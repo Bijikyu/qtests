@@ -1,14 +1,14 @@
 {
-  "name": "nodejs",
+  "name": "qtests",
   "version": "1.0.0",
-  "description": "",
+  "description": "Testing utilities and stubs for Node.js projects",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": ["testing", "stub", "mock", "winston", "axios", "utils"],
+  "author": "Q",
+  "license": "MIT",
   "dependencies": {
     "@types/node": "^22.13.11"
   }
