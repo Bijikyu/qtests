@@ -1,19 +1,35 @@
 
-const { greet, capitalize, randomBetween } = require('./index');
+const { stubMethod, stubs } = require('./index');
 
-console.log('=== Module Examples ===');
+console.log('=== Stub Utils Examples ===');
 
-// Greeting examples
-console.log(greet('World'));
-console.log(greet('Alice', 'Hi'));
-console.log(greet('Bob', 'Good morning'));
+// 1. Method stubbing example
+const myObj = {
+  greet: name => `Hello, ${name}!`,
+  calculate: (a, b) => a + b
+};
 
-// Capitalization examples
-console.log(capitalize('hello world'));
-console.log(capitalize('javascript is awesome'));
+console.log('\n--- Method Stubbing ---');
+console.log('Original:', myObj.greet('World'));
 
-// Random number examples
-console.log('Random numbers:');
-for (let i = 0; i < 5; i++) {
-  console.log(randomBetween(1, 100));
-}
+const restore = stubMethod(myObj, 'greet', name => `Hi there, ${name}!`);
+console.log('Stubbed:', myObj.greet('World'));
+
+restore();
+console.log('Restored:', myObj.greet('World'));
+
+// 2. Axios stub example
+console.log('\n--- Axios Stub ---');
+(async () => {
+  const result = await stubs.axios.post('https://fake-api.com', { data: 'test' });
+  console.log('Axios stub result:', result);
+})();
+
+// 3. Winston stub example
+console.log('\n--- Winston Stub ---');
+const logger = stubs.winston.createLogger();
+console.log('Creating logger (no output expected):');
+logger.info('This is an info message');
+logger.warn('This is a warning');
+logger.error('This is an error');
+console.log('Logger methods called successfully (silently)');
