@@ -22,6 +22,12 @@
 // Import logging utilities including wrapper for consistent logs
 const { logStart, logReturn, executeWithLogs } = require('../lib/logUtils'); //(add executeWithLogs and retain existing helpers)
 
+const defaultEnv = { // (shared env defaults for tests)
+  GOOGLE_API_KEY: 'key', // (fake google api key)
+  GOOGLE_CX: 'cx', // (fake search cx)
+  OPENAI_TOKEN: 'token' // (fake openai token)
+};
+
 /**
  * Sets up a standard test environment with common API keys
  * 
@@ -43,9 +49,7 @@ const { logStart, logReturn, executeWithLogs } = require('../lib/logUtils'); //(
  */
 function setTestEnv() {
   return executeWithLogs('setTestEnv', () => { //(log wrapper around env setup)
-    process.env.GOOGLE_API_KEY = 'key';   // Minimal fake API key
-    process.env.GOOGLE_CX = 'cx';         // Minimal fake Custom Search Engine ID
-    process.env.OPENAI_TOKEN = 'token';   // Minimal fake OpenAI token
+    Object.assign(process.env, defaultEnv); // (apply defaults)
     return true; //(report success)
   }, 'default values'); //(log parameter context)
 }
@@ -323,6 +327,7 @@ function initSearchTest() {
 // Each function serves a specific purpose and can be used independently
 // or in combination for complex test scenarios
 module.exports = {
+  defaultEnv,           // Export default env values
   setTestEnv,           // Set standard test environment variables
   saveEnv,              // Capture current environment for restoration
   restoreEnv,           // Restore previously saved environment
