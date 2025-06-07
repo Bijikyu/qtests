@@ -55,8 +55,10 @@ function verifyMockImplementation(){ //function tests mockImplementation overrid
  }
 } //end verifyMockImplementation
 
-if(verifySpyCaptures() && verifyMockImplementation()){ //run tests sequentially and evaluate results
- console.log('mockConsole tests passed'); //output success message
-}else{ //if either test fails
- console.error('mockConsole tests failed'); //output failure message
-}
+test('mockConsole captures calls', () => { //jest test verifying capture utility
+  expect(verifySpyCaptures()).toBe(true); //expect helper to indicate success
+});
+
+test('mockImplementation override works', () => { //jest test verifying implementation override
+  expect(verifyMockImplementation()).toBe(true); //expect helper to indicate success
+});

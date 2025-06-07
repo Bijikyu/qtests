@@ -20,7 +20,7 @@ async function searchTask(url){ // (test module performing http and logging)
   }
 }
 
-(async () => { // (self-running async test block)
+test('integration scenario completes', async () => { //wrap IIFE in jest test
   const mocks = initSearchTest(); // (setup env and create mocks)
   let axiosCalled = false; // (track axios usage)
   const restorePost = stubMethod(stubs.axios, 'post', async () => { // (stub axios.post)
@@ -44,4 +44,4 @@ async function searchTask(url){ // (test module performing http and logging)
   restoreLogger(); // (restore winston.createLogger)
   resetMocks(mocks.mock, mocks.scheduleMock, mocks.qerrorsMock); // (clean mocks)
   console.log('integration test complete'); // (final log)
-})();
+});

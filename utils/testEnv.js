@@ -227,51 +227,61 @@ function createQerrorsMock() {
  */
 function createAxiosMock() {
   logStart('createAxiosMock', 'none');
-  
+
   // Simple axios mock adapter without external dependencies
   // Stores configured replies for different URLs and methods
   const mock = {
+    _replies: { get: {}, post: {} }, //track replies per method on outer object
+
     /**
      * Configure mock response for GET requests to a specific URL
      * @param {string} url - URL to mock
      * @returns {Object} Reply configuration object
      */
     onGet: function(url) {
+      const outer = this; //reference outer mock for storing replies
       return {
         reply: function(status, data) {
-          // Store reply configuration for this URL
-          this._replies = this._replies || {};
-          this._replies[url] = { status, data };
-          return this; // Allow method chaining
+          outer._replies.get[url] = { status, data }; //store reply on outer mock
+          return outer; //return outer mock for chaining
         }
       };
     },
-    
+
     /**
      * Configure mock response for POST requests to a specific URL
      * @param {string} url - URL to mock
      * @returns {Object} Reply configuration object
      */
     onPost: function(url) {
+      const outer = this; //reference outer mock for storing replies
       return {
         reply: function(status, data) {
-          // Store reply configuration for this URL
-          this._replies = this._replies || {};
-          this._replies[url] = { status, data };
-          return this; // Allow method chaining
+          outer._replies.post[url] = { status, data }; //store reply on outer mock
+          return outer; //return outer mock for chaining
         }
       };
     },
-    
+
+    /**
+     * Retrieve stored reply configuration for assertions
+     * @param {string} url - Request URL used when configuring reply
+     * @param {string} method - HTTP method ('get' or 'post')
+     * @returns {Object|undefined} Stored reply or undefined if none
+     */
+    getReply: function(url, method) {
+      return (this._replies[method] || {})[url]; //lookup reply in store
+    },
+
     /**
      * Reset all configured mocks
      * Essential for preventing test pollution
      */
     reset: function() {
-      this._replies = {}; // Clear all stored replies
+      this._replies = { get: {}, post: {} }; //clear reply storage
     }
   };
-  
+
   logReturn('createAxiosMock', 'adapter');
   return mock;
 }
