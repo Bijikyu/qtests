@@ -1,5 +1,5 @@
 
-const { stubMethod, stubs } = require('./index');
+const { stubMethod, mockConsole, stubs } = require('./index');
 
 console.log('=== Stub Utils Examples ===');
 
@@ -33,3 +33,12 @@ logger.info('This is an info message');
 logger.warn('This is a warning');
 logger.error('This is an error');
 console.log('Logger methods called successfully (silently)');
+
+// 4. Console mocking example
+console.log('\n--- Console Mocking ---');
+const consoleSpy = mockConsole('log');
+console.log('This log will be captured');
+console.log('This too');
+console.log('Captured calls:', consoleSpy.mock.calls.length);
+consoleSpy.mockRestore();
+console.log('Console restored - this will show');
