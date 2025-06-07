@@ -74,12 +74,11 @@ require('module')._initPaths();
 
 const Module = require('module'); //(import module constructor for loader override)
 const origLoad = Module._load; //(store original load function)
+const stubMap = { axios: 'axios.js', winston: 'winston.js' }; //(map of stub files for quick lookup, extend with additional stubs as needed)
 Module._load = function(request, parent, isMain){ //(override to redirect specific modules)
-  if(request === 'axios'){ //(check for axios request)
-    return origLoad(path.join(stubsPath, 'axios.js'), parent, isMain); //(load axios stub)
-  }
-  if(request === 'winston'){ //(check for winston request)
-    return origLoad(path.join(stubsPath, 'winston.js'), parent, isMain); //(load winston stub)
+  const stubFile = stubMap[request]; //(retrieve stub file if available)
+  if(stubFile){ //(load stub if mapping exists)
+    return origLoad(path.join(stubsPath, stubFile), parent, isMain); //(load mapped stub dynamically)
   }
   return origLoad(request, parent, isMain); //(default loader for other modules)
 };
