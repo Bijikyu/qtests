@@ -1,0 +1,33 @@
+require('../setup'); //(activate stubs for subsequent requires)
+
+const assert = require('assert'); //(assert library for checks)
+const axios = require('axios'); //(axios after setup should be stub)
+const winston = require('winston'); //(winston after setup should be stub)
+const stubAxios = require('../stubs/axios'); //(axios stub reference)
+const stubWinston = require('../stubs/winston'); //(winston stub reference)
+const { execFileSync } = require('child_process'); //(utility to run child scripts)
+const path = require('path'); //(resolve helper script path)
+
+function runWithoutSetup(){ //(spawn child process without setup)
+ console.log(`runWithoutSetup is running with none`); //(start log)
+ try{ //(attempt to execute)
+  const script = path.join(__dirname, 'withoutSetup.js'); //(child script path)
+  const out = execFileSync(process.execPath, [script], { env: { NODE_PATH: '' } }).toString(); //(run child with clean env)
+  const res = JSON.parse(out); //(parse returned JSON)
+  console.log(`runWithoutSetup is returning ${JSON.stringify(res)}`); //(return log)
+  return res; //(forward result)
+ }catch(error){ //(handle errors)
+  console.error(error); //(output problem)
+  return {}; //(fallback result)
+ }
+} //(end runWithoutSetup)
+
+(function(){ //(self-executing test block)
+ console.log(`setupResolutionTest is running with none`); //(start log)
+ assert.strictEqual(axios.post, stubAxios.post); //(validate axios stub)
+ assert.strictEqual(winston.createLogger, stubWinston.createLogger); //(validate winston stub)
+ const check = runWithoutSetup(); //(verify real modules separately)
+ assert.strictEqual(check.axiosStub, false); //(axios before setup is real)
+ assert.strictEqual(check.winstonStub, false); //(winston before setup is real)
+ console.log(`setupResolutionTest has run resulting in a final value of pass`); //(end log)
+})();
