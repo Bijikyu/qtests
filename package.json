@@ -4,7 +4,7 @@
   "description": "Testing utilities and stubs for Node.js projects",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha"
   },
   "keywords": [
     "testing",
@@ -19,5 +19,9 @@
   "dependencies": {
     "@types/node": "^22.13.11",
     "axios": "^1.9.0"
+  },
+  "devDependencies": {
+    "chai": "^5.2.0",
+    "mocha": "^11.5.0"
   }
 }
