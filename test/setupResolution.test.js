@@ -14,11 +14,11 @@ function runChild(includeSetup){ //(execute child script with or without setup)
 } //(end runChild)
 
 function runWithoutSetup(){ //(spawn child process without setup)
- return executeWithLogs('runWithoutSetup', () => runChild(false)); //(delegate to executeWithLogs)
+ return runChild(false); //(directly return child result without extra logs)
 } //(end runWithoutSetup)
 
 function runWithSetup(){ //(spawn child process with setup)
- return executeWithLogs('runWithSetup', () => runChild(true)); //(delegate to executeWithLogs)
+ return runChild(true); //(directly return child result without extra logs)
 } //(end runWithSetup)
 
 test('child process uses stubs when setup is required', () => { //(jest test case)
