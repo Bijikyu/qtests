@@ -17,16 +17,10 @@
 const stubMethod = require('./utils/stubMethod');
 const { mockConsole } = require('./utils/mockConsole');
 const testEnv = require('./utils/testEnv');
+const { executeWithLogs } = require('./lib/logUtils'); //(import executeWithLogs)
 
 function setup(){ // (function exported so stubs activate only when called)
-  console.log(`setup is running with none`); // (debug start log)
-  try{ // (error handling wrapper)
-    require('./setup'); // (load setup side effect on demand)
-    console.log(`setup is returning undefined`); // (debug return log)
-  }catch(error){ // (catch any require failure)
-    console.log(`setup encountered ${error.message}`); // (error log)
-    throw error; // (propagate error)
-  }
+  return executeWithLogs('setup', () => require('./setup')); //(delegate to executeWithLogs)
 } // (end setup function)
 
 /**
