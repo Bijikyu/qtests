@@ -2,9 +2,25 @@ require('..').setup(); //load qtests setup for stub resolution
 
 const { mockConsole } = require('../utils/mockConsole'); //import mockConsole utility for testing
 
-test('mockConsole captures calls and restores', () => { //jest test verifying spy
+function withTempConsole(fn){ //helper ensures console restored
+  console.log(`withTempConsole is running with ${fn.name || 'anon'}`); //log start of helper
+  const realLog = console.log; //store original console.log
+  try{ //attempt to run wrapped function
+    const res = fn(realLog); //execute callback with backup
+    console.log(`withTempConsole is returning ${res}`); //log return value
+    return res; //return result to caller
+  }
+  catch(err){ //propagate error while logging
+    console.log(`withTempConsole error ${err}`); //log error
+    throw err; //rethrow to fail test
+  }
+  finally{ //ensure restoration even on failure
+    console.log = realLog; //restore original console.log
+  }
+} //end helper
+
+test('mockConsole captures calls and restores', () => withTempConsole(realLog => { //jest test verifying spy
   const recorded = []; //store real console output
-  const realLog = console.log; //save original console.log
   console.log = (...args) => recorded.push(args); //override console.log
   const spy = mockConsole('log'); //create console spy for log method
   console.log('first'); //call mocked console method
@@ -14,12 +30,10 @@ test('mockConsole captures calls and restores', () => { //jest test verifying sp
   spy.mockRestore(); //restore console.log via spy
   console.log('second'); //call console.log after restore
   expect(recorded.length).toBe(2); //real console captured restore call
-  console.log = realLog; //restore original console.log
-});
+}));
 
-test('mockConsole mockImplementation works', () => { //jest test verifying mockImplementation
+test('mockConsole mockImplementation works', () => withTempConsole(() => { //jest test verifying mockImplementation
   const customOut = []; //array to capture custom output
-  const realLog = console.log; //save original console.log
   console.log = () => {}; //silence console during test
   const spy = mockConsole('log'); //create console spy for log method
   spy.mockImplementation(msg => customOut.push(msg)); //override console.log
@@ -28,13 +42,11 @@ test('mockConsole mockImplementation works', () => { //jest test verifying mockI
   expect(spy.mock.calls.length).toBe(2); //tracks override call as well
   expect(spy.mock.calls[1][0]).toBe('override'); //second call stores argument
   spy.mockRestore(); //restore console.log via spy
-  console.log = realLog; //restore original console.log
-});
+}));
 
-test('mockConsole tracks calls after reimplementation', () => { //verify multiple overrides
+test('mockConsole tracks calls after reimplementation', () => withTempConsole(() => { //verify multiple overrides
   const firstOut = []; //array for first implementation
   const secondOut = []; //array for second implementation
-  const realLog = console.log; //save original console.log
   console.log = () => {}; //silence console during test
   const spy = mockConsole('log'); //create console spy for log method
   spy.mockImplementation(msg => firstOut.push(msg)); //first custom behavior
@@ -47,6 +59,5 @@ test('mockConsole tracks calls after reimplementation', () => { //verify multipl
   expect(spy.mock.calls[1][0]).toBe('one'); //first tracked arg correct
   expect(spy.mock.calls[2][0]).toBe('two'); //second tracked arg correct
   spy.mockRestore(); //restore console.log via spy
-  console.log = realLog; //restore original console.log
-});
+}));
 
