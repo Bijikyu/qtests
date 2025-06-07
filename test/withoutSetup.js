@@ -1,0 +1,10 @@
+const path = require('path'); //(path utility for resolving stub paths)
+const axios = require('axios'); //(require real axios before setup)
+const winston = require('winston'); //(require real winston before setup)
+const stubAxios = require('../stubs/axios'); //(load stub axios for comparison)
+const stubWinston = require('../stubs/winston'); //(load stub winston for comparison)
+const result = { //(create result container)
+  axiosStub: axios.post === stubAxios.post, //(compare axios implementation)
+  winstonStub: winston.createLogger === stubWinston.createLogger //(compare winston implementation)
+};
+console.log(JSON.stringify(result)); //(output result for parent test)

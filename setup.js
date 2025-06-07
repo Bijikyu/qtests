@@ -72,6 +72,18 @@ process.env.NODE_PATH = stubsPath + (currentNodePath ? separator + currentNodePa
 // This updates Module._nodeModulePaths and other internal state
 require('module')._initPaths();
 
+const Module = require('module'); //(import module constructor for loader override)
+const origLoad = Module._load; //(store original load function)
+Module._load = function(request, parent, isMain){ //(override to redirect specific modules)
+  if(request === 'axios'){ //(check for axios request)
+    return origLoad(path.join(stubsPath, 'axios.js'), parent, isMain); //(load axios stub)
+  }
+  if(request === 'winston'){ //(check for winston request)
+    return origLoad(path.join(stubsPath, 'winston.js'), parent, isMain); //(load winston stub)
+  }
+  return origLoad(request, parent, isMain); //(default loader for other modules)
+};
+
 // No exports needed - this module works through side effects
 // The act of requiring this file is what activates the stubbing system
 // Tests should: require('qtests/setup') then require their modules normally

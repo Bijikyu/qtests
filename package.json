@@ -21,6 +21,7 @@
     "axios": "^1.9.0"
   },
   "devDependencies": {
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "winston": "^3.17.0"
   }
 }
