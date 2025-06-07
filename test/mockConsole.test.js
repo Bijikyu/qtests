@@ -55,8 +55,12 @@ function verifyMockImplementation(){ //function tests mockImplementation overrid
  }
 } //end verifyMockImplementation
 
-if(verifySpyCaptures() && verifyMockImplementation()){ //run tests sequentially and evaluate results
- console.log('mockConsole tests passed'); //output success message
-}else{ //if either test fails
- console.error('mockConsole tests failed'); //output failure message
-}
+describe('mockConsole', () => { // (group mockConsole tests)
+  test('captures calls', () => { // (verify spy captures calls)
+    expect(verifySpyCaptures()).toBe(true); // (assert function result)
+  });
+
+  test('supports mockImplementation', () => { // (verify mockImplementation use)
+    expect(verifyMockImplementation()).toBe(true); // (assert function result)
+  });
+});

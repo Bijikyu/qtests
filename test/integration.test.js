@@ -20,28 +20,41 @@ async function searchTask(url){ // (test module performing http and logging)
   }
 }
 
-(async () => { // (self-running async test block)
-  const mocks = initSearchTest(); // (setup env and create mocks)
-  let axiosCalled = false; // (track axios usage)
-  const restorePost = stubMethod(stubs.axios, 'post', async () => { // (stub axios.post)
-    axiosCalled = true; // (mark call)
-    return {}; // (fake response)
-  });
-  let infoCalled = false; // (track logger info)
-  const restoreLogger = stubMethod(stubs.winston, 'createLogger', () => ({ // (stub winston logger)
-    info: () => { // (info method)
-      infoCalled = true; // (mark log call)
-    }
-  }));
+describe('integration', () => { // (group integration tests)
+  let mocks; // (store initialized mocks)
+  let restorePost; // (function to restore axios)
+  let restoreLogger; // (function to restore winston)
+  let logSpy; // (console spy)
+  let axiosCalled; // (flag for axios use)
+  let infoCalled; // (flag for winston use)
 
-  const logSpy = mockConsole('log'); // (capture console.log output)
-  const result = await searchTask('https://example.com'); // (execute module)
-  assert.strictEqual(result, true); // (check result)
-  assert(axiosCalled); // (verify axios used)
-  assert(infoCalled); // (verify logger used)
-  logSpy.mockRestore(); // (restore console.log)
-  restorePost(); // (restore axios.post)
-  restoreLogger(); // (restore winston.createLogger)
-  resetMocks(mocks.mock, mocks.scheduleMock, mocks.qerrorsMock); // (clean mocks)
-  console.log('integration test complete'); // (final log)
-})();
+  beforeEach(() => { // (setup fresh environment for each test)
+    mocks = initSearchTest(); // (initialize stubs and env)
+    axiosCalled = false; // (reset axios flag)
+    restorePost = stubMethod(stubs.axios, 'post', async () => { // (stub axios.post)
+      axiosCalled = true; // (mark axios call)
+      return {}; // (fake response)
+    });
+    infoCalled = false; // (reset winston flag)
+    restoreLogger = stubMethod(stubs.winston, 'createLogger', () => ({ // (stub winston logger)
+      info: () => { // (info method)
+        infoCalled = true; // (mark log call)
+      }
+    }));
+    logSpy = mockConsole('log'); // (capture console.log output)
+  });
+
+  afterEach(() => { // (clean up stubs after each test)
+    logSpy.mockRestore(); // (restore console.log)
+    restorePost(); // (restore axios.post)
+    restoreLogger(); // (restore winston.createLogger)
+    resetMocks(mocks.mock, mocks.scheduleMock, mocks.qerrorsMock); // (reset dependency mocks)
+  });
+
+  test('searchTask posts to axios and logs info', async () => { // (verify searchTask behaviour)
+    const result = await searchTask('https://example.com'); // (execute module)
+    assert.strictEqual(result, true); // (check result)
+    assert(axiosCalled); // (verify axios used)
+    assert(infoCalled); // (verify logger used)
+  });
+});
