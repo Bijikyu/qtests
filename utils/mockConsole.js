@@ -57,15 +57,18 @@ function mockConsole(method) {
   // This matches Jest's spy.mock.calls format for compatibility
   const calls = [];
   
-  // Default mock implementation: capture calls but produce no output
-  // This is the most common use case - testing logging without console spam
-  const mockImpl = (...args) => {
-    calls.push(args);
+  // Default implementation used when no custom function provided //(capture default)
+  const defaultImpl = () => {}; //(empty output to silence console)
+  let customImpl = defaultImpl; //(variable to store custom function)
+
+  // Wrapper records each call then delegates to stored implementation //(ensures tracking)
+  const wrapper = (...args) => {
+    calls.push(args); //(record arguments for test assertions)
+    return customImpl(...args); //(execute custom behavior if provided)
   };
-  
-  // Replace the console method with our mock implementation
-  // From this point, all calls to console[method] will be captured
-  console[method] = mockImpl;
+
+  // Replace console method with wrapper so calls are always tracked //(install wrapper)
+  console[method] = wrapper;
   
   // Create Jest-compatible spy object
   // This provides familiar methods for tests that may have used Jest before
@@ -79,9 +82,10 @@ function mockConsole(method) {
      * @param {Function} fn - Custom implementation function, or null for no-op
      * @returns {Object} The spy object for method chaining
      */
-    mockImplementation: (fn) => {
-      console[method] = fn || (() => {}); // Use no-op if no function provided
-      return spy; // Return spy for method chaining
+    mockImplementation: (fn) => { //(allow custom behavior while tracking)
+      customImpl = fn || defaultImpl; //(store provided function or fallback)
+      console[method] = wrapper; //(ensure wrapper remains installed)
+      return spy; //(return spy for chaining)
     },
     
     /**
