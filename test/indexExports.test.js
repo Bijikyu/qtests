@@ -1,4 +1,4 @@
-require('../setup'); // (enable stub path before importing index)
+require('..').setup(); // (activate stubs before importing index)
 
 const index = require('..'); // (load main exports)
 const directStubMethod = require('../utils/stubMethod'); // (direct stubMethod for comparison)
@@ -9,7 +9,7 @@ const { mockConsole: directMockConsole } = require('../utils/mockConsole'); // (
   expect(typeof index.stubMethod).toBe('function'); // (stubMethod export must be a function)
   expect(typeof index.mockConsole).toBe('function'); // (mockConsole export must be a function)
   expect(typeof index.testEnv).toBe('object'); // (testEnv export should be an object)
-  expect(typeof index.setup).toBe('object'); // (setup export is the setup side-effect module)
+  expect(typeof index.setup).toBe('function'); // (setup export is a callable helper)
   expect(typeof index.stubs).toBe('object'); // (stubs namespace object)
   expect(typeof index.stubs.axios).toBe('object'); // (axios stub object)
   expect(typeof index.stubs.winston).toBe('object'); // (winston stub object)

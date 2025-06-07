@@ -18,6 +18,17 @@ const stubMethod = require('./utils/stubMethod');
 const { mockConsole } = require('./utils/mockConsole');
 const testEnv = require('./utils/testEnv');
 
+function setup(){ // (function exported so stubs activate only when called)
+  console.log(`setup is running with none`); // (debug start log)
+  try{ // (error handling wrapper)
+    require('./setup'); // (load setup side effect on demand)
+    console.log(`setup is returning undefined`); // (debug return log)
+  }catch(error){ // (catch any require failure)
+    console.log(`setup encountered ${error.message}`); // (error log)
+    throw error; // (propagate error)
+  }
+} // (end setup function)
+
 /**
  * Main module exports
  * 
@@ -36,8 +47,8 @@ module.exports = {
   testEnv,         // Environment and mock management for complex test scenarios
   
   // Setup utility - separated because it modifies global Node.js module resolution
-  // Users must explicitly require this to enable automatic stub resolution
-  setup: require('./setup'),
+  // Users must explicitly invoke this function to enable stub resolution
+  setup, // (call this to activate stubs when desired)
   
   // Stub library - organized under namespace to group related mock implementations
   // This prevents naming conflicts and makes it clear these are replacement modules
