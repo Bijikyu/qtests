@@ -1,8 +1,12 @@
 require('..').setup(); //initialize stub resolution before requiring modules
 
-const { stubMethod, mockConsole, testEnv, stubs } = require('..'); //import qtests utilities
+const { stubMethod, testEnv, stubs } = require('..'); //import qtests utilities minus mockConsole
 const { initSearchTest, resetMocks } = testEnv; //extract env helpers
+
+const { withMockConsole } = require('../utils/testHelpers'); //(helper for console spies)
+
 const { executeWithLogs } = require('../lib/logUtils'); //(import executeWithLogs)
+
 
 async function searchTask(url){ //test module performing http and logging
   return executeWithLogs('searchTask', async target => { //(delegate to executeWithLogs)
@@ -15,7 +19,7 @@ async function searchTask(url){ //test module performing http and logging
   }, url);
 }
 
-test('integration flow using stubs', async () => { //jest test executing searchTask
+test('integration flow using stubs', () => withMockConsole('log', async logSpy => { //jest test executing searchTask with helper
   const mocks = initSearchTest(); //setup env and create mocks
   let axiosCalled = false; //track axios usage
   const restorePost = stubMethod(stubs.axios, 'post', async () => { //stub axios.post
@@ -29,14 +33,12 @@ test('integration flow using stubs', async () => { //jest test executing searchT
     }
   }));
 
-  const logSpy = mockConsole('log'); //capture console.log output
   const result = await searchTask('https://example.com'); //execute module
   expect(result).toBe(true); //check result
   expect(axiosCalled).toBe(true); //verify axios used
   expect(infoCalled).toBe(true); //verify logger used
-  logSpy.mockRestore(); //restore console.log
   restorePost(); //restore axios.post
   restoreLogger(); //restore winston.createLogger
   resetMocks(mocks.mock, mocks.scheduleMock, mocks.qerrorsMock); //clean mocks
-});
+}));
 
