@@ -1,9 +1,8 @@
 
 
-const { logStart, logReturn } = require('../lib/logUtils'); //functions under test
 const { withMockConsole } = require('../utils/testHelpers'); //(helper for console spies)
 
-const { logStart, logReturn, executeWithLogs } = require('../lib/logUtils'); //functions under test
+const { logStart, logReturn, executeWithLogs } = require('../lib/logUtils'); //functions under test, includes executeWithLogs
 const { mockConsole } = require('../utils/mockConsole'); //capture console output
 
 
