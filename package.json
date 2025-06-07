@@ -1,6 +1,6 @@
 {
   "name": "qtests",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Testing utilities and stubs for Node.js projects",
   "main": "index.js",
   "scripts": {
