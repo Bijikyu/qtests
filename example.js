@@ -42,3 +42,31 @@ console.log('This too');
 console.log('Captured calls:', consoleSpy.mock.calls.length);
 consoleSpy.mockRestore();
 console.log('Console restored - this will show');
+
+// 5. Test environment example
+console.log('\n--- Test Environment ---');
+const { testEnv } = require('./index');
+
+// Save current environment
+const savedEnv = testEnv.saveEnv();
+console.log('Environment saved');
+
+// Set test environment
+testEnv.setTestEnv();
+console.log('Test API keys set:', {
+  GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
+  GOOGLE_CX: process.env.GOOGLE_CX,
+  OPENAI_TOKEN: process.env.OPENAI_TOKEN
+});
+
+// Initialize test mocks
+const { mock, scheduleMock, qerrorsMock } = testEnv.initSearchTest();
+console.log('Test mocks initialized');
+
+// Reset mocks
+testEnv.resetMocks(mock, scheduleMock, qerrorsMock);
+console.log('Mocks reset');
+
+// Restore environment
+testEnv.restoreEnv(savedEnv);
+console.log('Environment restored');
