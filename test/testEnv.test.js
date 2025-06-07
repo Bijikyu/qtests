@@ -52,6 +52,12 @@ test('createAxiosMock stores replies and resets', () => { // (verify axios mock)
   expect(cfg2._replies).toEqual({ '/again': { status: 200, data: { ok: false } } }); // (old replies cleared)
 });
 
+test('createAxiosMock stores post replies', () => { // (verify axios post mock)
+  const axiosMock = createAxiosMock(); // (create adapter for post)
+  const cfg = axiosMock.onPost('/url').reply(200, { foo: 'bar' }); // (configure post reply)
+  expect(cfg._replies['/url']).toEqual({ status: 200, data: { foo: 'bar' } }); // (post reply stored)
+});
+
 
 test('resetMocks clears history on mocks', () => { // (verify centralized reset)
   const scheduleMock = createScheduleMock(); // (create schedule mock)
