@@ -1,10 +1,5 @@
 require('../setup'); //(activate stubs for subsequent requires)
 
-const assert = require('assert'); //(assert library for checks)
-const axios = require('axios'); //(axios after setup should be stub)
-const winston = require('winston'); //(winston after setup should be stub)
-const stubAxios = require('../stubs/axios'); //(axios stub reference)
-const stubWinston = require('../stubs/winston'); //(winston stub reference)
 const { execFileSync } = require('child_process'); //(utility to run child scripts)
 const path = require('path'); //(resolve helper script path)
 
@@ -22,12 +17,28 @@ function runWithoutSetup(){ //(spawn child process without setup)
  }
 } //(end runWithoutSetup)
 
-(function(){ //(self-executing test block)
+function runWithSetup(){ //(spawn child process with setup required)
+ console.log(`runWithSetup is running with none`); //(start log)
+ try{ //(attempt execution)
+  const script = path.join(__dirname, 'withoutSetup.js'); //(child script path)
+  const setupPath = path.join(__dirname, '../setup'); //(setup file path)
+  const out = execFileSync(process.execPath, ['-r', setupPath, script], { env: { NODE_PATH: '' } }).toString(); //(run child with setup)
+  const res = JSON.parse(out); //(parse returned JSON)
+  console.log(`runWithSetup is returning ${JSON.stringify(res)}`); //(return log)
+  return res; //(forward result)
+ }catch(error){ //(handle errors)
+  console.error(error); //(output problem)
+  return {}; //(fallback result)
+ }
+} //(end runWithSetup)
+
+test('child process uses stubs when setup is required', () => { //(jest test case)
  console.log(`setupResolutionTest is running with none`); //(start log)
- assert.strictEqual(axios.post, stubAxios.post); //(validate axios stub)
- assert.strictEqual(winston.createLogger, stubWinston.createLogger); //(validate winston stub)
- const check = runWithoutSetup(); //(verify real modules separately)
- assert.strictEqual(check.axiosStub, false); //(axios before setup is real)
- assert.strictEqual(check.winstonStub, false); //(winston before setup is real)
- console.log(`setupResolutionTest has run resulting in a final value of pass`); //(end log)
-})();
+ const withSetup = runWithSetup(); //(result when setup loaded)
+ const withoutSetup = runWithoutSetup(); //(result when setup absent)
+ expect(withSetup.axiosStub).toBe(true); //(axios should be stubbed)
+ expect(withSetup.winstonStub).toBe(true); //(winston should be stubbed)
+ expect(withoutSetup.axiosStub).toBe(false); //(axios should be real)
+ expect(withoutSetup.winstonStub).toBe(false); //(winston should be real)
+ console.log(`setupResolutionTest has run resulting in pass`); //(end log)
+});
