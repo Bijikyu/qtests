@@ -58,11 +58,13 @@ restore();
 
 ### 2. Stubbing Modules for All Tests
 
-Before running your tests, use the setup script to tell Node.js to look in your stubs directory first when resolving modules. This way, any code that imports `axios` or `winston` will get your test doubles automatically.
+Before running your tests, call the setup helper so Node.js loads the stubs directory first. Until this is done, modules like `axios` or `winston` will resolve to their real implementations.
 
 **In your test runner setup (e.g., Mocha’s `--require` or Jest’s setup):**
 
 ```js
+require('qtests').setup();
+// or
 require('qtests/setup');
 ```
 
@@ -112,7 +114,7 @@ module.exports = async function myFunction() {
 **Test:**
 
 ```js
-require('qtests/setup'); // Must be called before requiring your module
+require('qtests').setup(); // Must be called before requiring your module
 
 const myFunction = require('./myFunction'); // Will use stubbed axios and winston
 

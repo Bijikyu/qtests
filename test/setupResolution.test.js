@@ -1,4 +1,4 @@
-require('../setup'); //(activate stubs for subsequent requires)
+require('..').setup(); //(activate stubs for subsequent requires)
 
 const { execFileSync } = require('child_process'); //(utility to run child scripts)
 const path = require('path'); //(resolve helper script path)

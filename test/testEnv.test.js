@@ -1,4 +1,4 @@
-require('qtests/setup'); // (initialize stubs before imports)
+require('..').setup(); // (initialize stubs before imports)
 
 const { setTestEnv, saveEnv, restoreEnv, createScheduleMock, createQerrorsMock, createAxiosMock, resetMocks, initSearchTest } = require('../utils/testEnv'); // (import utilities under test)
 
