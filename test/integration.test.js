@@ -20,7 +20,7 @@ async function searchTask(url){ // (test module performing http and logging)
   }
 }
 
-(async () => { // (self-running async test block)
+test('integration test using stubs', async () => { //wrap previous IIFE in jest test
   const mocks = initSearchTest(); // (setup env and create mocks)
   let axiosCalled = false; // (track axios usage)
   const restorePost = stubMethod(stubs.axios, 'post', async () => { // (stub axios.post)
@@ -36,12 +36,12 @@ async function searchTask(url){ // (test module performing http and logging)
 
   const logSpy = mockConsole('log'); // (capture console.log output)
   const result = await searchTask('https://example.com'); // (execute module)
-  assert.strictEqual(result, true); // (check result)
-  assert(axiosCalled); // (verify axios used)
-  assert(infoCalled); // (verify logger used)
+  expect(result).toBe(true); // (check result with jest expect)
+  expect(axiosCalled).toBe(true); // (verify axios used)
+  expect(infoCalled).toBe(true); // (verify logger used)
   logSpy.mockRestore(); // (restore console.log)
   restorePost(); // (restore axios.post)
   restoreLogger(); // (restore winston.createLogger)
   resetMocks(mocks.mock, mocks.scheduleMock, mocks.qerrorsMock); // (clean mocks)
   console.log('integration test complete'); // (final log)
-})();
+});
