@@ -121,6 +121,28 @@ function restoreEnv(savedEnv) {
 }
 
 /**
+ * Attach Jest spy helpers to a mock when available
+ *
+ * Reduces duplication by centralizing the environment check and method creation
+ * for mocks that require mockClear and mockReset methods.
+ *
+ * @param {Function} mock - Mock or spy object to enhance
+ * @returns {Function} The same mock enhanced with spy methods
+ */
+function attachMockSpies(mock) { // (adds mockClear/mockReset to provided mock)
+  logStart('attachMockSpies', 'mock'); // (trace function start)
+  if (typeof jest !== 'undefined') { // (verify jest availability)
+    mock.mockClear = jest.fn(); // (assign jest spy clear method)
+    mock.mockReset = jest.fn(); // (assign jest spy reset method)
+  } else {
+    mock.mockClear = () => {}; // (fallback noop clear in non-jest)
+    mock.mockReset = () => {}; // (fallback noop reset in non-jest)
+  }
+  logReturn('attachMockSpies', mock); // (trace function return)
+  return mock; // (return enhanced mock for chaining)
+}
+
+/**
  * Creates a mock for scheduler/throttling libraries like Bottleneck
  * 
  * Many applications use scheduling libraries to control rate limiting or
@@ -148,16 +170,7 @@ function createScheduleMock() {
     return Promise.resolve(fn()); // Execute immediately and return result
   };
   
-  // Add Jest-compatible methods if Jest environment is detected
-  if (typeof jest !== 'undefined') {
-    scheduleMock.mockClear = jest.fn(); // Jest spy clear method
-    scheduleMock.mockReset = jest.fn(); // Jest spy reset method
-  } else {
-    // Provide no-op fallbacks for non-Jest environments
-    // This prevents errors when tests call these methods
-    scheduleMock.mockClear = () => {};
-    scheduleMock.mockReset = () => {};
-  }
+  attachMockSpies(scheduleMock); // (add spy helpers via helper)
   
   logReturn('createScheduleMock', 'mock');
   return scheduleMock;
@@ -191,15 +204,7 @@ function createQerrorsMock() {
     return args; // Return arguments for test inspection
   };
   
-  // Add Jest-compatible methods for call tracking and reset
-  if (typeof jest !== 'undefined') {
-    qerrorsMock.mockReset = jest.fn();
-    qerrorsMock.mockClear = jest.fn();
-  } else {
-    // No-op fallbacks for non-Jest environments
-    qerrorsMock.mockReset = () => {};
-    qerrorsMock.mockClear = () => {};
-  }
+  attachMockSpies(qerrorsMock); // (add spy helpers via helper)
   
   logReturn('createQerrorsMock', 'mock');
   return qerrorsMock;
