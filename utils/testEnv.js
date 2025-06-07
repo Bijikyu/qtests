@@ -19,8 +19,8 @@
  * - Integration tests that need controlled environments
  */
 
-// Import logging utilities for function call tracing and debugging
-const { logStart, logReturn } = require('../lib/logUtils');
+// Import logging utilities including wrapper for consistent logs
+const { logStart, logReturn, executeWithLogs } = require('../lib/logUtils'); //(add executeWithLogs and retain existing helpers)
 
 /**
  * Sets up a standard test environment with common API keys
@@ -42,16 +42,12 @@ const { logStart, logReturn } = require('../lib/logUtils');
  * @returns {boolean} Always returns true to confirm environment was set
  */
 function setTestEnv() {
-  logStart('setTestEnv', 'default values');
-  
-  // Set standard test API keys
-  // These values are obviously fake and safe for logging
-  process.env.GOOGLE_API_KEY = 'key';   // Minimal fake API key
-  process.env.GOOGLE_CX = 'cx';         // Minimal fake Custom Search Engine ID
-  process.env.OPENAI_TOKEN = 'token';   // Minimal fake OpenAI token
-  
-  logReturn('setTestEnv', true);
-  return true; // Confirm successful setup for test verification
+  return executeWithLogs('setTestEnv', () => { //(log wrapper around env setup)
+    process.env.GOOGLE_API_KEY = 'key';   // Minimal fake API key
+    process.env.GOOGLE_CX = 'cx';         // Minimal fake Custom Search Engine ID
+    process.env.OPENAI_TOKEN = 'token';   // Minimal fake OpenAI token
+    return true; //(report success)
+  }, 'default values'); //(log parameter context)
 }
 
 /**
@@ -74,16 +70,10 @@ function setTestEnv() {
  * @returns {Object} Copy of current environment variables
  */
 function saveEnv() {
-  logStart('saveEnv', 'none');
-  
-  // Create shallow copy of current environment
-  // Spread operator is efficient for this use case
-  const savedEnv = { ...process.env };
-  
-  // Log success but mask actual environment data for security
-  // Environment variables may contain sensitive information
-  logReturn('saveEnv', 'env stored');
-  return savedEnv;
+  return executeWithLogs('saveEnv', () => { //(wrap env capture in logger)
+    const savedEnv = { ...process.env }; // Spread operator for shallow copy
+    return savedEnv; //(return snapshot)
+  }, 'none');
 }
 
 /**
@@ -106,18 +96,11 @@ function saveEnv() {
  * @returns {boolean} Always returns true to confirm restoration
  */
 function restoreEnv(savedEnv) {
-  logStart('restoreEnv', 'env restore');
-  
-  // Step 1: Clear all current environment variables
-  // This removes any variables that were added during testing
-  Object.keys(process.env).forEach(k => delete process.env[k]);
-  
-  // Step 2: Restore the saved environment
-  // Object.assign copies all properties from savedEnv to process.env
-  Object.assign(process.env, savedEnv);
-  
-  logReturn('restoreEnv', true);
-  return true; // Confirm successful restoration
+  return executeWithLogs('restoreEnv', () => { //(wrap env restore in logger)
+    Object.keys(process.env).forEach(k => delete process.env[k]); // clear env
+    Object.assign(process.env, savedEnv); // restore saved env
+    return true; //(confirm success)
+  }, 'env restore');
 }
 
 /**
@@ -162,18 +145,13 @@ function attachMockSpies(mock) { // (adds mockClear/mockReset to provided mock)
  * @returns {Function} Mock scheduler function with Jest-compatible methods
  */
 function createScheduleMock() {
-  logStart('createScheduleMock', 'none');
-  
-  // Create mock function that immediately executes passed functions
-  // This simulates a scheduler that processes jobs instantly
-  const scheduleMock = function(fn) {
-    return Promise.resolve(fn()); // Execute immediately and return result
-  };
-  
-  attachMockSpies(scheduleMock); // (add spy helpers via helper)
-  
-  logReturn('createScheduleMock', 'mock');
-  return scheduleMock;
+  return executeWithLogs('createScheduleMock', () => { //(log wrapper for schedule)
+    const scheduleMock = function(fn) { // immediate scheduler mock
+      return Promise.resolve(fn()); // Execute and resolve instantly
+    };
+    attachMockSpies(scheduleMock); // (add spy helpers via helper)
+    return scheduleMock; // (return configured mock)
+  }, 'none');
 }
 
 /**
@@ -196,18 +174,13 @@ function createScheduleMock() {
  * @returns {Function} Mock error handler with Jest-compatible methods
  */
 function createQerrorsMock() {
-  logStart('createQerrorsMock', 'none');
-  
-  // Mock function that captures and returns its arguments
-  // This allows tests to inspect what was passed to error handlers
-  const qerrorsMock = function(...args) {
-    return args; // Return arguments for test inspection
-  };
-  
-  attachMockSpies(qerrorsMock); // (add spy helpers via helper)
-  
-  logReturn('createQerrorsMock', 'mock');
-  return qerrorsMock;
+  return executeWithLogs('createQerrorsMock', () => { //(log wrapper for errors)
+    const qerrorsMock = function(...args) { // capture args for inspection
+      return args; // Return arguments for test inspection
+    };
+    attachMockSpies(qerrorsMock); // (add spy helpers via helper)
+    return qerrorsMock; // (provide mock back)
+  }, 'none');
 }
 
 /**
@@ -231,24 +204,21 @@ function createQerrorsMock() {
  * @returns {Object} Mock adapter with onGet, onPost, and reset methods
  */
 function createAxiosMock() {
-  logStart('createAxiosMock', 'none');
-
-  // Simple axios mock adapter without external dependencies
-  // Stores configured replies for different URLs and methods
-  function createReplyBinder(url){ //helper for binding replies on adapter
-    return { //return object with reply method
-      reply: function(status, data){ //store status and data for url
-        mock._replies[url] = { status, data }; // (bind response to url)
-        return mock; // (allow chaining)
-      }
-    }; //close returned object
-  }
-  const mock = {
-    /**
-     * Configure mock response for GET requests to a specific URL
-     * @param {string} url - URL to mock
-     * @returns {Object} Reply configuration object
-     */
+  return executeWithLogs('createAxiosMock', () => { //(log wrapper for axios)
+    function createReplyBinder(url){ //helper for binding replies on adapter
+      return { //return object with reply method
+        reply: function(status, data){ //store status and data for url
+          mock._replies[url] = { status, data }; // (bind response to url)
+          return mock; // (allow chaining)
+        }
+      }; //close returned object
+    }
+    const mock = {
+      /**
+       * Configure mock response for GET requests to a specific URL
+       * @param {string} url - URL to mock
+       * @returns {Object} Reply configuration object
+       */
     onGet: function(url) {
       return createReplyBinder(url); //delegate to reply binder
     },
@@ -270,11 +240,9 @@ function createAxiosMock() {
       mock._replies = {}; // (clear stored replies on adapter)
     }
   };
-
-  mock._replies = {}; // (initialize reply store for adapter)
-  
-  logReturn('createAxiosMock', 'adapter');
-  return mock;
+    mock._replies = {}; // (initialize reply store for adapter)
+    return mock; // (return configured adapter)
+  }, 'none');
 }
 
 /**
@@ -300,25 +268,18 @@ function createAxiosMock() {
  * @returns {boolean} Always returns true to confirm reset completion
  */
 function resetMocks(mock, scheduleMock, qerrorsMock) {
-  logStart('resetMocks', 'mocks');
-  
-  // Reset HTTP adapter mock if it has reset capability
-  if (mock && mock.reset) {
-    mock.reset();
-  }
-  
-  // Clear scheduler mock call history if available
-  if (scheduleMock && scheduleMock.mockClear) {
-    scheduleMock.mockClear();
-  }
-  
-  // Clear error mock call history if available
-  if (qerrorsMock && qerrorsMock.mockClear) {
-    qerrorsMock.mockClear();
-  }
-  
-  logReturn('resetMocks', true);
-  return true; // Confirm all resets completed
+  return executeWithLogs('resetMocks', () => { //(wrap mock resets in logger)
+    if (mock && mock.reset) {
+      mock.reset();
+    }
+    if (scheduleMock && scheduleMock.mockClear) {
+      scheduleMock.mockClear();
+    }
+    if (qerrorsMock && qerrorsMock.mockClear) {
+      qerrorsMock.mockClear();
+    }
+    return true; //(confirm completion)
+  }, 'mocks');
 }
 
 /**
@@ -346,26 +307,16 @@ function resetMocks(mock, scheduleMock, qerrorsMock) {
  * @returns {Object} Object containing all created mocks for individual control
  */
 function initSearchTest() {
-  logStart('initSearchTest', 'none');
-  
-  // Reset Jest modules if in Jest environment
-  // This ensures clean module state for each test
-  if (typeof jest !== 'undefined' && jest.resetModules) {
-    jest.resetModules();
-  }
-  
-  // Set up test environment with known values
-  setTestEnv();
-  
-  // Create all common mocks for search/API testing
-  const scheduleMock = createScheduleMock();
-  const qerrorsMock = createQerrorsMock();
-  const mock = createAxiosMock();
-  
-  logReturn('initSearchTest', 'mocks');
-  
-  // Return mocks for individual control in tests
-  return { mock, scheduleMock, qerrorsMock };
+  return executeWithLogs('initSearchTest', () => { //(wrap full init in logger)
+    if (typeof jest !== 'undefined' && jest.resetModules) {
+      jest.resetModules();
+    }
+    setTestEnv();
+    const scheduleMock = createScheduleMock();
+    const qerrorsMock = createQerrorsMock();
+    const mock = createAxiosMock();
+    return { mock, scheduleMock, qerrorsMock }; // (provide mocks)
+  }, 'none');
 }
 
 // Export all functions for flexible test environment management
