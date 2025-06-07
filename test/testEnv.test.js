@@ -45,17 +45,17 @@ test('createQerrorsMock captures arguments', () => { // (verify error mock)
 
 test('createAxiosMock stores replies and resets', () => { // (verify axios mock)
   const axiosMock = createAxiosMock(); // (create axios adapter)
-  const cfg = axiosMock.onGet('/test').reply(200, { ok: true }); // (configure get reply)
-  expect(cfg._replies['/test']).toEqual({ status: 200, data: { ok: true } }); // (replies stored)
+  axiosMock.onGet('/test').reply(200, { ok: true }); // (configure get reply)
+  expect(axiosMock._replies['/test']).toEqual({ status: 200, data: { ok: true } }); // (reply stored on adapter)
   axiosMock.reset(); // (reset replies on adapter)
-  const cfg2 = axiosMock.onGet('/again').reply(200, { ok: false }); // (configure after reset)
-  expect(cfg2._replies).toEqual({ '/again': { status: 200, data: { ok: false } } }); // (old replies cleared)
+  axiosMock.onGet('/again').reply(200, { ok: false }); // (configure after reset)
+  expect(axiosMock._replies).toEqual({ '/again': { status: 200, data: { ok: false } } }); // (old replies cleared)
 });
 
 test('createAxiosMock stores post replies', () => { // (verify axios post mock)
   const axiosMock = createAxiosMock(); // (create adapter for post)
-  const cfg = axiosMock.onPost('/url').reply(200, { foo: 'bar' }); // (configure post reply)
-  expect(cfg._replies['/url']).toEqual({ status: 200, data: { foo: 'bar' } }); // (post reply stored)
+  axiosMock.onPost('/url').reply(200, { foo: 'bar' }); // (configure post reply)
+  expect(axiosMock._replies['/url']).toEqual({ status: 200, data: { foo: 'bar' } }); // (post reply stored)
 });
 
 

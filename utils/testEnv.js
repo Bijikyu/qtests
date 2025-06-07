@@ -239,10 +239,8 @@ function createAxiosMock() {
     onGet: function(url) {
       return {
         reply: function(status, data) {
-          // Store reply configuration for this URL
-          this._replies = this._replies || {};
-          this._replies[url] = { status, data };
-          return this; // Allow method chaining
+          mock._replies[url] = { status, data }; // (store get response on adapter)
+          return mock; // (return adapter for chaining)
         }
       };
     },
@@ -255,10 +253,8 @@ function createAxiosMock() {
     onPost: function(url) {
       return {
         reply: function(status, data) {
-          // Store reply configuration for this URL
-          this._replies = this._replies || {};
-          this._replies[url] = { status, data };
-          return this; // Allow method chaining
+          mock._replies[url] = { status, data }; // (store post response on adapter)
+          return mock; // (return adapter for chaining)
         }
       };
     },
@@ -268,9 +264,11 @@ function createAxiosMock() {
      * Essential for preventing test pollution
      */
     reset: function() {
-      this._replies = {}; // Clear all stored replies
+      mock._replies = {}; // (clear stored replies on adapter)
     }
   };
+
+  mock._replies = {}; // (initialize reply store for adapter)
   
   logReturn('createAxiosMock', 'adapter');
   return mock;
