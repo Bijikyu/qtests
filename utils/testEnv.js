@@ -130,6 +130,25 @@ function attachMockSpies(mock) { // (adds mockClear/mockReset to provided mock)
 }
 
 /**
+ * Creates a logged mock and attaches spies
+ *
+ * Consolidates repetitive mock creation logic by wrapping executeWithLogs
+ * with automatic spy attachment. Useful for any mock factory in this file
+ * that needs consistent logging behavior.
+ *
+ * @param {string} name - Identifier used for logging
+ * @param {Function} creator - Function that returns the raw mock
+ * @returns {any} Mock enhanced with spy helpers
+ */
+function makeLoggedMock(name, creator) { //(wrapper for logged mock creation)
+  return executeWithLogs(name, () => { //(consistent log wrapper)
+    const mock = creator(); // (create raw mock)
+    attachMockSpies(mock); // (add jest spies if available)
+    return mock; // (return enhanced mock)
+  }, 'none');
+}
+
+/**
  * Creates a mock for scheduler/throttling libraries like Bottleneck
  * 
  * Many applications use scheduling libraries to control rate limiting or
@@ -149,13 +168,12 @@ function attachMockSpies(mock) { // (adds mockClear/mockReset to provided mock)
  * @returns {Function} Mock scheduler function with Jest-compatible methods
  */
 function createScheduleMock() {
-  return executeWithLogs('createScheduleMock', () => { //(log wrapper for schedule)
+  return makeLoggedMock('createScheduleMock', () => { //(log and spy helper)
     const scheduleMock = function(fn) { // immediate scheduler mock
       return Promise.resolve(fn()); // Execute and resolve instantly
     };
-    attachMockSpies(scheduleMock); // (add spy helpers via helper)
-    return scheduleMock; // (return configured mock)
-  }, 'none');
+    return scheduleMock; // (returned to helper for spies)
+  });
 }
 
 /**
@@ -178,13 +196,12 @@ function createScheduleMock() {
  * @returns {Function} Mock error handler with Jest-compatible methods
  */
 function createQerrorsMock() {
-  return executeWithLogs('createQerrorsMock', () => { //(log wrapper for errors)
+  return makeLoggedMock('createQerrorsMock', () => { //(log and spy helper)
     const qerrorsMock = function(...args) { // capture args for inspection
       return args; // Return arguments for test inspection
     };
-    attachMockSpies(qerrorsMock); // (add spy helpers via helper)
-    return qerrorsMock; // (provide mock back)
-  }, 'none');
+    return qerrorsMock; // (returned to helper for spies)
+  });
 }
 
 /**
@@ -208,7 +225,7 @@ function createQerrorsMock() {
  * @returns {Object} Mock adapter with onGet, onPost, and reset methods
  */
 function createAxiosMock() {
-  return executeWithLogs('createAxiosMock', () => { //(log wrapper for axios)
+  return makeLoggedMock('createAxiosMock', () => { //(log and spy helper)
     function createReplyBinder(url){ //helper for binding replies on adapter
       return { //return object with reply method
         reply: function(status, data){ //store status and data for url
@@ -245,8 +262,8 @@ function createAxiosMock() {
     }
   };
     mock._replies = {}; // (initialize reply store for adapter)
-    return mock; // (return configured adapter)
-  }, 'none');
+    return mock; // (returned to helper for spies)
+  });
 }
 
 /**
