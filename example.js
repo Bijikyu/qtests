@@ -211,6 +211,8 @@ console.log('TEST_VARIABLE after restore:', process.env.TEST_VARIABLE || 'undefi
  */
 console.log('\n4. Mock Creation for Complex Dependencies:');
 
+(async () => { // (wrapping async demo to allow top-level await in CommonJS)
+
 // Create a scheduler mock for testing rate-limited operations
 // Real schedulers delay execution; this mock executes immediately
 const scheduleMock = testEnv.createScheduleMock();
@@ -296,6 +298,8 @@ testEnv.resetMocks(testMocks.mock, testMocks.scheduleMock, testMocks.qerrorsMock
 
 console.log('\n=== All Examples Complete ===');
 console.log('All mocks have been cleaned up and original behavior restored');
+
+})(); // (end async wrapper to keep CommonJS compatible)
 
 /**
  * Key Takeaways for Using qtests:
