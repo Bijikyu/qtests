@@ -227,9 +227,17 @@ function createQerrorsMock() {
  */
 function createAxiosMock() {
   logStart('createAxiosMock', 'none');
-  
+
   // Simple axios mock adapter without external dependencies
   // Stores configured replies for different URLs and methods
+  function createReplyBinder(url){ //helper for binding replies on adapter
+    return { //return object with reply method
+      reply: function(status, data){ //store status and data for url
+        mock._replies[url] = { status, data }; // (bind response to url)
+        return mock; // (allow chaining)
+      }
+    }; //close returned object
+  }
   const mock = {
     /**
      * Configure mock response for GET requests to a specific URL
@@ -237,12 +245,7 @@ function createAxiosMock() {
      * @returns {Object} Reply configuration object
      */
     onGet: function(url) {
-      return {
-        reply: function(status, data) {
-          mock._replies[url] = { status, data }; // (store get response on adapter)
-          return mock; // (return adapter for chaining)
-        }
-      };
+      return createReplyBinder(url); //delegate to reply binder
     },
     
     /**
@@ -251,12 +254,7 @@ function createAxiosMock() {
      * @returns {Object} Reply configuration object
      */
     onPost: function(url) {
-      return {
-        reply: function(status, data) {
-          mock._replies[url] = { status, data }; // (store post response on adapter)
-          return mock; // (return adapter for chaining)
-        }
-      };
+      return createReplyBinder(url); //use common binder for post
     },
     
     /**
