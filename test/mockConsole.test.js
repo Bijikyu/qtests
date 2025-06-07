@@ -1,62 +1,32 @@
 require('../setup'); //load qtests setup for stub resolution
 
 const { mockConsole } = require('../utils/mockConsole'); //import mockConsole utility for testing
-const assert = require('assert'); //core assertion library used for test verification
 
-function verifySpyCaptures(){ //function tests call capture and output suppression
- console.log(`verifySpyCaptures is running with none`); //log function start per convention
- let realLog; //declare variable for original console method
- try{ //start error handling block
-  const recorded = []; //store real console output for detection
-  realLog = console.log; //save original console.log to restore later
-  console.log = (...args)=>recorded.push(args); //override console.log before spying
+test('mockConsole captures calls and restores', () => { //jest test verifying spy
+  const recorded = []; //store real console output
+  const realLog = console.log; //save original console.log
+  console.log = (...args) => recorded.push(args); //override console.log
   const spy = mockConsole('log'); //create console spy for log method
   console.log('first'); //call mocked console method
-  assert.strictEqual(spy.mock.calls.length,2); //ensure spy recorded creation log and test call
-  assert.strictEqual(spy.mock.calls[1][0],'first'); //ensure captured argument matches
-  assert.strictEqual(recorded.length,1); //confirm only setup log reached real console
-  spy.mockRestore(); //restore console.log using spy method
+  expect(spy.mock.calls.length).toBe(2); //spy recorded creation and call
+  expect(spy.mock.calls[1][0]).toBe('first'); //captured argument matches
+  expect(recorded.length).toBe(1); //only setup log reached real console
+  spy.mockRestore(); //restore console.log via spy
   console.log('second'); //call console.log after restore
-  assert.strictEqual(recorded.length,2); //verify real console now captured restore call
-  console.log(`verifySpyCaptures is returning true`); //log successful return
+  expect(recorded.length).toBe(2); //real console captured restore call
   console.log = realLog; //restore original console.log
-  return true; //indicate test passed
- }catch(error){ //handle potential errors
-  console.error(error); //log error for debugging
-  if(realLog){ //ensure variable defined before use
-   console.log = realLog; //restore original console.log on failure
-  }
-  return false; //indicate test failed
- }
-} //end verifySpyCaptures
+});
 
-function verifyMockImplementation(){ //function tests mockImplementation override
- console.log(`verifyMockImplementation is running with none`); //log function start per convention
- let realLog; //declare variable for original console method
- try{ //start error handling block
-  const customOut = []; //store output from custom implementation
-  realLog = console.log; //save original console.log for restoration
-  console.log = ()=>{}; //suppress real console output during test
+test('mockConsole mockImplementation works', () => { //jest test verifying mockImplementation
+  const customOut = []; //array to capture custom output
+  const realLog = console.log; //save original console.log
+  console.log = () => {}; //silence console during test
   const spy = mockConsole('log'); //create console spy for log method
-  spy.mockImplementation(msg=>customOut.push(msg)); //override console method with custom function
+  spy.mockImplementation(msg => customOut.push(msg)); //override console.log
   console.log('override'); //call overridden console method
-  assert.deepStrictEqual(customOut,['override']); //verify custom function captured call
-  assert.strictEqual(spy.mock.calls.length,1); //spy only recorded creation log before override
-  spy.mockRestore(); //restore console.log using spy method
+  expect(customOut).toEqual(['override']); //custom function captured call
+  expect(spy.mock.calls.length).toBe(1); //creation log only
+  spy.mockRestore(); //restore console.log via spy
   console.log = realLog; //restore original console.log
-  console.log(`verifyMockImplementation is returning true`); //log successful return
-  return true; //indicate test passed
- }catch(error){ //handle potential errors
-  console.error(error); //log error for debugging
-  if(realLog){ //ensure variable defined before use
-   console.log = realLog; //restore original console.log on failure
-  }
-  return false; //indicate test failed
- }
-} //end verifyMockImplementation
+});
 
-if(verifySpyCaptures() && verifyMockImplementation()){ //run tests sequentially and evaluate results
- console.log('mockConsole tests passed'); //output success message
-}else{ //if either test fails
- console.error('mockConsole tests failed'); //output failure message
-}
