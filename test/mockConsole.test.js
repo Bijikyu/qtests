@@ -1,4 +1,3 @@
-require('..').setup(); //load qtests setup for stub resolution
 
 const { mockConsole } = require('../utils/mockConsole'); //import mockConsole utility for testing
 

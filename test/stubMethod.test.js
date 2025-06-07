@@ -1,4 +1,3 @@
-require('..').setup(); // (activate stubs before imports)
 const stubMethod = require('../utils/stubMethod'); // (import module under test)
 
 test('stubMethod replaces and restores methods', () => { // (jest test case)

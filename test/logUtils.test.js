@@ -1,4 +1,3 @@
-require('..').setup(); //ensure stubs active
 
 const { logStart, logReturn } = require('../lib/logUtils'); //functions under test
 const { mockConsole } = require('../utils/mockConsole'); //capture console output
