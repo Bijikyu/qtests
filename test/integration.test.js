@@ -1,4 +1,3 @@
-require('..').setup(); //initialize stub resolution before requiring modules
 
 const { stubMethod, testEnv, stubs } = require('..'); //import qtests utilities minus mockConsole
 const { initSearchTest, resetMocks } = testEnv; //extract env helpers

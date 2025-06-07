@@ -1,3 +1,3 @@
 module.exports = {
-  setupFiles: ['<rootDir>/setup.js'], // (load qtests setup before tests)
+  setupFiles: ['<rootDir>/test/testSetup.js'], // (invoke exported setup for jest)
 };

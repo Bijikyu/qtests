@@ -1,4 +1,3 @@
-require('..').setup(); // (activate stubs before importing index)
 
 const index = require('..'); // (load main exports)
 const directStubMethod = require('../utils/stubMethod'); // (direct stubMethod for comparison)
