@@ -57,6 +57,9 @@ const Module = require('module');
 const path = require('path');
 const stubsPath = path.join(__dirname, 'stubs'); // (absolute path for stub modules)
 
+// Calculate absolute path to our stubs directory
+const stubsPath = path.join(__dirname, 'stubs'); //(path to bundled stubs)
+
 /**
  * Module stub registry - defines which modules should be replaced with stubs
  * 
@@ -93,10 +96,13 @@ const STUB_REGISTRY = {
 
   // Logging library - redirected to silent stub for clean test output
   'winston': './stubs/winston'
-}; // (registry end for stub mappings)
+
+}; //(close registry mapping)
+// (registry end for stub mappings)
 
   // Additional stubs can be added here following the same pattern:
   // 'module-name': './stubs/module-name'
+
 
 // Preserve existing NODE_PATH if it exists
 // Some environments or tools may have already set NODE_PATH
@@ -117,8 +123,6 @@ process.env.NODE_PATH = stubsPath + (currentNodePath ? separator + currentNodePa
 // We must call this to apply our changes mid-execution
 // This updates Module._nodeModulePaths and other internal state
 require('module')._initPaths();
-
-const Module = require('module'); //(import module constructor for loader override)
 const origLoad = Module._load; //(store original load function)
 const stubMap = { axios: 'axios.js', winston: 'winston.js' }; //(map of stub files for quick lookup, extend with additional stubs as needed)
 Module._load = function(request, parent, isMain){ //(override to redirect specific modules)
