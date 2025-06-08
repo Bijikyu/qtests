@@ -24,6 +24,7 @@
  * 4. Production environment variables shouldn't leak into test execution
  */
 
+
 // Import logging utilities for function call tracing and debugging
 // These utilities provide consistent logging patterns across the qtests framework
 const { logStart, logReturn } = require('../lib/logUtils');
@@ -55,6 +56,7 @@ const { logStart, logReturn } = require('../lib/logUtils');
  * // Test code here - runs with known environment
  * restoreEnv(envSnapshot);
  */
+
 function setTestEnv(envVars = {}) {
   // Log function execution for debugging test setup issues
   logStart('setTestEnv', envVars);
@@ -94,6 +96,225 @@ function setTestEnv(envVars = {}) {
     console.log(`setTestEnv error: ${error.message}`);
     throw error;
   }
+
+function setTestEnv() {
+  return executeWithLogs('setTestEnv', () => { //(log wrapper around env setup)
+    Object.assign(process.env, defaultEnv); // (apply defaults)
+    return true; //(report success)
+  }, 'default values'); //(log parameter context)
+}
+
+/**
+ * Captures the current process environment for later restoration
+ * 
+ * This function creates a snapshot of the current environment variables
+ * so they can be restored after test modifications. Essential for preventing
+ * test pollution and ensuring each test starts with a clean environment.
+ * 
+ * Implementation details:
+ * - Uses spread operator for shallow copy (sufficient for env vars)
+ * - Copies at time of call, not when restore is called
+ * - Returns the copy rather than storing internally for thread safety
+ * 
+ * Why shallow copy is sufficient:
+ * - Environment variables are always strings (primitives)
+ * - No nested objects to worry about
+ * - Fast and memory efficient
+ * 
+ * @returns {Object} Copy of current environment variables
+ */
+function saveEnv() {
+  return executeWithLogs('saveEnv', () => { //(wrap env capture in logger)
+    const savedEnv = { ...process.env }; // Spread operator for shallow copy
+    return savedEnv; //(return snapshot)
+  }, 'none');
+}
+
+/**
+ * Restores environment to a previously saved state
+ * 
+ * This function completely replaces the current environment with a saved copy.
+ * It ensures clean restoration by clearing all current variables first,
+ * then applying the saved state.
+ * 
+ * Two-step process rationale:
+ * 1. Clear current env: removes any variables added during testing
+ * 2. Apply saved env: restores exactly the original state
+ * 
+ * Why not just override:
+ * - Tests might add new environment variables
+ * - Simple assignment wouldn't remove test-added variables
+ * - Complete replacement ensures clean state
+ * 
+ * @param {Object} savedEnv - Previously saved environment from saveEnv()
+ * @returns {boolean} Always returns true to confirm restoration
+ */
+function restoreEnv(savedEnv) {
+  return executeWithLogs('restoreEnv', () => { //(wrap env restore in logger)
+    Object.keys(process.env).forEach(k => delete process.env[k]); // clear env
+    Object.assign(process.env, savedEnv); // restore saved env
+    return true; //(confirm success)
+  }, 'env restore');
+}
+
+/**
+ * Attach Jest spy helpers to a mock when available
+ *
+ * Reduces duplication by centralizing the environment check and method creation
+ * for mocks that require mockClear and mockReset methods.
+ *
+ * @param {Function} mock - Mock or spy object to enhance
+ * @returns {Function} The same mock enhanced with spy methods
+ */
+function attachMockSpies(mock) { // (adds mockClear/mockReset to provided mock)
+  logStart('attachMockSpies', 'mock'); // (trace function start)
+  if (typeof jest !== 'undefined') { // (verify jest availability)
+    mock.mockClear = jest.fn(); // (assign jest spy clear method)
+    mock.mockReset = jest.fn(); // (assign jest spy reset method)
+  } else {
+    mock.mockClear = () => {}; // (fallback noop clear in non-jest)
+    mock.mockReset = () => {}; // (fallback noop reset in non-jest)
+  }
+  logReturn('attachMockSpies', mock); // (trace function return)
+  return mock; // (return enhanced mock for chaining)
+}
+
+/**
+ * Creates a logged mock and attaches spies
+ *
+ * Consolidates repetitive mock creation logic by wrapping executeWithLogs
+ * with automatic spy attachment. Useful for any mock factory in this file
+ * that needs consistent logging behavior.
+ *
+ * @param {string} name - Identifier used for logging
+ * @param {Function} creator - Function that returns the raw mock
+ * @returns {any} Mock enhanced with spy helpers
+ */
+function makeLoggedMock(name, creator) { //(wrapper for logged mock creation)
+  return executeWithLogs(name, () => { //(consistent log wrapper)
+    const mock = creator(); // (create raw mock)
+    attachMockSpies(mock); // (add jest spies if available)
+    return mock; // (return enhanced mock)
+  }, 'none');
+}
+
+/**
+ * Creates a mock for scheduler/throttling libraries like Bottleneck
+ * 
+ * Many applications use scheduling libraries to control rate limiting or
+ * async execution. In tests, we want immediate execution without delays.
+ * This mock provides that while maintaining a compatible interface.
+ * 
+ * Framework compatibility approach:
+ * - Provides Jest methods if Jest is available
+ * - Falls back to no-op implementations otherwise
+ * - This allows the same test code to work in different environments
+ * 
+ * Why Promise.resolve():
+ * - Schedule functions typically return promises
+ * - Immediate resolution simulates instant execution
+ * - Maintains async interface contract for realistic testing
+ * 
+ * @returns {Function} Mock scheduler function with Jest-compatible methods
+ */
+function createScheduleMock() {
+  return makeLoggedMock('createScheduleMock', () => { //(log and spy helper)
+    const scheduleMock = function(fn) { // immediate scheduler mock
+      return Promise.resolve(fn()); // Execute and resolve instantly
+    };
+    return scheduleMock; // (returned to helper for spies)
+  });
+}
+
+/**
+ * Creates a mock for error handling utilities
+ * 
+ * Applications often have centralized error handling utilities.
+ * In tests, we want to capture error calls without triggering real
+ * error handling logic like logging or alerting.
+ * 
+ * Design approach:
+ * - Returns arguments passed to it for inspection
+ * - Provides Jest methods for compatibility
+ * - No-op in terms of side effects
+ * 
+ * Why return arguments:
+ * - Allows tests to verify what errors were reported
+ * - Simple way to capture call data without complex tracking
+ * - Compatible with most error utility interfaces
+ * 
+ * @returns {Function} Mock error handler with Jest-compatible methods
+ */
+function createQerrorsMock() {
+  return makeLoggedMock('createQerrorsMock', () => { //(log and spy helper)
+    const qerrorsMock = function(...args) { // capture args for inspection
+      return args; // Return arguments for test inspection
+    };
+    return qerrorsMock; // (returned to helper for spies)
+  });
+}
+
+/**
+ * Creates a mock HTTP adapter for axios testing
+ * 
+ * This provides a simple HTTP mock without external dependencies like
+ * axios-mock-adapter. It implements the minimum interface needed for
+ * basic HTTP testing scenarios.
+ * 
+ * Design decisions:
+ * - Self-contained: no external mocking library dependencies
+ * - Simple interface: covers common GET/POST scenarios
+ * - Stateful: stores reply configurations for later use
+ * - Resettable: can clear state between tests
+ * 
+ * Why not use axios-mock-adapter:
+ * - Reduces dependencies for the qtests module
+ * - Simpler implementation for basic use cases
+ * - More predictable behavior in different environments
+ * 
+ * @returns {Object} Mock adapter with onGet, onPost, and reset methods
+ */
+function createAxiosMock() {
+  return makeLoggedMock('createAxiosMock', () => { //(log and spy helper)
+    function createReplyBinder(url){ //helper for binding replies on adapter
+      return { //return object with reply method
+        reply: function(status, data){ //store status and data for url
+          mock._replies[url] = { status, data }; // (bind response to url)
+          return mock; // (allow chaining)
+        }
+      }; //close returned object
+    }
+    const mock = {
+      /**
+       * Configure mock response for GET requests to a specific URL
+       * @param {string} url - URL to mock
+       * @returns {Object} Reply configuration object
+       */
+    onGet: function(url) {
+      return createReplyBinder(url); //delegate to reply binder
+    },
+    
+    /**
+     * Configure mock response for POST requests to a specific URL
+     * @param {string} url - URL to mock
+     * @returns {Object} Reply configuration object
+     */
+    onPost: function(url) {
+      return createReplyBinder(url); //use common binder for post
+    },
+    
+    /**
+     * Reset all configured mocks
+     * Essential for preventing test pollution
+     */
+    reset: function() {
+      mock._replies = {}; // (clear stored replies on adapter)
+    }
+  };
+    mock._replies = {}; // (initialize reply store for adapter)
+    return mock; // (returned to helper for spies)
+  });
+
 }
 
 /**
@@ -115,6 +336,7 @@ function setTestEnv(envVars = {}) {
  * // Run tests...
  * restoreEnv(snapshot); // Environment restored to original state
  */
+
 function restoreEnv(envSnapshot) {
   logStart('restoreEnv', envSnapshot);
 
@@ -136,6 +358,7 @@ function restoreEnv(envSnapshot) {
     console.log(`restoreEnv error: ${error.message}`);
     throw error;
   }
+
 }
 
 /**
@@ -164,6 +387,7 @@ function restoreEnv(envSnapshot) {
  * // Test code that calls someObject.method
  * console.log(mocks.mock.mock.calls.length); // Verify call count
  */
+
 function createMocks() {
   logStart('createMocks', 'none');
 
@@ -218,6 +442,7 @@ function createMocks() {
     console.log(`createMocks error: ${error.message}`);
     throw error;
   }
+
 }
 
 /**
@@ -282,15 +507,16 @@ function resetMocks(...mocks) {
  * 5. Call restoreEnv after test suites to clean up
  */
 module.exports = {
-  // Set up controlled test environment with known values
-  setTestEnv,
-
-  // Restore environment to original state for cleanup
-  restoreEnv,
-
-  // Create commonly needed mock objects for testing
-  createMocks,
-
-  // Reset mock state for test isolation
-  resetMocks
+  defaultEnv,           // Export default env values
+  setTestEnv,           // Set standard test environment variables
+  saveEnv,              // Capture current environment for restoration
+  restoreEnv,           // Restore previously saved environment
+  attachMockSpies,      // Export attachMockSpies helper //(added export for spy helper)
+  makeLoggedMock,       // Export makeLoggedMock factory //(added export for logged mock creation)
+  createScheduleMock,   // Create scheduler/throttling mock
+  createQerrorsMock,    // Create error handler mock
+  createAxiosMock,      // Create HTTP client mock adapter
+  resetMocks,           // Reset multiple mocks at once
+  initSearchTest        // Complete setup for search/API testing
 };
+

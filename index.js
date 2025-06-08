@@ -12,11 +12,13 @@
  * - Maintains backward compatibility with existing API
  */
 
+
 // Import organized utility categories from lib directory
 const { stubMethod, mockConsole } = require('./lib/coreUtils');
 const { testEnv, offlineMode, testHelpers } = require('./lib/envUtils');
 const { setup } = require('./lib/setup');
 const stubs = require('./lib/stubs');
+
 
 /**
  * Main module exports

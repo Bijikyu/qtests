@@ -1,8 +1,8 @@
-require('..').setup(); // (activate stubs before importing index)
 
 const index = require('..'); // (load main exports)
 const directStubMethod = require('../utils/stubMethod'); // (direct stubMethod for comparison)
 const { mockConsole: directMockConsole } = require('../utils/mockConsole'); // (direct mockConsole for comparison)
+const { withMockConsole } = require('../utils/testHelpers'); //(helper for console spies)
 
 // Jest-style test verifying export presence
  test('index exports expected modules', () => {
@@ -27,12 +27,10 @@ const { mockConsole: directMockConsole } = require('../utils/mockConsole'); // (
 });
 
 // Verify mockConsole behaves same via index
- test('mockConsole via index works like direct import', () => {
-  const spy = index.mockConsole('log'); // (create spy via index)
+test('mockConsole via index works like direct import', () => withMockConsole('log', spy => { //(use helper for spy lifecycle)
   console.log('test'); // (emit log to be captured)
-  spy.mockRestore(); // (restore console)
   expect(spy.mock.calls.length).toBe(2); // (expect creation log and test log)
   expect(spy.mock.calls[1][0]).toBe('test'); // (verify captured argument)
   expect(index.mockConsole).toBe(directMockConsole); // (same function reference)
-});
+}));
 

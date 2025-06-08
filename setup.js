@@ -93,8 +93,40 @@ const STUB_REGISTRY = {
   // Logging library - redirected to silent stub for clean test output
   'winston': './stubs/winston'
 
+
   // Additional stubs can be added here following the same pattern:
   // 'module-name': './stubs/module-name'
+
+// Preserve existing NODE_PATH if it exists
+// Some environments or tools may have already set NODE_PATH
+const currentNodePath = process.env.NODE_PATH || '';
+
+// Determine correct path separator for current platform
+// Windows uses semicolons, Unix-like systems use colons
+const separator = process.platform === 'win32' ? ';' : ':';
+
+// Prepend our stubs directory to NODE_PATH
+// Prepending (not appending) ensures our stubs take precedence
+// Only add separator if there's existing NODE_PATH content
+process.env.NODE_PATH = stubsPath + (currentNodePath ? separator + currentNodePath : '');
+
+// Force Node.js to recognize the updated NODE_PATH
+// _initPaths() is Node.js internal function that reads NODE_PATH
+// Normally NODE_PATH is only read at Node.js startup
+// We must call this to apply our changes mid-execution
+// This updates Module._nodeModulePaths and other internal state
+require('module')._initPaths();
+
+const Module = require('module'); //(import module constructor for loader override)
+const origLoad = Module._load; //(store original load function)
+const stubMap = { axios: 'axios.js', winston: 'winston.js' }; //(map of stub files for quick lookup, extend with additional stubs as needed)
+Module._load = function(request, parent, isMain){ //(override to redirect specific modules)
+  const stubFile = stubMap[request]; //(retrieve stub file if available)
+  if(stubFile){ //(load stub if mapping exists)
+    return origLoad(path.join(stubsPath, stubFile), parent, isMain); //(load mapped stub dynamically)
+  }
+  return origLoad(request, parent, isMain); //(default loader for other modules)
+
 };
 
 /**

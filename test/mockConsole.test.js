@@ -1,52 +1,39 @@
-require('..').setup(); //load qtests setup for stub resolution
 
-const { mockConsole } = require('../utils/mockConsole'); //import mockConsole utility for testing
+const { withMockConsole } = require('../utils/testHelpers'); //import helper handling console spies
 
-test('mockConsole captures calls and restores', () => { //jest test verifying spy
-  const recorded = []; //store real console output
-  const realLog = console.log; //save original console.log
-  console.log = (...args) => recorded.push(args); //override console.log
-  const spy = mockConsole('log'); //create console spy for log method
-  console.log('first'); //call mocked console method
-  expect(spy.mock.calls.length).toBe(2); //spy recorded creation and call
-  expect(spy.mock.calls[1][0]).toBe('first'); //captured argument matches
-  expect(recorded.length).toBe(1); //only setup log reached real console
-  spy.mockRestore(); //restore console.log via spy
-  console.log('second'); //call console.log after restore
-  expect(recorded.length).toBe(2); //real console captured restore call
-  console.log = realLog; //restore original console.log
+
+test('mockConsole captures calls and restores', async () => { //verify helper restores console
+  const recorded = []; //array for captured logs
+  await withMockConsole('log', spy => { //use helper to manage spy lifecycle
+    spy.mockImplementation((...args) => recorded.push(args)); //capture log calls
+    console.log('first'); //invoke mocked console
+    expect(spy.mock.calls.length).toBe(2); //spy tracks creation and call
+    expect(spy.mock.calls[1][0]).toBe('first'); //argument captured correctly
+  });
+  console.log('second'); //original console after helper cleanup
+  expect(recorded.length).toBe(1); //capture log inside callback only
 });
 
-test('mockConsole mockImplementation works', () => { //jest test verifying mockImplementation
-  const customOut = []; //array to capture custom output
-  const realLog = console.log; //save original console.log
-  console.log = () => {}; //silence console during test
-  const spy = mockConsole('log'); //create console spy for log method
-  spy.mockImplementation(msg => customOut.push(msg)); //override console.log
-  console.log('override'); //call overridden console method
+test('mockConsole mockImplementation works', () => withMockConsole('log', spy => { //helper handles spy cleanup
+  const customOut = []; //capture overridden output
+  spy.mockImplementation(msg => customOut.push(msg)); //replace console.log
+  console.log('override'); //trigger custom output
   expect(customOut).toEqual(['override']); //custom function captured call
-  expect(spy.mock.calls.length).toBe(2); //tracks override call as well
-  expect(spy.mock.calls[1][0]).toBe('override'); //second call stores argument
-  spy.mockRestore(); //restore console.log via spy
-  console.log = realLog; //restore original console.log
-});
+  expect(spy.mock.calls.length).toBe(2); //spy tracked creation and call
+  expect(spy.mock.calls[1][0]).toBe('override'); //argument stored correctly
+}));
 
-test('mockConsole tracks calls after reimplementation', () => { //verify multiple overrides
-  const firstOut = []; //array for first implementation
-  const secondOut = []; //array for second implementation
-  const realLog = console.log; //save original console.log
-  console.log = () => {}; //silence console during test
-  const spy = mockConsole('log'); //create console spy for log method
-  spy.mockImplementation(msg => firstOut.push(msg)); //first custom behavior
-  console.log('one'); //call with first implementation
-  spy.mockImplementation(msg => secondOut.push(msg)); //second custom behavior
-  console.log('two'); //call with second implementation
-  expect(firstOut).toEqual(['one']); //first custom function captured call
-  expect(secondOut).toEqual(['two']); //second custom function captured call
-  expect(spy.mock.calls.length).toBe(3); //tracks creation and both calls
-  expect(spy.mock.calls[1][0]).toBe('one'); //first tracked arg correct
-  expect(spy.mock.calls[2][0]).toBe('two'); //second tracked arg correct
-  spy.mockRestore(); //restore console.log via spy
-  console.log = realLog; //restore original console.log
-});
+test('mockConsole tracks calls after reimplementation', () => withMockConsole('log', spy => { //helper manages spy between implementations
+  const firstOut = []; //capture first custom output
+  const secondOut = []; //capture second custom output
+  spy.mockImplementation(msg => firstOut.push(msg)); //initial implementation
+  console.log('one'); //call using first implementation
+  spy.mockImplementation(msg => secondOut.push(msg)); //change implementation
+  console.log('two'); //call using second implementation
+  expect(firstOut).toEqual(['one']); //first output captured
+  expect(secondOut).toEqual(['two']); //second output captured
+  expect(spy.mock.calls.length).toBe(3); //spy logged creation and two calls
+  expect(spy.mock.calls[1][0]).toBe('one'); //first call argument tracked
+  expect(spy.mock.calls[2][0]).toBe('two'); //second call argument tracked
+}));
 
