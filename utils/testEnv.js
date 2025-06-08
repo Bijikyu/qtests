@@ -28,6 +28,7 @@
 // Import logging utilities for function call tracing and debugging
 // These utilities provide consistent logging patterns across the qtests framework
 const { logStart, logReturn } = require('../lib/logUtils');
+const defaultEnv = { GOOGLE_API_KEY: `key`, GOOGLE_CX: `cx`, OPENAI_TOKEN: `token` }; //defined defaults for tests
 
 /**
  * Set up test environment with controlled environment variables
@@ -56,53 +57,17 @@ const { logStart, logReturn } = require('../lib/logUtils');
  * // Test code here - runs with known environment
  * restoreEnv(envSnapshot);
  */
-
-function setTestEnv(envVars = {}) {
-  // Log function execution for debugging test setup issues
-  logStart('setTestEnv', envVars);
-
-  try {
-    // Define default test environment configuration
-    // These values provide a baseline test environment that works for most scenarios
-    const defaultEnv = {
-      NODE_ENV: 'test',           // Standard test environment identifier
-      API_KEY: 'test-api-key',    // Mock API key for service integration tests
-      DATABASE_URL: 'test://localhost/testdb', // Mock database connection string
-      DEBUG_MODE: 'false'         // Disable verbose logging during tests
-    };
-
-    // Merge custom environment variables with defaults
-    // Custom values override defaults, allowing test-specific configuration
-    const testEnv = { ...defaultEnv, ...envVars };
-
-    // Create snapshot of current environment for restoration
-    // This captures the current state before making changes
-    const envSnapshot = {};
-
-    // Apply test environment variables and capture original values
-    for (const [key, value] of Object.entries(testEnv)) {
-      // Store original value (undefined if not set) for restoration
-      envSnapshot[key] = process.env[key];
-
-      // Set the test environment variable
-      process.env[key] = value;
-    }
-
-    logReturn('setTestEnv', envSnapshot);
-    return envSnapshot;
-
-  } catch (error) {
-    // Log errors with context for debugging
-    console.log(`setTestEnv error: ${error.message}`);
-    throw error;
-  }
-
+// Simplified setTestEnv applies defaultEnv values for tests
 function setTestEnv() {
-  return executeWithLogs('setTestEnv', () => { //(log wrapper around env setup)
-    Object.assign(process.env, defaultEnv); // (apply defaults)
-    return true; //(report success)
-  }, 'default values'); //(log parameter context)
+  logStart(`setTestEnv`, `default values`);
+  process.env.GOOGLE_API_KEY = defaultEnv.GOOGLE_API_KEY;
+  process.env.GOOGLE_CX = defaultEnv.GOOGLE_CX;
+  process.env.OPENAI_TOKEN = defaultEnv.OPENAI_TOKEN;
+  logReturn(`setTestEnv`, true);
+  return true;
 }
+
+
 
 /**
  * Captures the current process environment for later restoration
@@ -124,38 +89,20 @@ function setTestEnv() {
  * @returns {Object} Copy of current environment variables
  */
 function saveEnv() {
-  return executeWithLogs('saveEnv', () => { //(wrap env capture in logger)
-    const savedEnv = { ...process.env }; // Spread operator for shallow copy
-    return savedEnv; //(return snapshot)
-  }, 'none');
+  logStart(`saveEnv`, `none`);
+  const savedEnv = { ...process.env };
+  logReturn(`saveEnv`, `env stored`);
+  return savedEnv;
 }
 
-/**
- * Restores environment to a previously saved state
- * 
- * This function completely replaces the current environment with a saved copy.
- * It ensures clean restoration by clearing all current variables first,
- * then applying the saved state.
- * 
- * Two-step process rationale:
- * 1. Clear current env: removes any variables added during testing
- * 2. Apply saved env: restores exactly the original state
- * 
- * Why not just override:
- * - Tests might add new environment variables
- * - Simple assignment wouldn't remove test-added variables
- * - Complete replacement ensures clean state
- * 
- * @param {Object} savedEnv - Previously saved environment from saveEnv()
- * @returns {boolean} Always returns true to confirm restoration
- */
 function restoreEnv(savedEnv) {
-  return executeWithLogs('restoreEnv', () => { //(wrap env restore in logger)
-    Object.keys(process.env).forEach(k => delete process.env[k]); // clear env
-    Object.assign(process.env, savedEnv); // restore saved env
-    return true; //(confirm success)
-  }, 'env restore');
+  logStart(`restoreEnv`, `env restore`);
+  Object.keys(process.env).forEach(k => delete process.env[k]);
+  Object.assign(process.env, savedEnv);
+  logReturn(`restoreEnv`, true);
+  return true;
 }
+
 
 /**
  * Attach Jest spy helpers to a mock when available
@@ -218,12 +165,12 @@ function makeLoggedMock(name, creator) { //(wrapper for logged mock creation)
  * @returns {Function} Mock scheduler function with Jest-compatible methods
  */
 function createScheduleMock() {
-  return makeLoggedMock('createScheduleMock', () => { //(log and spy helper)
-    const scheduleMock = function(fn) { // immediate scheduler mock
-      return Promise.resolve(fn()); // Execute and resolve instantly
-    };
-    return scheduleMock; // (returned to helper for spies)
-  });
+  logStart(`createScheduleMock`, `none`);
+  const scheduleMock = jest.fn(fn => Promise.resolve(fn()));
+  const Bottleneck = require(`bottleneck`);
+  Bottleneck.mockImplementation(() => ({ schedule: scheduleMock }));
+  logReturn(`createScheduleMock`, `mock`);
+  return scheduleMock;
 }
 
 /**
@@ -246,14 +193,12 @@ function createScheduleMock() {
  * @returns {Function} Mock error handler with Jest-compatible methods
  */
 function createQerrorsMock() {
-  return makeLoggedMock('createQerrorsMock', () => { //(log and spy helper)
-    const qerrorsMock = function(...args) { // capture args for inspection
-      return args; // Return arguments for test inspection
-    };
-    return qerrorsMock; // (returned to helper for spies)
-  });
+  logStart(`createQerrorsMock`, `none`);
+  const qerrorsMock = require(`qerrors`);
+  qerrorsMock.mockReset();
+  logReturn(`createQerrorsMock`, `mock`);
+  return qerrorsMock;
 }
-
 /**
  * Creates a mock HTTP adapter for axios testing
  * 
@@ -275,91 +220,14 @@ function createQerrorsMock() {
  * @returns {Object} Mock adapter with onGet, onPost, and reset methods
  */
 function createAxiosMock() {
-  return makeLoggedMock('createAxiosMock', () => { //(log and spy helper)
-    function createReplyBinder(url){ //helper for binding replies on adapter
-      return { //return object with reply method
-        reply: function(status, data){ //store status and data for url
-          mock._replies[url] = { status, data }; // (bind response to url)
-          return mock; // (allow chaining)
-        }
-      }; //close returned object
-    }
-    const mock = {
-      /**
-       * Configure mock response for GET requests to a specific URL
-       * @param {string} url - URL to mock
-       * @returns {Object} Reply configuration object
-       */
-    onGet: function(url) {
-      return createReplyBinder(url); //delegate to reply binder
-    },
-    
-    /**
-     * Configure mock response for POST requests to a specific URL
-     * @param {string} url - URL to mock
-     * @returns {Object} Reply configuration object
-     */
-    onPost: function(url) {
-      return createReplyBinder(url); //use common binder for post
-    },
-    
-    /**
-     * Reset all configured mocks
-     * Essential for preventing test pollution
-     */
-    reset: function() {
-      mock._replies = {}; // (clear stored replies on adapter)
-    }
-  };
-    mock._replies = {}; // (initialize reply store for adapter)
-    return mock; // (returned to helper for spies)
-  });
-
+  logStart(`createAxiosMock`, `none`);
+  const MockAdapter = require(`axios-mock-adapter`);
+  const axios = require(`axios`);
+  const mock = new MockAdapter(axios);
+  logReturn(`createAxiosMock`, `adapter`);
+  return mock;
 }
 
-/**
- * Restore environment variables from a snapshot
- * 
- * This function restores the environment to its previous state using
- * a snapshot created by setTestEnv. This is critical for test isolation
- * and preventing environment changes from affecting subsequent tests.
- * 
- * Restoration strategy:
- * - If original value was undefined, delete the environment variable
- * - If original value existed, restore it exactly
- * - Handle edge cases like null or empty string values correctly
- * 
- * @param {Object} envSnapshot - Environment snapshot from setTestEnv
- * 
- * @example
- * const snapshot = setTestEnv({ NODE_ENV: 'development' });
- * // Run tests...
- * restoreEnv(snapshot); // Environment restored to original state
- */
-
-function restoreEnv(envSnapshot) {
-  logStart('restoreEnv', envSnapshot);
-
-  try {
-    // Restore each environment variable from the snapshot
-    for (const [key, originalValue] of Object.entries(envSnapshot)) {
-      if (originalValue === undefined) {
-        // Variable didn't exist originally, so remove it
-        delete process.env[key];
-      } else {
-        // Variable existed originally, restore its value
-        process.env[key] = originalValue;
-      }
-    }
-
-    logReturn('restoreEnv', undefined);
-
-  } catch (error) {
-    console.log(`restoreEnv error: ${error.message}`);
-    throw error;
-  }
-
-}
 
 /**
  * Create mock objects for testing complex scenarios
@@ -466,31 +334,25 @@ function createMocks() {
  * resetMocks(mocks.mock, mocks.scheduleMock, mocks.qerrorsMock);
  * // All mocks now have clean state for next test
  */
-function resetMocks(...mocks) {
-  logStart('resetMocks', mocks.length);
-
-  try {
-    // Reset each provided mock object
-    mocks.forEach(mock => {
-      if (mock && typeof mock === 'function') {
-        // Check if this is a Jest mock with built-in reset functionality
-        if (mock.mockReset && typeof mock.mockReset === 'function') {
-          // Use Jest's built-in reset functionality
-          mock.mockReset();
-        } else if (mock.mock && Array.isArray(mock.mock.calls)) {
-          // Reset manual mock call tracking array
-          mock.mock.calls.length = 0;
-        }
-      }
-    });
-
-    logReturn('resetMocks', undefined);
-
-  } catch (error) {
-    console.log(`resetMocks error: ${error.message}`);
-    throw error;
-  }
+function resetMocks(mock, scheduleMock, qerrorsMock) {
+  logStart(`resetMocks`, `mocks`);
+  mock.reset();
+  scheduleMock.mockClear();
+  qerrorsMock.mockClear();
+  logReturn(`resetMocks`, true);
+  return true;
 }
+function initSearchTest() {
+  logStart(`initSearchTest`, `none`);
+  jest.resetModules();
+  setTestEnv();
+  const scheduleMock = createScheduleMock();
+  const qerrorsMock = createQerrorsMock();
+  const mock = createAxiosMock();
+  logReturn(`initSearchTest`, `mocks`);
+  return { mock, scheduleMock, qerrorsMock };
+}
+
 
 /**
  * Export test environment management utilities
