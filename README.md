@@ -1,7 +1,3 @@
-Absolutely! Here’s a complete, LLM-friendly README for your **qtests** module, with detailed, step-by-step instructions and clear explanations for every use case:
-
----
-
 # qtests
 
 **qtests** provides lightweight tools and stubs for seamless testing in Node.js projects. It includes utilities for method stubbing and drop-in replacements for common modules like `axios` and `winston` so you can run tests without making real HTTP requests or generating logs.
