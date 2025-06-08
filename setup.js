@@ -55,6 +55,7 @@ const Module = require('module');
 // Path operations must be cross-platform compatible and handle edge cases
 // like symbolic links, relative paths, and case sensitivity
 const path = require('path');
+const stubsPath = path.join(__dirname, 'stubs'); // (absolute path for stub modules)
 
 /**
  * Module stub registry - defines which modules should be replaced with stubs
@@ -92,7 +93,7 @@ const STUB_REGISTRY = {
 
   // Logging library - redirected to silent stub for clean test output
   'winston': './stubs/winston'
-
+}; // (registry end for stub mappings)
 
   // Additional stubs can be added here following the same pattern:
   // 'module-name': './stubs/module-name'
