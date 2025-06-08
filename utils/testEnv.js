@@ -348,6 +348,8 @@ module.exports = {
   setTestEnv,           // Set standard test environment variables
   saveEnv,              // Capture current environment for restoration
   restoreEnv,           // Restore previously saved environment
+  attachMockSpies,      // Export attachMockSpies helper //(added export for spy helper)
+  makeLoggedMock,       // Export makeLoggedMock factory //(added export for logged mock creation)
   createScheduleMock,   // Create scheduler/throttling mock
   createQerrorsMock,    // Create error handler mock
   createAxiosMock,      // Create HTTP client mock adapter
