@@ -1,4 +1,6 @@
 const { mockConsole } = require('./mockConsole'); //(import console spy util)
+const testEnv = require('./testEnv'); //(import env helpers for reuse)
+const { executeWithLogs } = require('../lib/logUtils'); //(import logging wrapper)
 
 async function withMockConsole(method, fn){ //(run callback with console spy)
   console.log(`withMockConsole is running with ${method}`); //(debug start log)
@@ -15,4 +17,16 @@ async function withMockConsole(method, fn){ //(run callback with console spy)
   }
 } //(end helper)
 
-module.exports = { withMockConsole }; //(export helper)
+async function withSavedEnv(fn){ //(run callback with saved process.env)
+  return executeWithLogs('withSavedEnv', async () => { //(run with logging)
+    const saved = testEnv.saveEnv(); //(capture current environment)
+    try{ //(attempt callback)
+      const result = await fn(); //(execute provided callback)
+      return result; //(forward callback result)
+    }finally{ //(always restore environment)
+      testEnv.restoreEnv(saved); //(restore captured environment)
+    }
+  }, 'none'); //(no extra context)
+} //(end helper)
+
+module.exports = { withMockConsole, withSavedEnv }; //(export helpers)

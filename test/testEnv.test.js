@@ -1,8 +1,8 @@
 
 const { setTestEnv, saveEnv, restoreEnv, createScheduleMock, createQerrorsMock, createAxiosMock, resetMocks, initSearchTest, defaultEnv } = require('../utils/testEnv'); // (import utilities under test including defaults)
+const { withSavedEnv } = require("../utils/testHelpers"); //(import env helper)
 
-test('setTestEnv sets variables', () => { // (verify environment variable setup)
-  const saved = saveEnv(); // (store current environment)
+test('setTestEnv sets variables', () => withSavedEnv(() => { // (use helper to restore env)
   delete process.env.GOOGLE_API_KEY; // (remove old key)
   delete process.env.GOOGLE_CX; // (remove old cx)
   delete process.env.OPENAI_TOKEN; // (remove old token)
@@ -10,8 +10,7 @@ test('setTestEnv sets variables', () => { // (verify environment variable setup)
   expect(process.env.GOOGLE_API_KEY).toBe(defaultEnv.GOOGLE_API_KEY); // (check key value)
   expect(process.env.GOOGLE_CX).toBe(defaultEnv.GOOGLE_CX); // (check cx value)
   expect(process.env.OPENAI_TOKEN).toBe(defaultEnv.OPENAI_TOKEN); // (check token value)
-  restoreEnv(saved); // (restore original env)
-});
+}));
 
 test('saveEnv and restoreEnv capture state', () => { // (verify env round trip)
   process.env.TEST_ENV_TEMP = 'a'; // (set test variable)
@@ -75,14 +74,12 @@ test('resetMocks clears history on mocks', () => { // (verify centralized reset)
 });
 
 
-test('initSearchTest sets env and returns mocks', () => { // (verify full init)
-  const saved = saveEnv(); // (save environment state)
+test('initSearchTest sets env and returns mocks', () => withSavedEnv(() => { // (wrap env lifecycle)
   const { mock, scheduleMock, qerrorsMock } = initSearchTest(); // (initialize search test)
   expect(process.env.GOOGLE_API_KEY).toBe(defaultEnv.GOOGLE_API_KEY); // (env key set)
   expect(mock).toBeDefined(); // (axios mock present)
   expect(scheduleMock).toBeDefined(); // (schedule mock present)
   expect(qerrorsMock).toBeDefined(); // (qerrors mock present)
   resetMocks(mock, scheduleMock, qerrorsMock); // (reset mocks)
-  restoreEnv(saved); // (restore environment)
-});
+}));
 
