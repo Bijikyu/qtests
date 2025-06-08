@@ -17,6 +17,7 @@
 const stubMethod = require('./utils/stubMethod');
 const { mockConsole } = require('./utils/mockConsole');
 const testEnv = require('./utils/testEnv');
+const offlineMode = require('./utils/offlineMode');
 
 function setup(){ // (function exported so stubs activate only when called)
   console.log(`setup is running with none`); // (debug start log)
@@ -45,6 +46,7 @@ module.exports = {
   stubMethod,      // Method replacement utility for isolating dependencies
   mockConsole,     // Console output capture for testing logging behavior
   testEnv,         // Environment and mock management for complex test scenarios
+  offlineMode,     // Offline/online mode utility with automatic axios and qerrors switching
   
   // Setup utility - separated because it modifies global Node.js module resolution
   // Users must explicitly invoke this function to enable stub resolution
