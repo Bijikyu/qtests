@@ -2,74 +2,86 @@
 /**
  * Method Stubbing Utility
  * 
- * Provides a simple, reliable way to temporarily replace any method on any object
- * during testing, with guaranteed restoration to prevent test pollution.
+ * This module provides the fundamental method replacement functionality
+ * that enables isolated unit testing by replacing method implementations
+ * with controlled test doubles.
+ * 
+ * Core concept:
+ * Stubbing temporarily replaces a method on an object with a test implementation,
+ * allowing tests to control the behavior of dependencies and verify interactions
+ * without executing the real method code.
  * 
  * Design philosophy:
- * - Simple API: one function call to stub, one call to restore
- * - Safe: always preserves original method for restoration
- * - Universal: works with any object and method combination
- * - Error-safe: propagates errors rather than silently failing
+ * - Simple, predictable API that follows common stubbing patterns
+ * - Automatic restoration to prevent test pollution
+ * - Flexible replacement function support
+ * - Framework-agnostic implementation
  * 
- * Why this approach:
- * - More explicit than automatic mocking frameworks
- * - No dependencies on specific testing libraries
- * - Works in any JavaScript environment
- * - Gives precise control over what gets stubbed when
+ * Why manual stubbing vs mocking libraries:
+ * 1. Zero dependencies - works in any Node.js environment
+ * 2. Simple implementation is easy to understand and debug
+ * 3. Predictable behavior without complex library-specific semantics
+ * 4. Minimal API surface reduces learning curve
+ * 5. Complete control over restoration behavior
  */
 
 /**
- * Temporarily replaces a method on an object with a stub implementation
+ * Replace a method on an object with a test implementation
  * 
- * This function is the core of qtests' method stubbing capability. It safely
- * stores the original method and provides a restoration function to ensure
- * tests don't interfere with each other.
+ * This function temporarily replaces a method with a stub implementation,
+ * providing a restoration function to return the object to its original state.
  * 
- * Technical implementation:
- * - Captures reference to original method before replacement
- * - Assigns new implementation to the same property
- * - Returns a closure that restores the original method
+ * Implementation strategy:
+ * 1. Store original method reference before replacement
+ * 2. Replace method with provided stub function  
+ * 3. Return restoration function that reinstates original method
+ * 4. Use closure to maintain access to original method and object
  * 
- * Error handling approach:
- * - Allows any errors during stubbing to propagate (fail fast)
- * - This prevents silent failures that could lead to confusing test results
- * - Callers can handle errors appropriately for their context
+ * Why this approach:
+ * - Closure pattern ensures original method is preserved correctly
+ * - Restoration function provides clear, explicit cleanup
+ * - No global state management required
+ * - Works with any object and method combination
+ * - Simple implementation is easy to debug when tests fail
  * 
- * @param {Object} obj - The object containing the method to stub
- *                      Can be any JavaScript object with properties
- * @param {string} method - The name of the method to replace
- *                         Must be a valid property name on the object
- * @param {Function} replacement - The stub function to use during testing
- *                                Should match expected signature of original method
- * @returns {Function} Restoration function - call this to restore the original method
- *                    MUST be called after testing to prevent test pollution
- * @throws {Error} Propagates any errors from property assignment or access
+ * Alternative approaches considered:
+ * - Automatic restoration via setTimeout: Rejected due to unpredictable timing
+ * - Stack-based restoration: Rejected due to complexity for minimal benefit
+ * - Property descriptor manipulation: Current approach is simpler and sufficient
+ * 
+ * @param {Object} obj - The object containing the method to replace
+ * @param {string} methodName - Name of the method to replace
+ * @param {Function} stubFn - Function to use as replacement implementation
+ * @returns {Function} Restoration function that reinstates the original method
+ * 
+ * @example
+ * const restore = stubMethod(fs, 'readFileSync', () => 'mock data');
+ * // fs.readFileSync now returns 'mock data'
+ * restore();
+ * // fs.readFileSync restored to original implementation
  */
-function stubMethod(obj, method, replacement) {
-  try {
-    // Capture original method reference before replacement
-    // This preserves the exact original function for later restoration
-    const orig = obj[method];
-    
-    // Replace the method with our stub implementation
-    // This assignment may throw if the property is non-configurable
-    obj[method] = replacement;
-    
-    // Return restoration function as a closure
-    // The closure captures 'orig' and 'obj[method]' references
-    // This ensures restoration works even if the object changes
-    const restore = () => { 
-      obj[method] = orig; 
-    };
-    
-    return restore;
-  } catch (error) {
-    // Re-throw any errors rather than swallowing them
-    // This ensures callers know when stubbing fails
-    // Common causes: non-configurable properties, frozen objects
-    throw error;
-  }
+function stubMethod(obj, methodName, stubFn) {
+  // Store the original method implementation before replacement
+  // This reference is captured in the closure and used for restoration
+  // Must be done before replacement to avoid losing the original reference
+  const originalMethod = obj[methodName];
+  
+  // Replace the method with the provided stub function
+  // This immediately changes the behavior of the method for all callers
+  // The stub function will be called instead of the original implementation
+  obj[methodName] = stubFn;
+  
+  // Return a restoration function that reinstates the original method
+  // This function is returned immediately, allowing the caller to control
+  // when restoration happens (typically in test cleanup)
+  return function restore() {
+    // Reinstate the original method implementation
+    // This completely undoes the stubbing operation
+    obj[methodName] = originalMethod;
+  };
 }
 
-// Export as a single function since this utility has one clear purpose
+// Export the stubMethod function as the primary module interface
+// Single function export pattern used because this module has one clear purpose
+// Users can require this directly or access via the main qtests module
 module.exports = stubMethod;

@@ -1,121 +1,233 @@
-
 /**
- * Offline Mode Utility for qtests
+ * Offline Mode Testing Utilities
  * 
- * This module provides automatic switching between real and mock implementations
- * of external dependencies based on the CODEX environment variable. When CODEX=true,
- * it uses mock implementations to enable offline testing and development.
+ * This module provides functionality to simulate offline conditions during testing
+ * by automatically switching between real and stub implementations of network-dependent
+ * modules. This enables testing of application behavior under network failure conditions
+ * without requiring actual network connectivity manipulation.
+ * 
+ * Core concept:
+ * Many applications need to handle offline scenarios gracefully. This utility
+ * allows tests to simulate offline conditions by replacing network-dependent
+ * modules (like axios for HTTP requests) and error reporting modules (like qerrors)
+ * with stub implementations that behave predictably without network access.
  * 
  * Design philosophy:
- * - Environment-driven behavior: one codebase works online and offline
- * - Transparent switching: calling code doesn't need to change
- * - Graceful degradation: mock implementations provide safe fallbacks
- * - Development flexibility: easily toggle between real and mock dependencies
+ * - Automatic switching based on offline mode flag
+ * - Transparent replacement of network-dependent modules
+ * - Graceful handling of missing optional dependencies
+ * - Clean separation between online and offline behavior testing
  * 
  * Use cases:
- * - Offline development when internet is unavailable
- * - CI/CD environments without external network access
- * - Testing scenarios that should not make real HTTP requests
- * - Development environments where external services are unreliable
- * 
- * Why CODEX environment variable:
- * - Conventional name for offline/mock mode in development tools
- * - Easy to set in different environments (local, CI, staging)
- * - Clear semantic meaning for developers
- * - Can be set once and affect entire application behavior
+ * - Testing application behavior when network requests fail
+ * - Verifying offline-first application logic
+ * - Testing error handling in network-dependent code
+ * - Simulating poor connectivity scenarios
  */
 
-const axiosReal = require('axios'); // Store real axios for online use
-const { createMockAxios } = require('./testEnv'); // Import mock axios factory from testEnv
-const codexFlag = String(process.env.CODEX).toLowerCase() === 'true'; // Normalize CODEX env check
+// Import logging utilities for consistent debugging output
+const { logStart, logReturn } = require('../lib/logUtils');
 
-// Conditionally load qerrors only when online to avoid dependency errors
-// This prevents crashes when qerrors module is not available in offline environments
-let realQerrors;
-if (!codexFlag) {
+// Initialize offline mode state - starts in online mode by default
+// This state determines whether to use real or stub implementations
+// Default to false (online) to match typical application runtime behavior
+let isOffline = false;
+
+/**
+ * Toggle offline mode on or off
+ * 
+ * This function switches the application between online and offline modes
+ * for testing purposes. When offline mode is enabled, network-dependent
+ * modules are replaced with stub implementations that don't require
+ * actual network connectivity.
+ * 
+ * Implementation strategy:
+ * 1. Update the global offline state flag
+ * 2. Log the state change for debugging
+ * 3. Return the new state for confirmation
+ * 
+ * Why a simple boolean flag:
+ * - Clear, unambiguous state representation
+ * - Easy to reason about in test code
+ * - Minimal complexity for maximum reliability
+ * - Follows principle of least surprise
+ * 
+ * @param {boolean} offline - Whether to enable offline mode
+ * @returns {boolean} The new offline mode state
+ * 
+ * @example
+ * setOfflineMode(true);  // Switch to offline mode
+ * // Tests here will use stub implementations
+ * setOfflineMode(false); // Switch back to online mode
+ */
+function setOfflineMode(offline) {
+  logStart('setOfflineMode', offline);
+
+  // Update global offline state
+  // This flag is checked by getAxios and other functions to determine
+  // whether to return real or stub implementations
+  isOffline = offline;
+
+  logReturn('setOfflineMode', isOffline);
+  return isOffline;
+}
+
+/**
+ * Get current offline mode state
+ * 
+ * This function returns the current offline mode state without changing it.
+ * Useful for conditional logic in tests and for debugging test setup.
+ * 
+ * @returns {boolean} Current offline mode state
+ * 
+ * @example
+ * if (isOfflineMode()) {
+ *   // Handle offline-specific test logic
+ * }
+ */
+function isOfflineMode() {
+  return isOffline;
+}
+
+/**
+ * Get appropriate axios implementation based on offline mode
+ * 
+ * This function returns either the real axios module (when online) or
+ * the qtests axios stub (when offline). This automatic switching allows
+ * tests to seamlessly transition between network-dependent and network-free
+ * execution without changing application code.
+ * 
+ * Implementation approach:
+ * 1. Check current offline mode state
+ * 2. Return appropriate implementation based on state
+ * 3. Handle require errors gracefully for missing dependencies
+ * 4. Log the decision for debugging purposes
+ * 
+ * Why automatic switching:
+ * - Tests can toggle network behavior without code changes
+ * - Application code remains unchanged between online/offline testing
+ * - Clear separation of concerns between test setup and application logic
+ * - Enables comprehensive testing of both network scenarios
+ * 
+ * @returns {Object} Either real axios or qtests axios stub
+ * 
+ * @example
+ * const axios = getAxios();
+ * // Returns real axios when online, stub when offline
+ * const response = await axios.get('/api/data');
+ */
+function getAxios() {
+  logStart('getAxios', `offline: ${isOffline}`);
+
   try {
-    ({ qerrors: realQerrors } = require('qerrors')); // Load qerrors only when online
+    let axiosImplementation;
+
+    if (isOffline) {
+      // Return stub implementation for offline mode
+      // This prevents actual network requests during offline testing
+      axiosImplementation = require('../stubs/axios');
+      console.log('getAxios returning stub axios for offline mode');
+    } else {
+      // Return real axios implementation for online mode
+      // This allows normal network behavior during online testing
+      axiosImplementation = require('axios');
+      console.log('getAxios returning real axios for online mode');
+    }
+
+    logReturn('getAxios', 'axios implementation');
+    return axiosImplementation;
+
   } catch (error) {
-    // If qerrors is not available, we'll fall back to mock implementation
-    console.log(`qerrors module not available: ${error.message}`);
-    realQerrors = null;
+    // Handle missing axios dependency gracefully
+    // This allows qtests to work even if axios isn't installed
+    console.log(`getAxios error: ${error.message}`);
+
+    // Fall back to stub implementation if real axios is unavailable
+    // This ensures tests can still run even with missing dependencies
+    const fallbackAxios = require('../stubs/axios');
+    logReturn('getAxios', 'fallback axios stub');
+    return fallbackAxios;
   }
 }
 
-const isOffline = codexFlag; // Codex env check for clarity
-
 /**
- * Configure axios based on offline mode
+ * Get appropriate qerrors implementation based on offline mode
  * 
- * When offline (CODEX=true):
- * - Uses createMockAxios() factory for predictable HTTP responses
- * - No real network requests are made
- * - Responses can be programmed via __set method
+ * Similar to getAxios, this function returns either the real qerrors module
+ * or a stub implementation based on the current offline mode state.
+ * qerrors is commonly used for error reporting, which often involves
+ * network requests to logging services.
  * 
- * When online (CODEX=false or unset):
- * - Uses real axios for actual HTTP requests
- * - Full axios functionality available
- * - Real network requests to external services
+ * Offline mode considerations for error reporting:
+ * - Error reporting services are often network-dependent
+ * - Offline applications need to handle error reporting gracefully
+ * - Tests shouldn't fail due to error reporting service unavailability
+ * - Stub implementation allows testing error handling logic separately
+ * 
+ * @returns {Object} Either real qerrors or stub implementation
+ * 
+ * @example
+ * const qerrors = getQerrors();
+ * // Returns real qerrors when online, stub when offline
+ * qerrors.report(new Error('Test error'));
  */
-let axios;
-if (isOffline) {
-  axios = createMockAxios(); // Use factory-built mock when offline
-} else {
-  axios = axiosReal; // Use real axios for online operation
-}
+function getQerrors() {
+  logStart('getQerrors', `offline: ${isOffline}`);
 
-/**
- * Configure qerrors based on offline mode
- * 
- * When offline (CODEX=true):
- * - Uses no-op implementation that logs calls
- * - Prevents error reporting to external services
- * - Safe for offline development and testing
- * 
- * When online (CODEX=false or unset):
- * - Uses real qerrors for actual error reporting
- * - Full error handling and reporting functionality
- * - Errors are sent to configured external services
- */
-let qerrors;
-if (isOffline) {
-  qerrors = function noopQerrors(...args) {
-    console.log(`noopQerrors is running with ${args.length} arguments`); // Start log
-    try {
-      // Log the error details for debugging without external reporting
-      if (args.length > 0) {
-        console.log(`noopQerrors captured:`, args[0]);
-      }
-      console.log(`noopQerrors has run`); // Finish log
-      return args; // Return arguments for compatibility
-    } catch (error) {
-      console.log(`noopQerrors error ${error.message}`); // Error log
-      throw error; // Propagate unexpected errors
+  try {
+    let qerrorsImplementation;
+
+    if (isOffline) {
+      // Return no-op implementation for offline mode
+      // This prevents error reporting network requests during offline testing
+      qerrorsImplementation = {
+        qerrors: () => {} // No-op function that does nothing
+      };
+      console.log('getQerrors returning stub qerrors for offline mode');
+    } else {
+      // Return real qerrors implementation for online mode
+      qerrorsImplementation = require('qerrors');
+      console.log('getQerrors returning real qerrors for online mode');
     }
-  };
-} else {
-  qerrors = realQerrors || function fallbackQerrors(...args) {
-    // Fallback if qerrors module wasn't available
-    console.log(`fallbackQerrors (qerrors unavailable):`, args[0]);
-    return args;
-  };
+
+    logReturn('getQerrors', 'qerrors implementation');
+    return qerrorsImplementation;
+
+  } catch (error) {
+    // Handle missing qerrors dependency gracefully
+    // qerrors is often an optional dependency, so missing it shouldn't break tests
+    console.log(`qerrors module not available: ${error.message}`);
+
+    // Always return stub implementation if real qerrors is unavailable
+    // This ensures tests continue to work regardless of qerrors installation
+    const fallbackQerrors = {
+      qerrors: () => {} // No-op error reporting function
+    };
+
+    logReturn('getQerrors', 'fallback qerrors stub');
+    return fallbackQerrors;
+  }
 }
 
 /**
- * Export configured utilities
+ * Export offline mode utilities
  * 
- * isOffline: Boolean flag indicating current mode for conditional logic
- * axios: Configured axios instance (real or mock based on environment)
- * qerrors: Configured error handler (real or no-op based on environment)
+ * These functions work together to provide comprehensive offline mode testing:
+ * - setOfflineMode and isOfflineMode manage the offline state
+ * - getAxios and getQerrors provide automatic implementation switching
  * 
- * Usage examples:
- * const { isOffline, axios, qerrors } = require('qtests/utils/offlineMode');
- * 
- * if (isOffline) {
- *   axios.__set('http://api.example.com', { data: 'mock response' });
- * }
- * 
- * const response = await axios.get('http://api.example.com');
- * qerrors('Something went wrong', { context: 'user-action' });
+ * Usage pattern:
+ * 1. Call setOfflineMode(true) to enable offline testing
+ * 2. Use getAxios() and getQerrors() in application code
+ * 3. Run tests - they will use stub implementations automatically
+ * 4. Call setOfflineMode(false) to return to online mode
  */
-module.exports = { isOffline, axios, qerrors }; // Export utilities
+module.exports = {
+  // Control offline mode state
+  setOfflineMode,
+  isOfflineMode,
+
+  // Get appropriate implementations based on offline mode
+  getAxios,
+  getQerrors
+};

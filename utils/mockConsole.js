@@ -1,119 +1,111 @@
 
 /**
- * Console Mocking Utility
+ * Console Mocking Utilities
  * 
- * Provides Jest-style console mocking capabilities without requiring Jest.
- * This allows testing of code that writes to console while capturing and
- * inspecting the output instead of polluting test output.
+ * This module provides console output capture functionality for testing
+ * code that logs to the console without polluting test output.
  * 
- * Design goals:
- * - Jest-compatible API for easy migration
- * - Works in any testing environment (Mocha, AVA, Tape, etc.)
- * - Captures console output for assertion
- * - Clean restoration to prevent test pollution
+ * Core purpose:
+ * When testing functions that log information, errors, or debug output,
+ * we need to verify the logging behavior without cluttering the test
+ * runner's console. This utility captures console calls while providing
+ * access to verify what was logged.
+ * 
+ * Design philosophy:
+ * - Clean test output by preventing unwanted console pollution
+ * - Full capture and verification capabilities for logged content
+ * - Framework compatibility (works with Jest, Mocha, etc.)
+ * - Simple restoration to prevent test interference
  * 
  * Implementation approach:
- * - Replaces console methods temporarily
- * - Tracks all calls in a Jest-compatible format
- * - Provides familiar mockImplementation and mockRestore methods
- * - Uses logging utility to track function calls for debugging
+ * Uses the same stubbing pattern as stubMethod but specialized for console
+ * methods with additional mock call tracking for test verification.
  */
-
-// Import logging utilities for function call tracing
-// This helps with debugging test setup and understanding call flow
-const { logStart, logReturn } = require('../lib/logUtils');
 
 /**
- * Creates a Jest-style spy for console methods
+ * Create a mock console method that captures calls without output
  * 
- * This function temporarily replaces a console method (log, error, warn, etc.)
- * with a spy that captures calls while optionally suppressing output.
+ * This function replaces a console method (log, error, warn, etc.) with
+ * a mock implementation that captures all calls and arguments while
+ * preventing actual console output during testing.
  * 
- * Architecture rationale:
- * - Returns a Jest-compatible spy object to minimize learning curve
- * - Stores original method reference for safe restoration
- * - Tracks calls in the same format as Jest spies for compatibility
- * - Provides mockImplementation for custom behavior during tests
+ * Mock implementation strategy:
+ * 1. Check if Jest is available and use its mocking capabilities
+ * 2. Fall back to manual mock implementation for non-Jest environments
+ * 3. Provide consistent API regardless of underlying implementation
+ * 4. Capture all arguments passed to console method for verification
  * 
- * Why track calls in an array:
- * - Allows inspection of call count, arguments, and call order
- * - Compatible with existing Jest assertion patterns
- * - Enables testing of logging behavior without visual inspection
+ * Why Jest detection:
+ * - Jest provides superior mock functionality with built-in call tracking
+ * - Jest mocks have additional features like call count, arguments history
+ * - Fallback ensures compatibility with other test frameworks
+ * - Consistent API means tests work regardless of framework choice
  * 
- * @param {string} method - The console method name to mock ('log', 'error', 'warn', etc.)
- *                         Must be a valid property of the console object
- * @returns {Object} Jest-compatible spy object with mock methods and call tracking
+ * @param {string} method - Console method name to mock ('log', 'error', 'warn', etc.)
+ * @returns {Object} Mock object with call tracking and restoration capabilities
+ * 
+ * @example
+ * const spy = mockConsole('log');
+ * console.log('test message');
+ * console.log(spy.mock.calls.length); // 1
+ * spy.mockRestore();
  */
 function mockConsole(method) {
-  // Log function entry for debugging test setup issues
-  logStart('mockConsole', method);
+  // Check if Jest mocking is available in the current environment
+  // Jest provides sophisticated mock functionality that we prefer when available
+  // The typeof check safely detects Jest without throwing errors in other environments
+  if (typeof jest !== 'undefined' && jest.fn) {
+    // Use Jest's spyOn functionality for superior mock capabilities
+    // Jest.spyOn creates a mock that automatically tracks calls, arguments, and return values
+    // The mockImplementation ensures the method does nothing (no console output)
+    return jest.spyOn(console, method).mockImplementation(() => {});
+  }
   
-  // Store reference to original console method before replacement
-  // This ensures we can always restore the original behavior
+  // Fallback implementation for non-Jest environments
+  // This provides basic mock functionality with manual call tracking
+  // Ensures qtests works with any test framework, not just Jest
+  
+  // Store reference to original console method for restoration
   const originalMethod = console[method];
   
-  // Array to store all calls made to the mocked method
-  // Each element will be an array of arguments passed to the method
-  // This matches Jest's spy.mock.calls format for compatibility
+  // Create manual call tracking array to simulate Jest mock.calls
   const calls = [];
   
-  // Default implementation used when no custom function provided //(capture default)
-  const defaultImpl = () => {}; //(empty output to silence console)
-  let customImpl = defaultImpl; //(variable to store custom function)
-
-  // Wrapper records each call then delegates to stored implementation //(ensures tracking)
-  const wrapper = (...args) => {
-    calls.push(args); //(record arguments for test assertions)
-    return customImpl(...args); //(execute custom behavior if provided)
+  // Replace console method with capturing implementation
+  // This function captures arguments but produces no output
+  console[method] = function(...args) {
+    // Store all arguments passed to the console method
+    // This allows test verification of what was logged
+    calls.push(args);
   };
-
-  // Replace console method with wrapper so calls are always tracked //(install wrapper)
-  console[method] = wrapper;
   
-  // Create Jest-compatible spy object
-  // This provides familiar methods for tests that may have used Jest before
-  const spy = {
-    /**
-     * Replace the mock implementation with a custom function
-     * 
-     * Allows tests to control exactly what happens when the console method is called.
-     * Useful for testing error conditions or custom logging behavior.
-     * 
-     * @param {Function} fn - Custom implementation function, or null for no-op
-     * @returns {Object} The spy object for method chaining
-     */
-    mockImplementation: (fn) => { //(allow custom behavior while tracking)
-      customImpl = fn || defaultImpl; //(store provided function or fallback)
-      console[method] = wrapper; //(ensure wrapper remains installed)
-      return spy; //(return spy for chaining)
-    },
-    
-    /**
-     * Restore the original console method
-     * 
-     * MUST be called after testing to prevent interference with other tests
-     * or normal console output. Restores the exact original method reference.
-     */
-    mockRestore: () => {
-      console[method] = originalMethod;
-    },
-    
-    /**
-     * Jest-compatible mock tracking object
-     * 
-     * Provides access to call history in the same format as Jest spies.
-     * This allows existing Jest assertions to work unchanged.
-     */
+  // Return mock object with Jest-compatible interface
+  // This ensures consistent API regardless of underlying implementation
+  return {
+    // Mock call tracking that mimics Jest's mock.calls structure
     mock: {
-      calls: calls // Array of argument arrays, one per method call
+      calls: calls
+    },
+    
+    // Restoration function that reinstates original console method
+    // Named mockRestore to match Jest's API for consistency
+    mockRestore: function() {
+      console[method] = originalMethod;
     }
   };
-  
-  // Log successful spy creation for debugging
-  logReturn('mockConsole', 'spy');
-  return spy;
 }
 
-// Export as an object to maintain consistency with other utilities
-// and allow for potential future expansion
-module.exports = { mockConsole };
+/**
+ * Export mockConsole utilities
+ * 
+ * Using object export pattern to allow for future expansion while
+ * maintaining backward compatibility. The mockConsole function is
+ * the primary interface, but additional console-related utilities
+ * could be added to this module in the future.
+ */
+module.exports = {
+  // Primary console mocking function
+  // Captures console output during testing to prevent output pollution
+  // while allowing verification of logging behavior
+  mockConsole
+};
