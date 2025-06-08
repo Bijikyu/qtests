@@ -55,10 +55,9 @@ const Module = require('module');
 // Path operations must be cross-platform compatible and handle edge cases
 // like symbolic links, relative paths, and case sensitivity
 const path = require('path');
-const stubsPath = path.join(__dirname, 'stubs'); // (absolute path for stub modules)
+const stubsPath = path.join(__dirname, 'stubs'); // (single absolute path for stub modules after duplicate removal)
 
-// Calculate absolute path to our stubs directory
-const stubsPath = path.join(__dirname, 'stubs'); //(path to bundled stubs)
+// path to stubs directory resolved above //(single comment after removal)
 
 /**
  * Module stub registry - defines which modules should be replaced with stubs
