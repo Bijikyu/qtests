@@ -34,6 +34,7 @@
 // Using path.resolve ensures correct path handling across different operating systems
 // and prevents issues with relative path interpretation in test environments
 const path = require('path');
+const { mockConsole } = require('./mockConsole'); // (import console spy utility)
 
 /**
  * Stub qerrors.qerrors method to silence error reporting during tests
@@ -91,7 +92,7 @@ function stubQerrors() {
     // Force offline module to reload and pick up the stubbed qerrors
     // This must happen after stubbing to ensure the module gets the stub version
     // Using require.resolve ensures we get the correct path for cache deletion
-    delete require.cache[require.resolve('../../utils/offline')];
+    delete require.cache[require.resolve('./offlineMode')]; //(ensure offlineMode reloaded)
     
     // Log successful completion for debugging
     console.log(`stubQerrors is returning undefined`);
@@ -175,6 +176,36 @@ function reload(relPath) {
     // Propagate error to caller
     // Module loading failures should halt tests to prevent confusing behavior
     throw err;
+  }
+}
+
+/**
+ * Execute a callback with a mocked console method
+ *
+ * This helper creates a console spy using mockConsole, runs the callback,
+ * then restores the original console method. It simplifies tests that need
+ * temporary console interception.
+ *
+ * @param {string} method - Console method name to spy on
+ * @param {Function} fn - Callback to execute with the spy
+ * @returns {Promise<*>} Result returned by the callback
+ *
+ * @example
+ * await withMockConsole('log', spy => { console.log('hi'); });
+ */
+async function withMockConsole(method, fn) {
+  const spy = mockConsole(method); //(create console spy)
+  console.log(`withMockConsole is running with ${method}`); //(log after spy setup)
+  try {
+    const result = await fn(spy);
+    spy.mockRestore();
+    console.log(`withMockConsole is returning ${result}`); //(log after restore)
+    return result;
+  } catch (err) {
+    console.log(`withMockConsole error ${err.message}`);
+    throw err;
+  } finally {
+    if (spy.mockRestore) { spy.mockRestore(); } //(ensure restoration if error)
   }
 }
 
@@ -549,6 +580,31 @@ function restoreEnvVars(envBackup) {
 }
 
 /**
+ * Run a callback with environment variables saved and restored
+ *
+ * This helper captures process.env, executes the callback, then restores
+ * the original environment. Useful for tests that temporarily modify env vars.
+ *
+ * @param {Function} fn - Callback function to run while env is saved
+ * @returns {Promise<*>} Result returned by the callback
+ */
+async function withSavedEnv(fn) {
+  console.log(`withSavedEnv is running with none`);
+
+  const backup = backupEnvVars();
+  try {
+    const result = await fn();
+    console.log(`withSavedEnv is returning ${result}`);
+    return result;
+  } catch (err) {
+    console.log(`withSavedEnv error ${err.message}`);
+    throw err;
+  } finally {
+    restoreEnvVars(backup);
+  }
+}
+
+/**
  * Export advanced testing helper utilities
  * 
  * These utilities handle specialized testing scenarios that require
@@ -582,6 +638,10 @@ module.exports = {
 
   // Environment isolation utilities for test cleanup
   backupEnvVars,  // Create environment snapshot for restoration
-  restoreEnvVars  // Restore environment from snapshot for cleanup
+  restoreEnvVars, // Restore environment from snapshot for cleanup
+
+  // Lifecycle helpers simplifying common patterns
+  withMockConsole, // Wrap code with console spy lifecycle
+  withSavedEnv    // Wrap code with environment save/restore
 };
 
