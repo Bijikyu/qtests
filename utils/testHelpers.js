@@ -198,8 +198,7 @@ async function withMockConsole(method, fn) {
   console.log(`withMockConsole is running with ${method}`); //(log after spy setup)
   try {
     const result = await fn(spy);
-    spy.mockRestore();
-    console.log(`withMockConsole is returning ${result}`); //(log after restore)
+    console.log(`withMockConsole is returning ${result}`); //(log before restore moved to finally)
     return result;
   } catch (err) {
     console.log(`withMockConsole error ${err.message}`);
