@@ -28,10 +28,8 @@
 /**
  * Axios stub module exports
  * 
- * Currently implements only the POST method as it's the most commonly
- * stubbed in testing scenarios. Can be easily extended to include
- * get, put, delete, patch, etc. as needed.
- * 
+ * Currently implements the GET and POST methods as these are the most commonly
+ * stubbed in testing scenarios. Additional verbs can easily be added if needed.
  * Method selection rationale:
  * - POST is most common for API interactions
  * - Often the method that needs stubbing in integration tests
@@ -44,6 +42,13 @@
  * - Can be extended to return more realistic response shapes
  */
 module.exports = {
+  /**
+   * Mock implementation of axios.get()
+   * Works like axios.get but instantly resolves an empty object.
+   * @param {...any} args - Parameters ignored to prevent network use
+   * @returns {Promise<Object>} Promise resolving to empty object
+   */
+  get: async () => ({}) ,
   /**
    * Mock implementation of axios.post()
    * 
@@ -73,6 +78,7 @@ module.exports = {
  * 
  * After requiring 'qtests/setup', any code that does:
  *   const axios = require('axios');
+ *   const data = await axios.get(`https://api.example.com`);
  *   await axios.post('https://api.example.com', data);
  * 
  * Will actually call this stub instead, which:
