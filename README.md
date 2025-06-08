@@ -86,6 +86,7 @@ You can also import the provided stubs for manual mocking:
 const { stubs } = require('qtests');
 
 // Use axios stub
+await stubs.axios.get(`https://anything`); // Returns {}
 await stubs.axios.post('https://anything', {}); // Returns {}
 
 // Use winston stub
@@ -162,6 +163,7 @@ When required, adds the included `stubs/` directory to Node’s module resolutio
 ### `stubs/axios.js` and `stubs/winston.js`
 
 * `axios.post`: An async function that returns an empty object.
+* `axios.get`: An async function that returns an empty object.
 * `winston.createLogger()`: Returns an object with no-op logging methods (`info`, `warn`, `error`, etc.).
 
 ---
