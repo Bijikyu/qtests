@@ -1,0 +1,104 @@
+//(replaces qerrors.qerrors with noop to silence logs)
+function stubQerrors(){
+  console.log(`stubQerrors is running with none`); //(log start of stubQerrors)
+  try {
+    const qerrors = require('qerrors'); //(require qerrors module)
+    test.mock.method(qerrors, 'qerrors', () => {}); //(stub qerrors.qerrors)
+    delete require.cache[require.resolve('../../utils/offline')]; //(force offline module reload)
+    console.log(`stubQerrors is returning undefined`); //(log completion)
+  } catch (err) {
+    console.log(`stubQerrors error ${err.message}`); //(log error)
+    throw err; //(propagate error)
+  }
+}
+
+//(reload a module from cache for isolated tests)
+function reload(relPath){ //(rename parameter for clarity)
+  console.log(`reload is running with ${relPath}`); //(log start of reload)
+  try {
+    const fullPath = path.resolve(__dirname, relPath); //(resolve relative to helpers)
+    delete require.cache[require.resolve(fullPath)]; //(clear module from cache)
+    const mod = require(fullPath); //(require module afresh)
+    console.log(`reload is returning module`); //(log completion)
+    return mod; //(return reloaded module)
+  } catch (err) {
+    console.log(`reload error ${err.message}`); //(log error)
+    throw err; //(propagate error)
+  }
+}
+
+//(build minimal response object with json spy)
+function createJsonRes(){
+  console.log(`createJsonRes is running with none`); //(log start of createJsonRes)
+  try {
+    const res = { json: test.mock.fn() }; //(create json stub response)
+    console.log(`createJsonRes is returning res`); //(log completion)
+    return res; //(return response mock)
+  } catch (err) {
+    console.log(`createJsonRes error ${err.message}`); //(log error)
+    throw err; //(propagate error)
+  }
+}
+
+//(general purpose response mock used across tests)
+function createRes(){
+  console.log(`createRes is running with none`); //(log start of createRes)
+  try {
+    const res = { locals: {}, headersSent: false }; //(init defaults)
+    res.status = (code) => { res.statusCode = code; return res; }; //(status mock)
+    res.json = test.mock.fn(payload => { res.jsonPayload = payload; res.payload = payload; return res; }); //(json mock with tracker)
+    res.render = test.mock.fn(); //(render stub)
+    res.send = test.mock.fn(); //(send stub)
+    console.log(`createRes is returning res`); //(log completion)
+    return res; //(return res object)
+  } catch (err) {
+    console.log(`createRes error ${err.message}`); //(log error)
+    throw err; //(propagate error)
+  }
+}
+
+//(helper to call /api/generate-key for integration tests)
+async function generateKey(app, allowedApi){
+  console.log(`generateKey is running with ${allowedApi}`); //(log start of generateKey)
+  try {
+    const res = await require('./supertest')(app)
+      .post('/api/generate-key')
+      .send({ allowedApi });
+    console.log(`generateKey is returning ${res.statusCode}`); //(log completion)
+    return res; //(return server response)
+  } catch (err) {
+    console.log(`generateKey error ${err.message}`); //(log error)
+    throw err; //(propagate error)
+  }
+}
+
+//(store selected env vars for later restoration)
+let envBackup; //(holds captured variables)
+
+//(capture current env variable values)
+function backupEnvVars(...names){
+  console.log(`backupEnvVars is running with ${names}`); //(start log)
+  try {
+    envBackup = {}; //(init backup container)
+    names.forEach(n => { envBackup[n] = process.env[n]; }); //(store each value)
+    console.log(`backupEnvVars is returning undefined`); //(end log)
+  } catch (err) {
+    console.log(`backupEnvVars error ${err.message}`); //(log error)
+    throw err; //(propagate)
+  }
+}
+
+//(restore previously backed up env vars)
+function restoreEnvVars(){
+  console.log(`restoreEnvVars is running with none`); //(start log)
+  try {
+    if(!envBackup){ console.log(`restoreEnvVars is returning undefined`); return; } //(no backup)
+    Object.keys(envBackup).forEach(n => {
+      if(envBackup[n] === undefined) delete process.env[n]; else process.env[n] = envBackup[n];
+    }); //(apply backups)
+    console.log(`restoreEnvVars is returning undefined`); //(end log)
+  } catch (err) {
+    console.log(`restoreEnvVars error ${err.message}`); //(log error)
+    throw err; //(propagate)
+  }
+}
