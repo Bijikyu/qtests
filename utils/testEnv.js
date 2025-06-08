@@ -1,4 +1,3 @@
-
 /**
  * Test Environment Management Utilities
  * 
@@ -43,13 +42,13 @@ const { logStart, logReturn } = require('../lib/logUtils');
  */
 function setTestEnv() {
   logStart('setTestEnv', 'default values');
-  
+
   // Set standard test API keys
   // These values are obviously fake and safe for logging
   process.env.GOOGLE_API_KEY = 'key';   // Minimal fake API key
   process.env.GOOGLE_CX = 'cx';         // Minimal fake Custom Search Engine ID
   process.env.OPENAI_TOKEN = 'token';   // Minimal fake OpenAI token
-  
+
   logReturn('setTestEnv', true);
   return true; // Confirm successful setup for test verification
 }
@@ -75,11 +74,11 @@ function setTestEnv() {
  */
 function saveEnv() {
   logStart('saveEnv', 'none');
-  
+
   // Create shallow copy of current environment
   // Spread operator is efficient for this use case
   const savedEnv = { ...process.env };
-  
+
   // Log success but mask actual environment data for security
   // Environment variables may contain sensitive information
   logReturn('saveEnv', 'env stored');
@@ -107,15 +106,15 @@ function saveEnv() {
  */
 function restoreEnv(savedEnv) {
   logStart('restoreEnv', 'env restore');
-  
+
   // Step 1: Clear all current environment variables
   // This removes any variables that were added during testing
   Object.keys(process.env).forEach(k => delete process.env[k]);
-  
+
   // Step 2: Restore the saved environment
   // Object.assign copies all properties from savedEnv to process.env
   Object.assign(process.env, savedEnv);
-  
+
   logReturn('restoreEnv', true);
   return true; // Confirm successful restoration
 }
@@ -141,13 +140,13 @@ function restoreEnv(savedEnv) {
  */
 function createScheduleMock() {
   logStart('createScheduleMock', 'none');
-  
+
   // Create mock function that immediately executes passed functions
   // This simulates a scheduler that processes jobs instantly
   const scheduleMock = function(fn) {
     return Promise.resolve(fn()); // Execute immediately and return result
   };
-  
+
   // Add Jest-compatible methods if Jest environment is detected
   if (typeof jest !== 'undefined') {
     scheduleMock.mockClear = jest.fn(); // Jest spy clear method
@@ -158,7 +157,7 @@ function createScheduleMock() {
     scheduleMock.mockClear = () => {};
     scheduleMock.mockReset = () => {};
   }
-  
+
   logReturn('createScheduleMock', 'mock');
   return scheduleMock;
 }
@@ -184,13 +183,13 @@ function createScheduleMock() {
  */
 function createQerrorsMock() {
   logStart('createQerrorsMock', 'none');
-  
+
   // Mock function that captures and returns its arguments
   // This allows tests to inspect what was passed to error handlers
   const qerrorsMock = function(...args) {
     return args; // Return arguments for test inspection
   };
-  
+
   // Add Jest-compatible methods for call tracking and reset
   if (typeof jest !== 'undefined') {
     qerrorsMock.mockReset = jest.fn();
@@ -200,7 +199,7 @@ function createQerrorsMock() {
     qerrorsMock.mockReset = () => {};
     qerrorsMock.mockClear = () => {};
   }
-  
+
   logReturn('createQerrorsMock', 'mock');
   return qerrorsMock;
 }
@@ -227,7 +226,7 @@ function createQerrorsMock() {
  */
 function createAxiosMock() {
   logStart('createAxiosMock', 'none');
-  
+
   // Simple axios mock adapter without external dependencies
   // Stores configured replies for different URLs and methods
   const mock = {
@@ -244,7 +243,7 @@ function createAxiosMock() {
         }
       };
     },
-    
+
     /**
      * Configure mock response for POST requests to a specific URL
      * @param {string} url - URL to mock
@@ -258,7 +257,7 @@ function createAxiosMock() {
         }
       };
     },
-    
+
     /**
      * Reset all configured mocks
      * Essential for preventing test pollution
@@ -269,9 +268,64 @@ function createAxiosMock() {
   };
 
   mock._replies = {}; // (initialize reply store for adapter)
-  
+
   logReturn('createAxiosMock', 'adapter');
   return mock;
+}
+
+/**
+ * Creates a configurable axios mock with programmable responses
+ * 
+ * This function creates a more sophisticated axios mock than the basic stub,
+ * allowing tests to configure specific responses for different URLs. This
+ * enables testing of complex HTTP interaction patterns.
+ * 
+ * Design features:
+ * - Configurable responses per URL
+ * - Support for both success and error responses
+ * - Axios-compatible response format
+ * - Easy response programming via __set method
+ * - Comprehensive logging for debugging
+ * 
+ * Why this approach over simple stubs:
+ * - Enables testing of different API endpoints
+ * - Supports testing error handling paths
+ * - More realistic than always returning empty objects
+ * - Allows dynamic response configuration during tests
+ * 
+ * @returns {Function} Mock axios function with __set method for configuration
+ */
+function createMockAxios(){
+    console.log(`createMockAxios is running with none`); // log start of factory
+    try {
+        const responses = new Map(); // map to hold url responses
+        responses.set('http://a', { data: { mock: true }, status: 200, reject: false }); // seed default mock
+        function mockAxios(config){
+            console.log(`mockAxios is running with ${JSON.stringify(config)}`); // log start
+            try {
+                const mock = responses.get(config.url); // lookup response
+                if(mock){
+                    const result = { status: mock.status, data: mock.data }; // build axios style result
+                    console.log(`mockAxios is returning ${JSON.stringify(result)}`); // log return
+                    if(mock.reject) return Promise.reject({ response: result }); // reject when flagged
+                    return Promise.resolve(result); // resolve mock success
+                }
+                const error = { response: { status: 500, data: 'error' } }; // fallback error
+                console.log(`mockAxios is returning ${JSON.stringify(error)}`); // log error return
+                return Promise.reject(error); // reject unknown url
+            } catch(error){
+                console.log(`mockAxios error ${error.message}`); // log internal error
+                return Promise.reject(error); // propagate
+            }
+        }
+        function axiosWrapper(config){ return mockAxios(config); } // expose axios like function
+        axiosWrapper.__set = (url, data, status = 200, reject = false) => { responses.set(url, { data, status, reject }); }; // helper to program responses
+        console.log(`createMockAxios is returning axiosWrapper`); // log end
+        return axiosWrapper; // return configured mock
+    } catch(error){
+        console.log(`createMockAxios error ${error.message}`); // log failure
+        throw error; // rethrow for caller
+    }
 }
 
 /**
@@ -298,22 +352,22 @@ function createAxiosMock() {
  */
 function resetMocks(mock, scheduleMock, qerrorsMock) {
   logStart('resetMocks', 'mocks');
-  
+
   // Reset HTTP adapter mock if it has reset capability
   if (mock && mock.reset) {
     mock.reset();
   }
-  
+
   // Clear scheduler mock call history if available
   if (scheduleMock && scheduleMock.mockClear) {
     scheduleMock.mockClear();
   }
-  
+
   // Clear error mock call history if available
   if (qerrorsMock && qerrorsMock.mockClear) {
     qerrorsMock.mockClear();
   }
-  
+
   logReturn('resetMocks', true);
   return true; // Confirm all resets completed
 }
@@ -344,23 +398,23 @@ function resetMocks(mock, scheduleMock, qerrorsMock) {
  */
 function initSearchTest() {
   logStart('initSearchTest', 'none');
-  
+
   // Reset Jest modules if in Jest environment
   // This ensures clean module state for each test
   if (typeof jest !== 'undefined' && jest.resetModules) {
     jest.resetModules();
   }
-  
+
   // Set up test environment with known values
   setTestEnv();
-  
+
   // Create all common mocks for search/API testing
   const scheduleMock = createScheduleMock();
   const qerrorsMock = createQerrorsMock();
   const mock = createAxiosMock();
-  
+
   logReturn('initSearchTest', 'mocks');
-  
+
   // Return mocks for individual control in tests
   return { mock, scheduleMock, qerrorsMock };
 }
@@ -375,6 +429,7 @@ module.exports = {
   createScheduleMock,   // Create scheduler/throttling mock
   createQerrorsMock,    // Create error handler mock
   createAxiosMock,      // Create HTTP client mock adapter
+  createMockAxios,      // Create Configurable axios mock
   resetMocks,           // Reset multiple mocks at once
   initSearchTest        // Complete setup for search/API testing
 };
