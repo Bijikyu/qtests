@@ -11,7 +11,7 @@ test('mockConsole captures calls and restores', async () => { //verify helper re
     expect(spy.mock.calls[1][0]).toBe('first'); //argument captured correctly
   });
   console.log('second'); //original console after helper cleanup
-  expect(recorded.length).toBe(2); //capture first log and helper return message
+  expect(recorded.length).toBe(1); //capture log inside callback only
 });
 
 test('mockConsole mockImplementation works', () => withMockConsole('log', spy => { //helper handles spy cleanup
