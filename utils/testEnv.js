@@ -292,11 +292,5 @@ module.exports = {
   createMocks,
 
   // Reset mock state for test isolation
-  resetMocks,
-  createScheduleMock,
-  createQerrorsMock,
-  createAxiosMock,
-  createMockAxios,
-  resetMocks,
-  initSearchTest
+  resetMocks
 };

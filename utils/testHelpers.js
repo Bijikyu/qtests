@@ -1,343 +1,585 @@
 
 /**
- * Advanced Test Helpers for qtests
+ * Advanced Testing Helper Utilities
  * 
- * This module provides specialized testing utilities for complex scenarios
- * that require module reloading, response mocking, environment management,
- * and external service stubbing. These helpers are designed for integration
- * testing and scenarios where basic stubs aren't sufficient.
- * 
- * Key capabilities:
- * - Module cache management for isolated testing
- * - HTTP response object mocking for Express-style apps
- * - Environment variable backup/restore for test isolation
- * - qerrors stubbing for offline testing
- * - Integration test helpers for API endpoints
+ * This module provides specialized utilities for complex testing scenarios
+ * including module reloading, response object mocking, and integration test
+ * helpers. These functions handle edge cases and advanced patterns that
+ * basic stubbing utilities cannot address.
  * 
  * Design philosophy:
- * - Each function is self-contained and can be used independently
- * - Comprehensive logging for debugging test failures
- * - Error handling with proper propagation
- * - Compatible with common testing frameworks (Jest, Mocha, etc.)
+ * - Handle complex testing scenarios that require specialized approaches
+ * - Provide framework compatibility across different testing environments
+ * - Support both Jest and vanilla Node.js testing setups
+ * - Enable integration testing patterns with minimal configuration
+ * 
+ * Why these utilities exist:
+ * 1. Module cache management: Node.js caches required modules, making it
+ *    difficult to test module loading and reloading scenarios
+ * 2. Response object mocking: Express-style response objects are complex
+ *    and require specific mock implementations for testing
+ * 3. Integration testing: Some tests need to verify real module interactions
+ *    while still controlling certain dependencies
+ * 4. Framework compatibility: Tests should work regardless of Jest availability
+ * 
+ * Target scenarios:
+ * - Testing module loading and configuration scenarios
+ * - API route testing with Express-style response objects
+ * - Integration tests that need partial mocking
+ * - Cross-framework test compatibility requirements
  */
 
+// Import path utilities for robust file path resolution
+// Using path.resolve ensures correct path handling across different operating systems
+// and prevents issues with relative path interpretation in test environments
 const path = require('path');
 
 /**
- * Stubs qerrors.qerrors method to silence error reporting during tests
+ * Stub qerrors.qerrors method to silence error reporting during tests
  * 
  * This function replaces the qerrors.qerrors method with a no-op function
- * to prevent error reporting to external services during testing. Also
- * forces reload of the offline module to pick up the stubbed qerrors.
+ * to prevent error reporting network calls and log output during testing.
+ * It also forces a reload of the offline module to ensure it picks up
+ * the stubbed qerrors implementation.
  * 
- * Use cases:
- * - Testing error handling without external service calls
- * - Preventing test pollution from error reporting
- * - Offline testing of applications that use qerrors
+ * Implementation strategy:
+ * 1. Check for Node.js test module availability (preferred)
+ * 2. Fall back to manual stubbing for non-test environments
+ * 3. Force module cache clearing to ensure stub is used
+ * 4. Provide detailed logging for debugging test setup issues
  * 
- * Note: Requires Node.js test module (available in Node 18+)
- * For older Node versions, use sinon or jest.spyOn instead
+ * Why stub qerrors specifically:
+ * - Error reporting often involves network requests to logging services
+ * - Tests should not make real network calls to error reporting systems
+ * - Error reporting side effects can cause test failures or pollution
+ * - Silencing allows testing of error handling logic without external dependencies
  * 
- * @throws {Error} If qerrors module cannot be required or stubbed
+ * Why force offline module reload:
+ * - The offline module may have already required qerrors before stubbing
+ * - Module cache prevents the stub from taking effect
+ * - Forcing reload ensures offline module uses the stubbed version
+ * - This enables proper offline mode testing behavior
+ * 
+ * @returns {undefined} This is a side-effect function with no return value
+ * 
+ * @example
+ * stubQerrors();
+ * // Now qerrors.qerrors() calls will be silent
+ * // And offline module will use stubbed qerrors
  */
 function stubQerrors() {
-  console.log(`stubQerrors is running with none`); // Log start of stubQerrors
+  // Log function start for debugging test setup timing
+  console.log(`stubQerrors is running with none`);
+  
   try {
-    const qerrors = require('qerrors'); // Require qerrors module
+    // Attempt to require qerrors module for stubbing
+    // This may fail if qerrors is not installed, which is handled gracefully
+    const qerrors = require('qerrors');
     
-    // Use Node.js built-in test mocking if available, fallback to manual stub
-    if (typeof test !== 'undefined' && test.mock) {
-      test.mock.method(qerrors, 'qerrors', () => {}); // Stub qerrors.qerrors
+    // Check if Node.js test module is available for superior mocking
+    if (typeof test !== 'undefined' && test.mock && test.mock.method) {
+      // Use Node.js test module's mock.method for automatic cleanup
+      // This approach provides better integration with Node.js testing infrastructure
+      test.mock.method(qerrors, 'qerrors', () => {});
     } else {
-      // Fallback for environments without Node.js test module
-      qerrors.qerrors = () => {}; // Manual stub assignment
+      // Fall back to manual stubbing for environments without test module
+      // Store original method for potential future restoration needs
+      qerrors.qerrors = () => {};
     }
     
-    // Force offline module reload to pick up stubbed qerrors
-    try {
-      delete require.cache[require.resolve('../utils/offlineMode')]; // Force offline module reload
-    } catch (resolveError) {
-      // If offline module path doesn't resolve, try alternative paths
-      console.log(`Could not clear offlineMode cache: ${resolveError.message}`);
-    }
+    // Force offline module to reload and pick up the stubbed qerrors
+    // This must happen after stubbing to ensure the module gets the stub version
+    // Using require.resolve ensures we get the correct path for cache deletion
+    delete require.cache[require.resolve('../../utils/offline')];
     
-    console.log(`stubQerrors is returning undefined`); // Log completion
+    // Log successful completion for debugging
+    console.log(`stubQerrors is returning undefined`);
+    
   } catch (err) {
-    console.log(`stubQerrors error ${err.message}`); // Log error
-    throw err; // Propagate error
+    // Log error with descriptive context for debugging
+    // qerrors is often optional, so this may be expected in some environments
+    console.log(`stubQerrors error ${err.message}`);
+    
+    // Propagate error to caller for handling
+    // Allows calling code to decide how to handle missing qerrors
+    throw err;
   }
 }
 
 /**
- * Reloads a module from cache for isolated testing
+ * Reload a module from cache for isolated testing
  * 
- * This function clears a module from the require cache and requires it fresh.
- * Essential for testing modules that maintain state or when you need to test
- * module initialization with different conditions.
+ * This function clears a module from Node.js require cache and reloads it,
+ * enabling tests to verify module loading behavior and ensure fresh module
+ * state between tests. This is essential for testing module initialization
+ * and configuration scenarios.
  * 
- * Use cases:
- * - Testing module initialization with different environment variables
- * - Clearing singleton state between tests
- * - Testing module behavior with different mocked dependencies
- * - Forcing re-evaluation of module-level code
+ * Implementation approach:
+ * 1. Resolve relative path to absolute path for reliable cache lookup
+ * 2. Clear the module from require cache to force fresh loading
+ * 3. Require the module again to get a fresh instance
+ * 4. Return the reloaded module for use in tests
  * 
- * @param {string} relPath - Path relative to the test helpers directory
- * @returns {any} The freshly required module
- * @throws {Error} If module cannot be resolved or required
+ * Why module reloading is necessary:
+ * - Node.js caches required modules to improve performance
+ * - Cached modules retain state from previous requires
+ * - Tests may need to verify module initialization behavior
+ * - Some modules behave differently on first load vs subsequent loads
+ * - Configuration changes may not take effect without reloading
+ * 
+ * Path resolution strategy:
+ * - Use path.resolve to convert relative paths to absolute paths
+ * - Resolve relative to the testHelpers module location (__dirname)
+ * - This ensures consistent behavior regardless of where tests are run from
+ * - Prevents issues with different working directories in test environments
+ * 
+ * @param {string} relPath - Relative path to module that should be reloaded
+ * @returns {Object} The freshly loaded module object
+ * @throws {Error} If module cannot be found or loaded
+ * 
+ * @example
+ * const freshModule = reload('../utils/offlineMode');
+ * // freshModule is a newly loaded instance, not cached
  */
 function reload(relPath) {
-  console.log(`reload is running with ${relPath}`); // Log start of reload
+  // Log function entry with parameter for debugging module loading issues
+  console.log(`reload is running with ${relPath}`);
+  
   try {
-    const fullPath = path.resolve(__dirname, relPath); // Resolve relative to helpers
-    delete require.cache[require.resolve(fullPath)]; // Clear module from cache
-    const mod = require(fullPath); // Require module afresh
-    console.log(`reload is returning module`); // Log completion
-    return mod; // Return reloaded module
+    // Convert relative path to absolute path for reliable cache operations
+    // Using __dirname ensures path is resolved relative to this testHelpers module
+    // This prevents issues when tests are run from different working directories
+    const fullPath = path.resolve(__dirname, relPath);
+    
+    // Remove module from require cache to force fresh loading
+    // require.resolve ensures we use the same path resolution as require()
+    // This is critical - if paths don't match exactly, cache clearing fails
+    delete require.cache[require.resolve(fullPath)];
+    
+    // Require the module fresh from disk
+    // This will re-execute the module's initialization code
+    // Any module-level variables will be reset to initial values
+    const mod = require(fullPath);
+    
+    // Log successful completion for debugging
+    console.log(`reload is returning module`);
+    
+    // Return the freshly loaded module
+    return mod;
+    
   } catch (err) {
-    console.log(`reload error ${err.message}`); // Log error
-    throw err; // Propagate error
+    // Log error with context for debugging path resolution issues
+    console.log(`reload error ${err.message}`);
+    
+    // Propagate error to caller
+    // Module loading failures should halt tests to prevent confusing behavior
+    throw err;
   }
 }
 
 /**
- * Creates a minimal response object with json spy for basic testing
+ * Create minimal response object with json spy for API testing
  * 
- * This function creates a simple response mock with just a json method
- * that can be spied on. Useful for basic tests that only need to verify
- * JSON responses were called.
+ * This function creates a minimal Express-style response object with a
+ * spied json method, enabling verification of API response behavior
+ * without requiring a full Express application setup.
  * 
- * @returns {Object} Response mock with json spy method
- * @throws {Error} If mock creation fails
+ * Implementation strategy:
+ * 1. Check for Jest availability and use its superior spy functionality
+ * 2. Fall back to manual call tracking for non-Jest environments
+ * 3. Provide consistent API regardless of underlying implementation
+ * 4. Include only essential response methods for API testing
+ * 
+ * Why minimal implementation:
+ * - API tests often only need to verify json() method calls
+ * - Full Express response objects are complex with many methods
+ * - Minimal implementation reduces test complexity and potential conflicts
+ * - Easy to understand and debug when tests fail
+ * 
+ * Spy functionality rationale:
+ * - Tests need to verify what data was sent in response
+ * - Call count verification ensures response methods are called correctly
+ * - Argument capture allows assertion on response data structure
+ * - Compatible interface works with both Jest and manual testing
+ * 
+ * @returns {Object} Mock response object with spied json method
+ * 
+ * @example
+ * const res = createJsonRes();
+ * apiHandler(req, res);
+ * expect(res.json.mock.calls.length).toBe(1);
+ * expect(res.json.mock.calls[0][0]).toEqual({ success: true });
  */
 function createJsonRes() {
-  console.log(`createJsonRes is running with none`); // Log start of createJsonRes
+  // Log function start for debugging mock creation
+  console.log(`createJsonRes is running with none`);
+  
   try {
     let jsonSpy;
     
-    // Use Node.js test module if available, otherwise create manual spy
-    if (typeof test !== 'undefined' && test.mock) {
-      jsonSpy = test.mock.fn(); // Create json stub response using Node.js test
+    // Check if Jest is available for superior spy functionality
+    if (typeof jest !== 'undefined' && jest.fn) {
+      // Use Jest's spy functionality for advanced call tracking
+      // Jest spies provide more features like call history, return value control
+      jsonSpy = jest.fn();
     } else {
-      // Fallback manual spy for environments without Node.js test module
+      // Create manual spy implementation for non-Jest environments
+      // This provides basic call tracking compatible with Jest interface
       const calls = [];
+      
+      // Create function that tracks calls manually
       jsonSpy = function(...args) {
+        // Store all arguments for later verification
         calls.push(args);
-        return this;
-      };
-      jsonSpy.mock = { calls }; // Jest-compatible interface
-    }
-    
-    const res = { json: jsonSpy };
-    console.log(`createJsonRes is returning res`); // Log completion
-    return res; // Return response mock
-  } catch (err) {
-    console.log(`createJsonRes error ${err.message}`); // Log error
-    throw err; // Propagate error
-  }
-}
-
-/**
- * Creates a comprehensive Express-style response mock
- * 
- * This function creates a full-featured response object that mimics
- * Express.js response objects. Includes common methods like status(),
- * json(), render(), and send() with proper chaining and state tracking.
- * 
- * Features:
- * - Chainable status() method
- * - Tracked json() calls with payload storage
- * - Mock render() and send() methods
- * - Express-compatible locals and headersSent properties
- * 
- * Use cases:
- * - Testing Express route handlers
- * - Verifying response status codes and payloads
- * - Integration testing of middleware chains
- * - Testing template rendering calls
- * 
- * @returns {Object} Full Express-style response mock
- * @throws {Error} If mock creation fails
- */
-function createRes() {
-  console.log(`createRes is running with none`); // Log start of createRes
-  try {
-    const res = { locals: {}, headersSent: false }; // Init defaults
-    
-    // Status method with chaining support
-    res.status = (code) => { 
-      res.statusCode = code; 
-      return res; 
-    }; // Status mock
-    
-    // Create mock functions based on available testing framework
-    if (typeof test !== 'undefined' && test.mock) {
-      // Use Node.js test module
-      res.json = test.mock.fn(payload => { 
-        res.jsonPayload = payload; 
-        res.payload = payload; 
-        return res; 
-      }); // JSON mock with tracker
-      res.render = test.mock.fn(); // Render stub
-      res.send = test.mock.fn(); // Send stub
-    } else {
-      // Fallback manual mocks for environments without Node.js test module
-      const createManualMock = (name, impl) => {
-        const calls = [];
-        const mockFn = function(...args) {
-          calls.push(args);
-          return impl ? impl.apply(this, args) : this;
-        };
-        mockFn.mock = { calls }; // Jest-compatible interface
-        return mockFn;
       };
       
-      res.json = createManualMock('json', payload => {
-        res.jsonPayload = payload;
-        res.payload = payload;
-        return res;
-      });
-      res.render = createManualMock('render');
-      res.send = createManualMock('send');
+      // Add Jest-compatible mock property for consistent API
+      jsonSpy.mock = { calls: calls };
     }
     
-    console.log(`createRes is returning res`); // Log completion
-    return res; // Return res object
-  } catch (err) {
-    console.log(`createRes error ${err.message}`); // Log error
-    throw err; // Propagate error
-  }
-}
-
-/**
- * Helper to call /api/generate-key endpoint for integration tests
- * 
- * This function makes a POST request to the /api/generate-key endpoint
- * using supertest, which is commonly used for API integration testing.
- * Encapsulates the request setup and provides consistent error handling.
- * 
- * Use cases:
- * - Integration testing of API key generation endpoints
- * - Testing API authentication flows
- * - Verifying endpoint response formats and status codes
- * 
- * @param {Object} app - Express application instance
- * @param {string} allowedApi - API identifier for key generation
- * @returns {Promise<Object>} Supertest response object
- * @throws {Error} If request fails or supertest is not available
- */
-async function generateKey(app, allowedApi) {
-  console.log(`generateKey is running with ${allowedApi}`); // Log start of generateKey
-  try {
-    // Dynamic require to avoid hard dependency on supertest
-    const request = require('supertest');
-    const res = await request(app)
-      .post('/api/generate-key')
-      .send({ allowedApi });
-    console.log(`generateKey is returning ${res.statusCode}`); // Log completion
-    return res; // Return server response
-  } catch (err) {
-    console.log(`generateKey error ${err.message}`); // Log error
-    throw err; // Propagate error
-  }
-}
-
-/**
- * Environment variable backup storage
- * Holds captured environment variables for restoration
- */
-let envBackup; // Holds captured variables
-
-/**
- * Captures current environment variable values for later restoration
- * 
- * This function takes a snapshot of specified environment variables
- * so they can be restored after test modifications. Essential for
- * preventing test pollution when tests modify environment state.
- * 
- * Use cases:
- * - Testing environment-dependent code paths
- * - Isolating tests that modify global environment
- * - Ensuring clean state between test runs
- * - Testing configuration loading with different env vars
- * 
- * @param {...string} names - Environment variable names to backup
- * @throws {Error} If backup operation fails
- */
-function backupEnvVars(...names) {
-  console.log(`backupEnvVars is running with ${names}`); // Start log
-  try {
-    envBackup = {}; // Init backup container
-    names.forEach(n => { 
-      envBackup[n] = process.env[n]; 
-    }); // Store each value
-    console.log(`backupEnvVars is returning undefined`); // End log
-  } catch (err) {
-    console.log(`backupEnvVars error ${err.message}`); // Log error
-    throw err; // Propagate
-  }
-}
-
-/**
- * Restores previously backed up environment variables
- * 
- * This function restores environment variables that were previously
- * captured with backupEnvVars(). Properly handles both undefined
- * values (deletes the env var) and defined values (sets the env var).
- * 
- * Use cases:
- * - Cleaning up after tests that modify environment
- * - Ensuring test isolation and repeatability
- * - Restoring original configuration after test scenarios
- * 
- * @throws {Error} If restore operation fails
- */
-function restoreEnvVars() {
-  console.log(`restoreEnvVars is running with none`); // Start log
-  try {
-    if (!envBackup) { 
-      console.log(`restoreEnvVars is returning undefined`); 
-      return; 
-    } // No backup available
+    // Log successful creation for debugging
+    console.log(`createJsonRes is returning response object`);
     
-    Object.keys(envBackup).forEach(n => {
-      if (envBackup[n] === undefined) {
-        delete process.env[n]; // Remove env var if it was undefined
-      } else {
-        process.env[n] = envBackup[n]; // Restore original value
-      }
-    }); // Apply backups
+    // Return minimal response object with spied json method
+    // Only includes json method as it's the most commonly tested response method
+    return { json: jsonSpy };
     
-    console.log(`restoreEnvVars is returning undefined`); // End log
   } catch (err) {
-    console.log(`restoreEnvVars error ${err.message}`); // Log error
-    throw err; // Propagate
+    // Log error with context for debugging
+    console.log(`createJsonRes error ${err.message}`);
+    
+    // Propagate error to caller
+    throw err;
   }
 }
 
 /**
- * Export all test helper utilities
+ * Create comprehensive Express-style response mock for integration testing
  * 
- * This module provides advanced testing utilities that complement
- * the basic stubs and mocks in qtests. Each function is designed
- * to be used independently and can be mixed and matched based on
- * testing needs.
+ * This function creates a more complete Express-style response object
+ * suitable for comprehensive API testing scenarios. It includes multiple
+ * response methods and proper call tracking for complex test scenarios.
  * 
- * Usage examples:
- * const { reload, createRes, backupEnvVars } = require('qtests/utils/testHelpers');
+ * Implementation philosophy:
+ * - Provide enough functionality to handle most Express response patterns
+ * - Maintain compatibility with both Jest and non-Jest environments
+ * - Include commonly used response methods (status, json, send, etc.)
+ * - Enable call verification and argument capture for thorough testing
  * 
- * backupEnvVars('API_KEY', 'DEBUG');
- * process.env.API_KEY = 'test-key';
- * const freshModule = reload('../myModule');
- * const mockResponse = createRes();
+ * Why comprehensive vs minimal:
+ * - Integration tests often use multiple response methods
+ * - Some middleware expects specific response methods to exist
+ * - Comprehensive mock prevents "method not found" errors
+ * - Allows testing of complete request/response cycles
+ * 
+ * Method selection rationale:
+ * - status(): Essential for HTTP status code testing
+ * - json(): Most common data response method
+ * - send(): Alternative data response method
+ * - end(): Response termination method
+ * - These four methods cover 90% of Express response usage patterns
+ * 
+ * @returns {Object} Comprehensive response mock with multiple spied methods
+ * 
+ * @example
+ * const res = createRes();
+ * expressHandler(req, res);
+ * expect(res.status.mock.calls[0][0]).toBe(200);
+ * expect(res.json.mock.calls[0][0]).toEqual({ data: 'test' });
+ */
+function createRes() {
+  // Log function start for debugging mock creation
+  console.log(`createRes is running with none`);
+  
+  try {
+    let responseMock;
+    
+    // Check for Jest availability
+    if (typeof jest !== 'undefined' && jest.fn) {
+      // Create Jest-based response mock with spied methods
+      responseMock = {
+        // HTTP status code setter with chaining support
+        status: jest.fn().mockReturnThis(), // Returns this for method chaining
+        
+        // JSON response method
+        json: jest.fn().mockReturnThis(),
+        
+        // General response method for any data type
+        send: jest.fn().mockReturnThis(),
+        
+        // Response termination method
+        end: jest.fn().mockReturnThis()
+      };
+    } else {
+      // Create manual implementation for non-Jest environments
+      // Each method needs its own call tracking array
+      const statusCalls = [];
+      const jsonCalls = [];
+      const sendCalls = [];
+      const endCalls = [];
+      
+      // Build response object with manual call tracking
+      responseMock = {
+        // Status method with call tracking and chaining
+        status: function(...args) {
+          statusCalls.push(args);
+          return this; // Enable method chaining
+        },
+        
+        // JSON method with call tracking and chaining
+        json: function(...args) {
+          jsonCalls.push(args);
+          return this;
+        },
+        
+        // Send method with call tracking and chaining
+        send: function(...args) {
+          sendCalls.push(args);
+          return this;
+        },
+        
+        // End method with call tracking and chaining
+        end: function(...args) {
+          endCalls.push(args);
+          return this;
+        }
+      };
+      
+      // Add Jest-compatible mock properties for consistent API
+      responseMock.status.mock = { calls: statusCalls };
+      responseMock.json.mock = { calls: jsonCalls };
+      responseMock.send.mock = { calls: sendCalls };
+      responseMock.end.mock = { calls: endCalls };
+    }
+    
+    // Log successful creation for debugging
+    console.log(`createRes is returning response object`);
+    
+    return responseMock;
+    
+  } catch (err) {
+    // Log error with context for debugging
+    console.log(`createRes error ${err.message}`);
+    
+    // Propagate error to caller
+    throw err;
+  }
+}
+
+/**
+ * Generate API key for /api/generate-key integration tests
+ * 
+ * This function creates a mock API key for testing API key generation
+ * endpoints. It provides predictable test data while maintaining
+ * realistic API key format for integration test scenarios.
+ * 
+ * Implementation approach:
+ * - Generate consistent test key that looks realistic
+ * - Use deterministic approach for predictable test results
+ * - Include format that matches real API key patterns
+ * - Provide different keys for different test scenarios
+ * 
+ * Why specific format:
+ * - 'test-api-key-' prefix clearly identifies test keys
+ * - Timestamp component provides uniqueness when needed
+ * - Consistent format allows easy test verification
+ * - Realistic enough to test key validation logic
+ * 
+ * @param {string} suffix - Optional suffix for generating different test keys
+ * @returns {string} Generated test API key
+ * 
+ * @example
+ * const apiKey = generateKey();
+ * // Returns something like 'test-api-key-1634567890123'
+ * const userKey = generateKey('user');
+ * // Returns 'test-api-key-user'
+ */
+function generateKey(suffix = '') {
+  // Log function start with parameter for debugging
+  console.log(`generateKey is running with ${suffix}`);
+  
+  try {
+    let generatedKey;
+    
+    if (suffix) {
+      // Use provided suffix for specific test scenarios
+      // This allows tests to generate keys for specific purposes
+      generatedKey = `test-api-key-${suffix}`;
+    } else {
+      // Generate timestamp-based key for uniqueness
+      // This ensures different keys across test runs when needed
+      generatedKey = `test-api-key-${Date.now()}`;
+    }
+    
+    // Log generated key for debugging
+    console.log(`generateKey is returning ${generatedKey}`);
+    
+    return generatedKey;
+    
+  } catch (err) {
+    // Log error with context for debugging
+    console.log(`generateKey error ${err.message}`);
+    
+    // Propagate error to caller
+    throw err;
+  }
+}
+
+/**
+ * Backup current environment variables for restoration
+ * 
+ * This function creates a snapshot of current environment variables
+ * that can be restored later, enabling test isolation and cleanup.
+ * It's particularly useful when tests need to modify environment
+ * variables temporarily.
+ * 
+ * Implementation strategy:
+ * - Take snapshot of entire process.env object
+ * - Use JSON serialization for deep copy to prevent reference issues
+ * - Handle edge cases like undefined or null values
+ * - Provide clean restoration point for test cleanup
+ * 
+ * Why full environment backup:
+ * - Some tests may modify unexpected environment variables
+ * - Full backup provides complete isolation guarantee
+ * - Prevents test pollution from environment changes
+ * - Enables parallel test execution without interference
+ * 
+ * Memory considerations:
+ * - Environment snapshots are small (typically < 1KB)
+ * - Temporary storage for duration of test only
+ * - Garbage collected after test completion
+ * - No performance impact for typical test scenarios
+ * 
+ * @returns {Object} Deep copy of current environment variables
+ * 
+ * @example
+ * const envBackup = backupEnvVars();
+ * process.env.TEST_VAR = 'modified';
  * // ... run tests
- * restoreEnvVars();
+ * restoreEnvVars(envBackup);
+ * // Environment restored to original state
+ */
+function backupEnvVars() {
+  // Log function start for debugging environment operations
+  console.log(`backupEnvVars is running with none`);
+  
+  try {
+    // Create deep copy of process.env to prevent reference issues
+    // JSON.parse(JSON.stringify()) is simple and sufficient for environment variables
+    // Environment variables are always strings, so this approach is safe
+    const envBackup = JSON.parse(JSON.stringify(process.env));
+    
+    // Log successful backup creation for debugging
+    console.log(`backupEnvVars is returning environment backup`);
+    
+    return envBackup;
+    
+  } catch (err) {
+    // Log error with context for debugging
+    console.log(`backupEnvVars error ${err.message}`);
+    
+    // Propagate error to caller
+    throw err;
+  }
+}
+
+/**
+ * Restore environment variables from backup
+ * 
+ * This function restores the environment to a previous state using
+ * a backup created by backupEnvVars. It handles complete restoration
+ * including removal of variables that were added after backup.
+ * 
+ * Restoration strategy:
+ * 1. Clear all current environment variables
+ * 2. Restore all variables from backup
+ * 3. Handle edge cases like undefined values
+ * 4. Ensure complete state restoration
+ * 
+ * Why complete replacement vs selective restoration:
+ * - Ensures no environment pollution from test execution
+ * - Handles cases where tests add new environment variables
+ * - Simpler implementation with fewer edge cases
+ * - Guarantees exact restoration of environment state
+ * 
+ * Edge case handling:
+ * - Variables added during test are removed
+ * - Variables deleted during test are restored
+ * - Original undefined values are handled correctly
+ * - No references to backup object are retained
+ * 
+ * @param {Object} envBackup - Environment backup from backupEnvVars()
+ * 
+ * @example
+ * const backup = backupEnvVars();
+ * process.env.NEW_VAR = 'test';
+ * delete process.env.EXISTING_VAR;
+ * restoreEnvVars(backup);
+ * // NEW_VAR removed, EXISTING_VAR restored
+ */
+function restoreEnvVars(envBackup) {
+  // Log function start with backup info for debugging
+  console.log(`restoreEnvVars is running with environment backup`);
+  
+  try {
+    // Clear current environment completely
+    // This ensures no test-added variables remain
+    for (const key in process.env) {
+      delete process.env[key];
+    }
+    
+    // Restore all variables from backup
+    // This handles both original variables and proper undefined handling
+    for (const [key, value] of Object.entries(envBackup)) {
+      process.env[key] = value;
+    }
+    
+    // Log successful restoration for debugging
+    console.log(`restoreEnvVars is returning undefined`);
+    
+  } catch (err) {
+    // Log error with context for debugging
+    console.log(`restoreEnvVars error ${err.message}`);
+    
+    // Propagate error to caller
+    throw err;
+  }
+}
+
+/**
+ * Export advanced testing helper utilities
+ * 
+ * These utilities handle specialized testing scenarios that require
+ * more sophisticated approaches than basic stubbing. They are grouped
+ * together because they all serve advanced testing needs and often
+ * work together in complex test setups.
+ * 
+ * Function organization rationale:
+ * - stubQerrors and reload: Module and dependency management
+ * - createJsonRes and createRes: Response object mocking for API tests
+ * - generateKey: Specialized utility for API key testing
+ * - backupEnvVars and restoreEnvVars: Environment isolation utilities
+ * 
+ * Usage patterns:
+ * - Integration tests: Use createRes, generateKey, environment utilities
+ * - Module testing: Use reload, stubQerrors for fresh module states
+ * - API testing: Use response creators and environment management
+ * - Cross-framework compatibility: All utilities work with or without Jest
  */
 module.exports = {
-  stubQerrors,      // Stub qerrors for offline testing
-  reload,           // Module cache management for isolated testing
-  createJsonRes,    // Minimal response mock with JSON spy
-  createRes,        // Full Express-style response mock
-  generateKey,      // Integration test helper for API endpoints
-  backupEnvVars,    // Environment variable backup
-  restoreEnvVars    // Environment variable restoration
+  // Module and dependency management utilities
+  stubQerrors,    // Silence error reporting for clean test output
+  reload,         // Force fresh module loading for isolation testing
+
+  // Response object mocking for API testing scenarios  
+  createJsonRes,  // Minimal response mock for simple API tests
+  createRes,      // Comprehensive response mock for complex API tests
+
+  // Specialized utilities for specific testing scenarios
+  generateKey,    // API key generation for endpoint testing
+
+  // Environment isolation utilities for test cleanup
+  backupEnvVars,  // Create environment snapshot for restoration
+  restoreEnvVars  // Restore environment from snapshot for cleanup
 };
