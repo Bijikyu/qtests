@@ -24,6 +24,8 @@
  * - No state storage to keep memory usage minimal
  */
 
+const noop = () => {}; // shared no-op function for all stub methods
+
 /**
  * Winston stub module exports
  * 
@@ -63,21 +65,21 @@ module.exports = {
      * Replaces logger.error() calls with silent operation
      * @param {...any} args - Any logging arguments (ignored)
      */
-    error: () => {}, // Silent - no error output during tests
+    error: noop, // Silent - no error output during tests
 
     /**
      * No-op warning logging  
      * Replaces logger.warn() calls with silent operation
      * @param {...any} args - Any logging arguments (ignored)
      */
-    warn: () => {},  // Silent - no warning output during tests
+    warn: noop,  // Silent - no warning output during tests
 
     /**
      * No-op info logging
      * Replaces logger.info() calls with silent operation
      * @param {...any} args - Any logging arguments (ignored)
      */
-    info: () => {}   // Silent - no info output during tests
+    info: noop   // Silent - no info output during tests
   }),
 
   /**
@@ -99,42 +101,42 @@ module.exports = {
      * Replaces winston.format.combine() for chaining formatters
      * @returns {Function} No-op function
      */
-    combine: () => {},    // Silent - no format combination
+    combine: noop,    // Silent - no format combination
 
     /**
      * No-op timestamp formatter
      * Replaces winston.format.timestamp() for adding timestamps
      * @returns {Function} No-op function  
      */
-    timestamp: () => {},  // Silent - no timestamp formatting
+    timestamp: noop,  // Silent - no timestamp formatting
 
     /**
      * No-op error formatter
      * Replaces winston.format.errors() for error object formatting
      * @returns {Function} No-op function
      */
-    errors: () => {},     // Silent - no error formatting
+    errors: noop,     // Silent - no error formatting
 
     /**
      * No-op splat formatter
      * Replaces winston.format.splat() for string interpolation
      * @returns {Function} No-op function
      */
-    splat: () => {},      // Silent - no string interpolation
+    splat: noop,      // Silent - no string interpolation
 
     /**
      * No-op JSON formatter
      * Replaces winston.format.json() for JSON output formatting
      * @returns {Function} No-op function
      */
-    json: () => {},       // Silent - no JSON formatting
+    json: noop,       // Silent - no JSON formatting
 
     /**
      * No-op printf formatter
      * Replaces winston.format.printf() for custom formatting
      * @returns {Function} No-op function
      */
-    printf: () => {}      // Silent - no custom formatting
+    printf: noop      // Silent - no custom formatting
   },
 
   /**
@@ -156,14 +158,14 @@ module.exports = {
      * Replaces winston.transports.File for file logging configuration
      * @param {Object} options - Transport configuration (ignored)
      */
-    File: function(){},    // Silent - no file transport creation
+    File: noop,    // Silent - no file transport creation
 
     /**
      * No-op console transport constructor  
      * Replaces winston.transports.Console for console logging configuration
      * @param {Object} options - Transport configuration (ignored)
      */
-    Console: function(){}  // Silent - no console transport creation
+    Console: noop  // Silent - no console transport creation
   }
 };
 
