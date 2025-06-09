@@ -64,3 +64,14 @@ test('backupEnvVars and restoreEnvVars round trip', () => withMockConsole('log',
   expect(process.env.TEMP_VAR).toBe('first'); //original value restored
   expect(process.env.EXTRA_VAR).toBeUndefined(); //added variable removed
 })));
+
+test('withMockConsole returns callback result', async () => { //verify helper passes result back
+  const result = await withMockConsole('log', () => 'ok'); //use helper with simple callback
+  expect(result).toBe('ok'); //returned value should match
+});
+
+test('withMockConsole restores console method', async () => { //ensure console restored after helper
+  const original = console.log; //save current console.log reference
+  await withMockConsole('log', () => console.log('run')); //invoke helper using log
+  expect(console.log).toBe(original); //console.log should be restored
+});
