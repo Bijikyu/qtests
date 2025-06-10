@@ -149,24 +149,27 @@ function reload(relPath) {
   
   try {
     // Convert relative path to absolute path for reliable cache operations
-    // Using __dirname ensures path is resolved relative to this testHelpers module
+    // Using __dirname ensures path is resolved relative to this testHelpers module location
     // This prevents issues when tests are run from different working directories
+    // Absolute paths are required for reliable Node.js cache operations
     const fullPath = path.resolve(__dirname, relPath);
     
     // Remove module from require cache to force fresh loading
-    // require.resolve ensures we use the same path resolution as require()
-    // This is critical - if paths don't match exactly, cache clearing fails
+    // require.resolve ensures we use exact same path resolution as require() will use
+    // This is critical - if cache key doesn't match require() path exactly, cache clearing fails
+    // Two-step process: resolve path, then delete from cache using resolved path
     delete require.cache[require.resolve(fullPath)];
     
-    // Require the module fresh from disk
-    // This will re-execute the module's initialization code
-    // Any module-level variables will be reset to initial values
+    // Require the module fresh from disk after cache clearing
+    // This triggers complete module re-evaluation including all initialization code
+    // Any module-level variables, closures, and state will be reset to initial values
+    // Essential for testing module loading behavior and configuration scenarios
     const mod = require(fullPath);
     
-    // Log successful completion for debugging
+    // Log successful completion for debugging module reload timing
     console.log(`reload is returning module`);
     
-    // Return the freshly loaded module
+    // Return the freshly loaded module instance for use in tests
     return mod;
     
   } catch (err) {

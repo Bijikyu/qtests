@@ -126,27 +126,47 @@ function getAxios() {
   console.log(`getAxios is running with offline: ${isOffline}`); // logging function start per requirements
   
   try {
-    if (axiosCache) { // return cached module if available
+    // Check cache first to avoid repeated module loading and maintain consistency
+    // Caching prevents different axios implementations during single test run
+    // Essential for predictable behavior when offline mode doesn't change mid-test
+    // Cache also improves performance by avoiding repeated require() calls
+    if (axiosCache) {
       console.log(`getAxios is returning ${axiosCache}`); // logging return value per requirements
       return axiosCache;
     }
 
-    let axiosImplementation; // module holder variable
+    // Declare variable to hold appropriate axios implementation
+    // Declared outside if/else to maintain consistent scope and enable caching
+    let axiosImplementation;
 
     if (isOffline) {
-      axiosImplementation = require(`../stubs/axios`); // load stub for offline mode with backticks
+      // Load stub implementation for offline mode to prevent network calls
+      // Stub provides immediate promise resolution without actual HTTP requests
+      // Critical for test isolation and preventing external dependencies
+      // Relative path used to ensure stub loading works regardless of test location
+      axiosImplementation = require(`../stubs/axios`);
     } else {
-      axiosImplementation = require(`axios`); // load real axios for online mode with backticks
+      // Load real axios module for online mode when network calls are intended
+      // Standard require path allows npm to resolve axios from node_modules
+      // Used when tests need to verify actual HTTP behavior or integration testing
+      axiosImplementation = require(`axios`);
     }
 
-    axiosCache = axiosImplementation; // store in cache for future use
+    // Cache the loaded implementation for consistent behavior and performance
+    // Prevents mode switching from loading different implementations mid-test
+    // Ensures same axios instance used throughout test execution for predictability
+    axiosCache = axiosImplementation;
     console.log(`getAxios is returning ${axiosCache}`); // logging return value per requirements
     return axiosCache;
 
   } catch (error) {
-    console.log(`getAxios error: ${error.message}`); // error logging per requirements
-    const fallbackAxios = require(`../stubs/axios`); // load fallback stub with backticks
-    axiosCache = fallbackAxios; // store fallback in cache
+    // Handle module loading failures by falling back to stub implementation
+    // Real axios might fail to load due to missing dependency or installation issues
+    // Stub fallback ensures tests can continue running even with axios installation problems
+    // This graceful degradation prevents test suite failures due to dependency issues
+    console.log(`getAxios error: ${error.message}`);
+    const fallbackAxios = require(`../stubs/axios`);
+    axiosCache = fallbackAxios; // cache fallback to maintain consistency
     console.log(`getAxios is returning ${axiosCache}`); // logging return value per requirements
     return axiosCache;
   }

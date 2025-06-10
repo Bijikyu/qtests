@@ -116,21 +116,45 @@ const separator = process.platform === 'win32' ? ';' : ':';
 // Only add separator if there's existing NODE_PATH content
 process.env.NODE_PATH = stubsPath + (currentNodePath ? separator + currentNodePath : '');
 
-// Force Node.js to recognize the updated NODE_PATH
-// _initPaths() is Node.js internal function that reads NODE_PATH
-// Normally NODE_PATH is only read at Node.js startup
-// We must call this to apply our changes mid-execution
-// This updates Module._nodeModulePaths and other internal state
+// Force Node.js to recognize the updated NODE_PATH for dynamic module resolution
+// _initPaths() is Node.js internal function that reads NODE_PATH and updates module search paths
+// Normally NODE_PATH is only read at Node.js startup, but we need to apply changes mid-execution
+// This updates Module._nodeModulePaths and other internal resolution state to include our stubs directory
 require('module')._initPaths();
-const origLoad = Module._load; //(store original load function)
-const stubMap = { axios: 'axios.js', winston: 'winston.js' }; //(map of stub files for quick lookup, extend with additional stubs as needed)
-Module._load = function(request, parent, isMain){ //(override to redirect specific modules)
-  const stubFile = stubMap[request]; //(retrieve stub file if available)
-  if(stubFile){ //(load stub if mapping exists)
-    return origLoad(path.join(stubsPath, stubFile), parent, isMain); //(load mapped stub dynamically)
-  }
-  return origLoad(request, parent, isMain); //(default loader for other modules)
 
+// Store original Module._load function for delegation to maintain normal module loading behavior
+// _load is the core module loading function that handles actual file reading and module instantiation
+// We preserve this to ensure non-stubbed modules load exactly as they would without qtests
+const origLoad = Module._load;
+
+// Create fast lookup map for stub file resolution to avoid string manipulation on every require
+// Simple object lookup is faster than string processing or file system checks
+// Keys are module names as they appear in require() calls, values are actual stub filenames
+// This mapping allows for different naming conventions between npm packages and stub files
+const stubMap = { 
+  axios: 'axios.js',     // HTTP client library redirected to no-op stub
+  winston: 'winston.js'  // Logging library redirected to silent stub
+};
+
+// Override Node.js Module._load to intercept and redirect specific module loads
+// _load is chosen over _resolveFilename because it handles the complete loading process
+// Function signature must match Node.js internal API exactly for compatibility
+Module._load = function(request, parent, isMain){
+  // Check if the requested module has a registered stub implementation
+  // Fast object property lookup avoids expensive string operations or file system access
+  const stubFile = stubMap[request];
+  
+  if(stubFile){
+    // Load stub implementation by constructing path and delegating to original loader
+    // path.join ensures cross-platform compatibility for file path construction
+    // Delegation to origLoad maintains proper module loading semantics and caching
+    return origLoad(path.join(stubsPath, stubFile), parent, isMain);
+  }
+  
+  // Delegate to original loader for all non-stubbed modules
+  // This ensures qtests doesn't interfere with normal Node.js module resolution
+  // Maintains full compatibility with existing codebases and module ecosystem
+  return origLoad(request, parent, isMain);
 };
 
 /**
