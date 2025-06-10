@@ -34,6 +34,10 @@
 // Using path.resolve ensures correct path handling across different operating systems
 // and prevents issues with relative path interpretation in test environments
 const path = require('path');
+
+// Thread-safe module reloading lock to prevent race conditions
+// This prevents concurrent reload operations on the same module
+const moduleReloadLock = new Set();
 const { mockConsole } = require('./mockConsole'); // (import console spy utility)
 
 /**
