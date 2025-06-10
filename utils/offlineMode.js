@@ -26,7 +26,8 @@
  */
 
 // Import logging utilities for consistent debugging output
-const { logStart, logReturn } = require('../lib/logUtils');
+const { logStart, logReturn, setLogging } = require('../lib/logUtils'); //(import setLogging)
+if (process.env.NODE_ENV !== 'test') setLogging(false); //(mute logs outside tests)
 
 // Initialize offline mode state - starts in online mode by default
 // This state determines whether to use real or stub implementations
