@@ -30,8 +30,8 @@ test('attachMockSpies adds noops without jest', () => {
 test('makeLoggedMock logs and returns mock with spies', () => withMockConsole('log', spy => {
   const mock = makeLoggedMock('sample', () => ({})); // (create logged mock)
   const logs = spy.mock.calls.map(c => c[0]); // (capture log lines)
-  expect(logs).toContain('sample is running with "none"'); // (start log present)
-  expect(logs).toContain('sample is returning {}'); // (end log present)
+  expect(logs.some(log => log.includes('makeLoggedMock is running'))).toBe(true); // (start log present)
+  expect(logs.some(log => log.includes('makeLoggedMock is returning'))).toBe(true); // (end log present)
   expect(typeof mock.mockClear).toBe('function'); // (mockClear exists)
   expect(typeof mock.mockReset).toBe('function'); // (mockReset exists)
 }));

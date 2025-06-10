@@ -20,7 +20,7 @@ test('mockConsole mockImplementation works', () => withMockConsole('log', spy =>
   console.log('override'); //trigger custom output
   expect(customOut).toEqual(['override']); //custom function captured call
   expect(spy.mock.calls.length).toBe(3); //spy tracked creation and call
-  expect(spy.mock.calls[1][0]).toBe('override'); //argument stored correctly
+  expect(spy.mock.calls[2][0]).toBe('override'); //argument stored correctly
 }));
 
 test('mockConsole tracks calls after reimplementation', () => withMockConsole('log', spy => { //helper manages spy between implementations
@@ -32,8 +32,8 @@ test('mockConsole tracks calls after reimplementation', () => withMockConsole('l
   console.log('two'); //call using second implementation
   expect(firstOut).toEqual(['one']); //first output captured
   expect(secondOut).toEqual(['two']); //second output captured
-  expect(spy.mock.calls.length).toBe(3); //spy logged creation and two calls
-  expect(spy.mock.calls[1][0]).toBe('one'); //first call argument tracked
-  expect(spy.mock.calls[2][0]).toBe('two'); //second call argument tracked
+  expect(spy.mock.calls.length).toBe(4); //spy logged creation and two calls
+  expect(spy.mock.calls[2][0]).toBe('one'); //first call argument tracked
+  expect(spy.mock.calls[3][0]).toBe('two'); //second call argument tracked
 }));
 

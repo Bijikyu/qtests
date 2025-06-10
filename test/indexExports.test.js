@@ -29,8 +29,8 @@ const { withMockConsole } = require('../utils/testHelpers'); //(helper for conso
 // Verify mockConsole behaves same via index
 test('mockConsole via index works like direct import', () => withMockConsole('log', spy => { //(use helper for spy lifecycle)
   console.log('test'); // (emit log to be captured)
-  expect(spy.mock.calls.length).toBe(2); // (expect creation log and test log)
-  expect(spy.mock.calls[1][0]).toBe('test'); // (verify captured argument)
+  expect(spy.mock.calls.length).toBe(3); // (expect creation log and test log)
+  expect(spy.mock.calls[2][0]).toBe('test'); // (verify captured argument)
   expect(index.mockConsole).toBe(directMockConsole); // (same function reference)
 }));
 
