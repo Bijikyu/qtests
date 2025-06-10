@@ -84,17 +84,7 @@ function mockConsole(method) {
   }
 }
 
-/**
- * Export mockConsole utilities
- * 
- * Using object export pattern to allow for future expansion while
- * maintaining backward compatibility. The mockConsole function is
- * the primary interface, but additional console-related utilities
- * could be added to this module in the future.
- */
+// export mockConsole utilities at bottom per requirements
 module.exports = {
-  // Primary console mocking function
-  // Captures console output during testing to prevent output pollution
-  // while allowing verification of logging behavior
-  mockConsole
+  mockConsole // primary console mocking function
 };

@@ -216,26 +216,11 @@ function clearOfflineCache() { // reset caches for testing purposes
   }
 }
 
-/**
- * Export offline mode utilities
- * 
- * These functions work together to provide comprehensive offline mode testing:
- * - setOfflineMode and isOfflineMode manage the offline state
- * - getAxios and getQerrors provide automatic implementation switching
- * 
- * Usage pattern:
- * 1. Call setOfflineMode(true) to enable offline testing
- * 2. Use getAxios() and getQerrors() in application code
- * 3. Run tests - they will use stub implementations automatically
- * 4. Call setOfflineMode(false) to return to online mode
- */
+// export offline mode utilities at bottom per requirements
 module.exports = {
-  // Control offline mode state
-  setOfflineMode,
-  isOfflineMode,
-
-  // Get appropriate implementations based on offline mode
-  getAxios,
-  getQerrors,
-  clearOfflineCache
+  setOfflineMode, // control offline mode state
+  isOfflineMode, // get current offline state
+  getAxios, // get appropriate axios implementation
+  getQerrors, // get appropriate qerrors implementation
+  clearOfflineCache // reset module caches
 };

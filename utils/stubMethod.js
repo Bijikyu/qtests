@@ -79,7 +79,5 @@ function stubMethod(obj, methodName, stubFn) {
   }
 }
 
-// Export the stubMethod function as the primary module interface
-// Single function export pattern used because this module has one clear purpose
-// Users can require this directly or access via the main qtests module
+// export stubMethod function at bottom per requirements
 module.exports = stubMethod;

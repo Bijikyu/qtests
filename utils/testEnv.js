@@ -385,19 +385,17 @@ function initSearchTest() {
   }, 'none');
 }
 
-// Export all functions for flexible test environment management
-// Each function serves a specific purpose and can be used independently
-// or in combination for complex test scenarios
+// export all test environment functions at bottom per requirements
 module.exports = {
-  defaultEnv,           // Export default env values
-  setTestEnv,           // Set standard test environment variables
-  saveEnv,              // Capture current environment for restoration
-  restoreEnv,           // Restore previously saved environment
-  attachMockSpies,      // Export attachMockSpies helper //(added export for spy helper)
-  makeLoggedMock,       // Export makeLoggedMock factory //(added export for logged mock creation)
-  createScheduleMock,   // Create scheduler/throttling mock
-  createQerrorsMock,    // Create error handler mock
-  createAxiosMock,      // Create HTTP client mock adapter
-  resetMocks,           // Reset multiple mocks at once
-  initSearchTest        // Complete setup for search/API testing
+  defaultEnv, // default test environment values
+  setTestEnv, // set standard test environment variables
+  saveEnv, // capture current environment for restoration
+  restoreEnv, // restore previously saved environment
+  attachMockSpies, // attach jest spy helpers to mocks
+  makeLoggedMock, // factory for creating logged mocks
+  createScheduleMock, // create scheduler/throttling mock
+  createQerrorsMock, // create error handler mock
+  createAxiosMock, // create http client mock adapter
+  resetMocks, // reset multiple mocks at once
+  initSearchTest // complete setup for search/api testing
 };

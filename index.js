@@ -20,32 +20,14 @@ const { setup } = require('./lib/setup');
 const stubs = require('./lib/stubs');
 
 
-/**
- * Main module exports
- * 
- * Structure rationale:
- * - Top-level utilities (stubMethod, mockConsole, testEnv) are the most commonly used
- * - setup is separate because it modifies global Node.js behavior and should be explicit
- * - stubs are grouped under a namespace to avoid naming conflicts and provide clarity
- * 
- * This structure allows both simple usage (require('qtests').stubMethod) and
- * organized access to related functionality (require('qtests').stubs.axios)
- */
+// export main module utilities at bottom per requirements
 module.exports = {
-  // Core utilities - most frequently used testing functions
-  stubMethod,      // Method replacement utility for isolating dependencies
-  mockConsole,     // Console output capture for testing logging behavior
-
-  // Environment management utilities
-  testEnv,         // Environment and mock management for complex test scenarios
-  offlineMode,     // Offline/online mode utility with automatic axios and qerrors switching
-  testHelpers,     // Advanced testing utilities for module reloading and mocking
-
-  // Setup utility - separated because it modifies global Node.js module resolution
-  // Users must explicitly invoke this function to enable stub resolution
-  setup,           // Call this to activate stubs when desired
-
-  // Stub library - organized under namespace to group related mock implementations
-  // This prevents naming conflicts and makes it clear these are replacement modules
-  stubs
+  stubMethod, // method replacement utility for isolating dependencies
+  mockConsole, // console output capture for testing logging behavior
+  testEnv, // environment and mock management for complex test scenarios
+  offlineMode, // offline/online mode utility with automatic switching
+  testHelpers, // advanced testing utilities for module reloading and mocking
+  setup, // call this to activate stubs when desired
+  stubs // stub library organized under namespace
+}
 };
