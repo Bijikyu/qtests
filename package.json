@@ -17,8 +17,7 @@
   "author": "Q",
   "license": "MIT",
   "dependencies": {
-    "@types/node": "^22.13.11",
-    "axios": "^1.9.0"
+    "@types/node": "^22.13.11"
   },
   "devDependencies": {
     "jest": "^29.7.0",
