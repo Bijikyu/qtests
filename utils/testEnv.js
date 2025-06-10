@@ -20,7 +20,8 @@
  */
 
 // Import logging utilities including wrapper for consistent logs
-const { logStart, logReturn, executeWithLogs } = require('../lib/logUtils'); //(add executeWithLogs and retain existing helpers)
+const { logStart, logReturn, executeWithLogs, setLogging } = require('../lib/logUtils'); //(import setLogging for optional disable)
+if (process.env.NODE_ENV !== 'test') setLogging(false); //(mute logs outside tests)
 
 const defaultEnv = { // (shared env defaults for tests)
   GOOGLE_API_KEY: 'key', // (fake google api key)
