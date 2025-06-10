@@ -1,6 +1,6 @@
 # qtests
 
-**qtests** provides lightweight tools and stubs for seamless testing in Node.js projects. It includes utilities for method stubbing and drop-in replacements for common modules like `axios` and `winston` so you can run tests without making real HTTP requests or generating logs.
+**qtests** is a comprehensive Node.js testing framework that provides zero-dependency utilities for fast, isolated unit testing. It includes advanced method stubbing, console mocking, environment management, and drop-in replacements for popular modules like `axios` and `winston` so you can run tests without external dependencies, network calls, or log pollution.
 
 ---
 
@@ -18,159 +18,316 @@ yarn add qtests --dev
 
 ---
 
-## Contents
+## Features
 
-* **utils/stubMethod.js**: Replace an object’s method with a stub, restoring it after the test.
-* **setup.js**: Configures Node to resolve stub modules (like `axios` or `winston`) during tests.
-* **stubs/axios.js**: No-op axios stub.
-* **stubs/winston.js**: No-op winston logger stub.
-* **index.js**: Entry point with unified exports.
+* **Method Stubbing**: Temporarily replace object methods with automatic restoration
+* **Console Mocking**: Jest-compatible console spies with fallback for vanilla Node.js
+* **Environment Management**: Safe backup and restore of environment variables
+* **Module Stubs**: Drop-in replacements for axios, winston, and other common dependencies
+* **Offline Mode**: Automatic stub resolution when external services are unavailable
+* **Zero Dependencies**: No production dependencies to bloat your project
+* **Thread Safe**: Concurrent test execution support with race condition prevention
+* **Framework Agnostic**: Works with Jest, Mocha, and vanilla Node.js testing
 
 ---
 
-## How to Use
+## Quick Start
 
-### 1. Stubbing Object Methods
+### Basic Setup
 
-Use the `stubMethod` utility to temporarily replace any method on any object during a test. After your test, restore the original method.
+```js
+// At the top of your test files
+require('qtests/setup');
+
+// Your tests now use stubs automatically
+const axios = require('axios'); // Uses qtests axios stub
+const winston = require('winston'); // Uses qtests winston stub
+```
+
+### Method Stubbing
 
 ```js
 const { stubMethod } = require('qtests');
 
-const myObj = {
-	greet: name => `Hello, ${name}!`
-};
+const myObj = { greet: name => `Hello, ${name}!` };
 
 // Stub the method
-const restore = stubMethod(myObj, 'greet', name => 'Hi!');
-// myObj.greet('Brian') === 'Hi!'
+const restore = stubMethod(myObj, 'greet', () => 'Hi!');
+console.log(myObj.greet('Brian')); // 'Hi!'
 
-// Restore the original after test
+// Restore original
 restore();
-// myObj.greet('Brian') === 'Hello, Brian!'
+console.log(myObj.greet('Brian')); // 'Hello, Brian!'
+```
+
+### Console Mocking
+
+```js
+const { mockConsole } = require('qtests');
+
+const spy = mockConsole('log');
+console.log('test message');
+
+console.log(spy.mock.calls); // [['test message']]
+spy.mockRestore(); // Restore original console.log
+```
+
+### Environment Management
+
+```js
+const { setTestEnv, backupEnvVars, restoreEnvVars } = require('qtests');
+
+// Set test environment
+setTestEnv(); // Sets NODE_ENV=test, DEBUG=qtests:*
+
+// Backup and restore environment
+const backup = backupEnvVars();
+process.env.TEST_VAR = 'modified';
+restoreEnvVars(backup); // TEST_VAR removed, original state restored
 ```
 
 ---
 
-### 2. Stubbing Modules for All Tests
+## Advanced Usage
 
-Before running your tests, call the setup helper so Node.js loads the stubs directory first. Until this is done, modules like `axios` or `winston` will resolve to their real implementations.
-
-**In your test runner setup (e.g., Mocha’s `--require` or Jest’s setup):**
+### Offline Mode
 
 ```js
-require('qtests').setup();
-// or
-require('qtests/setup');
+const { setOfflineMode, getAxios } = require('qtests');
+
+// Enable offline mode
+setOfflineMode(true);
+
+// Get stubbed axios automatically
+const axios = getAxios(); // Returns stub when offline
+await axios.get('/api/data'); // Returns {} instead of real request
 ```
 
-Or, add it as a pre-hook in your test command:
-
-```bash
-mocha --require qtests/setup
-```
-
-Now, any `require('axios')` or `require('winston')` in your code will use the stubs from `qtests/stubs/`.
-
----
-
-### 3. Using Provided Stubs Directly
-
-You can also import the provided stubs for manual mocking:
+### Test Environment Helpers
 
 ```js
-const { stubs } = require('qtests');
+const { createAxiosMock, createScheduleMock } = require('qtests');
 
-// Use axios stub
-await stubs.axios.get(`https://anything`); // Returns {}
-await stubs.axios.post('https://anything', {}); // Returns {}
+// Create specialized mocks
+const axiosMock = createAxiosMock();
+axiosMock.onGet('/users').reply(200, { users: [] });
 
-// Use winston stub
-const logger = stubs.winston.createLogger();
-logger.info('This will not output anything!');
+const scheduleMock = createScheduleMock();
+await scheduleMock(() => console.log('Executed immediately'));
 ```
 
----
-
-### 4. Example: Testing a Function That Logs and Makes HTTP Calls
-
-Suppose you have a function that uses both `axios` and `winston`:
+### Integration with Jest
 
 ```js
-// myFunction.js
-const axios = require('axios');
-const winston = require('winston');
-const logger = winston.createLogger();
+// qtests automatically detects Jest and enhances functionality
+const { withMockConsole } = require('qtests');
 
-module.exports = async function myFunction() {
-	await axios.post('https://api.example.com/test', {});
-	logger.info('Posted to API');
-};
-```
-
-**Test:**
-
-```js
-require('qtests').setup(); // Must be called before requiring your module
-
-const myFunction = require('./myFunction'); // Will use stubbed axios and winston
-
-(async () => {
-	await myFunction(); // Does nothing real: no network, no logs!
-})();
-```
-
----
-
-### 5. Directory Structure
-
-A typical project setup might look like:
-
-```
-project-root/
-├── node_modules/
-├── test/
-│   └── my-test.js
-├── myFunction.js
-├── package.json
-└── ... (qtests installed here)
+test('console output', async () => {
+  await withMockConsole('log', (spy) => {
+    console.log('test');
+    expect(spy.mock.calls[0][0]).toBe('test');
+  });
+});
 ```
 
 ---
 
 ## API Reference
 
-### `stubMethod(obj, method, replacement)`
+### Core Utilities
 
-* **obj**: The object whose method you want to stub.
-* **method**: The string name of the method to replace.
-* **replacement**: The new function to use during the test.
+#### `stubMethod(obj, methodName, replacement)`
+- **obj**: Object containing the method to stub
+- **methodName**: String name of the method to replace
+- **replacement**: Function to use as replacement
+- **Returns**: Function to restore original method
 
-**Returns**: A function. Call it to restore the original method after the test.
+#### `mockConsole(method)`
+- **method**: Console method to mock ('log', 'error', 'warn', 'info')
+- **Returns**: Spy object with `mock.calls` array and `mockRestore()` function
+
+#### `setTestEnv()`
+Sets standard test environment variables (NODE_ENV=test, DEBUG=qtests:*)
+
+#### `backupEnvVars()` / `restoreEnvVars(backup)`
+Safe environment variable backup and restoration
+
+### Offline Mode
+
+#### `setOfflineMode(enabled)`
+- **enabled**: Boolean to enable/disable offline mode
+
+#### `getAxios()` / `getQerrors()`
+Returns appropriate stub when offline mode is enabled
+
+### Test Helpers
+
+#### `withMockConsole(method, callback)`
+- **method**: Console method to mock
+- **callback**: Function to execute with mocked console
+- **Returns**: Promise resolving to callback result
+
+#### `createAxiosMock()` / `createScheduleMock()` / `createQerrorsMock()`
+Factory functions for creating specialized test mocks
 
 ---
 
-### `setup.js`
+## Module Stubs
 
-When required, adds the included `stubs/` directory to Node’s module resolution path, so stubs are used automatically.
+### Axios Stub
+
+```js
+const axios = require('axios'); // When qtests/setup is loaded
+
+// All HTTP methods return empty objects
+await axios.get('/api'); // {}
+await axios.post('/api', data); // {}
+await axios.put('/api', data); // {}
+await axios.delete('/api'); // {}
+```
+
+### Winston Stub
+
+```js
+const winston = require('winston'); // When qtests/setup is loaded
+
+const logger = winston.createLogger();
+logger.info('This produces no output'); // Silent
+logger.error('This also produces no output'); // Silent
+```
 
 ---
 
-### `stubs/axios.js` and `stubs/winston.js`
+## Testing Patterns
 
-* `axios.post`: An async function that returns an empty object.
-* `axios.get`: An async function that returns an empty object.
-* `winston.createLogger()`: Returns an object with no-op logging methods (`info`, `warn`, `error`, etc.).
+### Isolated Unit Tests
+
+```js
+require('qtests/setup');
+const { stubMethod, mockConsole } = require('qtests');
+
+// Your module under test
+const myModule = require('./myModule');
+
+test('isolated functionality', async () => {
+  // Stub external dependencies
+  const restore = stubMethod(myModule.deps, 'externalCall', () => 'mocked');
+  
+  // Mock console output
+  const spy = mockConsole('log');
+  
+  // Test your function
+  const result = await myModule.doSomething();
+  
+  // Verify behavior
+  expect(result).toBe('expected');
+  expect(spy.mock.calls.length).toBe(1);
+  
+  // Cleanup
+  restore();
+  spy.mockRestore();
+});
+```
+
+### Integration Testing
+
+```js
+require('qtests/setup');
+const { setTestEnv, withMockConsole } = require('qtests');
+
+beforeEach(() => {
+  setTestEnv(); // Consistent test environment
+});
+
+test('full workflow', async () => {
+  await withMockConsole('log', async (spy) => {
+    // Test complete workflow with mocked external calls
+    const result = await fullWorkflow();
+    
+    expect(result.success).toBe(true);
+    expect(spy.mock.calls.some(call => 
+      call[0].includes('workflow completed')
+    )).toBe(true);
+  });
+});
+```
 
 ---
 
-## FAQ
+## Best Practices
 
-**Q: Will this module interfere with my production code?**
-A: No! Only include it in your test setup. Your real code and dependencies are untouched in production.
+### 1. Always Use Setup
+```js
+// ✅ Correct - at the very top of test files
+require('qtests/setup');
+const myModule = require('./myModule');
 
-**Q: Can I extend or customize the stubs?**
-A: Yes! You can copy and modify the stubs as needed or contribute improvements.
+// ❌ Wrong - setup after module requires
+const myModule = require('./myModule');
+require('qtests/setup');
+```
+
+### 2. Clean Up After Tests
+```js
+test('example', () => {
+  const restore = stubMethod(obj, 'method', stub);
+  const spy = mockConsole('log');
+  
+  // ... test code ...
+  
+  // Always restore
+  restore();
+  spy.mockRestore();
+});
+```
+
+### 3. Use Environment Helpers
+```js
+const { withSavedEnv } = require('qtests');
+
+test('environment test', async () => {
+  await withSavedEnv(async () => {
+    process.env.TEST_VAR = 'value';
+    // Test code here
+    // Environment automatically restored
+  });
+});
+```
+
+---
+
+## Troubleshooting
+
+### Common Issues
+
+**Stubs not working**: Ensure `require('qtests/setup')` is called before requiring modules that should be stubbed.
+
+**Console pollution**: Use `mockConsole()` to capture and verify console output instead of letting it pollute test output.
+
+**Environment leaks**: Use `backupEnvVars()` and `restoreEnvVars()` or `withSavedEnv()` to prevent environment variable pollution between tests.
+
+**Race conditions**: qtests is thread-safe, but ensure proper cleanup in concurrent test scenarios.
+
+### Performance Tips
+
+- Use qtests stubs instead of full mocking libraries for better performance
+- Enable offline mode for tests that don't need real external services
+- Use environment helpers to avoid repeated setup/teardown
+
+---
+
+## Contributing
+
+qtests uses a zero-dependency philosophy for production code. All utilities are implemented with vanilla Node.js to ensure minimal impact on consumer projects.
+
+### Development Setup
+
+```bash
+git clone https://github.com/your-repo/qtests
+cd qtests
+npm install # Installs dev dependencies only
+npm test # Run the test suite
+```
 
 ---
 
@@ -180,6 +337,6 @@ MIT
 
 ---
 
-This module helps you run fast, reliable, side-effect-free tests—no HTTP calls, no logs, no real file access—using simple, explicit stubbing for any object or module.
+**qtests** enables fast, reliable, side-effect-free testing with minimal configuration. Perfect for unit testing Node.js applications that interact with external services, databases, or logging systems.
 
 **Happy testing!**
