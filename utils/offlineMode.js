@@ -174,49 +174,46 @@ function getAxios() {
  * qerrors.report(new Error('Test error'));
  */
 function getQerrors() {
-  logStart('getQerrors', `offline: ${isOffline}`);
-
+  console.log(`getQerrors is running with offline: ${isOffline}`); // logging function start per requirements
+  
   try {
-    if (qerrorsCache) { // (return cached module if available)
-      console.log('getQerrors returning cached qerrors'); // (notify cache use)
-      logReturn('getQerrors', 'cached qerrors');
+    if (qerrorsCache) { // return cached module if available
+      console.log(`getQerrors is returning ${qerrorsCache}`); // logging return value per requirements
       return qerrorsCache;
     }
 
-    let qerrorsImplementation; // (module holder)
+    let qerrorsImplementation; // module holder variable
 
     if (isOffline) {
-      qerrorsImplementation = { qerrors: () => {} }; // (create stub offline)
-      console.log('getQerrors returning stub qerrors for offline mode');
+      qerrorsImplementation = { qerrors: () => {} }; // create stub for offline mode
     } else {
-      qerrorsImplementation = require('qerrors'); // (load real qerrors)
-      console.log('getQerrors returning real qerrors for online mode');
+      qerrorsImplementation = require(`qerrors`); // load real qerrors for online mode with backticks
     }
 
-    qerrorsCache = qerrorsImplementation; // (store in cache)
-    logReturn('getQerrors', 'qerrors implementation');
+    qerrorsCache = qerrorsImplementation; // store in cache for future use
+    console.log(`getQerrors is returning ${qerrorsCache}`); // logging return value per requirements
     return qerrorsCache;
 
   } catch (error) {
-    // Handle missing qerrors dependency gracefully
-    // qerrors is often an optional dependency, so missing it shouldn't break tests
-    console.log(`qerrors module not available: ${error.message}`);
-
-    // Always return stub implementation if real qerrors is unavailable
-    // This ensures tests continue to work regardless of qerrors installation
-    const fallbackQerrors = { qerrors: () => {} }; // (create fallback stub)
-    qerrorsCache = fallbackQerrors; // (store fallback in cache)
-    logReturn('getQerrors', 'fallback qerrors stub');
+    console.log(`getQerrors error: ${error.message}`); // error logging per requirements
+    const fallbackQerrors = { qerrors: () => {} }; // create fallback stub
+    qerrorsCache = fallbackQerrors; // store fallback in cache
+    console.log(`getQerrors is returning ${qerrorsCache}`); // logging return value per requirements
     return qerrorsCache;
   }
 }
 
-// Reset caches for testing purposes //(allow module reload)
-function clearOfflineCache() {
-  logStart('clearOfflineCache');
-  axiosCache = undefined; // (clear axios cache)
-  qerrorsCache = undefined; // (clear qerrors cache)
-  logReturn('clearOfflineCache', 'caches cleared');
+function clearOfflineCache() { // reset caches for testing purposes
+  console.log(`clearOfflineCache is running with none`); // logging function start per requirements
+  
+  try {
+    axiosCache = undefined; // clear axios cache
+    qerrorsCache = undefined; // clear qerrors cache
+    console.log(`clearOfflineCache is returning undefined`); // logging return value per requirements
+  } catch (error) {
+    console.log(`clearOfflineCache error: ${error.message}`); // error logging per requirements
+    throw error;
+  }
 }
 
 /**

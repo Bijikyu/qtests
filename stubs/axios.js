@@ -42,35 +42,8 @@
  * - Can be extended to return more realistic response shapes
  */
 module.exports = {
-  /**
-   * Mock implementation of axios.get()
-   * Works like axios.get but instantly resolves an empty object.
-   * @param {...any} args - Parameters ignored to prevent network use
-   * @returns {Promise<Object>} Promise resolving to empty object
-   */
-  get: async () => ({}) ,
-  /**
-   * Mock implementation of axios.post()
-   * 
-   * This replaces axios.post() calls with a function that immediately
-   * resolves to an empty object. This prevents real HTTP requests while
-   * maintaining the async interface that calling code expects.
-   * 
-   * Parameter handling:
-   * - Accepts any parameters (url, data, config) like real axios
-   * - Ignores all parameters to prevent side effects
-   * - Returns same type regardless of input for predictability
-   * 
-   * Why async with immediate resolution:
-   * - Maintains promise interface for await/then compatibility
-   * - Prevents "promise not resolved" errors in test code
-   * - Allows testing of async/await patterns
-   * - Fast execution (no actual network delay)
-   * 
-   * @param {...any} args - Any arguments (ignored for safety)
-   * @returns {Promise<Object>} Promise resolving to empty object
-   */
-  post: async () => ({}) // Always resolves to empty object, no actual HTTP request
+  get: async () => ({}), // mock get method returns empty object promise
+  post: async () => ({}) // mock post method returns empty object promise
 };
 
 /**

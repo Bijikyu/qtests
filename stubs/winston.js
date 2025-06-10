@@ -26,21 +26,7 @@
 
 const noop = () => {}; // shared no-op function for all stub methods
 
-/**
- * Winston stub module exports
- * 
- * This object structure matches winston's main exports, providing
- * replacement implementations for the most commonly used winston APIs.
- * 
- * Structure rationale:
- * - createLogger: Main winston function for creating logger instances
- * - format: Winston's formatting utilities for log messages
- * - transports: Winston's output destinations (file, console, etc.)
- * 
- * Each section implements enough of the API to prevent errors when
- * existing code calls winston methods during testing.
- */
-module.exports = {
+const winstonStub = {
   /**
    * Creates a no-op logger instance
    * 
@@ -168,6 +154,8 @@ module.exports = {
     Console: noop  // Silent - no console transport creation
   }
 };
+
+module.exports = winstonStub;
 
 /**
  * Usage in tests:
