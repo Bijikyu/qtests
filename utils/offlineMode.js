@@ -31,7 +31,11 @@ const { logStart, logReturn } = require('../lib/logUtils');
 // Initialize offline mode state - starts in online mode by default
 // This state determines whether to use real or stub implementations
 // Default to false (online) to match typical application runtime behavior
-let isOffline = false;
+let isOffline = false; // (tracks offline mode state)
+
+// Cache variables for required modules //(store loaded modules)
+let axiosCache; // (cache for axios module)
+let qerrorsCache; // (cache for qerrors module)
 
 /**
  * Toggle offline mode on or off
@@ -120,22 +124,25 @@ function getAxios() {
   logStart('getAxios', `offline: ${isOffline}`);
 
   try {
-    let axiosImplementation;
+    if (axiosCache) { // (return cached module if available)
+      console.log('getAxios returning cached axios'); // (notify cache use)
+      logReturn('getAxios', 'cached axios');
+      return axiosCache;
+    }
+
+    let axiosImplementation; // (module holder)
 
     if (isOffline) {
-      // Return stub implementation for offline mode
-      // This prevents actual network requests during offline testing
-      axiosImplementation = require('../stubs/axios');
+      axiosImplementation = require('../stubs/axios'); // (load stub offline)
       console.log('getAxios returning stub axios for offline mode');
     } else {
-      // Return real axios implementation for online mode
-      // This allows normal network behavior during online testing
-      axiosImplementation = require('axios');
+      axiosImplementation = require('axios'); // (load real axios online)
       console.log('getAxios returning real axios for online mode');
     }
 
+    axiosCache = axiosImplementation; // (store in cache)
     logReturn('getAxios', 'axios implementation');
-    return axiosImplementation;
+    return axiosCache;
 
   } catch (error) {
     // Handle missing axios dependency gracefully
@@ -144,9 +151,10 @@ function getAxios() {
 
     // Fall back to stub implementation if real axios is unavailable
     // This ensures tests can still run even with missing dependencies
-    const fallbackAxios = require('../stubs/axios');
+    const fallbackAxios = require('../stubs/axios'); // (load fallback stub)
+    axiosCache = fallbackAxios; // (store fallback in cache)
     logReturn('getAxios', 'fallback axios stub');
-    return fallbackAxios;
+    return axiosCache;
   }
 }
 
@@ -175,23 +183,25 @@ function getQerrors() {
   logStart('getQerrors', `offline: ${isOffline}`);
 
   try {
-    let qerrorsImplementation;
+    if (qerrorsCache) { // (return cached module if available)
+      console.log('getQerrors returning cached qerrors'); // (notify cache use)
+      logReturn('getQerrors', 'cached qerrors');
+      return qerrorsCache;
+    }
+
+    let qerrorsImplementation; // (module holder)
 
     if (isOffline) {
-      // Return no-op implementation for offline mode
-      // This prevents error reporting network requests during offline testing
-      qerrorsImplementation = {
-        qerrors: () => {} // No-op function that does nothing
-      };
+      qerrorsImplementation = { qerrors: () => {} }; // (create stub offline)
       console.log('getQerrors returning stub qerrors for offline mode');
     } else {
-      // Return real qerrors implementation for online mode
-      qerrorsImplementation = require('qerrors');
+      qerrorsImplementation = require('qerrors'); // (load real qerrors)
       console.log('getQerrors returning real qerrors for online mode');
     }
 
+    qerrorsCache = qerrorsImplementation; // (store in cache)
     logReturn('getQerrors', 'qerrors implementation');
-    return qerrorsImplementation;
+    return qerrorsCache;
 
   } catch (error) {
     // Handle missing qerrors dependency gracefully
@@ -200,13 +210,19 @@ function getQerrors() {
 
     // Always return stub implementation if real qerrors is unavailable
     // This ensures tests continue to work regardless of qerrors installation
-    const fallbackQerrors = {
-      qerrors: () => {} // No-op error reporting function
-    };
-
+    const fallbackQerrors = { qerrors: () => {} }; // (create fallback stub)
+    qerrorsCache = fallbackQerrors; // (store fallback in cache)
     logReturn('getQerrors', 'fallback qerrors stub');
-    return fallbackQerrors;
+    return qerrorsCache;
   }
+}
+
+// Reset caches for testing purposes //(allow module reload)
+function clearOfflineCache() {
+  logStart('clearOfflineCache');
+  axiosCache = undefined; // (clear axios cache)
+  qerrorsCache = undefined; // (clear qerrors cache)
+  logReturn('clearOfflineCache', 'caches cleared');
 }
 
 /**
@@ -229,5 +245,6 @@ module.exports = {
 
   // Get appropriate implementations based on offline mode
   getAxios,
-  getQerrors
+  getQerrors,
+  clearOfflineCache
 };
