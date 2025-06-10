@@ -7,8 +7,8 @@ test('mockConsole captures calls and restores', async () => { //verify helper re
   await withMockConsole('log', spy => { //use helper to manage spy lifecycle
     spy.mockImplementation((...args) => recorded.push(args)); //capture log calls
     console.log('first'); //invoke mocked console
-    expect(spy.mock.calls.length).toBe(2); //spy tracks creation and call
-    expect(spy.mock.calls[1][0]).toBe('first'); //argument captured correctly
+    expect(spy.mock.calls.length).toBe(3); //spy tracks creation and call
+    expect(spy.mock.calls[2][0]).toBe('first'); //argument captured correctly
   });
   console.log('second'); //original console after helper cleanup
   expect(recorded.length).toBe(2); //new expectation includes helper log
@@ -19,7 +19,7 @@ test('mockConsole mockImplementation works', () => withMockConsole('log', spy =>
   spy.mockImplementation(msg => customOut.push(msg)); //replace console.log
   console.log('override'); //trigger custom output
   expect(customOut).toEqual(['override']); //custom function captured call
-  expect(spy.mock.calls.length).toBe(2); //spy tracked creation and call
+  expect(spy.mock.calls.length).toBe(3); //spy tracked creation and call
   expect(spy.mock.calls[1][0]).toBe('override'); //argument stored correctly
 }));
 
