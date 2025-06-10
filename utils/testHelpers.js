@@ -496,10 +496,9 @@ function backupEnvVars() {
   console.log(`backupEnvVars is running with none`);
   
   try {
-    // Create deep copy of process.env to prevent reference issues
-    // JSON.parse(JSON.stringify()) is simple and sufficient for environment variables
-    // Environment variables are always strings, so this approach is safe
-    const envBackup = JSON.parse(JSON.stringify(process.env));
+    // Create copy of process.env using object spread for simplicity
+    // All env values are strings so shallow copy avoids reference issues
+    const envBackup = { ...process.env }; //(use spread copy to avoid JSON parsing & retain strings)
     
     // Log successful backup creation for debugging
     console.log(`backupEnvVars is returning environment backup`);
