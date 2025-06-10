@@ -51,48 +51,37 @@
  * spy.mockRestore();
  */
 function mockConsole(method) {
-  // Check if Jest mocking is available in the current environment
-  // Jest provides sophisticated mock functionality that we prefer when available
-  // The typeof check safely detects Jest without throwing errors in other environments
-  if (typeof jest !== 'undefined' && jest.fn) {
-    // Use Jest's spyOn functionality for superior mock capabilities
-    // Jest.spyOn creates a mock that automatically tracks calls, arguments, and return values
-    // The mockImplementation ensures the method does nothing (no console output)
-    return jest.spyOn(console, method).mockImplementation(() => {});
-  }
+  console.log(`mockConsole is running with ${method}`); // logging function start per requirements
   
-  // Fallback implementation for non-Jest environments
-  // This provides basic mock functionality with manual call tracking
-  // Ensures qtests works with any test framework, not just Jest
-  
-  // Store reference to original console method for restoration
-  const originalMethod = console[method];
-  
-  // Create manual call tracking array to simulate Jest mock.calls
-  const calls = [];
-  
-  // Replace console method with capturing implementation
-  // This function captures arguments but produces no output
-  console[method] = function(...args) {
-    // Store all arguments passed to the console method
-    // This allows test verification of what was logged
-    calls.push(args);
-  };
-  
-  // Return mock object with Jest-compatible interface
-  // This ensures consistent API regardless of underlying implementation
-  return {
-    // Mock call tracking that mimics Jest's mock.calls structure
-    mock: {
-      calls: calls
-    },
-    
-    // Restoration function that reinstates original console method
-    // Named mockRestore to match Jest's API for consistency
-    mockRestore: function() {
-      console[method] = originalMethod;
+  try {
+    if (typeof jest !== `undefined` && jest.fn) { // changed quotes to backticks per requirements
+      const jestSpy = jest.spyOn(console, method).mockImplementation(() => {}); // use jest spy for superior mocking
+      console.log(`mockConsole is returning ${jestSpy}`); // logging return value per requirements
+      return jestSpy;
     }
-  };
+    
+    const originalMethod = console[method]; // store original method for restoration
+    const calls = []; // manual call tracking for non-jest environments
+    
+    console[method] = function(...args) { // replace console method with capturing function
+      calls.push(args); // store arguments for test verification
+    };
+    
+    const mockObject = { // create mock object with jest-compatible interface
+      mock: {
+        calls: calls
+      },
+      mockRestore: function() {
+        console[method] = originalMethod; // restore original console method
+      }
+    };
+    
+    console.log(`mockConsole is returning ${mockObject}`); // logging return value per requirements
+    return mockObject;
+  } catch (error) {
+    console.log(`mockConsole error: ${error.message}`); // error logging for debugging
+    throw error;
+  }
 }
 
 /**

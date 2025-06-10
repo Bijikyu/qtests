@@ -49,10 +49,16 @@ const defaultEnv = { // (shared env defaults for tests)
  * @returns {boolean} Always returns true to confirm environment was set
  */
 function setTestEnv() {
-  return executeWithLogs('setTestEnv', () => { //(log wrapper around env setup)
-    Object.assign(process.env, defaultEnv); // (apply defaults)
-    return true; //(report success)
-  }, 'default values'); //(log parameter context)
+  console.log(`setTestEnv is running with default values`); // logging function start per requirements
+  
+  try {
+    Object.assign(process.env, defaultEnv); // apply default test environment variables
+    console.log(`setTestEnv is returning true`); // logging return value per requirements
+    return true;
+  } catch (error) {
+    console.log(`setTestEnv error: ${error.message}`); // error logging per requirements
+    throw error;
+  }
 }
 
 /**
@@ -75,10 +81,16 @@ function setTestEnv() {
  * @returns {Object} Copy of current environment variables
  */
 function saveEnv() {
-  return executeWithLogs('saveEnv', () => { //(wrap env capture in logger)
-    const savedEnv = { ...process.env }; // Spread operator for shallow copy
-    return savedEnv; //(return snapshot)
-  }, 'none');
+  console.log(`saveEnv is running with none`); // logging function start per requirements
+  
+  try {
+    const savedEnv = { ...process.env }; // spread operator for shallow copy of environment
+    console.log(`saveEnv is returning ${savedEnv}`); // logging return value per requirements
+    return savedEnv;
+  } catch (error) {
+    console.log(`saveEnv error: ${error.message}`); // error logging per requirements
+    throw error;
+  }
 }
 
 /**
@@ -101,11 +113,17 @@ function saveEnv() {
  * @returns {boolean} Always returns true to confirm restoration
  */
 function restoreEnv(savedEnv) {
-  return executeWithLogs('restoreEnv', () => { //(wrap env restore in logger)
-    Object.keys(process.env).forEach(k => delete process.env[k]); // clear env
-    Object.assign(process.env, savedEnv); // restore saved env
-    return true; //(confirm success)
-  }, 'env restore');
+  console.log(`restoreEnv is running with ${savedEnv}`); // logging function start per requirements
+  
+  try {
+    Object.keys(process.env).forEach(k => delete process.env[k]); // clear current environment variables
+    Object.assign(process.env, savedEnv); // restore saved environment state
+    console.log(`restoreEnv is returning true`); // logging return value per requirements
+    return true;
+  } catch (error) {
+    console.log(`restoreEnv error: ${error.message}`); // error logging per requirements
+    throw error;
+  }
 }
 
 /**
@@ -117,17 +135,23 @@ function restoreEnv(savedEnv) {
  * @param {Function} mock - Mock or spy object to enhance
  * @returns {Function} The same mock enhanced with spy methods
  */
-function attachMockSpies(mock) { // (adds mockClear/mockReset to provided mock)
-  logStart('attachMockSpies', 'mock'); // (trace function start)
-  if (typeof jest !== 'undefined') { // (verify jest availability)
-    mock.mockClear = jest.fn(); // (assign jest spy clear method)
-    mock.mockReset = jest.fn(); // (assign jest spy reset method)
-  } else {
-    mock.mockClear = () => {}; // (fallback noop clear in non-jest)
-    mock.mockReset = () => {}; // (fallback noop reset in non-jest)
+function attachMockSpies(mock) {
+  console.log(`attachMockSpies is running with ${mock}`); // logging function start per requirements
+  
+  try {
+    if (typeof jest !== `undefined`) { // verify jest availability with backticks
+      mock.mockClear = jest.fn(); // assign jest spy clear method
+      mock.mockReset = jest.fn(); // assign jest spy reset method
+    } else {
+      mock.mockClear = () => {}; // fallback noop clear in non-jest environments
+      mock.mockReset = () => {}; // fallback noop reset in non-jest environments
+    }
+    console.log(`attachMockSpies is returning ${mock}`); // logging return value per requirements
+    return mock;
+  } catch (error) {
+    console.log(`attachMockSpies error: ${error.message}`); // error logging per requirements
+    throw error;
   }
-  logReturn('attachMockSpies', mock); // (trace function return)
-  return mock; // (return enhanced mock for chaining)
 }
 
 /**
@@ -141,12 +165,18 @@ function attachMockSpies(mock) { // (adds mockClear/mockReset to provided mock)
  * @param {Function} creator - Function that returns the raw mock
  * @returns {any} Mock enhanced with spy helpers
  */
-function makeLoggedMock(name, creator) { //(wrapper for logged mock creation)
-  return executeWithLogs(name, () => { //(consistent log wrapper)
-    const mock = creator(); // (create raw mock)
-    attachMockSpies(mock); // (add jest spies if available)
-    return mock; // (return enhanced mock)
-  }, 'none');
+function makeLoggedMock(name, creator) {
+  console.log(`makeLoggedMock is running with ${name}, ${creator}`); // logging function start per requirements
+  
+  try {
+    const mock = creator(); // create raw mock using provided creator function
+    attachMockSpies(mock); // add jest spies if available
+    console.log(`makeLoggedMock is returning ${mock}`); // logging return value per requirements
+    return mock;
+  } catch (error) {
+    console.log(`makeLoggedMock error: ${error.message}`); // error logging per requirements
+    throw error;
+  }
 }
 
 /**
@@ -169,12 +199,19 @@ function makeLoggedMock(name, creator) { //(wrapper for logged mock creation)
  * @returns {Function} Mock scheduler function with Jest-compatible methods
  */
 function createScheduleMock() {
-  return makeLoggedMock('createScheduleMock', () => { //(log and spy helper)
-    const scheduleMock = function(fn) { // immediate scheduler mock
-      return Promise.resolve(fn()); // Execute and resolve instantly
+  console.log(`createScheduleMock is running with none`); // logging function start per requirements
+  
+  try {
+    const scheduleMock = function(fn) { // immediate scheduler mock function
+      return Promise.resolve(fn()); // execute and resolve instantly for fast tests
     };
-    return scheduleMock; // (returned to helper for spies)
-  });
+    attachMockSpies(scheduleMock); // add jest spies if available
+    console.log(`createScheduleMock is returning ${scheduleMock}`); // logging return value per requirements
+    return scheduleMock;
+  } catch (error) {
+    console.log(`createScheduleMock error: ${error.message}`); // error logging per requirements
+    throw error;
+  }
 }
 
 /**
@@ -197,12 +234,19 @@ function createScheduleMock() {
  * @returns {Function} Mock error handler with Jest-compatible methods
  */
 function createQerrorsMock() {
-  return makeLoggedMock('createQerrorsMock', () => { //(log and spy helper)
-    const qerrorsMock = function(...args) { // capture args for inspection
-      return args; // Return arguments for test inspection
+  console.log(`createQerrorsMock is running with none`); // logging function start per requirements
+  
+  try {
+    const qerrorsMock = function(...args) { // capture arguments for inspection
+      return args; // return arguments for test inspection
     };
-    return qerrorsMock; // (returned to helper for spies)
-  });
+    attachMockSpies(qerrorsMock); // add jest spies if available
+    console.log(`createQerrorsMock is returning ${qerrorsMock}`); // logging return value per requirements
+    return qerrorsMock;
+  } catch (error) {
+    console.log(`createQerrorsMock error: ${error.message}`); // error logging per requirements
+    throw error;
+  }
 }
 
 /**

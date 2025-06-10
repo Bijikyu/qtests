@@ -66,15 +66,16 @@ let qerrorsCache; // (cache for qerrors module)
  * setOfflineMode(false); // Switch back to online mode
  */
 function setOfflineMode(offline) {
-  logStart('setOfflineMode', offline);
-
-  // Update global offline state
-  // This flag is checked by getAxios and other functions to determine
-  // whether to return real or stub implementations
-  isOffline = offline;
-
-  logReturn('setOfflineMode', isOffline);
-  return isOffline;
+  console.log(`setOfflineMode is running with ${offline}`); // logging function start per requirements
+  
+  try {
+    isOffline = offline; // update global offline state flag
+    console.log(`setOfflineMode is returning ${isOffline}`); // logging return value per requirements
+    return isOffline;
+  } catch (error) {
+    console.log(`setOfflineMode error: ${error.message}`); // error logging per requirements
+    throw error;
+  }
 }
 
 /**
@@ -122,39 +123,31 @@ function isOfflineMode() {
  * const response = await axios.get('/api/data');
  */
 function getAxios() {
-  logStart('getAxios', `offline: ${isOffline}`);
-
+  console.log(`getAxios is running with offline: ${isOffline}`); // logging function start per requirements
+  
   try {
-    if (axiosCache) { // (return cached module if available)
-      console.log('getAxios returning cached axios'); // (notify cache use)
-      logReturn('getAxios', 'cached axios');
+    if (axiosCache) { // return cached module if available
+      console.log(`getAxios is returning ${axiosCache}`); // logging return value per requirements
       return axiosCache;
     }
 
-    let axiosImplementation; // (module holder)
+    let axiosImplementation; // module holder variable
 
     if (isOffline) {
-      axiosImplementation = require('../stubs/axios'); // (load stub offline)
-      console.log('getAxios returning stub axios for offline mode');
+      axiosImplementation = require(`../stubs/axios`); // load stub for offline mode with backticks
     } else {
-      axiosImplementation = require('axios'); // (load real axios online)
-      console.log('getAxios returning real axios for online mode');
+      axiosImplementation = require(`axios`); // load real axios for online mode with backticks
     }
 
-    axiosCache = axiosImplementation; // (store in cache)
-    logReturn('getAxios', 'axios implementation');
+    axiosCache = axiosImplementation; // store in cache for future use
+    console.log(`getAxios is returning ${axiosCache}`); // logging return value per requirements
     return axiosCache;
 
   } catch (error) {
-    // Handle missing axios dependency gracefully
-    // This allows qtests to work even if axios isn't installed
-    console.log(`getAxios error: ${error.message}`);
-
-    // Fall back to stub implementation if real axios is unavailable
-    // This ensures tests can still run even with missing dependencies
-    const fallbackAxios = require('../stubs/axios'); // (load fallback stub)
-    axiosCache = fallbackAxios; // (store fallback in cache)
-    logReturn('getAxios', 'fallback axios stub');
+    console.log(`getAxios error: ${error.message}`); // error logging per requirements
+    const fallbackAxios = require(`../stubs/axios`); // load fallback stub with backticks
+    axiosCache = fallbackAxios; // store fallback in cache
+    console.log(`getAxios is returning ${axiosCache}`); // logging return value per requirements
     return axiosCache;
   }
 }

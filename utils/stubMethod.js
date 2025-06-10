@@ -61,24 +61,22 @@
  * // fs.readFileSync restored to original implementation
  */
 function stubMethod(obj, methodName, stubFn) {
-  // Store the original method implementation before replacement
-  // This reference is captured in the closure and used for restoration
-  // Must be done before replacement to avoid losing the original reference
-  const originalMethod = obj[methodName];
+  console.log(`stubMethod is running with ${obj}, ${methodName}, ${stubFn}`); // logging function start per requirements
   
-  // Replace the method with the provided stub function
-  // This immediately changes the behavior of the method for all callers
-  // The stub function will be called instead of the original implementation
-  obj[methodName] = stubFn;
-  
-  // Return a restoration function that reinstates the original method
-  // This function is returned immediately, allowing the caller to control
-  // when restoration happens (typically in test cleanup)
-  return function restore() {
-    // Reinstate the original method implementation
-    // This completely undoes the stubbing operation
-    obj[methodName] = originalMethod;
-  };
+  try {
+    const originalMethod = obj[methodName]; // store original before replacement to enable restoration
+    obj[methodName] = stubFn; // replace method with stub implementation for testing isolation
+    
+    const restoreFunction = function restore() { // create restoration function for cleanup
+      obj[methodName] = originalMethod; // reinstate original method implementation
+    };
+    
+    console.log(`stubMethod is returning ${restoreFunction}`); // logging return value per requirements
+    return restoreFunction;
+  } catch (error) {
+    console.log(`stubMethod error: ${error.message}`); // error logging for debugging
+    throw error;
+  }
 }
 
 // Export the stubMethod function as the primary module interface
