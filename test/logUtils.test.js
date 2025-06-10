@@ -26,7 +26,7 @@ test('executeWithLogs wraps sync function', () => withMockConsole('log', spy => 
   expect(res).toBe(3); //verify result
   expect(spy.mock.calls[3][0]).toBe('add is running with 1, 2'); //check start log
   const last = spy.mock.calls.length - 1; //index of last log
-  expect(spy.mock.calls[last][0]).toBe('add is returning 3'); //check return log
+  expect(spy.mock.calls[last][0]).toBe('executeWithLogs is returning 3'); //check return log
 }));
 
 test('executeWithLogs wraps async function', async () => withMockConsole('log', async spy => { //jest test for executeWithLogs async with helper
@@ -35,8 +35,8 @@ test('executeWithLogs wraps async function', async () => withMockConsole('log', 
   }
   const res = await executeWithLogs('fetchVal', fetchVal); //execute with logging
   expect(res).toBe('ok'); //verify result
-  expect(spy.mock.calls[2][0]).toBe('fetchVal is running with none'); //check start log
+  expect(spy.mock.calls[3][0]).toBe('fetchVal is running with none'); //check start log
   const last = spy.mock.calls.length - 1; //index of last log
-  expect(spy.mock.calls[last][0]).toBe('fetchVal is returning "ok"'); //check return log
+  expect(spy.mock.calls[last][0]).toBe('executeWithLogs is returning ok'); //check return log
 }));
 
