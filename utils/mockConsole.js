@@ -54,32 +54,60 @@ function mockConsole(method) {
   console.log(`mockConsole is running with ${method}`); // logging function start per requirements
   
   try {
-    if (typeof jest !== `undefined` && jest.fn) { // changed quotes to backticks per requirements
-      const jestSpy = jest.spyOn(console, method).mockImplementation(() => {}); // use jest spy for superior mocking
+    // Check for Jest availability and prefer Jest spies when available
+    // Jest spies provide superior debugging tools, call introspection, and integration with Jest ecosystem
+    // typeof check ensures we don't throw errors in non-Jest environments
+    // jest.fn check ensures Jest mocking functionality is actually available, not just Jest test runner
+    if (typeof jest !== `undefined` && jest.fn) {
+      // Use Jest's built-in spying mechanism for enhanced debugging and integration
+      // jest.spyOn preserves original method while adding spy capabilities
+      // mockImplementation(() => {}) creates silent mock that captures calls without output
+      // Jest spies automatically integrate with Jest's assertion and debugging tools
+      const jestSpy = jest.spyOn(console, method).mockImplementation(() => {});
       console.log(`mockConsole is returning ${jestSpy}`); // logging return value per requirements
       return jestSpy;
     }
     
-    const originalMethod = console[method]; // store original method for restoration
-    const calls = []; // manual call tracking for non-jest environments
+    // Fallback implementation for non-Jest environments (Mocha, AVA, vanilla Node.js)
+    // Manual implementation ensures qtests works regardless of testing framework choice
+    // This approach maintains Jest-compatible API for consistent developer experience
+    const originalMethod = console[method]; // preserve original for restoration
+    const calls = []; // array to capture all method invocations with arguments
     
-    console[method] = function(...args) { // replace console method with capturing function
-      calls.push(args); // store arguments for test verification
+    // Replace console method with capturing function that stores calls but produces no output
+    // Spread operator (...args) captures all arguments regardless of method signature
+    // Anonymous function used to avoid name conflicts and ensure proper 'this' binding
+    console[method] = function(...args) {
+      // Store complete argument list for each invocation
+      // Arguments stored as arrays to match Jest's spy.mock.calls format
+      // This enables tests to verify exactly what was logged during execution
+      calls.push(args);
     };
     
-    const mockObject = { // create mock object with jest-compatible interface
+    // Create Jest-compatible mock object for consistent API across environments
+    // Object structure matches Jest spy interface to minimize learning curve for developers
+    // Provides same call tracking and restoration capabilities as Jest spies
+    const mockObject = {
       mock: {
+        // Expose calls array with same structure as Jest spies
+        // Each element is an array of arguments passed to that invocation
         calls: calls
       },
       mockRestore: function() {
-        console[method] = originalMethod; // restore original console method
+        // Restore original console method to prevent test pollution
+        // Simple assignment approach ensures reliable restoration
+        // This must be called after each test to prevent affecting subsequent tests
+        console[method] = originalMethod;
       }
     };
     
     console.log(`mockConsole is returning ${mockObject}`); // logging return value per requirements
     return mockObject;
   } catch (error) {
-    console.log(`mockConsole error: ${error.message}`); // error logging for debugging
+    // Provide context for debugging console mocking failures
+    // Common issues include invalid method names or console object modification conflicts
+    // Error re-throwing maintains proper error handling while adding diagnostic information
+    console.log(`mockConsole error: ${error.message}`);
     throw error;
   }
 }

@@ -64,17 +64,34 @@ function stubMethod(obj, methodName, stubFn) {
   console.log(`stubMethod is running with ${obj}, ${methodName}, ${stubFn}`); // logging function start per requirements
   
   try {
-    const originalMethod = obj[methodName]; // store original before replacement to enable restoration
-    obj[methodName] = stubFn; // replace method with stub implementation for testing isolation
+    // Store original method reference before replacement
+    // This is critical for restoration - without this reference, the original method is lost forever
+    // We must capture this before any modification to ensure we can restore exact original behavior
+    const originalMethod = obj[methodName];
     
-    const restoreFunction = function restore() { // create restoration function for cleanup
-      obj[methodName] = originalMethod; // reinstate original method implementation
+    // Replace method directly on the object for immediate effect
+    // Direct property assignment chosen over Object.defineProperty for simplicity and performance
+    // This approach works for 99% of use cases and avoids descriptor complexity
+    obj[methodName] = stubFn;
+    
+    // Create restoration function using closure pattern
+    // Closure captures originalMethod and obj references for later restoration
+    // Named function 'restore' provides clear intent and better debugging experience
+    // Returned function pattern allows caller to control when restoration occurs
+    const restoreFunction = function restore() {
+      // Reinstate original method implementation exactly as it was
+      // Simple assignment chosen over complex descriptor restoration for reliability
+      // This approach ensures no side effects or partial restoration states
+      obj[methodName] = originalMethod;
     };
     
     console.log(`stubMethod is returning ${restoreFunction}`); // logging return value per requirements
     return restoreFunction;
   } catch (error) {
-    console.log(`stubMethod error: ${error.message}`); // error logging for debugging
+    // Log error with context for debugging test setup issues
+    // Error logging helps developers identify problems with object access or property assignment
+    // We re-throw to maintain error handling contract while providing debugging information
+    console.log(`stubMethod error: ${error.message}`);
     throw error;
   }
 }

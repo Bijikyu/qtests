@@ -52,11 +52,18 @@ function setTestEnv() {
   console.log(`setTestEnv is running with default values`); // logging function start per requirements
   
   try {
-    Object.assign(process.env, defaultEnv); // apply default test environment variables
+    // Apply default test environment variables using Object.assign for atomic operation
+    // Object.assign chosen over individual assignments for performance and atomicity
+    // All environment variables are set together to prevent partial states
+    // Overwrites existing values to ensure predictable test environment regardless of host setup
+    Object.assign(process.env, defaultEnv);
     console.log(`setTestEnv is returning true`); // logging return value per requirements
     return true;
   } catch (error) {
-    console.log(`setTestEnv error: ${error.message}`); // error logging per requirements
+    // Log error context for debugging environment setup issues
+    // Environment variable assignment rarely fails but can occur with read-only process.env
+    // Error re-throwing maintains contract while providing diagnostic information
+    console.log(`setTestEnv error: ${error.message}`);
     throw error;
   }
 }
@@ -84,11 +91,19 @@ function saveEnv() {
   console.log(`saveEnv is running with none`); // logging function start per requirements
   
   try {
-    const savedEnv = { ...process.env }; // spread operator for shallow copy of environment
+    // Create shallow copy of process.env using spread operator
+    // Spread operator chosen over Object.assign for conciseness and readability
+    // Shallow copy is sufficient because environment variables are always string primitives
+    // Snapshot taken immediately to capture current state, not when restore is called
+    // This timing ensures we get the exact environment state at the moment of saving
+    const savedEnv = { ...process.env };
     console.log(`saveEnv is returning ${savedEnv}`); // logging return value per requirements
     return savedEnv;
   } catch (error) {
-    console.log(`saveEnv error: ${error.message}`); // error logging per requirements
+    // Handle rare cases where process.env access might fail
+    // Possible issues include permission restrictions or corrupted environment
+    // Error logging provides diagnostic context for environment capture failures
+    console.log(`saveEnv error: ${error.message}`);
     throw error;
   }
 }
@@ -116,12 +131,24 @@ function restoreEnv(savedEnv) {
   console.log(`restoreEnv is running with ${savedEnv}`); // logging function start per requirements
   
   try {
-    Object.keys(process.env).forEach(k => delete process.env[k]); // clear current environment variables
-    Object.assign(process.env, savedEnv); // restore saved environment state
+    // Clear all current environment variables first to ensure complete restoration
+    // This two-step process prevents test pollution from variables added during testing
+    // Using delete operator rather than setting to undefined to completely remove properties
+    // forEach chosen over for...in to avoid prototype chain issues with process.env
+    Object.keys(process.env).forEach(k => delete process.env[k]);
+    
+    // Restore saved environment state using Object.assign for atomic operation
+    // Object.assign chosen over individual property assignment for performance and atomicity
+    // All variables restored together to prevent partial restoration states
+    // This ensures exact restoration of the original environment snapshot
+    Object.assign(process.env, savedEnv);
     console.log(`restoreEnv is returning true`); // logging return value per requirements
     return true;
   } catch (error) {
-    console.log(`restoreEnv error: ${error.message}`); // error logging per requirements
+    // Handle environment restoration failures which can occur with permission restrictions
+    // Critical to log these errors as they indicate test cleanup failures
+    // Error re-throwing maintains contract while providing diagnostic information
+    console.log(`restoreEnv error: ${error.message}`);
     throw error;
   }
 }
@@ -139,17 +166,31 @@ function attachMockSpies(mock) {
   console.log(`attachMockSpies is running with ${mock}`); // logging function start per requirements
   
   try {
-    if (typeof jest !== `undefined`) { // verify jest availability with backticks
-      mock.mockClear = jest.fn(); // assign jest spy clear method
-      mock.mockReset = jest.fn(); // assign jest spy reset method
+    // Check for Jest availability and enhance mock with Jest-compatible methods
+    // This pattern ensures consistent API across testing environments while leveraging Jest features when available
+    // typeof check prevents ReferenceError in environments where Jest is not loaded
+    if (typeof jest !== `undefined`) {
+      // Add Jest spy methods for enhanced testing capabilities
+      // jest.fn() creates proper Jest mock functions with full spy capabilities
+      // These methods integrate with Jest's assertion and debugging tools
+      // Provides mockClear and mockReset functionality expected by Jest users
+      mock.mockClear = jest.fn();
+      mock.mockReset = jest.fn();
     } else {
-      mock.mockClear = () => {}; // fallback noop clear in non-jest environments
-      mock.mockReset = () => {}; // fallback noop reset in non-jest environments
+      // Provide no-op implementations for non-Jest environments
+      // Maintains API compatibility so the same test code works across frameworks
+      // No-op functions prevent errors when tests call these methods
+      // Arrow functions used for minimal overhead and clear intent
+      mock.mockClear = () => {};
+      mock.mockReset = () => {};
     }
     console.log(`attachMockSpies is returning ${mock}`); // logging return value per requirements
     return mock;
   } catch (error) {
-    console.log(`attachMockSpies error: ${error.message}`); // error logging per requirements
+    // Handle cases where Jest enhancement fails or mock modification errors occur
+    // Important for debugging framework integration issues
+    // Error re-throwing maintains proper error handling contract
+    console.log(`attachMockSpies error: ${error.message}`);
     throw error;
   }
 }
