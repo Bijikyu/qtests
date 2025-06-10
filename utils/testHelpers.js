@@ -556,16 +556,33 @@ function restoreEnvVars(envBackup) {
   console.log(`restoreEnvVars is running with environment backup`);
   
   try {
-    // Clear current environment completely
-    // This ensures no test-added variables remain
-    for (const key in process.env) {
-      delete process.env[key];
+    // Validate backup parameter to prevent runtime errors
+    if (!envBackup || typeof envBackup !== 'object') {
+      console.log(`restoreEnvVars: Invalid backup provided, skipping restoration`);
+      return;
     }
     
-    // Restore all variables from backup
-    // This handles both original variables and proper undefined handling
+    // Safe restoration strategy: only remove variables added after backup
+    // This prevents deletion of system-critical environment variables
+    const currentKeys = new Set(Object.keys(process.env));
+    const backupKeys = new Set(Object.keys(envBackup));
+    
+    // Remove only variables that were added after backup creation
+    // This preserves system-critical variables like PATH, HOME, NODE_ENV
+    for (const key of currentKeys) {
+      if (!backupKeys.has(key)) {
+        delete process.env[key];
+      }
+    }
+    
+    // Restore original values for all backed-up variables
+    // Handle undefined values by deleting the key (restoring original undefined state)
     for (const [key, value] of Object.entries(envBackup)) {
-      process.env[key] = value;
+      if (value !== undefined) {
+        process.env[key] = value;
+      } else {
+        delete process.env[key];
+      }
     }
     
     // Log successful restoration for debugging
