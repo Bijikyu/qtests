@@ -622,24 +622,16 @@ async function withSavedEnv(fn) {
  * - API testing: Use response creators and environment management
  * - Cross-framework compatibility: All utilities work with or without Jest
  */
+// export all test helper utilities at bottom per requirements
 module.exports = {
-  // Module and dependency management utilities
-  stubQerrors,    // Silence error reporting for clean test output
-  reload,         // Force fresh module loading for isolation testing
-
-  // Response object mocking for API testing scenarios  
-  createJsonRes,  // Minimal response mock for simple API tests
-  createRes,      // Comprehensive response mock for complex API tests
-
-  // Specialized utilities for specific testing scenarios
-  generateKey,    // API key generation for endpoint testing
-
-  // Environment isolation utilities for test cleanup
-  backupEnvVars,  // Create environment snapshot for restoration
-  restoreEnvVars, // Restore environment from snapshot for cleanup
-
-  // Lifecycle helpers simplifying common patterns
-  withMockConsole, // Wrap code with console spy lifecycle
-  withSavedEnv    // Wrap code with environment save/restore
+  stubQerrors, // error reporting stubbing utility
+  reload, // module cache management utility
+  withMockConsole, // console mocking helper function
+  createJsonRes, // minimal response mocking utility
+  createRes, // comprehensive response mocking utility
+  generateKey, // test data generation utility
+  backupEnvVars, // environment backup utility
+  restoreEnvVars, // environment restoration utility
+  withSavedEnv // environment save/restore wrapper
 };
 

@@ -29,5 +29,4 @@ module.exports = {
   testHelpers, // advanced testing utilities for module reloading and mocking
   setup, // call this to activate stubs when desired
   stubs // stub library organized under namespace
-}
 };
