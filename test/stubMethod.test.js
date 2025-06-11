@@ -21,3 +21,13 @@ test('stubMethod throws for non-function stub', () => { // verify stubFn validat
   const obj = { greet: () => 'hi' }; // sample object
   expect(() => stubMethod(obj, 'greet', 'notFn')).toThrow('must be a function'); // should reject invalid stub
 });
+
+test('stubMethod handles inherited methods', () => { // new test for prototype restoration
+  const proto = { greet: () => 'proto' }; // prototype with method
+  const obj = Object.create(proto); // object inheriting greet
+  const restore = stubMethod(obj, 'greet', () => 'stub'); // stub inherited method
+  expect(obj.greet()).toBe('stub'); // stub in effect
+  restore(); // restore should remove own property
+  expect(Object.prototype.hasOwnProperty.call(obj, 'greet')).toBe(false); // stub removed
+  expect(obj.greet()).toBe('proto'); // inherited method available again
+});

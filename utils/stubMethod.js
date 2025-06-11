@@ -76,7 +76,8 @@ function stubMethod(obj, methodName, stubFn) {
     // Store original method reference before replacement
     // This is critical for restoration - without this reference, the original method is lost forever
     // We must capture this before any modification to ensure we can restore exact original behavior
-    const originalMethod = obj[methodName];
+    const originalMethod = obj[methodName]; // capture original reference
+    const hadOwn = Object.prototype.hasOwnProperty.call(obj, methodName); // track if property was own before stubbing
     
     // Replace method directly on the object for immediate effect
     // Direct property assignment chosen over Object.defineProperty for simplicity and performance
@@ -88,10 +89,12 @@ function stubMethod(obj, methodName, stubFn) {
     // Named function 'restore' provides clear intent and better debugging experience
     // Returned function pattern allows caller to control when restoration occurs
     const restoreFunction = function restore() {
-      // Reinstate original method implementation exactly as it was
-      // Simple assignment chosen over complex descriptor restoration for reliability
-      // This approach ensures no side effects or partial restoration states
-      obj[methodName] = originalMethod;
+      // Reinstate original method only if it existed as own property, otherwise remove stub
+      if (hadOwn) { // property was originally own so simply reassign
+        obj[methodName] = originalMethod; // restore exact original method
+      } else {
+        delete obj[methodName]; // remove stub so prototype chain resolves original
+      }
     };
     
     console.log(`stubMethod is returning ${restoreFunction}`); // logging return value per requirements
