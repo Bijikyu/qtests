@@ -318,15 +318,7 @@ function createQerrorsMock() {
  */
 function createAxiosMock() {
   return makeLoggedMock('createAxiosMock', () => { //(log and spy helper)
-    function createReplyBinder(url){ //helper for binding replies on adapter
-      return { //return object with reply method
-        reply: function(status, data){ //store status and data for url
-          mock._replies[url] = { status, data }; // (bind response to url)
-          return mock; // (allow chaining)
-        }
-      }; //close returned object
-    }
-    const mock = {
+    const mock = { //declare mock before binder so binder can reference it
       /**
        * Configure mock response for GET requests to a specific URL
        * @param {string} url - URL to mock
@@ -354,6 +346,14 @@ function createAxiosMock() {
     }
   };
     mock._replies = {}; // (initialize reply store for adapter)
+    function createReplyBinder(url){ //helper after mock exists to avoid reference errors
+      return { //return object with reply method
+        reply: function(status, data){ //store status and data for url
+          mock._replies[url] = { status, data }; // (bind response to url)
+          return mock; // (allow chaining)
+        }
+      }; //close returned object
+    }
     return mock; // (returned to helper for spies)
   });
 }
