@@ -67,9 +67,11 @@ let qerrorsCache; // (cache for qerrors module)
  */
 function setOfflineMode(offline) {
   console.log(`setOfflineMode is running with ${offline}`); // logging function start per requirements
-  
+
   try {
+    const stateChanged = isOffline !== offline; // check if state differs to know when to clear cache
     isOffline = offline; // update global offline state flag
+    if (stateChanged) clearOfflineCache(); // wipe caches when toggling state for consistent modules
     console.log(`setOfflineMode is returning ${isOffline}`); // logging return value per requirements
     return isOffline;
   } catch (error) {

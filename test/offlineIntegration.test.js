@@ -8,13 +8,10 @@ function runToggleScript(){ // (execute a node script toggling offline mode)
     const realAxios = require(require.resolve('axios'));
     const states = []; 
     offline.setOfflineMode(true);
-    offline.clearOfflineCache();
     states.push({ offline: offline.isOfflineMode(), axiosStub: offline.getAxios() === stubAxios, qType: typeof offline.getQerrors().qerrors });
     offline.setOfflineMode(false);
-    offline.clearOfflineCache();
     states.push({ offline: offline.isOfflineMode(), axiosReal: offline.getAxios() === realAxios, qType: typeof offline.getQerrors().qerrors });
     offline.setOfflineMode(true);
-    offline.clearOfflineCache();
     states.push({ offline: offline.isOfflineMode(), axiosStub: offline.getAxios() === stubAxios, qType: typeof offline.getQerrors().qerrors });
     console.log(JSON.stringify(states));
   `; // (script toggles offline mode and captures results)
