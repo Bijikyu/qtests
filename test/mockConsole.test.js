@@ -37,3 +37,22 @@ test('mockConsole tracks calls after reimplementation', () => withMockConsole('l
   expect(spy.mock.calls[3][0]).toBe('two'); //second call argument tracked
 }));
 
+test('mockRestore clears calls and resets method', () => { //verify fallback clean up
+  const saved = global.jest; //save jest reference for restoration
+  global.jest = undefined; //force fallback path by removing jest
+  delete require.cache[require.resolve('../utils/mockConsole')]; //ensure fallback load
+  const { mockConsole } = require('../utils/mockConsole'); //direct import after change
+  const orig = console.log; //store original method for comparison
+  const spy = mockConsole('log'); //create manual spy using fallback
+  console.log('first'); //trigger captured call
+  expect(spy.mock.calls.length).toBe(2); //call history includes creation log
+  spy.mockRestore(); //run cleanup to restore and clear
+  console.log('second'); //ensure restored method runs without capturing
+  expect(console.log).toBe(orig); //method restored to original
+  const cleared = spy.mock.calls === null || spy.mock.calls.length === 0; //verify cleared history
+  expect(cleared).toBe(true); //array cleared or reference removed
+  global.jest = saved; //restore jest global for remaining tests
+  delete require.cache[require.resolve('../utils/mockConsole')]; //clear fallback cache
+  require('../utils/mockConsole'); //reload module with jest available
+});
+

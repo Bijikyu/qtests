@@ -71,8 +71,8 @@ function mockConsole(method) {
     // Fallback implementation for non-Jest environments (Mocha, AVA, vanilla Node.js)
     // Manual implementation ensures qtests works regardless of testing framework choice
     // This approach maintains Jest-compatible API for consistent developer experience
-    const originalMethod = console[method]; // preserve original for restoration
-    const calls = []; // array to capture all method invocations with arguments
+    let originalMethod = console[method]; // preserve original for restoration
+    let calls = []; // array to capture all method invocations with arguments
     
     // Replace console method with capturing function that stores calls but produces no output
     // Spread operator (...args) captures all arguments regardless of method signature
@@ -95,9 +95,12 @@ function mockConsole(method) {
       },
       mockRestore: function() {
         // Restore original console method to prevent test pollution
-        // Simple assignment approach ensures reliable restoration
-        // This must be called after each test to prevent affecting subsequent tests
-        console[method] = originalMethod;
+        // Simple assignment ensures reliable restoration and avoids memory leaks
+        console[method] = originalMethod; // reinstate saved method for other tests
+        if (calls) { calls.length = 0; } // clear captured calls for GC
+        this.mock.calls = null; // remove reference from mock object for GC
+        originalMethod = null; // drop reference to allow garbage collection
+        calls = null; // drop call history reference enabling GC
       }
     };
     
