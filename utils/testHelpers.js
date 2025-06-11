@@ -148,41 +148,26 @@ function stubQerrors() {
  * // freshModule is a newly loaded instance, not cached
  */
 function reload(relPath) {
-  // Log function entry with parameter for debugging module loading issues
-  console.log(`reload is running with ${relPath}`);
-  
+  console.log(`reload is running with ${relPath}`); // log entry for troubleshooting
+
+  const fullPath = path.resolve(__dirname, relPath); // compute absolute path once for reuse
+
+  if (moduleReloadLock.has(fullPath)) { // avoid race by checking lock
+    console.log(`reload has run resulting in skip`); // log skip event per requirement
+    return require(fullPath); // return cached module when locked
+  }
+
   try {
-    // Convert relative path to absolute path for reliable cache operations
-    // Using __dirname ensures path is resolved relative to this testHelpers module location
-    // This prevents issues when tests are run from different working directories
-    // Absolute paths are required for reliable Node.js cache operations
-    const fullPath = path.resolve(__dirname, relPath);
-    
-    // Remove module from require cache to force fresh loading
-    // require.resolve ensures we use exact same path resolution as require() will use
-    // This is critical - if cache key doesn't match require() path exactly, cache clearing fails
-    // Two-step process: resolve path, then delete from cache using resolved path
-    delete require.cache[require.resolve(fullPath)];
-    
-    // Require the module fresh from disk after cache clearing
-    // This triggers complete module re-evaluation including all initialization code
-    // Any module-level variables, closures, and state will be reset to initial values
-    // Essential for testing module loading behavior and configuration scenarios
-    const mod = require(fullPath);
-    
-    // Log successful completion for debugging module reload timing
-    console.log(`reload is returning module`);
-    
-    // Return the freshly loaded module instance for use in tests
-    return mod;
-    
+    moduleReloadLock.add(fullPath); // acquire reload lock before cache operations
+    delete require.cache[require.resolve(fullPath)]; // clear cache while locked
+    const mod = require(fullPath); // require fresh module after clearing cache
+    moduleReloadLock.delete(fullPath); // release lock after load completes
+    console.log(`reload is returning module`); // log successful reload
+    return mod; // return newly loaded module to caller
   } catch (err) {
-    // Log error with context for debugging path resolution issues
-    console.log(`reload error ${err.message}`);
-    
-    // Propagate error to caller
-    // Module loading failures should halt tests to prevent confusing behavior
-    throw err;
+    moduleReloadLock.delete(fullPath); // release lock on failure to avoid deadlock
+    console.log(`reload error ${err.message}`); // log error context
+    throw err; // propagate failure for caller handling
   }
 }
 
@@ -650,6 +635,7 @@ async function withSavedEnv(fn) {
 module.exports = {
   stubQerrors, // error reporting stubbing utility
   reload, // module cache management utility
+  moduleReloadLock, // expose lock for testing of concurrent reloads
   withMockConsole, // console mocking helper function
   createJsonRes, // minimal response mocking utility
   createRes, // comprehensive response mocking utility
