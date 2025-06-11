@@ -36,7 +36,7 @@
 const path = require('path');
 
 // Thread-safe module reloading lock to prevent race conditions
-// This prevents concurrent reload operations on the same module
+// This prevents concurrent reload operations on the same module by tracking paths
 const moduleReloadLock = new Set();
 const { mockConsole } = require('./mockConsole'); // (import console spy utility)
 
@@ -150,36 +150,49 @@ function stubQerrors() {
 function reload(relPath) {
   // Log function entry with parameter for debugging module loading issues
   console.log(`reload is running with ${relPath}`);
-  
+
   try {
     // Convert relative path to absolute path for reliable cache operations
     // Using __dirname ensures path is resolved relative to this testHelpers module location
     // This prevents issues when tests are run from different working directories
     // Absolute paths are required for reliable Node.js cache operations
     const fullPath = path.resolve(__dirname, relPath);
-    
-    // Remove module from require cache to force fresh loading
-    // require.resolve ensures we use exact same path resolution as require() will use
-    // This is critical - if cache key doesn't match require() path exactly, cache clearing fails
-    // Two-step process: resolve path, then delete from cache using resolved path
-    delete require.cache[require.resolve(fullPath)];
-    
-    // Require the module fresh from disk after cache clearing
-    // This triggers complete module re-evaluation including all initialization code
-    // Any module-level variables, closures, and state will be reset to initial values
-    // Essential for testing module loading behavior and configuration scenarios
-    const mod = require(fullPath);
-    
-    // Log successful completion for debugging module reload timing
-    console.log(`reload is returning module`);
-    
-    // Return the freshly loaded module instance for use in tests
-    return mod;
-    
+
+    // Prevent concurrent reloads on the same module
+    if (moduleReloadLock.has(fullPath)) { //check active reloads
+      throw new Error(`Module ${relPath} is currently being reloaded`); //throw when locked
+    }
+
+    // Begin reload by registering the module path in lock set
+    moduleReloadLock.add(fullPath); //mark module as reloading
+
+    try {
+      // Remove module from require cache to force fresh loading
+      // require.resolve ensures we use exact same path resolution as require() will use
+      // This is critical - if cache key doesn't match require() path exactly, cache clearing fails
+      // Two-step process: resolve path, then delete from cache using resolved path
+      delete require.cache[require.resolve(fullPath)];
+
+      // Require the module fresh from disk after cache clearing
+      // This triggers complete module re-evaluation including all initialization code
+      // Any module-level variables, closures, and state will be reset to initial values
+      // Essential for testing module loading behavior and configuration scenarios
+      const mod = require(fullPath);
+
+      // Log successful completion for debugging module reload timing
+      console.log(`reload is returning module`);
+
+      // Return the freshly loaded module instance for use in tests
+      return mod;
+
+    } finally {
+      moduleReloadLock.delete(fullPath); //remove path from lock set
+    }
+
   } catch (err) {
     // Log error with context for debugging path resolution issues
     console.log(`reload error ${err.message}`);
-    
+
     // Propagate error to caller
     // Module loading failures should halt tests to prevent confusing behavior
     throw err;
@@ -656,6 +669,7 @@ module.exports = {
   generateKey, // test data generation utility
   backupEnvVars, // environment backup utility
   restoreEnvVars, // environment restoration utility
-  withSavedEnv // environment save/restore wrapper
+  withSavedEnv, // environment save/restore wrapper
+  reloadLock: moduleReloadLock // export lock for concurrency tests
 };
 

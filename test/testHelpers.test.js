@@ -7,7 +7,8 @@ const {
   backupEnvVars,
   restoreEnvVars,
   withMockConsole,
-  withSavedEnv
+  withSavedEnv,
+  reloadLock
 } = require('../utils/testHelpers'); //import utilities under test
 
 jest.mock('qerrors', () => ({ qerrors: jest.fn(() => 'orig') }), { virtual: true }); //mock qerrors module for stub test
@@ -30,6 +31,16 @@ test('reload returns fresh module instance', () => withMockConsole('log', () => 
   const line = out.trim().split('\n').pop(); //take last line for data
   const { val1, val2 } = JSON.parse(line); //parse values from child
   expect(val2).toBe(val1 + 1); //reload should increment value
+}));
+
+test('reload throws when called concurrently', () => withMockConsole('log', () => { //verify lock behavior
+  const path = require('path'); //resolve helper
+  const rel = '../test/fixtures/reloadTarget'; //target module relative path
+  const utilsDir = path.join(__dirname, '..', 'utils'); //directory of utils
+  const abs = path.resolve(utilsDir, rel); //compute same path as reload
+  reloadLock.add(abs); //simulate other reload in progress
+  expect(() => reload(rel)).toThrow('currently being reloaded'); //reload should throw
+  reloadLock.delete(abs); //cleanup lock after test
 }));
 
 test('createJsonRes returns object with tracking json', () => withMockConsole('log', () => { //hide logs
