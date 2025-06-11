@@ -62,8 +62,11 @@
  */
 function stubMethod(obj, methodName, stubFn) {
   console.log(`stubMethod is running with ${obj}, ${methodName}, ${stubFn}`); // logging function start per requirements
-  
+
   try {
+    if (typeof obj !== 'object' || obj === null) { throw new TypeError('stubMethod expected obj to be an object'); } //validate obj parameter
+    if (typeof methodName !== 'string') { throw new TypeError('stubMethod expected methodName to be a string'); } //validate method name type
+    if (!Object.prototype.hasOwnProperty.call(obj, methodName)) { throw new TypeError('stubMethod expected methodName to reference an existing property'); } //ensure property exists
     // Store original method reference before replacement
     // This is critical for restoration - without this reference, the original method is lost forever
     // We must capture this before any modification to ensure we can restore exact original behavior

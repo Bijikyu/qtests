@@ -8,3 +8,9 @@ test('stubMethod replaces and restores methods', () => { // (jest test case)
   expect(result).toBe('Hi'); // (assert stub result)
   expect(obj.greet('Bob')).toBe('Hello, Bob'); // (assert restoration works)
 });
+
+test('stubMethod validates inputs', () => { // (ensure TypeErrors are thrown for invalid input)
+  expect(() => stubMethod(null, 'greet', () => {})).toThrow(TypeError); // (obj must be an object)
+  expect(() => stubMethod({}, 123, () => {})).toThrow(TypeError); // (method name must be string)
+  expect(() => stubMethod({}, 'missing', () => {})).toThrow(TypeError); // (property must exist)
+});
