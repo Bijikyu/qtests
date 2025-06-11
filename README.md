@@ -145,6 +145,7 @@ test('console output', async () => {
 #### `mockConsole(method)`
 - **method**: Console method to mock ('log', 'error', 'warn', 'info')
 - **Returns**: Spy object with `mock.calls` array and `mockRestore()` function
+  (`mockRestore()` resets the console method and clears call history)
 
 #### `setTestEnv()`
 Sets standard test environment variables (NODE_ENV=test, DEBUG=qtests:*)
