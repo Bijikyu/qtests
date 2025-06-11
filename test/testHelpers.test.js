@@ -75,3 +75,14 @@ test('withMockConsole restores console method', async () => { //ensure console r
   await withMockConsole('log', () => console.log('run')); //invoke helper using log
   expect(console.log).toBe(original); //console.log should be restored
 });
+
+test('reload skips when lock present', () => withMockConsole('log', () => { //verify lock prevents duplicate reload
+  const path = require('path'); //path for resolving
+  const full = path.resolve(__dirname, 'fixtures/reloadTarget'); //path used by reload
+  const { moduleReloadLock } = require('../utils/testHelpers'); //import lock set
+  moduleReloadLock.add(full); //simulate concurrent reload in progress
+  const before = require('./fixtures/reloadTarget'); //cached module
+  const after = reload('../test/fixtures/reloadTarget'); //attempt reload while locked
+  expect(after).toBe(before); //module should be same when skipped
+  moduleReloadLock.delete(full); //cleanup lock after test
+}));
