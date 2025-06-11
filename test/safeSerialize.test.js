@@ -8,6 +8,10 @@ test('serializes primitives and objects', () => { //verify JSON path
   expect(safeSerialize(obj)).toBe(JSON.stringify(obj)); //object serialization output
 });
 
+test('handles undefined value', () => { //new test for explicit undefined handling
+  expect(safeSerialize(undefined)).toBe('undefined'); //should return string literal
+});
+
 test('falls back to util.inspect for circular references', () => { //verify fallback
   const circ = {}; //create base object
   circ.self = circ; //circular reference

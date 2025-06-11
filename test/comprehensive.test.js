@@ -17,7 +17,7 @@ describe('Additional qtests Coverage', () => {
 
   test('safeSerialize handles edge cases', () => {
     expect(safeSerialize(null)).toBe('null');
-    expect(typeof safeSerialize(undefined)).toBe('string');
+    expect(safeSerialize(undefined)).toBe('undefined'); // updated expectation for explicit undefined handling
     expect(safeSerialize('string')).toBe('"string"');
     expect(safeSerialize(123)).toBe('123');
   });
