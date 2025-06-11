@@ -91,10 +91,10 @@ const stubsPath = path.join(__dirname, 'stubs'); // (single absolute path for st
  */
 const STUB_REGISTRY = {
   // HTTP client library - redirected to no-op stub for network-free testing
-  'axios': './stubs/axios',
+  'axios': './stubs/axios.js', // ensure resolved path includes extension
 
   // Logging library - redirected to silent stub for clean test output
-  'winston': './stubs/winston'
+  'winston': './stubs/winston.js' // ensure resolved path includes extension
 
 }; //(close registry mapping)
 // (registry end for stub mappings)
