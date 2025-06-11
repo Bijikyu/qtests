@@ -93,10 +93,11 @@ restoreEnvVars(backup); // TEST_VAR removed, original state restored
 ### Offline Mode
 
 ```js
-const { setOfflineMode, getAxios } = require('qtests');
+const { setOfflineMode, clearOfflineCache, getAxios } = require('qtests');
 
 // Enable offline mode
 setOfflineMode(true);
+clearOfflineCache(); // call before requiring modules
 
 // Get stubbed axios automatically
 const axios = getAxios(); // Returns stub when offline
@@ -160,6 +161,8 @@ Safe environment variable backup and restoration
 
 #### `getAxios()` / `getQerrors()`
 Returns appropriate stub when offline mode is enabled
+#### `clearOfflineCache()`
+  Call after `setOfflineMode(true/false)` and before requiring modules so axios and qerrors load correctly
 
 ### Test Helpers
 
