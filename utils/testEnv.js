@@ -129,27 +129,33 @@ function saveEnv() {
  */
 function restoreEnv(savedEnv) {
   console.log(`restoreEnv is running with ${savedEnv}`); // logging function start per requirements
-  
+
   try {
-    // Clear all current environment variables first to ensure complete restoration
-    // This two-step process prevents test pollution from variables added during testing
-    // Using delete operator rather than setting to undefined to completely remove properties
-    // forEach chosen over for...in to avoid prototype chain issues with process.env
-    Object.keys(process.env).forEach(k => delete process.env[k]);
-    
-    // Restore saved environment state using Object.assign for atomic operation
-    // Object.assign chosen over individual property assignment for performance and atomicity
-    // All variables restored together to prevent partial restoration states
-    // This ensures exact restoration of the original environment snapshot
-    Object.assign(process.env, savedEnv);
+    // Validate the saved environment to avoid runtime errors
+    if (!savedEnv || typeof savedEnv !== 'object') {
+      console.log(`restoreEnv: invalid saved environment`); // log invalid input
+      return false; // indicate failure to restore
+    }
+
+    // Determine which variables were added after the backup was taken
+    const currentKeys = new Set(Object.keys(process.env)); // capture current keys
+    const backupKeys = new Set(Object.keys(savedEnv)); // capture backup keys
+
+    // Remove only those keys that did not exist at backup time
+    for (const key of currentKeys) {
+      if (!backupKeys.has(key)) delete process.env[key]; // remove added variables only
+    }
+
+    // Restore backed up variables to their original values without wiping others
+    for (const [key, value] of Object.entries(savedEnv)) {
+      if (value !== undefined) process.env[key] = value; else delete process.env[key]; // reinstate or delete per backup
+    }
+
     console.log(`restoreEnv is returning true`); // logging return value per requirements
     return true;
   } catch (error) {
-    // Handle environment restoration failures which can occur with permission restrictions
-    // Critical to log these errors as they indicate test cleanup failures
-    // Error re-throwing maintains contract while providing diagnostic information
-    console.log(`restoreEnv error: ${error.message}`);
-    throw error;
+    console.log(`restoreEnv error: ${error.message}`); // log restoration failure
+    throw error; // propagate error to caller
   }
 }
 
