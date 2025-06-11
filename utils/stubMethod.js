@@ -62,8 +62,17 @@
  */
 function stubMethod(obj, methodName, stubFn) {
   console.log(`stubMethod is running with ${obj}, ${methodName}, ${stubFn}`); // logging function start per requirements
-  
+
   try {
+    if (typeof obj !== 'object' || obj === null) { // ensure obj is valid before accessing properties
+      throw new Error(`stubMethod expected object but received ${obj}`); // informative error for invalid obj
+    }
+    if (!(methodName in obj)) { // confirm property exists on target object
+      throw new Error(`stubMethod could not find ${methodName} on provided object`); // error when method missing
+    }
+    if (typeof stubFn !== 'function') { // verify stubFn is callable
+      throw new Error('stubMethod stubFn must be a function'); // error when stubFn invalid
+    }
     // Store original method reference before replacement
     // This is critical for restoration - without this reference, the original method is lost forever
     // We must capture this before any modification to ensure we can restore exact original behavior
