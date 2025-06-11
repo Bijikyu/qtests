@@ -25,8 +25,8 @@
  * - Simulating poor connectivity scenarios
  */
 
-// Import logging utilities for consistent debugging output
-const { logStart, logReturn, setLogging } = require('../lib/logUtils'); //(import setLogging)
+// Import logging control utility for optional log muting
+const { setLogging } = require('../lib/logUtils'); // use only setLogging here
 if (process.env.NODE_ENV !== 'test') setLogging(false); //(mute logs outside tests)
 
 // Initialize offline mode state - starts in online mode by default
