@@ -32,3 +32,15 @@ test('getQerrors returns stub offline and fallback when module missing', () => {
   const onlineQerrors = getQerrors(); //should fall back due to missing module
   expect(typeof onlineQerrors.qerrors).toBe('function'); //fallback still exposes function
 });
+
+test('clearOfflineCache refreshes instances on mode toggle', () => { //verify cache reset behaviour
+  setOfflineMode(true); //start offline
+  const axiosFirst = getAxios(); //fetch stub instance
+  const qerrorsFirst = getQerrors(); //fetch qerrors stub
+  setOfflineMode(false); //toggle to online
+  clearOfflineCache(); //wipe cached modules
+  const axiosSecond = getAxios(); //fetch new axios
+  const qerrorsSecond = getQerrors(); //fetch new qerrors
+  expect(axiosSecond).not.toBe(axiosFirst); //axios should be different
+  expect(qerrorsSecond).not.toBe(qerrorsFirst); //qerrors should be different
+});
