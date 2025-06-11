@@ -12,14 +12,18 @@ test('setTestEnv sets variables', () => withSavedEnv(() => { // (use helper to r
   expect(process.env.OPENAI_TOKEN).toBe(defaultEnv.OPENAI_TOKEN); // (check token value)
 }));
 
-test('saveEnv and restoreEnv capture state', () => { // (verify env round trip)
+test('saveEnv and restoreEnv capture state', () => withSavedEnv(() => { // (verify env round trip)
   process.env.TEST_ENV_TEMP = 'a'; // (set test variable)
   const saved = saveEnv(); // (capture environment)
   process.env.TEST_ENV_TEMP = 'b'; // (modify variable)
+  process.env.EXTRA_ENV_TEMP = 'c'; // (add new variable)
+  const oldPath = process.env.PATH; // (record critical variable)
   restoreEnv(saved); // (restore environment)
   expect(process.env.TEST_ENV_TEMP).toBe('a'); // (verify value restored)
+  expect(process.env.EXTRA_ENV_TEMP).toBeUndefined(); // (added variable removed)
+  expect(process.env.PATH).toBe(oldPath); // (critical variable preserved)
   delete process.env.TEST_ENV_TEMP; // (cleanup variable)
-});
+}));
 
 
 test('createScheduleMock executes function immediately', async () => { // (verify scheduler mock)
