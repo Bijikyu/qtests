@@ -90,12 +90,8 @@ const stubsPath = path.join(__dirname, 'stubs'); // (single absolute path for st
  * - Prevents security issues from auto-discovering and loading arbitrary stubs
  */
 const STUB_REGISTRY = {
-  // HTTP client library - redirected to no-op stub for network-free testing
-  'axios': './stubs/axios.js', // ensure resolved path includes extension
-
-  // Logging library - redirected to silent stub for clean test output
-  'winston': './stubs/winston.js' // ensure resolved path includes extension
-
+  axios: 'axios.js', // HTTP client library stub file name for quick lookup
+  winston: 'winston.js' // logging library stub file name for quick lookup
 }; //(close registry mapping)
 // (registry end for stub mappings)
 
@@ -127,28 +123,18 @@ require('module')._initPaths();
 // We preserve this to ensure non-stubbed modules load exactly as they would without qtests
 const origLoad = Module._load;
 
-// Create fast lookup map for stub file resolution to avoid string manipulation on every require
-// Simple object lookup is faster than string processing or file system checks
-// Keys are module names as they appear in require() calls, values are actual stub filenames
-// This mapping allows for different naming conventions between npm packages and stub files
-const stubMap = { 
-  axios: 'axios.js',     // HTTP client library redirected to no-op stub
-  winston: 'winston.js'  // Logging library redirected to silent stub
-};
+// STUB_REGISTRY lookup used below for quick stub resolution on every require
 
 // Override Node.js Module._load to intercept and redirect specific module loads
 // _load is chosen over _resolveFilename because it handles the complete loading process
 // Function signature must match Node.js internal API exactly for compatibility
 Module._load = function(request, parent, isMain){
-  // Check if the requested module has a registered stub implementation
-  // Fast object property lookup avoids expensive string operations or file system access
-  const stubFile = stubMap[request];
-  
+  // Look up stub file via shared registry to avoid duplicate maps
+  const stubFile = STUB_REGISTRY[request]; // single source of truth for stubs
+
   if(stubFile){
-    // Load stub implementation by constructing path and delegating to original loader
-    // path.join ensures cross-platform compatibility for file path construction
-    // Delegation to origLoad maintains proper module loading semantics and caching
-    return origLoad(path.join(stubsPath, stubFile), parent, isMain);
+    // Build absolute stub path and delegate load to Node's original loader
+    return origLoad(path.join(stubsPath, stubFile), parent, isMain); // ensure cross platform path resolution
   }
   
   // Delegate to original loader for all non-stubbed modules
@@ -218,13 +204,9 @@ Module._resolveFilename = function(request, parent, isMain, options) {
   if (STUB_REGISTRY.hasOwnProperty(request)) {
     // Module is in stub registry - resolve stub path
 
-    // Get the stub path from registry (relative to this file)
-    const stubPath = STUB_REGISTRY[request];
-
-    // Resolve the stub path to an absolute path
-    // Using path.resolve with __dirname ensures the stub is found regardless
-    // of the current working directory when qtests is used
-    const resolvedStubPath = path.resolve(__dirname, stubPath);
+    // Get stub file name from registry and resolve using stubsPath directory
+    const stubFile = STUB_REGISTRY[request];
+    const resolvedStubPath = path.resolve(stubsPath, stubFile); // compute absolute stub path
 
     // Return the resolved stub path
     // Node.js will load this file instead of the real module
