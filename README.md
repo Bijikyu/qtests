@@ -75,15 +75,15 @@ spy.mockRestore(); // Restore original console.log
 ### Environment Management
 
 ```js
-const { setTestEnv, backupEnvVars, restoreEnvVars } = require('qtests');
+const { testEnv } = require('qtests');
 
 // Set test environment
-setTestEnv(); // Sets NODE_ENV=test, DEBUG=qtests:*
+testEnv.setTestEnv(); // Sets NODE_ENV=test, DEBUG=qtests:*
 
 // Backup and restore environment
-const backup = backupEnvVars();
+const backup = testEnv.backupEnvVars();
 process.env.TEST_VAR = 'modified';
-restoreEnvVars(backup); // TEST_VAR removed, original state restored
+testEnv.restoreEnvVars(backup); // TEST_VAR removed, original state restored
 ```
 
 ---
@@ -93,26 +93,26 @@ restoreEnvVars(backup); // TEST_VAR removed, original state restored
 ### Offline Mode
 
 ```js
-const { setOfflineMode, getAxios } = require('qtests');
+const { offlineMode } = require('qtests');
 
 // Enable offline mode
-setOfflineMode(true); // caches cleared automatically on toggle
+offlineMode.setOfflineMode(true); // caches cleared automatically on toggle
 
 // Get stubbed axios automatically
-const axios = getAxios(); // Returns stub when offline
+const axios = offlineMode.getAxios(); // Returns stub when offline
 await axios.get('/api/data'); // Returns {} instead of real request
 ```
 
 ### Test Environment Helpers
 
 ```js
-const { createAxiosMock, createScheduleMock } = require('qtests');
+const { testEnv } = require('qtests');
 
 // Create specialized mocks
-const axiosMock = createAxiosMock();
+const axiosMock = testEnv.createAxiosMock();
 axiosMock.onGet('/users').reply(200, { users: [] });
 
-const scheduleMock = createScheduleMock();
+const scheduleMock = testEnv.createScheduleMock();
 await scheduleMock(() => console.log('Executed immediately'));
 ```
 
@@ -120,10 +120,10 @@ await scheduleMock(() => console.log('Executed immediately'));
 
 ```js
 // qtests automatically detects Jest and enhances functionality
-const { withMockConsole } = require('qtests');
+const { testHelpers } = require('qtests');
 
 test('console output', async () => {
-  await withMockConsole('log', (spy) => {
+  await testHelpers.withMockConsole('log', (spy) => {
     console.log('test');
     expect(spy.mock.calls[0][0]).toBe('test');
   });
@@ -147,31 +147,33 @@ test('console output', async () => {
 - **Returns**: Spy object with `mock.calls` array and `mockRestore()` function
   (`mockRestore()` resets the console method and clears call history)
 
-#### `setTestEnv()`
+#### `testEnv.setTestEnv()`
 Sets standard test environment variables (NODE_ENV=test, DEBUG=qtests:*)
 
-#### `backupEnvVars()` / `restoreEnvVars(backup)`
+#### `testHelpers.backupEnvVars()` / `testHelpers.restoreEnvVars(backup)`
 Safe environment variable backup and restoration
 
 ### Offline Mode
 
-#### `setOfflineMode(enabled)`
+#### `offlineMode.setOfflineMode(enabled)`
 - **enabled**: Boolean to enable/disable offline mode
 
-#### `getAxios()` / `getQerrors()`
+#### `offlineMode.getAxios()` / `offlineMode.getQerrors()`
 Returns appropriate stub when offline mode is enabled
-#### `clearOfflineCache()`
+#### `offlineMode.clearOfflineCache()`
   Manually reset cached axios and qerrors instances when needed; `setOfflineMode` now clears caches automatically
 
 ### Test Helpers
 
-#### `withMockConsole(method, callback)`
+#### `testHelpers.withMockConsole(method, callback)`
 - **method**: Console method to mock
 - **callback**: Function to execute with mocked console
 - **Returns**: Promise resolving to callback result
 
-#### `createAxiosMock()` / `createScheduleMock()` / `createQerrorsMock()`
+#### `testEnv.createAxiosMock()` / `testEnv.createScheduleMock()` / `testEnv.createQerrorsMock()`
 Factory functions for creating specialized test mocks
+#### `testEnv.resetMocks()` / `testEnv.initSearchTest()`
+Utilities for cleaning up multiple mocks or bootstrapping a full search test environment
 
 ---
 
@@ -236,14 +238,14 @@ test('isolated functionality', async () => {
 
 ```js
 require('qtests/setup');
-const { setTestEnv, withMockConsole } = require('qtests');
+const { testEnv, testHelpers } = require('qtests');
 
 beforeEach(() => {
-  setTestEnv(); // Consistent test environment
+  testEnv.setTestEnv(); // Consistent test environment
 });
 
 test('full workflow', async () => {
-  await withMockConsole('log', async (spy) => {
+  await testHelpers.withMockConsole('log', async (spy) => {
     // Test complete workflow with mocked external calls
     const result = await fullWorkflow();
     
@@ -286,10 +288,10 @@ test('example', () => {
 
 ### 3. Use Environment Helpers
 ```js
-const { withSavedEnv } = require('qtests');
+const { testHelpers } = require('qtests');
 
 test('environment test', async () => {
-  await withSavedEnv(async () => {
+  await testHelpers.withSavedEnv(async () => {
     process.env.TEST_VAR = 'value';
     // Test code here
     // Environment automatically restored
@@ -307,7 +309,7 @@ test('environment test', async () => {
 
 **Console pollution**: Use `mockConsole()` to capture and verify console output instead of letting it pollute test output.
 
-**Environment leaks**: Use `backupEnvVars()` and `restoreEnvVars()` or `withSavedEnv()` to prevent environment variable pollution between tests.
+**Environment leaks**: Use `testHelpers.backupEnvVars()` and `testHelpers.restoreEnvVars()` or `testHelpers.withSavedEnv()` to prevent environment variable pollution between tests.
 
 **Race conditions**: qtests is thread-safe, but ensure proper cleanup in concurrent test scenarios.
 
