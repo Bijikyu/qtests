@@ -115,6 +115,16 @@ axiosMock.onGet('/users').reply(200, { users: [] });
 const scheduleMock = testEnv.createScheduleMock();
 await scheduleMock(() => console.log('Executed immediately'));
 ```
+```js
+const custom = () => {};
+testEnv.attachMockSpies(custom);
+custom.mockClear(); // works even without Jest
+
+const logged = testEnv.makeLoggedMock('db', () => ({ query: () => [] }));
+logged.query();
+
+console.log(testEnv.defaultEnv.OPENAI_TOKEN); // 'token'
+```
 
 ### Integration with Jest
 
@@ -158,6 +168,8 @@ Captures current environment variables
 
 #### `testEnv.restoreEnv(savedEnv)`
 Restores an environment snapshot
+#### `testEnv.defaultEnv`
+Default values used by `setTestEnv()`
 
 ### Offline Mode
 
@@ -181,6 +193,10 @@ Returns appropriate stub when offline mode is enabled
 Factory functions for creating specialized test mocks
 #### `testEnv.resetMocks()` / `testEnv.initSearchTest()`
 Utilities for cleaning up multiple mocks or bootstrapping a full search test environment
+#### `testEnv.attachMockSpies(mock)`
+Adds mockClear and mockReset helpers using Jest if available
+#### `testEnv.makeLoggedMock(name, creator)`
+Creates a mock with logging and attached spies
 #### `stubQerrors()`
 Silences qerrors for tests
 #### `reload(relPath)`
