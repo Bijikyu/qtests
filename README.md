@@ -157,6 +157,7 @@ Safe environment variable backup and restoration
 
 #### `offlineMode.setOfflineMode(enabled)`
 - **enabled**: Boolean to enable/disable offline mode
+- Use `offlineMode.isOfflineMode()` to read the current state
 
 #### `offlineMode.getAxios()` / `offlineMode.getQerrors()`
 Returns appropriate stub when offline mode is enabled
