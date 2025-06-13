@@ -220,6 +220,21 @@ logger.info('This produces no output'); // Silent
 logger.error('This also produces no output'); // Silent
 ```
 
+### Using the `stubs` Object
+
+If you need to call the stubbed modules directly, `require('qtests')` exposes a
+`stubs` object:
+
+```js
+const { stubs } = require('qtests');
+
+await stubs.axios.get('https://example.com'); // {}
+await stubs.axios.post('https://example.com', {}); // {}
+```
+
+Most projects should still load `qtests/setup` so that common modules resolve to
+stubs automatically, making manual calls unnecessary.
+
 ---
 
 ## Testing Patterns
