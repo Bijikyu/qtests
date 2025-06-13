@@ -174,6 +174,18 @@ Returns appropriate stub when offline mode is enabled
 Factory functions for creating specialized test mocks
 #### `testEnv.resetMocks()` / `testEnv.initSearchTest()`
 Utilities for cleaning up multiple mocks or bootstrapping a full search test environment
+#### `stubQerrors()`
+Silences qerrors for tests
+#### `reload(relPath)`
+Reloads a module from cache
+#### `createJsonRes()` / `createRes()`
+Response object mocks
+#### `generateKey(suffix)`
+Generates predictable keys for tests
+#### `withSavedEnv(fn)`
+Runs a callback with env saved and restored
+#### `moduleReloadLock`
+Lock set used by `reload`
 
 ---
 
