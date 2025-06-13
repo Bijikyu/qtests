@@ -153,6 +153,12 @@ Sets standard test environment variables (NODE_ENV=test, DEBUG=qtests:*)
 #### `testHelpers.backupEnvVars()` / `testHelpers.restoreEnvVars(backup)`
 Safe environment variable backup and restoration
 
+#### `testEnv.saveEnv()`
+Captures current environment variables
+
+#### `testEnv.restoreEnv(savedEnv)`
+Restores an environment snapshot
+
 ### Offline Mode
 
 #### `offlineMode.setOfflineMode(enabled)`
