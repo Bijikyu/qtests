@@ -80,10 +80,10 @@ const { testEnv } = require('qtests');
 // Set test environment
 testEnv.setTestEnv(); // Sets NODE_ENV=test, DEBUG=qtests:*
 
-// Backup and restore environment
-const backup = testEnv.backupEnvVars();
+// Save and restore environment using helpers
+const saved = testEnv.saveEnv();
 process.env.TEST_VAR = 'modified';
-testEnv.restoreEnvVars(backup); // TEST_VAR removed, original state restored
+testEnv.restoreEnv(saved); // TEST_VAR removed, original state restored
 ```
 
 ---
