@@ -39,6 +39,10 @@ yarn add qtests --dev
 // At the top of your test files
 require('qtests/setup');
 
+// Or call the exported setup function if you prefer
+const { setup } = require('qtests');
+setup();
+
 // Your tests now use stubs automatically
 const axios = require('axios'); // Uses qtests axios stub
 const winston = require('winston'); // Uses qtests winston stub
@@ -316,6 +320,10 @@ test('full workflow', async () => {
 // ✅ Correct - at the very top of test files
 require('qtests/setup');
 const myModule = require('./myModule');
+
+// Or programmatically
+const { setup } = require('qtests');
+setup();
 
 // ❌ Wrong - setup after module requires
 const myModule = require('./myModule');
