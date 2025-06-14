@@ -1,7 +1,7 @@
 {
   "name": "qtests",
-  "version": "1.0.4",
-  "description": "Testing utilities and stubs for Node.js projects",
+  "version": "1.0.5",
+  "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
   "main": "index.js",
   "scripts": {
     "test": "jest"
@@ -12,7 +12,13 @@
     "mock",
     "winston",
     "axios",
-    "utils"
+    "utils",
+    "test-framework", 
+    "console-mock", 
+    "environment-management", 
+    "jest-compatible", 
+    "offline-testing",
+    "side-effect-free"
   ],
   "author": "Q",
   "license": "MIT",
