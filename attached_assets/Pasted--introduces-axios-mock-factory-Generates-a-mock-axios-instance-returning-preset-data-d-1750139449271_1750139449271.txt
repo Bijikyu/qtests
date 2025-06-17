@@ -1,0 +1,38 @@
+/** //(introduces axios mock factory)
+ * Generates a mock axios instance returning preset data. //(describe function)
+ * It intercepts axios calls to return canned responses, avoiding real HTTP. //(explain mocking)
+ * Rationale: enables offline tests and predictable responses. //(why)
+ */ //(close introductory comment)
+function createMockAxios(){ // factory producing configurable axios mock
+    console.log(`createMockAxios is running with none`); // log start of factory
+    try {
+        const responses = new Map(); // map to hold url responses
+        responses.set('http://a', { data: { mock: true }, status: 200, reject: false }); // seed default mock
+        function mockAxios(config){ // simulate axios request/response
+            console.log(`mockAxios is running with ${JSON.stringify(config)}`); // log start
+            try {
+                const mock = responses.get(config.url); // lookup response
+                if(mock){
+                    const result = { status: mock.status, data: mock.data }; // build axios style result
+                    console.log(`mockAxios is returning ${JSON.stringify(result)}`); // log return
+                    if(mock.reject) return Promise.reject({ response: result }); // reject when flagged
+                    return Promise.resolve(result); // resolve mock success
+                }
+                const error = { response: { status: 500, data: 'error' } }; // fallback error
+                console.log(`mockAxios is returning ${JSON.stringify(error)}`); // log error return
+                return Promise.reject(error); // reject unknown url
+            } catch(error){
+                console.log(`mockAxios error ${error.message}`); // log internal error
+                return Promise.reject(error); // propagate
+            }
+        }
+        function axiosWrapper(config){ return mockAxios(config); } // expose axios like function
+        axiosWrapper.__set = (url, data, status = 200, reject = false) => { responses.set(url, { data, status, reject }); }; // helper to program responses
+        console.log(`createMockAxios is returning axiosWrapper`); // log end
+        return axiosWrapper; // return configured mock
+    } catch(error){
+        console.log(`createMockAxios error ${error.message}`); // log failure
+        throw error; // rethrow for caller
+    }
+}
+module.exports = { createMockAxios }; // export factory

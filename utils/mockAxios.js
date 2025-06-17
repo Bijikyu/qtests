@@ -222,139 +222,42 @@ function createMockAxios(options = {}) {
   }
 }
 
-/**
- * Create a configurable mock axios with URL-specific response mapping
- * 
- * This factory function creates a mock axios implementation that uses a Map-based
- * response system for URL-specific configurations. This approach allows precise
- * control over responses for different endpoints and supports error simulation.
- * 
- * Implementation approach:
- * 1. Use Map to store URL-specific response configurations
- * 2. Support both success and error response scenarios
- * 3. Provide helper methods for programming responses
- * 4. Maintain axios-compatible interface for seamless integration
- * 
- * Why Map-based response system:
- * - Precise control over individual endpoint responses
- * - Easy to configure different scenarios per URL
- * - Supports dynamic response modification during tests
- * - Clear separation between configuration and execution
- * 
- * @returns {Function} Mock axios function with URL-specific response capabilities
- * 
- * @example
- * const mockAxios = createConfigurableMockAxios();
- * mockAxios.__set('http://api.test.com/users', { users: [] }, 200);
- * const response = await mockAxios({ url: 'http://api.test.com/users' });
- */
-function createConfigurableMockAxios() {
-  console.log(`createConfigurableMockAxios is running with none`);
-  
-  try {
-    const responses = new Map(); // map to hold url responses
-    // Seed default mock response for demonstration
-    responses.set('http://a', { data: { mock: true }, status: 200, reject: false });
-    
-    /**
-     * Mock axios request handler
-     * 
-     * This function simulates axios request/response behavior by looking up
-     * pre-configured responses based on the request URL. It supports both
-     * successful responses and error scenarios for comprehensive testing.
-     * 
-     * @param {Object} config - Axios request configuration object
-     * @returns {Promise} Promise resolving/rejecting based on configuration
-     */
-    function mockAxios(config) {
-      console.log(`mockAxios is running with ${JSON.stringify(config)}`);
-      
-      try {
-        const mock = responses.get(config.url); // lookup response
-        
-        if (mock) {
-          const result = { status: mock.status, data: mock.data }; // build axios style result
-          console.log(`mockAxios is returning ${JSON.stringify(result)}`);
-          
-          if (mock.reject) {
-            return Promise.reject({ response: result }); // reject when flagged
-          }
-          return Promise.resolve(result); // resolve mock success
+/** //(introduces axios mock factory)
+ * Generates a mock axios instance returning preset data. //(describe function)
+ * It intercepts axios calls to return canned responses, avoiding real HTTP. //(explain mocking)
+ * Rationale: enables offline tests and predictable responses. //(why)
+ */ //(close introductory comment)
+function createUserMockAxios(){ // factory producing configurable axios mock
+    console.log(`createMockAxios is running with none`); // log start of factory
+    try {
+        const responses = new Map(); // map to hold url responses
+        responses.set('http://a', { data: { mock: true }, status: 200, reject: false }); // seed default mock
+        function mockAxios(config){ // simulate axios request/response
+            console.log(`mockAxios is running with ${JSON.stringify(config)}`); // log start
+            try {
+                const mock = responses.get(config.url); // lookup response
+                if(mock){
+                    const result = { status: mock.status, data: mock.data }; // build axios style result
+                    console.log(`mockAxios is returning ${JSON.stringify(result)}`); // log return
+                    if(mock.reject) return Promise.reject({ response: result }); // reject when flagged
+                    return Promise.resolve(result); // resolve mock success
+                }
+                const error = { response: { status: 500, data: 'error' } }; // fallback error
+                console.log(`mockAxios is returning ${JSON.stringify(error)}`); // log error return
+                return Promise.reject(error); // reject unknown url
+            } catch(error){
+                console.log(`mockAxios error ${error.message}`); // log internal error
+                return Promise.reject(error); // propagate
+            }
         }
-        
-        // Fallback error for unknown URLs
-        const error = { response: { status: 500, data: 'error' } };
-        console.log(`mockAxios is returning ${JSON.stringify(error)}`);
-        return Promise.reject(error); // reject unknown url
-        
-      } catch (error) {
-        console.log(`mockAxios error ${error.message}`);
-        return Promise.reject(error); // propagate internal errors
-      }
+        function axiosWrapper(config){ return mockAxios(config); } // expose axios like function
+        axiosWrapper.__set = (url, data, status = 200, reject = false) => { responses.set(url, { data, status, reject }); }; // helper to program responses
+        console.log(`createMockAxios is returning axiosWrapper`); // log end
+        return axiosWrapper; // return configured mock
+    } catch(error){
+        console.log(`createMockAxios error ${error.message}`); // log failure
+        throw error; // rethrow for caller
     }
-    
-    /**
-     * Axios wrapper function with configuration helpers
-     * 
-     * This wrapper provides the main axios interface while adding helper
-     * methods for configuring URL-specific responses. The __set method
-     * allows dynamic configuration of mock responses during test execution.
-     */
-    function axiosWrapper(config) {
-      return mockAxios(config);
-    }
-    
-    /**
-     * Configure mock response for specific URL
-     * 
-     * This helper method allows dynamic configuration of mock responses
-     * for specific URLs. It supports both success and error scenarios
-     * with customizable status codes and response data.
-     * 
-     * @param {string} url - URL to configure response for
-     * @param {any} data - Response data to return
-     * @param {number} status - HTTP status code (default: 200)
-     * @param {boolean} reject - Whether to reject the promise (default: false)
-     */
-    axiosWrapper.__set = (url, data, status = 200, reject = false) => {
-      responses.set(url, { data, status, reject });
-    };
-    
-    /**
-     * Get configured response for URL (for debugging)
-     * 
-     * @param {string} url - URL to get configuration for
-     * @returns {Object|undefined} Response configuration or undefined
-     */
-    axiosWrapper.__get = (url) => {
-      return responses.get(url);
-    };
-    
-    /**
-     * Clear all configured responses
-     * 
-     * @returns {void}
-     */
-    axiosWrapper.__clear = () => {
-      responses.clear();
-    };
-    
-    /**
-     * Get all configured URLs
-     * 
-     * @returns {Array<string>} Array of configured URLs
-     */
-    axiosWrapper.__urls = () => {
-      return Array.from(responses.keys());
-    };
-    
-    console.log(`createConfigurableMockAxios is returning axiosWrapper`);
-    return axiosWrapper;
-    
-  } catch (error) {
-    console.log(`createConfigurableMockAxios error ${error.message}`);
-    throw error;
-  }
 }
 
 /**
@@ -386,6 +289,6 @@ function createSimpleMockAxios() {
 // Export mock axios factory utilities at bottom per requirements
 module.exports = {
   createMockAxios, // configurable mock axios factory
-  createConfigurableMockAxios, // URL-specific response mapping mock axios
+  createUserMockAxios, // user-provided axios mock factory with exact implementation
   createSimpleMockAxios // simple mock axios for basic usage
 };

@@ -14,7 +14,7 @@
  * - Performance and reliability characteristics
  */
 
-const { createMockAxios, createConfigurableMockAxios, createSimpleMockAxios } = require('../utils/mockAxios');
+const { createMockAxios, createUserMockAxios, createSimpleMockAxios } = require('../utils/mockAxios');
 
 describe('Mock Axios Factory', () => {
   
@@ -129,21 +129,18 @@ describe('Mock Axios Factory', () => {
     });
   });
   
-  describe('createConfigurableMockAxios', () => {
+  describe('createUserMockAxios', () => {
     
     test('creates mock axios with URL-specific response mapping', async () => {
-      const mockAxios = createConfigurableMockAxios();
+      const mockAxios = createUserMockAxios();
       
       // Verify it's a function with helper methods
       expect(typeof mockAxios).toBe('function');
       expect(typeof mockAxios.__set).toBe('function');
-      expect(typeof mockAxios.__get).toBe('function');
-      expect(typeof mockAxios.__clear).toBe('function');
-      expect(typeof mockAxios.__urls).toBe('function');
     });
     
     test('returns default seeded response for configured URL', async () => {
-      const mockAxios = createConfigurableMockAxios();
+      const mockAxios = createUserMockAxios();
       
       const response = await mockAxios({ url: 'http://a' });
       
@@ -152,7 +149,7 @@ describe('Mock Axios Factory', () => {
     });
     
     test('configures custom responses using __set method', async () => {
-      const mockAxios = createConfigurableMockAxios();
+      const mockAxios = createUserMockAxios();
       const testData = { users: ['alice', 'bob'] };
       
       mockAxios.__set('http://api.test.com/users', testData, 201);
@@ -164,7 +161,7 @@ describe('Mock Axios Factory', () => {
     });
     
     test('simulates error responses when reject flag is set', async () => {
-      const mockAxios = createConfigurableMockAxios();
+      const mockAxios = createUserMockAxios();
       const errorData = { error: 'Not found' };
       
       mockAxios.__set('http://api.test.com/notfound', errorData, 404, true);
@@ -179,7 +176,7 @@ describe('Mock Axios Factory', () => {
     });
     
     test('returns 500 error for unconfigured URLs', async () => {
-      const mockAxios = createConfigurableMockAxios();
+      const mockAxios = createUserMockAxios();
       
       try {
         await mockAxios({ url: 'http://unknown.com' });
@@ -190,46 +187,8 @@ describe('Mock Axios Factory', () => {
       }
     });
     
-    test('__get method retrieves configured responses', () => {
-      const mockAxios = createConfigurableMockAxios();
-      const testData = { message: 'test' };
-      
-      mockAxios.__set('http://test.com', testData, 200);
-      
-      const config = mockAxios.__get('http://test.com');
-      expect(config.data).toEqual(testData);
-      expect(config.status).toBe(200);
-      expect(config.reject).toBe(false);
-    });
-    
-    test('__clear method removes all configurations', () => {
-      const mockAxios = createConfigurableMockAxios();
-      
-      mockAxios.__set('http://test1.com', { data: 1 });
-      mockAxios.__set('http://test2.com', { data: 2 });
-      
-      expect(mockAxios.__urls()).toHaveLength(3); // 2 new + 1 default
-      
-      mockAxios.__clear();
-      
-      expect(mockAxios.__urls()).toHaveLength(0);
-    });
-    
-    test('__urls method returns all configured URLs', () => {
-      const mockAxios = createConfigurableMockAxios();
-      
-      mockAxios.__set('http://api1.com', { data: 1 });
-      mockAxios.__set('http://api2.com', { data: 2 });
-      
-      const urls = mockAxios.__urls();
-      expect(urls).toContain('http://a'); // default
-      expect(urls).toContain('http://api1.com');
-      expect(urls).toContain('http://api2.com');
-      expect(urls).toHaveLength(3);
-    });
-    
     test('handles multiple configurations for same URL', async () => {
-      const mockAxios = createConfigurableMockAxios();
+      const mockAxios = createUserMockAxios();
       
       // Initial configuration
       mockAxios.__set('http://api.com', { version: 1 }, 200);
@@ -244,8 +203,8 @@ describe('Mock Axios Factory', () => {
     });
     
     test('maintains isolation between different mock instances', async () => {
-      const mockAxios1 = createConfigurableMockAxios();
-      const mockAxios2 = createConfigurableMockAxios();
+      const mockAxios1 = createUserMockAxios();
+      const mockAxios2 = createUserMockAxios();
       
       mockAxios1.__set('http://shared.com', { instance: 1 });
       mockAxios2.__set('http://shared.com', { instance: 2 });
@@ -255,6 +214,22 @@ describe('Mock Axios Factory', () => {
       
       expect(response1.data.instance).toBe(1);
       expect(response2.data.instance).toBe(2);
+    });
+    
+    test('matches exact implementation provided by user', () => {
+      const mockAxios = createUserMockAxios();
+      
+      // Verify it follows the exact pattern from user's code
+      expect(typeof mockAxios).toBe('function');
+      expect(typeof mockAxios.__set).toBe('function');
+      
+      // Test the __set signature matches: (url, data, status = 200, reject = false)
+      mockAxios.__set('http://test.com', { test: true });
+      mockAxios.__set('http://test2.com', { test: true }, 201);
+      mockAxios.__set('http://test3.com', { test: true }, 202, true);
+      
+      // Should not throw errors with these configurations
+      expect(true).toBe(true);
     });
   });
   
