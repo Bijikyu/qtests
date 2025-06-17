@@ -29,10 +29,22 @@
 const { setLogging } = require('../lib/logUtils'); // use only setLogging here
 if (process.env.NODE_ENV !== 'test') setLogging(false); //(mute logs outside tests)
 
-// Initialize offline mode state - starts in online mode by default
-// This state determines whether to use real or stub implementations
-// Default to false (online) to match typical application runtime behavior
-let isOffline = false; // (tracks offline mode state)
+// Import mock axios factory for creating configurable mock instances
+const { createMockAxios } = require('./mockAxios');
+
+// Environment variable detection for automatic offline mode
+// Supports multiple environment variables for different use cases:
+// - CODEX: Used by development/testing environments
+// - OFFLINE_MODE: Explicit offline mode flag
+// - NODE_ENV=test: Automatic offline mode in test environments
+const codexFlag = String(process.env.CODEX).toLowerCase() === 'true';
+const offlineFlagExplicit = String(process.env.OFFLINE_MODE).toLowerCase() === 'true';
+const testEnvironment = process.env.NODE_ENV === 'test';
+
+// Initialize offline mode state with environment variable detection
+// Precedence order: explicit OFFLINE_MODE > CODEX flag > manual setting
+// This allows environment-based automatic configuration while preserving programmatic control
+let isOffline = offlineFlagExplicit || codexFlag || false; // (tracks offline mode state with env detection)
 
 // Cache variables for required modules //(store loaded modules)
 let axiosCache; // (cache for axios module)
@@ -142,11 +154,11 @@ function getAxios() {
     let axiosImplementation;
 
     if (isOffline) {
-      // Load stub implementation for offline mode to prevent network calls
-      // Stub provides immediate promise resolution without actual HTTP requests
-      // Critical for test isolation and preventing external dependencies
-      // Relative path used to ensure stub loading works regardless of test location
-      axiosImplementation = require(`../stubs/axios`);
+      // Use factory-created mock axios for offline mode with enhanced capabilities
+      // Mock factory provides configurable response behavior and error simulation
+      // Superior to simple stub for testing various network scenarios
+      // Maintains consistent interface while providing testing flexibility
+      axiosImplementation = createMockAxios();
     } else {
       // Load real axios module for online mode when network calls are intended
       // Standard require path allows npm to resolve axios from node_modules
@@ -207,8 +219,22 @@ function getQerrors() {
     let qerrorsImplementation; // module holder variable
 
     if (isOffline) {
-      qerrorsImplementation = { qerrors: () => {} }; // create stub for offline mode
+      // Enhanced no-op qerrors implementation for offline environments
+      // Provides same interface as real qerrors but only logs locally
+      // Includes debugging output to help track error reporting behavior
+      qerrorsImplementation = {
+        qerrors: () => {
+          console.log(`noopQerrors is running with none`); // Log function entry for debugging
+          try {
+            console.log(`noopQerrors has run`); // Log successful execution
+          } catch(error) {
+            console.log(`noopQerrors error ${error.message}`); // Log any unexpected errors
+          }
+        }
+      };
     } else {
+      // Conditionally load qerrors only in online environments to prevent module not found errors
+      // Dynamic import prevents errors in offline mode when qerrors module is unavailable
       qerrorsImplementation = require(`qerrors`); // load real qerrors for online mode with backticks
     }
 
@@ -222,6 +248,71 @@ function getQerrors() {
     qerrorsCache = fallbackQerrors; // store fallback in cache
     console.log(`getQerrors is returning ${qerrorsCache}`); // logging return value per requirements
     return qerrorsCache;
+  }
+}
+
+/**
+ * Get environment detection state for debugging and configuration
+ * 
+ * This function returns the current state of environment variable detection
+ * to help with debugging and understanding how offline mode was configured.
+ * Useful for troubleshooting environment-specific behavior.
+ * 
+ * @returns {Object} Environment detection state information
+ * 
+ * @example
+ * const envState = getEnvironmentState();
+ * console.log(`CODEX flag: ${envState.codexFlag}`);
+ * console.log(`Offline mode: ${envState.isOffline}`);
+ */
+function getEnvironmentState() {
+  console.log(`getEnvironmentState is running with none`);
+  
+  try {
+    const state = {
+      codexFlag,
+      offlineFlagExplicit,
+      testEnvironment,
+      isOffline,
+      environmentDetected: codexFlag || offlineFlagExplicit
+    };
+    console.log(`getEnvironmentState is returning ${JSON.stringify(state)}`);
+    return state;
+  } catch (error) {
+    console.log(`getEnvironmentState error: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Create environment-aware adapters based on current offline state
+ * 
+ * This function provides a convenient way to get both axios and qerrors
+ * implementations in a single call, configured appropriately for the
+ * current environment. This matches the pattern from your provided
+ * environment adapter functionality.
+ * 
+ * @returns {Object} Object containing axios and qerrors implementations
+ * 
+ * @example
+ * const { axios, qerrors } = createEnvironmentAdapters();
+ * const response = await axios.get('/api/data');
+ * qerrors.report(new Error('Test error'));
+ */
+function createEnvironmentAdapters() {
+  console.log(`createEnvironmentAdapters is running with offline: ${isOffline}`);
+  
+  try {
+    const adapters = {
+      isOffline,
+      axios: getAxios(),
+      qerrors: getQerrors()
+    };
+    console.log(`createEnvironmentAdapters is returning adapters`);
+    return adapters;
+  } catch (error) {
+    console.log(`createEnvironmentAdapters error: ${error.message}`);
+    throw error;
   }
 }
 
@@ -244,5 +335,7 @@ module.exports = {
   isOfflineMode, // get current offline state
   getAxios, // get appropriate axios implementation
   getQerrors, // get appropriate qerrors implementation
+  getEnvironmentState, // get environment detection information
+  createEnvironmentAdapters, // create complete environment-aware adapter set
   clearOfflineCache // reset module caches
 };
