@@ -319,7 +319,7 @@ console.log('All mocks have been cleaned up and original behavior restored');
 console.log('\n=== Environment Adapter Pattern Demo ===');
 
 // Import environment utilities with enhanced adapter support
-const { offlineMode, mockAxios, httpTest } = require('./lib/envUtils');
+const { offlineMode, mockAxios, httpTest, mockModels } = require('./lib/envUtils');
 
 // Get current environment state information
 const envState = offlineMode.getEnvironmentState();
@@ -564,6 +564,222 @@ async function demonstrateHttpTesting() {
 demonstrateHttpTesting();
 
 console.log('All HTTP testing demonstrations completed');
+
+/**
+ * Example 8: In-Memory Database Models for Unit Testing
+ * 
+ * This demonstrates the in-memory Mongoose model replacements that provide
+ * database functionality without requiring actual database connections.
+ * Essential for fast, isolated unit testing of data-dependent applications.
+ * 
+ * Key benefits of mock models:
+ * - Zero database dependencies for unit testing
+ * - Fast test execution without database I/O
+ * - Predictable data state for reliable testing
+ * - Full Mongoose API compatibility for seamless integration
+ * - Complete control over test data scenarios
+ */
+
+// Demonstrate in-memory database model testing
+console.log('\n=== In-Memory Database Models Demo ===');
+
+// Create custom models for different entity types
+const User = mockModels.createMockModel('User');
+const Product = mockModels.createMockModel('Product');
+
+// Use pre-built models for common scenarios
+const { ApiKey, ApiLog } = mockModels;
+
+async function demonstrateModelOperations() {
+  console.log('\n--- Model CRUD Operations Demo ---');
+  
+  try {
+    // Create and save user instances
+    const user1 = new User({ name: 'Alice', email: 'alice@example.com', role: 'admin' });
+    const user2 = new User({ name: 'Bob', email: 'bob@example.com', role: 'user' });
+    
+    await user1.save();
+    await user2.save();
+    
+    console.log(`Created users with IDs: ${user1._id}, ${user2._id}`);
+    
+    // Create product instances
+    const product1 = new Product({ name: 'Widget', price: 29.99, category: 'tools' });
+    const product2 = new Product({ name: 'Gadget', price: 49.99, category: 'electronics' });
+    
+    await product1.save();
+    await product2.save();
+    
+    console.log(`Created products: ${product1.name}, ${product2.name}`);
+    
+    // Demonstrate query operations
+    const adminUser = await User.findOne({ role: 'admin' });
+    console.log(`Found admin user: ${adminUser.name}`);
+    
+    const expensiveProducts = await Product.find({ price: { $gt: 30 } }).lean();
+    console.log(`Found ${expensiveProducts.length} expensive products`);
+    
+    // Demonstrate updates
+    const updatedUser = await User.findOneAndUpdate(
+      { name: 'Bob' },
+      { role: 'moderator' }
+    );
+    console.log(`Updated user ${updatedUser.name} to role: ${updatedUser.role}`);
+    
+    // Demonstrate deletion
+    const deletedProduct = await Product.findOneAndDelete({ name: 'Widget' });
+    console.log(`Deleted product: ${deletedProduct.name}`);
+    
+    console.log('CRUD operations completed successfully');
+    
+  } catch (error) {
+    console.log(`Model operations error: ${error.message}`);
+  }
+}
+
+async function demonstrateQueryChaining() {
+  console.log('\n--- Query Chaining Demo ---');
+  
+  try {
+    // Create test data for query demonstrations
+    await new User({ name: 'Charlie', age: 25, department: 'engineering' }).save();
+    await new User({ name: 'Diana', age: 30, department: 'marketing' }).save();
+    await new User({ name: 'Eve', age: 35, department: 'engineering' }).save();
+    await new User({ name: 'Frank', age: 28, department: 'sales' }).save();
+    
+    // Demonstrate complex query chaining
+    const engineeringUsers = await User.find({ department: 'engineering' })
+      .sort({ age: -1 })
+      .limit(2)
+      .lean();
+    
+    console.log(`Engineering users (sorted by age desc, limit 2):`);
+    engineeringUsers.forEach(user => {
+      console.log(`  ${user.name} (age ${user.age})`);
+    });
+    
+    // Demonstrate pagination
+    const paginatedUsers = await User.find({})
+      .sort({ name: 1 })
+      .skip(2)
+      .limit(2)
+      .lean();
+    
+    console.log(`Paginated users (skip 2, limit 2):`);
+    paginatedUsers.forEach(user => {
+      console.log(`  ${user.name}`);
+    });
+    
+    // Demonstrate counting
+    const totalUsers = await User.countDocuments({});
+    const engineeringCount = await User.countDocuments({ department: 'engineering' });
+    
+    console.log(`Total users: ${totalUsers}, Engineering users: ${engineeringCount}`);
+    
+  } catch (error) {
+    console.log(`Query chaining error: ${error.message}`);
+  }
+}
+
+async function demonstratePreBuiltModels() {
+  console.log('\n--- Pre-built Models Demo ---');
+  
+  try {
+    // Demonstrate ApiKey model usage
+    const apiKey1 = new ApiKey({ key: 'api-key-123', userId: 'user-456', scopes: ['read', 'write'] });
+    const apiKey2 = new ApiKey({ key: 'api-key-789', userId: 'user-321', scopes: ['read'] });
+    
+    await apiKey1.save();
+    await apiKey2.save();
+    
+    console.log(`Created API keys: ${apiKey1.key}, ${apiKey2.key}`);
+    
+    // Find API key by key value
+    const foundKey = await ApiKey.findOne({ key: 'api-key-123' });
+    console.log(`Found API key for user: ${foundKey.userId}`);
+    
+    // Update API key status
+    const deactivatedKey = await ApiKey.findOneAndUpdate(
+      { key: 'api-key-789' },
+      { isActive: false }
+    );
+    console.log(`Deactivated API key: ${deactivatedKey.key}`);
+    
+    // Demonstrate ApiLog model usage
+    const log1 = new ApiLog({ 
+      message: 'API request processed', 
+      allowedApi: 'userService',
+      level: 'info',
+      userId: 'user-456'
+    });
+    
+    const log2 = new ApiLog({ 
+      message: 'Rate limit exceeded', 
+      allowedApi: 'userService',
+      level: 'warning',
+      userId: 'user-321'
+    });
+    
+    await log1.save();
+    await log2.save();
+    
+    console.log(`Created ${mockModels.mockLogs.length} log entries`);
+    
+    // Query logs by service
+    const userServiceLogs = await ApiLog.find({ allowedApi: 'userService' }).lean();
+    console.log(`User service logs: ${userServiceLogs.length}`);
+    
+    userServiceLogs.forEach(log => {
+      console.log(`  ${log.level}: ${log.message}`);
+    });
+    
+  } catch (error) {
+    console.log(`Pre-built models error: ${error.message}`);
+  }
+}
+
+async function demonstrateBulkOperations() {
+  console.log('\n--- Bulk Operations Demo ---');
+  
+  try {
+    // Create multiple users for bulk operations
+    await new User({ name: 'User1', status: 'active', category: 'premium' }).save();
+    await new User({ name: 'User2', status: 'inactive', category: 'basic' }).save();
+    await new User({ name: 'User3', status: 'active', category: 'premium' }).save();
+    await new User({ name: 'User4', status: 'pending', category: 'basic' }).save();
+    
+    // Bulk update operation
+    const updateResult = await User.updateMany(
+      { status: 'active' },
+      { lastLogin: new Date() }
+    );
+    console.log(`Updated ${updateResult.modifiedCount} active users with lastLogin`);
+    
+    // Bulk delete operation
+    const deleteResult = await User.deleteMany({ status: 'inactive' });
+    console.log(`Deleted ${deleteResult.deletedCount} inactive users`);
+    
+    // Count remaining users
+    const remainingCount = await User.countDocuments({});
+    console.log(`Remaining users: ${remainingCount}`);
+    
+  } catch (error) {
+    console.log(`Bulk operations error: ${error.message}`);
+  }
+}
+
+// Run all model demonstrations
+demonstrateModelOperations();
+demonstrateQueryChaining();
+demonstratePreBuiltModels();
+demonstrateBulkOperations();
+
+// Clean up test data
+console.log('\n--- Cleanup Demo ---');
+mockModels.resetAllCollections();
+console.log('All collections reset for clean test state');
+
+console.log('All database model demonstrations completed');
 
 })(); // (end async wrapper to keep CommonJS compatible)
 
