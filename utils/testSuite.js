@@ -268,11 +268,19 @@ class MockManager {
     logStart('MockManager.setupConsoleMocks');
     
     try {
-      const { mockConsole } = require('../lib/envUtils');
+      const { mockConsole } = require('../utils/mockConsole');
       
-      // Use qtests mockConsole utility
-      const mockConsoleResult = mockConsole();
-      const { mockLog, mockError, mockWarn, restore } = mockConsoleResult;
+      // Use qtests mockConsole utility - mock each console method individually
+      const mockLog = mockConsole('log');
+      const mockError = mockConsole('error');
+      const mockWarn = mockConsole('warn');
+      
+      // Create restore function that restores all console methods
+      const restore = () => {
+        if (mockLog && mockLog.mockRestore) mockLog.mockRestore();
+        if (mockError && mockError.mockRestore) mockError.mockRestore();
+        if (mockWarn && mockWarn.mockRestore) mockWarn.mockRestore();
+      };
       
       const consoleMocks = {
         log: mockLog,
@@ -308,8 +316,8 @@ class MockManager {
       const { testEnv } = require('../lib/envUtils');
       
       // Save current environment and set test values
-      const restore = testEnv.save();
-      testEnv.set(envVars);
+      const restore = testEnv().save();
+      testEnv().set(envVars);
       
       this.mocks.set('environment', envVars);
       this.restorations.set('environment', restore);
@@ -1182,26 +1190,8 @@ class TestSuiteBuilder {
   build() {
     logStart('TestSuiteBuilder.build');
     
-    // Set up automatic cleanup if enabled
-    if (this.autoCleanup) {
-      // Try to set up beforeEach hook for mock cleanup
-      try {
-        if (typeof beforeEach === 'function') {
-          const isValidTestContext = typeof describe === 'function' && typeof it === 'function';
-          
-          if (isValidTestContext) {
-            beforeEach(() => {
-              this.mockManager.clearAll();
-              TestDataFactory.reset();
-            });
-          } else {
-            console.log('Warning: Not in valid test context - manual cleanup required');
-          }
-        }
-      } catch (error) {
-        console.log('Warning: Could not set up automatic cleanup hooks');
-      }
-    }
+    // Note: Automatic cleanup disabled in builder to avoid hook definition issues
+    // Users should call suite.mocks.clearAll() and suite.data.reset() manually in their beforeEach hooks
 
     const suite = {
       db: this.dbHelper,

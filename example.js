@@ -1273,6 +1273,357 @@ demonstrateEmailTestingWorkflow();
 
 console.log('\nAll email mock demonstrations completed');
 
+/**
+ * Example 7: Comprehensive Test Suite Utilities for Pattern Elimination
+ * 
+ * This demonstrates the testSuite utility for eliminating duplicate patterns
+ * across test suites by centralizing setup, teardown, mocking, and assertion
+ * patterns. Essential for large projects with consistent testing requirements.
+ * 
+ * Benefits of comprehensive test suite utilities:
+ * - Eliminates duplicate setup/teardown patterns across test files
+ * - Provides standardized mocking patterns for consistent behavior
+ * - Centralizes assertion helpers for common testing scenarios
+ * - Reduces boilerplate code and improves test maintainability
+ * - Ensures consistent testing patterns across different developers
+ */
+
+function demonstrateTestSuiteUtilities() {
+  console.log('\n=== Comprehensive Test Suite Utilities Demonstration ===');
+  
+  try {
+    const { testSuite } = require('./lib/envUtils');
+    const {
+      DatabaseTestHelper,
+      MockManager,
+      AssertionHelper,
+      TestDataFactory,
+      PerformanceTestHelper,
+      TestSuiteBuilder
+    } = testSuite;
+    
+    // Database Testing Helper demonstration
+    console.log('\n--- Database Testing Helper ---');
+    const dbHelper = new DatabaseTestHelper();
+    
+    // Mock management demonstration
+    console.log('\n--- Mock Management System ---');
+    const mockManager = new MockManager();
+    
+    // Set up API client mocks
+    mockManager.setupApiClientMocks({
+      get: { status: 200, data: { message: 'Mock API response' } }
+    });
+    console.log('✓ API client mocks configured');
+    
+    // Set up email mocks
+    const emailMocks = mockManager.setupEmailMocks();
+    console.log('✓ Email mocks configured');
+    
+    // Test data factory demonstration
+    console.log('\n--- Test Data Factory ---');
+    TestDataFactory.reset(); // Start with clean counter
+    
+    const user1 = TestDataFactory.createUser();
+    const user2 = TestDataFactory.createUser({ username: 'customuser' });
+    const apiKey = TestDataFactory.createApiKey();
+    
+    console.log(`✓ Created user: ${user1.username} (${user1.email})`);
+    console.log(`✓ Created custom user: ${user2.username} (${user2.email})`);
+    console.log(`✓ Created API key: ${apiKey.name}`);
+    
+    // Create multiple related entities
+    const entities = TestDataFactory.createRelatedEntities({
+      userCount: 2,
+      apiKeysPerUser: 1,
+      logsPerUser: 1
+    });
+    
+    console.log(`✓ Created ${entities.users.length} users with related data`);
+    console.log(`✓ Total API keys: ${entities.apiKeys.length}`);
+    console.log(`✓ Total logs: ${entities.logs.length}`);
+    
+    // Assertion helper demonstration
+    console.log('\n--- Assertion Helpers ---');
+    
+    // Mock database entity for assertion testing
+    const mockEntity = {
+      _id: 'test-id-123',
+      createdAt: new Date(),
+      name: 'Test Entity',
+      status: 'active'
+    };
+    
+    try {
+      AssertionHelper.assertDatabaseEntity(mockEntity, {
+        name: 'Test Entity',
+        status: 'active'
+      });
+      console.log('✓ Database entity assertions passed');
+    } catch (error) {
+      console.log(`✗ Database entity assertion failed: ${error.message}`);
+    }
+    
+    // API response assertion
+    const mockResponse = {
+      status: 200,
+      body: { data: 'test data' }
+    };
+    
+    try {
+      AssertionHelper.assertApiResponse(mockResponse, 200, true);
+      console.log('✓ API response assertions passed');
+    } catch (error) {
+      console.log(`✗ API response assertion failed: ${error.message}`);
+    }
+    
+    // Email assertion
+    emailMocks.sendEmail('test@example.com', 'Test Email', 'Test content');
+    
+    try {
+      AssertionHelper.assertEmailSent({ to: 'test@example.com' });
+      console.log('✓ Email assertion passed');
+    } catch (error) {
+      console.log(`✗ Email assertion failed: ${error.message}`);
+    }
+    
+    // Clean up mocks
+    mockManager.clearAll();
+    console.log('✓ All mocks cleared');
+    
+    console.log('\nTest suite utilities demonstration completed');
+    
+  } catch (error) {
+    console.log(`Test suite demo error: ${error.message}`);
+  }
+}
+
+async function demonstratePerformanceTestingUtilities() {
+  console.log('\n=== Performance Testing Utilities Demonstration ===');
+  
+  try {
+    const { testSuite } = require('./lib/envUtils');
+    const { PerformanceTestHelper, TestDataFactory } = testSuite;
+    
+    // Performance measurement demonstration
+    console.log('\n--- Performance Measurement ---');
+    
+    const operation = async () => {
+      // Simulate some work
+      const users = TestDataFactory.createMultiple(TestDataFactory.createUser, 50);
+      return users.filter(user => user.isActive).length;
+    };
+    
+    const measurement = await PerformanceTestHelper.measureTime(operation);
+    console.log(`✓ Operation completed in ${measurement.duration.toFixed(2)}ms`);
+    console.log(`✓ Result: ${measurement.result} active users`);
+    
+    // Timing constraint demonstration
+    console.log('\n--- Timing Constraint Testing ---');
+    
+    const fastOperation = async () => {
+      await new Promise(resolve => setTimeout(resolve, 5));
+      return 'fast result';
+    };
+    
+    try {
+      const result = await PerformanceTestHelper.assertTimingConstraint(fastOperation, 50);
+      console.log(`✓ Timing constraint passed: ${result}`);
+    } catch (error) {
+      console.log(`✗ Timing constraint failed: ${error.message}`);
+    }
+    
+    // Concurrency testing demonstration
+    console.log('\n--- Concurrency Testing ---');
+    
+    const operations = [
+      async () => 'operation 1',
+      async () => 'operation 2',
+      async () => 'operation 3'
+    ];
+    
+    const concurrencyResult = await PerformanceTestHelper.testConcurrency(operations);
+    console.log(`✓ Concurrent operations: ${concurrencyResult.successful}/${concurrencyResult.results.length} successful`);
+    console.log(`✓ Average duration: ${concurrencyResult.averageDuration.toFixed(2)}ms`);
+    
+    // Memory measurement demonstration
+    console.log('\n--- Memory Usage Testing ---');
+    
+    const memoryOperation = async () => {
+      const largeArray = new Array(1000).fill('test data');
+      return largeArray.length;
+    };
+    
+    const memoryMeasurement = await PerformanceTestHelper.measureMemory(memoryOperation);
+    console.log(`✓ Memory operation result: ${memoryMeasurement.result}`);
+    console.log(`✓ Heap used change: ${(memoryMeasurement.memoryDelta.heapUsed / 1024).toFixed(2)}KB`);
+    
+    console.log('\nPerformance testing utilities demonstration completed');
+    
+  } catch (error) {
+    console.log(`Performance demo error: ${error.message}`);
+  }
+}
+
+function demonstrateTestSuiteBuilder() {
+  console.log('\n=== Test Suite Builder Demonstration ===');
+  
+  try {
+    const { testSuite } = require('./lib/envUtils');
+    const { TestSuiteBuilder } = testSuite;
+    
+    // Builder pattern demonstration
+    console.log('\n--- Fluent Configuration API ---');
+    
+    const suite = new TestSuiteBuilder()
+      .withApiMocks()
+      .withEmailMocks()
+      .withPerformance()
+      .withoutAutoCleanup()
+      .build();
+    
+    console.log('✓ Test suite built with fluent API');
+    console.log(`✓ Includes API mocks: ${suite.mocks.getMock('apiClient') ? 'Yes' : 'No'}`);
+    console.log(`✓ Includes email mocks: ${suite.mocks.getMock('email') ? 'Yes' : 'No'}`);
+    console.log(`✓ Includes performance utilities: ${suite.performance ? 'Yes' : 'No'}`);
+    
+    // Testing the configured suite
+    console.log('\n--- Using Configured Suite ---');
+    
+    // Create test data
+    const userData = suite.data.createUser({ email: 'builder-test@example.com' });
+    console.log(`✓ Created test user: ${userData.username}`);
+    
+    // Test email functionality
+    const emailMock = suite.mocks.getMock('email');
+    emailMock.sendEmail(userData.email, 'Builder Test', 'Testing the builder');
+    console.log('✓ Email sent through configured mock');
+    
+    // Test assertions
+    try {
+      suite.assert.assertEmailSent({ to: userData.email });
+      console.log('✓ Email assertion passed');
+    } catch (error) {
+      console.log(`✗ Email assertion failed: ${error.message}`);
+    }
+    
+    // Test API mock
+    const apiClient = suite.mocks.getMock('apiClient');
+    apiClient.get().then(response => {
+      console.log(`✓ API mock response status: ${response.status}`);
+    });
+    
+    // Clean up
+    suite.mocks.clearAll();
+    console.log('✓ Suite cleaned up');
+    
+    console.log('\nTest suite builder demonstration completed');
+    
+  } catch (error) {
+    console.log(`Builder demo error: ${error.message}`);
+  }
+}
+
+async function demonstrateCompleteTestingWorkflow() {
+  console.log('\n=== Complete Testing Workflow Integration ===');
+  
+  try {
+    const { testSuite } = require('./lib/envUtils');
+    const { TestSuiteBuilder } = testSuite;
+    
+    // Configure comprehensive test suite
+    console.log('\n--- Comprehensive Test Setup ---');
+    
+    const suite = new TestSuiteBuilder()
+      .withApiMocks()
+      .withEmailMocks()
+      .withPerformance()
+      .withoutAutoCleanup()
+      .build();
+    
+    console.log('✓ Comprehensive test suite configured');
+    
+    // Simulate complete application testing workflow
+    console.log('\n--- Simulated Application Testing ---');
+    
+    // 1. Create test data
+    const testUsers = suite.data.createMultiple(suite.data.createUser, 3);
+    console.log(`✓ Created ${testUsers.length} test users`);
+    
+    // 2. Test API interactions
+    const apiClient = suite.mocks.getMock('apiClient');
+    const apiResponse = await apiClient.get();
+    suite.assert.assertApiResponse(apiResponse, 200, true);
+    console.log('✓ API interaction tested');
+    
+    // 3. Test email notifications
+    const emailMock = suite.mocks.getMock('email');
+    testUsers.forEach(user => {
+      emailMock.sendEmail(user.email, 'Welcome', `Welcome ${user.firstName}!`);
+    });
+    console.log(`✓ Sent ${testUsers.length} welcome emails`);
+    
+    // 4. Test performance constraints
+    const batchOperation = async () => {
+      return testUsers.map(user => ({ id: user.id, processed: true }));
+    };
+    
+    const result = await suite.performance.assertTimingConstraint(batchOperation, 100);
+    console.log(`✓ Batch operation processed ${result.length} items within time limit`);
+    
+    // 5. Verify all expectations
+    const emailHistory = emailMock.getHistory();
+    if (emailHistory.length === testUsers.length) {
+      console.log('✓ All email notifications verified');
+    }
+    
+    // 6. Test concurrent operations
+    const concurrentOps = testUsers.map(user => async () => {
+      return { userId: user.id, status: 'processed' };
+    });
+    
+    const concurrencyResults = await suite.performance.testConcurrency(concurrentOps);
+    console.log(`✓ Concurrent processing: ${concurrencyResults.successful}/${concurrencyResults.results.length} successful`);
+    
+    // 7. Clean up
+    suite.mocks.clearAll();
+    suite.data.reset();
+    console.log('✓ Test environment cleaned up');
+    
+    console.log('\n--- Test Pattern Summary ---');
+    console.log('1. Data factory created realistic test entities');
+    console.log('2. Mock manager handled API and email mocking');
+    console.log('3. Assertion helpers verified expected behavior');
+    console.log('4. Performance utilities tested timing and concurrency');
+    console.log('5. Builder pattern enabled flexible configuration');
+    console.log('6. Automated cleanup prevented test interference');
+    
+    console.log('\nComplete testing workflow demonstration completed');
+    
+  } catch (error) {
+    console.log(`Workflow demo error: ${error.message}`);
+  }
+}
+
+// Run comprehensive test suite demonstrations
+demonstrateTestSuiteUtilities();
+demonstrateTestSuiteBuilder();
+
+// Run async demonstrations
+(async () => {
+  await demonstratePerformanceTestingUtilities();
+  await demonstrateCompleteTestingWorkflow();
+  
+  console.log('\n=== All Test Suite Demonstrations Completed ===');
+  console.log('✓ Database testing helpers for in-memory model management');
+  console.log('✓ Mock management system with qtests integration');
+  console.log('✓ Assertion helpers for common testing patterns');
+  console.log('✓ Test data factory for realistic entity creation');
+  console.log('✓ Performance testing utilities with timing and concurrency');
+  console.log('✓ Test suite builder with fluent configuration API');
+  console.log('✓ Complete workflow integration for comprehensive testing');
+})();
+
 })(); // (end async wrapper to keep CommonJS compatible)
 
 /**
