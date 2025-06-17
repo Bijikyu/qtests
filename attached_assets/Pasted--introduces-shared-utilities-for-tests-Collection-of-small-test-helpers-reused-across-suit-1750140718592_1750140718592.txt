@@ -1,0 +1,67 @@
+/** //(introduces shared utilities for tests)
+ * Collection of small test helpers reused across suites. //(describe purpose)
+ * Rationale: centralizes mocks and module reload logic. //(explain reason)
+ */ //(close introductory comment)
+const test = require('node:test'); //(import node test for mocking)
+const path = require('path'); //(import path to resolve file locations)
+
+//(replaces qerrors.qerrors with noop to silence logs)
+function stubQerrors(){
+  console.log(`stubQerrors is running with none`); //(log start of stubQerrors)
+  try {
+    const qerrors = require('qerrors'); //(use global stubbed module)
+    test.mock.method(qerrors, 'qerrors', () => {}); //(spy on qerrors.qerrors)
+    delete require.cache[require.resolve('../../utils/offline')]; //(force offline module reload)
+    console.log(`stubQerrors is returning undefined`); //(log completion)
+  } catch (err) {
+    console.log(`stubQerrors error ${err.message}`); //(log error)
+    throw err; //(propagate error)
+  }
+}
+
+//(reload a module from cache for isolated tests)
+function reload(relPath){ //(rename parameter for clarity)
+  console.log(`reload is running with ${relPath}`); //(log start of reload)
+  try {
+    const fullPath = path.resolve(__dirname, relPath); //(resolve relative to helpers)
+    delete require.cache[require.resolve(fullPath)]; //(clear module from cache)
+    const mod = require(fullPath); //(require module afresh)
+    console.log(`reload is returning module`); //(log completion)
+    return mod; //(return reloaded module)
+  } catch (err) {
+    console.log(`reload error ${err.message}`); //(log error)
+    throw err; //(propagate error)
+  }
+}
+
+//(build minimal response object with json spy)
+function createJsonRes(){
+  console.log(`createJsonRes is running with none`); //(log start of createJsonRes)
+  try {
+    const res = { json: test.mock.fn() }; //(create json stub response)
+    console.log(`createJsonRes is returning res`); //(log completion)
+    return res; //(return response mock)
+  } catch (err) {
+    console.log(`createJsonRes error ${err.message}`); //(log error)
+    throw err; //(propagate error)
+  }
+}
+
+//(general purpose response mock used across tests)
+function createRes(){
+  console.log(`createRes is running with none`); //(log start of createRes)
+  try {
+    const res = { locals: {}, headersSent: false }; //(init defaults)
+    res.status = (code) => { res.statusCode = code; return res; }; //(status mock)
+    res.json = test.mock.fn(payload => { res.jsonPayload = payload; res.payload = payload; return res; }); //(json mock with tracker)
+    res.render = test.mock.fn(); //(render stub)
+    res.send = test.mock.fn(); //(send stub)
+    console.log(`createRes is returning res`); //(log completion)
+    return res; //(return res object)
+  } catch (err) {
+    console.log(`createRes error ${err.message}`); //(log error)
+    throw err; //(propagate error)
+  }
+}
+
+//(helper to call /api/generate-key for integration tests)

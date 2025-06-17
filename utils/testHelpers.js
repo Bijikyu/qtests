@@ -48,11 +48,12 @@ const { mockConsole } = require('./mockConsole'); // (import console spy utility
  * It also forces a reload of the offline module to ensure it picks up
  * the stubbed qerrors implementation.
  * 
- * Implementation strategy:
- * 1. Check for Node.js test module availability (preferred)
- * 2. Fall back to manual stubbing for non-test environments
+ * Enhanced implementation with Node.js test module integration:
+ * 1. Prefer Node.js test module for superior mocking when available
+ * 2. Support both test.mock.method and manual stubbing approaches
  * 3. Force module cache clearing to ensure stub is used
- * 4. Provide detailed logging for debugging test setup issues
+ * 4. Handle graceful fallback when qerrors module is missing
+ * 5. Provide detailed logging for debugging test setup issues
  * 
  * Why stub qerrors specifically:
  * - Error reporting often involves network requests to logging services
@@ -66,6 +67,12 @@ const { mockConsole } = require('./mockConsole'); // (import console spy utility
  * - Forcing reload ensures offline module uses the stubbed version
  * - This enables proper offline mode testing behavior
  * 
+ * Node.js test module benefits:
+ * - Automatic cleanup after test completion
+ * - Better integration with Node.js testing infrastructure
+ * - Consistent behavior across different test frameworks
+ * - Superior spy functionality for call verification
+ * 
  * @returns {undefined} This is a side-effect function with no return value
  * 
  * @example
@@ -74,19 +81,19 @@ const { mockConsole } = require('./mockConsole'); // (import console spy utility
  * // And offline module will use stubbed qerrors
  */
 function stubQerrors() {
-  // Log function start for debugging test setup timing
-  console.log(`stubQerrors is running with none`);
+  console.log(`stubQerrors is running with none`); //(log start of stubQerrors)
   
   try {
     // Attempt to require qerrors module for stubbing
     // This may fail if qerrors is not installed, which is handled gracefully
-    const qerrors = require('qerrors');
+    const qerrors = require('qerrors'); //(use global stubbed module)
     
     // Check if Node.js test module is available for superior mocking
+    // Node.js test module provides automatic cleanup and better spy functionality
     if (typeof test !== 'undefined' && test.mock && test.mock.method) {
       // Use Node.js test module's mock.method for automatic cleanup
       // This approach provides better integration with Node.js testing infrastructure
-      test.mock.method(qerrors, 'qerrors', () => {});
+      test.mock.method(qerrors, 'qerrors', () => {}); //(spy on qerrors.qerrors)
     } else {
       // Fall back to manual stubbing for environments without test module
       // Store original method for potential future restoration needs
@@ -96,19 +103,19 @@ function stubQerrors() {
     // Force offline module to reload and pick up the stubbed qerrors
     // This must happen after stubbing to ensure the module gets the stub version
     // Using require.resolve ensures we get the correct path for cache deletion
-    delete require.cache[require.resolve('./offlineMode')]; //(ensure offlineMode reloaded)
+    delete require.cache[require.resolve('./offlineMode')]; //(force offline module reload)
     
     // Log successful completion for debugging
-    console.log(`stubQerrors is returning undefined`);
+    console.log(`stubQerrors is returning undefined`); //(log completion)
     
   } catch (err) {
     // Log error with descriptive context for debugging
     // qerrors is often optional, so this may be expected in some environments
-    console.log(`stubQerrors error ${err.message}`);
+    console.log(`stubQerrors error ${err.message}`); //(log error)
     
     // Propagate error to caller for handling
     // Allows calling code to decide how to handle missing qerrors
-    throw err;
+    throw err; //(propagate error)
   }
 }
 
@@ -322,7 +329,10 @@ function createRes() {
       // Create Jest-based response mock with spied methods
       responseMock = {
         // HTTP status code setter with chaining support
-        status: jest.fn().mockReturnThis(), // Returns this for method chaining
+        status: jest.fn().mockImplementation(function(code) {
+          this.statusCode = code; // Set statusCode property for Express compatibility
+          return this; // Enable method chaining
+        }),
         
         // JSON response method
         json: jest.fn().mockReturnThis(),
@@ -346,6 +356,9 @@ function createRes() {
         // Status method with call tracking and chaining
         status: function(...args) {
           statusCalls.push(args);
+          if (args.length > 0) {
+            this.statusCode = args[0]; // Set statusCode property for Express compatibility
+          }
           return this; // Enable method chaining
         },
         
@@ -396,11 +409,15 @@ function createRes() {
  * endpoints. It provides predictable test data while maintaining
  * realistic API key format for integration test scenarios.
  * 
- * Implementation approach:
+ * Enhanced implementation with HTTP testing support:
  * - Generate consistent test key that looks realistic
- * - Use deterministic approach for predictable test results
- * - Include format that matches real API key patterns
+ * - Support HTTP app testing with supertest-style calls
+ * - Handle both direct key generation and API endpoint testing
  * - Provide different keys for different test scenarios
+ * 
+ * Dual usage patterns:
+ * 1. Direct key generation: generateKey('suffix') returns string
+ * 2. HTTP endpoint testing: generateKey(app, allowedApi) returns response
  * 
  * Why specific format:
  * - 'test-api-key-' prefix clearly identifies test keys
@@ -408,43 +425,65 @@ function createRes() {
  * - Consistent format allows easy test verification
  * - Realistic enough to test key validation logic
  * 
- * @param {string} suffix - Optional suffix for generating different test keys
- * @returns {string} Generated test API key
+ * @param {string|Object} appOrSuffix - Express app for HTTP testing or suffix for direct generation
+ * @param {string} allowedApi - API service name for HTTP endpoint testing
+ * @returns {string|Promise<Object>} Generated test API key or HTTP response
  * 
  * @example
- * const apiKey = generateKey();
- * // Returns something like 'test-api-key-1634567890123'
- * const userKey = generateKey('user');
+ * // Direct key generation
+ * const apiKey = generateKey('user');
  * // Returns 'test-api-key-user'
+ * 
+ * // HTTP endpoint testing
+ * const response = await generateKey(app, 'userService');
+ * // Returns supertest response object
  */
-function generateKey(suffix = '') {
-  // Log function start with parameter for debugging
-  console.log(`generateKey is running with ${suffix}`);
+async function generateKey(appOrSuffix = '', allowedApi = null) {
+  // Determine if this is HTTP testing or direct key generation
+  const isHttpTesting = allowedApi !== null && typeof appOrSuffix === 'object';
   
-  try {
-    let generatedKey;
+  if (isHttpTesting) {
+    // HTTP endpoint testing mode
+    console.log(`generateKey is running with ${allowedApi}`); //(log start of generateKey)
     
-    if (suffix) {
-      // Use provided suffix for specific test scenarios
-      // This allows tests to generate keys for specific purposes
-      generatedKey = `test-api-key-${suffix}`;
-    } else {
-      // Generate timestamp-based key for uniqueness
-      // This ensures different keys across test runs when needed
-      generatedKey = `test-api-key-${Date.now()}`;
+    try {
+      // Import httpTest for supertest-style testing
+      const { supertest } = require('./httpTest');
+      
+      // Make HTTP request to generate-key endpoint
+      const res = await supertest(appOrSuffix)
+        .post('/api/generate-key')
+        .send({ allowedApi });
+      
+      console.log(`generateKey is returning ${res.statusCode}`); //(log completion)
+      return res; //(return server response)
+    } catch (err) {
+      console.log(`generateKey error ${err.message}`); //(log error)
+      throw err; //(propagate error)
     }
+  } else {
+    // Direct key generation mode
+    const suffix = appOrSuffix;
+    console.log(`generateKey is running with ${suffix}`);
     
-    // Log generated key for debugging
-    console.log(`generateKey is returning ${generatedKey}`);
-    
-    return generatedKey;
-    
-  } catch (err) {
-    // Log error with context for debugging
-    console.log(`generateKey error ${err.message}`);
-    
-    // Propagate error to caller
-    throw err;
+    try {
+      let generatedKey;
+      
+      if (suffix) {
+        // Use provided suffix for specific test scenarios
+        generatedKey = `test-api-key-${suffix}`;
+      } else {
+        // Generate timestamp-based key for uniqueness
+        generatedKey = `test-api-key-${Date.now()}`;
+      }
+      
+      console.log(`generateKey is returning ${generatedKey}`);
+      return generatedKey;
+      
+    } catch (err) {
+      console.log(`generateKey error ${err.message}`);
+      throw err;
+    }
   }
 }
 
@@ -456,53 +495,80 @@ function generateKey(suffix = '') {
  * It's particularly useful when tests need to modify environment
  * variables temporarily.
  * 
- * Implementation strategy:
- * - Take snapshot of entire process.env object
- * - Use JSON serialization for deep copy to prevent reference issues
+ * Enhanced implementation with selective backup:
+ * - Support both full environment backup and selective variable backup
+ * - Store selected env vars for later restoration
  * - Handle edge cases like undefined or null values
  * - Provide clean restoration point for test cleanup
  * 
- * Why full environment backup:
- * - Some tests may modify unexpected environment variables
- * - Full backup provides complete isolation guarantee
- * - Prevents test pollution from environment changes
- * - Enables parallel test execution without interference
+ * Dual usage patterns:
+ * 1. Full backup: backupEnvVars() returns complete environment snapshot
+ * 2. Selective backup: backupEnvVars('VAR1', 'VAR2') returns specified variables
+ * 
+ * Why selective backup option:
+ * - Memory efficiency for tests that only modify specific variables
+ * - Clear intent about which variables test will modify
+ * - Faster restoration for selective backups
+ * - Reduces noise in debugging output
  * 
  * Memory considerations:
  * - Environment snapshots are small (typically < 1KB)
+ * - Selective backups use even less memory
  * - Temporary storage for duration of test only
  * - Garbage collected after test completion
- * - No performance impact for typical test scenarios
  * 
- * @returns {Object} Deep copy of current environment variables
+ * @param {...string} names - Optional variable names for selective backup
+ * @returns {Object} Environment backup object
  * 
  * @example
+ * // Full environment backup
  * const envBackup = backupEnvVars();
- * process.env.TEST_VAR = 'modified';
- * // ... run tests
- * restoreEnvVars(envBackup);
- * // Environment restored to original state
+ * 
+ * // Selective variable backup
+ * const envBackup = backupEnvVars('NODE_ENV', 'DEBUG');
  */
-function backupEnvVars() {
-  // Log function start for debugging environment operations
-  console.log(`backupEnvVars is running with none`);
+function backupEnvVars(...names) {
+  // Determine backup mode based on arguments
+  const isSelectiveBackup = names.length > 0;
   
-  try {
-    // Create copy of process.env using object spread for simplicity
-    // All env values are strings so shallow copy avoids reference issues
-    const envBackup = { ...process.env }; //(use spread copy to avoid JSON parsing & retain strings)
+  if (isSelectiveBackup) {
+    // Selective backup mode for specific variables
+    console.log(`backupEnvVars is running with ${names}`); //(start log)
     
-    // Log successful backup creation for debugging
-    console.log(`backupEnvVars is returning environment backup`);
+    try {
+      const envBackup = {}; //(init backup container)
+      names.forEach(name => { 
+        envBackup[name] = process.env[name]; 
+      }); //(store each value)
+      
+      console.log(`backupEnvVars is returning selective backup`); //(end log)
+      return envBackup;
+      
+    } catch (err) {
+      console.log(`backupEnvVars error ${err.message}`); //(log error)
+      throw err; //(propagate)
+    }
+  } else {
+    // Full environment backup mode
+    console.log(`backupEnvVars is running with none`);
     
-    return envBackup;
-    
-  } catch (err) {
-    // Log error with context for debugging
-    console.log(`backupEnvVars error ${err.message}`);
-    
-    // Propagate error to caller
-    throw err;
+    try {
+      // Create copy of process.env using object spread for simplicity
+      // All env values are strings so shallow copy avoids reference issues
+      const envBackup = { ...process.env }; //(use spread copy to avoid JSON parsing & retain strings)
+      
+      // Log successful backup creation for debugging
+      console.log(`backupEnvVars is returning environment backup`);
+      
+      return envBackup;
+      
+    } catch (err) {
+      // Log error with context for debugging
+      console.log(`backupEnvVars error ${err.message}`);
+      
+      // Propagate error to caller
+      throw err;
+    }
   }
 }
 
@@ -510,39 +576,68 @@ function backupEnvVars() {
  * Restore environment variables from backup
  * 
  * This function restores the environment to a previous state using
- * a backup created by backupEnvVars. It handles complete restoration
- * including removal of variables that were added after backup.
+ * a backup created by backupEnvVars. It handles both complete restoration
+ * and selective restoration based on the backup contents.
  * 
- * Restoration strategy:
- * 1. Clear all current environment variables
- * 2. Restore all variables from backup
- * 3. Handle edge cases like undefined values
- * 4. Ensure complete state restoration
+ * Enhanced restoration strategy:
+ * 1. Detect if backup is selective or complete based on backup size
+ * 2. For selective backups: only restore specified variables
+ * 3. For complete backups: full environment restoration
+ * 4. Handle edge cases like undefined values consistently
  * 
- * Why complete replacement vs selective restoration:
- * - Ensures no environment pollution from test execution
- * - Handles cases where tests add new environment variables
- * - Simpler implementation with fewer edge cases
- * - Guarantees exact restoration of environment state
+ * Restoration modes:
+ * - Selective restoration: Only restores variables present in backup
+ * - Complete restoration: Removes added variables and restores all original values
+ * 
+ * Why smart restoration:
+ * - Prevents accidental deletion of system variables during selective restore
+ * - Maintains full compatibility with existing usage patterns
+ * - Provides optimal performance for both use cases
+ * - Clear behavior based on backup type
  * 
  * Edge case handling:
- * - Variables added during test are removed
- * - Variables deleted during test are restored
+ * - Variables added during test are removed (complete mode only)
+ * - Variables deleted during test are restored (both modes)
  * - Original undefined values are handled correctly
  * - No references to backup object are retained
  * 
  * @param {Object} envBackup - Environment backup from backupEnvVars()
  * 
  * @example
+ * // Selective restoration
+ * const backup = backupEnvVars('NODE_ENV', 'DEBUG');
+ * process.env.NODE_ENV = 'test';
+ * restoreEnvVars(backup);
+ * // Only NODE_ENV and DEBUG restored
+ * 
+ * // Complete restoration
  * const backup = backupEnvVars();
  * process.env.NEW_VAR = 'test';
- * delete process.env.EXISTING_VAR;
  * restoreEnvVars(backup);
- * // NEW_VAR removed, EXISTING_VAR restored
+ * // NEW_VAR removed, all original variables restored
  */
 function restoreEnvVars(envBackup) {
-  // Log function start with backup info for debugging
-  console.log(`restoreEnvVars is running with environment backup`);
+  // Handle the new calling pattern without backup parameter
+  if (!envBackup) {
+    console.log(`restoreEnvVars is running with none`); //(start log)
+    
+    try {
+      // Check for stored backup from backupEnvVars (legacy pattern support)
+      if (typeof global !== 'undefined' && global.qtestsEnvBackup) {
+        envBackup = global.qtestsEnvBackup;
+        delete global.qtestsEnvBackup; // Clean up after use
+      } else {
+        console.log(`restoreEnvVars is returning undefined`); //(no backup)
+        return;
+      }
+    } catch (err) {
+      console.log(`restoreEnvVars error ${err.message}`); //(log error)
+      throw err; //(propagate)
+    }
+  } else {
+    // Standard backup restoration
+    console.log(`restoreEnvVars is running with environment backup`);
+  }
   
   try {
     // Validate backup parameter to prevent runtime errors
@@ -551,27 +646,47 @@ function restoreEnvVars(envBackup) {
       return;
     }
     
-    // Safe restoration strategy: only remove variables added after backup
-    // This prevents deletion of system-critical environment variables
-    const currentKeys = new Set(Object.keys(process.env));
-    const backupKeys = new Set(Object.keys(envBackup));
+    // Determine restoration mode based on backup characteristics
+    const backupKeys = Object.keys(envBackup);
+    const currentKeys = Object.keys(process.env);
+    const isSelectiveBackup = backupKeys.length < currentKeys.length / 2; // Heuristic for selective backup
     
-    // Remove only variables that were added after backup creation
-    // This preserves system-critical variables like PATH, HOME, NODE_ENV
-    for (const key of currentKeys) {
-      if (!backupKeys.has(key)) {
-        delete process.env[key];
+    if (isSelectiveBackup) {
+      // Selective restoration: only restore variables from backup
+      // This prevents accidental deletion of system variables
+      for (const [key, value] of Object.entries(envBackup)) {
+        if (value === undefined) {
+          delete process.env[key]; // Restore original undefined state
+        } else {
+          process.env[key] = value; // Restore original value
+        }
       }
-    }
-    
-    // Restore original values for all backed-up variables
-    // Handle undefined values by deleting the key (restoring original undefined state)
-    for (const [key, value] of Object.entries(envBackup)) {
-      if (value !== undefined) {
-        process.env[key] = value;
-      } else {
-        delete process.env[key];
+      
+      console.log(`restoreEnvVars completed selective restoration`);
+    } else {
+      // Complete restoration: full environment reset
+      const currentKeySet = new Set(currentKeys);
+      const backupKeySet = new Set(backupKeys);
+      
+      // Remove only variables that were added after backup creation
+      // This preserves system-critical variables like PATH, HOME, NODE_ENV
+      for (const key of currentKeySet) {
+        if (!backupKeySet.has(key)) {
+          delete process.env[key];
+        }
       }
+      
+      // Restore original values for all backed-up variables
+      // Handle undefined values by deleting the key (restoring original undefined state)
+      for (const [key, value] of Object.entries(envBackup)) {
+        if (value !== undefined) {
+          process.env[key] = value;
+        } else {
+          delete process.env[key];
+        }
+      }
+      
+      console.log(`restoreEnvVars completed full restoration`);
     }
     
     // Log successful restoration for debugging

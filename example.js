@@ -781,6 +781,298 @@ console.log('All collections reset for clean test state');
 
 console.log('All database model demonstrations completed');
 
+/**
+ * Example 9: Enhanced Test Helper Utilities for Shared Testing Logic
+ * 
+ * This demonstrates the enhanced test helper utilities that centralize common
+ * mocking and module reload logic across test suites. These utilities provide
+ * Node.js test module integration, selective environment management, and 
+ * framework-agnostic response mocking capabilities.
+ * 
+ * Key benefits of shared test helpers:
+ * - Centralized mocking logic reduces test setup duplication
+ * - Node.js test module integration provides superior spying capabilities
+ * - Selective environment backup improves test performance and clarity
+ * - Framework-agnostic response mocks work with Jest and vanilla Node.js
+ * - Thread-safe module reloading prevents test concurrency issues
+ */
+
+// Demonstrate enhanced test helper utilities
+console.log('\n=== Enhanced Test Helper Utilities Demo ===');
+
+// Import enhanced test helpers from environment utilities
+const { testHelpers } = require('./lib/envUtils');
+
+function demonstrateSelectiveEnvironmentManagement() {
+  console.log('\n--- Selective Environment Management Demo ---');
+  
+  try {
+    // Set up test environment variables
+    process.env.DEMO_VAR1 = 'original_value_1';
+    process.env.DEMO_VAR2 = 'original_value_2';
+    process.env.DEMO_VAR3 = 'original_value_3';
+    
+    console.log(`Initial state: DEMO_VAR1=${process.env.DEMO_VAR1}, DEMO_VAR2=${process.env.DEMO_VAR2}`);
+    
+    // Demonstrate selective backup - only backup specific variables
+    const selectiveBackup = testHelpers.backupEnvVars('DEMO_VAR1', 'DEMO_VAR2');
+    console.log(`Selective backup created for DEMO_VAR1 and DEMO_VAR2`);
+    
+    // Modify environment variables during test
+    process.env.DEMO_VAR1 = 'modified_value_1';
+    process.env.DEMO_VAR2 = 'modified_value_2';
+    process.env.DEMO_VAR3 = 'modified_value_3';
+    process.env.NEW_VAR = 'new_variable';
+    
+    console.log(`After modifications: DEMO_VAR1=${process.env.DEMO_VAR1}, DEMO_VAR2=${process.env.DEMO_VAR2}, NEW_VAR=${process.env.NEW_VAR}`);
+    
+    // Restore selective backup - only restores specified variables
+    testHelpers.restoreEnvVars(selectiveBackup);
+    console.log(`After selective restore: DEMO_VAR1=${process.env.DEMO_VAR1}, DEMO_VAR2=${process.env.DEMO_VAR2}`);
+    console.log(`NEW_VAR still exists: ${process.env.NEW_VAR} (selective restore doesn't remove it)`);
+    console.log(`DEMO_VAR3 remains modified: ${process.env.DEMO_VAR3} (not in selective backup)`);
+    
+    // Demonstrate full environment backup and restoration
+    const fullBackup = testHelpers.backupEnvVars(); // No arguments = full backup
+    console.log(`Full environment backup created`);
+    
+    // Add more variables
+    process.env.TEMP_VAR1 = 'temporary_1';
+    process.env.TEMP_VAR2 = 'temporary_2';
+    
+    console.log(`Added temporary variables: TEMP_VAR1=${process.env.TEMP_VAR1}, TEMP_VAR2=${process.env.TEMP_VAR2}`);
+    
+    // Full restore removes added variables and restores all original values
+    testHelpers.restoreEnvVars(fullBackup);
+    console.log(`After full restore: TEMP_VAR1=${process.env.TEMP_VAR1}, TEMP_VAR2=${process.env.TEMP_VAR2} (removed)`);
+    console.log(`Original values restored: DEMO_VAR1=${process.env.DEMO_VAR1}, DEMO_VAR3=${process.env.DEMO_VAR3}`);
+    
+    // Clean up demonstration variables
+    delete process.env.DEMO_VAR1;
+    delete process.env.DEMO_VAR2;
+    delete process.env.DEMO_VAR3;
+    delete process.env.NEW_VAR;
+    
+    console.log('Selective environment management demo completed');
+    
+  } catch (error) {
+    console.log(`Environment management demo error: ${error.message}`);
+  }
+}
+
+function demonstrateFrameworkAgnosticResponseMocks() {
+  console.log('\n--- Framework-Agnostic Response Mocks Demo ---');
+  
+  try {
+    // Demonstrate minimal JSON response mock
+    const jsonRes = testHelpers.createJsonRes();
+    console.log('Created minimal JSON response mock');
+    
+    // Simulate API endpoint usage
+    jsonRes.json({ message: 'Success', data: { id: 123, name: 'Test' } });
+    
+    // Verify mock call tracking (works with both Jest and manual tracking)
+    if (jsonRes.json.mock && jsonRes.json.mock.calls) {
+      const callCount = jsonRes.json.mock.calls.length;
+      const lastCall = jsonRes.json.mock.calls[callCount - 1];
+      console.log(`JSON response called ${callCount} times`);
+      console.log(`Last call data: ${JSON.stringify(lastCall[0])}`);
+    }
+    
+    // Demonstrate comprehensive response mock
+    const res = testHelpers.createRes();
+    console.log('Created comprehensive response mock');
+    
+    // Simulate Express middleware pattern with method chaining
+    res.status(201)
+       .json({ created: true, id: 456 });
+    
+    // Verify statusCode property is set (Express compatibility)
+    console.log(`Response status code: ${res.statusCode}`);
+    
+    // Verify call tracking for all methods
+    if (res.status.mock && res.json.mock) {
+      console.log(`Status method called ${res.status.mock.calls.length} times with: ${res.status.mock.calls[0][0]}`);
+      console.log(`JSON method called ${res.json.mock.calls.length} times`);
+    }
+    
+    // Demonstrate error response pattern
+    const errorRes = testHelpers.createRes();
+    errorRes.status(400)
+           .json({ error: 'Bad Request', details: 'Invalid input data' });
+    
+    console.log(`Error response status: ${errorRes.statusCode}`);
+    if (errorRes.json.mock) {
+      const errorData = errorRes.json.mock.calls[0][0];
+      console.log(`Error response data: ${JSON.stringify(errorData)}`);
+    }
+    
+    console.log('Framework-agnostic response mocks demo completed');
+    
+  } catch (error) {
+    console.log(`Response mocks demo error: ${error.message}`);
+  }
+}
+
+async function demonstrateEnhancedAPIKeyGeneration() {
+  console.log('\n--- Enhanced API Key Generation Demo ---');
+  
+  try {
+    // Demonstrate direct API key generation
+    const userKey = await testHelpers.generateKey('user');
+    console.log(`Generated user API key: ${userKey}`);
+    
+    const adminKey = await testHelpers.generateKey('admin');
+    console.log(`Generated admin API key: ${adminKey}`);
+    
+    // Generate timestamp-based key for uniqueness
+    const uniqueKey = await testHelpers.generateKey();
+    console.log(`Generated unique API key: ${uniqueKey}`);
+    
+    // Demonstrate HTTP endpoint testing pattern (simulated)
+    try {
+      // This would be used with actual Express app in real tests
+      const mockApp = {
+        post: () => ({ send: () => Promise.resolve({ statusCode: 201, body: { key: 'api-key-generated' } }) })
+      };
+      
+      // In real usage: const response = await testHelpers.generateKey(app, 'userService');
+      console.log('HTTP endpoint testing pattern available for integration tests');
+      console.log('Usage: await generateKey(expressApp, "serviceName") returns HTTP response');
+      
+    } catch (httpError) {
+      console.log(`HTTP testing requires actual app instance: ${httpError.message}`);
+    }
+    
+    console.log('Enhanced API key generation demo completed');
+    
+  } catch (error) {
+    console.log(`API key generation demo error: ${error.message}`);
+  }
+}
+
+function demonstrateModuleReloadingWithSafety() {
+  console.log('\n--- Thread-Safe Module Reloading Demo ---');
+  
+  try {
+    // Demonstrate module reloading for test isolation
+    console.log('Reloading mock console utility for fresh state...');
+    const reloadedModule = testHelpers.reload('../utils/mockConsole');
+    
+    if (reloadedModule && typeof reloadedModule.mockConsole === 'function') {
+      console.log('Module reloaded successfully - fresh instance available');
+    } else {
+      console.log('Module reloaded - structure varies by module type');
+    }
+    
+    // Demonstrate thread-safety features
+    console.log('Module reload lock prevents concurrent operations on same module');
+    console.log('Lock state visible for debugging: has, add, delete methods available');
+    
+    // Show lock exposure for testing
+    if (testHelpers.moduleReloadLock) {
+      console.log('Module reload lock exposed for advanced testing scenarios');
+      console.log(`Lock methods available: ${Object.getOwnPropertyNames(testHelpers.moduleReloadLock).join(', ')}`);
+    }
+    
+    console.log('Thread-safe module reloading demo completed');
+    
+  } catch (error) {
+    console.log(`Module reloading demo error: ${error.message}`);
+  }
+}
+
+async function demonstrateEnvironmentWrapperUtilities() {
+  console.log('\n--- Environment Wrapper Utilities Demo ---');
+  
+  try {
+    // Set up test state
+    process.env.WRAPPER_TEST = 'initial_value';
+    
+    // Demonstrate withSavedEnv wrapper utility
+    const result = await testHelpers.withSavedEnv(() => {
+      console.log(`Inside wrapper: WRAPPER_TEST=${process.env.WRAPPER_TEST}`);
+      
+      // Modify environment inside callback
+      process.env.WRAPPER_TEST = 'modified_value';
+      process.env.TEMPORARY_VAR = 'temp_value';
+      
+      console.log(`Modified inside wrapper: WRAPPER_TEST=${process.env.WRAPPER_TEST}, TEMPORARY_VAR=${process.env.TEMPORARY_VAR}`);
+      
+      return 'callback_result';
+    });
+    
+    console.log(`Wrapper returned: ${result}`);
+    console.log(`After wrapper: WRAPPER_TEST=${process.env.WRAPPER_TEST} (restored)`);
+    console.log(`After wrapper: TEMPORARY_VAR=${process.env.TEMPORARY_VAR} (removed)`);
+    
+    // Demonstrate error handling with environment restoration
+    try {
+      await testHelpers.withSavedEnv(() => {
+        process.env.WRAPPER_TEST = 'error_test_value';
+        throw new Error('Simulated error');
+      });
+    } catch (err) {
+      console.log(`Caught expected error: ${err.message}`);
+      console.log(`Environment restored despite error: WRAPPER_TEST=${process.env.WRAPPER_TEST}`);
+    }
+    
+    // Clean up
+    delete process.env.WRAPPER_TEST;
+    
+    console.log('Environment wrapper utilities demo completed');
+    
+  } catch (error) {
+    console.log(`Environment wrapper demo error: ${error.message}`);
+  }
+}
+
+function demonstrateIntegratedTestPatterns() {
+  console.log('\n--- Integrated Test Patterns Demo ---');
+  
+  try {
+    // Demonstrate combining multiple test helpers
+    console.log('Combining environment backup with response mocking...');
+    
+    const envBackup = testHelpers.backupEnvVars('NODE_ENV');
+    process.env.NODE_ENV = 'test_integration';
+    
+    const res = testHelpers.createRes();
+    res.status(200).json({ environment: process.env.NODE_ENV });
+    
+    console.log(`Response status: ${res.statusCode}`);
+    if (res.json.mock) {
+      console.log(`Response data: ${JSON.stringify(res.json.mock.calls[0][0])}`);
+    }
+    
+    testHelpers.restoreEnvVars(envBackup);
+    console.log(`Environment restored: NODE_ENV=${process.env.NODE_ENV || 'undefined'}`);
+    
+    // Demonstrate test setup/teardown pattern
+    console.log('Complete test setup/teardown pattern demonstrated:');
+    console.log('1. Backup environment variables');
+    console.log('2. Create response mocks');
+    console.log('3. Execute test logic');
+    console.log('4. Verify mock interactions');
+    console.log('5. Restore environment state');
+    
+    console.log('Integrated test patterns demo completed');
+    
+  } catch (error) {
+    console.log(`Integrated patterns demo error: ${error.message}`);
+  }
+}
+
+// Run all enhanced test helper demonstrations
+demonstrateSelectiveEnvironmentManagement();
+demonstrateFrameworkAgnosticResponseMocks();
+demonstrateEnhancedAPIKeyGeneration();
+demonstrateModuleReloadingWithSafety();
+demonstrateEnvironmentWrapperUtilities();
+demonstrateIntegratedTestPatterns();
+
+console.log('All enhanced test helper demonstrations completed');
+
 })(); // (end async wrapper to keep CommonJS compatible)
 
 /**
