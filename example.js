@@ -319,7 +319,7 @@ console.log('All mocks have been cleaned up and original behavior restored');
 console.log('\n=== Environment Adapter Pattern Demo ===');
 
 // Import environment utilities with enhanced adapter support
-const { offlineMode, mockAxios } = require('./lib/envUtils');
+const { offlineMode, mockAxios, httpTest } = require('./lib/envUtils');
 
 // Get current environment state information
 const envState = offlineMode.getEnvironmentState();
@@ -450,6 +450,120 @@ const onlineAdapters = offlineMode.createEnvironmentAdapters();
 console.log(`After toggle back - Offline state: ${onlineAdapters.isOffline}`);
 
 console.log('Environment adapter demonstrations completed');
+
+/**
+ * Example 7: HTTP Integration Testing with Lightweight Client
+ * 
+ * This demonstrates the lightweight HTTP testing client that provides
+ * supertest-like functionality without external dependencies. Essential
+ * for integration testing of HTTP endpoints and applications.
+ * 
+ * Key benefits of HTTP test client:
+ * - Zero external dependencies (uses Node.js core http module)
+ * - Express-compatible mock application support
+ * - Supertest-like API for familiar testing patterns
+ * - Automatic JSON parsing and response handling
+ * - Comprehensive error handling and cleanup
+ */
+
+// Demonstrate HTTP integration testing capabilities
+console.log('\n=== HTTP Integration Testing Demo ===');
+
+// Create a mock Express-style application for testing
+const app = httpTest.createMockApp();
+
+// Configure routes on the mock application
+app.get('/api/status', (req, res) => {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ status: 'healthy', timestamp: Date.now() }));
+});
+
+app.post('/api/users', (req, res) => {
+  let body = '';
+  req.on('data', chunk => { body += chunk; });
+  req.on('end', () => {
+    const userData = JSON.parse(body);
+    res.statusCode = 201;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ id: 123, ...userData, created: true }));
+  });
+});
+
+app.put('/api/users/:id', (req, res) => {
+  const auth = req.headers.authorization;
+  if (auth === 'Bearer valid-token') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ updated: true }));
+  } else {
+    res.statusCode = 401;
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ error: 'Unauthorized' }));
+  }
+});
+
+// Demonstrate HTTP testing patterns
+async function demonstrateHttpTesting() {
+  console.log('\n--- HTTP Test Client Demo ---');
+  
+  try {
+    // Test GET endpoint
+    console.log('Testing GET /api/status...');
+    const statusResponse = await httpTest.supertest(app)
+      .get('/api/status')
+      .expect(200)
+      .end();
+    
+    console.log(`GET response status: ${statusResponse.status}`);
+    console.log(`GET response body: ${JSON.stringify(statusResponse.body)}`);
+    
+    // Test POST endpoint with JSON body
+    console.log('\nTesting POST /api/users...');
+    const createResponse = await httpTest.supertest(app)
+      .post('/api/users')
+      .send({ name: 'John Doe', email: 'john@example.com' })
+      .expect(201)
+      .end();
+    
+    console.log(`POST response status: ${createResponse.status}`);
+    console.log(`POST response body: ${JSON.stringify(createResponse.body)}`);
+    
+    // Test PUT endpoint with authentication
+    console.log('\nTesting PUT /api/users/123 with auth...');
+    const updateResponse = await httpTest.supertest(app)
+      .put('/api/users/123')
+      .set('Authorization', 'Bearer valid-token')
+      .send({ name: 'John Updated' })
+      .expect(200)
+      .end();
+    
+    console.log(`PUT response status: ${updateResponse.status}`);
+    console.log(`PUT response body: ${JSON.stringify(updateResponse.body)}`);
+    
+    // Test unauthorized request
+    console.log('\nTesting unauthorized PUT request...');
+    const unauthorizedResponse = await httpTest.supertest(app)
+      .put('/api/users/123')
+      .set('Authorization', 'Bearer invalid-token')
+      .send({ name: 'John Hacker' })
+      .expect(401)
+      .end();
+    
+    console.log(`Unauthorized response status: ${unauthorizedResponse.status}`);
+    console.log(`Unauthorized response body: ${JSON.stringify(unauthorizedResponse.body)}`);
+    
+    console.log('\nHTTP integration testing completed successfully');
+    
+  } catch (error) {
+    console.log(`HTTP testing error: ${error.message}`);
+  }
+}
+
+// Run HTTP testing demonstration
+demonstrateHttpTesting();
+
+console.log('All HTTP testing demonstrations completed');
 
 })(); // (end async wrapper to keep CommonJS compatible)
 

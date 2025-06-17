@@ -48,6 +48,12 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 **Architecture**: Environment variable detection with configurable mock factories
 **New Features**: CODEX/OFFLINE_MODE environment variable support, enhanced mock axios factory, comprehensive adapter creation
 
+### 6. HTTP Integration Testing (`httpTest`)
+**Purpose**: Lightweight supertest alternative without external dependencies
+**Use Case**: Integration testing of HTTP endpoints and applications
+**Architecture**: Node.js core http module with Express-compatible mock applications
+**Features**: Method chaining, automatic JSON parsing, route parameters, status expectations
+
 ## Data Flow
 
 ### Setup Phase
@@ -102,6 +108,9 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 - June 17, 2025. Added mock axios factory with configurable response behavior
 - June 17, 2025. Implemented environment-aware adapter pattern for seamless online/offline testing
 - June 17, 2025. Added comprehensive test coverage for new functionality
+- June 17, 2025. Integrated lightweight HTTP testing client (supertest alternative) with zero dependencies
+- June 17, 2025. Added Express-compatible mock application support with route parameters
+- June 17, 2025. Enhanced integration testing capabilities with automatic JSON parsing and status validation
 
 ## User Preferences
 
