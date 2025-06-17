@@ -54,6 +54,12 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 **Architecture**: Node.js core http module with Express-compatible mock applications
 **Features**: Method chaining, automatic JSON parsing, route parameters, status expectations
 
+### 7. In-Memory Database Models (`mockModels`)
+**Purpose**: Mongoose-compatible models without database dependencies for unit testing
+**Use Case**: Testing data-dependent applications without database setup
+**Architecture**: In-memory collections with comprehensive Mongoose API compatibility
+**Features**: CRUD operations, query chaining, pre-built models (ApiKey, ApiLog), custom model factory
+
 ## Data Flow
 
 ### Setup Phase
@@ -111,6 +117,9 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 - June 17, 2025. Integrated lightweight HTTP testing client (supertest alternative) with zero dependencies
 - June 17, 2025. Added Express-compatible mock application support with route parameters
 - June 17, 2025. Enhanced integration testing capabilities with automatic JSON parsing and status validation
+- June 17, 2025. Implemented in-memory Mongoose model replacements for database-free unit testing
+- June 17, 2025. Added pre-built ApiKey and ApiLog models with comprehensive CRUD operations
+- June 17, 2025. Created custom model factory and query chaining system with full Mongoose API compatibility
 
 ## User Preferences
 
