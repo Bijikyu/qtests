@@ -387,10 +387,52 @@ function demonstrateCustomMockFactory() {
   });
 }
 
+// Demonstrate configurable mock axios with URL-specific responses
+function demonstrateConfigurableMockFactory() {
+  console.log('\n--- Configurable Mock Factory Demo ---');
+  
+  // Create a configurable mock with URL-specific response mapping
+  const configurableMock = mockAxios.createConfigurableMockAxios();
+  
+  // Configure specific responses for different endpoints
+  configurableMock.__set('http://api.example.com/users', { users: ['alice', 'bob'] }, 200);
+  configurableMock.__set('http://api.example.com/posts', { posts: [] }, 200);
+  configurableMock.__set('http://api.example.com/error', { error: 'Not found' }, 404, true);
+  
+  // Test successful responses
+  configurableMock({ url: 'http://api.example.com/users' }).then(response => {
+    console.log(`Users response: ${JSON.stringify(response.data)}`);
+    console.log(`Users status: ${response.status}`);
+  });
+  
+  configurableMock({ url: 'http://api.example.com/posts' }).then(response => {
+    console.log(`Posts response: ${JSON.stringify(response.data)}`);
+    console.log(`Posts status: ${response.status}`);
+  });
+  
+  // Test error response
+  configurableMock({ url: 'http://api.example.com/error' }).catch(error => {
+    console.log(`Error response status: ${error.response.status}`);
+    console.log(`Error response data: ${JSON.stringify(error.response.data)}`);
+  });
+  
+  // Test unknown URL (should return 500 error)
+  configurableMock({ url: 'http://unknown.com' }).catch(error => {
+    console.log(`Unknown URL status: ${error.response.status}`);
+    console.log(`Unknown URL data: ${error.response.data}`);
+  });
+  
+  // Demonstrate configuration inspection
+  console.log(`Configured URLs: ${configurableMock.__urls().join(', ')}`);
+  const userConfig = configurableMock.__get('http://api.example.com/users');
+  console.log(`User endpoint config: ${JSON.stringify(userConfig)}`);
+}
+
 // Run the demonstrations
 demonstrateHttpAdapter();
 demonstrateErrorAdapter();
 demonstrateCustomMockFactory();
+demonstrateConfigurableMockFactory();
 
 // Demonstrate offline mode toggling with environment adapters
 console.log('\n--- Offline Mode Toggling Demo ---');
