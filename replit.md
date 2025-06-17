@@ -10,7 +10,15 @@ qtests is a comprehensive Node.js testing framework that provides zero-dependenc
 The qtests framework uses a **module resolution hooking** architecture that patches Node.js's global `Module._resolveFilename` method to intercept `require()` calls and redirect them to stub implementations during testing. This approach was chosen over dependency injection to minimize changes to existing codebases.
 
 ### Directory Structure
-- `lib/` - Core framework modules organized by functionality
+- `lib/` - Core framework modules organized by functionality and purpose:
+  - `coreUtils.js` - Core testing utilities (stubMethod, mockConsole)
+  - `envUtils.js` - Environment management and main entry point
+  - `httpUtils.js` - HTTP testing utilities (mockAxios, httpTest, offlineMode)
+  - `dataUtils.js` - Data and database utilities (mockModels, sendEmail)
+  - `testUtils.js` - Advanced testing utilities (testHelpers, testSuite)
+  - `logUtils.js` - Logging utilities for function tracing
+  - `setup.js` - Framework initialization and setup
+  - `stubs.js` - Stub library registry
 - `utils/` - Individual utility implementations 
 - `stubs/` - Drop-in replacements for common libraries (axios, winston)
 - `test/` - Comprehensive test suite with integration and edge case coverage
@@ -147,6 +155,7 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 - June 17, 2025. Developed comprehensive testSuite utilities for eliminating duplicate patterns across test suites
 - June 17, 2025. Added database testing helpers, mock management system, assertion helpers, and test data factory
 - June 17, 2025. Implemented performance testing utilities with timing constraints, concurrency testing, and memory measurement
+- June 17, 2025. Reorganized /lib directory structure by functionality: coreUtils (core testing), httpUtils (HTTP testing), dataUtils (data/database), testUtils (advanced testing), envUtils (main entry point)
 
 ## User Preferences
 
