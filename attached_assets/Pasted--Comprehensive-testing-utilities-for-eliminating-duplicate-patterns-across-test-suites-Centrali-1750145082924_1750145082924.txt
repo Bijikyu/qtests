@@ -1,0 +1,159 @@
+// Comprehensive testing utilities for eliminating duplicate patterns across test suites
+// Centralizes setup, teardown, mocking, and assertion patterns for consistent testing
+// Provides reusable helpers for database, API, and component testing scenarios
+
+import { beforeEach, afterEach, vi, expect } from 'vitest';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
+import { MongoStorage } from '../../server/storage';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, RenderOptions } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
+
+/**
+ * Centralized database testing utilities for MongoDB Memory Server management
+ * Eliminates duplicate beforeEach/afterEach patterns across storage tests
+ */
+export class DatabaseTestHelper {
+  private mongoServer: MongoMemoryServer | null = null;
+  public storage: MongoStorage | null = null;
+
+  /**
+   * Sets up MongoDB Memory Server and storage instance
+   * Call this in beforeEach hooks for consistent database setup
+   */
+  async setup(): Promise<void> {
+    this.mongoServer = await MongoMemoryServer.create();
+    const mongoUri = this.mongoServer.getUri();
+    await mongoose.connect(mongoUri);
+    this.storage = new MongoStorage();
+  }
+
+  /**
+   * Tears down MongoDB connection and server
+   * Call this in afterEach hooks for proper cleanup
+   */
+  async teardown(): Promise<void> {
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect();
+    }
+    if (this.mongoServer) {
+      await this.mongoServer.stop();
+      this.mongoServer = null;
+    }
+    this.storage = null;
+  }
+
+  /**
+   * Creates a complete test suite setup with automatic cleanup
+   * Reduces boilerplate in test files by handling setup/teardown automatically
+   */
+  static createSuite(): DatabaseTestHelper {
+    const helper = new DatabaseTestHelper();
+    
+    beforeEach(async () => {
+      await helper.setup();
+    });
+
+    afterEach(async () => {
+      await helper.teardown();
+    });
+
+    return helper;
+  }
+}
+
+/**
+ * Centralized mock management for consistent API and service mocking
+ * Eliminates duplicate vi.mock patterns and provides standardized mock responses
+ */
+export class MockManager {
+  private mocks: Map<string, any> = new Map();
+
+  /**
+   * Sets up standard API client mocks with configurable responses
+   * Provides consistent mock patterns for client-side testing
+   */
+  setupApiClientMocks(customResponses: Record<string, any> = {}): void {
+    const defaultMocks = {
+      apiRequest: vi.fn(),
+      queryClient: new QueryClient({
+        defaultOptions: {
+          queries: { retry: false },
+          mutations: { retry: false }
+        }
+      })
+    };
+
+    const apiClientMock = { ...defaultMocks, ...customResponses };
+    this.mocks.set('apiClient', apiClientMock);
+
+    vi.mock('../../client/src/lib/queryClient', () => apiClientMock);
+  }
+
+  /**
+   * Sets up toast notification mocks for user feedback testing
+   * Standardizes toast mock patterns across component tests
+   */
+  setupToastMocks(): any {
+    const mockToast = vi.fn();
+    this.mocks.set('toast', mockToast);
+
+    vi.mock('../../client/src/hooks/use-toast', () => ({
+      useToast: () => ({ toast: mockToast })
+    }));
+
+    return mockToast;
+  }
+
+  /**
+   * Sets up external service mocks with realistic response patterns
+   * Provides consistent mocking for GitHub, OpenAI, and email services
+   */
+  setupExternalServiceMocks(): void {
+    const githubMock = {
+      rest: {
+        users: { getAuthenticated: vi.fn().mockResolvedValue({ data: { login: 'testuser' } }) },
+        repos: {
+          get: vi.fn().mockResolvedValue({ data: { default_branch: 'main' } }),
+          createFork: vi.fn().mockResolvedValue({ data: { clone_url: 'https://github.com/user/repo.git' } }),
+          getContent: vi.fn().mockResolvedValue({ data: [] })
+        },
+        pulls: {
+          create: vi.fn().mockResolvedValue({ data: { number: 123, html_url: 'https://github.com/user/repo/pull/123' } })
+        }
+      }
+    };
+
+    const openaiMock = {
+      chat: {
+        completions: {
+          create: vi.fn().mockResolvedValue({
+            choices: [{ message: { content: '{"tasks": ["task1", "task2"]}' } }]
+          })
+        }
+      }
+    };
+
+    this.mocks.set('github', githubMock);
+    this.mocks.set('openai', openaiMock);
+
+    vi.mock('@octokit/rest', () => ({ Octokit: vi.fn(() => githubMock) }));
+    vi.mock('openai', () => ({ default: vi.fn(() => openaiMock) }));
+  }
+
+  /**
+   * Sets up fetch mocks with realistic response patterns
+   * Provides consistent HTTP mocking for API endpoint testing
+   */
+  setupFetchMocks(responses: Array<{ data: any; status?: number; ok?: boolean }>): void {
+    const mockFetch = vi.fn();
+    
+    responses.forEach((response, index) => {
+      mockFetch.mockResolvedValueOnce({
+        ok: response.ok ?? true,
+        status: response.status ?? 200,
+        json: () => Promise.resolve(response.data)
+      });
+    });
