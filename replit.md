@@ -60,6 +60,12 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 **Architecture**: In-memory collections with comprehensive Mongoose API compatibility
 **Features**: CRUD operations, query chaining, pre-built models (ApiKey, ApiLog), custom model factory
 
+### 8. Enhanced Test Helper Utilities (`testHelpers`)
+**Purpose**: Centralized test utilities with Node.js test module integration and selective environment management
+**Use Case**: Shared testing logic across test suites with framework-agnostic patterns
+**Architecture**: Enhanced utilities supporting both Jest and vanilla Node.js testing environments
+**Features**: Selective environment backup/restore, framework-agnostic response mocks, thread-safe module reloading, HTTP endpoint testing support
+
 ## Data Flow
 
 ### Setup Phase
@@ -120,6 +126,9 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 - June 17, 2025. Implemented in-memory Mongoose model replacements for database-free unit testing
 - June 17, 2025. Added pre-built ApiKey and ApiLog models with comprehensive CRUD operations
 - June 17, 2025. Created custom model factory and query chaining system with full Mongoose API compatibility
+- June 17, 2025. Enhanced test helper utilities with Node.js test module integration and selective environment management
+- June 17, 2025. Added framework-agnostic response mocks supporting both Jest and vanilla Node.js environments
+- June 17, 2025. Implemented thread-safe module reloading and HTTP endpoint testing capabilities for shared test logic
 
 ## User Preferences
 
