@@ -42,10 +42,11 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 **Features**: Save/restore cycles, mock creation, standard test environments
 **Default Values**: Provides fake API keys (GOOGLE_API_KEY, OPENAI_TOKEN, etc.)
 
-### 5. Offline Mode (`offlineMode`)
-**Purpose**: Toggle between real and stub implementations for network isolation
-**Use Case**: Testing application behavior under network failure conditions
-**Architecture**: Caching system with automatic module switching
+### 5. Enhanced Offline Mode (`offlineMode`)
+**Purpose**: Environment-aware adapter system with automatic configuration
+**Use Case**: Testing application behavior across online/offline environments
+**Architecture**: Environment variable detection with configurable mock factories
+**New Features**: CODEX/OFFLINE_MODE environment variable support, enhanced mock axios factory, comprehensive adapter creation
 
 ## Data Flow
 
@@ -97,6 +98,10 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 
 ## Changelog
 - June 17, 2025. Initial setup
+- June 17, 2025. Enhanced offline mode with environment variable detection (CODEX, OFFLINE_MODE)
+- June 17, 2025. Added mock axios factory with configurable response behavior
+- June 17, 2025. Implemented environment-aware adapter pattern for seamless online/offline testing
+- June 17, 2025. Added comprehensive test coverage for new functionality
 
 ## User Preferences
 

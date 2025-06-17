@@ -299,6 +299,115 @@ testEnv.resetMocks(testMocks.mock, testMocks.scheduleMock, testMocks.qerrorsMock
 console.log('\n=== All Examples Complete ===');
 console.log('All mocks have been cleaned up and original behavior restored');
 
+/**
+ * Example 6: Environment-Aware Adapter Pattern
+ * 
+ * This demonstrates the enhanced environment adapter functionality that
+ * automatically configures HTTP clients and error reporting based on
+ * environment variables. This pattern is essential for applications that
+ * need to work seamlessly across development, testing, and production environments.
+ * 
+ * Key benefits of environment adapters:
+ * - Automatic configuration based on environment variables (CODEX, OFFLINE_MODE)
+ * - Consistent interface across online/offline modes
+ * - Enhanced mock implementations with realistic response simulation
+ * - Comprehensive error handling with graceful degradation
+ * - Easy integration with existing codebases
+ */
+
+// Demonstrate environment adapter creation and usage
+console.log('\n=== Environment Adapter Pattern Demo ===');
+
+// Import environment utilities with enhanced adapter support
+const { offlineMode, mockAxios } = require('./lib/envUtils');
+
+// Get current environment state information
+const envState = offlineMode.getEnvironmentState();
+console.log(`Environment detection: ${JSON.stringify(envState, null, 2)}`);
+
+// Create environment-aware adapters that automatically configure based on offline mode
+const adapters = offlineMode.createEnvironmentAdapters();
+console.log(`Adapters created - Offline mode: ${adapters.isOffline}`);
+
+// Demonstrate HTTP client adapter usage
+async function demonstrateHttpAdapter() {
+  console.log('\n--- HTTP Client Adapter Demo ---');
+  
+  try {
+    // Use the environment-aware axios instance
+    const response = await adapters.axios.get('/api/users');
+    console.log(`HTTP GET response status: ${response.status}`);
+    console.log(`Response data type: ${typeof response.data}`);
+    
+    // Demonstrate POST request with data
+    const postResponse = await adapters.axios.post('/api/users', {
+      name: 'Test User',
+      email: 'test@example.com'
+    });
+    console.log(`HTTP POST response status: ${postResponse.status}`);
+    
+  } catch (error) {
+    console.log(`HTTP request error: ${error.message}`);
+  }
+}
+
+// Demonstrate error reporting adapter usage
+function demonstrateErrorAdapter() {
+  console.log('\n--- Error Reporting Adapter Demo ---');
+  
+  try {
+    // Use the environment-aware error reporting
+    adapters.qerrors.qerrors();
+    console.log('Error reporting adapter executed successfully');
+  } catch (error) {
+    console.log(`Error reporting failed: ${error.message}`);
+  }
+}
+
+// Demonstrate custom mock axios factory
+function demonstrateCustomMockFactory() {
+  console.log('\n--- Custom Mock Factory Demo ---');
+  
+  // Create a custom mock with specific response data
+  const customMock = mockAxios.createMockAxios({
+    defaultResponse: { users: ['alice', 'bob', 'charlie'] },
+    defaultStatus: 200
+  });
+  
+  // Test the custom mock
+  customMock.get('/api/users').then(response => {
+    console.log(`Custom mock response: ${JSON.stringify(response.data)}`);
+    console.log(`Custom mock status: ${response.status}`);
+  });
+  
+  // Create a simple mock for basic testing
+  const simpleMock = mockAxios.createSimpleMockAxios();
+  simpleMock.post('/api/test', { data: 'test' }).then(response => {
+    console.log(`Simple mock response status: ${response.status}`);
+  });
+}
+
+// Run the demonstrations
+demonstrateHttpAdapter();
+demonstrateErrorAdapter();
+demonstrateCustomMockFactory();
+
+// Demonstrate offline mode toggling with environment adapters
+console.log('\n--- Offline Mode Toggling Demo ---');
+console.log(`Initial offline state: ${offlineMode.isOfflineMode()}`);
+
+// Toggle to offline mode and create new adapters
+offlineMode.setOfflineMode(true);
+const offlineAdapters = offlineMode.createEnvironmentAdapters();
+console.log(`After toggle - Offline state: ${offlineAdapters.isOffline}`);
+
+// Toggle back to online mode
+offlineMode.setOfflineMode(false);
+const onlineAdapters = offlineMode.createEnvironmentAdapters();
+console.log(`After toggle back - Offline state: ${onlineAdapters.isOffline}`);
+
+console.log('Environment adapter demonstrations completed');
+
 })(); // (end async wrapper to keep CommonJS compatible)
 
 /**
