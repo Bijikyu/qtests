@@ -66,6 +66,12 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 **Architecture**: Enhanced utilities supporting both Jest and vanilla Node.js testing environments
 **Features**: Selective environment backup/restore, framework-agnostic response mocks, thread-safe module reloading, HTTP endpoint testing support
 
+### 9. Email Mock System (`sendEmail`)
+**Purpose**: Lightweight email mocking for testing notification systems without external mail service dependencies
+**Use Case**: Testing user registration, password resets, and email-dependent workflows
+**Architecture**: Zero-dependency email mock with structured data return and comprehensive history tracking
+**Features**: Basic email sending, batch processing, template system, email validation, history management, error handling
+
 ## Data Flow
 
 ### Setup Phase

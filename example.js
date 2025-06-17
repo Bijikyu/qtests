@@ -1073,6 +1073,206 @@ demonstrateIntegratedTestPatterns();
 
 console.log('All enhanced test helper demonstrations completed');
 
+/**
+ * Example 6: Email Mock Testing for Notification Systems
+ * 
+ * This demonstrates the sendEmail utility for testing applications that send
+ * email notifications without requiring external mail service configuration.
+ * Essential for testing user registration, password resets, and notification systems.
+ * 
+ * Benefits of email mocking:
+ * - Tests run without actual email delivery
+ * - Email content can be verified programmatically
+ * - No external service dependencies in test environment
+ * - Fast execution without network delays
+ * - Complete email history tracking for comprehensive testing
+ */
+
+function demonstrateEmailMocking() {
+  console.log('\n=== Email Mock Testing Demonstration ===');
+  
+  try {
+    const { sendEmail } = require('./lib/envUtils');
+    const {
+      sendEmail: sendEmailFn,
+      sendEmailBatch,
+      createEmailTemplate,
+      clearEmailHistory,
+      getEmailHistory
+    } = sendEmail;
+    
+    // Clear previous email history for clean demonstration
+    clearEmailHistory();
+    console.log('Email history cleared for clean test state');
+    
+    // Basic email sending demonstration
+    console.log('\n--- Basic Email Sending ---');
+    const basicResult = sendEmailFn(
+      'user@example.com',
+      'Welcome to Our Service',
+      'Thank you for joining! Your account is now active.'
+    );
+    
+    console.log(`Email sent: ${basicResult.success}`);
+    console.log(`Email ID: ${basicResult.id}`);
+    console.log(`Message: ${basicResult.message}`);
+    
+    // Template-based email demonstration
+    console.log('\n--- Template-Based Email ---');
+    const welcomeTemplate = createEmailTemplate('welcome', {
+      appName: 'QtestsDemo',
+      userName: 'John Doe'
+    });
+    
+    if (welcomeTemplate.success) {
+      const templateResult = sendEmailFn(
+        'john.doe@example.com',
+        welcomeTemplate.template.subject,
+        welcomeTemplate.template.body
+      );
+      console.log(`Template email sent: ${templateResult.success}`);
+      console.log(`Subject: ${templateResult.emailData.subject}`);
+    }
+    
+    // Batch email sending demonstration
+    console.log('\n--- Batch Email Processing ---');
+    const batchEmails = [
+      { to: 'user1@example.com', subject: 'Notification 1', body: 'First notification' },
+      { to: 'user2@example.com', subject: 'Notification 2', body: 'Second notification' },
+      { to: 'invalid-email', subject: 'Failed Email', body: 'This will fail' },
+      { to: 'user3@example.com', subject: 'Notification 3', body: 'Third notification' }
+    ];
+    
+    const batchResult = sendEmailBatch(batchEmails);
+    console.log(`Batch processing: ${batchResult.success ? 'completed' : 'completed with errors'}`);
+    console.log(`Summary: ${batchResult.summary.successful} successful, ${batchResult.summary.failed} failed`);
+    
+    // Email history verification
+    console.log('\n--- Email History Verification ---');
+    const history = getEmailHistory();
+    console.log(`Total emails in history: ${history.length}`);
+    
+    const successfulEmails = history.filter(email => email.success);
+    const failedEmails = history.filter(email => !email.success);
+    
+    console.log(`Successful emails: ${successfulEmails.length}`);
+    console.log(`Failed emails: ${failedEmails.length}`);
+    
+    // Advanced template usage with custom variables
+    console.log('\n--- Advanced Template Usage ---');
+    const resetTemplate = createEmailTemplate('reset', {
+      appName: 'QtestsDemo',
+      userName: 'Jane Smith',
+      resetLink: 'https://qtestsdemo.com/reset/abc123'
+    });
+    
+    if (resetTemplate.success) {
+      const resetResult = sendEmailFn(
+        'jane.smith@example.com',
+        resetTemplate.template.subject,
+        resetTemplate.template.body,
+        { priority: 'high', category: 'security' }
+      );
+      
+      console.log(`Password reset email sent: ${resetResult.success}`);
+      console.log(`Priority: ${resetResult.emailData.priority}`);
+      console.log(`Category: ${resetResult.emailData.category}`);
+    }
+    
+    // Testing email validation and error handling
+    console.log('\n--- Error Handling Demonstration ---');
+    const invalidResult = sendEmailFn('not-an-email', 'Test', 'Test body');
+    console.log(`Invalid email handling: ${!invalidResult.success ? 'working correctly' : 'unexpected success'}`);
+    console.log(`Error type: ${invalidResult.error}`);
+    
+    console.log('\nEmail mock testing demonstration completed');
+    
+  } catch (error) {
+    console.log(`Email mock demo error: ${error.message}`);
+  }
+}
+
+function demonstrateEmailTestingWorkflow() {
+  console.log('\n=== Complete Email Testing Workflow ===');
+  
+  try {
+    const { sendEmail } = require('./lib/envUtils');
+    const {
+      sendEmail: sendEmailFn,
+      createEmailTemplate,
+      clearEmailHistory,
+      getEmailHistory
+    } = sendEmail;
+    
+    // Simulate a complete user registration workflow
+    console.log('\n--- User Registration Email Workflow ---');
+    
+    // Step 1: Clear email state for test
+    clearEmailHistory();
+    
+    // Step 2: Simulate user registration
+    const userData = {
+      email: 'newuser@example.com',
+      name: 'New User',
+      activationCode: 'ACT12345'
+    };
+    
+    // Step 3: Create welcome email template
+    const welcomeTemplate = createEmailTemplate('welcome', {
+      appName: 'QtestsDemo',
+      userName: userData.name
+    });
+    
+    // Step 4: Send welcome email
+    const welcomeResult = sendEmailFn(
+      userData.email,
+      welcomeTemplate.template.subject,
+      welcomeTemplate.template.body,
+      { 
+        activationCode: userData.activationCode,
+        emailType: 'registration'
+      }
+    );
+    
+    // Step 5: Send confirmation email with custom content
+    const confirmationResult = sendEmailFn(
+      userData.email,
+      'Please Confirm Your Email Address',
+      `Hello ${userData.name},\n\nPlease click this link to activate your account: https://qtestsdemo.com/activate/${userData.activationCode}\n\nBest regards,\nThe QtestsDemo Team`,
+      { emailType: 'activation' }
+    );
+    
+    // Step 6: Verify workflow results
+    const emailHistory = getEmailHistory();
+    console.log(`Registration workflow sent ${emailHistory.length} emails`);
+    
+    const registrationEmails = emailHistory.filter(email => email.emailData?.emailType === 'registration');
+    const activationEmails = emailHistory.filter(email => email.emailData?.emailType === 'activation');
+    
+    console.log(`Registration emails: ${registrationEmails.length}`);
+    console.log(`Activation emails: ${activationEmails.length}`);
+    
+    // Step 7: Demonstrate test assertions
+    console.log('\n--- Test Assertion Examples ---');
+    console.log('// Example test assertions for email workflow:');
+    console.log(`// expect(emailHistory).toHaveLength(2);`);
+    console.log(`// expect(registrationEmails[0].emailData.to).toBe('${userData.email}');`);
+    console.log(`// expect(activationEmails[0].emailData.activationCode).toBe('${userData.activationCode}');`);
+    console.log(`// expect(emailHistory.every(email => email.success)).toBe(true);`);
+    
+    console.log('\nComplete email testing workflow demonstrated');
+    
+  } catch (error) {
+    console.log(`Email workflow demo error: ${error.message}`);
+  }
+}
+
+// Run email mock demonstrations
+demonstrateEmailMocking();
+demonstrateEmailTestingWorkflow();
+
+console.log('\nAll email mock demonstrations completed');
+
 })(); // (end async wrapper to keep CommonJS compatible)
 
 /**
