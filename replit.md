@@ -86,6 +86,12 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 **Architecture**: Class-based utilities with builder pattern for flexible configuration, zero external dependencies
 **Features**: Database testing helpers, mock management system, assertion helpers, test data factory, performance testing, fluent configuration API
 
+### 11. Automatic Test Generator (`TestGenerator`)
+**Purpose**: Automatically generates unit tests and API tests by scanning and analyzing JavaScript/TypeScript source code
+**Use Case**: Rapid test scaffolding for existing codebases, maintaining test coverage as projects grow
+**Architecture**: Static code analysis with pattern matching to detect exports, imports, and API routes
+**Features**: CLI tool (qtests-generate), unit test generation for exported functions/classes, API test generation for Express routes, automatic mock setup for known libraries, Jest configuration scaffolding, TypeScript/JSX support
+
 ## Data Flow
 
 ### Setup Phase
@@ -156,6 +162,10 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 - June 17, 2025. Added database testing helpers, mock management system, assertion helpers, and test data factory
 - June 17, 2025. Implemented performance testing utilities with timing constraints, concurrency testing, and memory measurement
 - June 17, 2025. Reorganized /lib directory structure by functionality: coreUtils (core testing), httpUtils (HTTP testing), dataUtils (data/database), testUtils (advanced testing), envUtils (main entry point)
+- July 29, 2025. Added automatic test generator functionality with CLI tool (qtests-generate) for scanning source code and generating unit tests and API tests
+- July 29, 2025. Implemented TestGenerator class with support for JavaScript/TypeScript/JSX files, Express route detection, and automatic mock setup
+- July 29, 2025. Created CLI interface with help/version commands, configurable source and test directories, and comprehensive test scaffolding
+- July 29, 2025. Added integration with Jest configuration, automatic directory creation, and pattern-based code analysis for exports and imports
 
 ## User Preferences
 

@@ -1,0 +1,133 @@
+#!/usr/bin/env node
+
+/**
+ * qtests Test Generator CLI
+ * 
+ * Command-line interface for generating unit tests and API tests
+ * by scanning source code and analyzing exports, imports, and routes.
+ */
+
+const { TestGenerator } = require('../lib/testGenerator');
+const path = require('path');
+
+// Parse command line arguments
+function parseArgs(argv) {
+  const args = argv.slice(2);
+  const options = {};
+  
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    
+    switch (arg) {
+      case '--src':
+      case '-s':
+        options.SRC_DIR = args[++i];
+        break;
+      case '--test-dir':
+      case '-t':
+        options.TEST_DIR = args[++i];
+        break;
+      case '--help':
+      case '-h':
+        showHelp();
+        process.exit(0);
+        break;
+      case '--version':
+      case '-v':
+        showVersion();
+        process.exit(0);
+        break;
+      default:
+        if (arg.startsWith('-')) {
+          console.error(`Unknown option: ${arg}`);
+          process.exit(1);
+        }
+    }
+  }
+  
+  return options;
+}
+
+function showHelp() {
+  console.log(`
+qtests Test Generator
+
+USAGE:
+  qtests-generate [OPTIONS]
+
+OPTIONS:
+  -s, --src <dir>       Source directory to scan (default: src)
+  -t, --test-dir <dir>  Integration test directory (default: tests/integration)
+  -h, --help           Show this help message
+  -v, --version        Show version information
+
+EXAMPLES:
+  qtests-generate                    # Scan 'src' directory with defaults
+  qtests-generate --src lib          # Scan 'lib' directory instead
+  qtests-generate -s app -t tests    # Custom source and test directories
+
+DESCRIPTION:
+  Automatically generates unit tests and API tests by scanning JavaScript/TypeScript
+  source files. Detects exported functions, classes, and Express routes to create
+  appropriate test files with proper mocking setup.
+
+  Generated test files:
+  - Unit tests: Created alongside source files with .test extension
+  - API tests: Created in integration test directory with route-specific names
+  - Jest configuration: Automatically creates jest.config.js and test setup files
+
+For more information, visit: https://github.com/qtests/qtests
+`);
+}
+
+function showVersion() {
+  const packageJson = require('../package.json');
+  console.log(`qtests v${packageJson.version}`);
+}
+
+function main() {
+  try {
+    console.log('🔧 qtests Test Generator\n');
+    
+    const options = parseArgs(process.argv);
+    const generator = new TestGenerator(options);
+    
+    // Display configuration
+    console.log(`Configuration:`);
+    console.log(`  Source directory: ${generator.config.SRC_DIR}`);
+    console.log(`  Test directory: ${generator.config.TEST_DIR}`);
+    console.log(`  File extensions: ${generator.config.VALID_EXTS.join(', ')}`);
+    console.log(`  Known mocks: ${generator.config.KNOWN_MOCKS.join(', ')}`);
+    console.log('');
+    
+    // Generate tests
+    const results = generator.generate();
+    
+    // Summary
+    console.log('\n📊 Generation Summary:');
+    const unitTests = results.filter(r => r.type === 'unit').length;
+    const apiTests = results.filter(r => r.type === 'api').length;
+    
+    console.log(`  Unit tests: ${unitTests}`);
+    console.log(`  API tests: ${apiTests}`);
+    console.log(`  Total files: ${results.length}`);
+    
+    if (results.length > 0) {
+      console.log('\n💡 Next steps:');
+      console.log('  1. Review generated test files');
+      console.log('  2. Add specific test implementations');
+      console.log('  3. Run tests with: npm test');
+    }
+    
+  } catch (error) {
+    console.error('❌ Error generating tests:', error.message);
+    process.exit(1);
+  }
+}
+
+// Run CLI if this script is executed directly
+if (require.main === module) {
+  main();
+}
+
+module.exports = { main, parseArgs, showHelp, showVersion };

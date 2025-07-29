@@ -18,6 +18,7 @@ const { stubMethod, mockConsole } = require('./lib/coreUtils');
 const { testEnv, offlineMode, testHelpers } = require('./lib/envUtils');
 const { setup } = require('./lib/setup');
 const stubs = require('./lib/stubs');
+const { TestGenerator } = require('./lib/testGenerator');
 
 
 // export main module utilities at bottom per requirements
@@ -27,6 +28,7 @@ module.exports = {
   testEnv, // environment and mock management for complex test scenarios
   offlineMode, // offline/online mode utility with automatic switching
   testHelpers, // advanced testing utilities for module reloading and mocking
+  TestGenerator, // automatic test generation from source code analysis
   setup, // call this to activate stubs when desired
   stubs // stub library organized under namespace
 };
