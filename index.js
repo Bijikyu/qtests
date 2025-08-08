@@ -19,6 +19,7 @@ const { testEnv, offlineMode, testHelpers } = require('./lib/envUtils');
 const { setup } = require('./lib/setup');
 const stubs = require('./lib/stubs');
 const { TestGenerator } = require('./lib/testGenerator');
+const { runTestSuite, runTestSuites, createAssertions } = require('./utils/runTestSuite');
 
 
 // export main module utilities at bottom per requirements
@@ -29,6 +30,9 @@ module.exports = {
   offlineMode, // offline/online mode utility with automatic switching
   testHelpers, // advanced testing utilities for module reloading and mocking
   TestGenerator, // automatic test generation from source code analysis
+  runTestSuite, // lightweight test runner for simple test scenarios
+  runTestSuites, // run multiple test suites with overall summary
+  createAssertions, // basic assertion helpers for test writing
   setup, // call this to activate stubs when desired
   stubs // stub library organized under namespace
 };
