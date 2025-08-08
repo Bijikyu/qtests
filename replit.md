@@ -92,6 +92,12 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 **Architecture**: Static code analysis with pattern matching to detect exports, imports, and API routes
 **Features**: CLI tool (qtests-generate), unit test generation for exported functions/classes, API test generation for Express routes, automatic mock setup for known libraries, Jest configuration scaffolding, TypeScript/JSX support
 
+### 12. Lightweight Test Runner (`runTestSuite`)
+**Purpose**: Simple test execution engine for quick testing scenarios without full framework overhead
+**Use Case**: Rapid prototyping, educational examples, simple testing where Jest setup is unnecessary
+**Architecture**: Zero-dependency test runner with pass/fail tracking and formatted console output
+**Features**: Individual test suite execution, multiple suite orchestration, built-in assertion helpers, visual test result indicators, integration with other qtests utilities
+
 ## Data Flow
 
 ### Setup Phase
@@ -166,6 +172,10 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 - July 29, 2025. Implemented TestGenerator class with support for JavaScript/TypeScript/JSX files, Express route detection, and automatic mock setup
 - July 29, 2025. Created CLI interface with help/version commands, configurable source and test directories, and comprehensive test scaffolding
 - July 29, 2025. Added integration with Jest configuration, automatic directory creation, and pattern-based code analysis for exports and imports
+- August 8, 2025. Added lightweight test runner functionality (runTestSuite, runTestSuites, createAssertions) for simple testing scenarios
+- August 8, 2025. Implemented zero-dependency test execution engine with pass/fail tracking and formatted console output
+- August 8, 2025. Created comprehensive assertion helper library with equality, truthiness, error handling, and object/array validation
+- August 8, 2025. Added integration between test runner and existing qtests utilities (stubMethod, mockConsole) for enhanced testing capabilities
 
 ## User Preferences
 

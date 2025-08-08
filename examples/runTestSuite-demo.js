@@ -202,7 +202,10 @@ const integrationTests = [
     // Check that console was captured (exact implementation depends on mockConsole)
     assert.equal(result, 'Logged: test message', 'Method should still work normally');
     
-    mockLog.restore();
+    // Restore console (mockConsole may return different restore interface)
+    if (mockLog && typeof mockLog.restore === 'function') {
+      mockLog.restore();
+    }
   }]
 ];
 
