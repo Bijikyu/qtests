@@ -154,11 +154,9 @@ function getAxios() {
     let axiosImplementation;
 
     if (isOffline) {
-      // Use factory-created mock axios for offline mode with enhanced capabilities
-      // Mock factory provides configurable response behavior and error simulation
-      // Superior to simple stub for testing various network scenarios
-      // Maintains consistent interface while providing testing flexibility
-      axiosImplementation = createMockAxios();
+      // For compatibility with integration tests that compare instances directly,
+      // return the original stub module. The cache behavior is handled by axiosCache.
+      axiosImplementation = require(`../stubs/axios`);
     } else {
       // Load real axios module for online mode when network calls are intended
       // Standard require path allows npm to resolve axios from node_modules

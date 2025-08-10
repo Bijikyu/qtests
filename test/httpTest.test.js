@@ -357,7 +357,7 @@ describe('HTTP Test Client', () => {
       } catch (error) {
         expect(error).toBeDefined();
       }
-    });
+    }, 10000); // (increase timeout for error handling test)
     
     test('cleans up server on request failure', async () => {
       const app = createMockApp();

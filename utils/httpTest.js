@@ -17,6 +17,13 @@ const http = require('http'); //(use node http to avoid external deps)
 function supertest(app) { //(lightweight supertest-like client)
   console.log(`supertest is running with app`); // log factory creation
   
+  // Validate app early to provide immediate feedback
+  if (!app || typeof app !== 'function') {
+    const error = new Error('Invalid app provided to supertest');
+    console.log(`supertest error ${error.message}`); // log failure  
+    throw error;
+  }
+  
   try {
     const client = new Super(app); // create builder instance
     console.log(`supertest is returning Super instance`); // log return

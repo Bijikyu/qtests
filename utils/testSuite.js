@@ -313,17 +313,18 @@ class MockManager {
     logStart('MockManager.setupEnvironmentMocks', envVars);
     
     try {
-      const { testEnv } = require('../lib/envUtils');
+      const { saveEnv, restoreEnv } = require('../utils/testEnv');
       
       // Save current environment and set test values
-      const restore = testEnv().save();
-      testEnv().set(envVars);
+      const savedEnv = saveEnv();
+      Object.assign(process.env, envVars);
       
       this.mocks.set('environment', envVars);
-      this.restorations.set('environment', restore);
+      const restoreFunction = () => restoreEnv(savedEnv);
+      this.restorations.set('environment', restoreFunction);
       
       logReturn('MockManager.setupEnvironmentMocks', 'completed');
-      return restore;
+      return restoreFunction;
     } catch (error) {
       logReturn('MockManager.setupEnvironmentMocks', `error: ${error.message}`);
       throw error;
@@ -1194,10 +1195,10 @@ class TestSuiteBuilder {
     // Users should call suite.mocks.clearAll() and suite.data.reset() manually in their beforeEach hooks
 
     const suite = {
-      db: this.dbHelper,
       mocks: this.mockManager,
       assert: AssertionHelper,
       data: TestDataFactory,
+      ...(this.dbHelper && { db: this.dbHelper }),
       ...(this.includePerformance && { performance: PerformanceTestHelper })
     };
 

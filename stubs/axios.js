@@ -41,9 +41,24 @@
  * - No properties that might interfere with test assertions
  * - Can be extended to return more realistic response shapes
  */
+// Enhanced axios stub with all HTTP methods and response structure
+const mockResponse = {
+  status: 200,
+  statusText: 'OK',
+  data: {},
+  headers: {},
+  config: {}
+};
+
 module.exports = {
-  get: async () => ({}), // mock get method returns empty object promise
-  post: async () => ({}) // mock post method returns empty object promise
+  get: async () => mockResponse, // mock get method returns mock response
+  post: async () => mockResponse, // mock post method returns mock response
+  put: async () => mockResponse, // mock put method returns mock response
+  delete: async () => mockResponse, // mock delete method returns mock response  
+  patch: async () => mockResponse, // mock patch method returns mock response
+  head: async () => mockResponse, // mock head method returns mock response
+  options: async () => mockResponse, // mock options method returns mock response
+  request: async () => mockResponse // mock generic request method returns mock response
 };
 
 /**
