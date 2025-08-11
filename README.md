@@ -25,6 +25,11 @@ yarn add qtests --dev
 * **Environment Management**: Safe backup and restore of environment variables
 * **Module Stubs**: Drop-in replacements for axios, winston, and other common dependencies
 * **Offline Mode**: Automatic stub resolution when external services are unavailable
+* **Test Generation**: Automatic test scaffolding from source code analysis
+* **Lightweight Test Runner**: Zero-dependency test execution engine
+* **HTTP Testing**: Integration testing utilities (supertest alternative)
+* **Email Mocking**: Email testing without external mail services
+* **Advanced Test Suites**: Comprehensive test suite management and utilities
 * **Zero Dependencies**: No production dependencies to bloat your project
 * **Thread Safe**: Concurrent test execution support with race condition prevention
 * **Framework Agnostic**: Works with Jest, Mocha, and vanilla Node.js testing
@@ -144,6 +149,105 @@ test('console output', async () => {
 });
 ```
 
+### Test Generation
+
+```js
+const { TestGenerator } = require('qtests');
+
+// Generate tests for your source code
+const generator = new TestGenerator({
+  sourceDir: 'src',
+  testDir: 'tests',
+  extensions: ['.js', '.ts', '.jsx', '.tsx']
+});
+
+await generator.generateAllTests();
+
+// Or use the CLI tool
+// npx qtests-generate --source src --test tests
+```
+
+### Lightweight Test Runner
+
+```js
+const { runTestSuite, createAssertions } = require('qtests');
+
+// Create assertions
+const assert = createAssertions();
+
+// Define and run test suite
+const tests = {
+  'basic test': () => {
+    assert.equals(1 + 1, 2);
+    assert.isTrue(true);
+  },
+  'async test': async () => {
+    const result = await Promise.resolve('done');
+    assert.equals(result, 'done');
+  }
+};
+
+runTestSuite('My Tests', tests);
+```
+
+### HTTP Testing
+
+```js
+const { httpTest } = require('qtests/lib/envUtils');
+const { supertest, createMockApp } = httpTest;
+
+// Create a mock Express-style app
+const app = createMockApp();
+app.get('/users', (req, res) => {
+  res.statusCode = 200;
+  res.end(JSON.stringify({ users: [] }));
+});
+
+// Test the app
+const response = await supertest(app)
+  .get('/users')
+  .expect(200)
+  .end();
+
+console.log(response.body); // { users: [] }
+```
+
+### Email Mocking
+
+```js
+const { sendEmail } = require('qtests/lib/envUtils');
+
+// Mock email sending
+const result = await sendEmail.send({
+  to: 'user@example.com',
+  subject: 'Welcome',
+  text: 'Welcome to our app!'
+});
+
+console.log(result.success); // true
+console.log(sendEmail.getHistory()); // Array of sent emails
+```
+
+### Advanced Test Suites
+
+```js
+const { testSuite } = require('qtests/lib/envUtils');
+
+// Create comprehensive test suite
+const suite = testSuite.TestSuiteBuilder()
+  .withDatabase(['User', 'Product'])
+  .withMocks(['axios', 'fs'])
+  .withPerformance({ maxTime: 1000 })
+  .build();
+
+await suite.runTests({
+  'database test': async () => {
+    const user = await suite.models.User.create({ name: 'John' });
+    suite.assert.equals(user.name, 'John');
+  }
+});
+```
+
 ---
 
 ## API Reference
@@ -214,6 +318,80 @@ Runs a callback with env saved and restored
 #### `moduleReloadLock`
 Lock set used by `reload`
 
+### Test Generation
+
+#### `TestGenerator(options)`
+- **options.sourceDir**: Directory to scan for source files (default: 'src')
+- **options.testDir**: Directory to generate tests in (default: 'tests')
+- **options.extensions**: File extensions to process (default: ['.js', '.ts'])
+- **options.knownMocks**: Libraries to auto-mock (default: ['axios', 'node-fetch', 'pg', 'mongoose'])
+
+#### `generator.generateAllTests()`
+Scans source directory and generates missing test files
+
+#### CLI: `npx qtests-generate`
+- `--source <dir>`: Source directory to scan
+- `--test <dir>`: Test directory for output
+- `--help`: Show usage information
+
+### Lightweight Test Runner
+
+#### `runTestSuite(name, tests)`
+- **name**: String name for the test suite
+- **tests**: Object with test names as keys and test functions as values
+
+#### `runTestSuites(suites)`
+- **suites**: Array of {name, tests} objects to run sequentially
+
+#### `createAssertions()`
+Returns object with assertion methods:
+- `equals(actual, expected)`: Deep equality check
+- `isTrue(value)`: Truthiness assertion
+- `isFalse(value)`: Falsiness assertion
+- `throws(fn, expectedError)`: Error throwing assertion
+- `isArray(value)`: Array type check
+- `isObject(value)`: Object type check
+
+### HTTP Testing
+
+#### `httpTest.supertest(app)`
+- **app**: Express-style application function
+- **Returns**: Request builder for chaining HTTP calls
+
+#### `httpTest.createMockApp()`
+Creates Express-compatible application for testing
+
+#### Request builder methods:
+- `get(path)`, `post(path)`, `put(path)`, `delete(path)`
+- `set(header, value)`: Set request headers
+- `send(data)`: Set request body
+- `expect(status)`: Assert response status
+- `end()`: Execute request and return response
+
+### Email Mocking
+
+#### `sendEmail.send(options)`
+- **options.to**: Recipient email address
+- **options.subject**: Email subject
+- **options.text**: Plain text content
+- **options.html**: HTML content (optional)
+- **Returns**: Promise resolving to {success: true, id: string}
+
+#### `sendEmail.getHistory()`
+Returns array of all sent emails for verification
+
+#### `sendEmail.clearHistory()`
+Clears email history for test isolation
+
+### Advanced Test Suites
+
+#### `testSuite.TestSuiteBuilder()`
+Returns fluent builder for comprehensive test suites:
+- `withDatabase(models)`: Setup in-memory database models
+- `withMocks(libraries)`: Auto-mock specified libraries
+- `withPerformance(options)`: Enable performance constraints
+- `build()`: Create configured test suite instance
+
 ---
 
 ## Module Stubs
@@ -223,11 +401,13 @@ Lock set used by `reload`
 ```js
 const axios = require('axios'); // When qtests/setup is loaded
 
-// All HTTP methods return empty objects
-await axios.get('/api'); // {}
-await axios.post('/api', data); // {}
-await axios.put('/api', data); // {}
-await axios.delete('/api'); // {}
+// All HTTP methods return enhanced response objects
+const response = await axios.get('/api');
+// Returns: { data: {}, status: 200, statusText: 'OK', headers: {}, config: {} }
+
+await axios.post('/api', data); // Same enhanced format
+await axios.put('/api', data); // Same enhanced format  
+await axios.delete('/api'); // Same enhanced format
 ```
 
 ### Winston Stub
@@ -248,12 +428,31 @@ If you need to call the stubbed modules directly, `require('qtests')` exposes a
 ```js
 const { stubs } = require('qtests');
 
-await stubs.axios.get('https://example.com'); // {}
-await stubs.axios.post('https://example.com', {}); // {}
+const response = await stubs.axios.get('https://example.com');
+// Returns: { data: {}, status: 200, statusText: 'OK', headers: {}, config: {} }
+await stubs.axios.post('https://example.com', {}); // Same enhanced format
 ```
 
 Most projects should still load `qtests/setup` so that common modules resolve to
 stubs automatically, making manual calls unnecessary.
+
+### Import Patterns
+
+qtests provides multiple import patterns for different use cases:
+
+```js
+// Core utilities (always available from main index)
+const { stubMethod, mockConsole, testEnv, TestGenerator, runTestSuite } = require('qtests');
+
+// Advanced utilities (available from envUtils)
+const { httpTest, sendEmail, testSuite } = require('qtests/lib/envUtils');
+
+// Category-based imports for organized access
+const { http, data, test } = require('qtests/lib/envUtils');
+const { supertest } = http.httpTest;
+const { send } = data.sendEmail;
+const { TestSuiteBuilder } = test.testSuite;
+```
 
 ---
 
@@ -368,6 +567,10 @@ test('environment test', async () => {
 **Console pollution**: Use `mockConsole()` to capture and verify console output instead of letting it pollute test output.
 
 **Environment leaks**: Use `testHelpers.backupEnvVars()` and `testHelpers.restoreEnvVars()` or `testHelpers.withSavedEnv()` to prevent environment variable pollution between tests.
+
+**Module not found errors**: Some advanced utilities require importing from `qtests/lib/envUtils` rather than the main `qtests` package. See Import Patterns section above.
+
+**CLI command not found**: For `qtests-generate`, ensure you're using `npx qtests-generate` or install qtests globally with `npm install -g qtests`.
 
 **Race conditions**: qtests is thread-safe, but ensure proper cleanup in concurrent test scenarios.
 
