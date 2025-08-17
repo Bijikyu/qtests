@@ -237,11 +237,46 @@ class TestRunner {
           console.log(`${colors.dim}${result.error.split('\n').slice(0, 5).join('\n')}${colors.reset}`);
         }
       });
+
+      // Generate debug file for failed tests
+      this.generateDebugFile(failedResults);
     }
 
     // Performance summary
     const avgDuration = results.reduce((sum, r) => sum + r.duration, 0) / results.length;
     console.log(`\n${colors.dim}Average test duration: ${Math.round(avgDuration)}ms${colors.reset}`);
+  }
+
+  /**
+   * Generate DEBUG_TESTS.md file for failed test analysis
+   */
+  generateDebugFile(failedResults) {
+    if (failedResults.length === 0) return;
+    
+    let debugContent = '# Test Failure Analysis\n\n';
+    debugContent += 'Analyze and address the following test failures:\n\n';
+    
+    failedResults.forEach((result, index) => {
+      debugContent += `## Failed Test ${index + 1}: ${result.file}\n\n`;
+      debugContent += '### Output:\n';
+      debugContent += '```\n';
+      debugContent += result.error || result.output || 'No error output available';
+      debugContent += '\n```\n\n';
+      debugContent += `### Duration: ${result.duration}ms\n\n`;
+      debugContent += '---\n\n';
+    });
+    
+    debugContent += '## Summary\n\n';
+    debugContent += `- Total failed tests: ${failedResults.length}\n`;
+    debugContent += `- Failed test files: ${failedResults.map(r => r.file).join(', ')}\n`;
+    debugContent += `- Generated: ${new Date().toISOString()}\n`;
+    
+    try {
+      fs.writeFileSync('DEBUG_TESTS.md', debugContent);
+      console.log(`\n${colors.yellow}📋 Debug file created: DEBUG_TESTS.md${colors.reset}`);
+    } catch (error) {
+      console.log(`${colors.red}⚠️  Could not create DEBUG_TESTS.md: ${error.message}${colors.reset}`);
+    }
   }
 
   /**

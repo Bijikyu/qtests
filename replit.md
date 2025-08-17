@@ -59,6 +59,12 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - Generated tests include performance optimizations like shared app setup and efficient mocking patterns
 - Parallel execution utilizes available CPU cores effectively while preventing resource exhaustion
 
+### ES Module Compatibility (August 2025)
+- **Universal Module Support**: qtests-runner.js now automatically detects ES module projects (`"type": "module"` in package.json) and generates appropriate syntax
+- **Smart Conversion**: Automatically converts CommonJS syntax (`require()`) to ES module syntax (`import/export`) for client projects
+- **DEBUG_TESTS.md Generation**: Fixed missing debug documentation generation - now works in both CommonJS and ES module environments
+- **No Breaking Changes**: Maintains full backward compatibility with existing CommonJS projects
+
 <!--┌── 🚫 PROTECTED: DO NOT EDIT (READ ONLY) BELOW THIS LINE-->
 ## ADDITIONAL SPECIFIC GUIDANCE
 Beyond the general rules here, please also read the rules and guidance 
