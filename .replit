@@ -34,65 +34,13 @@ task = "shell.exec"
 args = "node bin/qtests-generate"
 
 [[ports]]
-localPort = 33243
-externalPort = 3000
-
-[[ports]]
-localPort = 33267
-externalPort = 5173
-
-[[ports]]
-localPort = 34033
-externalPort = 6800
-
-[[ports]]
-localPort = 34295
-externalPort = 8000
-
-[[ports]]
-localPort = 35303
-externalPort = 8008
-
-[[ports]]
-localPort = 35555
-externalPort = 3002
-
-[[ports]]
-localPort = 36037
-externalPort = 5000
-
-[[ports]]
-localPort = 37605
-externalPort = 8099
-
-[[ports]]
-localPort = 38441
-externalPort = 8080
-
-[[ports]]
-localPort = 39217
-externalPort = 4200
-
-[[ports]]
-localPort = 40355
-externalPort = 80
-
-[[ports]]
-localPort = 41407
-externalPort = 6000
-
-[[ports]]
-localPort = 41605
-externalPort = 3001
-
-[[ports]]
-localPort = 43103
-externalPort = 3003
-
-[[ports]]
-localPort = 45615
+localPort = 36203
 externalPort = 9000
 
 [[ports]]
-localPort = 46429
+localPort = 37193
 externalPort = 8081
+
+[[ports]]
+localPort = 46843
+externalPort = 8099
