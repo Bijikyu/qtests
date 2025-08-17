@@ -21,6 +21,7 @@ The qtests framework uses a **module resolution hooking** architecture that patc
   - `stubs.js` - Stub library registry
 - `utils/` - Individual utility implementations 
 - `stubs/` - Drop-in replacements for common libraries (axios, winston)
+- `bin/` - CLI executables for global npm installation (qtests-runner, qtests-generate)
 - `test/` - Comprehensive test suite with integration and edge case coverage
 
 ### Technology Stack
@@ -180,6 +181,7 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 - August 17, 2025. Achieved 100% test suite success - all 25 test files passing with 0 failures, demonstrating qtests comprehensive testing capabilities
 - August 17, 2025. Validated qtests can replace Jest for its own testing needs, proving the framework's maturity and self-sufficiency
 - August 17, 2025. Renamed CLI test runner from 'runner' to 'make-qtester' for better naming convention and clarity
+- August 17, 2025. Restructured CLI as proper npm module with bin/qtests-runner that works from any directory when installed globally
 
 ## User Preferences
 

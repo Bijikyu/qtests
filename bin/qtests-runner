@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+// qtests Test Runner - CLI tool for running tests
+// This file discovers and runs all tests in the current project
+// Install: npm install -g qtests
+// Run with: qtests-runner
+
 const fs = require('fs');
 const path = require('path');
 const { spawn } = require('child_process');
@@ -34,8 +39,8 @@ class TestRunner {
     this.startTime = Date.now();
   }
 
-  // Discover all test files in the project
-  discoverTests(dir = '.', depth = 0, maxDepth = 10) {
+  // Discover all test files in the project (from current working directory)
+  discoverTests(dir = process.cwd(), depth = 0, maxDepth = 10) {
     const testFiles = [];
     
     if (depth > maxDepth) return testFiles;
