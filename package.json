@@ -4,7 +4,7 @@
   "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "node test-runner.js"
   },
   "keywords": [
     "testing",
@@ -13,10 +13,10 @@
     "winston",
     "axios",
     "utils",
-    "test-framework", 
-    "console-mock", 
-    "environment-management", 
-    "jest-compatible", 
+    "test-framework",
+    "console-mock",
+    "environment-management",
+    "jest-compatible",
     "offline-testing",
     "side-effect-free"
   ],
