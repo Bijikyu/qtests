@@ -59,7 +59,11 @@ class TestRunner {
       'dist',
       'build',
       '.cache',
-      '.jest-cache'
+      '.jest-cache',
+      'demo',        // Exclude demo directory to match Jest config
+      'examples',    // Exclude examples directory to match Jest config
+      'docs',        // Exclude docs directory to match Jest config
+      'stubs'        // Exclude stubs directory to match Jest config
     ];
 
     const testFiles = new Set();
@@ -75,12 +79,15 @@ class TestRunner {
           if (excludePatterns.includes(item.name)) continue;
           
           const fullPath = path.join(dir, item.name);
+          const relativePath = path.relative('.', fullPath);
+          
+          // Skip paths that match exclude patterns (including subdirectories)
+          if (excludePatterns.some(pattern => relativePath.includes(pattern))) continue;
           
           if (item.isDirectory()) {
             walkDir(fullPath);
           } else if (item.isFile()) {
             // Check if file matches test patterns
-            const relativePath = path.relative('.', fullPath);
             if (this.isTestFile(relativePath)) {
               testFiles.add(relativePath);
             }
