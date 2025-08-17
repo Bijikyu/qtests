@@ -37,10 +37,7 @@ function parseArgs(argv) {
         showVersion();
         process.exit(0);
         break;
-      case '--runner':
-      case '-r':
-        options.generateRunner = true;
-        break;
+
       default:
         if (arg.startsWith('-')) {
           console.error(`Unknown option: ${arg}`);
@@ -62,7 +59,7 @@ USAGE:
 OPTIONS:
   -s, --src <dir>       Source directory to scan (default: src)
   -t, --test-dir <dir>  Integration test directory (default: tests/integration)
-  -r, --runner          Generate qtests-runner.js and update package.json test script
+
   -h, --help           Show this help message
   -v, --version        Show version information
 
@@ -70,7 +67,7 @@ EXAMPLES:
   qtests-generate                    # Scan 'src' directory with defaults
   qtests-generate --src lib          # Scan 'lib' directory instead
   qtests-generate -s app -t tests    # Custom source and test directories
-  qtests-generate --runner           # Generate test runner and update package.json
+
 
 DESCRIPTION:
   Automatically generates unit tests and API tests by scanning JavaScript/TypeScript
@@ -109,15 +106,13 @@ function main() {
     // Generate tests
     const results = generator.generate();
     
-    // Generate test runner if requested
-    if (options.generateRunner) {
-      console.log('\n🏃 Generating test runner...');
-      const runnerGenerated = generator.generateTestRunner();
-      if (runnerGenerated) {
-        console.log('✅ Generated qtests-runner.js');
-      } else {
-        console.log('⚠️  qtests-runner.js already exists');
-      }
+    // Generate test runner automatically
+    console.log('\n🏃 Generating test runner...');
+    const runnerGenerated = generator.generateTestRunner();
+    if (runnerGenerated) {
+      console.log('✅ Generated qtests-runner.js');
+    } else {
+      console.log('⚠️  qtests-runner.js already exists');
     }
     
     // Summary
