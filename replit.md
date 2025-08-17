@@ -184,6 +184,7 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 - August 17, 2025. Restructured CLI as proper npm module with bin/qtests-runner that works from any directory when installed globally
 - August 17, 2025. Renamed test-runner.js to qtests-runner.js for consistent naming convention with CLI command
 - August 17, 2025. Simplified qtests-generate to automatically create qtests-runner.js and update package.json test script
+- August 17, 2025. Fixed testGenerator test by converting from Jest syntax to qtests' own testing framework - all 25/25 tests now passing
 
 ## User Preferences
 
