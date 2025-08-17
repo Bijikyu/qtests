@@ -1,28 +1,19 @@
 // Temporary failing test - run with ./runner to see DEBUG_TESTS.md generation
-// Use Node.js assert instead of Jest/Mocha syntax for compatibility
+// Jest-compatible format
 
-const assert = require('assert');
+describe('Temporary Failing Tests', () => {
+  test('should fail - wrong math calculation', () => {
+    const result = 2 + 2;
+    expect(result).toBe(5); // This will always fail because 2+2 = 4, not 5
+  });
 
-console.log('Running temp failing test...');
+  test('should fail - undefined property access', () => {
+    const obj = { name: 'test' };
+    expect(obj.age).toBe(25); // This will fail because obj.age is undefined
+  });
 
-// Test 1: Always fails - wrong math
-try {
-  const result = 2 + 2;
-  assert.strictEqual(result, 5, 'Expected 2+2 to equal 5 (this will always fail)');
-  console.log('✓ Math test passed');
-} catch (error) {
-  console.error('✗ Math test failed:', error.message);
-  process.exit(1);
-}
-
-// Test 2: Always fails - undefined property
-try {
-  const obj = { name: 'test' };
-  assert.strictEqual(obj.age, 25, 'Expected obj.age to be 25 (but it is undefined)');
-  console.log('✓ Object test passed');
-} catch (error) {
-  console.error('✗ Object test failed:', error.message);
-  process.exit(1);
-}
-
-console.log('All tests passed (this should never print)');
+  test('should fail - array length mismatch', () => {
+    const arr = [1, 2, 3];
+    expect(arr.length).toBe(10); // This will fail because array has 3 items, not 10
+  });
+});
