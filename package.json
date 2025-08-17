@@ -3,6 +3,10 @@
   "version": "1.0.7",
   "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
   "main": "index.js",
+  "bin": {
+    "qtests-runner": "./bin/qtests-runner",
+    "qtests-generate": "./bin/qtests-generate"
+  },
   "scripts": {
     "test": "node test-runner.js"
   },
