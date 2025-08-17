@@ -4,7 +4,7 @@ module.exports = {
   setupFiles: ['<rootDir>/test/testSetup.js'], // (invoke exported setup for jest)
   
   // Performance optimizations
-  maxWorkers: '50%', // Use half available CPU cores for parallel execution
+  maxWorkers: '100%', // Use all available CPU cores for maximum speed
   cache: true,
   cacheDirectory: '<rootDir>/.jest-cache',
   clearMocks: true,

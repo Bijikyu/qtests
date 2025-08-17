@@ -246,9 +246,10 @@ class TestRunner {
     testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
     console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
     
-    // Run tests in parallel with controlled concurrency
-    const maxConcurrency = Math.min(testFiles.length, Math.max(2, Math.floor(require('os').cpus().length / 2)));
-    console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers${colors.reset}\n`);
+    // Run tests in parallel with aggressive concurrency for speed
+    const cpuCount = require('os').cpus().length;
+    const maxConcurrency = Math.min(testFiles.length, Math.max(4, cpuCount * 2)); // Use 2x CPU cores for I/O-bound tests
+    console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores)${colors.reset}\n`);
     
     const runBatch = async (batch) => {
       const promises = batch.map(async (testFile) => {
