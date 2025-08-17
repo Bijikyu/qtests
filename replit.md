@@ -179,6 +179,7 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 - August 17, 2025. Successfully implemented qtests dogfooding - qtests now tests itself using its own utilities (mockConsole, testEnv, stubMethod, runTestSuite)
 - August 17, 2025. Achieved 100% test suite success - all 25 test files passing with 0 failures, demonstrating qtests comprehensive testing capabilities
 - August 17, 2025. Validated qtests can replace Jest for its own testing needs, proving the framework's maturity and self-sufficiency
+- August 17, 2025. Renamed CLI test runner from 'runner' to 'make-qtester' for better naming convention and clarity
 
 ## User Preferences
 
