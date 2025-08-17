@@ -292,9 +292,23 @@ class TestRunner {
   generateDebugFile(failedResults) {
     if (failedResults.length === 0) return;
     
-    const creationTime = new Date().toISOString();
+    const now = new Date();
+    const creationTime = now.toISOString();
+    const pacificTime = now.toLocaleString('en-US', { 
+      timeZone: 'America/Los_Angeles',
+      weekday: 'long',
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit', 
+      minute: '2-digit', 
+      second: '2-digit',
+      timeZoneName: 'short'
+    });
+    
     let debugContent = '# Test Failure Analysis\n\n';
-    debugContent += `**Creation Time:** ${creationTime}\n\n`;
+    debugContent += `**Creation Time:** ${creationTime}\n`;
+    debugContent += `**Pacific Time:** ${pacificTime}\n\n`;
     debugContent += '⚠️ **STALENESS WARNING:** If your code changes are after the creation time above and you are checking this file, then it is stale and tests need to be rerun.\n\n';
     debugContent += 'Analyze and address the following test failures:\n\n';
     

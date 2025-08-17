@@ -27,13 +27,21 @@
   "author": "Q",
   "license": "MIT",
   "devDependencies": {
+    "agentsqripts": "^1.0.7",
+    "arqitect": "^1.0.2",
+    "instruqt": "^1.0.8",
     "jest": "^29.7.0",
+    "loqatevars": "^1.0.6",
+    "madge": "^8.0.0",
+    "qtests": "^1.1.2",
+    "repomix": "^1.2.0",
+    "unqommented": "^1.1.0",
     "winston": "^3.17.0"
   },
   "dependencies": {
     "@types/node": "^24.0.0",
     "axios": "^1.9.0",
-    "instruqt": "^1.0.7",
-    "ts-jest": "^29.4.1"
+    "ts-jest": "^29.4.1",
+    "qerrors": "^1.2.6"
   }
 }
