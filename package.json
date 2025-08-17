@@ -8,7 +8,7 @@
     "qtests-generate": "./bin/qtests-generate"
   },
   "scripts": {
-    "test": "node test-runner.js"
+    "test": "node qtests-runner.js"
   },
   "keywords": [
     "testing",
