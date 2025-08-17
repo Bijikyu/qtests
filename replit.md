@@ -183,8 +183,10 @@ The qtests framework uses a **module resolution hooking** architecture that patc
 - August 17, 2025. Renamed CLI test runner from 'runner' to 'make-qtester' for better naming convention and clarity
 - August 17, 2025. Restructured CLI as proper npm module with bin/qtests-runner that works from any directory when installed globally
 - August 17, 2025. Renamed test-runner.js to qtests-runner.js for consistent naming convention with CLI command
-- August 17, 2025. Added --runner flag to qtests-generate command that creates qtests-runner.js and automatically updates package.json test script
+- August 17, 2025. Simplified qtests-generate to automatically create qtests-runner.js and update package.json test script
 
 ## User Preferences
 
-Preferred communication style: Simple, everyday language.
+- Preferred communication style: Simple, everyday language
+- Keep functionality simple - avoid unnecessary flags or options
+- Don't add complexity unless explicitly requested
