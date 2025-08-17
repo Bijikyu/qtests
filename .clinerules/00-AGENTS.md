@@ -1,63 +1,15 @@
-# qtests - Node.js Testing Framework
+# AGENTS.md
 
-## Overview
-qtests is a comprehensive Node.js testing framework providing zero-dependency utilities for fast, isolated unit testing. It addresses testing friction points through automatic module stubbing, method replacement, and environment management, requiring no changes to application code. Its business vision is to simplify testing in Node.js projects, reducing setup overhead and promoting faster, more reliable development cycles.
+## VISION
+(To be determined once template is filled with functionality)
 
-## User Preferences
-- Preferred communication style: Simple, everyday language
-- Keep functionality simple - avoid unnecessary flags or options
-- Don't add complexity unless explicitly requested
-- Performance Priority: High - Test execution speed is critical for developer productivity
+## SCOPE
+**In-scope:**
+(To be determined once template is filled with functionality)
 
-## System Architecture
+**Out-of-scope:**
+(To be determined once template is filled with functionality)
 
-### Core Architecture Pattern
-qtests employs a **module resolution hooking** architecture that patches Node.js's global `Module._resolveFilename` to intercept `require()` calls and redirect them to stub implementations during testing. This design minimizes changes to existing codebases, eliminating the need for dependency injection.
-
-### Technology Stack
-- **Runtime**: Node.js 20+ with module resolution patching.
-- **Testing**: Jest-compatible with fallback for vanilla Node.js.
-- **Module System**: CommonJS with dynamic `require` interception.
-
-### Key Components
-- **Module Resolution System (`setup.js`)**: Globally modifies Node.js module resolution to automatically substitute stubs, enabling testing without altering application code.
-- **Method Stubbing (`stubMethod`)**: Temporarily replaces object methods with test implementations using a closure-based restoration pattern.
-- **Console Mocking (`mockConsole`)**: Captures console output during tests to prevent pollution, with Jest compatibility and manual mock fallback.
-- **Environment Management (`testEnv`)**: Provides isolated environment variable management for predictable tests, including save/restore cycles and default mock values.
-- **Enhanced Offline Mode (`offlineMode`)**: An environment-aware adapter system for testing application behavior across online/offline scenarios, with `CODEX`/`OFFLINE_MODE` support and mock axios factory.
-- **HTTP Integration Testing (`httpTest`)**: A lightweight, zero-dependency alternative to supertest for integration testing HTTP endpoints, supporting method chaining, JSON parsing, and Express-compatible mock applications.
-- **In-Memory Database Models (`mockModels`)**: Mongoose-compatible in-memory models for testing data-dependent applications without database setup, supporting CRUD operations and query chaining.
-- **Enhanced Test Helper Utilities (`testHelpers`)**: Centralized utilities for shared testing logic across test suites, supporting both Jest and vanilla Node.js, with selective environment management and thread-safe module reloading.
-- **Email Mock System (`sendEmail`)**: Lightweight email mocking for testing notification systems without external mail service dependencies, featuring structured data return and history tracking.
-- **Comprehensive Test Suite Utilities (`testSuite`)**: Eliminates duplicate patterns across test suites by centralizing setup, teardown, mocking, and assertion patterns through a class-based utility with a builder pattern.
-- **Automatic Test Generator (`TestGenerator`)**: Automatically generates unit and API tests by scanning JavaScript/TypeScript source code, acting as a CLI tool (`qtests-generate`) for rapid test scaffolding.
-- **Lightweight Test Runner (`runTestSuite`)**: A simple, zero-dependency test execution engine for quick testing scenarios, providing pass/fail tracking and formatted console output.
-
-## External Dependencies
-
-### Production Dependencies
-- `@types/node`: TypeScript definitions for Node.js APIs.
-- `axios`: Real HTTP client (referenced for stub implementation).
-
-### Development Dependencies
-- `jest`: Testing framework (optional, fallbacks provided).
-- `winston`: Logging library (referenced for stub implementation).
-
-### Optional Dependencies
-- `qerrors`: Error reporting module (gracefully handled if missing).
-
-## Recent Changes (January 2025)
-
-### Performance Optimizations
-- **Jest Configuration**: Added parallel execution with `maxWorkers: '50%'`, caching, and TypeScript optimizations for 50%+ speed improvement
-- **Test Generator**: Enhanced to generate speed-optimized tests with shared setup, efficient mocking, and minimal overhead
-- **Parallel Test Runner**: Implemented concurrent test execution in qtests-runner with controlled batch processing and CPU-aware concurrency
-- **TypeScript Support**: Restored and optimized intelligent TypeScript test generation with proper import handling and ts-jest integration
-
-### Speed Improvements Achieved
-- Test execution time reduced from ~9 seconds to ~4 seconds (52% improvement)
-- Generated tests include performance optimizations like shared app setup and efficient mocking patterns
-- Parallel execution utilizes available CPU cores effectively while preventing resource exhaustion
 
 <!--┌── 🚫 PROTECTED: DO NOT EDIT (READ ONLY) BELOW THIS LINE-->
 ## ADDITIONAL SPECIFIC GUIDANCE
@@ -165,5 +117,8 @@ Name folders clearly as to what they are for and organizing so that LLMs and dev
 ### REPLIT AGENT SECTION
 While replit.md is the source of truth for replit agent, it often becomes out of date, 
 with AGENTS.md being the maintained rules file. Check AGENTS.md for up to date information.
-
+    
 <!--└── END PROTECTED RANGE 🚫-->
+
+<!--AI Can write from here on-->
+
