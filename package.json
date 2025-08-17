@@ -31,7 +31,10 @@
     "winston": "^3.17.0"
   },
   "dependencies": {
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
-    "axios": "^1.9.0"
+    "axios": "^1.9.0",
+    "ts-jest": "^29.4.1",
+    "typescript": "^5.9.2"
   }
 }
