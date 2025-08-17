@@ -1,0 +1,6 @@
+bcfcdbc93b5748799ef323f7e71c081d
+try {
+  require('qtests/setup');
+} catch {} //(attempt package setup without failing)
+require('..').setup(); // (activate stub resolution for jest)
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJyZXF1aXJlIiwic2V0dXAiXSwic291cmNlcyI6WyJ0ZXN0U2V0dXAuanMiXSwic291cmNlc0NvbnRlbnQiOlsidHJ5eyByZXF1aXJlKCdxdGVzdHMvc2V0dXAnKTsgfWNhdGNoe30gLy8oYXR0ZW1wdCBwYWNrYWdlIHNldHVwIHdpdGhvdXQgZmFpbGluZylcbnJlcXVpcmUoJy4uJykuc2V0dXAoKTsgLy8gKGFjdGl2YXRlIHN0dWIgcmVzb2x1dGlvbiBmb3IgamVzdClcbiJdLCJtYXBwaW5ncyI6IkFBQUEsSUFBRztFQUFFQSxPQUFPLENBQUMsY0FBYyxDQUFDO0FBQUUsQ0FBQyxPQUFLLENBQUMsQ0FBQyxDQUFDO0FBQ3ZDQSxPQUFPLENBQUMsSUFBSSxDQUFDLENBQUNDLEtBQUssQ0FBQyxDQUFDLENBQUMsQ0FBQyIsImlnbm9yZUxpc3QiOltdfQ==

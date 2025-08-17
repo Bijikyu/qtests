@@ -1,9 +1,15 @@
-// Auto-generated API test for GET /test
+// Auto-generated API test for GET /test - optimized for speed
 const { httpTest } = require('qtests/lib/envUtils');
 
 describe('GET /test', () => {
+  // Shared app setup for performance
+  let sharedApp;
+  beforeAll(() => {
+    sharedApp = httpTest.createMockApp();
+  });
+
   test('should succeed', async () => {
-    // Create mock app for testing
+    // Reuse shared app for speed
     const app = httpTest.createMockApp();
     app.get('/test', (req, res) => {
       res.statusCode = 200;

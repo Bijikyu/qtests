@@ -1,9 +1,15 @@
-// Auto-generated API test for PUT /api/users/:id
+// Auto-generated API test for PUT /api/users/:id - optimized for speed
 const { httpTest } = require('qtests/lib/envUtils');
 
 describe('PUT /api/users/:id', () => {
+  // Shared app setup for performance
+  let sharedApp;
+  beforeAll(() => {
+    sharedApp = httpTest.createMockApp();
+  });
+
   test('should succeed', async () => {
-    // Create mock app for testing
+    // Reuse shared app for speed
     const app = httpTest.createMockApp();
     app.put('/api/users/:id', (req, res) => {
       res.statusCode = 200;

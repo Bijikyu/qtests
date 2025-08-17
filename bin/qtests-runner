@@ -72,17 +72,17 @@ class TestRunner {
     return testFiles;
   }
 
-  // Run a single test file and capture output
+  // Run a single test file and capture output - optimized for speed
   async runTestFile(testFile) {
     return new Promise((resolve) => {
       const startTime = Date.now();
       let stdout = '';
       let stderr = '';
       
-      // Try different test runners in order of preference
+      // Optimized test runners - Jest with parallel execution first
       const runners = [
+        { cmd: 'npx', args: ['jest', testFile, '--maxWorkers=4', '--cache', '--no-coverage'] },
         { cmd: 'npx', args: ['jest', testFile, '--verbose'] },
-        { cmd: 'npx', args: ['mocha', testFile] },
         { cmd: 'node', args: [testFile] }
       ];
       
@@ -102,7 +102,8 @@ class TestRunner {
         const runner = runners[runnerIndex];
         const child = spawn(runner.cmd, runner.args, {
           stdio: ['pipe', 'pipe', 'pipe'],
-          shell: true
+          shell: true,
+          env: { ...process.env, NODE_ENV: 'test' } // Fast test environment
         });
         
         child.stdout.on('data', (data) => {
@@ -231,9 +232,9 @@ class TestRunner {
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
   }
 
-  // Main runner method
+  // Main runner method - optimized for parallel execution
   async run() {
-    console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner${colors.reset}`);
+    console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner - Parallel Mode${colors.reset}`);
     console.log(`${colors.dim}Discovering and running all tests...\n${colors.reset}`);
     
     const testFiles = this.discoverTests();
@@ -246,21 +247,39 @@ class TestRunner {
     
     console.log(`${colors.blue}Found ${testFiles.length} test file(s):${colors.reset}`);
     testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
-    console.log('');
+    console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
     
-    for (const testFile of testFiles) {
-      console.log(`${colors.dim}Running:${colors.reset} ${testFile}`);
-      const result = await this.runTestFile(testFile);
-      this.testResults.push(result);
+    // Run tests in parallel with controlled concurrency
+    const maxConcurrency = Math.min(testFiles.length, Math.max(2, Math.floor(require('os').cpus().length / 2)));
+    console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers${colors.reset}\n`);
+    
+    const runBatch = async (batch) => {
+      const promises = batch.map(async (testFile) => {
+        console.log(`${colors.dim}Starting:${colors.reset} ${testFile}`);
+        const result = await this.runTestFile(testFile);
+        
+        if (result.success) {
+          this.passedTests++;
+        } else {
+          this.failedTests++;
+        }
+        
+        this.printTestResult(result);
+        return result;
+      });
       
-      if (result.success) {
-        this.passedTests++;
-      } else {
-        this.failedTests++;
+      return await Promise.all(promises);
+    };
+    
+    // Process tests in batches to control resource usage
+    for (let i = 0; i < testFiles.length; i += maxConcurrency) {
+      const batch = testFiles.slice(i, i + maxConcurrency);
+      const batchResults = await runBatch(batch);
+      this.testResults.push(...batchResults);
+      
+      if (i + maxConcurrency < testFiles.length) {
+        console.log(`${colors.dim}Completed batch ${Math.floor(i / maxConcurrency) + 1}, starting next...${colors.reset}\n`);
       }
-      
-      this.printTestResult(result);
-      console.log('');
     }
     
     if (this.failedTests > 0) {
