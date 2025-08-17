@@ -10,7 +10,9 @@ module.exports = {
     '/utils/winstonStub.js'
   ],
   testMatch: [
-    '<rootDir>/test/**/*.test.js'
+    '<rootDir>/test/**/*.test.js',
+    '<rootDir>/tests/**/*.test.js',
+    '<rootDir>/**/*.test.js'
   ],
   collectCoverageFrom: [
     'lib/**/*.js',
