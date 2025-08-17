@@ -2,7 +2,7 @@
 
 Analyze and address the following test failures:
 
-## Failed Test 1: demo/src/apiRoutes.test.js
+## Failed Test 1: temp-failing.test.js
 
 ### Output:
 ```
@@ -13,474 +13,50 @@ In /home/runner/workspace
   testMatch: /home/runner/workspace/test/**/*.test.js - 24 matches
   testPathIgnorePatterns: /node_modules/, /demo/, /examples/, /docs/, /stubs/, /utils/axiosStub.js, /utils/winstonStub.js - 68 matches
   testRegex:  - 0 matches
-Pattern: demo/src/apiRoutes.test.js - 0 matches
+Pattern: temp-failing.test.js - 0 matches
 npm warn exec The following package was not found and will be installed: mocha@11.7.1
-(node:852) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/runner/workspace/demo/src/apiRoutes.js is not specified and it doesn't parse as CommonJS.
-Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
-To eliminate this warning, add "type": "module" to /home/runner/workspace/package.json.
-(Use `node --trace-warnings ...` to show where the warning was created)
 
- Exception during run: Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'express' imported from /home/runner/workspace/demo/src/apiRoutes.js
-    at packageResolve (node:internal/modules/esm/resolve:873:9)
-    at moduleResolve (node:internal/modules/esm/resolve:946:18)
-    at defaultResolve (node:internal/modules/esm/resolve:1188:11)
-    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:642:12)
-    at #cachedDefaultResolve (node:internal/modules/esm/loader:591:25)
-    at ModuleLoader.resolve (node:internal/modules/esm/loader:574:38)
-    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
-    at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
-  code: 'ERR_MODULE_NOT_FOUND'
-}
-(node:864) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///home/runner/workspace/demo/src/apiRoutes.test.js is not specified and it doesn't parse as CommonJS.
-Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
-To eliminate this warning, add "type": "module" to /home/runner/workspace/package.json.
-(Use `node --trace-warnings ...` to show where the warning was created)
-node:internal/modules/esm/resolve:873
-  throw new ERR_MODULE_NOT_FOUND(packageName, fileURLToPath(base), null);
-        ^
+ Exception during run: ReferenceError: test is not defined
+    at Suite.<anonymous> (/home/runner/workspace/temp-failing.test.js:5:3)
+    at Object.create (/home/runner/.npm/_npx/508606763866ae01/node_modules/mocha/lib/interfaces/common.js:148:19)
+    at context.describe.context.context (/home/runner/.npm/_npx/508606763866ae01/node_modules/mocha/lib/interfaces/bdd.js:42:27)
+    at Object.<anonymous> (/home/runner/workspace/temp-failing.test.js:4:1)
+    at Module._compile (node:internal/modules/cjs/loader:1529:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at cjsLoader (node:internal/modules/esm/translators:298:15)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:240:7)
+    at ModuleJob.run (node:internal/modules/esm/module_job:263:25)
+    at async ModuleLoader.import (node:internal/modules/esm/loader:540:24)
+    at async formattedImport (/home/runner/.npm/_npx/508606763866ae01/node_modules/mocha/lib/nodejs/esm-utils.js:9:14)
+    at async Object.requireModule [as requireOrImport] (/home/runner/.npm/_npx/508606763866ae01/node_modules/mocha/lib/nodejs/esm-utils.js:97:28)
+    at async exports.loadFilesAsync (/home/runner/.npm/_npx/508606763866ae01/node_modules/mocha/lib/nodejs/esm-utils.js:123:20)
+    at async singleRun (/home/runner/.npm/_npx/508606763866ae01/node_modules/mocha/lib/cli/run-helpers.js:164:3)
+    at async exports.handler (/home/runner/.npm/_npx/508606763866ae01/node_modules/mocha/lib/cli/run.js:379:5)
+/home/runner/workspace/temp-failing.test.js:4
+describe('Temporary Failing Tests', () => {
+^
 
-Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'express' imported from /home/runner/workspace/demo/src/apiRoutes.js
-    at packageResolve (node:internal/modules/esm/resolve:873:9)
-    at moduleResolve (node:internal/modules/esm/resolve:946:18)
-    at defaultResolve (node:internal/modules/esm/resolve:1188:11)
-    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:642:12)
-    at #cachedDefaultResolve (node:internal/modules/esm/loader:591:25)
-    at ModuleLoader.resolve (node:internal/modules/esm/loader:574:38)
-    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
-    at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
-  code: 'ERR_MODULE_NOT_FOUND'
-}
+ReferenceError: describe is not defined
+    at Object.<anonymous> (/home/runner/workspace/temp-failing.test.js:4:1)
+    at Module._compile (node:internal/modules/cjs/loader:1529:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
+    at node:internal/main/run_main_module:28:49
 
 Node.js v20.19.3
 
 ```
 
-### Duration: 8724ms
-
----
-
-## Failed Test 2: demo/tests/apiRoutes__delete.test.ts
-
-### Output:
-```
-No tests found, exiting with code 1
-Run with `--passWithNoTests` to exit with code 0
-In /home/runner/workspace
-  88 files checked.
-  testMatch: /home/runner/workspace/test/**/*.test.js - 24 matches
-  testPathIgnorePatterns: /node_modules/, /demo/, /examples/, /docs/, /stubs/, /utils/axiosStub.js, /utils/winstonStub.js - 68 matches
-  testRegex:  - 0 matches
-Pattern: demo/tests/apiRoutes__delete.test.ts - 0 matches
-
- Exception during run: TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/apiRoutes__delete.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/apiRoutes__delete.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 5304ms
-
----
-
-## Failed Test 3: demo/tests/apiRoutes__get.test.ts
-
-### Output:
-```
-No tests found, exiting with code 1
-Run with `--passWithNoTests` to exit with code 0
-In /home/runner/workspace
-  88 files checked.
-  testMatch: /home/runner/workspace/test/**/*.test.js - 24 matches
-  testPathIgnorePatterns: /node_modules/, /demo/, /examples/, /docs/, /stubs/, /utils/axiosStub.js, /utils/winstonStub.js - 68 matches
-  testRegex:  - 0 matches
-Pattern: demo/tests/apiRoutes__get.test.ts - 0 matches
-
- Exception during run: TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/apiRoutes__get.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/apiRoutes__get.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 3789ms
-
----
-
-## Failed Test 4: demo/tests/apiRoutes__patch.test.ts
-
-### Output:
-```
-No tests found, exiting with code 1
-Run with `--passWithNoTests` to exit with code 0
-In /home/runner/workspace
-  88 files checked.
-  testMatch: /home/runner/workspace/test/**/*.test.js - 24 matches
-  testPathIgnorePatterns: /node_modules/, /demo/, /examples/, /docs/, /stubs/, /utils/axiosStub.js, /utils/winstonStub.js - 68 matches
-  testRegex:  - 0 matches
-Pattern: demo/tests/apiRoutes__patch.test.ts - 0 matches
-
- Exception during run: TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/apiRoutes__patch.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/apiRoutes__patch.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 3238ms
-
----
-
-## Failed Test 5: demo/tests/apiRoutes__post.test.ts
-
-### Output:
-```
-No tests found, exiting with code 1
-Run with `--passWithNoTests` to exit with code 0
-In /home/runner/workspace
-  88 files checked.
-  testMatch: /home/runner/workspace/test/**/*.test.js - 24 matches
-  testPathIgnorePatterns: /node_modules/, /demo/, /examples/, /docs/, /stubs/, /utils/axiosStub.js, /utils/winstonStub.js - 68 matches
-  testRegex:  - 0 matches
-Pattern: demo/tests/apiRoutes__post.test.ts - 0 matches
-
- Exception during run: TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/apiRoutes__post.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/apiRoutes__post.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 3297ms
-
----
-
-## Failed Test 6: demo/tests/apiRoutes__put.test.ts
-
-### Output:
-```
-No tests found, exiting with code 1
-Run with `--passWithNoTests` to exit with code 0
-In /home/runner/workspace
-  88 files checked.
-  testMatch: /home/runner/workspace/test/**/*.test.js - 24 matches
-  testPathIgnorePatterns: /node_modules/, /demo/, /examples/, /docs/, /stubs/, /utils/axiosStub.js, /utils/winstonStub.js - 68 matches
-  testRegex:  - 0 matches
-Pattern: demo/tests/apiRoutes__put.test.ts - 0 matches
-
- Exception during run: TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/apiRoutes__put.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/apiRoutes__put.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 3190ms
-
----
-
-## Failed Test 7: demo/tests/integration/apiRoutes__delete.test.ts
-
-### Output:
-```
-No tests found, exiting with code 1
-Run with `--passWithNoTests` to exit with code 0
-In /home/runner/workspace
-  88 files checked.
-  testMatch: /home/runner/workspace/test/**/*.test.js - 24 matches
-  testPathIgnorePatterns: /node_modules/, /demo/, /examples/, /docs/, /stubs/, /utils/axiosStub.js, /utils/winstonStub.js - 68 matches
-  testRegex:  - 0 matches
-Pattern: demo/tests/integration/apiRoutes__delete.test.ts - 0 matches
-
- Exception during run: TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/integration/apiRoutes__delete.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/integration/apiRoutes__delete.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 3145ms
-
----
-
-## Failed Test 8: demo/tests/integration/apiRoutes__get.test.ts
-
-### Output:
-```
-No tests found, exiting with code 1
-Run with `--passWithNoTests` to exit with code 0
-In /home/runner/workspace
-  88 files checked.
-  testMatch: /home/runner/workspace/test/**/*.test.js - 24 matches
-  testPathIgnorePatterns: /node_modules/, /demo/, /examples/, /docs/, /stubs/, /utils/axiosStub.js, /utils/winstonStub.js - 68 matches
-  testRegex:  - 0 matches
-Pattern: demo/tests/integration/apiRoutes__get.test.ts - 0 matches
-
- Exception during run: TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/integration/apiRoutes__get.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/integration/apiRoutes__get.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 2983ms
-
----
-
-## Failed Test 9: demo/tests/integration/apiRoutes__patch.test.ts
-
-### Output:
-```
-No tests found, exiting with code 1
-Run with `--passWithNoTests` to exit with code 0
-In /home/runner/workspace
-  88 files checked.
-  testMatch: /home/runner/workspace/test/**/*.test.js - 24 matches
-  testPathIgnorePatterns: /node_modules/, /demo/, /examples/, /docs/, /stubs/, /utils/axiosStub.js, /utils/winstonStub.js - 68 matches
-  testRegex:  - 0 matches
-Pattern: demo/tests/integration/apiRoutes__patch.test.ts - 0 matches
-
- Exception during run: TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/integration/apiRoutes__patch.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/integration/apiRoutes__patch.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 3005ms
-
----
-
-## Failed Test 10: demo/tests/integration/apiRoutes__post.test.ts
-
-### Output:
-```
-No tests found, exiting with code 1
-Run with `--passWithNoTests` to exit with code 0
-In /home/runner/workspace
-  88 files checked.
-  testMatch: /home/runner/workspace/test/**/*.test.js - 24 matches
-  testPathIgnorePatterns: /node_modules/, /demo/, /examples/, /docs/, /stubs/, /utils/axiosStub.js, /utils/winstonStub.js - 68 matches
-  testRegex:  - 0 matches
-Pattern: demo/tests/integration/apiRoutes__post.test.ts - 0 matches
-
- Exception during run: TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/integration/apiRoutes__post.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/integration/apiRoutes__post.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 2979ms
-
----
-
-## Failed Test 11: demo/tests/integration/apiRoutes__put.test.ts
-
-### Output:
-```
-No tests found, exiting with code 1
-Run with `--passWithNoTests` to exit with code 0
-In /home/runner/workspace
-  88 files checked.
-  testMatch: /home/runner/workspace/test/**/*.test.js - 24 matches
-  testPathIgnorePatterns: /node_modules/, /demo/, /examples/, /docs/, /stubs/, /utils/axiosStub.js, /utils/winstonStub.js - 68 matches
-  testRegex:  - 0 matches
-Pattern: demo/tests/integration/apiRoutes__put.test.ts - 0 matches
-
- Exception during run: TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/integration/apiRoutes__put.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/demo/tests/integration/apiRoutes__put.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 3381ms
+### Duration: 7709ms
 
 ---
 
 ## Summary
 
-- Total failed tests: 11
-- Failed test files: demo/src/apiRoutes.test.js, demo/tests/apiRoutes__delete.test.ts, demo/tests/apiRoutes__get.test.ts, demo/tests/apiRoutes__patch.test.ts, demo/tests/apiRoutes__post.test.ts, demo/tests/apiRoutes__put.test.ts, demo/tests/integration/apiRoutes__delete.test.ts, demo/tests/integration/apiRoutes__get.test.ts, demo/tests/integration/apiRoutes__patch.test.ts, demo/tests/integration/apiRoutes__post.test.ts, demo/tests/integration/apiRoutes__put.test.ts
-- Generated: 2025-08-17T04:08:44.026Z
+- Total failed tests: 1
+- Failed test files: temp-failing.test.js
+- Generated: 2025-08-17T04:24:48.227Z
