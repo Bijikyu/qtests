@@ -34,65 +34,65 @@ task = "shell.exec"
 args = "node bin/qtests-generate"
 
 [[ports]]
-localPort = 34269
-externalPort = 8099
-
-[[ports]]
-localPort = 34811
-externalPort = 6000
-
-[[ports]]
-localPort = 34885
-externalPort = 3002
-
-[[ports]]
-localPort = 35283
-externalPort = 3000
-
-[[ports]]
-localPort = 35837
-externalPort = 5173
-
-[[ports]]
-localPort = 37405
-externalPort = 8081
-
-[[ports]]
-localPort = 37779
-externalPort = 3003
-
-[[ports]]
-localPort = 38683
-externalPort = 5000
-
-[[ports]]
-localPort = 38943
-externalPort = 80
-
-[[ports]]
-localPort = 39195
-externalPort = 4200
-
-[[ports]]
-localPort = 40019
+localPort = 33529
 externalPort = 3001
 
 [[ports]]
-localPort = 40813
-externalPort = 6800
+localPort = 35593
+externalPort = 8000
 
 [[ports]]
-localPort = 42185
-externalPort = 9000
+localPort = 36027
+externalPort = 5000
 
 [[ports]]
-localPort = 43293
-externalPort = 8080
-
-[[ports]]
-localPort = 43929
+localPort = 36091
 externalPort = 8008
 
 [[ports]]
-localPort = 46681
-externalPort = 8000
+localPort = 36379
+externalPort = 8099
+
+[[ports]]
+localPort = 36455
+externalPort = 9000
+
+[[ports]]
+localPort = 36791
+externalPort = 4200
+
+[[ports]]
+localPort = 39079
+externalPort = 80
+
+[[ports]]
+localPort = 40007
+externalPort = 6000
+
+[[ports]]
+localPort = 40009
+externalPort = 3003
+
+[[ports]]
+localPort = 40681
+externalPort = 5173
+
+[[ports]]
+localPort = 43283
+externalPort = 8081
+
+[[ports]]
+localPort = 43835
+externalPort = 6800
+
+[[ports]]
+localPort = 45113
+externalPort = 8080
+
+[[ports]]
+localPort = 45549
+externalPort = 3000
+
+[[ports]]
+localPort = 46047
+externalPort = 3002

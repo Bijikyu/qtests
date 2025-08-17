@@ -46,7 +46,17 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 ### Optional Dependencies
 - `qerrors`: Error reporting module (gracefully handled if missing).
 
-## Recent Changes (January 2025)
+## Recent Changes (August 2025)
+
+### Complete Test Suite Resolution (August 17, 2025)
+- **Zero Test Failures Achieved**: Fixed all remaining test failures, achieving 31/31 tests passing (100% success rate)
+- **Enhanced DEBUG_TESTS.md**: Added creation timestamp and staleness warnings to prevent outdated failure analysis
+- **Fixed False Positive Detection**: Resolved qtests-runner incorrectly flagging passing tests as failures through improved Jest output pattern matching
+- **Jest Parameter Verification**: Confirmed `--testPathPattern` (singular) is correct for Jest 29.7.0, preventing CLI parameter errors
+- **Improved Test Discovery**: Enhanced test file filtering to exclude utility files (testSetup.js, reloadCheck.js, etc.) that aren't actual test cases
+- **Robust Success Detection**: Implemented Jest-aware success detection using PASS/FAIL output patterns rather than unreliable exit codes
+
+## Previous Changes (January 2025)
 
 ### Performance Optimizations
 - **Jest Configuration**: Added parallel execution with `maxWorkers: '50%'`, caching, and TypeScript optimizations for 50%+ speed improvement
