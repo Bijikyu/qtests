@@ -33,6 +33,7 @@
   "dependencies": {
     "@types/node": "^24.0.0",
     "axios": "^1.9.0",
-    "instruqt": "^1.0.7"
+    "instruqt": "^1.0.7",
+    "ts-jest": "^29.4.1"
   }
 }

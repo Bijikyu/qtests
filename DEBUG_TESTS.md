@@ -6,17 +6,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2057ms
+### Duration: 6607ms
 
 ---
 
@@ -24,17 +24,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3011ms
+### Duration: 6506ms
 
 ---
 
@@ -42,17 +42,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2773ms
+### Duration: 6151ms
 
 ---
 
@@ -60,17 +60,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 1856ms
+### Duration: 6290ms
 
 ---
 
@@ -78,17 +78,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2765ms
+### Duration: 5961ms
 
 ---
 
@@ -96,17 +96,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2724ms
+### Duration: 5706ms
 
 ---
 
@@ -114,17 +114,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3043ms
+### Duration: 5424ms
 
 ---
 
@@ -132,17 +132,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2990ms
+### Duration: 5270ms
 
 ---
 
@@ -150,17 +150,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2991ms
+### Duration: 4972ms
 
 ---
 
@@ -168,17 +168,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2883ms
+### Duration: 4822ms
 
 ---
 
@@ -186,17 +186,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2723ms
+### Duration: 4774ms
 
 ---
 
@@ -204,17 +204,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2516ms
+### Duration: 4528ms
 
 ---
 
@@ -222,17 +222,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2966ms
+### Duration: 3995ms
 
 ---
 
@@ -240,17 +240,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2351ms
+### Duration: 3813ms
 
 ---
 
@@ -258,17 +258,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2668ms
+### Duration: 3756ms
 
 ---
 
@@ -276,17 +276,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2910ms
+### Duration: 3510ms
 
 ---
 
@@ -294,17 +294,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2794ms
+### Duration: 6149ms
 
 ---
 
@@ -312,17 +312,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2648ms
+### Duration: 5966ms
 
 ---
 
@@ -330,17 +330,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2844ms
+### Duration: 4588ms
 
 ---
 
@@ -348,17 +348,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2855ms
+### Duration: 5609ms
 
 ---
 
@@ -366,17 +366,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2914ms
+### Duration: 5333ms
 
 ---
 
@@ -384,17 +384,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2520ms
+### Duration: 4756ms
 
 ---
 
@@ -402,17 +402,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2752ms
+### Duration: 4217ms
 
 ---
 
@@ -420,17 +420,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2794ms
+### Duration: 4056ms
 
 ---
 
@@ -438,17 +438,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2885ms
+### Duration: 3928ms
 
 ---
 
@@ -456,17 +456,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2724ms
+### Duration: 3791ms
 
 ---
 
@@ -474,17 +474,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2894ms
+### Duration: 3419ms
 
 ---
 
@@ -492,17 +492,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2261ms
+### Duration: 2882ms
 
 ---
 
@@ -510,17 +510,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2436ms
+### Duration: 2656ms
 
 ---
 
@@ -528,17 +528,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2463ms
+### Duration: 2571ms
 
 ---
 
@@ -546,17 +546,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2155ms
+### Duration: 2419ms
 
 ---
 
@@ -564,17 +564,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3275ms
+### Duration: 7383ms
 
 ---
 
@@ -582,17 +582,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2747ms
+### Duration: 7679ms
 
 ---
 
@@ -600,17 +600,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3148ms
+### Duration: 7305ms
 
 ---
 
@@ -618,17 +618,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3058ms
+### Duration: 7011ms
 
 ---
 
@@ -636,17 +636,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3189ms
+### Duration: 6970ms
 
 ---
 
@@ -654,17 +654,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3154ms
+### Duration: 6299ms
 
 ---
 
@@ -672,17 +672,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2875ms
+### Duration: 6429ms
 
 ---
 
@@ -690,17 +690,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3160ms
+### Duration: 5806ms
 
 ---
 
@@ -708,17 +708,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2455ms
+### Duration: 6305ms
 
 ---
 
@@ -726,17 +726,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3107ms
+### Duration: 5945ms
 
 ---
 
@@ -744,17 +744,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3186ms
+### Duration: 6012ms
 
 ---
 
@@ -762,17 +762,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2641ms
+### Duration: 5450ms
 
 ---
 
@@ -780,17 +780,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3176ms
+### Duration: 4294ms
 
 ---
 
@@ -798,17 +798,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3143ms
+### Duration: 5101ms
 
 ---
 
@@ -816,17 +816,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 3116ms
+### Duration: 4189ms
 
 ---
 
@@ -834,17 +834,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 2694ms
+### Duration: 4124ms
 
 ---
 
@@ -852,17 +852,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 590ms
+### Duration: 1369ms
 
 ---
 
@@ -870,17 +870,17 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-● Validation Error:
+● Unrecognized CLI Parameter:
 
-  Preset ts-jest not found.
+  Unrecognized option "testPathPatterns". Did you mean "testPathPattern"?
 
-  Configuration Documentation:
-  https://jestjs.io/docs/configuration
+  CLI Options Documentation:
+  https://jestjs.io/docs/cli
 
 
 ```
 
-### Duration: 591ms
+### Duration: 1310ms
 
 ---
 
@@ -888,4 +888,4 @@ Analyze and address the following test failures:
 
 - Total failed tests: 49
 - Failed test files: demo/src/apiRoutes.test.js, demo/src/calculator.test.js, demo/tests/apiRoutes__delete.test.ts, demo/tests/apiRoutes__get.test.ts, demo/tests/apiRoutes__patch.test.ts, demo/tests/apiRoutes__post.test.ts, demo/tests/apiRoutes__put.test.ts, demo/tests/integration/apiRoutes__delete.test.ts, demo/tests/integration/apiRoutes__get.test.ts, demo/tests/integration/apiRoutes__patch.test.ts, demo/tests/integration/apiRoutes__post.test.ts, demo/tests/integration/apiRoutes__put.test.ts, demo/tests/setup.ts, test/axiosStub.test.js, test/comprehensive.test.js, test/edgeCases.test.js, test/httpTest.test.js, test/indexExports.test.js, test/integration.test.js, test/logUtils.test.js, test/mockAxios.test.js, test/mockConsole.test.js, test/mockModels.test.js, test/mockUtils.test.js, test/offlineIntegration.test.js, test/offlineMode.test.js, test/qtests-dogfood.test.js, test/reloadCheck.js, test/resolveStubPaths.test.js, test/runTestSuite.test.js, test/safeSerialize.test.js, test/sendEmail.test.js, test/setupMultiple.test.js, test/setupMultipleChild.js, test/setupResolution.test.js, test/stubMethod.test.js, test/testEnv.test.js, test/testGenerator.test.js, test/testHelpers.test.js, test/testSetup.js, test/testSuite.test.js, test/withoutSetup.js, tests/integration/example.test.js, tests/integration/example__get.test.js, tests/integration/example__post.test.js, tests/integration/example__put.test.js, tests/integration/utils__httpTest.test.js, tests/integration/utils__httpTest__get.test.js, tests/setup.ts
-- Generated: 2025-08-17T07:43:26.246Z
+- Generated: 2025-08-17T07:48:29.771Z

@@ -64,6 +64,7 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Smart Conversion**: Automatically converts CommonJS syntax (`require()`) to ES module syntax (`import/export`) for client projects
 - **DEBUG_TESTS.md Generation**: Fixed missing debug documentation generation - now works in both CommonJS and ES module environments
 - **No Breaking Changes**: Maintains full backward compatibility with existing CommonJS projects
+- **Critical Fix**: Resolved Jest configuration issues by installing missing `ts-jest` dependency and correcting CLI parameters
 
 <!--┌── 🚫 PROTECTED: DO NOT EDIT (READ ONLY) BELOW THIS LINE-->
 ## ADDITIONAL SPECIFIC GUIDANCE
