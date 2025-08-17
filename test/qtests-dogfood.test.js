@@ -6,6 +6,9 @@ const { mockConsole } = require('../utils/mockConsole');
 const { setTestEnv, saveEnv, restoreEnv } = require('../utils/testEnv');
 const stubMethod = require('../utils/stubMethod');
 
+// Convert to Jest format for proper test discovery
+describe('qtests Dogfooding Tests', () => {
+
 const assert = createAssertions();
 
 // Test qtests mockConsole utility
@@ -64,30 +67,18 @@ const stubMethodTests = [
   }]
 ];
 
-// Run all test suites using qtests
-if (require.main === module) {
-  console.log('🐕 qtests Dogfooding Tests - Using qtests to test itself!');
-  console.log('=' .repeat(60));
-  
-  const suites = [
-    ['mockConsole Tests', mockConsoleTests],
-    ['testEnv Tests', testEnvTests], 
-    ['stubMethod Tests', stubMethodTests]
-  ];
-  
-  let totalPassed = 0;
-  let totalFailed = 0;
-  
-  for (const [suiteName, tests] of suites) {
-    const results = runTestSuite(suiteName, tests);
-    totalPassed += results.passed;
-    totalFailed += results.failed;
-  }
-  
-  console.log('\n' + '='.repeat(60));
-  console.log(`🎯 DOGFOODING SUMMARY: ${totalPassed} passed, ${totalFailed} failed`);
-  console.log('qtests successfully testing itself with qtests utilities!');
-  console.log('='.repeat(60));
-  
-  process.exit(totalFailed > 0 ? 1 : 0);
-}
+  it('should run mockConsole tests', () => {
+    const results = runTestSuite('mockConsole Tests', mockConsoleTests);
+    expect(results.failed).toBe(0);
+  });
+
+  it('should run testEnv tests', () => {
+    const results = runTestSuite('testEnv Tests', testEnvTests);
+    expect(results.failed).toBe(0);
+  });
+
+  it('should run stubMethod tests', () => {
+    const results = runTestSuite('stubMethod Tests', stubMethodTests);
+    expect(results.failed).toBe(0);
+  });
+});

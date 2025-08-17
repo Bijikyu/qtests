@@ -5,40 +5,35 @@
  * Tests file scanning, code analysis, test generation, and CLI interface.
  */
 
-const { runTestSuite, createAssertions } = require('../utils/runTestSuite');
-const { TestGenerator, DEFAULT_CONFIG, PATTERNS } = require('../lib/testGenerator');
+const { TestGenerator } = require('../lib/testGenerator');
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
-const assert = createAssertions();
-
-// Test Generator Configuration Tests
-const configTests = [
-  ['uses default configuration', () => {
+describe('TestGenerator Configuration', () => {
+  it('should use default configuration', () => {
     const defaultGen = new TestGenerator();
-    assert.equal(defaultGen.config.SRC_DIR, 'src', 'Should use default src directory');
-    assert.equal(defaultGen.config.TEST_DIR, 'tests/integration', 'Should use default test directory');
-    assert.truthy(defaultGen.config.KNOWN_MOCKS.includes('axios'), 'Should include axios in known mocks');
-    assert.truthy(defaultGen.config.VALID_EXTS.includes('.js'), 'Should include .js extension');
-  }],
+    expect(defaultGen.config.SRC_DIR).toBe('src');
+    expect(defaultGen.config.TEST_DIR).toBe('tests/integration');
+    expect(defaultGen.config.KNOWN_MOCKS).toContain('axios');
+    expect(defaultGen.config.VALID_EXTS).toContain('.js');
+  });
 
-  ['accepts custom configuration', () => {
+  it('should accept custom configuration', () => {
     const customGen = new TestGenerator({
       SRC_DIR: 'lib',
       TEST_DIR: 'spec',
       KNOWN_MOCKS: ['custom-lib']
     });
     
-    assert.equal(customGen.config.SRC_DIR, 'lib', 'Should use custom src directory');
-    assert.equal(customGen.config.TEST_DIR, 'spec', 'Should use custom test directory');
-    assert.truthy(customGen.config.KNOWN_MOCKS.includes('custom-lib'), 'Should include custom mock');
-  }]
-];
+    expect(customGen.config.SRC_DIR).toBe('lib');
+    expect(customGen.config.TEST_DIR).toBe('spec');
+    expect(customGen.config.KNOWN_MOCKS).toContain('custom-lib');
+  });
+});
 
-// File System Operations Tests
-const fileSystemTests = [
-  ['walks directory structure', () => {
+describe('TestGenerator File System', () => {
+  it('should walk directory structure', () => {
     const tempDir = path.join(__dirname, 'temp-test-' + Date.now());
     fs.mkdirSync(tempDir, { recursive: true });
     
@@ -57,9 +52,9 @@ const fileSystemTests = [
         const generator = new TestGenerator({ SRC_DIR: 'src', TEST_DIR: 'tests' });
         const files = generator.walk('src');
         
-        assert.truthy(files.length >= 2, 'Should find multiple files');
-        assert.truthy(files.some(f => f.endsWith('utils.js')), 'Should find utils.js');
-        assert.truthy(files.some(f => f.endsWith('Button.tsx')), 'Should find Button.tsx');
+        expect(files.length).toBeGreaterThanOrEqual(2);
+        expect(files.some(f => f.endsWith('utils.js'))).toBe(true);
+        expect(files.some(f => f.endsWith('Button.tsx'))).toBe(true);
       } finally {
         process.chdir(originalCwd);
       }
@@ -67,45 +62,43 @@ const fileSystemTests = [
       // Cleanup
       fs.rmSync(tempDir, { recursive: true, force: true });
     }
-  }]
-];
+  });
+});
 
-// CLI Tests
-const cliTests = [
-  ['CLI script exists and is executable', () => {
+describe('TestGenerator CLI', () => {
+  it('should have executable CLI script', () => {
     const cliPath = path.join(__dirname, '..', 'bin', 'qtests-generate');
-    assert.truthy(fs.existsSync(cliPath), 'CLI script should exist');
+    expect(fs.existsSync(cliPath)).toBe(true);
     
     const stats = fs.statSync(cliPath);
-    assert.truthy(stats.mode & 0o111, 'CLI script should be executable'); // Check executable bit
-  }],
+    expect(stats.mode & 0o111).toBeTruthy(); // Check executable bit
+  });
 
-  ['CLI shows help when requested', () => {
+  it('should show help when requested', () => {
     const result = execSync('node bin/qtests-generate --help', { 
       cwd: path.join(__dirname, '..'),
       encoding: 'utf8',
       stdio: 'pipe'
     });
     
-    assert.truthy(result.includes('USAGE'), 'Help should include usage information');
-    assert.truthy(result.includes('OPTIONS'), 'Help should include options');
-    assert.truthy(result.includes('qtests-generate'), 'Help should include command name');
-  }],
+    expect(result).toContain('USAGE');
+    expect(result).toContain('OPTIONS');
+    expect(result).toContain('qtests-generate');
+  });
 
-  ['CLI shows version when requested', () => {
+  it('should show version when requested', () => {
     const result = execSync('node bin/qtests-generate --version', { 
       cwd: path.join(__dirname, '..'),
       encoding: 'utf8',
       stdio: 'pipe'
     });
     
-    assert.truthy(result.includes('qtests v'), 'Version should include qtests version');
-  }]
-];
+    expect(result).toContain('qtests v');
+  });
+});
 
-// Test Generation Tests  
-const generationTests = [
-  ['generates unit test content', () => {
+describe('TestGenerator Content Generation', () => {
+  it('should generate unit test content', () => {
     const generator = new TestGenerator();
     const exports = ['calculate', 'Calculator'];
     const usesQtests = false;
@@ -113,39 +106,20 @@ const generationTests = [
     
     const testContent = generator.createUnitTest('calculator.js', exports, usesQtests, mocks);
     
-    assert.truthy(testContent.includes('calculate'), 'Should include function name');
-    assert.truthy(testContent.includes('Calculator'), 'Should include class name');
-    assert.truthy(testContent.includes('describe'), 'Should include describe statements');
-  }],
+    expect(testContent).toContain('calculate');
+    expect(testContent).toContain('Calculator');
+    expect(testContent).toContain('describe');
+  });
 
-  ['generates API test content', () => {
+  it('should generate API test content', () => {
     const generator = new TestGenerator();
     const method = 'get';
     const route = '/api/users';
     
     const testContent = generator.createApiTest(method, route);
     
-    assert.truthy(testContent.includes('/api/users'), 'Should include route path');
-    assert.truthy(testContent.includes('GET'), 'Should include GET method');
-    assert.truthy(testContent.includes('request'), 'Should include request statements');
-  }]
-];
-
-// Run all test suites
-async function runAllTests() {
-  console.log('🧪 Running Test Generator Tests...\n');
-  
-  await runTestSuite('Configuration Tests', configTests);
-  await runTestSuite('File System Tests', fileSystemTests);
-  await runTestSuite('CLI Tests', cliTests);
-  await runTestSuite('Generation Tests', generationTests);
-  
-  console.log('\n✅ All Test Generator tests completed!');
-}
-
-// Run tests if this is the main module
-if (require.main === module) {
-  runAllTests().catch(console.error);
-}
-
-module.exports = { runAllTests };
+    expect(testContent).toContain('/api/users');
+    expect(testContent).toContain('GET');
+    expect(testContent).toContain('request');
+  });
+});

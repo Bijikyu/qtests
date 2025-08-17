@@ -1,58 +1,37 @@
 // qtests dogfooding - using qtests to test itself instead of Jest
 const stubMethod = require('../utils/stubMethod');
-const { runTestSuite, createAssertions } = require('../utils/runTestSuite');
 
-const assert = createAssertions();
+describe('stubMethod', () => {
 
-// Convert Jest tests to qtests format
-const tests = [
-  ['stubMethod replaces and restores methods', () => {
+  it('should replace and restore methods', () => {
     const obj = { greet: name => `Hello, ${name}` };
     const restore = stubMethod(obj, 'greet', () => 'Hi');
     const result = obj.greet('Bob');
     restore();
-    assert.equal(result, 'Hi', 'Stub should return stubbed value');
-    assert.equal(obj.greet('Bob'), 'Hello, Bob', 'Original method should be restored');
-  }],
+    expect(result).toBe('Hi');
+    expect(obj.greet('Bob')).toBe('Hello, Bob');
+  });
 
-  ['stubMethod throws for non-object target', () => {
-    assert.throws(
-      () => stubMethod(null, 'greet', () => {}),
-      'Should throw for null target'
-    );
-  }],
+  it('should throw for non-object target', () => {
+    expect(() => stubMethod(null, 'greet', () => {})).toThrow();
+  });
 
-  ['stubMethod throws when method missing', () => {
-    assert.throws(
-      () => stubMethod({}, 'missing', () => {}),
-      'Should throw for missing method'
-    );
-  }],
+  it('should throw when method missing', () => {
+    expect(() => stubMethod({}, 'missing', () => {})).toThrow();
+  });
 
-  ['stubMethod throws for non-function stub', () => {
+  it('should throw for non-function stub', () => {
     const obj = { greet: () => 'hi' };
-    assert.throws(
-      () => stubMethod(obj, 'greet', 'notFn'),
-      'Should throw for non-function stub'
-    );
-  }],
+    expect(() => stubMethod(obj, 'greet', 'notFn')).toThrow();
+  });
 
-  ['stubMethod handles inherited methods', () => {
+  it('should handle inherited methods', () => {
     const proto = { greet: () => 'proto' };
     const obj = Object.create(proto);
     const restore = stubMethod(obj, 'greet', () => 'stub');
-    assert.equal(obj.greet(), 'stub', 'Stub should work on inherited method');
+    expect(obj.greet()).toBe('stub');
     restore();
-    assert.falsy(
-      Object.prototype.hasOwnProperty.call(obj, 'greet'),
-      'Own property should be removed after restore'
-    );
-    assert.equal(obj.greet(), 'proto', 'Inherited method should be available again');
-  }]
-];
-
-// Run tests using qtests instead of Jest
-if (require.main === module) {
-  const results = runTestSuite('stubMethod', tests);
-  process.exit(results.failed > 0 ? 1 : 0);
-}
+    expect(Object.prototype.hasOwnProperty.call(obj, 'greet')).toBe(false);
+    expect(obj.greet()).toBe('proto');
+  });
+});

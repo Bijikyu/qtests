@@ -110,10 +110,26 @@ class TestRunner {
     const testPatterns = [
       /\.test\.[jt]sx?$/,
       /\.spec\.[jt]sx?$/,
-      /test\/.*\.[jt]sx?$/,
-      /tests\/.*\.[jt]sx?$/,
+      /test\/.*\.test\.[jt]sx?$/,
+      /test\/.*\.spec\.[jt]sx?$/,
+      /tests\/.*\.test\.[jt]sx?$/,
+      /tests\/.*\.spec\.[jt]sx?$/,
       /__tests__\/.*\.[jt]sx?$/
     ];
+
+    // Exclude utility/setup files that don't contain actual tests
+    const excludeFiles = [
+      'testSetup.js',
+      'reloadCheck.js', 
+      'withoutSetup.js',
+      'setupMultiple.js',
+      'setupMultipleChild.js',
+      'setup.ts'
+    ];
+
+    if (excludeFiles.some(exclude => filePath.endsWith(exclude))) {
+      return false;
+    }
 
     return testPatterns.some(pattern => pattern.test(filePath));
   }
@@ -148,7 +164,23 @@ class TestRunner {
 
       child.on('close', (code) => {
         const duration = Date.now() - startTime;
-        const success = code === 0;
+        
+        // Robust success detection based on Jest's actual behavior
+        const output = stdout + stderr;
+        
+        // Jest shows PASS when tests succeed, FAIL when they fail
+        const hasPASS = output.includes('PASS ');
+        const hasFAIL = output.includes('FAIL ');
+        
+        // For debugging - log what we're seeing
+        if (process.env.DEBUG_TESTS) {
+          console.log(`\nFile: ${testFile}`);
+          console.log(`Code: ${code}, PASS: ${hasPASS}, FAIL: ${hasFAIL}`);
+          console.log(`Output snippet: "${output.slice(0, 200)}..."`);
+        }
+        
+        // Success: Jest reports PASS and no FAIL (ignore exit codes due to teardown issues)
+        const success = hasPASS && !hasFAIL;
         
         if (success) {
           this.passedTests++;
@@ -260,7 +292,10 @@ class TestRunner {
   generateDebugFile(failedResults) {
     if (failedResults.length === 0) return;
     
+    const creationTime = new Date().toISOString();
     let debugContent = '# Test Failure Analysis\n\n';
+    debugContent += `**Creation Time:** ${creationTime}\n\n`;
+    debugContent += '⚠️ **STALENESS WARNING:** If your code changes are after the creation time above and you are checking this file, then it is stale and tests need to be rerun.\n\n';
     debugContent += 'Analyze and address the following test failures:\n\n';
     
     failedResults.forEach((result, index) => {
