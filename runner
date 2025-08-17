@@ -1,0 +1,280 @@
+#!/usr/bin/env node
+
+const fs = require('fs');
+const path = require('path');
+const { spawn } = require('child_process');
+
+// ANSI color codes for terminal output
+const colors = {
+  green: '\u001b[32m',
+  red: '\u001b[31m',  
+  yellow: '\u001b[33m',
+  blue: '\u001b[34m',
+  magenta: '\u001b[35m',
+  cyan: '\u001b[36m',
+  white: '\u001b[37m',
+  reset: '\u001b[0m',
+  bold: '\u001b[1m',
+  dim: '\u001b[2m'
+};
+
+// Test discovery patterns
+const TEST_PATTERNS = [
+  /\.test\.(js|ts|jsx|tsx)$/,
+  /\.spec\.(js|ts|jsx|tsx)$/,
+  /_test\.(js|ts|jsx|tsx)$/,
+  /_spec\.(js|ts|jsx|tsx)$/
+];
+
+class TestRunner {
+  constructor() {
+    this.passedTests = 0;
+    this.failedTests = 0;
+    this.testResults = [];
+    this.startTime = Date.now();
+  }
+
+  // Discover all test files in the project
+  discoverTests(dir = '.', depth = 0, maxDepth = 10) {
+    const testFiles = [];
+    
+    if (depth > maxDepth) return testFiles;
+    
+    try {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        
+        // Skip node_modules, hidden directories, and demo directory (has dependency issues)
+        if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'demo') {
+          continue;
+        }
+        
+        if (entry.isDirectory()) {
+          testFiles.push(...this.discoverTests(fullPath, depth + 1, maxDepth));
+        } else if (entry.isFile()) {
+          const isTestFile = TEST_PATTERNS.some(pattern => pattern.test(entry.name));
+          if (isTestFile) {
+            testFiles.push(fullPath);
+          }
+        }
+      }
+    } catch (error) {
+      // Silently skip directories we can't read
+    }
+    
+    return testFiles;
+  }
+
+  // Run a single test file and capture output
+  async runTestFile(testFile) {
+    return new Promise((resolve) => {
+      const startTime = Date.now();
+      let stdout = '';
+      let stderr = '';
+      
+      // Try different test runners in order of preference
+      const runners = [
+        { cmd: 'npx', args: ['jest', testFile, '--verbose'] },
+        { cmd: 'npx', args: ['mocha', testFile] },
+        { cmd: 'node', args: [testFile] }
+      ];
+      
+      const tryRunner = (runnerIndex = 0) => {
+        if (runnerIndex >= runners.length) {
+          resolve({
+            file: testFile,
+            success: false,
+            duration: Date.now() - startTime,
+            output: stderr || 'No test runner could execute this file',
+            stdout,
+            stderr
+          });
+          return;
+        }
+        
+        const runner = runners[runnerIndex];
+        const child = spawn(runner.cmd, runner.args, {
+          stdio: ['pipe', 'pipe', 'pipe'],
+          shell: true
+        });
+        
+        child.stdout.on('data', (data) => {
+          stdout += data.toString();
+        });
+        
+        child.stderr.on('data', (data) => {
+          stderr += data.toString();
+        });
+        
+        child.on('close', (code) => {
+          const duration = Date.now() - startTime;
+          const output = stdout + stderr;
+          
+          if (code === 0) {
+            resolve({
+              file: testFile,
+              success: true,
+              duration,
+              output,
+              stdout,
+              stderr
+            });
+          } else if (runnerIndex === runners.length - 1) {
+            resolve({
+              file: testFile,
+              success: false,
+              duration,
+              output,
+              stdout,
+              stderr
+            });
+          } else {
+            tryRunner(runnerIndex + 1);
+          }
+        });
+        
+        child.on('error', () => {
+          tryRunner(runnerIndex + 1);
+        });
+      };
+      
+      tryRunner();
+    });
+  }
+
+  // Print colored status indicator
+  printStatus(success, text) {
+    const indicator = success ? 
+      `${colors.green}${colors.bold}✓${colors.reset}` : 
+      `${colors.red}${colors.bold}✗${colors.reset}`;
+    console.log(`${indicator} ${text}`);
+  }
+
+  // Print test file result
+  printTestResult(result) {
+    const { file, success, duration } = result;
+    const durationText = `${colors.dim}(${duration}ms)${colors.reset}`;
+    const fileText = `${colors.cyan}${file}${colors.reset}`;
+    
+    this.printStatus(success, `${fileText} ${durationText}`);
+    
+    if (!success && result.output) {
+      const lines = result.output.split('\n');
+      lines.forEach(line => {
+        if (line.trim()) {
+          console.log(`  ${colors.dim}${line}${colors.reset}`);
+        }
+      });
+    }
+  }
+
+  // Generate debug file for failed tests
+  generateDebugFile() {
+    const failedResults = this.testResults.filter(r => !r.success);
+    if (failedResults.length === 0) return;
+    
+    let debugContent = '# Test Failure Analysis\n\n';
+    debugContent += 'Analyze and address the following test failures:\n\n';
+    
+    failedResults.forEach((result, index) => {
+      debugContent += `## Failed Test ${index + 1}: ${result.file}\n\n`;
+      debugContent += '### Output:\n';
+      debugContent += '```\n';
+      debugContent += result.output;
+      debugContent += '\n```\n\n';
+      debugContent += `### Duration: ${result.duration}ms\n\n`;
+      debugContent += '---\n\n';
+    });
+    
+    debugContent += '## Summary\n\n';
+    debugContent += `- Total failed tests: ${failedResults.length}\n`;
+    debugContent += `- Failed test files: ${failedResults.map(r => r.file).join(', ')}\n`;
+    debugContent += `- Generated: ${new Date().toISOString()}\n`;
+    
+    fs.writeFileSync('DEBUG_TESTS.md', debugContent);
+    console.log(`\n${colors.yellow}📋 Debug file created: DEBUG_TESTS.md${colors.reset}`);
+  }
+
+  // Print comprehensive summary
+  printSummary() {
+    const duration = Date.now() - this.startTime;
+    const totalFiles = this.testResults.length;
+    
+    console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
+    console.log(`${colors.bold}${colors.white}           TEST SUMMARY${colors.reset}`);
+    console.log(`${colors.bold}═══════════════════════════════════════${colors.reset}`);
+    
+    const allPassed = this.failedTests === 0;
+    const statusColor = allPassed ? colors.green : colors.red;
+    const statusText = allPassed ? 'ALL TESTS PASSED' : 'SOME TESTS FAILED';
+    console.log(`${statusColor}${colors.bold}${statusText}${colors.reset}\n`);
+    
+    console.log(`${colors.green}✓ Passed:${colors.reset} ${colors.bold}${this.passedTests}${colors.reset}`);
+    console.log(`${colors.red}✗ Failed:${colors.reset} ${colors.bold}${this.failedTests}${colors.reset}`);
+    console.log(`${colors.blue}📁 Files:${colors.reset} ${colors.bold}${totalFiles}${colors.reset}`);
+    console.log(`${colors.magenta}⏱  Duration:${colors.reset} ${colors.bold}${duration}ms${colors.reset}`);
+    
+    if (this.failedTests > 0) {
+      console.log(`\n${colors.red}Failed test files:${colors.reset}`);
+      this.testResults
+        .filter(r => !r.success)
+        .forEach(r => console.log(`  ${colors.red}•${colors.reset} ${r.file}`));
+    }
+    
+    console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
+  }
+
+  // Main runner method
+  async run() {
+    console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner${colors.reset}`);
+    console.log(`${colors.dim}Discovering and running all tests...\n${colors.reset}`);
+    
+    const testFiles = this.discoverTests();
+    
+    if (testFiles.length === 0) {
+      console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
+      console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
+      process.exit(0);
+    }
+    
+    console.log(`${colors.blue}Found ${testFiles.length} test file(s):${colors.reset}`);
+    testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
+    console.log('');
+    
+    for (const testFile of testFiles) {
+      console.log(`${colors.dim}Running:${colors.reset} ${testFile}`);
+      const result = await this.runTestFile(testFile);
+      this.testResults.push(result);
+      
+      if (result.success) {
+        this.passedTests++;
+      } else {
+        this.failedTests++;
+      }
+      
+      this.printTestResult(result);
+      console.log('');
+    }
+    
+    if (this.failedTests > 0) {
+      this.generateDebugFile();
+    }
+    
+    this.printSummary();
+    
+    process.exit(this.failedTests > 0 ? 1 : 0);
+  }
+}
+
+// Run the test suite
+if (require.main === module) {
+  const runner = new TestRunner();
+  runner.run().catch(error => {
+    console.error(`${colors.red}Test runner error:${colors.reset}`, error);
+    process.exit(1);
+  });
+}
+
+module.exports = TestRunner;
