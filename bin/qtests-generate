@@ -101,6 +101,7 @@ function main() {
     console.log(`  Test directory: ${generator.config.TEST_DIR}`);
     console.log(`  File extensions: ${generator.config.VALID_EXTS.join(', ')}`);
     console.log(`  Known mocks: ${generator.config.KNOWN_MOCKS.join(', ')}`);
+    console.log(`  Module system: ${generator.isESModule ? 'ES Modules' : 'CommonJS'}`);
     console.log('');
     
     // Generate tests
