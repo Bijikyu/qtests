@@ -41,15 +41,8 @@ module.exports = {
   ],
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
-      isolatedModules: true, // Faster TypeScript compilation
-      tsconfig: {
-        compilerOptions: {
-          sourceMap: false, // Skip source maps for speed
-          declaration: false,
-          declarationMap: false,
-          skipLibCheck: true // Skip lib checking for speed
-        }
-      }
+      // Use tsconfig.json instead of inline config to avoid deprecation warnings
+      tsconfig: './tsconfig.json'
     }],
     '^.+\\.jsx?$': 'babel-jest'
   },

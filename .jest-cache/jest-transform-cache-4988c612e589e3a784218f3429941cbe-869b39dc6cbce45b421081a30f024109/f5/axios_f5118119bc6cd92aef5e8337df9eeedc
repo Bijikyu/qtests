@@ -1,0 +1,85 @@
+708779ecc929af7fd827e5c0770174b6
+/**
+ * Axios HTTP Client Stub for Testing
+ * 
+ * This module provides a minimal, side-effect-free replacement for the axios
+ * HTTP client library. When tests require('axios') after qtests/setup, they
+ * get this stub instead of the real axios, preventing actual network requests.
+ * 
+ * Design philosophy:
+ * - Minimal interface: only implements commonly used methods
+ * - Predictable behavior: always returns empty objects
+ * - No side effects: no network requests, no state changes
+ * - Fast execution: immediate promise resolution
+ * 
+ * Why stub axios specifically:
+ * - Extremely common in Node.js applications
+ * - Network requests slow down tests significantly
+ * - Real HTTP calls can fail due to network issues
+ * - Tests should be isolated from external dependencies
+ * 
+ * Implementation approach:
+ * - Async functions that resolve immediately
+ * - Return empty objects (truthy but minimal)
+ * - Can be extended if tests need more specific behavior
+ * - Compatible with basic axios usage patterns
+ */
+
+/**
+ * Axios stub module exports
+ * 
+ * Currently implements the GET and POST methods as these are the most commonly
+ * stubbed in testing scenarios. Additional verbs can easily be added if needed.
+ * Method selection rationale:
+ * - POST is most common for API interactions
+ * - Often the method that needs stubbing in integration tests
+ * - Easy to add other methods following the same pattern
+ * 
+ * Return value approach:
+ * - Empty object {} is truthy (passes if (result) checks)
+ * - Minimal memory footprint
+ * - No properties that might interfere with test assertions
+ * - Can be extended to return more realistic response shapes
+ */
+// Enhanced axios stub with all HTTP methods and response structure
+const mockResponse = {
+  status: 200,
+  statusText: 'OK',
+  data: {},
+  headers: {},
+  config: {}
+};
+module.exports = {
+  get: async () => mockResponse,
+  // mock get method returns mock response
+  post: async () => mockResponse,
+  // mock post method returns mock response
+  put: async () => mockResponse,
+  // mock put method returns mock response
+  delete: async () => mockResponse,
+  // mock delete method returns mock response  
+  patch: async () => mockResponse,
+  // mock patch method returns mock response
+  head: async () => mockResponse,
+  // mock head method returns mock response
+  options: async () => mockResponse,
+  // mock options method returns mock response
+  request: async () => mockResponse // mock generic request method returns mock response
+};
+
+/**
+ * Usage in tests:
+ * 
+ * After requiring 'qtests/setup', any code that does:
+ *   const axios = require('axios');
+ *   const data = await axios.get(`https://api.example.com`);
+ *   await axios.post('https://api.example.com', data);
+ * 
+ * Will actually call this stub instead, which:
+ * - Returns immediately without network I/O
+ * - Resolves to {} for predictable test behavior
+ * - Doesn't log or store any request data
+ * 
+ * This allows testing of HTTP-dependent code without actual HTTP calls.
+ */
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2NrUmVzcG9uc2UiLCJzdGF0dXMiLCJzdGF0dXNUZXh0IiwiZGF0YSIsImhlYWRlcnMiLCJjb25maWciLCJtb2R1bGUiLCJleHBvcnRzIiwiZ2V0IiwicG9zdCIsInB1dCIsImRlbGV0ZSIsInBhdGNoIiwiaGVhZCIsIm9wdGlvbnMiLCJyZXF1ZXN0Il0sInNvdXJjZXMiOlsiYXhpb3MuanMiXSwic291cmNlc0NvbnRlbnQiOlsiXG4vKipcbiAqIEF4aW9zIEhUVFAgQ2xpZW50IFN0dWIgZm9yIFRlc3RpbmdcbiAqIFxuICogVGhpcyBtb2R1bGUgcHJvdmlkZXMgYSBtaW5pbWFsLCBzaWRlLWVmZmVjdC1mcmVlIHJlcGxhY2VtZW50IGZvciB0aGUgYXhpb3NcbiAqIEhUVFAgY2xpZW50IGxpYnJhcnkuIFdoZW4gdGVzdHMgcmVxdWlyZSgnYXhpb3MnKSBhZnRlciBxdGVzdHMvc2V0dXAsIHRoZXlcbiAqIGdldCB0aGlzIHN0dWIgaW5zdGVhZCBvZiB0aGUgcmVhbCBheGlvcywgcHJldmVudGluZyBhY3R1YWwgbmV0d29yayByZXF1ZXN0cy5cbiAqIFxuICogRGVzaWduIHBoaWxvc29waHk6XG4gKiAtIE1pbmltYWwgaW50ZXJmYWNlOiBvbmx5IGltcGxlbWVudHMgY29tbW9ubHkgdXNlZCBtZXRob2RzXG4gKiAtIFByZWRpY3RhYmxlIGJlaGF2aW9yOiBhbHdheXMgcmV0dXJucyBlbXB0eSBvYmplY3RzXG4gKiAtIE5vIHNpZGUgZWZmZWN0czogbm8gbmV0d29yayByZXF1ZXN0cywgbm8gc3RhdGUgY2hhbmdlc1xuICogLSBGYXN0IGV4ZWN1dGlvbjogaW1tZWRpYXRlIHByb21pc2UgcmVzb2x1dGlvblxuICogXG4gKiBXaHkgc3R1YiBheGlvcyBzcGVjaWZpY2FsbHk6XG4gKiAtIEV4dHJlbWVseSBjb21tb24gaW4gTm9kZS5qcyBhcHBsaWNhdGlvbnNcbiAqIC0gTmV0d29yayByZXF1ZXN0cyBzbG93IGRvd24gdGVzdHMgc2lnbmlmaWNhbnRseVxuICogLSBSZWFsIEhUVFAgY2FsbHMgY2FuIGZhaWwgZHVlIHRvIG5ldHdvcmsgaXNzdWVzXG4gKiAtIFRlc3RzIHNob3VsZCBiZSBpc29sYXRlZCBmcm9tIGV4dGVybmFsIGRlcGVuZGVuY2llc1xuICogXG4gKiBJbXBsZW1lbnRhdGlvbiBhcHByb2FjaDpcbiAqIC0gQXN5bmMgZnVuY3Rpb25zIHRoYXQgcmVzb2x2ZSBpbW1lZGlhdGVseVxuICogLSBSZXR1cm4gZW1wdHkgb2JqZWN0cyAodHJ1dGh5IGJ1dCBtaW5pbWFsKVxuICogLSBDYW4gYmUgZXh0ZW5kZWQgaWYgdGVzdHMgbmVlZCBtb3JlIHNwZWNpZmljIGJlaGF2aW9yXG4gKiAtIENvbXBhdGlibGUgd2l0aCBiYXNpYyBheGlvcyB1c2FnZSBwYXR0ZXJuc1xuICovXG5cbi8qKlxuICogQXhpb3Mgc3R1YiBtb2R1bGUgZXhwb3J0c1xuICogXG4gKiBDdXJyZW50bHkgaW1wbGVtZW50cyB0aGUgR0VUIGFuZCBQT1NUIG1ldGhvZHMgYXMgdGhlc2UgYXJlIHRoZSBtb3N0IGNvbW1vbmx5XG4gKiBzdHViYmVkIGluIHRlc3Rpbmcgc2NlbmFyaW9zLiBBZGRpdGlvbmFsIHZlcmJzIGNhbiBlYXNpbHkgYmUgYWRkZWQgaWYgbmVlZGVkLlxuICogTWV0aG9kIHNlbGVjdGlvbiByYXRpb25hbGU6XG4gKiAtIFBPU1QgaXMgbW9zdCBjb21tb24gZm9yIEFQSSBpbnRlcmFjdGlvbnNcbiAqIC0gT2Z0ZW4gdGhlIG1ldGhvZCB0aGF0IG5lZWRzIHN0dWJiaW5nIGluIGludGVncmF0aW9uIHRlc3RzXG4gKiAtIEVhc3kgdG8gYWRkIG90aGVyIG1ldGhvZHMgZm9sbG93aW5nIHRoZSBzYW1lIHBhdHRlcm5cbiAqIFxuICogUmV0dXJuIHZhbHVlIGFwcHJvYWNoOlxuICogLSBFbXB0eSBvYmplY3Qge30gaXMgdHJ1dGh5IChwYXNzZXMgaWYgKHJlc3VsdCkgY2hlY2tzKVxuICogLSBNaW5pbWFsIG1lbW9yeSBmb290cHJpbnRcbiAqIC0gTm8gcHJvcGVydGllcyB0aGF0IG1pZ2h0IGludGVyZmVyZSB3aXRoIHRlc3QgYXNzZXJ0aW9uc1xuICogLSBDYW4gYmUgZXh0ZW5kZWQgdG8gcmV0dXJuIG1vcmUgcmVhbGlzdGljIHJlc3BvbnNlIHNoYXBlc1xuICovXG4vLyBFbmhhbmNlZCBheGlvcyBzdHViIHdpdGggYWxsIEhUVFAgbWV0aG9kcyBhbmQgcmVzcG9uc2Ugc3RydWN0dXJlXG5jb25zdCBtb2NrUmVzcG9uc2UgPSB7XG4gIHN0YXR1czogMjAwLFxuICBzdGF0dXNUZXh0OiAnT0snLFxuICBkYXRhOiB7fSxcbiAgaGVhZGVyczoge30sXG4gIGNvbmZpZzoge31cbn07XG5cbm1vZHVsZS5leHBvcnRzID0ge1xuICBnZXQ6IGFzeW5jICgpID0+IG1vY2tSZXNwb25zZSwgLy8gbW9jayBnZXQgbWV0aG9kIHJldHVybnMgbW9jayByZXNwb25zZVxuICBwb3N0OiBhc3luYyAoKSA9PiBtb2NrUmVzcG9uc2UsIC8vIG1vY2sgcG9zdCBtZXRob2QgcmV0dXJucyBtb2NrIHJlc3BvbnNlXG4gIHB1dDogYXN5bmMgKCkgPT4gbW9ja1Jlc3BvbnNlLCAvLyBtb2NrIHB1dCBtZXRob2QgcmV0dXJucyBtb2NrIHJlc3BvbnNlXG4gIGRlbGV0ZTogYXN5bmMgKCkgPT4gbW9ja1Jlc3BvbnNlLCAvLyBtb2NrIGRlbGV0ZSBtZXRob2QgcmV0dXJucyBtb2NrIHJlc3BvbnNlICBcbiAgcGF0Y2g6IGFzeW5jICgpID0+IG1vY2tSZXNwb25zZSwgLy8gbW9jayBwYXRjaCBtZXRob2QgcmV0dXJucyBtb2NrIHJlc3BvbnNlXG4gIGhlYWQ6IGFzeW5jICgpID0+IG1vY2tSZXNwb25zZSwgLy8gbW9jayBoZWFkIG1ldGhvZCByZXR1cm5zIG1vY2sgcmVzcG9uc2VcbiAgb3B0aW9uczogYXN5bmMgKCkgPT4gbW9ja1Jlc3BvbnNlLCAvLyBtb2NrIG9wdGlvbnMgbWV0aG9kIHJldHVybnMgbW9jayByZXNwb25zZVxuICByZXF1ZXN0OiBhc3luYyAoKSA9PiBtb2NrUmVzcG9uc2UgLy8gbW9jayBnZW5lcmljIHJlcXVlc3QgbWV0aG9kIHJldHVybnMgbW9jayByZXNwb25zZVxufTtcblxuLyoqXG4gKiBVc2FnZSBpbiB0ZXN0czpcbiAqIFxuICogQWZ0ZXIgcmVxdWlyaW5nICdxdGVzdHMvc2V0dXAnLCBhbnkgY29kZSB0aGF0IGRvZXM6XG4gKiAgIGNvbnN0IGF4aW9zID0gcmVxdWlyZSgnYXhpb3MnKTtcbiAqICAgY29uc3QgZGF0YSA9IGF3YWl0IGF4aW9zLmdldChgaHR0cHM6Ly9hcGkuZXhhbXBsZS5jb21gKTtcbiAqICAgYXdhaXQgYXhpb3MucG9zdCgnaHR0cHM6Ly9hcGkuZXhhbXBsZS5jb20nLCBkYXRhKTtcbiAqIFxuICogV2lsbCBhY3R1YWxseSBjYWxsIHRoaXMgc3R1YiBpbnN0ZWFkLCB3aGljaDpcbiAqIC0gUmV0dXJucyBpbW1lZGlhdGVseSB3aXRob3V0IG5ldHdvcmsgSS9PXG4gKiAtIFJlc29sdmVzIHRvIHt9IGZvciBwcmVkaWN0YWJsZSB0ZXN0IGJlaGF2aW9yXG4gKiAtIERvZXNuJ3QgbG9nIG9yIHN0b3JlIGFueSByZXF1ZXN0IGRhdGFcbiAqIFxuICogVGhpcyBhbGxvd3MgdGVzdGluZyBvZiBIVFRQLWRlcGVuZGVudCBjb2RlIHdpdGhvdXQgYWN0dWFsIEhUVFAgY2FsbHMuXG4gKi9cbiJdLCJtYXBwaW5ncyI6IkFBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBLE1BQU1BLFlBQVksR0FBRztFQUNuQkMsTUFBTSxFQUFFLEdBQUc7RUFDWEMsVUFBVSxFQUFFLElBQUk7RUFDaEJDLElBQUksRUFBRSxDQUFDLENBQUM7RUFDUkMsT0FBTyxFQUFFLENBQUMsQ0FBQztFQUNYQyxNQUFNLEVBQUUsQ0FBQztBQUNYLENBQUM7QUFFREMsTUFBTSxDQUFDQyxPQUFPLEdBQUc7RUFDZkMsR0FBRyxFQUFFLE1BQUFBLENBQUEsS0FBWVIsWUFBWTtFQUFFO0VBQy9CUyxJQUFJLEVBQUUsTUFBQUEsQ0FBQSxLQUFZVCxZQUFZO0VBQUU7RUFDaENVLEdBQUcsRUFBRSxNQUFBQSxDQUFBLEtBQVlWLFlBQVk7RUFBRTtFQUMvQlcsTUFBTSxFQUFFLE1BQUFBLENBQUEsS0FBWVgsWUFBWTtFQUFFO0VBQ2xDWSxLQUFLLEVBQUUsTUFBQUEsQ0FBQSxLQUFZWixZQUFZO0VBQUU7RUFDakNhLElBQUksRUFBRSxNQUFBQSxDQUFBLEtBQVliLFlBQVk7RUFBRTtFQUNoQ2MsT0FBTyxFQUFFLE1BQUFBLENBQUEsS0FBWWQsWUFBWTtFQUFFO0VBQ25DZSxPQUFPLEVBQUUsTUFBQUEsQ0FBQSxLQUFZZixZQUFZLENBQUM7QUFDcEMsQ0FBQzs7QUFFRDtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0EiLCJpZ25vcmVMaXN0IjpbXX0=

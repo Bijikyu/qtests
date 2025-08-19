@@ -1,0 +1,11 @@
+a17b94dd94edb54c4384149235f4ec22
+// Lightweight unit test for logUtils.js - no complex operations
+describe('logUtils.js basic exports', () => {
+  test('module loads without errors', () => {
+    expect(() => require('./logUtils.js')).not.toThrow();
+    const mod = require('./logUtils.js');
+    expect(mod).toBeDefined();
+    expect(typeof mod).toBe('object');
+  });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJkZXNjcmliZSIsInRlc3QiLCJleHBlY3QiLCJyZXF1aXJlIiwibm90IiwidG9UaHJvdyIsIm1vZCIsInRvQmVEZWZpbmVkIiwidG9CZSJdLCJzb3VyY2VzIjpbImxvZ1V0aWxzLnRlc3QuanMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gTGlnaHR3ZWlnaHQgdW5pdCB0ZXN0IGZvciBsb2dVdGlscy5qcyAtIG5vIGNvbXBsZXggb3BlcmF0aW9uc1xuZGVzY3JpYmUoJ2xvZ1V0aWxzLmpzIGJhc2ljIGV4cG9ydHMnLCAoKSA9PiB7XG4gIHRlc3QoJ21vZHVsZSBsb2FkcyB3aXRob3V0IGVycm9ycycsICgpID0+IHtcbiAgICBleHBlY3QoKCkgPT4gcmVxdWlyZSgnLi9sb2dVdGlscy5qcycpKS5ub3QudG9UaHJvdygpO1xuICAgIGNvbnN0IG1vZCA9IHJlcXVpcmUoJy4vbG9nVXRpbHMuanMnKTtcbiAgICBleHBlY3QobW9kKS50b0JlRGVmaW5lZCgpO1xuICAgIGV4cGVjdCh0eXBlb2YgbW9kKS50b0JlKCdvYmplY3QnKTtcbiAgfSk7XG59KTtcbiJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQUEsUUFBUSxDQUFDLDJCQUEyQixFQUFFLE1BQU07RUFDMUNDLElBQUksQ0FBQyw2QkFBNkIsRUFBRSxNQUFNO0lBQ3hDQyxNQUFNLENBQUMsTUFBTUMsT0FBTyxDQUFDLGVBQWUsQ0FBQyxDQUFDLENBQUNDLEdBQUcsQ0FBQ0MsT0FBTyxDQUFDLENBQUM7SUFDcEQsTUFBTUMsR0FBRyxHQUFHSCxPQUFPLENBQUMsZUFBZSxDQUFDO0lBQ3BDRCxNQUFNLENBQUNJLEdBQUcsQ0FBQyxDQUFDQyxXQUFXLENBQUMsQ0FBQztJQUN6QkwsTUFBTSxDQUFDLE9BQU9JLEdBQUcsQ0FBQyxDQUFDRSxJQUFJLENBQUMsUUFBUSxDQUFDO0VBQ25DLENBQUMsQ0FBQztBQUNKLENBQUMsQ0FBQyIsImlnbm9yZUxpc3QiOltdfQ==

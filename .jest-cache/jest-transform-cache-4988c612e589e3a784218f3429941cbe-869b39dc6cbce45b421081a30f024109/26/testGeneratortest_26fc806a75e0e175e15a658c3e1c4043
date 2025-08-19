@@ -1,0 +1,23 @@
+280b440f262fe45f6f15492c3b320b01
+// Auto-generated unit test for testGenerator.js - optimized for speed
+// Mock external dependencies for speed
+_getJestObj().mock('fs', () => ({
+  __esModule: true,
+  default: jest.fn(),
+  ...jest.requireActual('fs')
+}));
+function _getJestObj() {
+  const {
+    jest
+  } = require("@jest/globals");
+  _getJestObj = () => jest;
+  return jest;
+}
+const mod = require('./testGenerator.js');
+describe('testGenerator.js', () => {
+  test('TestGenerator works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.TestGenerator).toBeDefined();
+  });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJfZ2V0SmVzdE9iaiIsIm1vY2siLCJfX2VzTW9kdWxlIiwiZGVmYXVsdCIsImplc3QiLCJmbiIsInJlcXVpcmVBY3R1YWwiLCJyZXF1aXJlIiwibW9kIiwiZGVzY3JpYmUiLCJ0ZXN0IiwiZXhwZWN0IiwiVGVzdEdlbmVyYXRvciIsInRvQmVEZWZpbmVkIl0sInNvdXJjZXMiOlsidGVzdEdlbmVyYXRvci50ZXN0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIEF1dG8tZ2VuZXJhdGVkIHVuaXQgdGVzdCBmb3IgdGVzdEdlbmVyYXRvci5qcyAtIG9wdGltaXplZCBmb3Igc3BlZWRcbi8vIE1vY2sgZXh0ZXJuYWwgZGVwZW5kZW5jaWVzIGZvciBzcGVlZFxuamVzdC5tb2NrKCdmcycsICgpID0+ICh7IF9fZXNNb2R1bGU6IHRydWUsIGRlZmF1bHQ6IGplc3QuZm4oKSwgLi4uamVzdC5yZXF1aXJlQWN0dWFsKCdmcycpIH0pKTtcbmNvbnN0IG1vZCA9IHJlcXVpcmUoJy4vdGVzdEdlbmVyYXRvci5qcycpO1xuXG5kZXNjcmliZSgndGVzdEdlbmVyYXRvci5qcycsICgpID0+IHtcbiAgdGVzdCgnVGVzdEdlbmVyYXRvciB3b3JrcycsIGFzeW5jICgpID0+IHtcbiAgICAvLyBGYXN0IGFzc2VydGlvbiAtIFRPRE86IGltcGxlbWVudCBzcGVjaWZpYyB0ZXN0IGxvZ2ljXG4gICAgZXhwZWN0KHR5cGVvZiBtb2QuVGVzdEdlbmVyYXRvcikudG9CZURlZmluZWQoKTtcbiAgfSk7XG59KTtcbiJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQTtBQUNBQSxXQUFBLEdBQUtDLElBQUksQ0FBQyxJQUFJLEVBQUUsT0FBTztFQUFFQyxVQUFVLEVBQUUsSUFBSTtFQUFFQyxPQUFPLEVBQUVDLElBQUksQ0FBQ0MsRUFBRSxDQUFDLENBQUM7RUFBRSxHQUFHRCxJQUFJLENBQUNFLGFBQWEsQ0FBQyxJQUFJO0FBQUUsQ0FBQyxDQUFDLENBQUM7QUFBQyxTQUFBTixZQUFBO0VBQUE7SUFBQUk7RUFBQSxJQUFBRyxPQUFBO0VBQUFQLFdBQUEsR0FBQUEsQ0FBQSxLQUFBSSxJQUFBO0VBQUEsT0FBQUEsSUFBQTtBQUFBO0FBQy9GLE1BQU1JLEdBQUcsR0FBR0QsT0FBTyxDQUFDLG9CQUFvQixDQUFDO0FBRXpDRSxRQUFRLENBQUMsa0JBQWtCLEVBQUUsTUFBTTtFQUNqQ0MsSUFBSSxDQUFDLHFCQUFxQixFQUFFLFlBQVk7SUFDdEM7SUFDQUMsTUFBTSxDQUFDLE9BQU9ILEdBQUcsQ0FBQ0ksYUFBYSxDQUFDLENBQUNDLFdBQVcsQ0FBQyxDQUFDO0VBQ2hELENBQUMsQ0FBQztBQUNKLENBQUMsQ0FBQyIsImlnbm9yZUxpc3QiOltdfQ==

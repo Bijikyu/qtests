@@ -1,0 +1,12 @@
+381568f8b1cfd727040c10040e07f529
+// Simplified setup test to prevent child process spawning issues
+require('../setup'); // activate stub resolution for test environment
+
+describe('setup multiple calls', () => {
+  test('setup can be called multiple times safely', () => {
+    // Test that setup is idempotent without spawning child processes
+    expect(() => require('../setup')).not.toThrow();
+    expect(() => require('../setup')).not.toThrow(); // Second call should be safe
+  });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJyZXF1aXJlIiwiZGVzY3JpYmUiLCJ0ZXN0IiwiZXhwZWN0Iiwibm90IiwidG9UaHJvdyJdLCJzb3VyY2VzIjpbInNldHVwTXVsdGlwbGUudGVzdC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBTaW1wbGlmaWVkIHNldHVwIHRlc3QgdG8gcHJldmVudCBjaGlsZCBwcm9jZXNzIHNwYXduaW5nIGlzc3Vlc1xucmVxdWlyZSgnLi4vc2V0dXAnKTsgLy8gYWN0aXZhdGUgc3R1YiByZXNvbHV0aW9uIGZvciB0ZXN0IGVudmlyb25tZW50XG5cbmRlc2NyaWJlKCdzZXR1cCBtdWx0aXBsZSBjYWxscycsICgpID0+IHtcbiAgdGVzdCgnc2V0dXAgY2FuIGJlIGNhbGxlZCBtdWx0aXBsZSB0aW1lcyBzYWZlbHknLCAoKSA9PiB7XG4gICAgLy8gVGVzdCB0aGF0IHNldHVwIGlzIGlkZW1wb3RlbnQgd2l0aG91dCBzcGF3bmluZyBjaGlsZCBwcm9jZXNzZXNcbiAgICBleHBlY3QoKCkgPT4gcmVxdWlyZSgnLi4vc2V0dXAnKSkubm90LnRvVGhyb3coKTtcbiAgICBleHBlY3QoKCkgPT4gcmVxdWlyZSgnLi4vc2V0dXAnKSkubm90LnRvVGhyb3coKTsgLy8gU2Vjb25kIGNhbGwgc2hvdWxkIGJlIHNhZmVcbiAgfSk7XG59KTtcbiJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQUEsT0FBTyxDQUFDLFVBQVUsQ0FBQyxDQUFDLENBQUM7O0FBRXJCQyxRQUFRLENBQUMsc0JBQXNCLEVBQUUsTUFBTTtFQUNyQ0MsSUFBSSxDQUFDLDJDQUEyQyxFQUFFLE1BQU07SUFDdEQ7SUFDQUMsTUFBTSxDQUFDLE1BQU1ILE9BQU8sQ0FBQyxVQUFVLENBQUMsQ0FBQyxDQUFDSSxHQUFHLENBQUNDLE9BQU8sQ0FBQyxDQUFDO0lBQy9DRixNQUFNLENBQUMsTUFBTUgsT0FBTyxDQUFDLFVBQVUsQ0FBQyxDQUFDLENBQUNJLEdBQUcsQ0FBQ0MsT0FBTyxDQUFDLENBQUMsQ0FBQyxDQUFDO0VBQ25ELENBQUMsQ0FBQztBQUNKLENBQUMsQ0FBQyIsImlnbm9yZUxpc3QiOltdfQ==

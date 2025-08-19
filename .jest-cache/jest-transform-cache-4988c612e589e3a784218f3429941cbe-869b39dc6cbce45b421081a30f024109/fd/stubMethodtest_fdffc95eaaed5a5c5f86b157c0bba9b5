@@ -1,0 +1,10 @@
+9c19502cdedfdc990e94c07eedd94048
+// Auto-generated unit test for stubMethod.js - optimized for speed
+const mod = require('./stubMethod.js');
+describe('stubMethod.js', () => {
+  test('stubMethod works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.stubMethod).toBeDefined();
+  });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2QiLCJyZXF1aXJlIiwiZGVzY3JpYmUiLCJ0ZXN0IiwiZXhwZWN0Iiwic3R1Yk1ldGhvZCIsInRvQmVEZWZpbmVkIl0sInNvdXJjZXMiOlsic3R1Yk1ldGhvZC50ZXN0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIEF1dG8tZ2VuZXJhdGVkIHVuaXQgdGVzdCBmb3Igc3R1Yk1ldGhvZC5qcyAtIG9wdGltaXplZCBmb3Igc3BlZWRcbmNvbnN0IG1vZCA9IHJlcXVpcmUoJy4vc3R1Yk1ldGhvZC5qcycpO1xuXG5kZXNjcmliZSgnc3R1Yk1ldGhvZC5qcycsICgpID0+IHtcbiAgdGVzdCgnc3R1Yk1ldGhvZCB3b3JrcycsIGFzeW5jICgpID0+IHtcbiAgICAvLyBGYXN0IGFzc2VydGlvbiAtIFRPRE86IGltcGxlbWVudCBzcGVjaWZpYyB0ZXN0IGxvZ2ljXG4gICAgZXhwZWN0KHR5cGVvZiBtb2Quc3R1Yk1ldGhvZCkudG9CZURlZmluZWQoKTtcbiAgfSk7XG59KTtcbiJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQSxNQUFNQSxHQUFHLEdBQUdDLE9BQU8sQ0FBQyxpQkFBaUIsQ0FBQztBQUV0Q0MsUUFBUSxDQUFDLGVBQWUsRUFBRSxNQUFNO0VBQzlCQyxJQUFJLENBQUMsa0JBQWtCLEVBQUUsWUFBWTtJQUNuQztJQUNBQyxNQUFNLENBQUMsT0FBT0osR0FBRyxDQUFDSyxVQUFVLENBQUMsQ0FBQ0MsV0FBVyxDQUFDLENBQUM7RUFDN0MsQ0FBQyxDQUFDO0FBQ0osQ0FBQyxDQUFDIiwiaWdub3JlTGlzdCI6W119
