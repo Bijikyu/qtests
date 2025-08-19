@@ -121,6 +121,15 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Root Cause**: Global regex replacement `--testPathPattern` → `--testPathPatterns` was replacing already-correct strings, causing double suffixes
 - **Fix Applied**: Used negative lookahead regex `(?!s)` to prevent double replacement of existing correct parameter names
 
+#### Jest Setup Directory Structure Assumptions
+- **Client-Reported Issue**: Fixed generated tests/setup.ts making hardcoded assumptions about project directory structure (../src/app)
+- **Root Cause**: Setup file contained hardcoded import paths that didn't exist in most projects, causing tests to hang waiting for servers
+- **Fixes Applied**:
+  - **Eliminated hardcoded paths**: Replaced specific paths like `../src/app.js` with placeholder `YOUR_APP_FILE`
+  - **Dynamic port allocation**: Changed from hardcoded port 4000 to `listen(0)` for available port detection
+  - **Clear customization instructions**: Added explicit comments telling users to replace placeholder with their actual file paths
+  - **File organization agnostic**: Setup template now works with any project directory structure
+
 #### Resolution Summary
 - **Fix Verification**: Confirmed fixes with 100% test success rate (75/75 tests passing)
 - **Quality Assurance**: Enhanced test generator to be more project-agnostic and robust
@@ -128,3 +137,4 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Transform Separation**: JavaScript and TypeScript files now use dedicated, appropriate transformers without conflicts
 - **Universal Success Detection**: qtests runner now recognizes success in both Jest format and native qtests/Node.js format, providing complete test framework compatibility
 - **Jest Version Compatibility**: qtests runner automatically adapts to both Jest 29 and Jest 30+ CLI parameter changes
+- **Directory Structure Agnostic**: Test generation makes no assumptions about project organization, works with any file structure
