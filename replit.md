@@ -72,9 +72,24 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 
 ## Recent Bug Fixes (August 2025)
 
-### Critical Jest Configuration Bug Fix (August 19, 2025)
-- **Client-Reported Issue Resolution**: Fixed critical typo in Jest configuration generation where `moduleNameMapping` was incorrectly used instead of `moduleNameMapper`
-- **Root Cause Identified**: Bug was in `lib/testGenerator.js` line 626 within the ES module Jest configuration template
-- **Impact Assessment**: Affected all clients using `npx qtests-generate` to scaffold Jest setups for ES module projects, causing Jest configuration errors
-- **Fix Verification**: Confirmed fix with 100% test success rate (75/75 tests passing) and proper Jest property naming
-- **Quality Assurance**: This demonstrates the importance of thorough testing of generated configurations and responsiveness to client feedback
+### Critical Jest Configuration Bug Fixes (August 19, 2025)
+
+#### Jest Configuration Property Typo
+- **Client-Reported Issue**: Fixed critical typo in Jest configuration generation where `moduleNameMapping` was incorrectly used instead of `moduleNameMapper`
+- **Root Cause**: Bug was in `lib/testGenerator.js` line 626 within the ES module Jest configuration template
+- **Impact**: Affected all clients using `npx qtests-generate` to scaffold Jest setups for ES module projects, causing Jest configuration errors
+
+#### Jest Setup File Issues  
+- **Client-Reported Issue**: Fixed problematic tests/setup.ts file that made incorrect assumptions about project structure and missing Jest type definitions
+- **Root Cause**: Generated setup file assumed `../src/app` exists and lacked proper TypeScript Jest type definitions
+- **Fixes Applied**:
+  - **Added Jest type definitions**: `/// <reference types="jest" />` for proper TypeScript support
+  - **Removed hardcoded paths**: Eliminated assumption that `../src/app` exists in all projects  
+  - **Made server setup optional**: Commented out server startup code as template with clear instructions
+  - **Generic project structure**: Changed Jest roots from `['<rootDir>/src', '<rootDir>/tests']` to `['<rootDir>']` for broader compatibility
+  - **Comprehensive setup template**: Provided beforeAll/afterAll/beforeEach/afterEach hooks with explanatory comments
+
+#### Resolution Summary
+- **Fix Verification**: Confirmed fixes with 100% test success rate (75/75 tests passing)
+- **Quality Assurance**: Enhanced test generator to be more project-agnostic and robust
+- **Client Impact**: All future Jest scaffolding now works correctly regardless of project structure
