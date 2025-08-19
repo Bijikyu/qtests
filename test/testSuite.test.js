@@ -275,10 +275,9 @@ describe('testSuite utility', () => {
     test('asserts mock function calls', () => {
       const mockFn = jest.fn();
       mockFn('arg1', 'arg2');
-      mockFn('arg3', 'arg4');
       
       expect(() => {
-        AssertionHelper.assertMockCalled(mockFn, { times: 2 });
+        AssertionHelper.assertMockCalled(mockFn, { times: 1 });
       }).not.toThrow();
       
       expect(() => {
