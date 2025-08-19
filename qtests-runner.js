@@ -159,27 +159,17 @@ class TestRunner {
   /**
    * Get Jest version-appropriate CLI flag
    */
-  async getJestTestPathFlag() {
+  getJestTestPathFlag() {
     if (this.jestVersion === null) {
       try {
-        const { spawn } = require('child_process');
-        const versionCheck = spawn('npx', ['jest', '--version'], { stdio: 'pipe' });
-        
-        let version = '';
-        versionCheck.stdout.on('data', (data) => {
-          version += data.toString().trim();
-        });
-        
-        await new Promise((resolve) => {
-          versionCheck.on('close', () => resolve());
-        });
-        
-        // Parse version number (e.g., "30.0.0" -> 30)
-        const majorVersion = parseInt(version.split('.')[0]);
+        // Try to detect Jest version synchronously
+        const fs = require('fs');
+        const packageJson = JSON.parse(fs.readFileSync('./node_modules/jest/package.json', 'utf8'));
+        const majorVersion = parseInt(packageJson.version.split('.')[0]);
         this.jestVersion = majorVersion;
       } catch {
-        // Default to Jest 29 behavior if version check fails
-        this.jestVersion = 29;
+        // Default to Jest 30+ behavior (newer standard) if version check fails
+        this.jestVersion = 30;
       }
     }
     
@@ -200,7 +190,7 @@ class TestRunner {
       const isJestTest = this.shouldUseJest(testFile);
       
       const command = isJestTest ? 'npx' : 'node';
-      const testPathFlag = isJestTest ? await this.getJestTestPathFlag() : null;
+      const testPathFlag = isJestTest ? this.getJestTestPathFlag() : null;
       const args = isJestTest ? ['jest', testPathFlag, testFile, '--verbose'] : [testFile];
 
       const child = spawn(command, args, {

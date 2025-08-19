@@ -1,0 +1,347 @@
+98d444c5b562e1221728e183b565c8ff
+/**
+ * Offline Mode Testing Utilities
+ * 
+ * This module provides functionality to simulate offline conditions during testing
+ * by automatically switching between real and stub implementations of network-dependent
+ * modules. This enables testing of application behavior under network failure conditions
+ * without requiring actual network connectivity manipulation.
+ * 
+ * Core concept:
+ * Many applications need to handle offline scenarios gracefully. This utility
+ * allows tests to simulate offline conditions by replacing network-dependent
+ * modules (like axios for HTTP requests) and error reporting modules (like qerrors)
+ * with stub implementations that behave predictably without network access.
+ * 
+ * Design philosophy:
+ * - Automatic switching based on offline mode flag
+ * - Transparent replacement of network-dependent modules
+ * - Graceful handling of missing optional dependencies
+ * - Clean separation between online and offline behavior testing
+ * 
+ * Use cases:
+ * - Testing application behavior when network requests fail
+ * - Verifying offline-first application logic
+ * - Testing error handling in network-dependent code
+ * - Simulating poor connectivity scenarios
+ */
+
+// Import logging control utility for optional log muting
+const {
+  setLogging
+} = require('../lib/logUtils'); // use only setLogging here
+if (process.env.NODE_ENV !== 'test') setLogging(false); //(mute logs outside tests)
+
+// Import mock axios factory for creating configurable mock instances
+const {
+  createMockAxios
+} = require('./mockAxios');
+
+// Environment variable detection for automatic offline mode
+// Supports multiple environment variables for different use cases:
+// - CODEX: Used by development/testing environments
+// - OFFLINE_MODE: Explicit offline mode flag
+// - NODE_ENV=test: Automatic offline mode in test environments
+const codexFlag = String(process.env.CODEX).toLowerCase() === 'true';
+const offlineFlagExplicit = String(process.env.OFFLINE_MODE).toLowerCase() === 'true';
+const testEnvironment = process.env.NODE_ENV === 'test';
+
+// Initialize offline mode state with environment variable detection
+// Precedence order: explicit OFFLINE_MODE > CODEX flag > manual setting
+// This allows environment-based automatic configuration while preserving programmatic control
+let isOffline = offlineFlagExplicit || codexFlag || false; // (tracks offline mode state with env detection)
+
+// Cache variables for required modules //(store loaded modules)
+let axiosCache; // (cache for axios module)
+let qerrorsCache; // (cache for qerrors module)
+
+/**
+ * Toggle offline mode on or off
+ * 
+ * This function switches the application between online and offline modes
+ * for testing purposes. When offline mode is enabled, network-dependent
+ * modules are replaced with stub implementations that don't require
+ * actual network connectivity.
+ * 
+ * Implementation strategy:
+ * 1. Update the global offline state flag
+ * 2. Log the state change for debugging
+ * 3. Return the new state for confirmation
+ * 
+ * Why a simple boolean flag:
+ * - Clear, unambiguous state representation
+ * - Easy to reason about in test code
+ * - Minimal complexity for maximum reliability
+ * - Follows principle of least surprise
+ * 
+ * @param {boolean} offline - Whether to enable offline mode
+ * @returns {boolean} The new offline mode state
+ * 
+ * @example
+ * setOfflineMode(true);  // Switch to offline mode
+ * // Tests here will use stub implementations
+ * setOfflineMode(false); // Switch back to online mode
+ */
+function setOfflineMode(offline) {
+  console.log(`setOfflineMode is running with ${offline}`); // logging function start per requirements
+
+  try {
+    const stateChanged = isOffline !== offline; // check if state differs to know when to clear cache
+    isOffline = offline; // update global offline state flag
+    if (stateChanged) clearOfflineCache(); // wipe caches when toggling state for consistent modules
+    console.log(`setOfflineMode is returning ${isOffline}`); // logging return value per requirements
+    return isOffline;
+  } catch (error) {
+    console.log(`setOfflineMode error: ${error.message}`); // error logging per requirements
+    throw error;
+  }
+}
+
+/**
+ * Get current offline mode state
+ * 
+ * This function returns the current offline mode state without changing it.
+ * Useful for conditional logic in tests and for debugging test setup.
+ * 
+ * @returns {boolean} Current offline mode state
+ * 
+ * @example
+ * if (isOfflineMode()) {
+ *   // Handle offline-specific test logic
+ * }
+ */
+function isOfflineMode() {
+  return isOffline;
+}
+
+/**
+ * Get appropriate axios implementation based on offline mode
+ * 
+ * This function returns either the real axios module (when online) or
+ * the qtests axios stub (when offline). This automatic switching allows
+ * tests to seamlessly transition between network-dependent and network-free
+ * execution without changing application code.
+ * 
+ * Implementation approach:
+ * 1. Check current offline mode state
+ * 2. Return appropriate implementation based on state
+ * 3. Handle require errors gracefully for missing dependencies
+ * 4. Log the decision for debugging purposes
+ * 
+ * Why automatic switching:
+ * - Tests can toggle network behavior without code changes
+ * - Application code remains unchanged between online/offline testing
+ * - Clear separation of concerns between test setup and application logic
+ * - Enables comprehensive testing of both network scenarios
+ * 
+ * @returns {Object} Either real axios or qtests axios stub
+ * 
+ * @example
+ * const axios = getAxios();
+ * // Returns real axios when online, stub when offline
+ * const response = await axios.get('/api/data');
+ */
+function getAxios() {
+  console.log(`getAxios is running with offline: ${isOffline}`); // logging function start per requirements
+
+  try {
+    // Check cache first to avoid repeated module loading and maintain consistency
+    // Caching prevents different axios implementations during single test run
+    // Essential for predictable behavior when offline mode doesn't change mid-test
+    // Cache also improves performance by avoiding repeated require() calls
+    if (axiosCache) {
+      console.log(`getAxios is returning ${axiosCache}`); // logging return value per requirements
+      return axiosCache;
+    }
+
+    // Declare variable to hold appropriate axios implementation
+    // Declared outside if/else to maintain consistent scope and enable caching
+    let axiosImplementation;
+    if (isOffline) {
+      // For compatibility with integration tests that compare instances directly,
+      // return the original stub module. The cache behavior is handled by axiosCache.
+      axiosImplementation = require(`../stubs/axios`);
+    } else {
+      // Load real axios module for online mode when network calls are intended
+      // Standard require path allows npm to resolve axios from node_modules
+      // Used when tests need to verify actual HTTP behavior or integration testing
+      axiosImplementation = require(`axios`);
+    }
+
+    // Cache the loaded implementation for consistent behavior and performance
+    // Prevents mode switching from loading different implementations mid-test
+    // Ensures same axios instance used throughout test execution for predictability
+    axiosCache = axiosImplementation;
+    console.log(`getAxios is returning ${axiosCache}`); // logging return value per requirements
+    return axiosCache;
+  } catch (error) {
+    // Handle module loading failures by falling back to stub implementation
+    // Real axios might fail to load due to missing dependency or installation issues
+    // Stub fallback ensures tests can continue running even with axios installation problems
+    // This graceful degradation prevents test suite failures due to dependency issues
+    console.log(`getAxios error: ${error.message}`);
+    const fallbackAxios = require(`../stubs/axios`);
+    axiosCache = fallbackAxios; // cache fallback to maintain consistency
+    console.log(`getAxios is returning ${axiosCache}`); // logging return value per requirements
+    return axiosCache;
+  }
+}
+
+/**
+ * Get appropriate qerrors implementation based on offline mode
+ * 
+ * Similar to getAxios, this function returns either the real qerrors module
+ * or a stub implementation based on the current offline mode state.
+ * qerrors is commonly used for error reporting, which often involves
+ * network requests to logging services.
+ * 
+ * Offline mode considerations for error reporting:
+ * - Error reporting services are often network-dependent
+ * - Offline applications need to handle error reporting gracefully
+ * - Tests shouldn't fail due to error reporting service unavailability
+ * - Stub implementation allows testing error handling logic separately
+ * 
+ * @returns {Object} Either real qerrors or stub implementation
+ * 
+ * @example
+ * const qerrors = getQerrors();
+ * // Returns real qerrors when online, stub when offline
+ * qerrors.report(new Error('Test error'));
+ */
+function getQerrors() {
+  console.log(`getQerrors is running with offline: ${isOffline}`); // logging function start per requirements
+
+  try {
+    if (qerrorsCache) {
+      // return cached module if available
+      console.log(`getQerrors is returning ${qerrorsCache}`); // logging return value per requirements
+      return qerrorsCache;
+    }
+    let qerrorsImplementation; // module holder variable
+
+    if (isOffline) {
+      // Enhanced no-op qerrors implementation for offline environments
+      // Provides same interface as real qerrors but only logs locally
+      // Includes debugging output to help track error reporting behavior
+      qerrorsImplementation = {
+        qerrors: () => {
+          console.log(`noopQerrors is running with none`); // Log function entry for debugging
+          try {
+            console.log(`noopQerrors has run`); // Log successful execution
+          } catch (error) {
+            console.log(`noopQerrors error ${error.message}`); // Log any unexpected errors
+          }
+        }
+      };
+    } else {
+      // Conditionally load qerrors only in online environments to prevent module not found errors
+      // Dynamic import prevents errors in offline mode when qerrors module is unavailable
+      qerrorsImplementation = require(`qerrors`); // load real qerrors for online mode with backticks
+    }
+    qerrorsCache = qerrorsImplementation; // store in cache for future use
+    console.log(`getQerrors is returning ${qerrorsCache}`); // logging return value per requirements
+    return qerrorsCache;
+  } catch (error) {
+    console.log(`getQerrors error: ${error.message}`); // error logging per requirements
+    const fallbackQerrors = {
+      qerrors: () => {}
+    }; // create fallback stub
+    qerrorsCache = fallbackQerrors; // store fallback in cache
+    console.log(`getQerrors is returning ${qerrorsCache}`); // logging return value per requirements
+    return qerrorsCache;
+  }
+}
+
+/**
+ * Get environment detection state for debugging and configuration
+ * 
+ * This function returns the current state of environment variable detection
+ * to help with debugging and understanding how offline mode was configured.
+ * Useful for troubleshooting environment-specific behavior.
+ * 
+ * @returns {Object} Environment detection state information
+ * 
+ * @example
+ * const envState = getEnvironmentState();
+ * console.log(`CODEX flag: ${envState.codexFlag}`);
+ * console.log(`Offline mode: ${envState.isOffline}`);
+ */
+function getEnvironmentState() {
+  console.log(`getEnvironmentState is running with none`);
+  try {
+    const state = {
+      codexFlag,
+      offlineFlagExplicit,
+      testEnvironment,
+      isOffline,
+      environmentDetected: codexFlag || offlineFlagExplicit
+    };
+    console.log(`getEnvironmentState is returning ${JSON.stringify(state)}`);
+    return state;
+  } catch (error) {
+    console.log(`getEnvironmentState error: ${error.message}`);
+    throw error;
+  }
+}
+
+/**
+ * Create environment-aware adapters based on current offline state
+ * 
+ * This function provides a convenient way to get both axios and qerrors
+ * implementations in a single call, configured appropriately for the
+ * current environment. This matches the pattern from your provided
+ * environment adapter functionality.
+ * 
+ * @returns {Object} Object containing axios and qerrors implementations
+ * 
+ * @example
+ * const { axios, qerrors } = createEnvironmentAdapters();
+ * const response = await axios.get('/api/data');
+ * qerrors.report(new Error('Test error'));
+ */
+function createEnvironmentAdapters() {
+  console.log(`createEnvironmentAdapters is running with offline: ${isOffline}`);
+  try {
+    const adapters = {
+      isOffline,
+      axios: getAxios(),
+      qerrors: getQerrors()
+    };
+    console.log(`createEnvironmentAdapters is returning adapters`);
+    return adapters;
+  } catch (error) {
+    console.log(`createEnvironmentAdapters error: ${error.message}`);
+    throw error;
+  }
+}
+function clearOfflineCache() {
+  // reset caches for testing purposes
+  console.log(`clearOfflineCache is running with none`); // logging function start per requirements
+
+  try {
+    axiosCache = undefined; // clear axios cache
+    qerrorsCache = undefined; // clear qerrors cache
+    console.log(`clearOfflineCache is returning undefined`); // logging return value per requirements
+  } catch (error) {
+    console.log(`clearOfflineCache error: ${error.message}`); // error logging per requirements
+    throw error;
+  }
+}
+
+// export offline mode utilities at bottom per requirements
+module.exports = {
+  setOfflineMode,
+  // control offline mode state
+  isOfflineMode,
+  // get current offline state
+  getAxios,
+  // get appropriate axios implementation
+  getQerrors,
+  // get appropriate qerrors implementation
+  getEnvironmentState,
+  // get environment detection information
+  createEnvironmentAdapters,
+  // create complete environment-aware adapter set
+  clearOfflineCache // reset module caches
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJzZXRMb2dnaW5nIiwicmVxdWlyZSIsInByb2Nlc3MiLCJlbnYiLCJOT0RFX0VOViIsImNyZWF0ZU1vY2tBeGlvcyIsImNvZGV4RmxhZyIsIlN0cmluZyIsIkNPREVYIiwidG9Mb3dlckNhc2UiLCJvZmZsaW5lRmxhZ0V4cGxpY2l0IiwiT0ZGTElORV9NT0RFIiwidGVzdEVudmlyb25tZW50IiwiaXNPZmZsaW5lIiwiYXhpb3NDYWNoZSIsInFlcnJvcnNDYWNoZSIsInNldE9mZmxpbmVNb2RlIiwib2ZmbGluZSIsImNvbnNvbGUiLCJsb2ciLCJzdGF0ZUNoYW5nZWQiLCJjbGVhck9mZmxpbmVDYWNoZSIsImVycm9yIiwibWVzc2FnZSIsImlzT2ZmbGluZU1vZGUiLCJnZXRBeGlvcyIsImF4aW9zSW1wbGVtZW50YXRpb24iLCJmYWxsYmFja0F4aW9zIiwiZ2V0UWVycm9ycyIsInFlcnJvcnNJbXBsZW1lbnRhdGlvbiIsInFlcnJvcnMiLCJmYWxsYmFja1FlcnJvcnMiLCJnZXRFbnZpcm9ubWVudFN0YXRlIiwic3RhdGUiLCJlbnZpcm9ubWVudERldGVjdGVkIiwiSlNPTiIsInN0cmluZ2lmeSIsImNyZWF0ZUVudmlyb25tZW50QWRhcHRlcnMiLCJhZGFwdGVycyIsImF4aW9zIiwidW5kZWZpbmVkIiwibW9kdWxlIiwiZXhwb3J0cyJdLCJzb3VyY2VzIjpbIm9mZmxpbmVNb2RlLmpzIl0sInNvdXJjZXNDb250ZW50IjpbIi8qKlxuICogT2ZmbGluZSBNb2RlIFRlc3RpbmcgVXRpbGl0aWVzXG4gKiBcbiAqIFRoaXMgbW9kdWxlIHByb3ZpZGVzIGZ1bmN0aW9uYWxpdHkgdG8gc2ltdWxhdGUgb2ZmbGluZSBjb25kaXRpb25zIGR1cmluZyB0ZXN0aW5nXG4gKiBieSBhdXRvbWF0aWNhbGx5IHN3aXRjaGluZyBiZXR3ZWVuIHJlYWwgYW5kIHN0dWIgaW1wbGVtZW50YXRpb25zIG9mIG5ldHdvcmstZGVwZW5kZW50XG4gKiBtb2R1bGVzLiBUaGlzIGVuYWJsZXMgdGVzdGluZyBvZiBhcHBsaWNhdGlvbiBiZWhhdmlvciB1bmRlciBuZXR3b3JrIGZhaWx1cmUgY29uZGl0aW9uc1xuICogd2l0aG91dCByZXF1aXJpbmcgYWN0dWFsIG5ldHdvcmsgY29ubmVjdGl2aXR5IG1hbmlwdWxhdGlvbi5cbiAqIFxuICogQ29yZSBjb25jZXB0OlxuICogTWFueSBhcHBsaWNhdGlvbnMgbmVlZCB0byBoYW5kbGUgb2ZmbGluZSBzY2VuYXJpb3MgZ3JhY2VmdWxseS4gVGhpcyB1dGlsaXR5XG4gKiBhbGxvd3MgdGVzdHMgdG8gc2ltdWxhdGUgb2ZmbGluZSBjb25kaXRpb25zIGJ5IHJlcGxhY2luZyBuZXR3b3JrLWRlcGVuZGVudFxuICogbW9kdWxlcyAobGlrZSBheGlvcyBmb3IgSFRUUCByZXF1ZXN0cykgYW5kIGVycm9yIHJlcG9ydGluZyBtb2R1bGVzIChsaWtlIHFlcnJvcnMpXG4gKiB3aXRoIHN0dWIgaW1wbGVtZW50YXRpb25zIHRoYXQgYmVoYXZlIHByZWRpY3RhYmx5IHdpdGhvdXQgbmV0d29yayBhY2Nlc3MuXG4gKiBcbiAqIERlc2lnbiBwaGlsb3NvcGh5OlxuICogLSBBdXRvbWF0aWMgc3dpdGNoaW5nIGJhc2VkIG9uIG9mZmxpbmUgbW9kZSBmbGFnXG4gKiAtIFRyYW5zcGFyZW50IHJlcGxhY2VtZW50IG9mIG5ldHdvcmstZGVwZW5kZW50IG1vZHVsZXNcbiAqIC0gR3JhY2VmdWwgaGFuZGxpbmcgb2YgbWlzc2luZyBvcHRpb25hbCBkZXBlbmRlbmNpZXNcbiAqIC0gQ2xlYW4gc2VwYXJhdGlvbiBiZXR3ZWVuIG9ubGluZSBhbmQgb2ZmbGluZSBiZWhhdmlvciB0ZXN0aW5nXG4gKiBcbiAqIFVzZSBjYXNlczpcbiAqIC0gVGVzdGluZyBhcHBsaWNhdGlvbiBiZWhhdmlvciB3aGVuIG5ldHdvcmsgcmVxdWVzdHMgZmFpbFxuICogLSBWZXJpZnlpbmcgb2ZmbGluZS1maXJzdCBhcHBsaWNhdGlvbiBsb2dpY1xuICogLSBUZXN0aW5nIGVycm9yIGhhbmRsaW5nIGluIG5ldHdvcmstZGVwZW5kZW50IGNvZGVcbiAqIC0gU2ltdWxhdGluZyBwb29yIGNvbm5lY3Rpdml0eSBzY2VuYXJpb3NcbiAqL1xuXG4vLyBJbXBvcnQgbG9nZ2luZyBjb250cm9sIHV0aWxpdHkgZm9yIG9wdGlvbmFsIGxvZyBtdXRpbmdcbmNvbnN0IHsgc2V0TG9nZ2luZyB9ID0gcmVxdWlyZSgnLi4vbGliL2xvZ1V0aWxzJyk7IC8vIHVzZSBvbmx5IHNldExvZ2dpbmcgaGVyZVxuaWYgKHByb2Nlc3MuZW52Lk5PREVfRU5WICE9PSAndGVzdCcpIHNldExvZ2dpbmcoZmFsc2UpOyAvLyhtdXRlIGxvZ3Mgb3V0c2lkZSB0ZXN0cylcblxuLy8gSW1wb3J0IG1vY2sgYXhpb3MgZmFjdG9yeSBmb3IgY3JlYXRpbmcgY29uZmlndXJhYmxlIG1vY2sgaW5zdGFuY2VzXG5jb25zdCB7IGNyZWF0ZU1vY2tBeGlvcyB9ID0gcmVxdWlyZSgnLi9tb2NrQXhpb3MnKTtcblxuLy8gRW52aXJvbm1lbnQgdmFyaWFibGUgZGV0ZWN0aW9uIGZvciBhdXRvbWF0aWMgb2ZmbGluZSBtb2RlXG4vLyBTdXBwb3J0cyBtdWx0aXBsZSBlbnZpcm9ubWVudCB2YXJpYWJsZXMgZm9yIGRpZmZlcmVudCB1c2UgY2FzZXM6XG4vLyAtIENPREVYOiBVc2VkIGJ5IGRldmVsb3BtZW50L3Rlc3RpbmcgZW52aXJvbm1lbnRzXG4vLyAtIE9GRkxJTkVfTU9ERTogRXhwbGljaXQgb2ZmbGluZSBtb2RlIGZsYWdcbi8vIC0gTk9ERV9FTlY9dGVzdDogQXV0b21hdGljIG9mZmxpbmUgbW9kZSBpbiB0ZXN0IGVudmlyb25tZW50c1xuY29uc3QgY29kZXhGbGFnID0gU3RyaW5nKHByb2Nlc3MuZW52LkNPREVYKS50b0xvd2VyQ2FzZSgpID09PSAndHJ1ZSc7XG5jb25zdCBvZmZsaW5lRmxhZ0V4cGxpY2l0ID0gU3RyaW5nKHByb2Nlc3MuZW52Lk9GRkxJTkVfTU9ERSkudG9Mb3dlckNhc2UoKSA9PT0gJ3RydWUnO1xuY29uc3QgdGVzdEVudmlyb25tZW50ID0gcHJvY2Vzcy5lbnYuTk9ERV9FTlYgPT09ICd0ZXN0JztcblxuLy8gSW5pdGlhbGl6ZSBvZmZsaW5lIG1vZGUgc3RhdGUgd2l0aCBlbnZpcm9ubWVudCB2YXJpYWJsZSBkZXRlY3Rpb25cbi8vIFByZWNlZGVuY2Ugb3JkZXI6IGV4cGxpY2l0IE9GRkxJTkVfTU9ERSA+IENPREVYIGZsYWcgPiBtYW51YWwgc2V0dGluZ1xuLy8gVGhpcyBhbGxvd3MgZW52aXJvbm1lbnQtYmFzZWQgYXV0b21hdGljIGNvbmZpZ3VyYXRpb24gd2hpbGUgcHJlc2VydmluZyBwcm9ncmFtbWF0aWMgY29udHJvbFxubGV0IGlzT2ZmbGluZSA9IG9mZmxpbmVGbGFnRXhwbGljaXQgfHwgY29kZXhGbGFnIHx8IGZhbHNlOyAvLyAodHJhY2tzIG9mZmxpbmUgbW9kZSBzdGF0ZSB3aXRoIGVudiBkZXRlY3Rpb24pXG5cbi8vIENhY2hlIHZhcmlhYmxlcyBmb3IgcmVxdWlyZWQgbW9kdWxlcyAvLyhzdG9yZSBsb2FkZWQgbW9kdWxlcylcbmxldCBheGlvc0NhY2hlOyAvLyAoY2FjaGUgZm9yIGF4aW9zIG1vZHVsZSlcbmxldCBxZXJyb3JzQ2FjaGU7IC8vIChjYWNoZSBmb3IgcWVycm9ycyBtb2R1bGUpXG5cbi8qKlxuICogVG9nZ2xlIG9mZmxpbmUgbW9kZSBvbiBvciBvZmZcbiAqIFxuICogVGhpcyBmdW5jdGlvbiBzd2l0Y2hlcyB0aGUgYXBwbGljYXRpb24gYmV0d2VlbiBvbmxpbmUgYW5kIG9mZmxpbmUgbW9kZXNcbiAqIGZvciB0ZXN0aW5nIHB1cnBvc2VzLiBXaGVuIG9mZmxpbmUgbW9kZSBpcyBlbmFibGVkLCBuZXR3b3JrLWRlcGVuZGVudFxuICogbW9kdWxlcyBhcmUgcmVwbGFjZWQgd2l0aCBzdHViIGltcGxlbWVudGF0aW9ucyB0aGF0IGRvbid0IHJlcXVpcmVcbiAqIGFjdHVhbCBuZXR3b3JrIGNvbm5lY3Rpdml0eS5cbiAqIFxuICogSW1wbGVtZW50YXRpb24gc3RyYXRlZ3k6XG4gKiAxLiBVcGRhdGUgdGhlIGdsb2JhbCBvZmZsaW5lIHN0YXRlIGZsYWdcbiAqIDIuIExvZyB0aGUgc3RhdGUgY2hhbmdlIGZvciBkZWJ1Z2dpbmdcbiAqIDMuIFJldHVybiB0aGUgbmV3IHN0YXRlIGZvciBjb25maXJtYXRpb25cbiAqIFxuICogV2h5IGEgc2ltcGxlIGJvb2xlYW4gZmxhZzpcbiAqIC0gQ2xlYXIsIHVuYW1iaWd1b3VzIHN0YXRlIHJlcHJlc2VudGF0aW9uXG4gKiAtIEVhc3kgdG8gcmVhc29uIGFib3V0IGluIHRlc3QgY29kZVxuICogLSBNaW5pbWFsIGNvbXBsZXhpdHkgZm9yIG1heGltdW0gcmVsaWFiaWxpdHlcbiAqIC0gRm9sbG93cyBwcmluY2lwbGUgb2YgbGVhc3Qgc3VycHJpc2VcbiAqIFxuICogQHBhcmFtIHtib29sZWFufSBvZmZsaW5lIC0gV2hldGhlciB0byBlbmFibGUgb2ZmbGluZSBtb2RlXG4gKiBAcmV0dXJucyB7Ym9vbGVhbn0gVGhlIG5ldyBvZmZsaW5lIG1vZGUgc3RhdGVcbiAqIFxuICogQGV4YW1wbGVcbiAqIHNldE9mZmxpbmVNb2RlKHRydWUpOyAgLy8gU3dpdGNoIHRvIG9mZmxpbmUgbW9kZVxuICogLy8gVGVzdHMgaGVyZSB3aWxsIHVzZSBzdHViIGltcGxlbWVudGF0aW9uc1xuICogc2V0T2ZmbGluZU1vZGUoZmFsc2UpOyAvLyBTd2l0Y2ggYmFjayB0byBvbmxpbmUgbW9kZVxuICovXG5mdW5jdGlvbiBzZXRPZmZsaW5lTW9kZShvZmZsaW5lKSB7XG4gIGNvbnNvbGUubG9nKGBzZXRPZmZsaW5lTW9kZSBpcyBydW5uaW5nIHdpdGggJHtvZmZsaW5lfWApOyAvLyBsb2dnaW5nIGZ1bmN0aW9uIHN0YXJ0IHBlciByZXF1aXJlbWVudHNcblxuICB0cnkge1xuICAgIGNvbnN0IHN0YXRlQ2hhbmdlZCA9IGlzT2ZmbGluZSAhPT0gb2ZmbGluZTsgLy8gY2hlY2sgaWYgc3RhdGUgZGlmZmVycyB0byBrbm93IHdoZW4gdG8gY2xlYXIgY2FjaGVcbiAgICBpc09mZmxpbmUgPSBvZmZsaW5lOyAvLyB1cGRhdGUgZ2xvYmFsIG9mZmxpbmUgc3RhdGUgZmxhZ1xuICAgIGlmIChzdGF0ZUNoYW5nZWQpIGNsZWFyT2ZmbGluZUNhY2hlKCk7IC8vIHdpcGUgY2FjaGVzIHdoZW4gdG9nZ2xpbmcgc3RhdGUgZm9yIGNvbnNpc3RlbnQgbW9kdWxlc1xuICAgIGNvbnNvbGUubG9nKGBzZXRPZmZsaW5lTW9kZSBpcyByZXR1cm5pbmcgJHtpc09mZmxpbmV9YCk7IC8vIGxvZ2dpbmcgcmV0dXJuIHZhbHVlIHBlciByZXF1aXJlbWVudHNcbiAgICByZXR1cm4gaXNPZmZsaW5lO1xuICB9IGNhdGNoIChlcnJvcikge1xuICAgIGNvbnNvbGUubG9nKGBzZXRPZmZsaW5lTW9kZSBlcnJvcjogJHtlcnJvci5tZXNzYWdlfWApOyAvLyBlcnJvciBsb2dnaW5nIHBlciByZXF1aXJlbWVudHNcbiAgICB0aHJvdyBlcnJvcjtcbiAgfVxufVxuXG4vKipcbiAqIEdldCBjdXJyZW50IG9mZmxpbmUgbW9kZSBzdGF0ZVxuICogXG4gKiBUaGlzIGZ1bmN0aW9uIHJldHVybnMgdGhlIGN1cnJlbnQgb2ZmbGluZSBtb2RlIHN0YXRlIHdpdGhvdXQgY2hhbmdpbmcgaXQuXG4gKiBVc2VmdWwgZm9yIGNvbmRpdGlvbmFsIGxvZ2ljIGluIHRlc3RzIGFuZCBmb3IgZGVidWdnaW5nIHRlc3Qgc2V0dXAuXG4gKiBcbiAqIEByZXR1cm5zIHtib29sZWFufSBDdXJyZW50IG9mZmxpbmUgbW9kZSBzdGF0ZVxuICogXG4gKiBAZXhhbXBsZVxuICogaWYgKGlzT2ZmbGluZU1vZGUoKSkge1xuICogICAvLyBIYW5kbGUgb2ZmbGluZS1zcGVjaWZpYyB0ZXN0IGxvZ2ljXG4gKiB9XG4gKi9cbmZ1bmN0aW9uIGlzT2ZmbGluZU1vZGUoKSB7XG4gIHJldHVybiBpc09mZmxpbmU7XG59XG5cbi8qKlxuICogR2V0IGFwcHJvcHJpYXRlIGF4aW9zIGltcGxlbWVudGF0aW9uIGJhc2VkIG9uIG9mZmxpbmUgbW9kZVxuICogXG4gKiBUaGlzIGZ1bmN0aW9uIHJldHVybnMgZWl0aGVyIHRoZSByZWFsIGF4aW9zIG1vZHVsZSAod2hlbiBvbmxpbmUpIG9yXG4gKiB0aGUgcXRlc3RzIGF4aW9zIHN0dWIgKHdoZW4gb2ZmbGluZSkuIFRoaXMgYXV0b21hdGljIHN3aXRjaGluZyBhbGxvd3NcbiAqIHRlc3RzIHRvIHNlYW1sZXNzbHkgdHJhbnNpdGlvbiBiZXR3ZWVuIG5ldHdvcmstZGVwZW5kZW50IGFuZCBuZXR3b3JrLWZyZWVcbiAqIGV4ZWN1dGlvbiB3aXRob3V0IGNoYW5naW5nIGFwcGxpY2F0aW9uIGNvZGUuXG4gKiBcbiAqIEltcGxlbWVudGF0aW9uIGFwcHJvYWNoOlxuICogMS4gQ2hlY2sgY3VycmVudCBvZmZsaW5lIG1vZGUgc3RhdGVcbiAqIDIuIFJldHVybiBhcHByb3ByaWF0ZSBpbXBsZW1lbnRhdGlvbiBiYXNlZCBvbiBzdGF0ZVxuICogMy4gSGFuZGxlIHJlcXVpcmUgZXJyb3JzIGdyYWNlZnVsbHkgZm9yIG1pc3NpbmcgZGVwZW5kZW5jaWVzXG4gKiA0LiBMb2cgdGhlIGRlY2lzaW9uIGZvciBkZWJ1Z2dpbmcgcHVycG9zZXNcbiAqIFxuICogV2h5IGF1dG9tYXRpYyBzd2l0Y2hpbmc6XG4gKiAtIFRlc3RzIGNhbiB0b2dnbGUgbmV0d29yayBiZWhhdmlvciB3aXRob3V0IGNvZGUgY2hhbmdlc1xuICogLSBBcHBsaWNhdGlvbiBjb2RlIHJlbWFpbnMgdW5jaGFuZ2VkIGJldHdlZW4gb25saW5lL29mZmxpbmUgdGVzdGluZ1xuICogLSBDbGVhciBzZXBhcmF0aW9uIG9mIGNvbmNlcm5zIGJldHdlZW4gdGVzdCBzZXR1cCBhbmQgYXBwbGljYXRpb24gbG9naWNcbiAqIC0gRW5hYmxlcyBjb21wcmVoZW5zaXZlIHRlc3Rpbmcgb2YgYm90aCBuZXR3b3JrIHNjZW5hcmlvc1xuICogXG4gKiBAcmV0dXJucyB7T2JqZWN0fSBFaXRoZXIgcmVhbCBheGlvcyBvciBxdGVzdHMgYXhpb3Mgc3R1YlxuICogXG4gKiBAZXhhbXBsZVxuICogY29uc3QgYXhpb3MgPSBnZXRBeGlvcygpO1xuICogLy8gUmV0dXJucyByZWFsIGF4aW9zIHdoZW4gb25saW5lLCBzdHViIHdoZW4gb2ZmbGluZVxuICogY29uc3QgcmVzcG9uc2UgPSBhd2FpdCBheGlvcy5nZXQoJy9hcGkvZGF0YScpO1xuICovXG5mdW5jdGlvbiBnZXRBeGlvcygpIHtcbiAgY29uc29sZS5sb2coYGdldEF4aW9zIGlzIHJ1bm5pbmcgd2l0aCBvZmZsaW5lOiAke2lzT2ZmbGluZX1gKTsgLy8gbG9nZ2luZyBmdW5jdGlvbiBzdGFydCBwZXIgcmVxdWlyZW1lbnRzXG4gIFxuICB0cnkge1xuICAgIC8vIENoZWNrIGNhY2hlIGZpcnN0IHRvIGF2b2lkIHJlcGVhdGVkIG1vZHVsZSBsb2FkaW5nIGFuZCBtYWludGFpbiBjb25zaXN0ZW5jeVxuICAgIC8vIENhY2hpbmcgcHJldmVudHMgZGlmZmVyZW50IGF4aW9zIGltcGxlbWVudGF0aW9ucyBkdXJpbmcgc2luZ2xlIHRlc3QgcnVuXG4gICAgLy8gRXNzZW50aWFsIGZvciBwcmVkaWN0YWJsZSBiZWhhdmlvciB3aGVuIG9mZmxpbmUgbW9kZSBkb2Vzbid0IGNoYW5nZSBtaWQtdGVzdFxuICAgIC8vIENhY2hlIGFsc28gaW1wcm92ZXMgcGVyZm9ybWFuY2UgYnkgYXZvaWRpbmcgcmVwZWF0ZWQgcmVxdWlyZSgpIGNhbGxzXG4gICAgaWYgKGF4aW9zQ2FjaGUpIHtcbiAgICAgIGNvbnNvbGUubG9nKGBnZXRBeGlvcyBpcyByZXR1cm5pbmcgJHtheGlvc0NhY2hlfWApOyAvLyBsb2dnaW5nIHJldHVybiB2YWx1ZSBwZXIgcmVxdWlyZW1lbnRzXG4gICAgICByZXR1cm4gYXhpb3NDYWNoZTtcbiAgICB9XG5cbiAgICAvLyBEZWNsYXJlIHZhcmlhYmxlIHRvIGhvbGQgYXBwcm9wcmlhdGUgYXhpb3MgaW1wbGVtZW50YXRpb25cbiAgICAvLyBEZWNsYXJlZCBvdXRzaWRlIGlmL2Vsc2UgdG8gbWFpbnRhaW4gY29uc2lzdGVudCBzY29wZSBhbmQgZW5hYmxlIGNhY2hpbmdcbiAgICBsZXQgYXhpb3NJbXBsZW1lbnRhdGlvbjtcblxuICAgIGlmIChpc09mZmxpbmUpIHtcbiAgICAgIC8vIEZvciBjb21wYXRpYmlsaXR5IHdpdGggaW50ZWdyYXRpb24gdGVzdHMgdGhhdCBjb21wYXJlIGluc3RhbmNlcyBkaXJlY3RseSxcbiAgICAgIC8vIHJldHVybiB0aGUgb3JpZ2luYWwgc3R1YiBtb2R1bGUuIFRoZSBjYWNoZSBiZWhhdmlvciBpcyBoYW5kbGVkIGJ5IGF4aW9zQ2FjaGUuXG4gICAgICBheGlvc0ltcGxlbWVudGF0aW9uID0gcmVxdWlyZShgLi4vc3R1YnMvYXhpb3NgKTtcbiAgICB9IGVsc2Uge1xuICAgICAgLy8gTG9hZCByZWFsIGF4aW9zIG1vZHVsZSBmb3Igb25saW5lIG1vZGUgd2hlbiBuZXR3b3JrIGNhbGxzIGFyZSBpbnRlbmRlZFxuICAgICAgLy8gU3RhbmRhcmQgcmVxdWlyZSBwYXRoIGFsbG93cyBucG0gdG8gcmVzb2x2ZSBheGlvcyBmcm9tIG5vZGVfbW9kdWxlc1xuICAgICAgLy8gVXNlZCB3aGVuIHRlc3RzIG5lZWQgdG8gdmVyaWZ5IGFjdHVhbCBIVFRQIGJlaGF2aW9yIG9yIGludGVncmF0aW9uIHRlc3RpbmdcbiAgICAgIGF4aW9zSW1wbGVtZW50YXRpb24gPSByZXF1aXJlKGBheGlvc2ApO1xuICAgIH1cblxuICAgIC8vIENhY2hlIHRoZSBsb2FkZWQgaW1wbGVtZW50YXRpb24gZm9yIGNvbnNpc3RlbnQgYmVoYXZpb3IgYW5kIHBlcmZvcm1hbmNlXG4gICAgLy8gUHJldmVudHMgbW9kZSBzd2l0Y2hpbmcgZnJvbSBsb2FkaW5nIGRpZmZlcmVudCBpbXBsZW1lbnRhdGlvbnMgbWlkLXRlc3RcbiAgICAvLyBFbnN1cmVzIHNhbWUgYXhpb3MgaW5zdGFuY2UgdXNlZCB0aHJvdWdob3V0IHRlc3QgZXhlY3V0aW9uIGZvciBwcmVkaWN0YWJpbGl0eVxuICAgIGF4aW9zQ2FjaGUgPSBheGlvc0ltcGxlbWVudGF0aW9uO1xuICAgIGNvbnNvbGUubG9nKGBnZXRBeGlvcyBpcyByZXR1cm5pbmcgJHtheGlvc0NhY2hlfWApOyAvLyBsb2dnaW5nIHJldHVybiB2YWx1ZSBwZXIgcmVxdWlyZW1lbnRzXG4gICAgcmV0dXJuIGF4aW9zQ2FjaGU7XG5cbiAgfSBjYXRjaCAoZXJyb3IpIHtcbiAgICAvLyBIYW5kbGUgbW9kdWxlIGxvYWRpbmcgZmFpbHVyZXMgYnkgZmFsbGluZyBiYWNrIHRvIHN0dWIgaW1wbGVtZW50YXRpb25cbiAgICAvLyBSZWFsIGF4aW9zIG1pZ2h0IGZhaWwgdG8gbG9hZCBkdWUgdG8gbWlzc2luZyBkZXBlbmRlbmN5IG9yIGluc3RhbGxhdGlvbiBpc3N1ZXNcbiAgICAvLyBTdHViIGZhbGxiYWNrIGVuc3VyZXMgdGVzdHMgY2FuIGNvbnRpbnVlIHJ1bm5pbmcgZXZlbiB3aXRoIGF4aW9zIGluc3RhbGxhdGlvbiBwcm9ibGVtc1xuICAgIC8vIFRoaXMgZ3JhY2VmdWwgZGVncmFkYXRpb24gcHJldmVudHMgdGVzdCBzdWl0ZSBmYWlsdXJlcyBkdWUgdG8gZGVwZW5kZW5jeSBpc3N1ZXNcbiAgICBjb25zb2xlLmxvZyhgZ2V0QXhpb3MgZXJyb3I6ICR7ZXJyb3IubWVzc2FnZX1gKTtcbiAgICBjb25zdCBmYWxsYmFja0F4aW9zID0gcmVxdWlyZShgLi4vc3R1YnMvYXhpb3NgKTtcbiAgICBheGlvc0NhY2hlID0gZmFsbGJhY2tBeGlvczsgLy8gY2FjaGUgZmFsbGJhY2sgdG8gbWFpbnRhaW4gY29uc2lzdGVuY3lcbiAgICBjb25zb2xlLmxvZyhgZ2V0QXhpb3MgaXMgcmV0dXJuaW5nICR7YXhpb3NDYWNoZX1gKTsgLy8gbG9nZ2luZyByZXR1cm4gdmFsdWUgcGVyIHJlcXVpcmVtZW50c1xuICAgIHJldHVybiBheGlvc0NhY2hlO1xuICB9XG59XG5cbi8qKlxuICogR2V0IGFwcHJvcHJpYXRlIHFlcnJvcnMgaW1wbGVtZW50YXRpb24gYmFzZWQgb24gb2ZmbGluZSBtb2RlXG4gKiBcbiAqIFNpbWlsYXIgdG8gZ2V0QXhpb3MsIHRoaXMgZnVuY3Rpb24gcmV0dXJucyBlaXRoZXIgdGhlIHJlYWwgcWVycm9ycyBtb2R1bGVcbiAqIG9yIGEgc3R1YiBpbXBsZW1lbnRhdGlvbiBiYXNlZCBvbiB0aGUgY3VycmVudCBvZmZsaW5lIG1vZGUgc3RhdGUuXG4gKiBxZXJyb3JzIGlzIGNvbW1vbmx5IHVzZWQgZm9yIGVycm9yIHJlcG9ydGluZywgd2hpY2ggb2Z0ZW4gaW52b2x2ZXNcbiAqIG5ldHdvcmsgcmVxdWVzdHMgdG8gbG9nZ2luZyBzZXJ2aWNlcy5cbiAqIFxuICogT2ZmbGluZSBtb2RlIGNvbnNpZGVyYXRpb25zIGZvciBlcnJvciByZXBvcnRpbmc6XG4gKiAtIEVycm9yIHJlcG9ydGluZyBzZXJ2aWNlcyBhcmUgb2Z0ZW4gbmV0d29yay1kZXBlbmRlbnRcbiAqIC0gT2ZmbGluZSBhcHBsaWNhdGlvbnMgbmVlZCB0byBoYW5kbGUgZXJyb3IgcmVwb3J0aW5nIGdyYWNlZnVsbHlcbiAqIC0gVGVzdHMgc2hvdWxkbid0IGZhaWwgZHVlIHRvIGVycm9yIHJlcG9ydGluZyBzZXJ2aWNlIHVuYXZhaWxhYmlsaXR5XG4gKiAtIFN0dWIgaW1wbGVtZW50YXRpb24gYWxsb3dzIHRlc3RpbmcgZXJyb3IgaGFuZGxpbmcgbG9naWMgc2VwYXJhdGVseVxuICogXG4gKiBAcmV0dXJucyB7T2JqZWN0fSBFaXRoZXIgcmVhbCBxZXJyb3JzIG9yIHN0dWIgaW1wbGVtZW50YXRpb25cbiAqIFxuICogQGV4YW1wbGVcbiAqIGNvbnN0IHFlcnJvcnMgPSBnZXRRZXJyb3JzKCk7XG4gKiAvLyBSZXR1cm5zIHJlYWwgcWVycm9ycyB3aGVuIG9ubGluZSwgc3R1YiB3aGVuIG9mZmxpbmVcbiAqIHFlcnJvcnMucmVwb3J0KG5ldyBFcnJvcignVGVzdCBlcnJvcicpKTtcbiAqL1xuZnVuY3Rpb24gZ2V0UWVycm9ycygpIHtcbiAgY29uc29sZS5sb2coYGdldFFlcnJvcnMgaXMgcnVubmluZyB3aXRoIG9mZmxpbmU6ICR7aXNPZmZsaW5lfWApOyAvLyBsb2dnaW5nIGZ1bmN0aW9uIHN0YXJ0IHBlciByZXF1aXJlbWVudHNcbiAgXG4gIHRyeSB7XG4gICAgaWYgKHFlcnJvcnNDYWNoZSkgeyAvLyByZXR1cm4gY2FjaGVkIG1vZHVsZSBpZiBhdmFpbGFibGVcbiAgICAgIGNvbnNvbGUubG9nKGBnZXRRZXJyb3JzIGlzIHJldHVybmluZyAke3FlcnJvcnNDYWNoZX1gKTsgLy8gbG9nZ2luZyByZXR1cm4gdmFsdWUgcGVyIHJlcXVpcmVtZW50c1xuICAgICAgcmV0dXJuIHFlcnJvcnNDYWNoZTtcbiAgICB9XG5cbiAgICBsZXQgcWVycm9yc0ltcGxlbWVudGF0aW9uOyAvLyBtb2R1bGUgaG9sZGVyIHZhcmlhYmxlXG5cbiAgICBpZiAoaXNPZmZsaW5lKSB7XG4gICAgICAvLyBFbmhhbmNlZCBuby1vcCBxZXJyb3JzIGltcGxlbWVudGF0aW9uIGZvciBvZmZsaW5lIGVudmlyb25tZW50c1xuICAgICAgLy8gUHJvdmlkZXMgc2FtZSBpbnRlcmZhY2UgYXMgcmVhbCBxZXJyb3JzIGJ1dCBvbmx5IGxvZ3MgbG9jYWxseVxuICAgICAgLy8gSW5jbHVkZXMgZGVidWdnaW5nIG91dHB1dCB0byBoZWxwIHRyYWNrIGVycm9yIHJlcG9ydGluZyBiZWhhdmlvclxuICAgICAgcWVycm9yc0ltcGxlbWVudGF0aW9uID0ge1xuICAgICAgICBxZXJyb3JzOiAoKSA9PiB7XG4gICAgICAgICAgY29uc29sZS5sb2coYG5vb3BRZXJyb3JzIGlzIHJ1bm5pbmcgd2l0aCBub25lYCk7IC8vIExvZyBmdW5jdGlvbiBlbnRyeSBmb3IgZGVidWdnaW5nXG4gICAgICAgICAgdHJ5IHtcbiAgICAgICAgICAgIGNvbnNvbGUubG9nKGBub29wUWVycm9ycyBoYXMgcnVuYCk7IC8vIExvZyBzdWNjZXNzZnVsIGV4ZWN1dGlvblxuICAgICAgICAgIH0gY2F0Y2goZXJyb3IpIHtcbiAgICAgICAgICAgIGNvbnNvbGUubG9nKGBub29wUWVycm9ycyBlcnJvciAke2Vycm9yLm1lc3NhZ2V9YCk7IC8vIExvZyBhbnkgdW5leHBlY3RlZCBlcnJvcnNcbiAgICAgICAgICB9XG4gICAgICAgIH1cbiAgICAgIH07XG4gICAgfSBlbHNlIHtcbiAgICAgIC8vIENvbmRpdGlvbmFsbHkgbG9hZCBxZXJyb3JzIG9ubHkgaW4gb25saW5lIGVudmlyb25tZW50cyB0byBwcmV2ZW50IG1vZHVsZSBub3QgZm91bmQgZXJyb3JzXG4gICAgICAvLyBEeW5hbWljIGltcG9ydCBwcmV2ZW50cyBlcnJvcnMgaW4gb2ZmbGluZSBtb2RlIHdoZW4gcWVycm9ycyBtb2R1bGUgaXMgdW5hdmFpbGFibGVcbiAgICAgIHFlcnJvcnNJbXBsZW1lbnRhdGlvbiA9IHJlcXVpcmUoYHFlcnJvcnNgKTsgLy8gbG9hZCByZWFsIHFlcnJvcnMgZm9yIG9ubGluZSBtb2RlIHdpdGggYmFja3RpY2tzXG4gICAgfVxuXG4gICAgcWVycm9yc0NhY2hlID0gcWVycm9yc0ltcGxlbWVudGF0aW9uOyAvLyBzdG9yZSBpbiBjYWNoZSBmb3IgZnV0dXJlIHVzZVxuICAgIGNvbnNvbGUubG9nKGBnZXRRZXJyb3JzIGlzIHJldHVybmluZyAke3FlcnJvcnNDYWNoZX1gKTsgLy8gbG9nZ2luZyByZXR1cm4gdmFsdWUgcGVyIHJlcXVpcmVtZW50c1xuICAgIHJldHVybiBxZXJyb3JzQ2FjaGU7XG5cbiAgfSBjYXRjaCAoZXJyb3IpIHtcbiAgICBjb25zb2xlLmxvZyhgZ2V0UWVycm9ycyBlcnJvcjogJHtlcnJvci5tZXNzYWdlfWApOyAvLyBlcnJvciBsb2dnaW5nIHBlciByZXF1aXJlbWVudHNcbiAgICBjb25zdCBmYWxsYmFja1FlcnJvcnMgPSB7IHFlcnJvcnM6ICgpID0+IHt9IH07IC8vIGNyZWF0ZSBmYWxsYmFjayBzdHViXG4gICAgcWVycm9yc0NhY2hlID0gZmFsbGJhY2tRZXJyb3JzOyAvLyBzdG9yZSBmYWxsYmFjayBpbiBjYWNoZVxuICAgIGNvbnNvbGUubG9nKGBnZXRRZXJyb3JzIGlzIHJldHVybmluZyAke3FlcnJvcnNDYWNoZX1gKTsgLy8gbG9nZ2luZyByZXR1cm4gdmFsdWUgcGVyIHJlcXVpcmVtZW50c1xuICAgIHJldHVybiBxZXJyb3JzQ2FjaGU7XG4gIH1cbn1cblxuLyoqXG4gKiBHZXQgZW52aXJvbm1lbnQgZGV0ZWN0aW9uIHN0YXRlIGZvciBkZWJ1Z2dpbmcgYW5kIGNvbmZpZ3VyYXRpb25cbiAqIFxuICogVGhpcyBmdW5jdGlvbiByZXR1cm5zIHRoZSBjdXJyZW50IHN0YXRlIG9mIGVudmlyb25tZW50IHZhcmlhYmxlIGRldGVjdGlvblxuICogdG8gaGVscCB3aXRoIGRlYnVnZ2luZyBhbmQgdW5kZXJzdGFuZGluZyBob3cgb2ZmbGluZSBtb2RlIHdhcyBjb25maWd1cmVkLlxuICogVXNlZnVsIGZvciB0cm91Ymxlc2hvb3RpbmcgZW52aXJvbm1lbnQtc3BlY2lmaWMgYmVoYXZpb3IuXG4gKiBcbiAqIEByZXR1cm5zIHtPYmplY3R9IEVudmlyb25tZW50IGRldGVjdGlvbiBzdGF0ZSBpbmZvcm1hdGlvblxuICogXG4gKiBAZXhhbXBsZVxuICogY29uc3QgZW52U3RhdGUgPSBnZXRFbnZpcm9ubWVudFN0YXRlKCk7XG4gKiBjb25zb2xlLmxvZyhgQ09ERVggZmxhZzogJHtlbnZTdGF0ZS5jb2RleEZsYWd9YCk7XG4gKiBjb25zb2xlLmxvZyhgT2ZmbGluZSBtb2RlOiAke2VudlN0YXRlLmlzT2ZmbGluZX1gKTtcbiAqL1xuZnVuY3Rpb24gZ2V0RW52aXJvbm1lbnRTdGF0ZSgpIHtcbiAgY29uc29sZS5sb2coYGdldEVudmlyb25tZW50U3RhdGUgaXMgcnVubmluZyB3aXRoIG5vbmVgKTtcbiAgXG4gIHRyeSB7XG4gICAgY29uc3Qgc3RhdGUgPSB7XG4gICAgICBjb2RleEZsYWcsXG4gICAgICBvZmZsaW5lRmxhZ0V4cGxpY2l0LFxuICAgICAgdGVzdEVudmlyb25tZW50LFxuICAgICAgaXNPZmZsaW5lLFxuICAgICAgZW52aXJvbm1lbnREZXRlY3RlZDogY29kZXhGbGFnIHx8IG9mZmxpbmVGbGFnRXhwbGljaXRcbiAgICB9O1xuICAgIGNvbnNvbGUubG9nKGBnZXRFbnZpcm9ubWVudFN0YXRlIGlzIHJldHVybmluZyAke0pTT04uc3RyaW5naWZ5KHN0YXRlKX1gKTtcbiAgICByZXR1cm4gc3RhdGU7XG4gIH0gY2F0Y2ggKGVycm9yKSB7XG4gICAgY29uc29sZS5sb2coYGdldEVudmlyb25tZW50U3RhdGUgZXJyb3I6ICR7ZXJyb3IubWVzc2FnZX1gKTtcbiAgICB0aHJvdyBlcnJvcjtcbiAgfVxufVxuXG4vKipcbiAqIENyZWF0ZSBlbnZpcm9ubWVudC1hd2FyZSBhZGFwdGVycyBiYXNlZCBvbiBjdXJyZW50IG9mZmxpbmUgc3RhdGVcbiAqIFxuICogVGhpcyBmdW5jdGlvbiBwcm92aWRlcyBhIGNvbnZlbmllbnQgd2F5IHRvIGdldCBib3RoIGF4aW9zIGFuZCBxZXJyb3JzXG4gKiBpbXBsZW1lbnRhdGlvbnMgaW4gYSBzaW5nbGUgY2FsbCwgY29uZmlndXJlZCBhcHByb3ByaWF0ZWx5IGZvciB0aGVcbiAqIGN1cnJlbnQgZW52aXJvbm1lbnQuIFRoaXMgbWF0Y2hlcyB0aGUgcGF0dGVybiBmcm9tIHlvdXIgcHJvdmlkZWRcbiAqIGVudmlyb25tZW50IGFkYXB0ZXIgZnVuY3Rpb25hbGl0eS5cbiAqIFxuICogQHJldHVybnMge09iamVjdH0gT2JqZWN0IGNvbnRhaW5pbmcgYXhpb3MgYW5kIHFlcnJvcnMgaW1wbGVtZW50YXRpb25zXG4gKiBcbiAqIEBleGFtcGxlXG4gKiBjb25zdCB7IGF4aW9zLCBxZXJyb3JzIH0gPSBjcmVhdGVFbnZpcm9ubWVudEFkYXB0ZXJzKCk7XG4gKiBjb25zdCByZXNwb25zZSA9IGF3YWl0IGF4aW9zLmdldCgnL2FwaS9kYXRhJyk7XG4gKiBxZXJyb3JzLnJlcG9ydChuZXcgRXJyb3IoJ1Rlc3QgZXJyb3InKSk7XG4gKi9cbmZ1bmN0aW9uIGNyZWF0ZUVudmlyb25tZW50QWRhcHRlcnMoKSB7XG4gIGNvbnNvbGUubG9nKGBjcmVhdGVFbnZpcm9ubWVudEFkYXB0ZXJzIGlzIHJ1bm5pbmcgd2l0aCBvZmZsaW5lOiAke2lzT2ZmbGluZX1gKTtcbiAgXG4gIHRyeSB7XG4gICAgY29uc3QgYWRhcHRlcnMgPSB7XG4gICAgICBpc09mZmxpbmUsXG4gICAgICBheGlvczogZ2V0QXhpb3MoKSxcbiAgICAgIHFlcnJvcnM6IGdldFFlcnJvcnMoKVxuICAgIH07XG4gICAgY29uc29sZS5sb2coYGNyZWF0ZUVudmlyb25tZW50QWRhcHRlcnMgaXMgcmV0dXJuaW5nIGFkYXB0ZXJzYCk7XG4gICAgcmV0dXJuIGFkYXB0ZXJzO1xuICB9IGNhdGNoIChlcnJvcikge1xuICAgIGNvbnNvbGUubG9nKGBjcmVhdGVFbnZpcm9ubWVudEFkYXB0ZXJzIGVycm9yOiAke2Vycm9yLm1lc3NhZ2V9YCk7XG4gICAgdGhyb3cgZXJyb3I7XG4gIH1cbn1cblxuZnVuY3Rpb24gY2xlYXJPZmZsaW5lQ2FjaGUoKSB7IC8vIHJlc2V0IGNhY2hlcyBmb3IgdGVzdGluZyBwdXJwb3Nlc1xuICBjb25zb2xlLmxvZyhgY2xlYXJPZmZsaW5lQ2FjaGUgaXMgcnVubmluZyB3aXRoIG5vbmVgKTsgLy8gbG9nZ2luZyBmdW5jdGlvbiBzdGFydCBwZXIgcmVxdWlyZW1lbnRzXG4gIFxuICB0cnkge1xuICAgIGF4aW9zQ2FjaGUgPSB1bmRlZmluZWQ7IC8vIGNsZWFyIGF4aW9zIGNhY2hlXG4gICAgcWVycm9yc0NhY2hlID0gdW5kZWZpbmVkOyAvLyBjbGVhciBxZXJyb3JzIGNhY2hlXG4gICAgY29uc29sZS5sb2coYGNsZWFyT2ZmbGluZUNhY2hlIGlzIHJldHVybmluZyB1bmRlZmluZWRgKTsgLy8gbG9nZ2luZyByZXR1cm4gdmFsdWUgcGVyIHJlcXVpcmVtZW50c1xuICB9IGNhdGNoIChlcnJvcikge1xuICAgIGNvbnNvbGUubG9nKGBjbGVhck9mZmxpbmVDYWNoZSBlcnJvcjogJHtlcnJvci5tZXNzYWdlfWApOyAvLyBlcnJvciBsb2dnaW5nIHBlciByZXF1aXJlbWVudHNcbiAgICB0aHJvdyBlcnJvcjtcbiAgfVxufVxuXG4vLyBleHBvcnQgb2ZmbGluZSBtb2RlIHV0aWxpdGllcyBhdCBib3R0b20gcGVyIHJlcXVpcmVtZW50c1xubW9kdWxlLmV4cG9ydHMgPSB7XG4gIHNldE9mZmxpbmVNb2RlLCAvLyBjb250cm9sIG9mZmxpbmUgbW9kZSBzdGF0ZVxuICBpc09mZmxpbmVNb2RlLCAvLyBnZXQgY3VycmVudCBvZmZsaW5lIHN0YXRlXG4gIGdldEF4aW9zLCAvLyBnZXQgYXBwcm9wcmlhdGUgYXhpb3MgaW1wbGVtZW50YXRpb25cbiAgZ2V0UWVycm9ycywgLy8gZ2V0IGFwcHJvcHJpYXRlIHFlcnJvcnMgaW1wbGVtZW50YXRpb25cbiAgZ2V0RW52aXJvbm1lbnRTdGF0ZSwgLy8gZ2V0IGVudmlyb25tZW50IGRldGVjdGlvbiBpbmZvcm1hdGlvblxuICBjcmVhdGVFbnZpcm9ubWVudEFkYXB0ZXJzLCAvLyBjcmVhdGUgY29tcGxldGUgZW52aXJvbm1lbnQtYXdhcmUgYWRhcHRlciBzZXRcbiAgY2xlYXJPZmZsaW5lQ2FjaGUgLy8gcmVzZXQgbW9kdWxlIGNhY2hlc1xufTsiXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7O0FBRUE7QUFDQSxNQUFNO0VBQUVBO0FBQVcsQ0FBQyxHQUFHQyxPQUFPLENBQUMsaUJBQWlCLENBQUMsQ0FBQyxDQUFDO0FBQ25ELElBQUlDLE9BQU8sQ0FBQ0MsR0FBRyxDQUFDQyxRQUFRLEtBQUssTUFBTSxFQUFFSixVQUFVLENBQUMsS0FBSyxDQUFDLENBQUMsQ0FBQzs7QUFFeEQ7QUFDQSxNQUFNO0VBQUVLO0FBQWdCLENBQUMsR0FBR0osT0FBTyxDQUFDLGFBQWEsQ0FBQzs7QUFFbEQ7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBLE1BQU1LLFNBQVMsR0FBR0MsTUFBTSxDQUFDTCxPQUFPLENBQUNDLEdB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

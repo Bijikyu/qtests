@@ -107,9 +107,19 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
   - **Native qtests support**: Success determined by exit code 0 + no uncaught exceptions for non-Jest tests
   - **Comprehensive error detection**: Catches ReferenceError, TypeError, SyntaxError and other uncaught exceptions
 
+#### Jest CLI Parameter Compatibility Issue
+- **Client-Reported Issue**: Fixed qtests runner using deprecated `--testPathPattern` instead of `--testPathPatterns` for Jest 30+
+- **Root Cause**: Jest v30 changed CLI flag from `--testPathPattern` (singular) to `--testPathPatterns` (plural), causing "Option was replaced" errors
+- **Fixes Applied**:
+  - **Version-aware detection**: Automatically detects installed Jest version from package.json
+  - **Smart CLI flag selection**: Uses `--testPathPatterns` for Jest 30+, `--testPathPattern` for Jest 29 and earlier  
+  - **Fallback compatibility**: Defaults to newer standard if version detection fails
+  - **Performance optimization**: Caches version detection result to avoid repeated file reads
+
 #### Resolution Summary
 - **Fix Verification**: Confirmed fixes with 100% test success rate (75/75 tests passing)
 - **Quality Assurance**: Enhanced test generator to be more project-agnostic and robust
 - **Client Impact**: All future Jest scaffolding now works correctly for both JavaScript and TypeScript projects regardless of project structure  
 - **Transform Separation**: JavaScript and TypeScript files now use dedicated, appropriate transformers without conflicts
 - **Universal Success Detection**: qtests runner now recognizes success in both Jest format and native qtests/Node.js format, providing complete test framework compatibility
+- **Jest Version Compatibility**: qtests runner automatically adapts to both Jest 29 and Jest 30+ CLI parameter changes
