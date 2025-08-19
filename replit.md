@@ -83,3 +83,10 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Zero Breaking Changes**: Maintained backward compatibility throughout refactoring, ensuring existing API interfaces continue working seamlessly
 - **Code Quality Transformation**: Reduced 4 large files from 3000+ total lines to 16+ focused modules averaging 100-150 lines each with clear single responsibilities
 - **Final Achievement**: Mock Models (92.7% pass rate), Test Suite (86.8% pass rate), with all core functionality working including query chains, bulk operations, performance testing, database helpers, mock management, and assertion helpers
+
+### Authoritative Test Runner Protection (August 19, 2025)
+- **AI/LLM Protection Headers**: Added comprehensive protective comments to qtests-runner.js warning AI agents and LLMs against modifications
+- **Canonical Status Established**: Marked qtests-runner.js as the authoritative and official test runner for the framework
+- **System Adaptation Policy**: Established that system changes must adapt around the test runner, not modify the runner itself
+- **Anti-Duplication Measures**: Explicitly prohibited creation of alternate, parallel, or competing test runners
+- **Architectural Integrity**: Protected the core test execution engine to maintain stable, predictable behavior across all qtests implementations
