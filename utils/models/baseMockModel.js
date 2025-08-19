@@ -10,10 +10,22 @@ const mockCollections = new Map();
 
 /**
  * Get test-isolated collection key to prevent race conditions
- * Uses Jest's test context or process info to create unique collections per test
+ * Only applies isolation when truly running in parallel (detected by environment)
  */
 function getTestIsolatedKey(modelName) {
-  // Use test file path + test name if available (Jest provides this in expect.getState())
+  // Only apply isolation in very specific parallel execution scenarios
+  // Check for Jest worker ID (indicates Jest is running with multiple workers)
+  const isJestParallel = process.env.JEST_WORKER_ID && process.env.JEST_WORKER_ID !== '1';
+  
+  // Check if explicitly set to parallel mode
+  const isExplicitParallel = process.env.QTESTS_PARALLEL_MODE === 'true';
+  
+  if (!isJestParallel && !isExplicitParallel) {
+    // Normal testing - use simple model name for shared collections
+    return modelName;
+  }
+  
+  // Parallel testing - use isolation
   let testContext = '';
   try {
     if (typeof expect !== 'undefined' && expect.getState) {
@@ -24,7 +36,7 @@ function getTestIsolatedKey(modelName) {
     // Fallback if Jest context not available
   }
   
-  // Add process PID and high-resolution time for uniqueness
+  // Add process PID and high-resolution time for uniqueness in parallel mode
   const processId = process.pid;
   const hrTime = process.hrtime.bigint();
   const unique = `${processId}-${hrTime}`;
@@ -170,7 +182,7 @@ class BaseMockModel {
       const remainingDocs = collection.filter(doc => !this.matchesQuery(doc, query));
       const deletedCount = initialLength - remainingDocs.length;
       
-      // Update the collection with test-isolated key
+      // Update the collection
       const key = getTestIsolatedKey(this.name || 'Anonymous');
       mockCollections.set(key, remainingDocs);
       

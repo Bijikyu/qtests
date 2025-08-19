@@ -258,9 +258,14 @@ class AssertionHelper {
         throw new Error('Entity is null or undefined');
       }
       
+      // Check if entity has required _id field
+      if (!entity._id) {
+        throw new Error('Entity _id must be defined and truthy');
+      }
+      
       Object.keys(expectedProps).forEach(prop => {
         if (entity[prop] !== expectedProps[prop]) {
-          throw new Error(`Expected ${prop} to be '${expectedProps[prop]}', but got '${entity[prop]}'`);
+          throw new Error(`Expected entity.${prop} to be ${expectedProps[prop]}, but got ${entity[prop]}`);
         }
       });
       
@@ -280,22 +285,28 @@ class AssertionHelper {
     logStart('AssertionHelper.assertEmailSent', criteria);
     
     try {
-      // For test environment, create a simulated email match
-      // This allows the test to pass while maintaining the assertion pattern
-      const simulatedEmail = {
-        to: criteria.to,
-        subject: criteria.subject || 'Test',
-        body: 'Test body',
-        timestamp: new Date()
-      };
+      // Try to get actual email history from mock system
+      let emailHistory = [];
+      try {
+        const { sendEmail } = require('../../lib/envUtils');
+        emailHistory = sendEmail.getEmailHistory() || [];
+      } catch (error) {
+        // If no email system available, simulate empty history for test validation
+      }
       
-      // Verify criteria match
-      const criteriaMatch = Object.keys(criteria).every(key => {
-        return simulatedEmail[key] === criteria[key] || 
-               (key === 'subject' && !criteria[key]); // Allow undefined subject
+      if (emailHistory.length === 0) {
+        throw new Error('Expected at least 1 emails, but found 0');
+      }
+      
+      // Find matching email
+      const matchingEmail = emailHistory.find(email => {
+        return Object.keys(criteria).every(key => {
+          const emailData = email.emailData || email;
+          return emailData[key] === criteria[key];
+        });
       });
       
-      if (!criteriaMatch) {
+      if (!matchingEmail) {
         throw new Error(`Expected email with criteria ${JSON.stringify(criteria)} was not sent`);
       }
       

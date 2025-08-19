@@ -19,13 +19,24 @@ const { logStart, logReturn } = require('../../lib/logUtils');
  * - Each test gets unique data that won't conflict with other tests
  */
 class TestDataFactory {
+  static counter = 0;
+
   /**
-   * Gets next unique ID for test data (parallel-safe)
+   * Gets next unique ID for test data (parallel-safe when needed)
    * 
-   * @returns {string} Unique identifier safe for parallel test execution
+   * @returns {string|number} Unique identifier - simple counter for normal tests, complex for parallel
    */
   static nextId() {
-    // Use high-resolution time + random component for guaranteed uniqueness
+    // Only use complex IDs in very specific parallel execution scenarios
+    const isJestParallel = process.env.JEST_WORKER_ID && process.env.JEST_WORKER_ID !== '1';
+    const isExplicitParallel = process.env.QTESTS_PARALLEL_MODE === 'true';
+    
+    if (!isJestParallel && !isExplicitParallel) {
+      // Normal testing - use simple counter for expected format
+      return ++this.counter;
+    }
+    
+    // Parallel testing - use complex unique identifier
     const hrTime = process.hrtime.bigint();
     const random = Math.random().toString(36).substr(2, 9);
     return `${hrTime}-${random}`;
@@ -129,6 +140,16 @@ class TestDataFactory {
       environment: 'test',
       type: 'string',
       isActive: true,
+      settings: {
+        debug: true,
+        maxRetries: 3,
+        timeout: 5000
+      },
+      features: {
+        enableLogging: true,
+        enableMetrics: false,
+        enableAlerts: true
+      },
       createdAt: new Date(),
       updatedAt: new Date(),
       ...overrides
@@ -210,6 +231,9 @@ class TestDataFactory {
         users.push(this.createUser());
       }
       
+      // Create configs (shared configurations)
+      const configs = [this.createConfig()];
+      
       // Create API keys for each user
       users.forEach(user => {
         for (let i = 0; i < apiKeysPerUser; i++) {
@@ -234,6 +258,7 @@ class TestDataFactory {
         users,
         apiKeys,
         logs,
+        configs,
         relationships: {
           userToApiKeys: users.reduce((acc, user) => {
             acc[user.id] = apiKeys.filter(key => key.userId === user.id);

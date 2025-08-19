@@ -249,6 +249,15 @@ class MockManager {
             get: (path) => ({ expect: (status) => ({ end: (callback) => callback() }) }),
             post: (path) => ({ send: () => ({ expect: (status) => ({ end: (callback) => callback() }) }) })
           };
+        },
+        request: function(options) {
+          // Simple request mock for HTTP testing
+          return Promise.resolve({
+            status: 200,
+            statusCode: 200,
+            body: { success: true },
+            headers: { 'content-type': 'application/json' }
+          });
         }
       };
       
