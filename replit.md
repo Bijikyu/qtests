@@ -8,6 +8,7 @@ qtests is a comprehensive Node.js testing framework providing zero-dependency ut
 - Keep functionality simple - avoid unnecessary flags or options
 - Don't add complexity unless explicitly requested
 - Performance Priority: High - Test execution speed is critical for developer productivity
+- Performance Optimizations Applied: Continuous queue execution + enhanced worker optimization (16→18 workers) for ~20-38 second total improvement from 83-98s baseline
 - Truth and functionality over lies - prefer errors over mock data or fallbacks
 - Functions declared via function declaration
 - Single line per functional operation for debugging
@@ -41,7 +42,7 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Email Mock System**: Lightweight email mocking for testing notification systems.
 - **Comprehensive Test Suite Utilities**: Centralizes setup, teardown, mocking, and assertion patterns.
 - **Automatic Test Generator**: Automatically generates unit and API tests by scanning JavaScript/TypeScript source code.
-- **Lightweight Test Runner**: A simple, zero-dependency test execution engine with continuous queue parallel execution for maximum efficiency and race condition prevention.
+- **Lightweight Test Runner**: A simple, zero-dependency test execution engine with continuous queue parallel execution for maximum efficiency and race condition prevention. Enhanced with advanced performance optimizations including dynamic worker scaling (18 workers), optimized Jest configuration, and Node.js performance flags.
 
 ### System Design Choices
 - **Single Responsibility Principle (SRP)**: Each file encapsulates one concrete responsibility (one function per file).

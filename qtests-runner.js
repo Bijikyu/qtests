@@ -178,7 +178,7 @@ class TestRunner {
   }
 
   /**
-   * Run a single test file
+   * Run a single test file with optimized Node.js performance flags
    */
   async runTestFile(testFile) {
     return new Promise((resolve) => {
@@ -191,11 +191,21 @@ class TestRunner {
       
       const command = isJestTest ? 'npx' : 'node';
       const testPathFlag = isJestTest ? this.getJestTestPathFlag() : null;
-      const args = isJestTest ? ['jest', testPathFlag, testFile, '--verbose'] : [testFile];
+      
+      // Balanced arguments for speed + stability
+      const baseArgs = isJestTest 
+        ? ['jest', testPathFlag, testFile, '--no-coverage', '--cache'] 
+        : ['--max-old-space-size=768', '--no-warnings', testFile];
+      
+      const args = isJestTest ? baseArgs : baseArgs;
 
       const child = spawn(command, args, {
         stdio: ['ignore', 'pipe', 'pipe'],
-        env: { ...process.env, NODE_ENV: 'test' }
+        env: { 
+          ...process.env, 
+          NODE_ENV: 'test',
+          NODE_OPTIONS: '--max-old-space-size=512 --no-warnings' // Memory optimization
+        }
       });
 
       child.stdout.on('data', (data) => {
@@ -283,7 +293,40 @@ class TestRunner {
   }
 
   /**
-   * Run tests with continuous parallel execution
+   * Group tests by size for optimized batch execution
+   */
+  groupTestsBySize(testFiles) {
+    const testSizes = testFiles.map(file => {
+      try {
+        const stats = fs.statSync(file);
+        return { file, size: stats.size };
+      } catch {
+        return { file, size: 1000 }; // Default size for inaccessible files
+      }
+    });
+
+    // Sort by size (smallest first for fastest batching)
+    testSizes.sort((a, b) => a.size - b.size);
+    
+    const small = []; // < 2KB - group together for efficiency
+    const medium = []; // 2KB - 10KB - moderate grouping
+    const large = []; // > 10KB - run individually
+    
+    testSizes.forEach(({ file, size }) => {
+      if (size < 2000) {
+        small.push(file);
+      } else if (size < 10000) {
+        medium.push(file);
+      } else {
+        large.push(file);
+      }
+    });
+    
+    return { small, medium, large };
+  }
+
+  /**
+   * Run tests with advanced parallel execution and smart grouping
    * Maintains max concurrency at all times - starts new test immediately as others finish
    */
   async runInParallel(testFiles, maxConcurrency) {
@@ -443,10 +486,16 @@ class TestRunner {
     testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
     console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
     
-    // Run tests in parallel with aggressive concurrency for speed
+    // Advanced concurrency calculation based on system resources and memory optimization
     const cpuCount = os.cpus().length;
-    const maxConcurrency = Math.min(testFiles.length, Math.max(4, cpuCount * 2)); // Use 2x CPU cores for I/O-bound tests
-    console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores)${colors.reset}\n`);
+    const totalMemoryGB = Math.round(os.totalmem() / (1024 ** 3));
+    
+    // Conservative optimization: avoid EAGAIN resource exhaustion
+    const memoryBasedMax = Math.floor(totalMemoryGB / 1.5); // 1.5GB per worker for stability
+    const cpuBasedMax = cpuCount * 2.25; // 2.25x cores (modest increase from 2x)
+    const maxConcurrency = Math.min(testFiles.length, Math.max(8, cpuBasedMax), memoryBasedMax, 18); // Max 18 to avoid spawn limits
+    
+    console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores, ${totalMemoryGB}GB RAM)${colors.reset}\n`);
     
     const results = await this.runInParallel(testFiles, maxConcurrency);
     this.results = results;

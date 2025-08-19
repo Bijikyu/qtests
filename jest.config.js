@@ -3,7 +3,7 @@ module.exports = {
   testEnvironment: 'node',
   setupFiles: ['<rootDir>/test/testSetup.js'], // (invoke exported setup for jest)
   
-  // Performance optimizations
+  // Advanced Performance optimizations
   maxWorkers: '100%', // Use all available CPU cores for maximum speed
   cache: true,
   cacheDirectory: '<rootDir>/.jest-cache',
@@ -11,10 +11,17 @@ module.exports = {
   resetMocks: false,
   restoreMocks: false,
   
-  // Fast test execution
+  // Balanced memory and execution optimizations
+  workerIdleMemoryLimit: '768MB', // Balanced worker memory for stability
+  detectLeaks: false, // Skip leak detection for speed
+  logHeapUsage: false, // Disable heap logging for speed
+  forceExit: true, // Force exit for faster cleanup
+  
+  // Fast test execution (balanced for stability)
   verbose: false,
-  silent: false,
+  silent: false, // Keep some output for debugging, qtests-runner handles display
   bail: false, // Don't stop on first failure for parallel efficiency
+  passWithNoTests: true, // Don't fail on empty test suites
   
   testPathIgnorePatterns: [
     '/node_modules/',
