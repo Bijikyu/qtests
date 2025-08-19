@@ -34,30 +34,29 @@ describe('TestGenerator Configuration', () => {
 
 describe('TestGenerator File System', () => {
   it('should walk directory structure', () => {
-    const tempDir = path.join(__dirname, 'temp-test-' + Date.now());
+    // PARALLEL-SAFE: Use unique temp dir and absolute paths, no process.chdir()
+    const uniqueId = `${process.hrtime.bigint()}-${Math.random().toString(36).substr(2, 9)}`;
+    const tempDir = path.join(__dirname, `temp-test-${uniqueId}`);
     fs.mkdirSync(tempDir, { recursive: true });
     
     try {
-      // Create test files
+      // Create test files with absolute paths
       const srcDir = path.join(tempDir, 'src');
       fs.mkdirSync(srcDir, { recursive: true });
       fs.writeFileSync(path.join(srcDir, 'utils.js'), 'export const helper = () => {};');
       fs.mkdirSync(path.join(srcDir, 'components'), { recursive: true });
       fs.writeFileSync(path.join(srcDir, 'components', 'Button.tsx'), 'export const Button = () => {};');
       
-      const originalCwd = process.cwd();
-      process.chdir(tempDir);
+      // PARALLEL-SAFE: Use absolute paths instead of changing working directory
+      const generator = new TestGenerator({ 
+        SRC_DIR: srcDir, 
+        TEST_DIR: path.join(tempDir, 'tests') 
+      });
+      const files = generator.walk(srcDir);
       
-      try {
-        const generator = new TestGenerator({ SRC_DIR: 'src', TEST_DIR: 'tests' });
-        const files = generator.walk('src');
-        
-        expect(files.length).toBeGreaterThanOrEqual(2);
-        expect(files.some(f => f.endsWith('utils.js'))).toBe(true);
-        expect(files.some(f => f.endsWith('Button.tsx'))).toBe(true);
-      } finally {
-        process.chdir(originalCwd);
-      }
+      expect(files.length).toBeGreaterThanOrEqual(2);
+      expect(files.some(f => f.endsWith('utils.js'))).toBe(true);
+      expect(files.some(f => f.endsWith('Button.tsx'))).toBe(true);
     } finally {
       // Cleanup
       fs.rmSync(tempDir, { recursive: true, force: true });

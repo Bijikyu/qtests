@@ -12,8 +12,9 @@ describe('qtests Dual Module System Test Generation', () => {
   let generator;
 
   beforeEach(() => {
-    // Create temporary directory for test files
-    tempDir = path.join(__dirname, 'temp_module_tests');
+    // Create UNIQUE temporary directory for parallel safety
+    const uniqueId = `${process.hrtime.bigint()}-${Math.random().toString(36).substr(2, 9)}`;
+    tempDir = path.join(__dirname, `temp_module_tests_${uniqueId}`);
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir, { recursive: true });
     }

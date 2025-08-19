@@ -15,8 +15,9 @@ describe('qtests Module System Integration Tests', () => {
     // Save original working directory
     originalCwd = process.cwd();
     
-    // Create temporary project directory
-    testProjectDir = path.join(__dirname, 'temp_integration_project');
+    // Create UNIQUE temporary project directory for parallel safety
+    const uniqueId = `${process.hrtime.bigint()}-${Math.random().toString(36).substr(2, 9)}`;
+    testProjectDir = path.join(__dirname, `temp_integration_project_${uniqueId}`);
     if (fs.existsSync(testProjectDir)) {
       fs.rmSync(testProjectDir, { recursive: true, force: true });
     }
