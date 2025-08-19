@@ -1,670 +1,75 @@
 # Test Failure Analysis
 
-**Creation Time:** 2025-08-19T14:34:00.265Z
-**Pacific Time:** Tuesday, August 19, 2025 at 07:34:00 AM PDT
+**Creation Time:** 2025-08-19T14:49:01.881Z
+**Pacific Time:** Tuesday, August 19, 2025 at 07:49:01 AM PDT
 
 ⚠️ **STALENESS WARNING:** If your code changes are after the creation time above and you are checking this file, then it is stale and tests need to be rerun.
 
 Analyze and address the following test failures:
 
-## Failed Test 1: test/dualModuleGeneration.test.js
+## Failed Test 1: test/mockModels.test.js
 
 ### Output:
 ```
-FAIL test/dualModuleGeneration.test.js
-  ● Console
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
 
-    console.log
-      setup is running with none
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
 
-      at Object.setup (lib/setup.js:58:11)
-
-    console.log
-      setup has run resulting in module resolution modification
-
-      at Object.setup (lib/setup.js:62:13)
-
-  ● qtests Dual Module System Test Generation › Test Generation for Different Module Systems › should generate CommonJS-style tests for CommonJS projects
-
-    expect(received).toContain(expected) // indexOf
-
-    Expected substring: "describe('mathUtils.js'"
-    Received string:    "// Lightweight unit test for mathUtils.js - no complex operations·
-    describe('mathUtils.js basic exports', () => {
-      test('module loads without errors', () => {
-        // Delayed module loading prevents hanging in parallel execution
-        expect(() => require('./mathUtils.js')).not.toThrow();
-        const mod = require('./mathUtils.js');
-        expect(mod).toBeDefined();
-        expect(typeof mod).toBe('object');
-      });
-    });
-    "
-
-      228 |       expect(testContent).toContain('const mod = require(');
-      229 |       expect(testContent).not.toContain('import');
-    > 230 |       expect(testContent).toContain("describe('mathUtils.js'");
-          |                           ^
-      231 |       expect(testContent).toContain("test('add works'");
-      232 |     });
-      233 |
-
-      at Object.toContain (test/dualModuleGeneration.test.js:230:27)
-
-  ● qtests Dual Module System Test Generation › Test Generation for Different Module Systems › should generate ES module-style tests for ES module projects
-
-    expect(received).toContain(expected) // indexOf
-
-    Expected substring: "import * as mod from"
-    Received string:    "// Lightweight unit test for dataProcessor.js - no complex operations·
-    describe('dataProcessor.js basic exports', () => {
-      test('module loads without errors', () => {
-        // Delayed module loading prevents hanging in parallel execution
-        expect(() => import('./dataProcessor.js')).not.toThrow();
-      });
-    });
-    "
-
-      248 |       
-      249 |       // Should use import syntax
-    > 250 |       expect(testContent).toContain('import * as mod from');
-          |                           ^
-      251 |       expect(testContent).not.toContain('require(');
-      252 |       expect(testContent).toContain("describe('dataProcessor.js'");
-      253 |       expect(testContent).toContain("test('process works'");
-
-      at Object.toContain (test/dualModuleGeneration.test.js:250:27)
-
-Test Suites: 1 failed, 1 total
-Tests:       2 failed, 16 passed, 18 total
-Snapshots:   0 total
-Time:        5.605 s, estimated 14 s
-Ran all test suites matching test/dualModuleGeneration.test.js.
+Node.js v20.19.3
 
 ```
 
-### Duration: 10300ms
+### Duration: 14812ms
 
 ---
 
-## Failed Test 2: test/moduleSystemIntegration.test.js
+## Failed Test 2: test/integration.test.js
 
 ### Output:
 ```
-FAIL test/moduleSystemIntegration.test.js
-  ● Console
-
-    console.log
-      setup is running with none
-
-      at Object.setup (lib/setup.js:58:11)
-
-    console.log
-      setup has run resulting in module resolution modification
-
-      at Object.setup (lib/setup.js:62:13)
-
-    console.log
-      Scanning project for test generation...
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:931:13)
-
-    console.log
-      Found 2 source files and 0 existing tests
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:937:13)
-
-    console.log
-      ✅ Generated 2 new test files:
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:947:15)
-
-    console.log
-        📦 Unit → src/mathUtils.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → src/stringUtils.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-      Scanning project for test generation...
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:931:13)
-
-    console.log
-      Found 3 source files and 0 existing tests
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:937:13)
-
-    console.log
-      ✅ Generated 3 new test files:
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:947:15)
-
-    console.log
-        📦 Unit → lib/helpers.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → lib/manager.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → lib/utils.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-      Scanning project for test generation...
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:931:13)
-
-    console.log
-      Found 2 source files and 0 existing tests
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:937:13)
-
-    console.log
-      ✅ Generated 2 new test files:
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:947:15)
-
-    console.log
-        📦 Unit → src/dataProcessor.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → src/validator.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-      Scanning project for test generation...
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:931:13)
-
-    console.log
-      Found 3 source files and 0 existing tests
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:937:13)
-
-    console.log
-      ✅ Generated 3 new test files:
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:947:15)
-
-    console.log
-        📦 Unit → src/cjsFile.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → src/esFile1.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → src/esFile2.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-      Scanning project for test generation...
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:931:13)
-
-    console.log
-      Found 1 source files and 0 existing tests
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:937:13)
-
-    console.log
-      ✅ Generated 3 new test files:
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:947:15)
-
-    console.log
-        📦 Unit → routes/users.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        🌐 API → tests/integration/routes__users__get.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        🌐 API → tests/integration/routes__users__post.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-      Scanning project for test generation...
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:931:13)
-
-    console.log
-      Found 50 source files and 0 existing tests
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:937:13)
-
-    console.log
-      ✅ Generated 50 new test files:
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:947:15)
-
-    console.log
-        📦 Unit → large-project/module0/file0.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module0/file1.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module0/file2.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module0/file3.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module0/file4.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module1/file0.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module1/file1.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module1/file2.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module1/file3.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module1/file4.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module2/file0.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module2/file1.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module2/file2.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module2/file3.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module2/file4.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module3/file0.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module3/file1.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module3/file2.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module3/file3.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module3/file4.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module4/file0.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module4/file1.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module4/file2.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module4/file3.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module4/file4.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module5/file0.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module5/file1.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module5/file2.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module5/file3.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module5/file4.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module6/file0.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module6/file1.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module6/file2.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module6/file3.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module6/file4.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module7/file0.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module7/file1.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module7/file2.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module7/file3.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module7/file4.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module8/file0.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module8/file1.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module8/file2.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module8/file3.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module8/file4.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module9/file0.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module9/file1.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module9/file2.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module9/file3.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-        📦 Unit → large-project/module9/file4.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-    console.log
-      Scanning project for test generation...
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:931:13)
-
-    console.log
-      Found 1 source files and 0 existing tests
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:937:13)
-
-    console.log
-      ✅ Generated 1 new test files:
-
-      at TestGenerator.log [as generate] (lib/testGenerator.js:947:15)
-
-    console.log
-        📦 Unit → problematic/broken.test.js
-
-      at log (lib/testGenerator.js:950:17)
-          at Array.forEach (<anonymous>)
-
-  ● qtests Module System Integration Tests › CommonJS Project Integration › should detect CommonJS project and generate appropriate tests
-
-    expect(received).toContain(expected) // indexOf
-
-    Expected substring: "test('add works'"
-    Received string:    "// Lightweight unit test for mathUtils.js - no complex operations·
-    // Lightweight mock setup - basic stubs only
-    jest.mock('fs', () => ({
-      __esModule: true,
-      default: jest.fn(() => 'mock-fs'),
-      // Lightweight mocks prevent hanging
-    }));·
-    describe('mathUtils.js basic exports', () => {
-      test('module loads without errors', () => {
-        // Delayed module loading prevents hanging in parallel execution
-        expect(() => require('./mathUtils.js')).not.toThrow();
-        const mod = require('./mathUtils.js');
-        expect(mod).toBeDefined();
-        expect(typeof mod).toBe('object');
-      });
-    });
-    "
-
-      124 |         expect(testContent).toContain('const mod = require(');
-      125 |         expect(testContent).not.toContain('import');
-    > 126 |         expect(testContent).toContain("test('add works'");
-          |                             ^
-      127 |         expect(testContent).toContain("test('multiply works'");
-      128 |         expect(testContent).toContain("test('Calculator works'");
-      129 |       }
-
-      at Object.toContain (test/moduleSystemIntegration.test.js:126:29)
-
-  ● qtests Module System Integration Tests › ES Module Project Integration › should detect ES module project and generate appropriate tests
-
-    expect(received).toContain(expected) // indexOf
-
-    Expected substring: "import * as mod from"
-    Received string:    "// Lightweight unit test for dataProcessor.js - no complex operations·
-    // Lightweight mock setup - basic stubs only
-    jest.mock('fs', () => ({
-      __esModule: true,
-      default: jest.fn(() => 'mock-fs'),
-      // Lightweight mocks prevent hanging
-    }));·
-    describe('dataProcessor.js basic exports', () => {
-      test('module loads without errors', () => {
-        // Delayed module loading prevents hanging in parallel execution
-        expect(() => import('./dataProcessor.js')).not.toThrow();
-      });
-    });
-    "
-
-      252 |       if (fs.existsSync(dataProcessorTestPath)) {
-      253 |         const testContent = fs.readFileSync(dataProcessorTestPath, 'utf8');
-    > 254 |         expect(testContent).toContain('import * as mod from');
-          |                             ^
-      255 |         expect(testContent).not.toContain('require(');
-      256 |         expect(testContent).toContain("test('processData works'");
-      257 |         expect(testContent).toContain("test('saveData works'");
-
-      at Object.toContain (test/moduleSystemIntegration.test.js:254:29)
-
-Test Suites: 1 failed, 1 total
-Tests:       2 failed, 6 passed, 8 total
-Snapshots:   0 total
-Time:        7.502 s, estimated 24 s
-Ran all test suites matching test/moduleSystemIntegration.test.js.
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
 
 ```
 
-### Duration: 13380ms
+### Duration: 17850ms
 
 ---
 
@@ -672,924 +77,791 @@ Ran all test suites matching test/moduleSystemIntegration.test.js.
 
 ### Output:
 ```
-FAIL test/offlineMode.test.js
-  ● Console
-
-    console.log
-      setup is running with none
-
-      at Object.setup (lib/setup.js:58:11)
-
-    console.log
-      setup has run resulting in module resolution modification
-
-      at Object.setup (lib/setup.js:62:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      getEnvironmentState is running with none
-
-      at log (utils/offlineMode.js:267:11)
-
-    console.log
-      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":false,"environmentDetected":false}
-
-      at log (utils/offlineMode.js:277:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      getEnvironmentState is running with none
-
-      at log (utils/offlineMode.js:267:11)
-
-    console.log
-      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":false,"environmentDetected":false}
-
-      at log (utils/offlineMode.js:277:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      getEnvironmentState is running with none
-
-      at log (utils/offlineMode.js:267:11)
-
-    console.log
-      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":false,"environmentDetected":false}
-
-      at log (utils/offlineMode.js:277:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      getEnvironmentState is running with none
-
-      at log (utils/offlineMode.js:267:11)
-
-    console.log
-      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":false,"environmentDetected":false}
-
-      at log (utils/offlineMode.js:277:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with true
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is returning true
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      getQerrors is running with offline: true
-
-      at log (utils/offlineMode.js:209:11)
-
-    console.log
-      getQerrors is returning [object Object]
-
-      at log (utils/offlineMode.js:240:13)
-
-    console.log
-      noopQerrors is running with none
-
-      at Object.log [as qerrors] (utils/offlineMode.js:225:19)
-
-    console.log
-      noopQerrors has run
-
-      at Object.log [as qerrors] (utils/offlineMode.js:227:21)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with true
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      setOfflineMode is returning true
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with true
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      setOfflineMode is returning true
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      getEnvironmentState is running with none
-
-      at log (utils/offlineMode.js:267:11)
-
-    console.log
-      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":true,"environmentDetected":false}
-
-      at log (utils/offlineMode.js:277:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      getEnvironmentState is running with none
-
-      at log (utils/offlineMode.js:267:11)
-
-    console.log
-      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":true,"environmentDetected":false}
-
-      at log (utils/offlineMode.js:277:13)
-
-    console.log
-      setOfflineMode is running with true
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      setOfflineMode is returning true
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      getEnvironmentState is running with none
-
-      at log (utils/offlineMode.js:267:11)
-
-    console.log
-      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":true,"environmentDetected":false}
-
-      at log (utils/offlineMode.js:277:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with true
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      setOfflineMode is returning true
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      createEnvironmentAdapters is running with offline: true
-
-      at log (utils/offlineMode.js:301:11)
-
-    console.log
-      getAxios is running with offline: true
-
-      at log (utils/offlineMode.js:140:11)
-
-    console.log
-      getAxios is returning [object Object]
-
-      at log (utils/offlineMode.js:171:13)
-
-    console.log
-      getQerrors is running with offline: true
-
-      at log (utils/offlineMode.js:209:11)
-
-    console.log
-      getQerrors is returning [object Object]
-
-      at log (utils/offlineMode.js:240:13)
-
-    console.log
-      createEnvironmentAdapters is returning adapters
-
-      at log (utils/offlineMode.js:309:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with true
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      setOfflineMode is returning true
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      createEnvironmentAdapters is running with offline: true
-
-      at log (utils/offlineMode.js:301:11)
-
-    console.log
-      getAxios is running with offline: true
-
-      at log (utils/offlineMode.js:140:11)
-
-    console.log
-      getAxios is returning [object Object]
-
-      at log (utils/offlineMode.js:171:13)
-
-    console.log
-      getQerrors is running with offline: true
-
-      at log (utils/offlineMode.js:209:11)
-
-    console.log
-      getQerrors is returning [object Object]
-
-      at log (utils/offlineMode.js:240:13)
-
-    console.log
-      createEnvironmentAdapters is returning adapters
-
-      at log (utils/offlineMode.js:309:13)
-
-    console.log
-      noopQerrors is running with none
-
-      at Object.log [as qerrors] (utils/offlineMode.js:225:19)
-
-    console.log
-      noopQerrors has run
-
-      at Object.log [as qerrors] (utils/offlineMode.js:227:21)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with false
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is returning false
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      createEnvironmentAdapters is running with offline: false
-
-      at log (utils/offlineMode.js:301:11)
-
-    console.log
-      getAxios is running with offline: false
-
-      at log (utils/offlineMode.js:140:11)
-
-    console.log
-      getAxios is returning function wrap() {
-          return fn.apply(thisArg, arguments);
-        }
-
-      at log (utils/offlineMode.js:171:13)
-
-    console.log
-      getQerrors is running with offline: false
-
-      at log (utils/offlineMode.js:209:11)
-
-    console.log
-      getQerrors is returning [object Object]
-
-      at log (utils/offlineMode.js:240:13)
-
-    console.log
-      createEnvironmentAdapters is returning adapters
-
-      at log (utils/offlineMode.js:309:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with true
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is returning true
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      getAxios is running with offline: true
-
-      at log (utils/offlineMode.js:140:11)
-
-    console.log
-      getAxios is returning [object Object]
-
-      at log (utils/offlineMode.js:171:13)
-
-    console.log
-      getAxios is running with offline: true
-
-      at log (utils/offlineMode.js:140:11)
-
-    console.log
-      getAxios is returning [object Object]
-
-      at log (utils/offlineMode.js:148:15)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with true
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      setOfflineMode is returning true
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      getAxios is running with offline: true
-
-      at log (utils/offlineMode.js:140:11)
-
-    console.log
-      getAxios is returning [object Object]
-
-      at log (utils/offlineMode.js:171:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      getAxios is running with offline: true
-
-      at log (utils/offlineMode.js:140:11)
-
-    console.log
-      getAxios is returning [object Object]
-
-      at log (utils/offlineMode.js:171:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with true
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      setOfflineMode is returning true
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      getAxios is running with offline: true
-
-      at log (utils/offlineMode.js:140:11)
-
-    console.log
-      getAxios is returning [object Object]
-
-      at log (utils/offlineMode.js:171:13)
-
-    console.log
-      setOfflineMode is running with false
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is returning false
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      getAxios is running with offline: false
-
-      at log (utils/offlineMode.js:140:11)
-
-    console.log
-      getAxios is returning function wrap() {
-          return fn.apply(thisArg, arguments);
-        }
-
-      at log (utils/offlineMode.js:171:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with false
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      setOfflineMode is returning false
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      getAxios is running with offline: false
-
-      at log (utils/offlineMode.js:140:11)
-
-    console.log
-      getAxios is returning function wrap() {
-          return fn.apply(thisArg, arguments);
-        }
-
-      at log (utils/offlineMode.js:171:13)
-
-    console.log
-      getQerrors is running with offline: false
-
-      at log (utils/offlineMode.js:209:11)
-
-    console.log
-      getQerrors is returning [object Object]
-
-      at log (utils/offlineMode.js:240:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with false
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      setOfflineMode is returning false
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      getAxios is running with offline: false
-
-      at log (utils/offlineMode.js:140:11)
-
-    console.log
-      getAxios is returning function wrap() {
-          return fn.apply(thisArg, arguments);
-        }
-
-      at log (utils/offlineMode.js:171:13)
-
-    console.log
-      getQerrors is running with offline: false
-
-      at log (utils/offlineMode.js:209:11)
-
-    console.log
-      getQerrors is returning [object Object]
-
-      at log (utils/offlineMode.js:240:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with true
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is returning true
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      setOfflineMode is running with false
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is returning false
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is running with true
-
-      at log (utils/offlineMode.js:81:11)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-    console.log
-      setOfflineMode is returning true
-
-      at log (utils/offlineMode.js:87:13)
-
-    console.log
-      getAxios is running with offline: true
-
-      at log (utils/offlineMode.js:140:11)
-
-    console.log
-      getAxios is returning [object Object]
-
-      at log (utils/offlineMode.js:171:13)
-
-    console.log
-      clearOfflineCache is running with none
-
-      at log (utils/offlineMode.js:318:11)
-
-    console.log
-      clearOfflineCache is returning undefined
-
-      at log (utils/offlineMode.js:323:13)
-
-  ● Enhanced Offline Mode › Environment Variable Detection › detects CODEX environment variable
-
-    expect(received).toBe(expected) // Object.is equality
-
-    Expected: true
-    Received: false
-
-      50 |       const { getEnvironmentState } = require('../utils/offlineMode');
-      51 |       const envState = getEnvironmentState();
-    > 52 |       expect(envState.codexFlag).toBe(true);
-         |                                  ^
-      53 |       expect(envState.environmentDetected).toBe(true);
-      54 |     });
-      55 |     
-
-      at Object.toBe (test/offlineMode.test.js:52:34)
-
-  ● Enhanced Offline Mode › Environment Variable Detection › detects OFFLINE_MODE environment variable
-
-    expect(received).toBe(expected) // Object.is equality
-
-    Expected: true
-    Received: false
-
-      59 |       const { getEnvironmentState } = require('../utils/offlineMode');
-      60 |       const envState = getEnvironmentState();
-    > 61 |       expect(envState.offlineFlagExplicit).toBe(true);
-         |                                            ^
-      62 |       expect(envState.environmentDetected).toBe(true);
-      63 |     });
-      64 |     
-
-      at Object.toBe (test/offlineMode.test.js:61:44)
-
-  ● Enhanced Offline Mode › Environment Variable Detection › handles case-insensitive environment variables
-
-    expect(received).toBe(expected) // Object.is equality
-
-    Expected: true
-    Received: false
-
-      69 |       const { getEnvironmentState } = require('../utils/offlineMode');
-      70 |       const envState = getEnvironmentState();
-    > 71 |       expect(envState.codexFlag).toBe(true);
-         |                                  ^
-      72 |       expect(envState.offlineFlagExplicit).toBe(true);
-      73 |     });
-      74 |     
-
-      at Object.toBe (test/offlineMode.test.js:71:34)
-
-
-ReferenceError: You are trying to `import` a file after the Jest environment has been torn down. From test/offlineMode.test.js.
-
-      at buildLogger (node_modules/qerrors/lib/logger.js:152:33)
-
-ReferenceError: You are trying to `import` a file after the Jest environment has been torn down. From test/offlineMode.test.js.
-
-      at Object.get [as File] (node_modules/winston/lib/winston/transports/index.js:30:12)
-      at node_modules/qerrors/lib/logger.js:164:57
-      at buildLogger (node_modules/qerrors/lib/logger.js:171:11)
-/home/runner/workspace/node_modules/qerrors/lib/logger.js:164
-                                arr.push(new transports.File({ filename: path.join(logDir, 'error.log'), level: 'error', ...rotationOpts, maxFiles: fileCap, format: fileFormat })); //(size-based rotation for error files with count limit)
-                                         ^
-
-[TypeError: transports.File is not a constructor]
-
-Node.js v20.19.3
-Test Suites: 1 failed, 1 total
-Tests:       3 failed, 15 passed, 18 total
-Snapshots:   0 total
-Time:        8.286 s, estimated 51 s
-Ran all test suites matching test/offlineMode.test.js.
-
+spawn npx EAGAIN
 ```
 
-### Duration: 13575ms
+### Duration: 299ms
 
 ---
 
-## Failed Test 4: test/testGenerator.test.js
+## Failed Test 4: test/qtests-dogfood.test.js
 
 ### Output:
 ```
-FAIL test/testGenerator.test.js
-  ● Console
+spawn npx EAGAIN
+```
 
-    console.log
-      setup is running with none
+### Duration: 44ms
 
-      at Object.setup (lib/setup.js:58:11)
+---
 
-    console.log
-      setup has run resulting in module resolution modification
+## Failed Test 5: test/resolveStubPaths.test.js
 
-      at Object.setup (lib/setup.js:62:13)
+### Output:
+```
+spawn npx EAGAIN
+```
 
-  ● TestGenerator basic tests › should show help when requested
+### Duration: 21ms
 
-    ReferenceError: execSync is not defined
+---
 
-      16 |
-      17 |   it('should show help when requested', () => {
-    > 18 |     const result = execSync('node bin/qtests-generate --help', { 
-         |                    ^
-      19 |       cwd: path.join(__dirname, '..'),
-      20 |       encoding: 'utf8',
-      21 |       stdio: 'pipe'
+## Failed Test 6: test/runTestSuite.test.js
 
-      at Object.execSync (test/testGenerator.test.js:18:20)
+### Output:
+```
+spawn npx EAGAIN
+```
 
-  ● TestGenerator basic tests › should show version when requested
+### Duration: 7ms
 
-    ReferenceError: execSync is not defined
+---
 
-      28 |
-      29 |   it('should show version when requested', () => {
-    > 30 |     const result = execSync('node bin/qtests-generate --version', { 
-         |                    ^
-      31 |       cwd: path.join(__dirname, '..'),
-      32 |       encoding: 'utf8',
-      33 |       stdio: 'pipe'
+## Failed Test 7: test/safeSerialize.test.js
 
-      at Object.execSync (test/testGenerator.test.js:30:20)
+### Output:
+```
+spawn npx EAGAIN
+```
 
-  ● TestGenerator Content Generation › should generate unit test content
+### Duration: 32ms
 
-    ReferenceError: TestGenerator is not defined
+---
 
-      40 | describe('TestGenerator Content Generation', () => {
-      41 |   it('should generate unit test content', () => {
-    > 42 |     const generator = new TestGenerator();
-         |                       ^
-      43 |     const exports = ['calculate', 'Calculator'];
-      44 |     const usesQtests = false;
-      45 |     const mocks = ['axios'];
+## Failed Test 8: test/sendEmail.test.js
 
-      at Object.<anonymous> (test/testGenerator.test.js:42:23)
+### Output:
+```
+spawn npx EAGAIN
+```
 
-  ● TestGenerator Content Generation › should generate API test content
+### Duration: 2ms
 
-    ReferenceError: TestGenerator is not defined
+---
 
-      53 |
-      54 |   it('should generate API test content', () => {
-    > 55 |     const generator = new TestGenerator();
-         |                       ^
-      56 |     const method = 'get';
-      57 |     const route = '/api/users';
-      58 |     
+## Failed Test 9: test/setupMultiple.test.js
 
-      at Object.<anonymous> (test/testGenerator.test.js:55:23)
+### Output:
+```
+spawn npx EAGAIN
+```
 
-Test Suites: 1 failed, 1 total
-Tests:       4 failed, 2 passed, 6 total
-Snapshots:   0 total
-Time:        5.071 s, estimated 21 s
-Ran all test suites matching test/testGenerator.test.js.
+### Duration: 2ms
+
+---
+
+## Failed Test 10: test/setupResolution.test.js
+
+### Output:
+```
+spawn npx EAGAIN
+```
+
+### Duration: 9ms
+
+---
+
+## Failed Test 11: test/stubMethod.test.js
+
+### Output:
+```
+spawn npx EAGAIN
+```
+
+### Duration: 7ms
+
+---
+
+## Failed Test 12: test/testEnv.test.js
+
+### Output:
+```
+spawn npx EAGAIN
+```
+
+### Duration: 2ms
+
+---
+
+## Failed Test 13: test/testGenerator.test.js
+
+### Output:
+```
+spawn npx EAGAIN
+```
+
+### Duration: 14ms
+
+---
+
+## Failed Test 14: test/testHelpers.test.js
+
+### Output:
+```
+spawn npx EAGAIN
+```
+
+### Duration: 40ms
+
+---
+
+## Failed Test 15: test/testSuite.test.js
+
+### Output:
+```
+spawn npx EAGAIN
+```
+
+### Duration: 14ms
+
+---
+
+## Failed Test 16: tests/integration/example.test.js
+
+### Output:
+```
+spawn npx EAGAIN
+```
+
+### Duration: 4ms
+
+---
+
+## Failed Test 17: tests/integration/example__get.test.js
+
+### Output:
+```
+spawn npx EAGAIN
+```
+
+### Duration: 55ms
+
+---
+
+## Failed Test 18: tests/integration/example__post.test.js
+
+### Output:
+```
+spawn npx EAGAIN
+```
+
+### Duration: 38ms
+
+---
+
+## Failed Test 19: test/mockConsole.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
 
 ```
 
-### Duration: 9489ms
+### Duration: 17806ms
+
+---
+
+## Failed Test 20: test/moduleSystemIntegration.test.js
+
+### Output:
+```
+Aborted (core dumped)
+
+```
+
+### Duration: 16660ms
+
+---
+
+## Failed Test 21: test/logUtils.test.js
+
+### Output:
+```
+
+  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[20218]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
+  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
+
+----- Native stack trace -----
+
+ 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 6: 0x7f070a1b04d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 7: 0x7f070a1b059b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+node[20216]: pthread_create: Resource temporarily unavailable
+
+  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[20210]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
+  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
+
+----- Native stack trace -----
+
+ 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 6: 0x7fb5db6694d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 7: 0x7fb5db66959b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+FAIL test/logUtils.test.js
+  ● Test suite failed to run
+
+    A jest worker process (pid=20210) was terminated by another process: signal=SIGABRT, exitCode=null. Operating system logs may contain more information on why this occurred.
+
+      at ChildProcessWorker._onExit (node_modules/jest-worker/build/index.js:968:23)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.784 s
+Ran all test suites matching test/logUtils.test.js.
+
+```
+
+### Duration: 21814ms
+
+---
+
+## Failed Test 22: tests/integration/utils__httpTest.test.js
+
+### Output:
+```
+
+  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[20329]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
+  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
+
+----- Native stack trace -----
+
+ 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 6: 0x7fc0e31d54d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 7: 0x7fc0e31d559b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 20329 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
+
+```
+
+### Duration: 2647ms
+
+---
+
+## Failed Test 23: tests/integration/utils__httpTest__get.test.js
+
+### Output:
+```
+
+  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[20330]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
+  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
+
+----- Native stack trace -----
+
+ 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 6: 0x7efd0e4a94d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 7: 0x7efd0e4a959b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 20330 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
+
+```
+
+### Duration: 2348ms
+
+---
+
+## Failed Test 24: utils/email/emailHistory.test.js
+
+### Output:
+```
+
+  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[20381]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
+  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
+
+----- Native stack trace -----
+
+ 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 6: 0x7fe74a9b44d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 7: 0x7fe74a9b459b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 20381 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
+
+```
+
+### Duration: 2078ms
+
+---
+
+## Failed Test 25: utils/email/emailFormatter.test.js
+
+### Output:
+```
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 20368 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
+
+```
+
+### Duration: 3439ms
+
+---
+
+## Failed Test 26: test/offlineIntegration.test.js
+
+### Output:
+```
+node[20186]: pthread_create: Resource temporarily unavailable
+
+  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[20530]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
+  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
+
+----- Native stack trace -----
+
+ 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 6: 0x7f3ffaa584d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 7: 0x7f3ffaa5859b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+Aborted (core dumped)
+
+```
+
+### Duration: 9774ms
+
+---
+
+## Failed Test 27: utils/email/emailTemplate.test.js
+
+### Output:
+```
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 20471 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
+
+```
+
+### Duration: 3061ms
+
+---
+
+## Failed Test 28: test/indexExports.test.js
+
+### Output:
+```
+Test timeout after 30 seconds
+```
+
+### Duration: 30000ms
+
+---
+
+## Failed Test 29: test/mockAxios.test.js
+
+### Output:
+```
+Test timeout after 30 seconds
+```
+
+### Duration: 30000ms
+
+---
+
+## Failed Test 30: utils/helpers/keyGenerator.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 16575ms
+
+---
+
+## Failed Test 31: utils/helpers/qerrorsStub.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 16096ms
+
+---
+
+## Failed Test 32: utils/email/emailSender.test.js
+
+### Output:
+```
+Test timeout after 30 seconds
+```
+
+### Duration: 30000ms
+
+---
+
+## Failed Test 33: utils/models/apiKeyModel.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 16941ms
+
+---
+
+## Failed Test 34: utils/mockModels.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 17586ms
+
+---
+
+## Failed Test 35: utils/offlineMode.test.js
+
+### Output:
+```
+npm error code EAGAIN
+npm error syscall spawn sh
+npm error path /home/runner/workspace
+npm error errno -11
+npm error spawn sh EAGAIN
+npm error command sh -c jest --testPathPatterns utils/offlineMode.test.js --no-coverage --cache
+npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-08-19T14_48_06_415Z-debug-0.log
+
+```
+
+### Duration: 5205ms
+
+---
+
+## Failed Test 36: utils/runTestSuite.test.js
+
+### Output:
+```
+npm error code EAGAIN
+npm error syscall spawn sh
+npm error path /home/runner/workspace
+npm error errno -11
+npm error spawn sh EAGAIN
+npm error command sh -c jest --testPathPatterns utils/runTestSuite.test.js --no-coverage --cache
+npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-08-19T14_48_06_666Z-debug-0.log
+
+```
+
+### Duration: 5628ms
+
+---
+
+## Failed Test 37: utils/helpers/responseMocker.test.js
+
+### Output:
+```
+Test timeout after 30 seconds
+```
+
+### Duration: 30000ms
+
+---
+
+## Failed Test 38: utils/sendEmail.test.js
+
+### Output:
+```
+npm error code EAGAIN
+npm error syscall spawn sh
+npm error path /home/runner/workspace
+npm error errno -11
+npm error spawn sh EAGAIN
+npm error command sh -c jest --testPathPatterns utils/sendEmail.test.js --no-coverage --cache
+npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-08-19T14_48_07_652Z-debug-0.log
+
+```
+
+### Duration: 7199ms
+
+---
+
+## Failed Test 39: utils/testEnv.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 18933ms
+
+---
+
+## Failed Test 40: utils/testHelpers.test.js
+
+### Output:
+```
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: fork: retry: Resource temporarily unavailable
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 19634ms
+
+---
+
+## Failed Test 41: utils/testing/databaseTestHelper.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 17748ms
+
+---
+
+## Failed Test 42: utils/models/modelFactory.test.js
+
+### Output:
+```
+Test timeout after 30 seconds
+```
+
+### Duration: 30000ms
+
+---
+
+## Failed Test 43: utils/testing/assertionHelper.test.js
+
+### Output:
+```
+Test timeout after 30 seconds
+```
+
+### Duration: 30000ms
+
+---
+
+## Failed Test 44: utils/testing/mockManager.test.js
+
+### Output:
+```
+Test timeout after 30 seconds
+```
+
+### Duration: 30000ms
+
+---
+
+## Failed Test 45: utils/testing/performanceTestHelper.test.js
+
+### Output:
+```
+Test timeout after 30 seconds
+```
+
+### Duration: 30000ms
+
+---
+
+## Failed Test 46: utils/testing/testDataFactory.test.js
+
+### Output:
+```
+Test timeout after 30 seconds
+```
+
+### Duration: 30000ms
 
 ---
 
 ## Summary
 
-- Total failed tests: 4
-- Failed test files: test/dualModuleGeneration.test.js, test/moduleSystemIntegration.test.js, test/offlineMode.test.js, test/testGenerator.test.js
-- Generated: 2025-08-19T14:34:00.302Z
+- Total failed tests: 46
+- Failed test files: test/mockModels.test.js, test/integration.test.js, test/offlineMode.test.js, test/qtests-dogfood.test.js, test/resolveStubPaths.test.js, test/runTestSuite.test.js, test/safeSerialize.test.js, test/sendEmail.test.js, test/setupMultiple.test.js, test/setupResolution.test.js, test/stubMethod.test.js, test/testEnv.test.js, test/testGenerator.test.js, test/testHelpers.test.js, test/testSuite.test.js, tests/integration/example.test.js, tests/integration/example__get.test.js, tests/integration/example__post.test.js, test/mockConsole.test.js, test/moduleSystemIntegration.test.js, test/logUtils.test.js, tests/integration/utils__httpTest.test.js, tests/integration/utils__httpTest__get.test.js, utils/email/emailHistory.test.js, utils/email/emailFormatter.test.js, test/offlineIntegration.test.js, utils/email/emailTemplate.test.js, test/indexExports.test.js, test/mockAxios.test.js, utils/helpers/keyGenerator.test.js, utils/helpers/qerrorsStub.test.js, utils/email/emailSender.test.js, utils/models/apiKeyModel.test.js, utils/mockModels.test.js, utils/offlineMode.test.js, utils/runTestSuite.test.js, utils/helpers/responseMocker.test.js, utils/sendEmail.test.js, utils/testEnv.test.js, utils/testHelpers.test.js, utils/testing/databaseTestHelper.test.js, utils/models/modelFactory.test.js, utils/testing/assertionHelper.test.js, utils/testing/mockManager.test.js, utils/testing/performanceTestHelper.test.js, utils/testing/testDataFactory.test.js
+- Generated: 2025-08-19T14:49:01.948Z
