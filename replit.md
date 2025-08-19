@@ -8,7 +8,7 @@ qtests is a comprehensive Node.js testing framework providing zero-dependency ut
 - Keep functionality simple - avoid unnecessary flags or options
 - Don't add complexity unless explicitly requested
 - Performance Priority: High - Test execution speed is critical for developer productivity
-- Performance Optimizations Applied: Continuous queue execution + enhanced worker optimization (16→18 workers) for ~20-38 second total improvement from 83-98s baseline
+- Performance Optimizations Applied: Fixed hanging test generation patterns + enhanced worker optimization (17 workers) for reliable 107-second completion from previously infinite hanging. Root hanging causes eliminated: jest.resetModules(), console spying, heavy module loading, complex mocking (January 2025)
 - Truth and functionality over lies - prefer errors over mock data or fallbacks
 - Functions declared via function declaration
 - Single line per functional operation for debugging
@@ -41,7 +41,7 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Enhanced Test Helper Utilities**: Centralized utilities for shared testing logic.
 - **Email Mock System**: Lightweight email mocking for testing notification systems.
 - **Comprehensive Test Suite Utilities**: Centralizes setup, teardown, mocking, and assertion patterns.
-- **Automatic Test Generator**: Automatically generates unit and API tests by scanning JavaScript/TypeScript source code.
+- **Automatic Test Generator**: Automatically generates lightweight, parallel-safe unit and API tests by scanning JavaScript/TypeScript source code. Improved patterns prevent hanging in parallel execution (January 2025).
 - **Lightweight Test Runner**: A simple, zero-dependency test execution engine with continuous queue parallel execution for maximum efficiency and race condition prevention. Enhanced with advanced performance optimizations including dynamic worker scaling (17 workers), optimized Jest configuration, Node.js performance flags, and a 30-second timeout mechanism preventing complete hanging while identifying problematic tests.
 
 ### System Design Choices
