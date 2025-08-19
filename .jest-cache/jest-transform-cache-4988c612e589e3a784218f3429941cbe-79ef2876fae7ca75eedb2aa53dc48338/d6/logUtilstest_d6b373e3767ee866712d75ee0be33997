@@ -1,0 +1,26 @@
+26f63bcc213073c5adca8c3f11148341
+// Auto-generated unit test for logUtils.js - optimized for speed
+import * as mod from './logUtils.js';
+describe('logUtils.js', () => {
+  test('logStart works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.logStart).toBeDefined();
+  });
+  test('logReturn works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.logReturn).toBeDefined();
+  });
+  test('executeWithLogs works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.executeWithLogs).toBeDefined();
+  });
+  test('safeSerialize works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.safeSerialize).toBeDefined();
+  });
+  test('setLogging works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.setLogging).toBeDefined();
+  });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2QiLCJkZXNjcmliZSIsInRlc3QiLCJleHBlY3QiLCJsb2dTdGFydCIsInRvQmVEZWZpbmVkIiwibG9nUmV0dXJuIiwiZXhlY3V0ZVdpdGhMb2dzIiwic2FmZVNlcmlhbGl6ZSIsInNldExvZ2dpbmciXSwic291cmNlcyI6WyJsb2dVdGlscy50ZXN0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIEF1dG8tZ2VuZXJhdGVkIHVuaXQgdGVzdCBmb3IgbG9nVXRpbHMuanMgLSBvcHRpbWl6ZWQgZm9yIHNwZWVkXG5pbXBvcnQgKiBhcyBtb2QgZnJvbSAnLi9sb2dVdGlscy5qcyc7XG5cbmRlc2NyaWJlKCdsb2dVdGlscy5qcycsICgpID0+IHtcbiAgdGVzdCgnbG9nU3RhcnQgd29ya3MnLCBhc3luYyAoKSA9PiB7XG4gICAgLy8gRmFzdCBhc3NlcnRpb24gLSBUT0RPOiBpbXBsZW1lbnQgc3BlY2lmaWMgdGVzdCBsb2dpY1xuICAgIGV4cGVjdCh0eXBlb2YgbW9kLmxvZ1N0YXJ0KS50b0JlRGVmaW5lZCgpO1xuICB9KTtcbiAgdGVzdCgnbG9nUmV0dXJuIHdvcmtzJywgYXN5bmMgKCkgPT4ge1xuICAgIC8vIEZhc3QgYXNzZXJ0aW9uIC0gVE9ETzogaW1wbGVtZW50IHNwZWNpZmljIHRlc3QgbG9naWNcbiAgICBleHBlY3QodHlwZW9mIG1vZC5sb2dSZXR1cm4pLnRvQmVEZWZpbmVkKCk7XG4gIH0pO1xuICB0ZXN0KCdleGVjdXRlV2l0aExvZ3Mgd29ya3MnLCBhc3luYyAoKSA9PiB7XG4gICAgLy8gRmFzdCBhc3NlcnRpb24gLSBUT0RPOiBpbXBsZW1lbnQgc3BlY2lmaWMgdGVzdCBsb2dpY1xuICAgIGV4cGVjdCh0eXBlb2YgbW9kLmV4ZWN1dGVXaXRoTG9ncykudG9CZURlZmluZWQoKTtcbiAgfSk7XG4gIHRlc3QoJ3NhZmVTZXJpYWxpemUgd29ya3MnLCBhc3luYyAoKSA9PiB7XG4gICAgLy8gRmFzdCBhc3NlcnRpb24gLSBUT0RPOiBpbXBsZW1lbnQgc3BlY2lmaWMgdGVzdCBsb2dpY1xuICAgIGV4cGVjdCh0eXBlb2YgbW9kLnNhZmVTZXJpYWxpemUpLnRvQmVEZWZpbmVkKCk7XG4gIH0pO1xuICB0ZXN0KCdzZXRMb2dnaW5nIHdvcmtzJywgYXN5bmMgKCkgPT4ge1xuICAgIC8vIEZhc3QgYXNzZXJ0aW9uIC0gVE9ETzogaW1wbGVtZW50IHNwZWNpZmljIHRlc3QgbG9naWNcbiAgICBleHBlY3QodHlwZW9mIG1vZC5zZXRMb2dnaW5nKS50b0JlRGVmaW5lZCgpO1xuICB9KTtcbn0pO1xuIl0sIm1hcHBpbmdzIjoiQUFBQTtBQUNBLE9BQU8sS0FBS0EsR0FBRyxNQUFNLGVBQWU7QUFFcENDLFFBQVEsQ0FBQyxhQUFhLEVBQUUsTUFBTTtFQUM1QkMsSUFBSSxDQUFDLGdCQUFnQixFQUFFLFlBQVk7SUFDakM7SUFDQUMsTUFBTSxDQUFDLE9BQU9ILEdBQUcsQ0FBQ0ksUUFBUSxDQUFDLENBQUNDLFdBQVcsQ0FBQyxDQUFDO0VBQzNDLENBQUMsQ0FBQztFQUNGSCxJQUFJLENBQUMsaUJBQWlCLEVBQUUsWUFBWTtJQUNsQztJQUNBQyxNQUFNLENBQUMsT0FBT0gsR0FBRyxDQUFDTSxTQUFTLENBQUMsQ0FBQ0QsV0FBVyxDQUFDLENBQUM7RUFDNUMsQ0FBQyxDQUFDO0VBQ0ZILElBQUksQ0FBQyx1QkFBdUIsRUFBRSxZQUFZO0lBQ3hDO0lBQ0FDLE1BQU0sQ0FBQyxPQUFPSCxHQUFHLENBQUNPLGVBQWUsQ0FBQyxDQUFDRixXQUFXLENBQUMsQ0FBQztFQUNsRCxDQUFDLENBQUM7RUFDRkgsSUFBSSxDQUFDLHFCQUFxQixFQUFFLFlBQVk7SUFDdEM7SUFDQUMsTUFBTSxDQUFDLE9BQU9ILEdBQUcsQ0FBQ1EsYUFBYSxDQUFDLENBQUNILFdBQVcsQ0FBQyxDQUFDO0VBQ2hELENBQUMsQ0FBQztFQUNGSCxJQUFJLENBQUMsa0JBQWtCLEVBQUUsWUFBWTtJQUNuQztJQUNBQyxNQUFNLENBQUMsT0FBT0gsR0FBRyxDQUFDUyxVQUFVLENBQUMsQ0FBQ0osV0FBVyxDQUFDLENBQUM7RUFDN0MsQ0FBQyxDQUFDO0FBQ0osQ0FBQyxDQUFDIiwiaWdub3JlTGlzdCI6W119

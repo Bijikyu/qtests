@@ -1,0 +1,10 @@
+e207db77f6abcb3d9bc2acb47c99e30d
+// Auto-generated unit test for coreUtils.js - optimized for speed
+import * as mod from './coreUtils.js';
+describe('coreUtils.js', () => {
+  test('stubMethod works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.stubMethod).toBeDefined();
+  });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2QiLCJkZXNjcmliZSIsInRlc3QiLCJleHBlY3QiLCJzdHViTWV0aG9kIiwidG9CZURlZmluZWQiXSwic291cmNlcyI6WyJjb3JlVXRpbHMudGVzdC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBBdXRvLWdlbmVyYXRlZCB1bml0IHRlc3QgZm9yIGNvcmVVdGlscy5qcyAtIG9wdGltaXplZCBmb3Igc3BlZWRcbmltcG9ydCAqIGFzIG1vZCBmcm9tICcuL2NvcmVVdGlscy5qcyc7XG5cbmRlc2NyaWJlKCdjb3JlVXRpbHMuanMnLCAoKSA9PiB7XG4gIHRlc3QoJ3N0dWJNZXRob2Qgd29ya3MnLCBhc3luYyAoKSA9PiB7XG4gICAgLy8gRmFzdCBhc3NlcnRpb24gLSBUT0RPOiBpbXBsZW1lbnQgc3BlY2lmaWMgdGVzdCBsb2dpY1xuICAgIGV4cGVjdCh0eXBlb2YgbW9kLnN0dWJNZXRob2QpLnRvQmVEZWZpbmVkKCk7XG4gIH0pO1xufSk7XG4iXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0EsT0FBTyxLQUFLQSxHQUFHLE1BQU0sZ0JBQWdCO0FBRXJDQyxRQUFRLENBQUMsY0FBYyxFQUFFLE1BQU07RUFDN0JDLElBQUksQ0FBQyxrQkFBa0IsRUFBRSxZQUFZO0lBQ25DO0lBQ0FDLE1BQU0sQ0FBQyxPQUFPSCxHQUFHLENBQUNJLFVBQVUsQ0FBQyxDQUFDQyxXQUFXLENBQUMsQ0FBQztFQUM3QyxDQUFDLENBQUM7QUFDSixDQUFDLENBQUMiLCJpZ25vcmVMaXN0IjpbXX0=

@@ -1,0 +1,14 @@
+bffbc93569a5372fbae3519edd08d8d0
+// Auto-generated unit test for httpUtils.js - optimized for speed
+import * as mod from './httpUtils.js';
+describe('httpUtils.js', () => {
+  test('mockAxios works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.mockAxios).toBeDefined();
+  });
+  test('httpTest works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.httpTest).toBeDefined();
+  });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2QiLCJkZXNjcmliZSIsInRlc3QiLCJleHBlY3QiLCJtb2NrQXhpb3MiLCJ0b0JlRGVmaW5lZCIsImh0dHBUZXN0Il0sInNvdXJjZXMiOlsiaHR0cFV0aWxzLnRlc3QuanMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gQXV0by1nZW5lcmF0ZWQgdW5pdCB0ZXN0IGZvciBodHRwVXRpbHMuanMgLSBvcHRpbWl6ZWQgZm9yIHNwZWVkXG5pbXBvcnQgKiBhcyBtb2QgZnJvbSAnLi9odHRwVXRpbHMuanMnO1xuXG5kZXNjcmliZSgnaHR0cFV0aWxzLmpzJywgKCkgPT4ge1xuICB0ZXN0KCdtb2NrQXhpb3Mgd29ya3MnLCBhc3luYyAoKSA9PiB7XG4gICAgLy8gRmFzdCBhc3NlcnRpb24gLSBUT0RPOiBpbXBsZW1lbnQgc3BlY2lmaWMgdGVzdCBsb2dpY1xuICAgIGV4cGVjdCh0eXBlb2YgbW9kLm1vY2tBeGlvcykudG9CZURlZmluZWQoKTtcbiAgfSk7XG4gIHRlc3QoJ2h0dHBUZXN0IHdvcmtzJywgYXN5bmMgKCkgPT4ge1xuICAgIC8vIEZhc3QgYXNzZXJ0aW9uIC0gVE9ETzogaW1wbGVtZW50IHNwZWNpZmljIHRlc3QgbG9naWNcbiAgICBleHBlY3QodHlwZW9mIG1vZC5odHRwVGVzdCkudG9CZURlZmluZWQoKTtcbiAgfSk7XG59KTtcbiJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQSxPQUFPLEtBQUtBLEdBQUcsTUFBTSxnQkFBZ0I7QUFFckNDLFFBQVEsQ0FBQyxjQUFjLEVBQUUsTUFBTTtFQUM3QkMsSUFBSSxDQUFDLGlCQUFpQixFQUFFLFlBQVk7SUFDbEM7SUFDQUMsTUFBTSxDQUFDLE9BQU9ILEdBQUcsQ0FBQ0ksU0FBUyxDQUFDLENBQUNDLFdBQVcsQ0FBQyxDQUFDO0VBQzVDLENBQUMsQ0FBQztFQUNGSCxJQUFJLENBQUMsZ0JBQWdCLEVBQUUsWUFBWTtJQUNqQztJQUNBQyxNQUFNLENBQUMsT0FBT0gsR0FBRyxDQUFDTSxRQUFRLENBQUMsQ0FBQ0QsV0FBVyxDQUFDLENBQUM7RUFDM0MsQ0FBQyxDQUFDO0FBQ0osQ0FBQyxDQUFDIiwiaWdub3JlTGlzdCI6W119

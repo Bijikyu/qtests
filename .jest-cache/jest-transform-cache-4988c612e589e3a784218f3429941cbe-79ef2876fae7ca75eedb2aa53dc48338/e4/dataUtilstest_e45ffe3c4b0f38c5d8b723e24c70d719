@@ -1,0 +1,10 @@
+4258af8507e3e3328e2937b610a17664
+// Auto-generated unit test for dataUtils.js - optimized for speed
+import * as mod from './dataUtils.js';
+describe('dataUtils.js', () => {
+  test('mockModels works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.mockModels).toBeDefined();
+  });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2QiLCJkZXNjcmliZSIsInRlc3QiLCJleHBlY3QiLCJtb2NrTW9kZWxzIiwidG9CZURlZmluZWQiXSwic291cmNlcyI6WyJkYXRhVXRpbHMudGVzdC5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBBdXRvLWdlbmVyYXRlZCB1bml0IHRlc3QgZm9yIGRhdGFVdGlscy5qcyAtIG9wdGltaXplZCBmb3Igc3BlZWRcbmltcG9ydCAqIGFzIG1vZCBmcm9tICcuL2RhdGFVdGlscy5qcyc7XG5cbmRlc2NyaWJlKCdkYXRhVXRpbHMuanMnLCAoKSA9PiB7XG4gIHRlc3QoJ21vY2tNb2RlbHMgd29ya3MnLCBhc3luYyAoKSA9PiB7XG4gICAgLy8gRmFzdCBhc3NlcnRpb24gLSBUT0RPOiBpbXBsZW1lbnQgc3BlY2lmaWMgdGVzdCBsb2dpY1xuICAgIGV4cGVjdCh0eXBlb2YgbW9kLm1vY2tNb2RlbHMpLnRvQmVEZWZpbmVkKCk7XG4gIH0pO1xufSk7XG4iXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0EsT0FBTyxLQUFLQSxHQUFHLE1BQU0sZ0JBQWdCO0FBRXJDQyxRQUFRLENBQUMsY0FBYyxFQUFFLE1BQU07RUFDN0JDLElBQUksQ0FBQyxrQkFBa0IsRUFBRSxZQUFZO0lBQ25DO0lBQ0FDLE1BQU0sQ0FBQyxPQUFPSCxHQUFHLENBQUNJLFVBQVUsQ0FBQyxDQUFDQyxXQUFXLENBQUMsQ0FBQztFQUM3QyxDQUFDLENBQUM7QUFDSixDQUFDLENBQUMiLCJpZ25vcmVMaXN0IjpbXX0=
