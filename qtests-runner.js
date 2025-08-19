@@ -168,7 +168,7 @@ class TestRunner {
       const isJestTest = this.shouldUseJest(testFile);
       
       const command = isJestTest ? 'npx' : 'node';
-      const args = isJestTest ? ['jest', '--testPathPattern', testFile, '--verbose'] : [testFile];
+      const args = isJestTest ? ['jest', '--testPathPatterns', testFile, '--verbose'] : [testFile];
 
       const child = spawn(command, args, {
         stdio: ['ignore', 'pipe', 'pipe'],
