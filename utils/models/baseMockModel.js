@@ -5,8 +5,32 @@
  * It handles core model functionality like save, remove, and collection management.
  */
 
-// Global registry for all mock model collections
+// Global registry for all mock model collections with parallel-test isolation
 const mockCollections = new Map();
+
+/**
+ * Get test-isolated collection key to prevent race conditions
+ * Uses Jest's test context or process info to create unique collections per test
+ */
+function getTestIsolatedKey(modelName) {
+  // Use test file path + test name if available (Jest provides this in expect.getState())
+  let testContext = '';
+  try {
+    if (typeof expect !== 'undefined' && expect.getState) {
+      const state = expect.getState();
+      testContext = `${state.testPath || ''}-${state.currentTestName || ''}`;
+    }
+  } catch (e) {
+    // Fallback if Jest context not available
+  }
+  
+  // Add process PID and high-resolution time for uniqueness
+  const processId = process.pid;
+  const hrTime = process.hrtime.bigint();
+  const unique = `${processId}-${hrTime}`;
+  
+  return `${modelName}-${testContext}-${unique}`;
+}
 
 /**
  * Base Mock Model Class
@@ -102,13 +126,13 @@ class BaseMockModel {
    * @returns {Array} Array serving as the in-memory collection
    */
   static getCollection() {
-    const modelName = this.name || 'Anonymous';
+    const key = getTestIsolatedKey(this.name || 'Anonymous');
     
-    if (!mockCollections.has(modelName)) {
-      mockCollections.set(modelName, []);
+    if (!mockCollections.has(key)) {
+      mockCollections.set(key, []);
     }
     
-    return mockCollections.get(modelName);
+    return mockCollections.get(key);
   }
   
   /**
@@ -120,8 +144,8 @@ class BaseMockModel {
     console.log(`${this.name}.clearCollection is running`);
     
     try {
-      const modelName = this.name || 'Anonymous';
-      mockCollections.set(modelName, []);
+      const key = getTestIsolatedKey(this.name || 'Anonymous');
+      mockCollections.set(key, []);
       console.log(`${this.name}.clearCollection completed`);
     } catch (error) {
       console.log(`${this.name}.clearCollection error ${error.message}`);
@@ -146,9 +170,9 @@ class BaseMockModel {
       const remainingDocs = collection.filter(doc => !this.matchesQuery(doc, query));
       const deletedCount = initialLength - remainingDocs.length;
       
-      // Update the collection
-      const modelName = this.name || 'Anonymous';
-      mockCollections.set(modelName, remainingDocs);
+      // Update the collection with test-isolated key
+      const key = getTestIsolatedKey(this.name || 'Anonymous');
+      mockCollections.set(key, remainingDocs);
       
       console.log(`${this.name}.deleteMany deleted ${deletedCount} documents`);
       return Promise.resolve({ deletedCount, acknowledged: true });

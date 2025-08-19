@@ -12,17 +12,23 @@ const { logStart, logReturn } = require('../../lib/logUtils');
  * 
  * This class eliminates duplicate test data creation across test files
  * by providing standardized factory methods for common test entities.
+ * 
+ * PARALLEL TEST SAFETY:
+ * - Uses process.hrtime.bigint() for unique IDs to avoid race conditions
+ * - No shared static state between parallel test executions
+ * - Each test gets unique data that won't conflict with other tests
  */
 class TestDataFactory {
-  static counter = 0;
-
   /**
-   * Gets next unique counter value for test data
+   * Gets next unique ID for test data (parallel-safe)
    * 
-   * @returns {number} Incremented counter value
+   * @returns {string} Unique identifier safe for parallel test execution
    */
   static nextId() {
-    return ++this.counter;
+    // Use high-resolution time + random component for guaranteed uniqueness
+    const hrTime = process.hrtime.bigint();
+    const random = Math.random().toString(36).substr(2, 9);
+    return `${hrTime}-${random}`;
   }
 
   /**

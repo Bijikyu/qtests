@@ -1,92 +1,221 @@
 # Test Failure Analysis
 
-**Creation Time:** 2025-08-19T09:41:44.783Z
-**Pacific Time:** Tuesday, August 19, 2025 at 02:41:44 AM PDT
+**Creation Time:** 2025-08-19T10:02:33.232Z
+**Pacific Time:** Tuesday, August 19, 2025 at 03:02:33 AM PDT
 
 ⚠️ **STALENESS WARNING:** If your code changes are after the creation time above and you are checking this file, then it is stale and tests need to be rerun.
 
 Analyze and address the following test failures:
 
-## Failed Test 1: test/testSuite.test.js
+## Failed Test 1: test/runTestSuite.test.js
+
+### Output:
+```
+Error: Cannot parse /home/runner/workspace/test/temp_integration_project/package.json as JSON: ENOENT: no such file or directory, open '/home/runner/workspace/test/temp_integration_project/package.json'
+    at Object.worker (/home/runner/workspace/node_modules/jest-haste-map/build/worker.js:128:13)
+    at execFunction (/home/runner/workspace/node_modules/jest-worker/build/workers/processChild.js:149:17)
+    at execHelper (/home/runner/workspace/node_modules/jest-worker/build/workers/processChild.js:137:5)
+    at execMethod (/home/runner/workspace/node_modules/jest-worker/build/workers/processChild.js:140:5)
+    at process.messageListener (/home/runner/workspace/node_modules/jest-worker/build/workers/processChild.js:44:7)
+    at process.emit (node:events:524:28)
+    at emit (node:internal/child_process:950:14)
+    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)
+
+```
+
+### Duration: 5829ms
+
+---
+
+## Failed Test 2: test/testGenerator.test.js
+
+### Output:
+```
+FAIL test/testGenerator.test.js
+  TestGenerator Configuration
+    ✓ should use default configuration (4 ms)
+    ✓ should accept custom configuration (1 ms)
+  TestGenerator File System
+    ✓ should walk directory structure (5 ms)
+  TestGenerator CLI
+    ✕ should have executable CLI script (2 ms)
+    ✓ should show help when requested (223 ms)
+    ✓ should show version when requested (303 ms)
+  TestGenerator Content Generation
+    ✓ should generate unit test content (2 ms)
+    ✓ should generate API test content (1 ms)
+
+  ● TestGenerator CLI › should have executable CLI script
+
+    expect(received).toBeTruthy()
+
+    Received: 0
+
+      72 |     
+      73 |     const stats = fs.statSync(cliPath);
+    > 74 |     expect(stats.mode & 0o111).toBeTruthy(); // Check executable bit
+         |                                ^
+      75 |   });
+      76 |
+      77 |   it('should show help when requested', () => {
+
+      at Object.toBeTruthy (test/testGenerator.test.js:74:32)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 7 passed, 8 total
+Snapshots:   0 total
+Time:        2.825 s
+Ran all test suites matching /test\/testGenerator.test.js/i.
+
+```
+
+### Duration: 7784ms
+
+---
+
+## Failed Test 3: test/testSuite.test.js
 
 ### Output:
 ```
 FAIL test/testSuite.test.js
   testSuite utility
     DatabaseTestHelper
-      ✓ sets up database models correctly (101 ms)
-      ✓ tears down database correctly (19 ms)
-      ✓ provides access to models after setup (31 ms)
-      ✓ throws error when accessing models before setup (39 ms)
+      ✓ sets up database models correctly (154 ms)
+      ✓ tears down database correctly (59 ms)
+      ✓ provides access to models after setup (20 ms)
+      ✓ throws error when accessing models before setup (83 ms)
       ✓ creates suite with automatic setup (1 ms)
-      ✓ clears model data on setup (81 ms)
+      ✓ clears model data on setup (39 ms)
     MockManager
       ✓ sets up API client mocks (11 ms)
-      ✓ sets up API client mocks with custom responses (8 ms)
-      ✓ sets up console mocks (10 ms)
-      ✓ sets up environment mocks (28 ms)
-      ✓ sets up email mocks (22 ms)
-      ✕ sets up HTTP mocks with responses (3 ms)
-      ✓ clears all mocks (11 ms)
-      ✓ gets specific mock by name (8 ms)
+      ✓ sets up API client mocks with custom responses (37 ms)
+      ✓ sets up console mocks (21 ms)
+      ✓ sets up environment mocks (25 ms)
+      ✓ sets up email mocks (32 ms)
+      ✕ sets up HTTP mocks with responses (11 ms)
+      ✓ clears all mocks (19 ms)
+      ✓ gets specific mock by name (9 ms)
     AssertionHelper
       ✓ asserts database entity properties (5 ms)
-      ✓ throws error for invalid database entity (5 ms)
-      ✓ throws error for wrong property values (3 ms)
-      ✓ asserts API response structure (2 ms)
-      ✓ throws error for wrong API response status (3 ms)
-      ✓ asserts email sent successfully (76 ms)
-      ✓ throws error when expected email not found (8 ms)
-      ✕ asserts mock function calls (23 ms)
-      ✓ throws error for wrong mock call count (17 ms)
+      ✕ throws error for invalid database entity (4 ms)
+      ✕ throws error for wrong property values (57 ms)
+      ✓ asserts API response structure (21 ms)
+      ✓ throws error for wrong API response status (4 ms)
+      ✓ asserts email sent successfully (31 ms)
+      ✕ throws error when expected email not found (16 ms)
+      ✕ asserts mock function calls (36 ms)
+      ✓ throws error for wrong mock call count (6 ms)
     TestDataFactory
-      ✕ creates user with default properties
-      ✕ creates user with overrides (1 ms)
-      ✕ creates API key with default properties
-      ✕ creates log entry with default properties
-      ✕ creates configuration with default properties
-      ✕ creates multiple entities (1 ms)
-      ✕ creates multiple entities with base overrides
-      ✕ creates related entities
-      ✕ increments counter for unique IDs (1 ms)
-      ✕ resets counter
+      ✓ creates user with default properties (18 ms)
+      ✓ creates user with overrides (7 ms)
+      ✓ creates API key with default properties (9 ms)
+      ✓ creates log entry with default properties (11 ms)
+      ✕ creates configuration with default properties (57 ms)
+      ✓ creates multiple entities (20 ms)
+      ✓ creates multiple entities with base overrides (69 ms)
+      ✕ creates related entities (102 ms)
+      ✓ increments counter for unique IDs (4 ms)
+      ✓ resets counter (4 ms)
     PerformanceTestHelper
-      ✓ measures operation time (44 ms)
-      ✓ asserts timing constraint success (18 ms)
-      ✓ asserts timing constraint failure (55 ms)
+      ✓ measures operation time (25 ms)
+      ✓ asserts timing constraint success (6 ms)
+      ✓ asserts timing constraint failure (61 ms)
       ✓ tests concurrent operations (2 ms)
-      ✕ measures memory usage (1 ms)
+      ✓ measures memory usage (2 ms)
     TestSuiteBuilder
-      ✕ builds basic test suite (4 ms)
-      ✕ builds suite with database (5 ms)
-      ✓ builds suite with API mocks (7 ms)
-      ✓ builds suite with console mocks (4 ms)
-      ✕ builds suite with environment mocks (2 ms)
+      ✓ builds basic test suite (2 ms)
+      ✓ builds suite with database (1 ms)
+      ✓ builds suite with API mocks (6 ms)
+      ✓ builds suite with console mocks (2 ms)
+      ✓ builds suite with environment mocks (10 ms)
       ✓ builds suite with email mocks (4 ms)
-      ✕ builds suite with HTTP mocks (2 ms)
-      ✕ builds suite with performance utilities (2 ms)
-      ✕ builds suite with all features (2 ms)
-      ✕ supports method chaining (1 ms)
-      ✓ supports without auto cleanup (1 ms)
+      ✓ builds suite with HTTP mocks (7 ms)
+      ✓ builds suite with performance utilities (1 ms)
+      ✓ builds suite with all features (5 ms)
+      ✓ supports method chaining (3 ms)
+      ✓ supports without auto cleanup (2 ms)
     integration scenarios
-      ✕ complete database workflow with assertions (5 ms)
-      ✕ mock management with API and email testing (12 ms)
-      ✓ performance testing with data factory (156 ms)
-      ✕ comprehensive test scenario with all utilities (4 ms)
+      ✓ complete database workflow with assertions (6 ms)
+      ✓ mock management with API and email testing (14 ms)
+      ✓ performance testing with data factory (167 ms)
+      ✓ comprehensive test scenario with all utilities (6 ms)
 
   ● testSuite utility › MockManager › sets up HTTP mocks with responses
 
-    TypeError: mockManager.setupHttpMocks is not a function
+    expect(received).toBe(expected) // Object.is equality
 
-      158 |       ];
-      159 |       
-    > 160 |       const httpMocks = mockManager.setupHttpMocks(responses);
-          |                                     ^
-      161 |       
+    Expected: "function"
+    Received: "undefined"
+
       162 |       expect(httpMocks.app).toBeDefined();
       163 |       expect(typeof httpMocks.supertest).toBe('function');
+    > 164 |       expect(typeof httpMocks.request).toBe('function');
+          |                                        ^
+      165 |     });
+      166 |
+      167 |     test('clears all mocks', () => {
 
-      at Object.setupHttpMocks (test/testSuite.test.js:160:37)
+      at Object.toBe (test/testSuite.test.js:164:40)
+
+  ● testSuite utility › AssertionHelper › throws error for invalid database entity
+
+    expect(received).toThrow(expected)
+
+    Expected substring: "Entity _id must be defined and truthy"
+
+    Received function did not throw
+
+      212 |       expect(() => {
+      213 |         AssertionHelper.assertDatabaseEntity(entity, {});
+    > 214 |       }).toThrow('Entity _id must be defined and truthy');
+          |          ^
+      215 |     });
+      216 |
+      217 |     test('throws error for wrong property values', () => {
+
+      at Object.toThrow (test/testSuite.test.js:214:10)
+
+  ● testSuite utility › AssertionHelper › throws error for wrong property values
+
+    expect(received).toThrow(expected)
+
+    Expected substring: "Expected entity.status to be active, but got inactive"
+    Received message:   "Expected status to be 'active', but got 'inactive'"
+
+          261 |       Object.keys(expectedProps).forEach(prop => {
+          262 |         if (entity[prop] !== expectedProps[prop]) {
+        > 263 |           throw new Error(`Expected ${prop} to be '${expectedProps[prop]}', but got '${entity[prop]}'`);
+              |                 ^
+          264 |         }
+          265 |       });
+          266 |
+
+      at utils/testing/assertionHelper.js:263:17
+                at Array.forEach (<anonymous>)
+      at Function.forEach [as assertDatabaseEntity] (utils/testing/assertionHelper.js:261:34)
+      at assertDatabaseEntity (test/testSuite.test.js:226:25)
+      at Object.<anonymous> (node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/expect/build/index.js:320:21)
+      at Object.toThrow (test/testSuite.test.js:227:10)
+      at Object.toThrow (test/testSuite.test.js:227:10)
+
+  ● testSuite utility › AssertionHelper › throws error when expected email not found
+
+    expect(received).toThrow(expected)
+
+    Expected substring: "Expected at least 1 emails, but found 0"
+
+    Received function did not throw
+
+      270 |       expect(() => {
+      271 |         AssertionHelper.assertEmailSent({ to: 'test@example.com' });
+    > 272 |       }).toThrow('Expected at least 1 emails, but found 0');
+          |          ^
+      273 |     });
+      274 |
+      275 |     test('asserts mock function calls', () => {
+
+      at Object.toThrow (test/testSuite.test.js:272:10)
 
   ● testSuite utility › AssertionHelper › asserts mock function calls
 
@@ -110,320 +239,54 @@ FAIL test/testSuite.test.js
       at Object.toThrow (test/testSuite.test.js:286:14)
       at Object.toThrow (test/testSuite.test.js:286:14)
 
-  ● testSuite utility › TestDataFactory › creates user with default properties
-
-    TypeError: TestDataFactory.reset is not a function
-
-      299 |   describe('TestDataFactory', () => {
-      300 |     beforeEach(() => {
-    > 301 |       TestDataFactory.reset();
-          |                       ^
-      302 |     });
-      303 |
-      304 |     test('creates user with default properties', () => {
-
-      at Object.reset (test/testSuite.test.js:301:23)
-
-  ● testSuite utility › TestDataFactory › creates user with overrides
-
-    TypeError: TestDataFactory.reset is not a function
-
-      299 |   describe('TestDataFactory', () => {
-      300 |     beforeEach(() => {
-    > 301 |       TestDataFactory.reset();
-          |                       ^
-      302 |     });
-      303 |
-      304 |     test('creates user with default properties', () => {
-
-      at Object.reset (test/testSuite.test.js:301:23)
-
-  ● testSuite utility › TestDataFactory › creates API key with default properties
-
-    TypeError: TestDataFactory.reset is not a function
-
-      299 |   describe('TestDataFactory', () => {
-      300 |     beforeEach(() => {
-    > 301 |       TestDataFactory.reset();
-          |                       ^
-      302 |     });
-      303 |
-      304 |     test('creates user with default properties', () => {
-
-      at Object.reset (test/testSuite.test.js:301:23)
-
-  ● testSuite utility › TestDataFactory › creates log entry with default properties
-
-    TypeError: TestDataFactory.reset is not a function
-
-      299 |   describe('TestDataFactory', () => {
-      300 |     beforeEach(() => {
-    > 301 |       TestDataFactory.reset();
-          |                       ^
-      302 |     });
-      303 |
-      304 |     test('creates user with default properties', () => {
-
-      at Object.reset (test/testSuite.test.js:301:23)
-
   ● testSuite utility › TestDataFactory › creates configuration with default properties
 
-    TypeError: TestDataFactory.reset is not a function
+    expect(received).toBeDefined()
 
-      299 |   describe('TestDataFactory', () => {
-      300 |     beforeEach(() => {
-    > 301 |       TestDataFactory.reset();
-          |                       ^
-      302 |     });
-      303 |
-      304 |     test('creates user with default properties', () => {
+    Received: undefined
 
-      at Object.reset (test/testSuite.test.js:301:23)
+      357 |       expect(config.name).toMatch(/^Test Configuration \d+$/);
+      358 |       expect(config.environment).toBe('test');
+    > 359 |       expect(config.settings).toBeDefined();
+          |                               ^
+      360 |       expect(config.features).toBeDefined();
+      361 |       expect(config.createdAt).toBeInstanceOf(Date);
+      362 |     });
 
-  ● testSuite utility › TestDataFactory › creates multiple entities
-
-    TypeError: TestDataFactory.reset is not a function
-
-      299 |   describe('TestDataFactory', () => {
-      300 |     beforeEach(() => {
-    > 301 |       TestDataFactory.reset();
-          |                       ^
-      302 |     });
-      303 |
-      304 |     test('creates user with default properties', () => {
-
-      at Object.reset (test/testSuite.test.js:301:23)
-
-  ● testSuite utility › TestDataFactory › creates multiple entities with base overrides
-
-    TypeError: TestDataFactory.reset is not a function
-
-      299 |   describe('TestDataFactory', () => {
-      300 |     beforeEach(() => {
-    > 301 |       TestDataFactory.reset();
-          |                       ^
-      302 |     });
-      303 |
-      304 |     test('creates user with default properties', () => {
-
-      at Object.reset (test/testSuite.test.js:301:23)
+      at Object.toBeDefined (test/testSuite.test.js:359:31)
 
   ● testSuite utility › TestDataFactory › creates related entities
 
-    TypeError: TestDataFactory.reset is not a function
+    expect(received).toHaveLength(expected)
 
-      299 |   describe('TestDataFactory', () => {
-      300 |     beforeEach(() => {
-    > 301 |       TestDataFactory.reset();
-          |                       ^
-      302 |     });
-      303 |
-      304 |     test('creates user with default properties', () => {
+    Matcher error: received value must have a length property whose value must be a number
 
-      at Object.reset (test/testSuite.test.js:301:23)
+    Received has value: undefined
 
-  ● testSuite utility › TestDataFactory › increments counter for unique IDs
+      394 |       expect(entities.apiKeys).toHaveLength(4); // 2 users * 2 keys each
+      395 |       expect(entities.logs).toHaveLength(2); // 2 users * 1 log each
+    > 396 |       expect(entities.configs).toHaveLength(1);
+          |                                ^
+      397 |       
+      398 |       // Check relationships
+      399 |       expect(entities.apiKeys[0].userId).toBe(entities.users[0].id);
 
-    TypeError: TestDataFactory.reset is not a function
-
-      299 |   describe('TestDataFactory', () => {
-      300 |     beforeEach(() => {
-    > 301 |       TestDataFactory.reset();
-          |                       ^
-      302 |     });
-      303 |
-      304 |     test('creates user with default properties', () => {
-
-      at Object.reset (test/testSuite.test.js:301:23)
-
-  ● testSuite utility › TestDataFactory › resets counter
-
-    TypeError: TestDataFactory.reset is not a function
-
-      299 |   describe('TestDataFactory', () => {
-      300 |     beforeEach(() => {
-    > 301 |       TestDataFactory.reset();
-          |                       ^
-      302 |     });
-      303 |
-      304 |     test('creates user with default properties', () => {
-
-      at Object.reset (test/testSuite.test.js:301:23)
-
-  ● testSuite utility › PerformanceTestHelper › measures memory usage
-
-    TypeError: PerformanceTestHelper.measureMemory is not a function
-
-      476 |       };
-      477 |       
-    > 478 |       const measurement = await PerformanceTestHelper.measureMemory(operation);
-          |                                                       ^
-      479 |       
-      480 |       expect(measurement.result).toBe(1000);
-      481 |       expect(measurement.beforeMemory).toBeDefined();
-
-      at Object.measureMemory (test/testSuite.test.js:478:55)
-
-  ● testSuite utility › TestSuiteBuilder › builds basic test suite
-
-    expect(received).toBe(expected) // Object.is equality
-
-    Expected: [Function AssertionHelper]
-    Received: {}
-
-      506 |       
-      507 |       expect(suite.mocks).toBeInstanceOf(MockManager);
-    > 508 |       expect(suite.assert).toBe(AssertionHelper);
-          |                            ^
-      509 |       expect(suite.data).toBe(TestDataFactory);
-      510 |       expect(suite.db).toBeUndefined(); // Not enabled
-      511 |       expect(suite.performance).toBeUndefined(); // Not enabled
-
-      at Object.toBe (test/testSuite.test.js:508:28)
-
-  ● testSuite utility › TestSuiteBuilder › builds suite with database
-
-    TypeError: builder.withDatabase is not a function
-
-      513 |
-      514 |     test('builds suite with database', () => {
-    > 515 |       const suite = builder.withDatabase().build();
-          |                             ^
-      516 |       
-      517 |       expect(suite.db).toBeInstanceOf(DatabaseTestHelper);
-      518 |     });
-
-      at Object.withDatabase (test/testSuite.test.js:515:29)
-
-  ● testSuite utility › TestSuiteBuilder › builds suite with environment mocks
-
-    TypeError: builder.withEnvironmentMocks is not a function
-
-      534 |     test('builds suite with environment mocks', () => {
-      535 |       const envVars = { TEST_MODE: 'true' };
-    > 536 |       const suite = builder.withEnvironmentMocks(envVars).build();
-          |                             ^
-      537 |       
-      538 |       expect(process.env.TEST_MODE).toBe('true');
-      539 |     });
-
-      at Object.withEnvironmentMocks (test/testSuite.test.js:536:29)
-
-  ● testSuite utility › TestSuiteBuilder › builds suite with HTTP mocks
-
-    TypeError: builder.withHttpMocks is not a function
-
-      548 |     test('builds suite with HTTP mocks', () => {
-      549 |       const responses = [{ method: 'GET', path: '/', data: { message: 'hello' } }];
-    > 550 |       const suite = builder.withHttpMocks(responses).build();
-          |                             ^
-      551 |       
-      552 |       const httpMock = suite.mocks.getMock('http');
-      553 |       expect(httpMock).toBeDefined();
-
-      at Object.withHttpMocks (test/testSuite.test.js:550:29)
-
-  ● testSuite utility › TestSuiteBuilder › builds suite with performance utilities
-
-    expect(received).toBe(expected) // Object.is equality
-
-    Expected: [Function PerformanceTestHelper]
-    Received: {}
-
-      557 |       const suite = builder.withPerformance().build();
-      558 |       
-    > 559 |       expect(suite.performance).toBe(PerformanceTestHelper);
-          |                                 ^
-      560 |     });
-      561 |
-      562 |     test('builds suite with all features', () => {
-
-      at Object.toBe (test/testSuite.test.js:559:33)
-
-  ● testSuite utility › TestSuiteBuilder › builds suite with all features
-
-    TypeError: builder.withDatabase is not a function
-
-      562 |     test('builds suite with all features', () => {
-      563 |       const suite = builder
-    > 564 |         .withDatabase()
-          |          ^
-      565 |         .withApiMocks()
-      566 |         .withConsoleMocks()
-      567 |         .withEmailMocks()
-
-      at Object.withDatabase (test/testSuite.test.js:564:10)
-
-  ● testSuite utility › TestSuiteBuilder › supports method chaining
-
-    TypeError: builder.withDatabase is not a function
-
-      578 |     test('supports method chaining', () => {
-      579 |       const result = builder
-    > 580 |         .withDatabase()
-          |          ^
-      581 |         .withApiMocks()
-      582 |         .withPerformance();
-      583 |       
-
-      at Object.withDatabase (test/testSuite.test.js:580:10)
-
-  ● testSuite utility › integration scenarios › complete database workflow with assertions
-
-    TypeError: suite.assert.assertDatabaseEntity is not a function
-
-      617 |         
-      618 |         // Assert database entity
-    > 619 |         suite.assert.assertDatabaseEntity(apiKey, {
-          |                      ^
-      620 |           key: userData.username + '-key',
-      621 |           userId: userData.id
-      622 |         });
-
-      at Object.assertDatabaseEntity (test/testSuite.test.js:619:22)
-
-  ● testSuite utility › integration scenarios › mock management with API and email testing
-
-    TypeError: suite.assert.assertEmailSent is not a function
-
-      643 |       emailMock.sendEmail('test@example.com', 'Test', 'Body');
-      644 |       
-    > 645 |       suite.assert.assertEmailSent({ to: 'test@example.com' });
-          |                    ^
-      646 |       
-      647 |       // Cleanup
-      648 |       suite.mocks.clearAll();
-
-      at Object.assertEmailSent (test/testSuite.test.js:645:20)
-
-  ● testSuite utility › integration scenarios › comprehensive test scenario with all utilities
-
-    TypeError: suite.assert.assertEmailSent is not a function
-
-      694 |         
-      695 |         // Test assertions
-    > 696 |         suite.assert.assertEmailSent({ to: userData.email, subject: 'Welcome' });
-          |                      ^
-      697 |         
-      698 |         // Test console mock
-      699 |         const consoleMock = suite.mocks.getMock('console');
-
-      at Object.assertEmailSent (test/testSuite.test.js:696:22)
+      at Object.toHaveLength (test/testSuite.test.js:396:32)
 
 Test Suites: 1 failed, 1 total
-Tests:       23 failed, 30 passed, 53 total
+Tests:       7 failed, 46 passed, 53 total
 Snapshots:   0 total
-Time:        3.735 s
+Time:        4.354 s
 Ran all test suites matching /test\/testSuite.test.js/i.
 
 ```
 
-### Duration: 8381ms
+### Duration: 8298ms
 
 ---
 
 ## Summary
 
-- Total failed tests: 1
-- Failed test files: test/testSuite.test.js
-- Generated: 2025-08-19T09:41:44.806Z
+- Total failed tests: 3
+- Failed test files: test/runTestSuite.test.js, test/testGenerator.test.js, test/testSuite.test.js
+- Generated: 2025-08-19T10:02:33.252Z
