@@ -98,8 +98,18 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
   - **Performance optimization**: Added `isolatedModules: true` for faster TypeScript compilation
   - **Clear separation**: TypeScript and JavaScript files now use appropriate, dedicated transformers
 
+#### qtests Runner Success Detection Issue
+- **Client-Reported Issue**: Fixed qtests runner using Jest-specific success detection patterns instead of recognizing qtests success format
+- **Root Cause**: qtests-runner.js only checked for Jest `PASS ` and `FAIL ` patterns, ignoring native qtests/Node.js test success indicators
+- **Fixes Applied**:
+  - **Enhanced success detection**: Now handles both Jest format (PASS/FAIL patterns) and qtests/Node.js format (exit codes + exception detection)
+  - **Smart format detection**: Uses `isJestTest()` to apply appropriate success criteria for each test type
+  - **Native qtests support**: Success determined by exit code 0 + no uncaught exceptions for non-Jest tests
+  - **Comprehensive error detection**: Catches ReferenceError, TypeError, SyntaxError and other uncaught exceptions
+
 #### Resolution Summary
 - **Fix Verification**: Confirmed fixes with 100% test success rate (75/75 tests passing)
 - **Quality Assurance**: Enhanced test generator to be more project-agnostic and robust
-- **Client Impact**: All future Jest scaffolding now works correctly for both JavaScript and TypeScript projects regardless of project structure
+- **Client Impact**: All future Jest scaffolding now works correctly for both JavaScript and TypeScript projects regardless of project structure  
 - **Transform Separation**: JavaScript and TypeScript files now use dedicated, appropriate transformers without conflicts
+- **Universal Success Detection**: qtests runner now recognizes success in both Jest format and native qtests/Node.js format, providing complete test framework compatibility
