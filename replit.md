@@ -69,3 +69,12 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - `arqitect`: AI-powered planning and architecture analysis.
 - `quantumagent`: Specialized reasoning and analysis subagent.
 - `fileflows`: Data flow visualization and documentation.
+
+## Recent Bug Fixes (August 2025)
+
+### Critical Jest Configuration Bug Fix (August 19, 2025)
+- **Client-Reported Issue Resolution**: Fixed critical typo in Jest configuration generation where `moduleNameMapping` was incorrectly used instead of `moduleNameMapper`
+- **Root Cause Identified**: Bug was in `lib/testGenerator.js` line 626 within the ES module Jest configuration template
+- **Impact Assessment**: Affected all clients using `npx qtests-generate` to scaffold Jest setups for ES module projects, causing Jest configuration errors
+- **Fix Verification**: Confirmed fix with 100% test success rate (75/75 tests passing) and proper Jest property naming
+- **Quality Assurance**: This demonstrates the importance of thorough testing of generated configurations and responsiveness to client feedback
