@@ -182,18 +182,18 @@ class TestRunner {
    */
   async runTestFile(testFile) {
     return new Promise((resolve) => {
-      // Timeout protection to prevent hanging
+      // Timeout protection to prevent hanging - LIGHTNING SPEED MODE
       const timeout = setTimeout(() => {
-        console.log(`\n${colors.red}⚠️  TIMEOUT: ${testFile} exceeded 30 seconds${colors.reset}`);
+        console.log(`\n${colors.red}⚠️  TIMEOUT: ${testFile} exceeded 5 seconds${colors.reset}`);
         resolve({
           file: testFile,
           success: false,
-          duration: 30000,
+          duration: 5000,
           output: '',
-          error: 'Test timeout after 30 seconds',
+          error: 'Test timeout after 5 seconds',
           code: 1
         });
-      }, 30000); // 30 second timeout per test
+      }, 5000); // 5 second timeout per test - FAST
       const startTime = Date.now();
       let stdout = '';
       let stderr = '';
