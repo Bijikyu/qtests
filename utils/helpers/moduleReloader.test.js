@@ -1,9 +1,9 @@
-// Auto-generated unit test for moduleReloader.js - optimized for speed
-const mod = require('./moduleReloader.js');
-
-describe('moduleReloader.js', () => {
-  test('reload works', async () => {
-    // Fast assertion - TODO: implement specific test logic
-    expect(typeof mod.reload).toBeDefined();
+// Lightweight unit test for moduleReloader.js - no complex operations
+describe('moduleReloader.js basic exports', () => {
+  test('module loads without errors', () => {
+    expect(() => require('./moduleReloader.js')).not.toThrow();
+    const mod = require('./moduleReloader.js');
+    expect(mod).toBeDefined();
+    expect(typeof mod).toBe('object');
   });
 });

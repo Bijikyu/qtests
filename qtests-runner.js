@@ -500,14 +500,14 @@ class TestRunner {
     testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
     console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
     
-    // Advanced concurrency calculation based on system resources and memory optimization
+    // Conservative concurrency calculation to prevent system resource exhaustion
     const cpuCount = os.cpus().length;
     const totalMemoryGB = Math.round(os.totalmem() / (1024 ** 3));
     
-    // Optimal balance: maintain performance gain without hanging
-    const memoryBasedMax = Math.floor(totalMemoryGB / 2); // 2GB per worker for stability
-    const cpuBasedMax = cpuCount * 2.125; // 2.125x cores (minimal increase from 2x)
-    const maxConcurrency = Math.min(testFiles.length, Math.max(8, cpuBasedMax), memoryBasedMax, 17); // Max 17 for stability
+    // Reduced concurrency to prevent thread creation failures (uv_thread_create errors)
+    const memoryBasedMax = Math.floor(totalMemoryGB / 3); // 3GB per worker for extra stability
+    const cpuBasedMax = Math.max(1, Math.floor(cpuCount * 1.5)); // More conservative 1.5x cores
+    const maxConcurrency = Math.min(testFiles.length, Math.max(4, cpuBasedMax), memoryBasedMax, 8); // Max 8 for system stability
     
     console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores, ${totalMemoryGB}GB RAM)${colors.reset}\n`);
     

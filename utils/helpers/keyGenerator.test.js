@@ -1,9 +1,9 @@
-// Auto-generated unit test for keyGenerator.js - optimized for speed
-const mod = require('./keyGenerator.js');
-
-describe('keyGenerator.js', () => {
-  test('generateKey works', async () => {
-    // Fast assertion - TODO: implement specific test logic
-    expect(typeof mod.generateKey).toBeDefined();
+// Lightweight unit test for keyGenerator.js - no complex operations
+describe('keyGenerator.js basic exports', () => {
+  test('module loads without errors', () => {
+    expect(() => require('./keyGenerator.js')).not.toThrow();
+    const mod = require('./keyGenerator.js');
+    expect(mod).toBeDefined();
+    expect(typeof mod).toBe('object');
   });
 });
