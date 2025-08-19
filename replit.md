@@ -89,7 +89,17 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
   - **Generic project structure**: Changed Jest roots from `['<rootDir>/src', '<rootDir>/tests']` to `['<rootDir>']` for broader compatibility
   - **Comprehensive setup template**: Provided beforeAll/afterAll/beforeEach/afterEach hooks with explanatory comments
 
+#### Jest Transform Configuration Issue
+- **Client-Reported Issue**: Fixed ts-jest trying to process .js files in primarily JavaScript projects, causing TypeScript compilation errors
+- **Root Cause**: ts-jest presets (`preset: 'ts-jest'` and `preset: 'ts-jest/presets/default-esm'`) automatically configured ts-jest to handle all files
+- **Fixes Applied**:
+  - **Removed problematic presets**: Eliminated automatic ts-jest configuration for all files
+  - **Added explicit transforms**: ts-jest now only handles `.tsx?` files, babel-jest handles `.jsx?` files
+  - **Performance optimization**: Added `isolatedModules: true` for faster TypeScript compilation
+  - **Clear separation**: TypeScript and JavaScript files now use appropriate, dedicated transformers
+
 #### Resolution Summary
 - **Fix Verification**: Confirmed fixes with 100% test success rate (75/75 tests passing)
 - **Quality Assurance**: Enhanced test generator to be more project-agnostic and robust
-- **Client Impact**: All future Jest scaffolding now works correctly regardless of project structure
+- **Client Impact**: All future Jest scaffolding now works correctly for both JavaScript and TypeScript projects regardless of project structure
+- **Transform Separation**: JavaScript and TypeScript files now use dedicated, appropriate transformers without conflicts
