@@ -49,6 +49,17 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 
 ## Recent Changes (August 2025)
 
+### Single Responsibility Principle Refactoring (August 19, 2025)
+- **Major Architecture Improvement**: Successfully refactored 4 critical files to follow Single Responsibility Principle, reducing 25 SRP violations to focused, maintainable modules
+- **utils/sendEmail.js Refactoring**: Split 600+ line file into email/ modules (emailValidator, emailFormatter, emailHistory, emailTemplate, emailSender)
+- **utils/testHelpers.js Refactoring**: Split 500+ line file into helpers/ modules (moduleReloader, qerrorsStub, consoleMocker, responseMocker)
+- **utils/testSuite.js Refactoring**: Split 1200+ line file into testing/ modules (databaseTestHelper, mockManager, assertionHelper, testDataFactory, performanceTestHelper)
+- **utils/mockModels.js Refactoring**: Split 634-line file into models/ modules (baseMockModel, apiKeyModel, apiLogModel, modelFactory)
+- **Enhanced Code Organization**: Large monolithic files broken into focused components (20-150 lines each) with clear single responsibilities
+- **Improved Maintainability**: Each module now handles one specific concern, making debugging, testing, and team development more efficient
+- **Automatic Test Coverage**: qtests generator automatically created comprehensive test files for all new modular components
+- **Backward Compatibility**: All refactoring maintains existing API interfaces to prevent breaking changes
+
 ### Universal CommonJS and ES Module Support (August 19, 2025)
 - **Enhanced Export Detection**: Test generator now intelligently detects both CommonJS (`module.exports`, `exports.name`) and ES module (`export const/function/class`) patterns in source code
 - **Dual Pattern Recognition**: Added comprehensive regex patterns to extract exports from both module systems without changing qtests' CommonJS architecture
