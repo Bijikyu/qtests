@@ -1,5 +1,5 @@
 // Auto-generated unit test for stubMethod.js - optimized for speed
-import * as mod from './stubMethod.js';
+const mod = require('./stubMethod.js');
 
 describe('stubMethod.js', () => {
   test('stubMethod works', async () => {

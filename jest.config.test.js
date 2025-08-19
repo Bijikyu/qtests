@@ -1,5 +1,5 @@
 // Auto-generated unit test for jest.config.js - optimized for speed
-import * as mod from './jest.config.js';
+const mod = require('./jest.config.js');
 
 describe('jest.config.js', () => {
   test('cache works', async () => {

@@ -1,5 +1,5 @@
 // Auto-generated unit test for runTestSuite.js - optimized for speed
-import * as mod from './runTestSuite.js';
+const mod = require('./runTestSuite.js');
 
 describe('runTestSuite.js', () => {
   test('runTestSuite works', async () => {

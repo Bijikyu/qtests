@@ -1,5 +1,5 @@
 // Auto-generated unit test for mockConsole.js - optimized for speed
-import * as mod from './mockConsole.js';
+const mod = require('./mockConsole.js');
 
 describe('mockConsole.js', () => {
   test('mockConsole works', async () => {

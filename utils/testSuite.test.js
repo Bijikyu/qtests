@@ -1,5 +1,5 @@
 // Auto-generated unit test for testSuite.js - optimized for speed
-import * as mod from './testSuite.js';
+const mod = require('./testSuite.js');
 
 describe('testSuite.js', () => {
   test('DatabaseTestHelper works', async () => {

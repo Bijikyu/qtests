@@ -1,5 +1,5 @@
 // Auto-generated unit test for index.js - optimized for speed
-import * as mod from './index.js';
+const mod = require('./index.js');
 
 describe('index.js', () => {
   test('stubMethod works', async () => {

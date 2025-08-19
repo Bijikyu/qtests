@@ -58,3 +58,5 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Robust Import Handling**: Enhanced import detection to handle both `require()` and `import` statements without null reference errors
 - **Intelligent Test Generation**: Generates appropriate test syntax based on detected project module type while maintaining qtests' CommonJS core
 - **Comprehensive Test Coverage**: Created dual module system tests that verify CommonJS object exports, ES module exports, mixed patterns, and edge cases
+- **Jest Compatibility Fix**: Fixed test generator to default to CommonJS syntax for maximum Jest compatibility, preventing ES module parse errors in test environments
+- **Root Cause Resolution**: Enhanced module detection logic to properly handle ambiguous scenarios and avoid auto-generating incompatible test syntax

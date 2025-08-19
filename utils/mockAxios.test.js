@@ -1,5 +1,5 @@
 // Auto-generated unit test for mockAxios.js - optimized for speed
-import * as mod from './mockAxios.js';
+const mod = require('./mockAxios.js');
 
 describe('mockAxios.js', () => {
   test('createMockAxios works', async () => {

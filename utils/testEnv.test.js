@@ -1,5 +1,5 @@
 // Auto-generated unit test for testEnv.js - optimized for speed
-import * as mod from './testEnv.js';
+const mod = require('./testEnv.js');
 
 describe('testEnv.js', () => {
   test('defaultEnv works', async () => {

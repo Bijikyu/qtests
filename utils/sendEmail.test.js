@@ -1,5 +1,5 @@
 // Auto-generated unit test for sendEmail.js - optimized for speed
-import * as mod from './sendEmail.js';
+const mod = require('./sendEmail.js');
 
 describe('sendEmail.js', () => {
   test('sendEmail works', async () => {

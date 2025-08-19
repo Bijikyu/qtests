@@ -1,5 +1,5 @@
 // Auto-generated unit test for testHelpers.js - optimized for speed
-import * as mod from './testHelpers.js';
+const mod = require('./testHelpers.js');
 
 describe('testHelpers.js', () => {
   test('stubQerrors works', async () => {

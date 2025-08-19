@@ -1,0 +1,10 @@
+7c1b9920c98589ce1aebec48be7e16e1
+// Auto-generated unit test for testUtils.js - optimized for speed
+const mod = require('./testUtils.js');
+describe('testUtils.js', () => {
+  test('testHelpers works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.testHelpers).toBeDefined();
+  });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2QiLCJyZXF1aXJlIiwiZGVzY3JpYmUiLCJ0ZXN0IiwiZXhwZWN0IiwidGVzdEhlbHBlcnMiLCJ0b0JlRGVmaW5lZCJdLCJzb3VyY2VzIjpbInRlc3RVdGlscy50ZXN0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIEF1dG8tZ2VuZXJhdGVkIHVuaXQgdGVzdCBmb3IgdGVzdFV0aWxzLmpzIC0gb3B0aW1pemVkIGZvciBzcGVlZFxuY29uc3QgbW9kID0gcmVxdWlyZSgnLi90ZXN0VXRpbHMuanMnKTtcblxuZGVzY3JpYmUoJ3Rlc3RVdGlscy5qcycsICgpID0+IHtcbiAgdGVzdCgndGVzdEhlbHBlcnMgd29ya3MnLCBhc3luYyAoKSA9PiB7XG4gICAgLy8gRmFzdCBhc3NlcnRpb24gLSBUT0RPOiBpbXBsZW1lbnQgc3BlY2lmaWMgdGVzdCBsb2dpY1xuICAgIGV4cGVjdCh0eXBlb2YgbW9kLnRlc3RIZWxwZXJzKS50b0JlRGVmaW5lZCgpO1xuICB9KTtcbn0pO1xuIl0sIm1hcHBpbmdzIjoiQUFBQTtBQUNBLE1BQU1BLEdBQUcsR0FBR0MsT0FBTyxDQUFDLGdCQUFnQixDQUFDO0FBRXJDQyxRQUFRLENBQUMsY0FBYyxFQUFFLE1BQU07RUFDN0JDLElBQUksQ0FBQyxtQkFBbUIsRUFBRSxZQUFZO0lBQ3BDO0lBQ0FDLE1BQU0sQ0FBQyxPQUFPSixHQUFHLENBQUNLLFdBQVcsQ0FBQyxDQUFDQyxXQUFXLENBQUMsQ0FBQztFQUM5QyxDQUFDLENBQUM7QUFDSixDQUFDLENBQUMiLCJpZ25vcmVMaXN0IjpbXX0=

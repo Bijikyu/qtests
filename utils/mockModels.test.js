@@ -1,5 +1,5 @@
 // Auto-generated unit test for mockModels.js - optimized for speed
-import * as mod from './mockModels.js';
+const mod = require('./mockModels.js');
 
 describe('mockModels.js', () => {
   test('BaseMockModel works', async () => {

@@ -1,5 +1,5 @@
 // Auto-generated unit test for offlineMode.js - optimized for speed
-import * as mod from './offlineMode.js';
+const mod = require('./offlineMode.js');
 
 describe('offlineMode.js', () => {
   test('setOfflineMode works', async () => {

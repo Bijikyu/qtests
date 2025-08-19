@@ -1,5 +1,5 @@
 // Auto-generated unit test for httpTest.js - optimized for speed
-import * as mod from './httpTest.js';
+const mod = require('./httpTest.js');
 
 describe('httpTest.js', () => {
   test('supertest works', async () => {
