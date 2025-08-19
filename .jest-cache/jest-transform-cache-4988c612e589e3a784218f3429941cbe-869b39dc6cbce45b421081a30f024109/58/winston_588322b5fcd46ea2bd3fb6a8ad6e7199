@@ -1,0 +1,190 @@
+2b1acf5356d750160f7be729cd5aa616
+/**
+ * Winston Logging Library Stub for Testing
+ * 
+ * This module provides a complete no-op replacement for the winston logging
+ * library. When tests require('winston') after qtests/setup, they get this
+ * stub instead of real winston, preventing log output during test execution.
+ * 
+ * Design philosophy:
+ * - Complete interface coverage: implements all commonly used winston APIs
+ * - Silent operation: no console output or file writing
+ * - Memory efficient: no log storage or processing
+ * - Fast execution: all operations are no-ops
+ * 
+ * Why stub winston specifically:
+ * - Extremely popular logging library in Node.js ecosystem
+ * - Log output pollutes test output and makes debugging harder
+ * - File logging during tests can cause permission issues
+ * - Tests should focus on business logic, not logging side effects
+ * 
+ * Implementation strategy:
+ * - Mirror winston's API structure exactly
+ * - All functions are no-ops (do nothing, return nothing meaningful)
+ * - Maintain object structure for property access compatibility
+ * - No state storage to keep memory usage minimal
+ */
+
+const noop = () => {}; // shared no-op function for all stub methods
+
+const winstonStub = {
+  /**
+   * Creates a no-op logger instance
+   * 
+   * This replaces winston.createLogger() with a function that returns
+   * an object containing silent implementations of all common logging methods.
+   * 
+   * Why return an object with methods:
+   * - Code expects to call logger.info(), logger.error(), etc.
+   * - Must provide these methods to prevent "function not found" errors
+   * - All methods are no-ops to eliminate log output
+   * 
+   * Method selection:
+   * - error, warn, info: Most common logging levels
+   * - Can be extended with debug, verbose, silly, etc. as needed
+   * - Each method accepts any arguments but does nothing
+   * 
+   * @returns {Object} Logger-like object with no-op logging methods
+   */
+  createLogger: () => ({
+    /**
+     * No-op error logging
+     * Replaces logger.error() calls with silent operation
+     * @param {...any} args - Any logging arguments (ignored)
+     */
+    error: noop,
+    // Silent - no error output during tests
+
+    /**
+     * No-op warning logging  
+     * Replaces logger.warn() calls with silent operation
+     * @param {...any} args - Any logging arguments (ignored)
+     */
+    warn: noop,
+    // Silent - no warning output during tests
+
+    /**
+     * No-op info logging
+     * Replaces logger.info() calls with silent operation
+     * @param {...any} args - Any logging arguments (ignored)
+     */
+    info: noop // Silent - no info output during tests
+  }),
+  /**
+   * Winston format utilities stub
+   * 
+   * Winston's format object provides utilities for formatting log messages.
+   * This stub provides no-op implementations of the most commonly used
+   * formatting functions to prevent errors when code configures loggers.
+   * 
+   * Why stub format utilities:
+   * - Logger configuration often chains format calls
+   * - Code like winston.format.combine(winston.format.timestamp()) is common
+   * - Without stubs, these calls would throw "function not found" errors
+   * - No-op implementations allow configuration code to run without effect
+   */
+  format: {
+    /**
+     * No-op format combiner
+     * Replaces winston.format.combine() for chaining formatters
+     * @returns {Function} No-op function
+     */
+    combine: noop,
+    // Silent - no format combination
+
+    /**
+     * No-op timestamp formatter
+     * Replaces winston.format.timestamp() for adding timestamps
+     * @returns {Function} No-op function  
+     */
+    timestamp: noop,
+    // Silent - no timestamp formatting
+
+    /**
+     * No-op error formatter
+     * Replaces winston.format.errors() for error object formatting
+     * @returns {Function} No-op function
+     */
+    errors: noop,
+    // Silent - no error formatting
+
+    /**
+     * No-op splat formatter
+     * Replaces winston.format.splat() for string interpolation
+     * @returns {Function} No-op function
+     */
+    splat: noop,
+    // Silent - no string interpolation
+
+    /**
+     * No-op JSON formatter
+     * Replaces winston.format.json() for JSON output formatting
+     * @returns {Function} No-op function
+     */
+    json: noop,
+    // Silent - no JSON formatting
+
+    /**
+     * No-op printf formatter
+     * Replaces winston.format.printf() for custom formatting
+     * @returns {Function} No-op function
+     */
+    printf: noop // Silent - no custom formatting
+  },
+  /**
+   * Winston transport utilities stub
+   * 
+   * Winston transports define where log messages go (files, console, etc.).
+   * This stub provides no-op constructor functions for the most common
+   * transport types to prevent errors during logger configuration.
+   * 
+   * Why stub transports:
+   * - Logger configuration typically specifies output destinations
+   * - Code like new winston.transports.File({filename: 'app.log'}) is common
+   * - Without stubs, transport construction would fail
+   * - No-op constructors allow configuration without creating real outputs
+   */
+  transports: {
+    /**
+     * No-op file transport constructor
+     * Replaces winston.transports.File for file logging configuration
+     * @param {Object} options - Transport configuration (ignored)
+     */
+    File: noop,
+    // Silent - no file transport creation
+
+    /**
+     * No-op console transport constructor  
+     * Replaces winston.transports.Console for console logging configuration
+     * @param {Object} options - Transport configuration (ignored)
+     */
+    Console: noop // Silent - no console transport creation
+  }
+};
+module.exports = winstonStub;
+
+/**
+ * Usage in tests:
+ * 
+ * After requiring 'qtests/setup', any code that does:
+ *   const winston = require('winston');
+ *   const logger = winston.createLogger({
+ *     format: winston.format.combine(
+ *       winston.format.timestamp(),
+ *       winston.format.json()
+ *     ),
+ *     transports: [
+ *       new winston.transports.File({ filename: 'app.log' })
+ *     ]
+ *   });
+ *   logger.info('Test message');
+ * 
+ * Will use this stub instead, which:
+ * - Creates a silent logger that outputs nothing
+ * - Allows all configuration calls to succeed
+ * - Prevents any file I/O or console output
+ * - Maintains the same API surface as real winston
+ * 
+ * This enables testing of logging-dependent code without log pollution.
+ */
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJub29wIiwid2luc3RvblN0dWIiLCJjcmVhdGVMb2dnZXIiLCJlcnJvciIsIndhcm4iLCJpbmZvIiwiZm9ybWF0IiwiY29tYmluZSIsInRpbWVzdGFtcCIsImVycm9ycyIsInNwbGF0IiwianNvbiIsInByaW50ZiIsInRyYW5zcG9ydHMiLCJGaWxlIiwiQ29uc29sZSIsIm1vZHVsZSIsImV4cG9ydHMiXSwic291cmNlcyI6WyJ3aW5zdG9uLmpzIl0sInNvdXJjZXNDb250ZW50IjpbIi8qKlxuICogV2luc3RvbiBMb2dnaW5nIExpYnJhcnkgU3R1YiBmb3IgVGVzdGluZ1xuICogXG4gKiBUaGlzIG1vZHVsZSBwcm92aWRlcyBhIGNvbXBsZXRlIG5vLW9wIHJlcGxhY2VtZW50IGZvciB0aGUgd2luc3RvbiBsb2dnaW5nXG4gKiBsaWJyYXJ5LiBXaGVuIHRlc3RzIHJlcXVpcmUoJ3dpbnN0b24nKSBhZnRlciBxdGVzdHMvc2V0dXAsIHRoZXkgZ2V0IHRoaXNcbiAqIHN0dWIgaW5zdGVhZCBvZiByZWFsIHdpbnN0b24sIHByZXZlbnRpbmcgbG9nIG91dHB1dCBkdXJpbmcgdGVzdCBleGVjdXRpb24uXG4gKiBcbiAqIERlc2lnbiBwaGlsb3NvcGh5OlxuICogLSBDb21wbGV0ZSBpbnRlcmZhY2UgY292ZXJhZ2U6IGltcGxlbWVudHMgYWxsIGNvbW1vbmx5IHVzZWQgd2luc3RvbiBBUElzXG4gKiAtIFNpbGVudCBvcGVyYXRpb246IG5vIGNvbnNvbGUgb3V0cHV0IG9yIGZpbGUgd3JpdGluZ1xuICogLSBNZW1vcnkgZWZmaWNpZW50OiBubyBsb2cgc3RvcmFnZSBvciBwcm9jZXNzaW5nXG4gKiAtIEZhc3QgZXhlY3V0aW9uOiBhbGwgb3BlcmF0aW9ucyBhcmUgbm8tb3BzXG4gKiBcbiAqIFdoeSBzdHViIHdpbnN0b24gc3BlY2lmaWNhbGx5OlxuICogLSBFeHRyZW1lbHkgcG9wdWxhciBsb2dnaW5nIGxpYnJhcnkgaW4gTm9kZS5qcyBlY29zeXN0ZW1cbiAqIC0gTG9nIG91dHB1dCBwb2xsdXRlcyB0ZXN0IG91dHB1dCBhbmQgbWFrZXMgZGVidWdnaW5nIGhhcmRlclxuICogLSBGaWxlIGxvZ2dpbmcgZHVyaW5nIHRlc3RzIGNhbiBjYXVzZSBwZXJtaXNzaW9uIGlzc3Vlc1xuICogLSBUZXN0cyBzaG91bGQgZm9jdXMgb24gYnVzaW5lc3MgbG9naWMsIG5vdCBsb2dnaW5nIHNpZGUgZWZmZWN0c1xuICogXG4gKiBJbXBsZW1lbnRhdGlvbiBzdHJhdGVneTpcbiAqIC0gTWlycm9yIHdpbnN0b24ncyBBUEkgc3RydWN0dXJlIGV4YWN0bHlcbiAqIC0gQWxsIGZ1bmN0aW9ucyBhcmUgbm8tb3BzIChkbyBub3RoaW5nLCByZXR1cm4gbm90aGluZyBtZWFuaW5nZnVsKVxuICogLSBNYWludGFpbiBvYmplY3Qgc3RydWN0dXJlIGZvciBwcm9wZXJ0eSBhY2Nlc3MgY29tcGF0aWJpbGl0eVxuICogLSBObyBzdGF0ZSBzdG9yYWdlIHRvIGtlZXAgbWVtb3J5IHVzYWdlIG1pbmltYWxcbiAqL1xuXG5jb25zdCBub29wID0gKCkgPT4ge307IC8vIHNoYXJlZCBuby1vcCBmdW5jdGlvbiBmb3IgYWxsIHN0dWIgbWV0aG9kc1xuXG5jb25zdCB3aW5zdG9uU3R1YiA9IHtcbiAgLyoqXG4gICAqIENyZWF0ZXMgYSBuby1vcCBsb2dnZXIgaW5zdGFuY2VcbiAgICogXG4gICAqIFRoaXMgcmVwbGFjZXMgd2luc3Rvbi5jcmVhdGVMb2dnZXIoKSB3aXRoIGEgZnVuY3Rpb24gdGhhdCByZXR1cm5zXG4gICAqIGFuIG9iamVjdCBjb250YWluaW5nIHNpbGVudCBpbXBsZW1lbnRhdGlvbnMgb2YgYWxsIGNvbW1vbiBsb2dnaW5nIG1ldGhvZHMuXG4gICAqIFxuICAgKiBXaHkgcmV0dXJuIGFuIG9iamVjdCB3aXRoIG1ldGhvZHM6XG4gICAqIC0gQ29kZSBleHBlY3RzIHRvIGNhbGwgbG9nZ2VyLmluZm8oKSwgbG9nZ2VyLmVycm9yKCksIGV0Yy5cbiAgICogLSBNdXN0IHByb3ZpZGUgdGhlc2UgbWV0aG9kcyB0byBwcmV2ZW50IFwiZnVuY3Rpb24gbm90IGZvdW5kXCIgZXJyb3JzXG4gICAqIC0gQWxsIG1ldGhvZHMgYXJlIG5vLW9wcyB0byBlbGltaW5hdGUgbG9nIG91dHB1dFxuICAgKiBcbiAgICogTWV0aG9kIHNlbGVjdGlvbjpcbiAgICogLSBlcnJvciwgd2FybiwgaW5mbzogTW9zdCBjb21tb24gbG9nZ2luZyBsZXZlbHNcbiAgICogLSBDYW4gYmUgZXh0ZW5kZWQgd2l0aCBkZWJ1ZywgdmVyYm9zZSwgc2lsbHksIGV0Yy4gYXMgbmVlZGVkXG4gICAqIC0gRWFjaCBtZXRob2QgYWNjZXB0cyBhbnkgYXJndW1lbnRzIGJ1dCBkb2VzIG5vdGhpbmdcbiAgICogXG4gICAqIEByZXR1cm5zIHtPYmplY3R9IExvZ2dlci1saWtlIG9iamVjdCB3aXRoIG5vLW9wIGxvZ2dpbmcgbWV0aG9kc1xuICAgKi9cbiAgY3JlYXRlTG9nZ2VyOiAoKSA9PiAoe1xuICAgIC8qKlxuICAgICAqIE5vLW9wIGVycm9yIGxvZ2dpbmdcbiAgICAgKiBSZXBsYWNlcyBsb2dnZXIuZXJyb3IoKSBjYWxscyB3aXRoIHNpbGVudCBvcGVyYXRpb25cbiAgICAgKiBAcGFyYW0gey4uLmFueX0gYXJncyAtIEFueSBsb2dnaW5nIGFyZ3VtZW50cyAoaWdub3JlZClcbiAgICAgKi9cbiAgICBlcnJvcjogbm9vcCwgLy8gU2lsZW50IC0gbm8gZXJyb3Igb3V0cHV0IGR1cmluZyB0ZXN0c1xuXG4gICAgLyoqXG4gICAgICogTm8tb3Agd2FybmluZyBsb2dnaW5nICBcbiAgICAgKiBSZXBsYWNlcyBsb2dnZXIud2FybigpIGNhbGxzIHdpdGggc2lsZW50IG9wZXJhdGlvblxuICAgICAqIEBwYXJhbSB7Li4uYW55fSBhcmdzIC0gQW55IGxvZ2dpbmcgYXJndW1lbnRzIChpZ25vcmVkKVxuICAgICAqL1xuICAgIHdhcm46IG5vb3AsICAvLyBTaWxlbnQgLSBubyB3YXJuaW5nIG91dHB1dCBkdXJpbmcgdGVzdHNcblxuICAgIC8qKlxuICAgICAqIE5vLW9wIGluZm8gbG9nZ2luZ1xuICAgICAqIFJlcGxhY2VzIGxvZ2dlci5pbmZvKCkgY2FsbHMgd2l0aCBzaWxlbnQgb3BlcmF0aW9uXG4gICAgICogQHBhcmFtIHsuLi5hbnl9IGFyZ3MgLSBBbnkgbG9nZ2luZyBhcmd1bWVudHMgKGlnbm9yZWQpXG4gICAgICovXG4gICAgaW5mbzogbm9vcCAgIC8vIFNpbGVudCAtIG5vIGluZm8gb3V0cHV0IGR1cmluZyB0ZXN0c1xuICB9KSxcblxuICAvKipcbiAgICogV2luc3RvbiBmb3JtYXQgdXRpbGl0aWVzIHN0dWJcbiAgICogXG4gICAqIFdpbnN0b24ncyBmb3JtYXQgb2JqZWN0IHByb3ZpZGVzIHV0aWxpdGllcyBmb3IgZm9ybWF0dGluZyBsb2cgbWVzc2FnZXMuXG4gICAqIFRoaXMgc3R1YiBwcm92aWRlcyBuby1vcCBpbXBsZW1lbnRhdGlvbnMgb2YgdGhlIG1vc3QgY29tbW9ubHkgdXNlZFxuICAgKiBmb3JtYXR0aW5nIGZ1bmN0aW9ucyB0byBwcmV2ZW50IGVycm9ycyB3aGVuIGNvZGUgY29uZmlndXJlcyBsb2dnZXJzLlxuICAgKiBcbiAgICogV2h5IHN0dWIgZm9ybWF0IHV0aWxpdGllczpcbiAgICogLSBMb2dnZXIgY29uZmlndXJhdGlvbiBvZnRlbiBjaGFpbnMgZm9ybWF0IGNhbGxzXG4gICAqIC0gQ29kZSBsaWtlIHdpbnN0b24uZm9ybWF0LmNvbWJpbmUod2luc3Rvbi5mb3JtYXQudGltZXN0YW1wKCkpIGlzIGNvbW1vblxuICAgKiAtIFdpdGhvdXQgc3R1YnMsIHRoZXNlIGNhbGxzIHdvdWxkIHRocm93IFwiZnVuY3Rpb24gbm90IGZvdW5kXCIgZXJyb3JzXG4gICAqIC0gTm8tb3AgaW1wbGVtZW50YXRpb25zIGFsbG93IGNvbmZpZ3VyYXRpb24gY29kZSB0byBydW4gd2l0aG91dCBlZmZlY3RcbiAgICovXG4gIGZvcm1hdDoge1xuICAgIC8qKlxuICAgICAqIE5vLW9wIGZvcm1hdCBjb21iaW5lclxuICAgICAqIFJlcGxhY2VzIHdpbnN0b24uZm9ybWF0LmNvbWJpbmUoKSBmb3IgY2hhaW5pbmcgZm9ybWF0dGVyc1xuICAgICAqIEByZXR1cm5zIHtGdW5jdGlvbn0gTm8tb3AgZnVuY3Rpb25cbiAgICAgKi9cbiAgICBjb21iaW5lOiBub29wLCAgICAvLyBTaWxlbnQgLSBubyBmb3JtYXQgY29tYmluYXRpb25cblxuICAgIC8qKlxuICAgICAqIE5vLW9wIHRpbWVzdGFtcCBmb3JtYXR0ZXJcbiAgICAgKiBSZXBsYWNlcyB3aW5zdG9uLmZvcm1hdC50aW1lc3RhbXAoKSBmb3IgYWRkaW5nIHRpbWVzdGFtcHNcbiAgICAgKiBAcmV0dXJucyB7RnVuY3Rpb259IE5vLW9wIGZ1bmN0aW9uICBcbiAgICAgKi9cbiAgICB0aW1lc3RhbXA6IG5vb3AsICAvLyBTaWxlbnQgLSBubyB0aW1lc3RhbXAgZm9ybWF0dGluZ1xuXG4gICAgLyoqXG4gICAgICogTm8tb3AgZXJyb3IgZm9ybWF0dGVyXG4gICAgICogUmVwbGFjZXMgd2luc3Rvbi5mb3JtYXQuZXJyb3JzKCkgZm9yIGVycm9yIG9iamVjdCBmb3JtYXR0aW5nXG4gICAgICogQHJldHVybnMge0Z1bmN0aW9ufSBOby1vcCBmdW5jdGlvblxuICAgICAqL1xuICAgIGVycm9yczogbm9vcCwgICAgIC8vIFNpbGVudCAtIG5vIGVycm9yIGZvcm1hdHRpbmdcblxuICAgIC8qKlxuICAgICAqIE5vLW9wIHNwbGF0IGZvcm1hdHRlclxuICAgICAqIFJlcGxhY2VzIHdpbnN0b24uZm9ybWF0LnNwbGF0KCkgZm9yIHN0cmluZyBpbnRlcnBvbGF0aW9uXG4gICAgICogQHJldHVybnMge0Z1bmN0aW9ufSBOby1vcCBmdW5jdGlvblxuICAgICAqL1xuICAgIHNwbGF0OiBub29wLCAgICAgIC8vIFNpbGVudCAtIG5vIHN0cmluZyBpbnRlcnBvbGF0aW9uXG5cbiAgICAvKipcbiAgICAgKiBOby1vcCBKU09OIGZvcm1hdHRlclxuICAgICAqIFJlcGxhY2VzIHdpbnN0b24uZm9ybWF0Lmpzb24oKSBmb3IgSlNPTiBvdXRwdXQgZm9ybWF0dGluZ1xuICAgICAqIEByZXR1cm5zIHtGdW5jdGlvbn0gTm8tb3AgZnVuY3Rpb25cbiAgICAgKi9cbiAgICBqc29uOiBub29wLCAgICAgICAvLyBTaWxlbnQgLSBubyBKU09OIGZvcm1hdHRpbmdcblxuICAgIC8qKlxuICAgICAqIE5vLW9wIHByaW50ZiBmb3JtYXR0ZXJcbiAgICAgKiBSZXBsYWNlcyB3aW5zdG9uLmZvcm1hdC5wcmludGYoKSBmb3IgY3VzdG9tIGZvcm1hdHRpbmdcbiAgICAgKiBAcmV0dXJucyB7RnVuY3Rpb259IE5vLW9wIGZ1bmN0aW9uXG4gICAgICovXG4gICAgcHJpbnRmOiBub29wICAgICAgLy8gU2lsZW50IC0gbm8gY3VzdG9tIGZvcm1hdHRpbmdcbiAgfSxcblxuICAvKipcbiAgICogV2luc3RvbiB0cmFuc3BvcnQgdXRpbGl0aWVzIHN0dWJcbiAgICogXG4gICAqIFdpbnN0b24gdHJhbnNwb3J0cyBkZWZpbmUgd2hlcmUgbG9nIG1lc3NhZ2VzIGdvIChmaWxlcywgY29uc29sZSwgZXRjLikuXG4gICAqIFRoaXMgc3R1YiBwcm92aWRlcyBuby1vcCBjb25zdHJ1Y3RvciBmdW5jdGlvbnMgZm9yIHRoZSBtb3N0IGNvbW1vblxuICAgKiB0cmFuc3BvcnQgdHlwZXMgdG8gcHJldmVudCBlcnJvcnMgZHVyaW5nIGxvZ2dlciBjb25maWd1cmF0aW9uLlxuICAgKiBcbiAgICogV2h5IHN0dWIgdHJhbnNwb3J0czpcbiAgICogLSBMb2dnZXIgY29uZmlndXJhdGlvbiB0eXBpY2FsbHkgc3BlY2lmaWVzIG91dHB1dCBkZXN0aW5hdGlvbnNcbiAgICogLSBDb2RlIGxpa2UgbmV3IHdpbnN0b24udHJhbnNwb3J0cy5GaWxlKHtmaWxlbmFtZTogJ2FwcC5sb2cnfSkgaXMgY29tbW9uXG4gICAqIC0gV2l0aG91dCBzdHVicywgdHJhbnNwb3J0IGNvbnN0cnVjdGlvbiB3b3VsZCBmYWlsXG4gICAqIC0gTm8tb3AgY29uc3RydWN0b3JzIGFsbG93IGNvbmZpZ3VyYXRpb24gd2l0aG91dCBjcmVhdGluZyByZWFsIG91dHB1dHNcbiAgICovXG4gIHRyYW5zcG9ydHM6IHtcbiAgICAvKipcbiAgICAgKiBOby1vcCBmaWxlIHRyYW5zcG9ydCBjb25zdHJ1Y3RvclxuICAgICAqIFJlcGxhY2VzIHdpbnN0b24udHJhbnNwb3J0cy5GaWxlIGZvciBmaWxlIGxvZ2dpbmcgY29uZmlndXJhdGlvblxuICAgICAqIEBwYXJhbSB7T2JqZWN0fSBvcHRpb25zIC0gVHJhbnNwb3J0IGNvbmZpZ3VyYXRpb24gKGlnbm9yZWQpXG4gICAgICovXG4gICAgRmlsZTogbm9vcCwgICAgLy8gU2lsZW50IC0gbm8gZmlsZSB0cmFuc3BvcnQgY3JlYXRpb25cblxuICAgIC8qKlxuICAgICAqIE5vLW9wIGNvbnNvbGUgdHJhbnNwb3J0IGNvbnN0cnVjdG9yICBcbiAgICAgKiBSZXBsYWNlcyB3aW5zdG9uLnRyYW5zcG9ydHMuQ29uc29sZSBmb3IgY29uc29sZSBsb2dnaW5nIGNvbmZpZ3VyYXRpb25cbiAgICAgKiBAcGFyYW0ge09iamVjdH0gb3B0aW9ucyAtIFRyYW5zcG9ydCBjb25maWd1cmF0aW9uIChpZ25vcmVkKVxuICAgICAqL1xuICAgIENvbnNvbGU6IG5vb3AgIC8vIFNpbGVudCAtIG5vIGNvbnNvbGUgdHJhbnNwb3J0IGNyZWF0aW9uXG4gIH1cbn07XG5cbm1vZHVsZS5leHBvcnRzID0gd2luc3RvblN0dWI7XG5cbi8qKlxuICogVXNhZ2UgaW4gdGVzdHM6XG4gKiBcbiAqIEFmdGVyIHJlcXVpcmluZyAncXRlc3RzL3NldHVwJywgYW55IGNvZGUgdGhhdCBkb2VzOlxuICogICBjb25zdCB3aW5zdG9uID0gcmVxdWlyZSgnd2luc3RvbicpO1xuICogICBjb25zdCBsb2dnZXIgPSB3aW5zdG9uLmNyZWF0ZUxvZ2dlcih7XG4gKiAgICAgZm9ybWF0OiB3aW5zdG9uLmZvcm1hdC5jb21iaW5lKFxuICogICAgICAgd2luc3Rvbi5mb3JtYXQudGltZXN0YW1wKCksXG4gKiAgICAgICB3aW5zdG9uLmZvcm1hdC5qc29uKClcbiAqICAgICApLFxuICogICAgIHRyYW5zcG9ydHM6IFtcbiAqICAgICAgIG5ldyB3aW5zdG9uLnRyYW5zcG9ydHMuRmlsZSh7IGZpbGVuYW1lOiAnYXBwLmxvZycgfSlcbiAqICAgICBdXG4gKiAgIH0pO1xuICogICBsb2dnZXIuaW5mbygnVGVzdCBtZXNzYWdlJyk7XG4gKiBcbiAqIFdpbGwgdXNlIHRoaXMgc3R1YiBpbnN0ZWFkLCB3aGljaDpcbiAqIC0gQ3JlYXRlcyBhIHNpbGVudCBsb2dnZXIgdGhhdCBvdXRwdXRzIG5vdGhpbmdcbiAqIC0gQWxsb3dzIGFsbCBjb25maWd1cmF0aW9uIGNhbGxzIHRvIHN1Y2NlZWRcbiAqIC0gUHJldmVudHMgYW55IGZpbGUgSS9PIG9yIGNvbnNvbGUgb3V0cHV0XG4gKiAtIE1haW50YWlucyB0aGUgc2FtZSBBUEkgc3VyZmFjZSBhcyByZWFsIHdpbnN0b25cbiAqIFxuICogVGhpcyBlbmFibGVzIHRlc3Rpbmcgb2YgbG9nZ2luZy1kZXBlbmRlbnQgY29kZSB3aXRob3V0IGxvZyBwb2xsdXRpb24uXG4gKi8iXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBOztBQUVBLE1BQU1BLElBQUksR0FBR0EsQ0FBQSxLQUFNLENBQUMsQ0FBQyxDQUFDLENBQUM7O0FBRXZCLE1BQU1DLFdBQVcsR0FBRztFQUNsQjtBQUNGO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7RUFDRUMsWUFBWSxFQUFFQSxDQUFBLE1BQU87SUFDbkI7QUFDSjtBQUNBO0FBQ0E7QUFDQTtJQUNJQyxLQUFLLEVBQUVILElBQUk7SUFBRTs7SUFFYjtBQUNKO0FBQ0E7QUFDQTtBQUNBO0lBQ0lJLElBQUksRUFBRUosSUFBSTtJQUFHOztJQUViO0FBQ0o7QUFDQTtBQUNBO0FBQ0E7SUFDSUssSUFBSSxFQUFFTCxJQUFJLENBQUc7RUFDZixDQUFDLENBQUM7RUFFRjtBQUNGO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtFQUNFTSxNQUFNLEVBQUU7SUFDTjtBQUNKO0FBQ0E7QUFDQTtBQUNBO0lBQ0lDLE9BQU8sRUFBRVAsSUFBSTtJQUFLOztJQUVsQjtBQUNKO0FBQ0E7QUFDQTtBQUNBO0lBQ0lRLFNBQVMsRUFBRVIsSUFBSTtJQUFHOztJQUVsQjtBQUNKO0FBQ0E7QUFDQTtBQUNBO0lBQ0lTLE1BQU0sRUFBRVQsSUFBSTtJQUFNOztJQUVsQjtBQUNKO0FBQ0E7QUFDQTtBQUNBO0lBQ0lVLEtBQUssRUFBRVYsSUFBSTtJQUFPOztJQUVsQjtBQUNKO0FBQ0E7QUFDQTtBQUNBO0lBQ0lXLElBQUksRUFBRVgsSUFBSTtJQUFROztJQUVsQjtBQUNKO0FBQ0E7QUFDQTtBQUNBO0lBQ0lZLE1BQU0sRUFBRVosSUFBSSxDQUFNO0VBQ3BCLENBQUM7RUFFRDtBQUNGO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtFQUNFYSxVQUFVLEVBQUU7SUFDVjtBQUNKO0FBQ0E7QUFDQTtBQUNBO0lBQ0lDLElBQUksRUFBRWQsSUFBSTtJQUFLOztJQUVmO0FBQ0o7QUFDQTtBQUNBO0FBQ0E7SUFDSWUsT0FBTyxFQUFFZixJQUFJLENBQUU7RUFDakI7QUFDRixDQUFDO0FBRURnQixNQUFNLENBQUNDLE9BQU8sR0FBR2hCLFdBQVc7O0FBRTVCO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSIsImlnbm9yZUxpc3QiOltdfQ==

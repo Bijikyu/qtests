@@ -1,0 +1,43 @@
+aa8dfffda7de0b249a22e7db91679c58
+/**
+ * Console Mocking Utility
+ * 
+ * This module provides utilities for mocking console methods during testing.
+ * It focuses solely on console interaction management.
+ */
+
+const {
+  mockConsole
+} = require('../mockConsole');
+
+/**
+ * Execute a callback with a mocked console method
+ *
+ * This helper creates a console spy using mockConsole, runs the callback,
+ * then restores the original console method. It simplifies tests that need
+ * temporary console interception.
+ *
+ * @param {string} method - Console method name to spy on
+ * @param {Function} fn - Callback to execute with the spy
+ * @returns {Promise<*>} Result returned by the callback
+ */
+async function withMockConsole(method, fn) {
+  const spy = mockConsole(method);
+  console.log(`withMockConsole is running with ${method}`);
+  try {
+    const result = await fn(spy);
+    console.log(`withMockConsole is returning ${result}`);
+    return result;
+  } catch (err) {
+    console.log(`withMockConsole error ${err.message}`);
+    throw err;
+  } finally {
+    if (spy.mockRestore) {
+      spy.mockRestore();
+    }
+  }
+}
+module.exports = {
+  withMockConsole
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2NrQ29uc29sZSIsInJlcXVpcmUiLCJ3aXRoTW9ja0NvbnNvbGUiLCJtZXRob2QiLCJmbiIsInNweSIsImNvbnNvbGUiLCJsb2ciLCJyZXN1bHQiLCJlcnIiLCJtZXNzYWdlIiwibW9ja1Jlc3RvcmUiLCJtb2R1bGUiLCJleHBvcnRzIl0sInNvdXJjZXMiOlsiY29uc29sZU1vY2tlci5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIENvbnNvbGUgTW9ja2luZyBVdGlsaXR5XG4gKiBcbiAqIFRoaXMgbW9kdWxlIHByb3ZpZGVzIHV0aWxpdGllcyBmb3IgbW9ja2luZyBjb25zb2xlIG1ldGhvZHMgZHVyaW5nIHRlc3RpbmcuXG4gKiBJdCBmb2N1c2VzIHNvbGVseSBvbiBjb25zb2xlIGludGVyYWN0aW9uIG1hbmFnZW1lbnQuXG4gKi9cblxuY29uc3QgeyBtb2NrQ29uc29sZSB9ID0gcmVxdWlyZSgnLi4vbW9ja0NvbnNvbGUnKTtcblxuLyoqXG4gKiBFeGVjdXRlIGEgY2FsbGJhY2sgd2l0aCBhIG1vY2tlZCBjb25zb2xlIG1ldGhvZFxuICpcbiAqIFRoaXMgaGVscGVyIGNyZWF0ZXMgYSBjb25zb2xlIHNweSB1c2luZyBtb2NrQ29uc29sZSwgcnVucyB0aGUgY2FsbGJhY2ssXG4gKiB0aGVuIHJlc3RvcmVzIHRoZSBvcmlnaW5hbCBjb25zb2xlIG1ldGhvZC4gSXQgc2ltcGxpZmllcyB0ZXN0cyB0aGF0IG5lZWRcbiAqIHRlbXBvcmFyeSBjb25zb2xlIGludGVyY2VwdGlvbi5cbiAqXG4gKiBAcGFyYW0ge3N0cmluZ30gbWV0aG9kIC0gQ29uc29sZSBtZXRob2QgbmFtZSB0byBzcHkgb25cbiAqIEBwYXJhbSB7RnVuY3Rpb259IGZuIC0gQ2FsbGJhY2sgdG8gZXhlY3V0ZSB3aXRoIHRoZSBzcHlcbiAqIEByZXR1cm5zIHtQcm9taXNlPCo+fSBSZXN1bHQgcmV0dXJuZWQgYnkgdGhlIGNhbGxiYWNrXG4gKi9cbmFzeW5jIGZ1bmN0aW9uIHdpdGhNb2NrQ29uc29sZShtZXRob2QsIGZuKSB7XG4gIGNvbnN0IHNweSA9IG1vY2tDb25zb2xlKG1ldGhvZCk7XG4gIGNvbnNvbGUubG9nKGB3aXRoTW9ja0NvbnNvbGUgaXMgcnVubmluZyB3aXRoICR7bWV0aG9kfWApO1xuICB0cnkge1xuICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IGZuKHNweSk7XG4gICAgY29uc29sZS5sb2coYHdpdGhNb2NrQ29uc29sZSBpcyByZXR1cm5pbmcgJHtyZXN1bHR9YCk7XG4gICAgcmV0dXJuIHJlc3VsdDtcbiAgfSBjYXRjaCAoZXJyKSB7XG4gICAgY29uc29sZS5sb2coYHdpdGhNb2NrQ29uc29sZSBlcnJvciAke2Vyci5tZXNzYWdlfWApO1xuICAgIHRocm93IGVycjtcbiAgfSBmaW5hbGx5IHtcbiAgICBpZiAoc3B5Lm1vY2tSZXN0b3JlKSB7IHNweS5tb2NrUmVzdG9yZSgpOyB9XG4gIH1cbn1cblxubW9kdWxlLmV4cG9ydHMgPSB7XG4gIHdpdGhNb2NrQ29uc29sZVxufTsiXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTs7QUFFQSxNQUFNO0VBQUVBO0FBQVksQ0FBQyxHQUFHQyxPQUFPLENBQUMsZ0JBQWdCLENBQUM7O0FBRWpEO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSxlQUFlQyxlQUFlQSxDQUFDQyxNQUFNLEVBQUVDLEVBQUUsRUFBRTtFQUN6QyxNQUFNQyxHQUFHLEdBQUdMLFdBQVcsQ0FBQ0csTUFBTSxDQUFDO0VBQy9CRyxPQUFPLENBQUNDLEdBQUcsQ0FBQyxtQ0FBbUNKLE1BQU0sRUFBRSxDQUFDO0VBQ3hELElBQUk7SUFDRixNQUFNSyxNQUFNLEdBQUcsTUFBTUosRUFBRSxDQUFDQyxHQUFHLENBQUM7SUFDNUJDLE9BQU8sQ0FBQ0MsR0FBRyxDQUFDLGdDQUFnQ0MsTUFBTSxFQUFFLENBQUM7SUFDckQsT0FBT0EsTUFBTTtFQUNmLENBQUMsQ0FBQyxPQUFPQyxHQUFHLEVBQUU7SUFDWkgsT0FBTyxDQUFDQyxHQUFHLENBQUMseUJBQXlCRSxHQUFHLENBQUNDLE9BQU8sRUFBRSxDQUFDO0lBQ25ELE1BQU1ELEdBQUc7RUFDWCxDQUFDLFNBQVM7SUFDUixJQUFJSixHQUFHLENBQUNNLFdBQVcsRUFBRTtNQUFFTixHQUFHLENBQUNNLFdBQVcsQ0FBQyxDQUFDO0lBQUU7RUFDNUM7QUFDRjtBQUVBQyxNQUFNLENBQUNDLE9BQU8sR0FBRztFQUNmWDtBQUNGLENBQUMiLCJpZ25vcmVMaXN0IjpbXX0=

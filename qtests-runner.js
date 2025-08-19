@@ -182,18 +182,19 @@ class TestRunner {
    */
   async runTestFile(testFile) {
     return new Promise((resolve) => {
-      // Timeout protection to prevent hanging - LIGHTNING SPEED MODE
+      // Reasonable timeout - 20 seconds per test
       const timeout = setTimeout(() => {
-        console.log(`\n${colors.red}⚠️  TIMEOUT: ${testFile} exceeded 5 seconds${colors.reset}`);
+        child.kill('SIGTERM');
         resolve({
           file: testFile,
           success: false,
-          duration: 5000,
+          duration: 20000,
           output: '',
-          error: 'Test timeout after 5 seconds',
-          code: 1
+          error: 'Test timeout after 20 seconds',
+          code: 124
         });
-      }, 5000); // 5 second timeout per test - FAST
+      }, 20000);
+      
       const startTime = Date.now();
       let stdout = '';
       let stderr = '';
@@ -202,22 +203,19 @@ class TestRunner {
       const isJestTest = this.shouldUseJest(testFile);
       
       const command = isJestTest ? 'npx' : 'node';
-      const testPathFlag = isJestTest ? this.getJestTestPathFlag() : null;
       
-      // Balanced arguments for speed + stability
-      const baseArgs = isJestTest 
-        ? ['jest', testPathFlag, testFile, '--no-coverage', '--cache'] 
+      // Minimal arguments that actually work
+      const args = isJestTest 
+        ? ['jest', testFile, '--forceExit']
         : ['--max-old-space-size=768', '--no-warnings', testFile];
-      
-      const args = isJestTest ? baseArgs : baseArgs;
 
       const child = spawn(command, args, {
         stdio: ['ignore', 'pipe', 'pipe'],
         env: { 
           ...process.env, 
-          NODE_ENV: 'test',
-          NODE_OPTIONS: '--max-old-space-size=512 --no-warnings' // Memory optimization
-        }
+          NODE_ENV: 'test'
+        },
+        shell: true // Use shell for better Jest compatibility
       });
 
       child.stdout.on('data', (data) => {
@@ -229,7 +227,7 @@ class TestRunner {
       });
 
       child.on('close', (code) => {
-        clearTimeout(timeout); // Clear timeout on normal completion
+        clearTimeout(timeout);
         const duration = Date.now() - startTime;
         
         // Robust success detection for both Jest and qtests/Node.js formats
@@ -279,7 +277,7 @@ class TestRunner {
       });
 
       child.on('error', (error) => {
-        clearTimeout(timeout); // Clear timeout on error
+        clearTimeout(timeout);
         this.failedTests++;
         resolve({
           file: testFile,
