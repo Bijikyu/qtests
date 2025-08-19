@@ -1,1841 +1,798 @@
 # Test Failure Analysis
 
-**Creation Time:** 2025-08-19T15:40:27.870Z
-**Pacific Time:** Tuesday, August 19, 2025 at 08:40:27 AM PDT
+**Creation Time:** 2025-08-19T15:51:19.847Z
+**Pacific Time:** Tuesday, August 19, 2025 at 08:51:19 AM PDT
 
 ⚠️ **STALENESS WARNING:** If your code changes are after the creation time above and you are checking this file, then it is stale and tests need to be rerun.
 
 Analyze and address the following test failures:
 
-## Failed Test 1: lib/setup.test.js
+## Failed Test 1: test/offlineMode.test.js
 
 ### Output:
 ```
-/home/runner/workspace/lib/setup.test.js:2
-describe('setup.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/lib/setup.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+FAIL test/offlineMode.test.js (6.442 s)
+  ● Console
 
-```
-
-### Duration: 239ms
-
----
-
-## Failed Test 2: lib/logUtils.test.js
-
-### Output:
-```
-/home/runner/workspace/lib/logUtils.test.js:2
-describe('logUtils.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/lib/logUtils.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
-
-```
-
-### Duration: 309ms
-
----
-
-## Failed Test 3: lib/httpUtils.test.js
-
-### Output:
-```
-/home/runner/workspace/lib/httpUtils.test.js:2
-describe('httpUtils.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/lib/httpUtils.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
-
-```
-
-### Duration: 336ms
-
----
-
-## Failed Test 4: lib/envUtils.test.js
-
-### Output:
-```
-/home/runner/workspace/lib/envUtils.test.js:2
-describe('envUtils.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/lib/envUtils.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
-
-```
-
-### Duration: 358ms
-
----
-
-## Failed Test 5: jest.config.test.js
-
-### Output:
-```
-/home/runner/workspace/jest.config.test.js:4
-describe('jest.config.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/jest.config.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
-
-```
-
-### Duration: 389ms
-
----
-
-## Failed Test 6: lib/dataUtils.test.js
-
-### Output:
-```
-/home/runner/workspace/lib/dataUtils.test.js:2
-describe('dataUtils.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/lib/dataUtils.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
-
-```
-
-### Duration: 393ms
-
----
-
-## Failed Test 7: lib/coreUtils.test.js
-
-### Output:
-```
-/home/runner/workspace/lib/coreUtils.test.js:2
-describe('coreUtils.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/lib/coreUtils.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
-
-```
-
-### Duration: 422ms
-
----
-
-## Failed Test 8: index.test.js
-
-### Output:
-```
-/home/runner/workspace/index.test.js:2
-describe('index.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/index.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
-
-```
-
-### Duration: 495ms
-
----
-
-## Failed Test 9: lib/testGenerator.test.js
-
-### Output:
-```
-/home/runner/workspace/lib/testGenerator.test.js:3
-jest.mock('fs', () => ({ __esModule: true, default: jest.fn(), ...jest.requireActual('fs') }));
-^
-
-ReferenceError: jest is not defined
-    at Object.<anonymous> (/home/runner/workspace/lib/testGenerator.test.js:3:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
-
-```
-
-### Duration: 369ms
-
----
-
-## Failed Test 10: lib/testUtils.test.js
-
-### Output:
-```
-/home/runner/workspace/lib/testUtils.test.js:4
-describe('testUtils.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/lib/testUtils.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
-
-```
-
-### Duration: 392ms
-
----
-
-## Failed Test 11: test/edgeCases.test.js
-
-### Output:
-```
-/home/runner/workspace/test/edgeCases.test.js:9
-describe('Essential Edge Cases', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/edgeCases.test.js:9:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
-
-```
-
-### Duration: 262ms
-
----
-
-## Failed Test 12: test/logUtils.test.js
-
-### Output:
-```
-/home/runner/workspace/test/logUtils.test.js:9
-test('logStart logs correct start message', () => withMockConsole('log', spy => { //jest test for logStart with helper
-^
-
-ReferenceError: test is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/logUtils.test.js:9:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      setup is running with none
 
-```
-
-### Duration: 241ms
-
----
-
-## Failed Test 13: qtests-runner.test.js
-
-### Output:
-```
-/home/runner/workspace/qtests-runner.test.js:3
-jest.mock('fs', () => ({ __esModule: true, default: jest.fn(), ...jest.requireActual('fs') }));
-^
-
-ReferenceError: jest is not defined
-    at Object.<anonymous> (/home/runner/workspace/qtests-runner.test.js:3:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
-
-```
+      at Object.setup (lib/setup.js:58:11)
 
-### Duration: 470ms
+    console.log
+      setup has run resulting in module resolution modification
 
----
+      at Object.setup (lib/setup.js:62:13)
 
-## Failed Test 14: test/mockConsole.test.js
+    console.log
+      clearOfflineCache is running with none
 
-### Output:
-```
-/home/runner/workspace/test/mockConsole.test.js:5
-test('mockConsole captures calls and restores', async () => { //verify helper restores console
-^
-
-ReferenceError: test is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/mockConsole.test.js:5:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
-
-```
+      at log (utils/offlineMode.js:318:11)
 
-### Duration: 297ms
+    console.log
+      clearOfflineCache is returning undefined
 
----
+      at log (utils/offlineMode.js:323:13)
 
-## Failed Test 15: test/httpTest.test.js
+    console.log
+      getEnvironmentState is running with none
 
-### Output:
-```
-/home/runner/workspace/test/httpTest.test.js:2
-describe('httpTest.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/httpTest.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:267:11)
 
-```
+    console.log
+      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":false,"environmentDetected":false}
 
-### Duration: 386ms
+      at log (utils/offlineMode.js:277:13)
 
----
+    console.log
+      clearOfflineCache is running with none
 
-## Failed Test 16: test/mockUtils.test.js
-
-### Output:
-```
-/home/runner/workspace/test/mockUtils.test.js:6
-test('attachMockSpies uses jest spies when available', () => {
-^
-
-ReferenceError: test is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/mockUtils.test.js:6:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:318:11)
 
-```
+    console.log
+      clearOfflineCache is returning undefined
 
-### Duration: 373ms
+      at log (utils/offlineMode.js:323:13)
 
----
+    console.log
+      getEnvironmentState is running with none
 
-## Failed Test 17: test/dualModuleGeneration.test.js
+      at log (utils/offlineMode.js:267:11)
 
-### Output:
-```
-/home/runner/workspace/test/dualModuleGeneration.test.js:2
-describe('dualModuleGeneration basic tests', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/dualModuleGeneration.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":false,"environmentDetected":false}
 
-```
+      at log (utils/offlineMode.js:277:13)
 
-### Duration: 464ms
+    console.log
+      clearOfflineCache is running with none
 
----
+      at log (utils/offlineMode.js:318:11)
 
-## Failed Test 18: test/axiosStub.test.js
+    console.log
+      clearOfflineCache is returning undefined
 
-### Output:
-```
-/home/runner/workspace/test/axiosStub.test.js:4
- test('stubs.axios.get returns enhanced response object', async () => {
- ^
-
-ReferenceError: test is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/axiosStub.test.js:4:2)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:323:13)
 
-```
+    console.log
+      getEnvironmentState is running with none
 
-### Duration: 581ms
+      at log (utils/offlineMode.js:267:11)
 
----
+    console.log
+      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":false,"environmentDetected":false}
 
-## Failed Test 19: test/qtests-dogfood.test.js
+      at log (utils/offlineMode.js:277:13)
 
-### Output:
-```
-/home/runner/workspace/test/qtests-dogfood.test.js:2
-describe('qtests Dogfooding Tests', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/qtests-dogfood.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      clearOfflineCache is running with none
 
-```
+      at log (utils/offlineMode.js:318:11)
 
-### Duration: 292ms
+    console.log
+      clearOfflineCache is returning undefined
 
----
+      at log (utils/offlineMode.js:323:13)
 
-## Failed Test 20: test/moduleSystemIntegration.test.js
+    console.log
+      getEnvironmentState is running with none
 
-### Output:
-```
-/home/runner/workspace/test/moduleSystemIntegration.test.js:2
-describe('moduleSystemIntegration basic tests', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/moduleSystemIntegration.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:267:11)
 
-```
+    console.log
+      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":false,"environmentDetected":false}
 
-### Duration: 392ms
+      at log (utils/offlineMode.js:277:13)
 
----
+    console.log
+      clearOfflineCache is running with none
 
-## Failed Test 21: test/offlineIntegration.test.js
+      at log (utils/offlineMode.js:318:11)
 
-### Output:
-```
-/home/runner/workspace/test/offlineIntegration.test.js:2
-describe('offlineIntegration basic tests', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/offlineIntegration.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      clearOfflineCache is returning undefined
 
-```
+      at log (utils/offlineMode.js:323:13)
 
-### Duration: 396ms
+    console.log
+      setOfflineMode is running with true
 
----
+      at log (utils/offlineMode.js:81:11)
 
-## Failed Test 22: test/indexExports.test.js
+    console.log
+      clearOfflineCache is running with none
 
-### Output:
-```
-/home/runner/workspace/test/indexExports.test.js:8
- test('index exports expected modules', () => {
- ^
-
-ReferenceError: test is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/indexExports.test.js:8:2)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:318:11)
 
-```
+    console.log
+      clearOfflineCache is returning undefined
 
-### Duration: 545ms
+      at log (utils/offlineMode.js:323:13)
 
----
+    console.log
+      setOfflineMode is returning true
 
-## Failed Test 23: test/safeSerialize.test.js
+      at log (utils/offlineMode.js:87:13)
 
-### Output:
-```
-/home/runner/workspace/test/safeSerialize.test.js:4
-test('serializes primitives and objects', () => { //verify JSON path
-^
-
-ReferenceError: test is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/safeSerialize.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      getQerrors is running with offline: true
 
-```
+      at log (utils/offlineMode.js:209:11)
 
-### Duration: 310ms
+    console.log
+      getQerrors is returning [object Object]
 
----
+      at log (utils/offlineMode.js:240:13)
 
-## Failed Test 24: test/setupMultiple.test.js
+    console.log
+      noopQerrors is running with none
 
-### Output:
-```
-/home/runner/workspace/test/setupMultiple.test.js:4
-describe('setup multiple calls', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/setupMultiple.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at Object.log [as qerrors] (utils/offlineMode.js:225:19)
 
-```
+    console.log
+      noopQerrors has run
 
-### Duration: 288ms
+      at Object.log [as qerrors] (utils/offlineMode.js:227:21)
 
----
+    console.log
+      clearOfflineCache is running with none
 
-## Failed Test 25: test/resolveStubPaths.test.js
+      at log (utils/offlineMode.js:318:11)
 
-### Output:
-```
-/home/runner/workspace/test/resolveStubPaths.test.js:2
-describe('resolveStubPaths basic tests', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/resolveStubPaths.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      clearOfflineCache is returning undefined
 
-```
+      at log (utils/offlineMode.js:323:13)
 
-### Duration: 374ms
+    console.log
+      setOfflineMode is running with true
 
----
+      at log (utils/offlineMode.js:81:11)
 
-## Failed Test 26: test/stubMethod.test.js
+    console.log
+      setOfflineMode is returning true
 
-### Output:
-```
-/home/runner/workspace/test/stubMethod.test.js:4
-describe('stubMethod', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/stubMethod.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:87:13)
 
-```
+    console.log
+      getEnvironmentState is running with none
 
-### Duration: 265ms
+      at log (utils/offlineMode.js:267:11)
 
----
+    console.log
+      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":true,"environmentDetected":false}
 
-## Failed Test 27: test/setupResolution.test.js
+      at log (utils/offlineMode.js:277:13)
 
-### Output:
-```
-/home/runner/workspace/test/setupResolution.test.js:3
-describe('setup resolution', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/setupResolution.test.js:3:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      clearOfflineCache is running with none
 
-```
+      at log (utils/offlineMode.js:318:11)
 
-### Duration: 343ms
+    console.log
+      clearOfflineCache is returning undefined
 
----
+      at log (utils/offlineMode.js:323:13)
 
-## Failed Test 28: test/testEnv.test.js
+    console.log
+      getEnvironmentState is running with none
 
-### Output:
-```
-/home/runner/workspace/test/testEnv.test.js:5
-describe('testEnv utilities', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/testEnv.test.js:5:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:267:11)
 
-```
+    console.log
+      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":true,"environmentDetected":false}
 
-### Duration: 386ms
+      at log (utils/offlineMode.js:277:13)
 
----
+    console.log
+      setOfflineMode is running with true
 
-## Failed Test 29: tests/integration/example__put.test.js
+      at log (utils/offlineMode.js:81:11)
 
-### Output:
-```
-/home/runner/workspace/tests/integration/example__put.test.js:4
-describe('PUT /api/users/:id', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/tests/integration/example__put.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      setOfflineMode is returning true
 
-```
+      at log (utils/offlineMode.js:87:13)
 
-### Duration: 281ms
+    console.log
+      getEnvironmentState is running with none
 
----
+      at log (utils/offlineMode.js:267:11)
 
-## Failed Test 30: tests/integration/example__post.test.js
+    console.log
+      getEnvironmentState is returning {"codexFlag":false,"offlineFlagExplicit":false,"testEnvironment":true,"isOffline":true,"environmentDetected":false}
 
-### Output:
-```
-/home/runner/workspace/tests/integration/example__post.test.js:4
-describe('POST /api/users', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/tests/integration/example__post.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:277:13)
 
-```
+    console.log
+      clearOfflineCache is running with none
 
-### Duration: 310ms
+      at log (utils/offlineMode.js:318:11)
 
----
+    console.log
+      clearOfflineCache is returning undefined
 
-## Failed Test 31: test/testSuite.test.js
+      at log (utils/offlineMode.js:323:13)
 
-### Output:
-```
-/home/runner/workspace/test/testSuite.test.js:2
-describe('testSuite basic tests', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/testSuite.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      setOfflineMode is running with true
 
-```
+      at log (utils/offlineMode.js:81:11)
 
-### Duration: 383ms
+    console.log
+      setOfflineMode is returning true
 
----
+      at log (utils/offlineMode.js:87:13)
 
-## Failed Test 32: test/testGenerator.test.js
+    console.log
+      createEnvironmentAdapters is running with offline: true
 
-### Output:
-```
-/home/runner/workspace/test/testGenerator.test.js:2
-describe('TestGenerator basic tests', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/testGenerator.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:301:11)
 
-```
+    console.log
+      getAxios is running with offline: true
 
-### Duration: 462ms
+      at log (utils/offlineMode.js:140:11)
 
----
+    console.log
+      getAxios is returning [object Object]
 
-## Failed Test 33: tests/integration/example__get.test.js
+      at log (utils/offlineMode.js:171:13)
 
-### Output:
-```
-/home/runner/workspace/tests/integration/example__get.test.js:4
-describe('GET /api/status', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/tests/integration/example__get.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      getQerrors is running with offline: true
 
-```
+      at log (utils/offlineMode.js:209:11)
 
-### Duration: 403ms
+    console.log
+      getQerrors is returning [object Object]
 
----
+      at log (utils/offlineMode.js:240:13)
 
-## Failed Test 34: utils/email/emailHistory.test.js
+    console.log
+      createEnvironmentAdapters is returning adapters
 
-### Output:
-```
-/home/runner/workspace/utils/email/emailHistory.test.js:4
-describe('emailHistory.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/email/emailHistory.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:309:13)
 
-```
+    console.log
+      clearOfflineCache is running with none
 
-### Duration: 283ms
+      at log (utils/offlineMode.js:318:11)
 
----
+    console.log
+      clearOfflineCache is returning undefined
 
-## Failed Test 35: tests/integration/example.test.js
+      at log (utils/offlineMode.js:323:13)
 
-### Output:
-```
-/home/runner/workspace/tests/integration/example.test.js:4
-describe('GET /api/status', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/tests/integration/example.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      setOfflineMode is running with true
 
-```
+      at log (utils/offlineMode.js:81:11)
 
-### Duration: 455ms
+    console.log
+      setOfflineMode is returning true
 
----
+      at log (utils/offlineMode.js:87:13)
 
-## Failed Test 36: utils/email/emailFormatter.test.js
+    console.log
+      createEnvironmentAdapters is running with offline: true
 
-### Output:
-```
-/home/runner/workspace/utils/email/emailFormatter.test.js:4
-describe('emailFormatter.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/email/emailFormatter.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:301:11)
 
-```
+    console.log
+      getAxios is running with offline: true
 
-### Duration: 341ms
+      at log (utils/offlineMode.js:140:11)
 
----
+    console.log
+      getAxios is returning [object Object]
 
-## Failed Test 37: test/testHelpers.test.js
+      at log (utils/offlineMode.js:171:13)
 
-### Output:
-```
-/home/runner/workspace/test/testHelpers.test.js:4
-describe('Test Helpers Basic Tests', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/testHelpers.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      getQerrors is running with offline: true
 
-```
+      at log (utils/offlineMode.js:209:11)
 
-### Duration: 548ms
+    console.log
+      getQerrors is returning [object Object]
 
----
+      at log (utils/offlineMode.js:240:13)
 
-## Failed Test 38: tests/integration/utils__httpTest.test.js
+    console.log
+      createEnvironmentAdapters is returning adapters
 
-### Output:
-```
-/home/runner/workspace/tests/integration/utils__httpTest.test.js:2
-describe('httpTest basic functionality', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/tests/integration/utils__httpTest.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:309:13)
 
-```
+    console.log
+      noopQerrors is running with none
 
-### Duration: 457ms
+      at Object.log [as qerrors] (utils/offlineMode.js:225:19)
 
----
+    console.log
+      noopQerrors has run
 
-## Failed Test 39: tests/integration/utils__httpTest__get.test.js
+      at Object.log [as qerrors] (utils/offlineMode.js:227:21)
 
-### Output:
-```
-/home/runner/workspace/tests/integration/utils__httpTest__get.test.js:4
-describe('GET /test', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/tests/integration/utils__httpTest__get.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      clearOfflineCache is running with none
 
-```
+      at log (utils/offlineMode.js:318:11)
 
-### Duration: 431ms
+    console.log
+      clearOfflineCache is returning undefined
 
----
+      at log (utils/offlineMode.js:323:13)
 
-## Failed Test 40: utils/helpers/envManager.test.js
+    console.log
+      setOfflineMode is running with false
 
-### Output:
-```
-/home/runner/workspace/utils/helpers/envManager.test.js:2
-describe('envManager.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/helpers/envManager.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:81:11)
 
-```
+    console.log
+      clearOfflineCache is running with none
 
-### Duration: 182ms
+      at log (utils/offlineMode.js:318:11)
 
----
+    console.log
+      clearOfflineCache is returning undefined
 
-## Failed Test 41: utils/helpers/consoleMocker.test.js
+      at log (utils/offlineMode.js:323:13)
 
-### Output:
-```
-/home/runner/workspace/utils/helpers/consoleMocker.test.js:2
-describe('consoleMocker.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/helpers/consoleMocker.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      setOfflineMode is returning false
 
-```
+      at log (utils/offlineMode.js:87:13)
 
-### Duration: 256ms
+    console.log
+      createEnvironmentAdapters is running with offline: false
 
----
+      at log (utils/offlineMode.js:301:11)
 
-## Failed Test 42: utils/email/emailTemplate.test.js
+    console.log
+      getAxios is running with offline: false
 
-### Output:
-```
-/home/runner/workspace/utils/email/emailTemplate.test.js:4
-describe('emailTemplate.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/email/emailTemplate.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:140:11)
 
-```
+    console.log
+      getAxios is returning function wrap() {
+          return fn.apply(thisArg, arguments);
+        }
 
-### Duration: 325ms
+      at log (utils/offlineMode.js:171:13)
 
----
+    console.log
+      getQerrors is running with offline: false
 
-## Failed Test 43: utils/email/emailValidator.test.js
+      at log (utils/offlineMode.js:209:11)
 
-### Output:
-```
-/home/runner/workspace/utils/email/emailValidator.test.js:4
-describe('emailValidator.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/email/emailValidator.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      getQerrors is returning [object Object]
 
-```
+      at log (utils/offlineMode.js:240:13)
 
-### Duration: 365ms
+    console.log
+      createEnvironmentAdapters is returning adapters
 
----
+      at log (utils/offlineMode.js:309:13)
 
-## Failed Test 44: utils/helpers/qerrorsStub.test.js
+    console.log
+      clearOfflineCache is running with none
 
-### Output:
-```
-/home/runner/workspace/utils/helpers/qerrorsStub.test.js:4
-describe('qerrorsStub.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/helpers/qerrorsStub.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:318:11)
 
-```
+    console.log
+      clearOfflineCache is returning undefined
 
-### Duration: 277ms
+      at log (utils/offlineMode.js:323:13)
 
----
+    console.log
+      setOfflineMode is running with true
 
-## Failed Test 45: utils/mockConsole.test.js
+      at log (utils/offlineMode.js:81:11)
 
-### Output:
-```
-/home/runner/workspace/utils/mockConsole.test.js:4
-describe('mockConsole.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/mockConsole.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      clearOfflineCache is running with none
 
-```
+      at log (utils/offlineMode.js:318:11)
 
-### Duration: 251ms
+    console.log
+      clearOfflineCache is returning undefined
 
----
+      at log (utils/offlineMode.js:323:13)
 
-## Failed Test 46: utils/helpers/moduleReloader.test.js
+    console.log
+      setOfflineMode is returning true
 
-### Output:
-```
-/home/runner/workspace/utils/helpers/moduleReloader.test.js:2
-describe('moduleReloader.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/helpers/moduleReloader.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:87:13)
 
-```
+    console.log
+      getAxios is running with offline: true
 
-### Duration: 338ms
+      at log (utils/offlineMode.js:140:11)
 
----
+    console.log
+      getAxios is returning [object Object]
 
-## Failed Test 47: utils/httpTest.test.js
+      at log (utils/offlineMode.js:171:13)
 
-### Output:
-```
-/home/runner/workspace/utils/httpTest.test.js:4
-describe('httpTest.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/httpTest.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      getAxios is running with offline: true
 
-```
+      at log (utils/offlineMode.js:140:11)
 
-### Duration: 280ms
+    console.log
+      getAxios is returning [object Object]
 
----
+      at log (utils/offlineMode.js:148:15)
 
-## Failed Test 48: utils/helpers/keyGenerator.test.js
+    console.log
+      clearOfflineCache is running with none
 
-### Output:
-```
-/home/runner/workspace/utils/helpers/keyGenerator.test.js:2
-describe('keyGenerator.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/helpers/keyGenerator.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:318:11)
 
-```
+    console.log
+      clearOfflineCache is returning undefined
 
-### Duration: 378ms
+      at log (utils/offlineMode.js:323:13)
 
----
+    console.log
+      setOfflineMode is running with true
 
-## Failed Test 49: utils/email/emailSender.test.js
+      at log (utils/offlineMode.js:81:11)
 
-### Output:
-```
-/home/runner/workspace/utils/email/emailSender.test.js:4
-describe('emailSender.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/email/emailSender.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      setOfflineMode is returning true
 
-```
+      at log (utils/offlineMode.js:87:13)
 
-### Duration: 523ms
+    console.log
+      getAxios is running with offline: true
 
----
+      at log (utils/offlineMode.js:140:11)
 
-## Failed Test 50: utils/models/apiLogModel.test.js
+    console.log
+      getAxios is returning [object Object]
 
-### Output:
-```
-/home/runner/workspace/utils/models/apiLogModel.test.js:4
-describe('apiLogModel.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/models/apiLogModel.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:171:13)
 
-```
+    console.log
+      clearOfflineCache is running with none
 
-### Duration: 331ms
+      at log (utils/offlineMode.js:318:11)
 
----
+    console.log
+      clearOfflineCache is returning undefined
 
-## Failed Test 51: utils/models/apiKeyModel.test.js
+      at log (utils/offlineMode.js:323:13)
 
-### Output:
-```
-/home/runner/workspace/utils/models/apiKeyModel.test.js:4
-describe('apiKeyModel.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/models/apiKeyModel.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      getAxios is running with offline: true
 
-```
+      at log (utils/offlineMode.js:140:11)
 
-### Duration: 377ms
+    console.log
+      getAxios is returning [object Object]
 
----
+      at log (utils/offlineMode.js:171:13)
 
-## Failed Test 52: utils/helpers/responseMocker.test.js
+    console.log
+      clearOfflineCache is running with none
 
-### Output:
-```
-/home/runner/workspace/utils/helpers/responseMocker.test.js:4
-describe('responseMocker.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/helpers/responseMocker.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:318:11)
 
-```
+    console.log
+      clearOfflineCache is returning undefined
 
-### Duration: 538ms
+      at log (utils/offlineMode.js:323:13)
 
----
+    console.log
+      setOfflineMode is running with true
 
-## Failed Test 53: utils/models/baseMockModel.test.js
+      at log (utils/offlineMode.js:81:11)
 
-### Output:
-```
-/home/runner/workspace/utils/models/baseMockModel.test.js:4
-describe('baseMockModel.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/models/baseMockModel.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      setOfflineMode is returning true
 
-```
+      at log (utils/offlineMode.js:87:13)
 
-### Duration: 408ms
+    console.log
+      getAxios is running with offline: true
 
----
+      at log (utils/offlineMode.js:140:11)
 
-## Failed Test 54: utils/testing/assertionHelper.test.js
+    console.log
+      getAxios is returning [object Object]
 
-### Output:
-```
-/home/runner/workspace/utils/testing/assertionHelper.test.js:4
-describe('assertionHelper.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/testing/assertionHelper.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:171:13)
 
-```
+    console.log
+      setOfflineMode is running with false
 
-### Duration: 238ms
+      at log (utils/offlineMode.js:81:11)
 
----
+    console.log
+      clearOfflineCache is running with none
 
-## Failed Test 55: utils/stubMethod.test.js
+      at log (utils/offlineMode.js:318:11)
 
-### Output:
-```
-/home/runner/workspace/utils/stubMethod.test.js:4
-describe('stubMethod.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/stubMethod.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      clearOfflineCache is returning undefined
 
-```
+      at log (utils/offlineMode.js:323:13)
 
-### Duration: 361ms
+    console.log
+      setOfflineMode is returning false
 
----
+      at log (utils/offlineMode.js:87:13)
 
-## Failed Test 56: utils/testing/mockManager.test.js
+    console.log
+      getAxios is running with offline: false
 
-### Output:
-```
-/home/runner/workspace/utils/testing/mockManager.test.js:4
-describe('mockManager.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/testing/mockManager.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:140:11)
 
-```
+    console.log
+      getAxios is returning function wrap() {
+          return fn.apply(thisArg, arguments);
+        }
 
-### Duration: 254ms
+      at log (utils/offlineMode.js:171:13)
 
----
+    console.log
+      clearOfflineCache is running with none
 
-## Failed Test 57: utils/models/modelFactory.test.js
+      at log (utils/offlineMode.js:318:11)
 
-### Output:
-```
-/home/runner/workspace/utils/models/modelFactory.test.js:4
-describe('modelFactory.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/models/modelFactory.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      clearOfflineCache is returning undefined
 
-```
+      at log (utils/offlineMode.js:323:13)
 
-### Duration: 414ms
+    console.log
+      setOfflineMode is running with false
 
----
+      at log (utils/offlineMode.js:81:11)
 
-## Failed Test 58: utils/testEnv.test.js
+    console.log
+      setOfflineMode is returning false
 
-### Output:
-```
-/home/runner/workspace/utils/testEnv.test.js:4
-describe('testEnv.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/testEnv.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:87:13)
 
-```
+    console.log
+      getAxios is running with offline: false
 
-### Duration: 349ms
+      at log (utils/offlineMode.js:140:11)
 
----
+    console.log
+      getAxios is returning function wrap() {
+          return fn.apply(thisArg, arguments);
+        }
 
-## Failed Test 59: utils/testing/databaseTestHelper.test.js
+      at log (utils/offlineMode.js:171:13)
 
-### Output:
-```
-/home/runner/workspace/utils/testing/databaseTestHelper.test.js:4
-describe('databaseTestHelper.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/testing/databaseTestHelper.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      getQerrors is running with offline: false
 
-```
+      at log (utils/offlineMode.js:209:11)
 
-### Duration: 277ms
+    console.log
+      getQerrors is returning [object Object]
 
----
+      at log (utils/offlineMode.js:240:13)
 
-## Failed Test 60: utils/testSuite.test.js
+    console.log
+      clearOfflineCache is running with none
 
-### Output:
-```
-/home/runner/workspace/utils/testSuite.test.js:4
-describe('testSuite.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/testSuite.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:318:11)
 
-```
+    console.log
+      clearOfflineCache is returning undefined
 
-### Duration: 313ms
+      at log (utils/offlineMode.js:323:13)
 
----
+    console.log
+      setOfflineMode is running with false
 
-## Failed Test 61: utils/testHelpers.test.js
+      at log (utils/offlineMode.js:81:11)
 
-### Output:
-```
-/home/runner/workspace/utils/testHelpers.test.js:4
-describe('testHelpers.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/testHelpers.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      setOfflineMode is returning false
 
-```
+      at log (utils/offlineMode.js:87:13)
 
-### Duration: 327ms
+    console.log
+      getAxios is running with offline: false
 
----
+      at log (utils/offlineMode.js:140:11)
 
-## Failed Test 62: utils/testing/performanceTestHelper.test.js
+    console.log
+      getAxios is returning function wrap() {
+          return fn.apply(thisArg, arguments);
+        }
 
-### Output:
-```
-/home/runner/workspace/utils/testing/performanceTestHelper.test.js:4
-describe('performanceTestHelper.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/testing/performanceTestHelper.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:171:13)
 
-```
+    console.log
+      getQerrors is running with offline: false
 
-### Duration: 215ms
+      at log (utils/offlineMode.js:209:11)
 
----
+    console.log
+      getQerrors is returning [object Object]
 
-## Failed Test 63: utils/testing/testDataFactory.test.js
+      at log (utils/offlineMode.js:240:13)
 
-### Output:
-```
-/home/runner/workspace/utils/testing/testDataFactory.test.js:4
-describe('testDataFactory.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/testing/testDataFactory.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      clearOfflineCache is running with none
 
-```
+      at log (utils/offlineMode.js:318:11)
 
-### Duration: 216ms
+    console.log
+      clearOfflineCache is returning undefined
 
----
+      at log (utils/offlineMode.js:323:13)
 
-## Failed Test 64: test/mockAxios.test.js
+    console.log
+      setOfflineMode is running with true
 
-### Output:
-```
-/home/runner/workspace/test/mockAxios.test.js:2
-describe('mockAxios functionality', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/mockAxios.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:81:11)
 
-```
+    console.log
+      clearOfflineCache is running with none
 
-### Duration: 144ms
+      at log (utils/offlineMode.js:318:11)
 
----
+    console.log
+      clearOfflineCache is returning undefined
 
-## Failed Test 65: test/comprehensive.test.js
+      at log (utils/offlineMode.js:323:13)
 
-### Output:
-```
-/home/runner/workspace/test/comprehensive.test.js:10
-describe('Additional qtests Coverage', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/comprehensive.test.js:10:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      setOfflineMode is returning true
 
-```
+      at log (utils/offlineMode.js:87:13)
 
-### Duration: 166ms
+    console.log
+      setOfflineMode is running with false
 
----
+      at log (utils/offlineMode.js:81:11)
 
-## Failed Test 66: test/mockModels.test.js
+    console.log
+      clearOfflineCache is running with none
 
-### Output:
-```
-/home/runner/workspace/test/mockModels.test.js:12
-describe('Mock Models Integration', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/mockModels.test.js:12:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:318:11)
 
-```
+    console.log
+      clearOfflineCache is returning undefined
 
-### Duration: 159ms
+      at log (utils/offlineMode.js:323:13)
 
----
+    console.log
+      setOfflineMode is returning false
 
-## Failed Test 67: test/integration.test.js
+      at log (utils/offlineMode.js:87:13)
 
-### Output:
-```
-/home/runner/workspace/test/integration.test.js:21
-test('integration flow using stubs', () => withMockConsole('log', async logSpy => { //jest test executing searchTask with helper
-^
-
-ReferenceError: test is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/integration.test.js:21:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      clearOfflineCache is running with none
 
-```
+      at log (utils/offlineMode.js:318:11)
 
-### Duration: 222ms
+    console.log
+      clearOfflineCache is returning undefined
 
----
+      at log (utils/offlineMode.js:323:13)
 
-## Failed Test 68: test/sendEmail.test.js
+    console.log
+      setOfflineMode is running with true
 
-### Output:
-```
-/home/runner/workspace/test/sendEmail.test.js:7
-describe('Send Email Integration', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/sendEmail.test.js:7:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:81:11)
 
-```
+    console.log
+      clearOfflineCache is running with none
 
-### Duration: 134ms
+      at log (utils/offlineMode.js:318:11)
 
----
+    console.log
+      clearOfflineCache is returning undefined
 
-## Failed Test 69: test/runTestSuite.test.js
+      at log (utils/offlineMode.js:323:13)
 
-### Output:
-```
-/home/runner/workspace/test/runTestSuite.test.js:2
-describe('runTestSuite.js basic exports', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/test/runTestSuite.test.js:2:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+    console.log
+      setOfflineMode is returning true
 
-```
+      at log (utils/offlineMode.js:87:13)
 
-### Duration: 146ms
+    console.log
+      getAxios is running with offline: true
 
----
+      at log (utils/offlineMode.js:140:11)
 
-## Failed Test 70: utils/mockAxios.test.js
+    console.log
+      getAxios is returning [object Object]
 
-### Output:
-```
-/home/runner/workspace/utils/mockAxios.test.js:4
-describe('mockAxios.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/mockAxios.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+      at log (utils/offlineMode.js:171:13)
 
-```
+    console.log
+      clearOfflineCache is running with none
 
-### Duration: 129ms
+      at log (utils/offlineMode.js:318:11)
 
----
+    console.log
+      clearOfflineCache is returning undefined
 
-## Failed Test 71: utils/mockModels.test.js
+      at log (utils/offlineMode.js:323:13)
 
-### Output:
-```
-/home/runner/workspace/utils/mockModels.test.js:4
-describe('mockModels.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/mockModels.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+  ● Enhanced Offline Mode › Environment Variable Detection › detects CODEX environment variable
 
-```
+    expect(received).toBe(expected) // Object.is equality
 
-### Duration: 133ms
+    Expected: true
+    Received: false
 
----
+      49 |       const { getEnvironmentState } = require('../utils/offlineMode');
+      50 |       const envState = getEnvironmentState();
+    > 51 |       expect(envState.codexFlag).toBe(true);
+         |                                  ^
+      52 |       expect(envState.environmentDetected).toBe(true);
+      53 |     });
+      54 |     
 
-## Failed Test 72: utils/runTestSuite.test.js
+      at Object.toBe (test/offlineMode.test.js:51:34)
 
-### Output:
-```
-/home/runner/workspace/utils/runTestSuite.test.js:4
-describe('runTestSuite.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/runTestSuite.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+  ● Enhanced Offline Mode › Environment Variable Detection › detects OFFLINE_MODE environment variable
 
-```
+    expect(received).toBe(expected) // Object.is equality
 
-### Duration: 118ms
+    Expected: true
+    Received: false
 
----
+      58 |       const { getEnvironmentState } = require('../utils/offlineMode');
+      59 |       const envState = getEnvironmentState();
+    > 60 |       expect(envState.offlineFlagExplicit).toBe(true);
+         |                                            ^
+      61 |       expect(envState.environmentDetected).toBe(true);
+      62 |     });
+      63 |     
 
-## Failed Test 73: utils/sendEmail.test.js
+      at Object.toBe (test/offlineMode.test.js:60:44)
 
-### Output:
-```
-/home/runner/workspace/utils/sendEmail.test.js:4
-describe('sendEmail.js', () => {
-^
-
-ReferenceError: describe is not defined
-    at Object.<anonymous> (/home/runner/workspace/utils/sendEmail.test.js:4:1)
-    at Module._compile (node:internal/modules/cjs/loader:1529:14)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1613:10)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)
-    at node:internal/main/run_main_module:28:49
-
-Node.js v20.19.3
+  ● Enhanced Offline Mode › Environment Variable Detection › handles case-insensitive environment variables
 
-```
+    expect(received).toBe(expected) // Object.is equality
 
-### Duration: 129ms
+    Expected: true
+    Received: false
 
----
+      68 |       const { getEnvironmentState } = require('../utils/offlineMode');
+      69 |       const envState = getEnvironmentState();
+    > 70 |       expect(envState.codexFlag).toBe(true);
+         |                                  ^
+      71 |       expect(envState.offlineFlagExplicit).toBe(true);
+      72 |     });
+      73 |     
 
-## Failed Test 74: test/offlineMode.test.js
+      at Object.toBe (test/offlineMode.test.js:70:34)
 
-### Output:
-```
 
 ReferenceError: You are trying to `import` a file after the Jest environment has been torn down. From test/offlineMode.test.js.
 
@@ -1853,78 +810,20 @@ ReferenceError: You are trying to `import` a file after the Jest environment has
 [TypeError: transports.File is not a constructor]
 
 Node.js v20.19.3
-
-ReferenceError: You are trying to `import` a file after the Jest environment has been torn down. From test/offlineMode.test.js.
-
-      at buildLogger (node_modules/qerrors/lib/logger.js:152:33)
-
-ReferenceError: You are trying to `import` a file after the Jest environment has been torn down. From test/offlineMode.test.js.
-
-      at Object.get [as File] (node_modules/winston/lib/winston/transports/index.js:30:12)
-      at node_modules/qerrors/lib/logger.js:164:57
-      at buildLogger (node_modules/qerrors/lib/logger.js:171:11)
-/home/runner/workspace/node_modules/qerrors/lib/logger.js:164
-                                arr.push(new transports.File({ filename: path.join(logDir, 'error.log'), level: 'error', ...rotationOpts, maxFiles: fileCap, format: fileFormat })); //(size-based rotation for error files with count limit)
-                                         ^
-
-[TypeError: transports.File is not a constructor]
-
-Node.js v20.19.3
-
-ReferenceError: You are trying to `import` a file after the Jest environment has been torn down. From test/offlineMode.test.js.
-
-      at buildLogger (node_modules/qerrors/lib/logger.js:152:33)
-
-ReferenceError: You are trying to `import` a file after the Jest environment has been torn down. From test/offlineMode.test.js.
-
-      at Object.get [as File] (node_modules/winston/lib/winston/transports/index.js:30:12)
-      at node_modules/qerrors/lib/logger.js:164:57
-      at buildLogger (node_modules/qerrors/lib/logger.js:171:11)
-/home/runner/workspace/node_modules/qerrors/lib/logger.js:164
-                                arr.push(new transports.File({ filename: path.join(logDir, 'error.log'), level: 'error', ...rotationOpts, maxFiles: fileCap, format: fileFormat })); //(size-based rotation for error files with count limit)
-                                         ^
-
-[TypeError: transports.File is not a constructor]
-
-Node.js v20.19.3
-
-ReferenceError: You are trying to `import` a file after the Jest environment has been torn down. From test/offlineMode.test.js.
-
-      at buildLogger (node_modules/qerrors/lib/logger.js:152:33)
-
-ReferenceError: You are trying to `import` a file after the Jest environment has been torn down. From test/offlineMode.test.js.
-
-      at Object.get [as File] (node_modules/winston/lib/winston/transports/index.js:30:12)
-      at node_modules/qerrors/lib/logger.js:164:57
-      at buildLogger (node_modules/qerrors/lib/logger.js:171:11)
-/home/runner/workspace/node_modules/qerrors/lib/logger.js:164
-                                arr.push(new transports.File({ filename: path.join(logDir, 'error.log'), level: 'error', ...rotationOpts, maxFiles: fileCap, format: fileFormat })); //(size-based rotation for error files with count limit)
-                                         ^
-
-[TypeError: transports.File is not a constructor]
-
-Node.js v20.19.3
-FAIL test/offlineMode.test.js
-  ● Test suite failed to run
-
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
-
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
-
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       3 failed, 14 passed, 17 total
 Snapshots:   0 total
-Time:        10.165 s
+Time:        9.205 s
 Ran all test suites matching test/offlineMode.test.js.
 
 ```
 
-### Duration: 12509ms
+### Duration: 12385ms
 
 ---
 
 ## Summary
 
-- Total failed tests: 74
-- Failed test files: lib/setup.test.js, lib/logUtils.test.js, lib/httpUtils.test.js, lib/envUtils.test.js, jest.config.test.js, lib/dataUtils.test.js, lib/coreUtils.test.js, index.test.js, lib/testGenerator.test.js, lib/testUtils.test.js, test/edgeCases.test.js, test/logUtils.test.js, qtests-runner.test.js, test/mockConsole.test.js, test/httpTest.test.js, test/mockUtils.test.js, test/dualModuleGeneration.test.js, test/axiosStub.test.js, test/qtests-dogfood.test.js, test/moduleSystemIntegration.test.js, test/offlineIntegration.test.js, test/indexExports.test.js, test/safeSerialize.test.js, test/setupMultiple.test.js, test/resolveStubPaths.test.js, test/stubMethod.test.js, test/setupResolution.test.js, test/testEnv.test.js, tests/integration/example__put.test.js, tests/integration/example__post.test.js, test/testSuite.test.js, test/testGenerator.test.js, tests/integration/example__get.test.js, utils/email/emailHistory.test.js, tests/integration/example.test.js, utils/email/emailFormatter.test.js, test/testHelpers.test.js, tests/integration/utils__httpTest.test.js, tests/integration/utils__httpTest__get.test.js, utils/helpers/envManager.test.js, utils/helpers/consoleMocker.test.js, utils/email/emailTemplate.test.js, utils/email/emailValidator.test.js, utils/helpers/qerrorsStub.test.js, utils/mockConsole.test.js, utils/helpers/moduleReloader.test.js, utils/httpTest.test.js, utils/helpers/keyGenerator.test.js, utils/email/emailSender.test.js, utils/models/apiLogModel.test.js, utils/models/apiKeyModel.test.js, utils/helpers/responseMocker.test.js, utils/models/baseMockModel.test.js, utils/testing/assertionHelper.test.js, utils/stubMethod.test.js, utils/testing/mockManager.test.js, utils/models/modelFactory.test.js, utils/testEnv.test.js, utils/testing/databaseTestHelper.test.js, utils/testSuite.test.js, utils/testHelpers.test.js, utils/testing/performanceTestHelper.test.js, utils/testing/testDataFactory.test.js, test/mockAxios.test.js, test/comprehensive.test.js, test/mockModels.test.js, test/integration.test.js, test/sendEmail.test.js, test/runTestSuite.test.js, utils/mockAxios.test.js, utils/mockModels.test.js, utils/runTestSuite.test.js, utils/sendEmail.test.js, test/offlineMode.test.js
-- Generated: 2025-08-19T15:40:27.908Z
+- Total failed tests: 1
+- Failed test files: test/offlineMode.test.js
+- Generated: 2025-08-19T15:51:19.880Z

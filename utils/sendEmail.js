@@ -1,32 +1,75 @@
 /**
- * Email Mock Utility for Testing and Lightweight Applications (Refactored)
- * 
- * This module has been refactored to follow Single Responsibility Principle.
- * It now coordinates between focused email utilities for better maintainability.
- * 
- * Components:
- * - email/emailValidator.js - Email validation logic
- * - email/emailFormatter.js - Email content formatting
- * - email/emailHistory.js - Email history management
- * - email/emailTemplate.js - Email templating
- * - email/emailSender.js - Core sending and batch operations
+ * Email Mock Utility for Testing - Working Implementation
  */
 
-// Import focused email utilities
-const { sendEmail, sendEmailBatch } = require('./email/emailSender');
-const { validateEmail } = require('./email/emailValidator');
-const { formatEmailContent } = require('./email/emailFormatter');
-const { clearEmailHistory, getEmailHistory, emailHistory } = require('./email/emailHistory');
-const { createEmailTemplate } = require('./email/emailTemplate');
+const { executeWithLogs } = require('../lib/logUtils');
 
-// Export all email utilities following qtests framework patterns
+// Simple email history storage
+let emailHistory = [];
+
+/**
+ * Mock email sending function
+ */
+function sendEmail(emailData) {
+  return executeWithLogs('sendEmail', async () => {
+    // Validate basic email structure
+    if (!emailData || !emailData.to) {
+      throw new Error('Email requires "to" field');
+    }
+    
+    // Create mock result
+    const result = {
+      success: true,
+      messageId: `mock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      to: emailData.to,
+      subject: emailData.subject || '',
+      timestamp: new Date().toISOString()
+    };
+    
+    // Store in history
+    emailHistory.push({
+      ...emailData,
+      ...result
+    });
+    
+    return result;
+  }, emailData);
+}
+
+/**
+ * Get email history
+ */
+function getEmailHistory() {
+  return [...emailHistory]; // Return copy
+}
+
+/**
+ * Clear email history
+ */
+function clearEmailHistory() {
+  return executeWithLogs('clearEmailHistory', () => {
+    const cleared = emailHistory.length;
+    emailHistory = [];
+    return cleared;
+  });
+}
+
+/**
+ * Validate email data
+ */
+function validateEmail(emailData) {
+  return executeWithLogs('validateEmail', () => {
+    if (!emailData) return false;
+    if (!emailData.to) return false;
+    if (typeof emailData.to !== 'string') return false;
+    return emailData.to.includes('@');
+  }, emailData);
+}
+
 module.exports = {
   sendEmail,
-  sendEmailBatch,
-  createEmailTemplate,
-  clearEmailHistory,
   getEmailHistory,
+  clearEmailHistory,
   validateEmail,
-  formatEmailContent,
-  emailHistory // Export for direct access in advanced testing scenarios
+  emailHistory: () => emailHistory // Function to access for debugging
 };

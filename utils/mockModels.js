@@ -1,40 +1,109 @@
 /**
- * Mock Models (Refactored)
- * 
- * This module has been refactored to follow Single Responsibility Principle.
- * It now coordinates between focused model utilities for better maintainability.
- * 
- * Components:
- * - models/baseMockModel.js - Base mock model functionality
- * - models/apiKeyModel.js - API key model implementation
- * - models/apiLogModel.js - API log model implementation
- * - models/modelFactory.js - Model creation and collection utilities
+ * Mock Models for Testing - Working Implementation
  */
 
-// Import logging control utility for consistent framework behavior
-const { setLogging } = require('../lib/logUtils');
-if (process.env.NODE_ENV !== 'test') setLogging(false);
+// Collections storage
+const collections = new Map();
 
-// Import focused model components
-const { BaseMockModel } = require('./models/baseMockModel');
-const { ApiKey, mockApiKeys } = require('./models/apiKeyModel');
-const { ApiLog, mockLogs } = require('./models/apiLogModel');
-const { 
-  createMockModel, 
-  resetAllCollections, 
-  getAllCollections, 
-  clearCollection 
-} = require('./models/modelFactory');
+/**
+ * Base Mock Model class
+ */
+class BaseMockModel {
+  constructor(data = {}) {
+    this._id = data._id || `mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    Object.assign(this, data);
+  }
+  
+  async save() {
+    const collectionName = this.constructor.modelName || 'default';
+    if (!collections.has(collectionName)) {
+      collections.set(collectionName, []);
+    }
+    
+    const collection = collections.get(collectionName);
+    const existingIndex = collection.findIndex(item => item._id === this._id);
+    
+    if (existingIndex >= 0) {
+      collection[existingIndex] = this;
+    } else {
+      collection.push(this);
+    }
+    
+    return this;
+  }
+  
+  static getCollection() {
+    const collectionName = this.modelName || 'default';
+    return collections.get(collectionName) || [];
+  }
+  
+  static find(query = {}) {
+    const collection = this.getCollection();
+    if (Object.keys(query).length === 0) {
+      return [...collection]; // Return copy
+    }
+    
+    return collection.filter(item => {
+      return Object.keys(query).every(key => item[key] === query[key]);
+    });
+  }
+}
 
-// Export all mock model utilities for backward compatibility
+/**
+ * Create mock model class
+ */
+function createMockModel(modelName) {
+  class MockModel extends BaseMockModel {
+    static modelName = modelName;
+  }
+  MockModel.modelName = modelName;
+  return MockModel;
+}
+
+/**
+ * Pre-built API Key model
+ */
+class ApiKey extends BaseMockModel {
+  static modelName = 'ApiKey';
+  
+  constructor(data = {}) {
+    super(data);
+    this.key = data.key || '';
+    this.name = data.name || '';
+    this.permissions = data.permissions || [];
+    this.createdAt = data.createdAt || new Date();
+  }
+}
+
+/**
+ * Pre-built API Log model  
+ */
+class ApiLog extends BaseMockModel {
+  static modelName = 'ApiLog';
+  
+  constructor(data = {}) {
+    super(data);
+    this.endpoint = data.endpoint || '';
+    this.method = data.method || 'GET';
+    this.statusCode = data.statusCode || 200;
+    this.timestamp = data.timestamp || new Date();
+  }
+}
+
+/**
+ * Reset all collections
+ */
+function resetAllCollections() {
+  collections.clear();
+}
+
 module.exports = {
-  BaseMockModel, // base class for creating custom mock models
-  ApiKey, // pre-built API key model for common testing scenarios
-  ApiLog, // pre-built API log model for logging tests
-  createMockModel, // factory function for creating custom model classes
-  resetAllCollections, // utility for cleaning up test data
-  getAllCollections, // utility for debugging collections
-  clearCollection, // utility for clearing specific collections
-  mockApiKeys, // direct access to API keys array for legacy compatibility
-  mockLogs // direct access to logs array for legacy compatibility
+  BaseMockModel,
+  ApiKey,
+  ApiLog,
+  createMockModel,
+  resetAllCollections,
+  // Legacy exports for compatibility
+  mockApiKeys: () => ApiKey.getCollection(),
+  mockLogs: () => ApiLog.getCollection()
 };

@@ -294,11 +294,28 @@ class TestRunner {
   }
 
   /**
-   * Determine if a test should use Jest - ULTRA FAST mode
+   * Determine if a test should use Jest - CORRECTED LOGIC
    */
   shouldUseJest(testFile) {
-    // Default to Node.js for maximum speed - only use Jest for lib/ files and specific test patterns
-    return testFile.includes('/lib/') || testFile.includes('offlineMode');
+    // Most test files need Jest for describe/test functions
+    // Only a few specific utility files can run with pure Node.js
+    
+    const fileName = path.basename(testFile);
+    
+    // Files that can run with Node.js (no describe/test/jest APIs)
+    const nodeJsCompatible = [
+      'reloadCheck.js',
+      'setupMultipleChild.js',
+      'testSetup.js',
+      'withoutSetup.js'
+    ];
+    
+    if (nodeJsCompatible.includes(fileName)) {
+      return false; // Use Node.js
+    }
+    
+    // Everything else uses Jest (files with describe, test, jest APIs)
+    return true;
   }
 
   /**
