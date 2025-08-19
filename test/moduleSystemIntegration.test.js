@@ -24,6 +24,12 @@ describe('qtests Module System Integration Tests', () => {
     
     // Change to test project directory
     process.chdir(testProjectDir);
+    
+    // Ensure clean environment with no package.json initially
+    const packagePath = path.join(testProjectDir, 'package.json');
+    if (fs.existsSync(packagePath)) {
+      fs.unlinkSync(packagePath);
+    }
   });
 
   afterEach(() => {
@@ -290,19 +296,29 @@ module.exports = func3;
     it('should default to CommonJS when no clear pattern emerges', () => {
       fs.mkdirSync('src');
       
-      // Files without clear module patterns
+      // Create a package.json explicitly without "type": "module"
+      fs.writeFileSync('package.json', JSON.stringify({
+        name: 'test-project',
+        version: '1.0.0',
+        main: 'index.js'
+      }, null, 2));
+      
+      // Files without clear module patterns - no import/export/require/module.exports
       const ambiguousFile = `
 function utilityFunction() {
   return 'result';
 }
 
-// No clear export pattern
+// No clear export pattern - just a plain function
+const helper = function() {
+  return 'helper';
+};
 `;
       fs.writeFileSync('src/ambiguous.js', ambiguousFile);
       
       const generator = new TestGenerator({ SRC_DIR: 'src' });
       
-      // Should default to CommonJS
+      // Should default to CommonJS when no package.json "type": "module" and no clear ES patterns
       expect(generator.isESModule).toBe(false);
     });
   });
