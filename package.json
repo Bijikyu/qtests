@@ -29,10 +29,12 @@
   "devDependencies": {
     "agentsqripts": "^1.0.8",
     "arqitect": "^1.0.7",
+    "commoncontext": "^1.0.1",
     "fileflows": "^1.0.0",
     "jest": "^29.7.0",
     "loqatevars": "^1.0.6",
     "madge": "^8.0.0",
+    "npmcontext": "^1.0.0",
     "quantumagent": "^1.0.5",
     "repomix": "^1.2.0",
     "unqommented": "^1.1.0",

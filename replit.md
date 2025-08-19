@@ -8,6 +8,13 @@ qtests is a comprehensive Node.js testing framework providing zero-dependency ut
 - Keep functionality simple - avoid unnecessary flags or options
 - Don't add complexity unless explicitly requested
 - Performance Priority: High - Test execution speed is critical for developer productivity
+- Truth and functionality over lies - prefer errors over mock data or fallbacks
+- Functions declared via function declaration
+- Single line per functional operation for debugging
+- Smallest practical number of lines with DRY principles
+- Strings in JavaScript written with backticks (`) for future extensibility
+- camelCase naming conventions
+- Inline comments preferred over above-the-line comments
 
 ## System Architecture
 
@@ -18,6 +25,9 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Runtime**: Node.js 20+ with module resolution patching.
 - **Testing**: Jest-compatible with fallback for vanilla Node.js.
 - **Module System**: CommonJS with dynamic `require` interception, with enhanced ES module compatibility.
+- **HTTP Client**: axios (preferred over node-fetch)
+- **Error Handling**: qerrors module for consistent error logging
+- **Architecture**: Single Responsibility Principle (SRP) - one function per file
 
 ### Key Components
 - **Module Resolution System**: Globally modifies Node.js module resolution to automatically substitute stubs.
@@ -33,6 +43,15 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Automatic Test Generator**: Automatically generates unit and API tests by scanning JavaScript/TypeScript source code.
 - **Lightweight Test Runner**: A simple, zero-dependency test execution engine.
 
+### System Design Choices
+- **Single Responsibility Principle (SRP)**: Each file encapsulates one concrete responsibility (one function per file).
+- **Constants and Environment Variables**: Centralized in `/config/localVars.js` as the single source of truth.
+- **Error Handling**: Use `qerrors` for consistent logging within `try/catch` blocks.
+- **Protected Code Blocks**: Specific code ranges are read-only and must not be modified.
+- **Test Locations**: Integration tests in `/tests`, unit tests alongside the files they test.
+- **No External API Calls in Tests**: All external services must be mocked.
+- **Frontend Requirements**: Client-side and server-side validation, WCAG 2.1 AA accessibility, UX best practices, AJAX interactions.
+
 ## External Dependencies
 
 ### Production Dependencies
@@ -45,68 +64,8 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - `ts-jest`: For TypeScript Jest integration.
 
 ### Optional Dependencies
-- `qerrors`: Error reporting module (gracefully handled if missing).
-
-## Recent Changes (August 2025)
-
-### Single Responsibility Principle Refactoring (August 19, 2025)
-- **Major Architecture Improvement**: Successfully refactored 4 critical files to follow Single Responsibility Principle, reducing 25 SRP violations to focused, maintainable modules
-- **utils/sendEmail.js Refactoring**: Split 600+ line file into email/ modules (emailValidator, emailFormatter, emailHistory, emailTemplate, emailSender)
-- **utils/testHelpers.js Refactoring**: Split 500+ line file into helpers/ modules (moduleReloader, qerrorsStub, consoleMocker, responseMocker)
-- **utils/testSuite.js Refactoring**: Split 1200+ line file into testing/ modules (databaseTestHelper, mockManager, assertionHelper, testDataFactory, performanceTestHelper)
-- **utils/mockModels.js Refactoring**: Split 634-line file into models/ modules (baseMockModel, apiKeyModel, apiLogModel, modelFactory)
-- **Enhanced Code Organization**: Large monolithic files broken into focused components (20-150 lines each) with clear single responsibilities
-- **Improved Maintainability**: Each module now handles one specific concern, making debugging, testing, and team development more efficient
-- **Automatic Test Coverage**: qtests generator automatically created comprehensive test files for all new modular components
-- **Backward Compatibility**: All refactoring maintains existing API interfaces to prevent breaking changes
-
-### Universal CommonJS and ES Module Support (August 19, 2025)
-- **Enhanced Export Detection**: Test generator now intelligently detects both CommonJS (`module.exports`, `exports.name`) and ES module (`export const/function/class`) patterns in source code
-- **Dual Pattern Recognition**: Added comprehensive regex patterns to extract exports from both module systems without changing qtests' CommonJS architecture
-- **Object Export Handling**: Fixed `module.exports = { name1, name2 }` pattern recognition with proper property extraction
-- **Comment Filter Enhancement**: Added robust comment filtering to prevent false positive export detection from commented code
-- **Smart Function Mapping**: Automatically identifies function declarations and class definitions that are exported in CommonJS style
-- **Robust Import Handling**: Enhanced import detection to handle both `require()` and `import` statements without null reference errors
-- **Intelligent Test Generation**: Generates appropriate test syntax based on detected project module type while maintaining qtests' CommonJS core
-- **Comprehensive Test Coverage**: Created dual module system tests that verify CommonJS object exports, ES module exports, mixed patterns, and edge cases
-- **Jest Compatibility Fix**: Fixed test generator to default to CommonJS syntax for maximum Jest compatibility, preventing ES module parse errors in test environments
-- **Root Cause Resolution**: Enhanced module detection logic to properly handle ambiguous scenarios and avoid auto-generating incompatible test syntax
-- **Zero Test Failures Achievement**: Successfully resolved all 3 failing tests with comprehensive fixes that prevent recurrence while maintaining dual module system capabilities
-
-### Complete SRP Refactoring Success (August 19, 2025)
-- **Mission Accomplished**: Successfully completed SRP refactoring of all 4 critical violation files, transforming monolithic utilities into focused, maintainable modules
-- **Outstanding Test Suite Recovery**: Achieved 90.6% test success rate (135/149 tests passing), up from initial 67% - a 23.6 percentage point improvement
-- **Advanced Missing Functionality Resolution**: Added missing helper functions (envManager.js, keyGenerator.js), model methods (.lean(), clearCollection(), deleteMany(), updateMany(), countDocuments()), and TestSuiteBuilder class with fluent API
-- **Module Resolution Architecture**: Fixed path resolution issues from SRP reorganization by updating moduleReloader.js to work from new helper directory structure
-- **Builder Pattern Implementation**: Created comprehensive TestSuiteBuilder with method chaining for test suite configuration (.withApiMocks(), .withEmailMocks(), .withConsoleMocks(), .withPerformance(), .withoutAutoCleanup())
-- **Instance Method Compatibility**: Added instance method wrappers to TestDataFactory and PerformanceTestHelper classes to maintain compatibility with TestSuiteBuilder fluent interface
-- **Zero Breaking Changes**: Maintained backward compatibility throughout refactoring, ensuring existing API interfaces continue working seamlessly
-- **Code Quality Transformation**: Reduced 4 large files from 3000+ total lines to 16+ focused modules averaging 100-150 lines each with clear single responsibilities
-- **Final Achievement**: Mock Models (92.7% pass rate), Test Suite (86.8% pass rate), with all core functionality working including query chains, bulk operations, performance testing, database helpers, mock management, and assertion helpers
-
-### Authoritative Test Runner Protection (August 19, 2025)
-- **AI/LLM Protection Headers**: Added comprehensive protective comments to qtests-runner.js warning AI agents and LLMs against modifications
-- **Canonical Status Established**: Marked qtests-runner.js as the authoritative and official test runner for the framework
-- **System Adaptation Policy**: Established that system changes must adapt around the test runner, not modify the runner itself
-- **Anti-Duplication Measures**: Explicitly prohibited creation of alternate, parallel, or competing test runners
-- **Architectural Integrity**: Protected the core test execution engine to maintain stable, predictable behavior across all qtests implementations
-- **Auto-Update Mechanism**: Modified qtests-generate to always overwrite qtests-runner.js with latest functionality, ensuring updated features are properly deployed
-- **Framework Evolution Support**: Enabled seamless updates to the test runner while maintaining its authoritative status and protection from manual AI modifications
-
-### Parallel-Safe Test Generation (August 19, 2025)
-- **Race Condition Prevention**: Completely redesigned test generation templates to eliminate race conditions in parallel test execution from the ground up
-- **Unique Test Identifiers**: Auto-generated tests now use `process.hrtime.bigint()` + random components for guaranteed uniqueness across parallel executions
-- **Isolated Mock State**: Each generated test gets isolated mock instances with test-scoped state, preventing cross-test interference
-- **Test-Scoped Data Generation**: Factory functions create unique test data per execution using session IDs and timestamps for complete isolation
-- **API Test Isolation**: Generated API tests use unique endpoint paths with test session parameters to avoid route conflicts between parallel tests
-- **Comprehensive Documentation**: All generated tests include detailed comments explaining parallel safety design patterns and race condition prevention
-- **Zero Shared State**: Eliminated all shared global variables and static counters in favor of per-test unique identifiers
-- **Template Architecture**: Both unit test and API test generation templates redesigned with parallel execution as the primary design constraint
-
-### 100% Test Success Achievement (August 19, 2025)
-- **Mission Accomplished**: Successfully achieved 100% test success rate (75/75 tests passing) through systematic issue resolution
-- **Race Condition Elimination**: Implemented conservative isolation detection that only triggers in true parallel environments, preventing unnecessary isolation during normal testing
-- **Comprehensive Bug Fixes**: Systematically reduced test failures from 14 → 5 → 3 → 2 → 1 → 0 through targeted fixes to mock models, test data factory, assertion helpers, and CLI permissions
-- **Infrastructure Protection**: Established qtests-runner.js as the authoritative, AI-protected test runner while enabling automatic updates via qtests-generate
-- **Parallel Execution Architecture**: Created robust parallel-safe test generation that prevents race conditions without breaking normal test execution patterns
-- **Quality Assurance Excellence**: Transformed the framework from 90.6% to 100% test success rate, ensuring reliable testing infrastructure for all qtests users
+- `qerrors`: Error reporting module.
+- `agentsqripts`: Code analysis and quality tools.
+- `arqitect`: AI-powered planning and architecture analysis.
+- `quantumagent`: Specialized reasoning and analysis subagent.
+- `fileflows`: Data flow visualization and documentation.
