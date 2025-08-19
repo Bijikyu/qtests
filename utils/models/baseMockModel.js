@@ -112,6 +112,103 @@ class BaseMockModel {
   }
   
   /**
+   * Clear collection for this model class
+   * 
+   * Removes all documents from the in-memory collection for this specific model
+   */
+  static clearCollection() {
+    console.log(`${this.name}.clearCollection is running`);
+    
+    try {
+      const modelName = this.name || 'Anonymous';
+      mockCollections.set(modelName, []);
+      console.log(`${this.name}.clearCollection completed`);
+    } catch (error) {
+      console.log(`${this.name}.clearCollection error ${error.message}`);
+      throw error;
+    }
+  }
+  
+  /**
+   * Delete many documents matching query
+   * 
+   * @param {Object} query - Query object to match documents for deletion
+   * @returns {Promise<Object>} Promise resolving to deletion result
+   */
+  static deleteMany(query = {}) {
+    console.log(`${this.name}.deleteMany is running with ${JSON.stringify(query)}`);
+    
+    try {
+      const collection = this.getCollection();
+      const initialLength = collection.length;
+      
+      // Filter out documents that match the query
+      const remainingDocs = collection.filter(doc => !this.matchesQuery(doc, query));
+      const deletedCount = initialLength - remainingDocs.length;
+      
+      // Update the collection
+      const modelName = this.name || 'Anonymous';
+      mockCollections.set(modelName, remainingDocs);
+      
+      console.log(`${this.name}.deleteMany deleted ${deletedCount} documents`);
+      return Promise.resolve({ deletedCount, acknowledged: true });
+    } catch (error) {
+      console.log(`${this.name}.deleteMany error ${error.message}`);
+      throw error;
+    }
+  }
+  
+  /**
+   * Update many documents matching query
+   * 
+   * @param {Object} query - Query object to match documents for update
+   * @param {Object} update - Update object
+   * @returns {Promise<Object>} Promise resolving to update result
+   */
+  static updateMany(query = {}, update = {}) {
+    console.log(`${this.name}.updateMany is running with query and update`);
+    
+    try {
+      const collection = this.getCollection();
+      let modifiedCount = 0;
+      
+      collection.forEach(doc => {
+        if (this.matchesQuery(doc, query)) {
+          Object.assign(doc, update);
+          modifiedCount++;
+        }
+      });
+      
+      console.log(`${this.name}.updateMany modified ${modifiedCount} documents`);
+      return Promise.resolve({ modifiedCount, acknowledged: true });
+    } catch (error) {
+      console.log(`${this.name}.updateMany error ${error.message}`);
+      throw error;
+    }
+  }
+  
+  /**
+   * Count documents matching query
+   * 
+   * @param {Object} query - Query object to match documents
+   * @returns {Promise<number>} Promise resolving to count
+   */
+  static countDocuments(query = {}) {
+    console.log(`${this.name}.countDocuments is running with ${JSON.stringify(query)}`);
+    
+    try {
+      const collection = this.getCollection();
+      const count = collection.filter(doc => this.matchesQuery(doc, query)).length;
+      
+      console.log(`${this.name}.countDocuments is returning ${count}`);
+      return Promise.resolve(count);
+    } catch (error) {
+      console.log(`${this.name}.countDocuments error ${error.message}`);
+      throw error;
+    }
+  }
+  
+  /**
    * Generate unique ID for new documents
    * 
    * @returns {string} Unique identifier
@@ -124,17 +221,78 @@ class BaseMockModel {
    * Find documents in collection
    * 
    * @param {Object} query - Query object
-   * @returns {Promise<Array>} Promise resolving to array of matching documents
+   * @returns {Object} Query chain object with lean() method
    */
   static find(query = {}) {
     console.log(`${this.name}.find is running with ${JSON.stringify(query)}`);
     
     try {
       const collection = this.getCollection();
-      const results = collection.filter(doc => this.matchesQuery(doc, query));
+      let results = collection.filter(doc => this.matchesQuery(doc, query));
       
-      console.log(`${this.name}.find is returning ${results.length} documents`);
-      return Promise.resolve(results);
+      // Return chainable object with full query chain (Mongoose-style)
+      const chain = {
+        _data: results,
+        _sortBy: null,
+        _skipCount: 0,
+        _limitCount: null,
+        
+        sort(sortObj) {
+          this._sortBy = sortObj;
+          return this;
+        },
+        
+        skip(count) {
+          this._skipCount = count;
+          return this;
+        },
+        
+        limit(count) {
+          this._limitCount = count;
+          return this;
+        },
+        
+        _applyChain() {
+          let data = [...this._data];
+          
+          // Apply sorting
+          if (this._sortBy) {
+            const sortKey = Object.keys(this._sortBy)[0];
+            const sortOrder = this._sortBy[sortKey];
+            data.sort((a, b) => {
+              if (sortOrder === 1) return a[sortKey] > b[sortKey] ? 1 : -1;
+              return a[sortKey] < b[sortKey] ? 1 : -1;
+            });
+          }
+          
+          // Apply skip
+          if (this._skipCount > 0) {
+            data = data.slice(this._skipCount);
+          }
+          
+          // Apply limit
+          if (this._limitCount) {
+            data = data.slice(0, this._limitCount);
+          }
+          
+          return data;
+        },
+        
+        lean() {
+          const finalData = this._applyChain();
+          console.log(`${this.name}.find.lean is returning ${finalData.length} documents`);
+          return Promise.resolve(finalData);
+        },
+        
+        exec() {
+          const finalData = this._applyChain();
+          console.log(`${this.name}.find.exec is returning ${finalData.length} documents`);
+          return Promise.resolve(finalData);
+        }
+      };
+      
+      console.log(`${this.name}.find is returning query chain`);
+      return chain;
     } catch (error) {
       console.log(`${this.name}.find error ${error.message}`);
       throw error;
@@ -167,7 +325,8 @@ class BaseMockModel {
    * 
    * @param {Object} query - Query object
    * @param {Object} update - Update object
-   * @param {Object} options - Update options
+   * @param {Object} options - Update options (including upsert)
+   * @returns {Promise<Object|null>} Promise resolving to updated document or null
    * @returns {Promise<Object|null>} Promise resolving to updated document or null
    */
   static findOneAndUpdate(query, update, options = {}) {
@@ -175,14 +334,34 @@ class BaseMockModel {
     
     try {
       const collection = this.getCollection();
-      const doc = collection.find(d => this.matchesQuery(d, query));
+      let doc = collection.find(d => this.matchesQuery(d, query));
       
       if (!doc) {
-        console.log(`${this.name}.findOneAndUpdate is returning null`);
-        return Promise.resolve(null);
+        if (options.upsert) {
+          // Create new document combining query and update
+          const newDoc = {
+            _id: this.generateId(),
+            ...query,
+            ...update,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          };
+          
+          // Add to collection  
+          const modelName = this.name || 'Anonymous';
+          const currentCollection = mockCollections.get(modelName) || [];
+          currentCollection.push(newDoc);
+          mockCollections.set(modelName, currentCollection);
+          
+          console.log(`${this.name}.findOneAndUpdate created new document with upsert`);
+          return Promise.resolve(newDoc);
+        } else {
+          console.log(`${this.name}.findOneAndUpdate is returning null`);
+          return Promise.resolve(null);
+        }
       }
       
-      Object.assign(doc, update);
+      Object.assign(doc, update, { updatedAt: new Date() });
       console.log(`${this.name}.findOneAndUpdate is returning updated document`);
       return Promise.resolve(doc);
     } catch (error) {

@@ -12,16 +12,23 @@
  */
 
 // Import focused helper utilities
-const { reload } = require('./helpers/moduleReloader');
+const { reload, moduleReloadLock } = require('./helpers/moduleReloader');
 const { stubQerrors } = require('./helpers/qerrorsStub');
 const { withMockConsole } = require('./helpers/consoleMocker');
 const { createJsonRes, createRes } = require('./helpers/responseMocker');
+const { backupEnvVars, restoreEnvVars, withSavedEnv } = require('./helpers/envManager');
+const { generateKey } = require('./helpers/keyGenerator');
 
 // Export all helper utilities following qtests framework patterns
 module.exports = {
   reload,
+  moduleReloadLock,
   stubQerrors,
   withMockConsole,
   createJsonRes,
-  createRes
+  createRes,
+  backupEnvVars,
+  restoreEnvVars,
+  withSavedEnv,
+  generateKey
 };

@@ -54,7 +54,7 @@ class PerformanceTestHelper {
    * @returns {Promise<any>} Operation result if within time limit
    */
   static async assertTimingConstraint(operation, maxDuration) {
-    logStart('PerformanceTestHelper.assertTimingConstraint', operation.name, maxDuration);
+    logStart('PerformanceTestHelper.assertTimingConstraint', `${operation.name || 'anonymous'}, ${maxDuration}ms`);
     
     try {
       const { result, duration } = await this.measureTime(operation);
@@ -128,49 +128,22 @@ class PerformanceTestHelper {
       logReturn('PerformanceTestHelper.testConcurrency', `${successful}/${results.length} succeeded in ${totalDuration.toFixed(2)}ms`);
       return analysis;
     } catch (error) {
-      logReturn('PerformanceTestHelper.testConcurrency', `failed: ${error.message}`);
+      logReturn('PerformanceTestHelper.testConcurrency', `error: ${error.message}`);
       throw error;
     }
   }
 
-  /**
-   * Measures memory usage during operation execution
-   * 
-   * @param {Function} operation - Operation to measure memory usage for
-   * @returns {Promise<Object>} Result with memory usage statistics
-   */
-  static async measureMemory(operation) {
-    logStart('PerformanceTestHelper.measureMemory', operation.name || 'anonymous');
-    
-    try {
-      const startMem = process.memoryUsage();
-      
-      const { result, duration } = await this.measureTime(operation);
-      
-      const endMem = process.memoryUsage();
-      
-      const memoryDelta = {
-        rss: endMem.rss - startMem.rss,
-        heapTotal: endMem.heapTotal - startMem.heapTotal,
-        heapUsed: endMem.heapUsed - startMem.heapUsed,
-        external: endMem.external - startMem.external
-      };
-      
-      const measurement = {
-        result,
-        duration,
-        memoryStart: startMem,
-        memoryEnd: endMem,
-        memoryDelta,
-        timestamp: new Date()
-      };
-      
-      logReturn('PerformanceTestHelper.measureMemory', `${duration.toFixed(2)}ms, heap: ${(memoryDelta.heapUsed / 1024 / 1024).toFixed(2)}MB`);
-      return measurement;
-    } catch (error) {
-      logReturn('PerformanceTestHelper.measureMemory', `error: ${error.message}`);
-      throw error;
-    }
+  // Instance method wrappers for compatibility with TestSuiteBuilder
+  async measureTime(operation) {
+    return PerformanceTestHelper.measureTime(operation);
+  }
+
+  async assertTimingConstraint(operation, maxDuration) {
+    return PerformanceTestHelper.assertTimingConstraint(operation, maxDuration);
+  }
+
+  async testConcurrency(operations) {
+    return PerformanceTestHelper.testConcurrency(operations);
   }
 }
 

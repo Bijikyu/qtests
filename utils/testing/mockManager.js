@@ -121,6 +121,52 @@ class MockManager {
   }
 
   /**
+   * Gets a specific mock by name
+   * 
+   * @param {string} mockName - Name of the mock to retrieve
+   * @returns {Object|null} Mock object or null if not found
+   */
+  getMock(mockName) {
+    logStart('MockManager.getMock', mockName);
+    
+    const mock = this.mocks.get(mockName);
+    if (mock) {
+      logReturn('MockManager.getMock', 'found');
+      return mock;
+    } else {
+      logReturn('MockManager.getMock', 'not found');
+      return null;
+    }
+  }
+
+  /**
+   * Clears all mocks and restores original functions
+   */
+  clearAll() {
+    logStart('MockManager.clearAll');
+    
+    try {
+      // Restore all mocked functions
+      this.restorations.forEach((restore, mockName) => {
+        try {
+          restore();
+        } catch (error) {
+          // Ignore restoration errors - function may already be restored
+        }
+      });
+      
+      // Clear all stored mocks and restorations
+      this.mocks.clear();
+      this.restorations.clear();
+      
+      logReturn('MockManager.clearAll', 'completed');
+    } catch (error) {
+      logReturn('MockManager.clearAll', `error: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
    * Sets up environment variable mocks using qtests testEnv utility
    * 
    * @param {Object} envVars - Environment variables to set

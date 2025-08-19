@@ -69,6 +69,10 @@ class ApiKey extends BaseMockModel {
       console.log(`ApiKey.find.lean is returning ${chain.data.length} keys`);
       return Promise.resolve(chain.data);
     };
+    chain.exec = () => {
+      console.log(`ApiKey.find.exec is returning ${chain.data.length} keys`);
+      return Promise.resolve(chain.data);
+    };
     return chain;
   }
 }

@@ -1,0 +1,53 @@
+20d9362242aa40cf7d85e43d3bbb7a45
+/**
+ * API Key Generator Utility
+ * 
+ * This module focuses solely on generating test API keys for testing scenarios.
+ * It provides both direct key generation and HTTP endpoint testing capabilities.
+ */
+
+/**
+ * Generate API key for testing scenarios
+ * 
+ * This function creates test API keys with optional HTTP app testing support.
+ * It supports both direct key generation and API endpoint testing patterns.
+ * 
+ * @param {string|Object} appOrSuffix - Either an Express app for HTTP testing or a suffix string
+ * @param {string} allowedApi - Optional API identifier for HTTP testing
+ * @returns {Promise<string|Object>} Generated key string or HTTP response object
+ */
+async function generateKey(appOrSuffix, allowedApi) {
+  console.log(`generateKey is running with ${typeof appOrSuffix} ${allowedApi || 'none'}`);
+  try {
+    // Check if first parameter is an Express app (has use/get/post methods)
+    if (appOrSuffix && typeof appOrSuffix === 'object' && (appOrSuffix.use || appOrSuffix.get || appOrSuffix.post)) {
+      // HTTP endpoint testing mode
+      try {
+        const {
+          supertest
+        } = require('../httpTest');
+        const response = await supertest(appOrSuffix).post('/api/generate-key').send({
+          allowedApi: allowedApi
+        });
+        console.log(`generateKey is returning HTTP response`);
+        return response;
+      } catch (error) {
+        console.log(`generateKey HTTP test error: ${error.message}`);
+        throw error;
+      }
+    } else {
+      // Direct key generation mode
+      const suffix = appOrSuffix || Date.now().toString();
+      const key = `test-api-key-${suffix}`;
+      console.log(`generateKey is returning direct key`);
+      return key;
+    }
+  } catch (error) {
+    console.log(`generateKey error ${error.message}`);
+    throw error;
+  }
+}
+module.exports = {
+  generateKey
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJnZW5lcmF0ZUtleSIsImFwcE9yU3VmZml4IiwiYWxsb3dlZEFwaSIsImNvbnNvbGUiLCJsb2ciLCJ1c2UiLCJnZXQiLCJwb3N0Iiwic3VwZXJ0ZXN0IiwicmVxdWlyZSIsInJlc3BvbnNlIiwic2VuZCIsImVycm9yIiwibWVzc2FnZSIsInN1ZmZpeCIsIkRhdGUiLCJub3ciLCJ0b1N0cmluZyIsImtleSIsIm1vZHVsZSIsImV4cG9ydHMiXSwic291cmNlcyI6WyJrZXlHZW5lcmF0b3IuanMiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBBUEkgS2V5IEdlbmVyYXRvciBVdGlsaXR5XG4gKiBcbiAqIFRoaXMgbW9kdWxlIGZvY3VzZXMgc29sZWx5IG9uIGdlbmVyYXRpbmcgdGVzdCBBUEkga2V5cyBmb3IgdGVzdGluZyBzY2VuYXJpb3MuXG4gKiBJdCBwcm92aWRlcyBib3RoIGRpcmVjdCBrZXkgZ2VuZXJhdGlvbiBhbmQgSFRUUCBlbmRwb2ludCB0ZXN0aW5nIGNhcGFiaWxpdGllcy5cbiAqL1xuXG4vKipcbiAqIEdlbmVyYXRlIEFQSSBrZXkgZm9yIHRlc3Rpbmcgc2NlbmFyaW9zXG4gKiBcbiAqIFRoaXMgZnVuY3Rpb24gY3JlYXRlcyB0ZXN0IEFQSSBrZXlzIHdpdGggb3B0aW9uYWwgSFRUUCBhcHAgdGVzdGluZyBzdXBwb3J0LlxuICogSXQgc3VwcG9ydHMgYm90aCBkaXJlY3Qga2V5IGdlbmVyYXRpb24gYW5kIEFQSSBlbmRwb2ludCB0ZXN0aW5nIHBhdHRlcm5zLlxuICogXG4gKiBAcGFyYW0ge3N0cmluZ3xPYmplY3R9IGFwcE9yU3VmZml4IC0gRWl0aGVyIGFuIEV4cHJlc3MgYXBwIGZvciBIVFRQIHRlc3Rpbmcgb3IgYSBzdWZmaXggc3RyaW5nXG4gKiBAcGFyYW0ge3N0cmluZ30gYWxsb3dlZEFwaSAtIE9wdGlvbmFsIEFQSSBpZGVudGlmaWVyIGZvciBIVFRQIHRlc3RpbmdcbiAqIEByZXR1cm5zIHtQcm9taXNlPHN0cmluZ3xPYmplY3Q+fSBHZW5lcmF0ZWQga2V5IHN0cmluZyBvciBIVFRQIHJlc3BvbnNlIG9iamVjdFxuICovXG5hc3luYyBmdW5jdGlvbiBnZW5lcmF0ZUtleShhcHBPclN1ZmZpeCwgYWxsb3dlZEFwaSkge1xuICBjb25zb2xlLmxvZyhgZ2VuZXJhdGVLZXkgaXMgcnVubmluZyB3aXRoICR7dHlwZW9mIGFwcE9yU3VmZml4fSAke2FsbG93ZWRBcGkgfHwgJ25vbmUnfWApO1xuICBcbiAgdHJ5IHtcbiAgICAvLyBDaGVjayBpZiBmaXJzdCBwYXJhbWV0ZXIgaXMgYW4gRXhwcmVzcyBhcHAgKGhhcyB1c2UvZ2V0L3Bvc3QgbWV0aG9kcylcbiAgICBpZiAoYXBwT3JTdWZmaXggJiYgdHlwZW9mIGFwcE9yU3VmZml4ID09PSAnb2JqZWN0JyAmJiBcbiAgICAgICAgKGFwcE9yU3VmZml4LnVzZSB8fCBhcHBPclN1ZmZpeC5nZXQgfHwgYXBwT3JTdWZmaXgucG9zdCkpIHtcbiAgICAgIFxuICAgICAgLy8gSFRUUCBlbmRwb2ludCB0ZXN0aW5nIG1vZGVcbiAgICAgIHRyeSB7XG4gICAgICAgIGNvbnN0IHsgc3VwZXJ0ZXN0IH0gPSByZXF1aXJlKCcuLi9odHRwVGVzdCcpO1xuICAgICAgICBjb25zdCByZXNwb25zZSA9IGF3YWl0IHN1cGVydGVzdChhcHBPclN1ZmZpeClcbiAgICAgICAgICAucG9zdCgnL2FwaS9nZW5lcmF0ZS1rZXknKVxuICAgICAgICAgIC5zZW5kKHsgYWxsb3dlZEFwaTogYWxsb3dlZEFwaSB9KTtcbiAgICAgICAgXG4gICAgICAgIGNvbnNvbGUubG9nKGBnZW5lcmF0ZUtleSBpcyByZXR1cm5pbmcgSFRUUCByZXNwb25zZWApO1xuICAgICAgICByZXR1cm4gcmVzcG9uc2U7XG4gICAgICB9IGNhdGNoIChlcnJvcikge1xuICAgICAgICBjb25zb2xlLmxvZyhgZ2VuZXJhdGVLZXkgSFRUUCB0ZXN0IGVycm9yOiAke2Vycm9yLm1lc3NhZ2V9YCk7XG4gICAgICAgIHRocm93IGVycm9yO1xuICAgICAgfVxuICAgIH0gZWxzZSB7XG4gICAgICAvLyBEaXJlY3Qga2V5IGdlbmVyYXRpb24gbW9kZVxuICAgICAgY29uc3Qgc3VmZml4ID0gYXBwT3JTdWZmaXggfHwgRGF0ZS5ub3coKS50b1N0cmluZygpO1xuICAgICAgY29uc3Qga2V5ID0gYHRlc3QtYXBpLWtleS0ke3N1ZmZpeH1gO1xuICAgICAgXG4gICAgICBjb25zb2xlLmxvZyhgZ2VuZXJhdGVLZXkgaXMgcmV0dXJuaW5nIGRpcmVjdCBrZXlgKTtcbiAgICAgIHJldHVybiBrZXk7XG4gICAgfVxuICB9IGNhdGNoIChlcnJvcikge1xuICAgIGNvbnNvbGUubG9nKGBnZW5lcmF0ZUtleSBlcnJvciAke2Vycm9yLm1lc3NhZ2V9YCk7XG4gICAgdGhyb3cgZXJyb3I7XG4gIH1cbn1cblxubW9kdWxlLmV4cG9ydHMgPSB7XG4gIGdlbmVyYXRlS2V5XG59OyJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0EsZUFBZUEsV0FBV0EsQ0FBQ0MsV0FBVyxFQUFFQyxVQUFVLEVBQUU7RUFDbERDLE9BQU8sQ0FBQ0MsR0FBRyxDQUFDLCtCQUErQixPQUFPSCxXQUFXLElBQUlDLFVBQVUsSUFBSSxNQUFNLEVBQUUsQ0FBQztFQUV4RixJQUFJO0lBQ0Y7SUFDQSxJQUFJRCxXQUFXLElBQUksT0FBT0EsV0FBVyxLQUFLLFFBQVEsS0FDN0NBLFdBQVcsQ0FBQ0ksR0FBRyxJQUFJSixXQUFXLENBQUNLLEdBQUcsSUFBSUwsV0FBVyxDQUFDTSxJQUFJLENBQUMsRUFBRTtNQUU1RDtNQUNBLElBQUk7UUFDRixNQUFNO1VBQUVDO1FBQVUsQ0FBQyxHQUFHQyxPQUFPLENBQUMsYUFBYSxDQUFDO1FBQzVDLE1BQU1DLFFBQVEsR0FBRyxNQUFNRixTQUFTLENBQUNQLFdBQVcsQ0FBQyxDQUMxQ00sSUFBSSxDQUFDLG1CQUFtQixDQUFDLENBQ3pCSSxJQUFJLENBQUM7VUFBRVQsVUFBVSxFQUFFQTtRQUFXLENBQUMsQ0FBQztRQUVuQ0MsT0FBTyxDQUFDQyxHQUFHLENBQUMsd0NBQXdDLENBQUM7UUFDckQsT0FBT00sUUFBUTtNQUNqQixDQUFDLENBQUMsT0FBT0UsS0FBSyxFQUFFO1FBQ2RULE9BQU8sQ0FBQ0MsR0FBRyxDQUFDLGdDQUFnQ1EsS0FBSyxDQUFDQyxPQUFPLEVBQUUsQ0FBQztRQUM1RCxNQUFNRCxLQUFLO01BQ2I7SUFDRixDQUFDLE1BQU07TUFDTDtNQUNBLE1BQU1FLE1BQU0sR0FBR2IsV0FBVyxJQUFJYyxJQUFJLENBQUNDLEdBQUcsQ0FBQyxDQUFDLENBQUNDLFFBQVEsQ0FBQyxDQUFDO01BQ25ELE1BQU1DLEdBQUcsR0FBRyxnQkFBZ0JKLE1BQU0sRUFBRTtNQUVwQ1gsT0FBTyxDQUFDQyxHQUFHLENBQUMscUNBQXFDLENBQUM7TUFDbEQsT0FBT2MsR0FBRztJQUNaO0VBQ0YsQ0FBQyxDQUFDLE9BQU9OLEtBQUssRUFBRTtJQUNkVCxPQUFPLENBQUNDLEdBQUcsQ0FBQyxxQkFBcUJRLEtBQUssQ0FBQ0MsT0FBTyxFQUFFLENBQUM7SUFDakQsTUFBTUQsS0FBSztFQUNiO0FBQ0Y7QUFFQU8sTUFBTSxDQUFDQyxPQUFPLEdBQUc7RUFDZnBCO0FBQ0YsQ0FBQyIsImlnbm9yZUxpc3QiOltdfQ==

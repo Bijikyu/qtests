@@ -198,14 +198,14 @@ describe('Enhanced Test Helpers Framework', () => {
   describe('Module reloading with thread safety', () => {
     
     test('reload prevents concurrent operations on same module', () => {
-      const testPath = '../utils/mockConsole';
+      const testPath = 'mockConsole';
       
       // First reload should succeed
       const module1 = reload(testPath);
       expect(module1).toBeDefined();
       
       // Add to lock manually to simulate concurrent access
-      const fullPath = require('path').resolve(__dirname, testPath);
+      const fullPath = require('path').resolve(__dirname, '..', 'utils', testPath);
       moduleReloadLock.add(fullPath);
       
       // Second reload should skip and return cached version
@@ -218,7 +218,7 @@ describe('Enhanced Test Helpers Framework', () => {
     
     test('reload handles non-existent modules gracefully', () => {
       expect(() => {
-        reload('../nonexistent/module');
+        reload('nonexistent/module');
       }).toThrow();
     });
     
@@ -360,7 +360,7 @@ describe('Enhanced Test Helpers Framework', () => {
       process.env.NODE_ENV = 'test_integration';
       
       // Reload a module
-      const reloadedModule = reload('../utils/mockConsole');
+      const reloadedModule = reload('mockConsole');
       expect(reloadedModule).toBeDefined();
       
       // Restore environment

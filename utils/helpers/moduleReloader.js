@@ -24,7 +24,8 @@ const moduleReloadLock = new Set();
 function reload(relPath) {
   console.log(`reload is running with ${relPath}`);
 
-  const fullPath = path.resolve(__dirname, relPath);
+  // Resolve relative to the utils directory (parent of helpers)
+  const fullPath = path.resolve(__dirname, '..', relPath);
 
   if (moduleReloadLock.has(fullPath)) {
     console.log(`reload has run resulting in skip`);
@@ -46,5 +47,6 @@ function reload(relPath) {
 }
 
 module.exports = {
-  reload
+  reload,
+  moduleReloadLock
 };

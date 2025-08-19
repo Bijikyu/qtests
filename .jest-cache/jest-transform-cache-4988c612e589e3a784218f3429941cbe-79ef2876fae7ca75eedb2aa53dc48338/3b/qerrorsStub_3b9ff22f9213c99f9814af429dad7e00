@@ -1,0 +1,41 @@
+cfa4f0b40e7d560019f55dd5d0a49dbd
+/**
+ * QErrors Stubbing Utility
+ * 
+ * This module provides functionality for stubbing the qerrors module
+ * during testing to prevent error reporting network calls.
+ */
+
+/**
+ * Stub qerrors.qerrors method to silence error reporting during tests
+ * 
+ * This function replaces the qerrors.qerrors method with a no-op function
+ * to prevent error reporting network calls and log output during testing.
+ * 
+ * @returns {undefined} This is a side-effect function with no return value
+ */
+function stubQerrors() {
+  console.log(`stubQerrors is running with none`);
+  try {
+    const qerrors = require('qerrors');
+
+    // Check if Node.js test module is available for superior mocking
+    if (typeof test !== 'undefined' && test.mock && test.mock.method) {
+      test.mock.method(qerrors, 'qerrors', () => {});
+    } else {
+      // Fall back to manual stubbing
+      qerrors.qerrors = () => {};
+    }
+
+    // Force offline module to reload and pick up the stubbed qerrors
+    delete require.cache[require.resolve('../offlineMode')];
+    console.log(`stubQerrors is returning undefined`);
+  } catch (err) {
+    console.log(`stubQerrors error ${err.message}`);
+    throw err;
+  }
+}
+module.exports = {
+  stubQerrors
+};
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJzdHViUWVycm9ycyIsImNvbnNvbGUiLCJsb2ciLCJxZXJyb3JzIiwicmVxdWlyZSIsInRlc3QiLCJtb2NrIiwibWV0aG9kIiwiY2FjaGUiLCJyZXNvbHZlIiwiZXJyIiwibWVzc2FnZSIsIm1vZHVsZSIsImV4cG9ydHMiXSwic291cmNlcyI6WyJxZXJyb3JzU3R1Yi5qcyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIFFFcnJvcnMgU3R1YmJpbmcgVXRpbGl0eVxuICogXG4gKiBUaGlzIG1vZHVsZSBwcm92aWRlcyBmdW5jdGlvbmFsaXR5IGZvciBzdHViYmluZyB0aGUgcWVycm9ycyBtb2R1bGVcbiAqIGR1cmluZyB0ZXN0aW5nIHRvIHByZXZlbnQgZXJyb3IgcmVwb3J0aW5nIG5ldHdvcmsgY2FsbHMuXG4gKi9cblxuLyoqXG4gKiBTdHViIHFlcnJvcnMucWVycm9ycyBtZXRob2QgdG8gc2lsZW5jZSBlcnJvciByZXBvcnRpbmcgZHVyaW5nIHRlc3RzXG4gKiBcbiAqIFRoaXMgZnVuY3Rpb24gcmVwbGFjZXMgdGhlIHFlcnJvcnMucWVycm9ycyBtZXRob2Qgd2l0aCBhIG5vLW9wIGZ1bmN0aW9uXG4gKiB0byBwcmV2ZW50IGVycm9yIHJlcG9ydGluZyBuZXR3b3JrIGNhbGxzIGFuZCBsb2cgb3V0cHV0IGR1cmluZyB0ZXN0aW5nLlxuICogXG4gKiBAcmV0dXJucyB7dW5kZWZpbmVkfSBUaGlzIGlzIGEgc2lkZS1lZmZlY3QgZnVuY3Rpb24gd2l0aCBubyByZXR1cm4gdmFsdWVcbiAqL1xuZnVuY3Rpb24gc3R1YlFlcnJvcnMoKSB7XG4gIGNvbnNvbGUubG9nKGBzdHViUWVycm9ycyBpcyBydW5uaW5nIHdpdGggbm9uZWApO1xuICBcbiAgdHJ5IHtcbiAgICBjb25zdCBxZXJyb3JzID0gcmVxdWlyZSgncWVycm9ycycpO1xuICAgIFxuICAgIC8vIENoZWNrIGlmIE5vZGUuanMgdGVzdCBtb2R1bGUgaXMgYXZhaWxhYmxlIGZvciBzdXBlcmlvciBtb2NraW5nXG4gICAgaWYgKHR5cGVvZiB0ZXN0ICE9PSAndW5kZWZpbmVkJyAmJiB0ZXN0Lm1vY2sgJiYgdGVzdC5tb2NrLm1ldGhvZCkge1xuICAgICAgdGVzdC5tb2NrLm1ldGhvZChxZXJyb3JzLCAncWVycm9ycycsICgpID0+IHt9KTtcbiAgICB9IGVsc2Uge1xuICAgICAgLy8gRmFsbCBiYWNrIHRvIG1hbnVhbCBzdHViYmluZ1xuICAgICAgcWVycm9ycy5xZXJyb3JzID0gKCkgPT4ge307XG4gICAgfVxuICAgIFxuICAgIC8vIEZvcmNlIG9mZmxpbmUgbW9kdWxlIHRvIHJlbG9hZCBhbmQgcGljayB1cCB0aGUgc3R1YmJlZCBxZXJyb3JzXG4gICAgZGVsZXRlIHJlcXVpcmUuY2FjaGVbcmVxdWlyZS5yZXNvbHZlKCcuLi9vZmZsaW5lTW9kZScpXTtcbiAgICBcbiAgICBjb25zb2xlLmxvZyhgc3R1YlFlcnJvcnMgaXMgcmV0dXJuaW5nIHVuZGVmaW5lZGApO1xuICAgIFxuICB9IGNhdGNoIChlcnIpIHtcbiAgICBjb25zb2xlLmxvZyhgc3R1YlFlcnJvcnMgZXJyb3IgJHtlcnIubWVzc2FnZX1gKTtcbiAgICB0aHJvdyBlcnI7XG4gIH1cbn1cblxubW9kdWxlLmV4cG9ydHMgPSB7XG4gIHN0dWJRZXJyb3JzXG59OyJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBOztBQUVBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSxTQUFTQSxXQUFXQSxDQUFBLEVBQUc7RUFDckJDLE9BQU8sQ0FBQ0MsR0FBRyxDQUFDLGtDQUFrQyxDQUFDO0VBRS9DLElBQUk7SUFDRixNQUFNQyxPQUFPLEdBQUdDLE9BQU8sQ0FBQyxTQUFTLENBQUM7O0lBRWxDO0lBQ0EsSUFBSSxPQUFPQyxJQUFJLEtBQUssV0FBVyxJQUFJQSxJQUFJLENBQUNDLElBQUksSUFBSUQsSUFBSSxDQUFDQyxJQUFJLENBQUNDLE1BQU0sRUFBRTtNQUNoRUYsSUFBSSxDQUFDQyxJQUFJLENBQUNDLE1BQU0sQ0FBQ0osT0FBTyxFQUFFLFNBQVMsRUFBRSxNQUFNLENBQUMsQ0FBQyxDQUFDO0lBQ2hELENBQUMsTUFBTTtNQUNMO01BQ0FBLE9BQU8sQ0FBQ0EsT0FBTyxHQUFHLE1BQU0sQ0FBQyxDQUFDO0lBQzVCOztJQUVBO0lBQ0EsT0FBT0MsT0FBTyxDQUFDSSxLQUFLLENBQUNKLE9BQU8sQ0FBQ0ssT0FBTyxDQUFDLGdCQUFnQixDQUFDLENBQUM7SUFFdkRSLE9BQU8sQ0FBQ0MsR0FBRyxDQUFDLG9DQUFvQyxDQUFDO0VBRW5ELENBQUMsQ0FBQyxPQUFPUSxHQUFHLEVBQUU7SUFDWlQsT0FBTyxDQUFDQyxHQUFHLENBQUMscUJBQXFCUSxHQUFHLENBQUNDLE9BQU8sRUFBRSxDQUFDO0lBQy9DLE1BQU1ELEdBQUc7RUFDWDtBQUNGO0FBRUFFLE1BQU0sQ0FBQ0MsT0FBTyxHQUFHO0VBQ2ZiO0FBQ0YsQ0FBQyIsImlnbm9yZUxpc3QiOltdfQ==

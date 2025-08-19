@@ -133,69 +133,45 @@ class TestDataFactory {
   }
 
   /**
-   * Creates multiple related entities for complex test scenarios
+   * Creates multiple test entities using a factory function
    * 
-   * @param {Object} options - Options for entity creation
-   * @returns {Object} Object containing all created entities
+   * @param {Function} factoryFn - Factory function to create single entities
+   * @param {number} count - Number of entities to create
+   * @param {Object} baseOverrides - Base overrides applied to all entities
+   * @returns {Array} Array of created test entities
    */
-  static createRelatedEntities(options = {}) {
-    logStart('TestDataFactory.createRelatedEntities', options);
+  static createMultiple(factoryFn, count = 10, baseOverrides = {}) {
+    logStart('TestDataFactory.createMultiple', { count, baseOverrides });
     
-    const {
-      userCount = 1,
-      apiKeyCount = 1,
-      logCount = 1,
-      configCount = 1,
-      userOverrides = {},
-      apiKeyOverrides = {},
-      logOverrides = {},
-      configOverrides = {}
-    } = options;
-    
-    const result = {
-      users: [],
-      apiKeys: [],
-      logs: [],
-      configs: []
-    };
-    
-    // Create users first
-    for (let i = 0; i < userCount; i++) {
-      result.users.push(this.createUser(userOverrides));
+    const entities = [];
+    for (let i = 0; i < count; i++) {
+      const entityOverrides = { ...baseOverrides };
+      entities.push(factoryFn.call(this, entityOverrides));
     }
     
-    // Create API keys linked to users
-    for (let i = 0; i < apiKeyCount; i++) {
-      const linkedUser = result.users[i % result.users.length];
-      result.apiKeys.push(this.createApiKey({
-        userId: linkedUser?.id,
-        ...apiKeyOverrides
-      }));
-    }
-    
-    // Create log entries linked to users
-    for (let i = 0; i < logCount; i++) {
-      const linkedUser = result.users[i % result.users.length];
-      result.logs.push(this.createLogEntry({
-        userId: linkedUser?.id,
-        ...logOverrides
-      }));
-    }
-    
-    // Create configurations
-    for (let i = 0; i < configCount; i++) {
-      result.configs.push(this.createConfig(configOverrides));
-    }
-    
-    logReturn('TestDataFactory.createRelatedEntities', result);
-    return result;
+    logReturn('TestDataFactory.createMultiple', `${entities.length} entities`);
+    return entities;
   }
 
-  /**
-   * Resets the counter for consistent test data generation
-   */
-  static reset() {
-    this.counter = 0;
+  // Instance method wrappers for compatibility with TestSuiteBuilder
+  createUser(overrides) {
+    return TestDataFactory.createUser(overrides);
+  }
+
+  createApiKey(overrides) {
+    return TestDataFactory.createApiKey(overrides);
+  }
+
+  createLogEntry(overrides) {
+    return TestDataFactory.createLogEntry(overrides);
+  }
+
+  createConfig(overrides) {
+    return TestDataFactory.createConfig(overrides);
+  }
+
+  createMultiple(factoryFn, count, baseOverrides) {
+    return TestDataFactory.createMultiple(factoryFn.bind(this), count, baseOverrides);
   }
 }
 
