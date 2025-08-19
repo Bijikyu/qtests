@@ -116,6 +116,11 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
   - **Fallback compatibility**: Defaults to newer standard if version detection fails
   - **Performance optimization**: Caches version detection result to avoid repeated file reads
 
+#### Jest CLI Parameter Regex Bug  
+- **Client-Reported Issue**: Fixed autogeneration creating "testPathPatternss" (double 's') typo in generated runners
+- **Root Cause**: Global regex replacement `--testPathPattern` → `--testPathPatterns` was replacing already-correct strings, causing double suffixes
+- **Fix Applied**: Used negative lookahead regex `(?!s)` to prevent double replacement of existing correct parameter names
+
 #### Resolution Summary
 - **Fix Verification**: Confirmed fixes with 100% test success rate (75/75 tests passing)
 - **Quality Assurance**: Enhanced test generator to be more project-agnostic and robust
