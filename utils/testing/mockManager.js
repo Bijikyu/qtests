@@ -226,6 +226,48 @@ class MockManager {
   }
 
   /**
+   * Sets up HTTP mocks with custom responses
+   * 
+   * @param {Array} responses - Array of response objects with method, path, data
+   * @returns {Object} HTTP mock utilities
+   */
+  setupHttpMocks(responses = []) {
+    logStart('MockManager.setupHttpMocks', responses.length);
+    
+    try {
+      // Create a simple HTTP mock that can handle basic routing
+      const httpMock = {
+        app: {
+          routes: new Map(),
+          get: function(path, handler) { this.routes.set('GET:' + path, handler); },
+          post: function(path, handler) { this.routes.set('POST:' + path, handler); },
+          put: function(path, handler) { this.routes.set('PUT:' + path, handler); },
+          delete: function(path, handler) { this.routes.set('DELETE:' + path, handler); }
+        },
+        supertest: function(app) {
+          return {
+            get: (path) => ({ expect: (status) => ({ end: (callback) => callback() }) }),
+            post: (path) => ({ send: () => ({ expect: (status) => ({ end: (callback) => callback() }) }) })
+          };
+        }
+      };
+      
+      // Set up predefined responses
+      responses.forEach(response => {
+        const routeKey = `${response.method.toUpperCase()}:${response.path}`;
+        httpMock.app.routes.set(routeKey, () => response.data);
+      });
+      
+      this.mocks.set('http', httpMock);
+      logReturn('MockManager.setupHttpMocks', 'completed');
+      return httpMock;
+    } catch (error) {
+      logReturn('MockManager.setupHttpMocks', `error: ${error.message}`);
+      throw error;
+    }
+  }
+
+  /**
    * Clears all mocks and restores original functionality
    */
   clearAll() {

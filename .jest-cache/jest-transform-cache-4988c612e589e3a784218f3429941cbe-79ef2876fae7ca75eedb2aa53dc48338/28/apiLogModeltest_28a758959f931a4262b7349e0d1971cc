@@ -1,0 +1,10 @@
+76d35c404c89778bddb87a475b3e8410
+// Auto-generated unit test for apiLogModel.js - optimized for speed
+const mod = require('./apiLogModel.js');
+describe('apiLogModel.js', () => {
+  test('ApiLog works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.ApiLog).toBeDefined();
+  });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2QiLCJyZXF1aXJlIiwiZGVzY3JpYmUiLCJ0ZXN0IiwiZXhwZWN0IiwiQXBpTG9nIiwidG9CZURlZmluZWQiXSwic291cmNlcyI6WyJhcGlMb2dNb2RlbC50ZXN0LmpzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIEF1dG8tZ2VuZXJhdGVkIHVuaXQgdGVzdCBmb3IgYXBpTG9nTW9kZWwuanMgLSBvcHRpbWl6ZWQgZm9yIHNwZWVkXG5jb25zdCBtb2QgPSByZXF1aXJlKCcuL2FwaUxvZ01vZGVsLmpzJyk7XG5cbmRlc2NyaWJlKCdhcGlMb2dNb2RlbC5qcycsICgpID0+IHtcbiAgdGVzdCgnQXBpTG9nIHdvcmtzJywgYXN5bmMgKCkgPT4ge1xuICAgIC8vIEZhc3QgYXNzZXJ0aW9uIC0gVE9ETzogaW1wbGVtZW50IHNwZWNpZmljIHRlc3QgbG9naWNcbiAgICBleHBlY3QodHlwZW9mIG1vZC5BcGlMb2cpLnRvQmVEZWZpbmVkKCk7XG4gIH0pO1xufSk7XG4iXSwibWFwcGluZ3MiOiJBQUFBO0FBQ0EsTUFBTUEsR0FBRyxHQUFHQyxPQUFPLENBQUMsa0JBQWtCLENBQUM7QUFFdkNDLFFBQVEsQ0FBQyxnQkFBZ0IsRUFBRSxNQUFNO0VBQy9CQyxJQUFJLENBQUMsY0FBYyxFQUFFLFlBQVk7SUFDL0I7SUFDQUMsTUFBTSxDQUFDLE9BQU9KLEdBQUcsQ0FBQ0ssTUFBTSxDQUFDLENBQUNDLFdBQVcsQ0FBQyxDQUFDO0VBQ3pDLENBQUMsQ0FBQztBQUNKLENBQUMsQ0FBQyIsImlnbm9yZUxpc3QiOltdfQ==

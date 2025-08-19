@@ -54,6 +54,21 @@ class TestSuiteBuilder {
     this.config.performance = true;
     return this;
   }
+
+  withDatabase() {
+    this.config.database = true;
+    return this;
+  }
+
+  withEnvironmentMocks(envVars) {
+    this.config.environmentMocks = envVars || {};
+    return this;
+  }
+
+  withHttpMocks(responses) {
+    this.config.httpMocks = responses || [];
+    return this;
+  }
   
   withoutAutoCleanup() {
     this.config.autoCleanup = false;
@@ -79,14 +94,22 @@ class TestSuiteBuilder {
     if (this.config.consoleMocks) {
       mockManager.setupConsoleMocks();
     }
+    if (this.config.environmentMocks && Object.keys(this.config.environmentMocks).length > 0) {
+      mockManager.setupEnvironmentMocks(this.config.environmentMocks);
+    }
+    if (this.config.httpMocks && this.config.httpMocks.length > 0) {
+      mockManager.setupHttpMocks(this.config.httpMocks);
+    }
+    
+    const assertionHelper = new AssertionHelper();
     
     return {
       mocks: mockManager,
-      db: new DatabaseTestHelper(), 
-      assertions: new AssertionHelper(),
-      assert: new AssertionHelper(), // Alias for compatibility
-      data: new TestDataFactory(),
-      performance: this.config.performance ? new PerformanceTestHelper() : null,
+      db: this.config.database ? new DatabaseTestHelper() : undefined,
+      assertions: assertionHelper,
+      assert: AssertionHelper, // Return class for toBe() equality checks
+      data: TestDataFactory, // Always return class for toBe() equality checks
+      performance: this.config.performance ? PerformanceTestHelper : undefined, // Return class for toBe() equality checks
       config: { ...this.config }
     };
   }

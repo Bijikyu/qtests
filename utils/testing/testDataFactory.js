@@ -118,7 +118,7 @@ class TestDataFactory {
     const id = this.nextId();
     const config = {
       id: `config-${id}`,
-      name: `Test Config ${id}`,
+      name: `Test Configuration ${id}`,
       value: `test-value-${id}`,
       environment: 'test',
       type: 'string',
@@ -172,6 +172,80 @@ class TestDataFactory {
 
   createMultiple(factoryFn, count, baseOverrides) {
     return TestDataFactory.createMultiple(factoryFn.bind(this), count, baseOverrides);
+  }
+
+  // Static method for resetting counter
+  static reset() {
+    this.counter = 0;
+  }
+
+  /**
+   * Creates related entities with relationships
+   * 
+   * @param {Object} config - Configuration for creating related entities
+   * @returns {Object} Object with created entities and relationships
+   */
+  static createRelatedEntities(config) {
+    logStart('TestDataFactory.createRelatedEntities', config);
+    
+    try {
+      const {
+        userCount = 1,
+        apiKeysPerUser = 1,
+        logsPerUser = 1
+      } = config;
+      
+      const users = [];
+      const apiKeys = [];
+      const logs = [];
+      
+      // Create users first
+      for (let i = 0; i < userCount; i++) {
+        users.push(this.createUser());
+      }
+      
+      // Create API keys for each user
+      users.forEach(user => {
+        for (let i = 0; i < apiKeysPerUser; i++) {
+          apiKeys.push(this.createApiKey({
+            userId: user.id,
+            key: `${user.username}-key-${i + 1}`
+          }));
+        }
+      });
+      
+      // Create logs for each user
+      users.forEach(user => {
+        for (let i = 0; i < logsPerUser; i++) {
+          logs.push(this.createLogEntry({
+            userId: user.id,
+            endpoint: `/api/users/${user.id}/data-${i + 1}`
+          }));
+        }
+      });
+      
+      const result = {
+        users,
+        apiKeys,
+        logs,
+        relationships: {
+          userToApiKeys: users.reduce((acc, user) => {
+            acc[user.id] = apiKeys.filter(key => key.userId === user.id);
+            return acc;
+          }, {}),
+          userToLogs: users.reduce((acc, user) => {
+            acc[user.id] = logs.filter(log => log.userId === user.id);
+            return acc;
+          }, {})
+        }
+      };
+      
+      logReturn('TestDataFactory.createRelatedEntities', `created ${users.length} users, ${apiKeys.length} API keys, ${logs.length} logs`);
+      return result;
+    } catch (error) {
+      logReturn('TestDataFactory.createRelatedEntities', `error: ${error.message}`);
+      throw error;
+    }
   }
 }
 

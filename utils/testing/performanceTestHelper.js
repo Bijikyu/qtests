@@ -145,6 +145,48 @@ class PerformanceTestHelper {
   async testConcurrency(operations) {
     return PerformanceTestHelper.testConcurrency(operations);
   }
+
+  async measureMemory(operation) {
+    return PerformanceTestHelper.measureMemory(operation);
+  }
+
+  /**
+   * Measures memory usage during operation execution
+   * 
+   * @param {Function} operation - Operation to measure memory usage for
+   * @returns {Promise<Object>} Result with memory usage statistics
+   */
+  static async measureMemory(operation) {
+    logStart('PerformanceTestHelper.measureMemory', operation.name || 'anonymous');
+    
+    try {
+      const startMem = process.memoryUsage();
+      
+      const { result, duration } = await this.measureTime(operation);
+      
+      const endMem = process.memoryUsage();
+      
+      const measurement = {
+        result,
+        duration,
+        beforeMemory: startMem,
+        afterMemory: endMem,
+        memoryDelta: {
+          rss: endMem.rss - startMem.rss,
+          heapTotal: endMem.heapTotal - startMem.heapTotal,
+          heapUsed: endMem.heapUsed - startMem.heapUsed,
+          external: endMem.external - startMem.external
+        },
+        timestamp: new Date()
+      };
+      
+      logReturn('PerformanceTestHelper.measureMemory', `${duration.toFixed(2)}ms, heap: ${(measurement.memoryDelta.heapUsed / 1024 / 1024).toFixed(2)}MB`);
+      return measurement;
+    } catch (error) {
+      logReturn('PerformanceTestHelper.measureMemory', `error: ${error.message}`);
+      throw error;
+    }
+  }
 }
 
 module.exports = {
