@@ -294,16 +294,18 @@ class TestRunner {
   }
 
   /**
-   * Determine if a test should use Jest
+   * Determine if a test should use Jest - SIMPLIFIED for performance
    */
   shouldUseJest(testFile) {
-    try {
-      const content = fs.readFileSync(testFile, 'utf8');
-      // Look for Jest-specific patterns
-      return /\b(describe|it|test|expect|jest|beforeEach|afterEach|beforeAll|afterAll)\b/.test(content);
-    } catch {
-      return false;
+    // Skip expensive file reading - use filename patterns instead
+    const fileName = path.basename(testFile);
+    
+    // Simple heuristic: if it's in lib/ or has certain patterns, assume Jest
+    if (testFile.includes('/lib/') || fileName.includes('.test.js')) {
+      return true;
     }
+    
+    return false; // Default to Node.js for speed
   }
 
   /**

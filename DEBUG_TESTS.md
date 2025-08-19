@@ -1,7 +1,7 @@
 # Test Failure Analysis
 
-**Creation Time:** 2025-08-19T15:02:52.838Z
-**Pacific Time:** Tuesday, August 19, 2025 at 08:02:52 AM PDT
+**Creation Time:** 2025-08-19T15:23:36.603Z
+**Pacific Time:** Tuesday, August 19, 2025 at 08:23:36 AM PDT
 
 ⚠️ **STALENESS WARNING:** If your code changes are after the creation time above and you are checking this file, then it is stale and tests need to be rerun.
 
@@ -11,7 +11,24 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-FAIL test/offlineMode.test.js
+
+ReferenceError: You are trying to `import` a file after the Jest environment has been torn down. From test/offlineMode.test.js.
+
+      at buildLogger (node_modules/qerrors/lib/logger.js:152:33)
+
+ReferenceError: You are trying to `import` a file after the Jest environment has been torn down. From test/offlineMode.test.js.
+
+      at Object.get [as File] (node_modules/winston/lib/winston/transports/index.js:30:12)
+      at node_modules/qerrors/lib/logger.js:164:57
+      at buildLogger (node_modules/qerrors/lib/logger.js:171:11)
+/home/runner/workspace/node_modules/qerrors/lib/logger.js:164
+                                arr.push(new transports.File({ filename: path.join(logDir, 'error.log'), level: 'error', ...rotationOpts, maxFiles: fileCap, format: fileFormat })); //(size-based rotation for error files with count limit)
+                                         ^
+
+[TypeError: transports.File is not a constructor]
+
+Node.js v20.19.3
+FAIL test/offlineMode.test.js (7.787 s)
   ● Console
 
     console.log
@@ -749,15 +766,15 @@ FAIL test/offlineMode.test.js
     Expected: true
     Received: false
 
-      50 |       const { getEnvironmentState } = require('../utils/offlineMode');
-      51 |       const envState = getEnvironmentState();
-    > 52 |       expect(envState.codexFlag).toBe(true);
+      49 |       const { getEnvironmentState } = require('../utils/offlineMode');
+      50 |       const envState = getEnvironmentState();
+    > 51 |       expect(envState.codexFlag).toBe(true);
          |                                  ^
-      53 |       expect(envState.environmentDetected).toBe(true);
-      54 |     });
-      55 |     
+      52 |       expect(envState.environmentDetected).toBe(true);
+      53 |     });
+      54 |     
 
-      at Object.toBe (test/offlineMode.test.js:52:34)
+      at Object.toBe (test/offlineMode.test.js:51:34)
 
   ● Enhanced Offline Mode › Environment Variable Detection › detects OFFLINE_MODE environment variable
 
@@ -766,15 +783,15 @@ FAIL test/offlineMode.test.js
     Expected: true
     Received: false
 
-      59 |       const { getEnvironmentState } = require('../utils/offlineMode');
-      60 |       const envState = getEnvironmentState();
-    > 61 |       expect(envState.offlineFlagExplicit).toBe(true);
+      58 |       const { getEnvironmentState } = require('../utils/offlineMode');
+      59 |       const envState = getEnvironmentState();
+    > 60 |       expect(envState.offlineFlagExplicit).toBe(true);
          |                                            ^
-      62 |       expect(envState.environmentDetected).toBe(true);
-      63 |     });
-      64 |     
+      61 |       expect(envState.environmentDetected).toBe(true);
+      62 |     });
+      63 |     
 
-      at Object.toBe (test/offlineMode.test.js:61:44)
+      at Object.toBe (test/offlineMode.test.js:60:44)
 
   ● Enhanced Offline Mode › Environment Variable Detection › handles case-insensitive environment variables
 
@@ -783,15 +800,15 @@ FAIL test/offlineMode.test.js
     Expected: true
     Received: false
 
-      69 |       const { getEnvironmentState } = require('../utils/offlineMode');
-      70 |       const envState = getEnvironmentState();
-    > 71 |       expect(envState.codexFlag).toBe(true);
+      68 |       const { getEnvironmentState } = require('../utils/offlineMode');
+      69 |       const envState = getEnvironmentState();
+    > 70 |       expect(envState.codexFlag).toBe(true);
          |                                  ^
-      72 |       expect(envState.offlineFlagExplicit).toBe(true);
-      73 |     });
-      74 |     
+      71 |       expect(envState.offlineFlagExplicit).toBe(true);
+      72 |     });
+      73 |     
 
-      at Object.toBe (test/offlineMode.test.js:71:34)
+      at Object.toBe (test/offlineMode.test.js:70:34)
 
 
 ReferenceError: You are trying to `import` a file after the Jest environment has been torn down. From test/offlineMode.test.js.
@@ -825,12 +842,12 @@ Unable to check memory usage Error: write EPIPE
 Test Suites: 1 failed, 1 total
 Tests:       3 failed, 14 passed, 17 total
 Snapshots:   0 total
-Time:        7.963 s, estimated 20 s
+Time:        18.81 s
 Ran all test suites matching test/offlineMode.test.js.
 
 ```
 
-### Duration: 11846ms
+### Duration: 24370ms
 
 ---
 
@@ -838,4 +855,4 @@ Ran all test suites matching test/offlineMode.test.js.
 
 - Total failed tests: 1
 - Failed test files: test/offlineMode.test.js
-- Generated: 2025-08-19T15:02:52.862Z
+- Generated: 2025-08-19T15:23:36.624Z

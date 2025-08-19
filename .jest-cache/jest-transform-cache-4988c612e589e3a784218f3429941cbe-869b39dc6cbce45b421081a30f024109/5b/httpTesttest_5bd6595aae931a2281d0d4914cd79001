@@ -1,0 +1,11 @@
+794f3f4ead0a992c0dc5a559b69da57f
+// Lightweight unit test for httpTest.js - no complex operations
+describe('httpTest.js basic exports', () => {
+  test('module loads without errors', () => {
+    expect(() => require('../utils/httpTest.js')).not.toThrow();
+    const mod = require('../utils/httpTest.js');
+    expect(mod).toBeDefined();
+    expect(typeof mod).toBe('object');
+  });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJkZXNjcmliZSIsInRlc3QiLCJleHBlY3QiLCJyZXF1aXJlIiwibm90IiwidG9UaHJvdyIsIm1vZCIsInRvQmVEZWZpbmVkIiwidG9CZSJdLCJzb3VyY2VzIjpbImh0dHBUZXN0LnRlc3QuanMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gTGlnaHR3ZWlnaHQgdW5pdCB0ZXN0IGZvciBodHRwVGVzdC5qcyAtIG5vIGNvbXBsZXggb3BlcmF0aW9uc1xuZGVzY3JpYmUoJ2h0dHBUZXN0LmpzIGJhc2ljIGV4cG9ydHMnLCAoKSA9PiB7XG4gIHRlc3QoJ21vZHVsZSBsb2FkcyB3aXRob3V0IGVycm9ycycsICgpID0+IHtcbiAgICBleHBlY3QoKCkgPT4gcmVxdWlyZSgnLi4vdXRpbHMvaHR0cFRlc3QuanMnKSkubm90LnRvVGhyb3coKTtcbiAgICBjb25zdCBtb2QgPSByZXF1aXJlKCcuLi91dGlscy9odHRwVGVzdC5qcycpO1xuICAgIGV4cGVjdChtb2QpLnRvQmVEZWZpbmVkKCk7XG4gICAgZXhwZWN0KHR5cGVvZiBtb2QpLnRvQmUoJ29iamVjdCcpO1xuICB9KTtcbn0pOyJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQUEsUUFBUSxDQUFDLDJCQUEyQixFQUFFLE1BQU07RUFDMUNDLElBQUksQ0FBQyw2QkFBNkIsRUFBRSxNQUFNO0lBQ3hDQyxNQUFNLENBQUMsTUFBTUMsT0FBTyxDQUFDLHNCQUFzQixDQUFDLENBQUMsQ0FBQ0MsR0FBRyxDQUFDQyxPQUFPLENBQUMsQ0FBQztJQUMzRCxNQUFNQyxHQUFHLEdBQUdILE9BQU8sQ0FBQyxzQkFBc0IsQ0FBQztJQUMzQ0QsTUFBTSxDQUFDSSxHQUFHLENBQUMsQ0FBQ0MsV0FBVyxDQUFDLENBQUM7SUFDekJMLE1BQU0sQ0FBQyxPQUFPSSxHQUFHLENBQUMsQ0FBQ0UsSUFBSSxDQUFDLFFBQVEsQ0FBQztFQUNuQyxDQUFDLENBQUM7QUFDSixDQUFDLENBQUMiLCJpZ25vcmVMaXN0IjpbXX0=
