@@ -1,13 +1,13 @@
 # Test Failure Analysis
 
-**Creation Time:** 2025-08-19T14:49:01.881Z
-**Pacific Time:** Tuesday, August 19, 2025 at 07:49:01 AM PDT
+**Creation Time:** 2025-08-19T14:57:03.489Z
+**Pacific Time:** Tuesday, August 19, 2025 at 07:57:03 AM PDT
 
 ⚠️ **STALENESS WARNING:** If your code changes are after the creation time above and you are checking this file, then it is stale and tests need to be rerun.
 
 Analyze and address the following test failures:
 
-## Failed Test 1: test/mockModels.test.js
+## Failed Test 1: lib/testGenerator.test.js
 
 ### Output:
 ```
@@ -36,11 +36,11 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 14812ms
+### Duration: 17172ms
 
 ---
 
-## Failed Test 2: test/integration.test.js
+## Failed Test 2: index.test.js
 
 ### Output:
 ```
@@ -69,176 +69,332 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 17850ms
+### Duration: 17447ms
 
 ---
 
-## Failed Test 3: test/offlineMode.test.js
+## Failed Test 3: lib/logUtils.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
 ```
 
-### Duration: 299ms
+### Duration: 17374ms
 
 ---
 
-## Failed Test 4: test/qtests-dogfood.test.js
+## Failed Test 4: lib/testUtils.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+
+  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[6716]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
+  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
+
+----- Native stack trace -----
+
+ 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 6: 0x7efed680d4d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 7: 0x7efed680d59b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+FAIL lib/testUtils.test.js
+  ● Test suite failed to run
+
+    A jest worker process (pid=6716) was terminated by another process: signal=SIGABRT, exitCode=null. Operating system logs may contain more information on why this occurred.
+
+      at ChildProcessWorker._onExit (node_modules/jest-worker/build/index.js:968:23)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.716 s, estimated 6 s
+Ran all test suites matching lib/testUtils.test.js.
+
 ```
 
-### Duration: 44ms
+### Duration: 18392ms
 
 ---
 
-## Failed Test 5: test/resolveStubPaths.test.js
+## Failed Test 5: test/edgeCases.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+npm error code EAGAIN
+npm error syscall spawn sh
+npm error path /home/runner/workspace
+npm error errno -11
+npm error spawn sh EAGAIN
+npm error command sh -c jest --testPathPatterns test/edgeCases.test.js --no-coverage --cache
+npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-08-19T14_55_12_491Z-debug-0.log
+
 ```
 
-### Duration: 21ms
+### Duration: 5571ms
 
 ---
 
-## Failed Test 6: test/runTestSuite.test.js
+## Failed Test 6: test/dualModuleGeneration.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+npm error code EAGAIN
+npm error syscall spawn sh
+npm error path /home/runner/workspace
+npm error errno -11
+npm error spawn sh EAGAIN
+npm error command sh -c jest --testPathPatterns test/dualModuleGeneration.test.js --no-coverage --cache
+npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-08-19T14_55_12_397Z-debug-0.log
+
 ```
 
-### Duration: 7ms
+### Duration: 6677ms
 
 ---
 
-## Failed Test 7: test/safeSerialize.test.js
+## Failed Test 7: test/indexExports.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+
+  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[7139]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
+  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
+
+----- Native stack trace -----
+
+ 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 6: 0x7fe1d005f4d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 7: 0x7fe1d005f59b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7:  7139 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
+
 ```
 
-### Duration: 32ms
+### Duration: 1650ms
 
 ---
 
-## Failed Test 8: test/sendEmail.test.js
+## Failed Test 8: test/comprehensive.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+Test timeout after 30 seconds
 ```
 
-### Duration: 2ms
+### Duration: 30000ms
 
 ---
 
-## Failed Test 9: test/setupMultiple.test.js
+## Failed Test 9: test/httpTest.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+Test timeout after 30 seconds
 ```
 
-### Duration: 2ms
+### Duration: 30000ms
 
 ---
 
-## Failed Test 10: test/setupResolution.test.js
+## Failed Test 10: test/offlineMode.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+Test timeout after 30 seconds
 ```
 
-### Duration: 9ms
+### Duration: 30000ms
 
 ---
 
-## Failed Test 11: test/stubMethod.test.js
+## Failed Test 11: test/setupMultiple.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+Aborted (core dumped)
+
 ```
 
-### Duration: 7ms
+### Duration: 14630ms
 
 ---
 
-## Failed Test 12: test/testEnv.test.js
+## Failed Test 12: test/safeSerialize.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
 ```
 
-### Duration: 2ms
+### Duration: 17954ms
 
 ---
 
-## Failed Test 13: test/testGenerator.test.js
+## Failed Test 13: test/sendEmail.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
 ```
 
-### Duration: 14ms
+### Duration: 16929ms
 
 ---
 
-## Failed Test 14: test/testHelpers.test.js
+## Failed Test 14: test/setupResolution.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+Aborted (core dumped)
+
 ```
 
-### Duration: 40ms
+### Duration: 17183ms
 
 ---
 
-## Failed Test 15: test/testSuite.test.js
+## Failed Test 15: test/testHelpers.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
 ```
 
-### Duration: 14ms
+### Duration: 16365ms
 
 ---
 
-## Failed Test 16: tests/integration/example.test.js
+## Failed Test 16: test/testGenerator.test.js
 
 ### Output:
 ```
-spawn npx EAGAIN
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
 ```
 
-### Duration: 4ms
+### Duration: 16983ms
 
 ---
 
-## Failed Test 17: tests/integration/example__get.test.js
-
-### Output:
-```
-spawn npx EAGAIN
-```
-
-### Duration: 55ms
-
----
-
-## Failed Test 18: tests/integration/example__post.test.js
+## Failed Test 17: utils/email/emailFormatter.test.js
 
 ### Output:
 ```
@@ -249,7 +405,33 @@ spawn npx EAGAIN
 
 ---
 
-## Failed Test 19: test/mockConsole.test.js
+## Failed Test 18: tests/integration/utils__httpTest.test.js
+
+### Output:
+```
+
+  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[9617]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
+  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
+
+----- Native stack trace -----
+
+ 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 6: 0x7f96a8dca4d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 7: 0x7f96a8dca59b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7:  9617 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
+
+```
+
+### Duration: 1781ms
+
+---
+
+## Failed Test 19: test/stubMethod.test.js
 
 ### Output:
 ```
@@ -278,11 +460,213 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 17806ms
+### Duration: 19377ms
 
 ---
 
-## Failed Test 20: test/moduleSystemIntegration.test.js
+## Failed Test 20: utils/email/emailSender.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 14589ms
+
+---
+
+## Failed Test 21: utils/email/emailHistory.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 14755ms
+
+---
+
+## Failed Test 22: test/testSuite.test.js
+
+### Output:
+```
+Test timeout after 30 seconds
+```
+
+### Duration: 30000ms
+
+---
+
+## Failed Test 23: utils/helpers/moduleReloader.test.js
+
+### Output:
+```
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 10412 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
+
+```
+
+### Duration: 3510ms
+
+---
+
+## Failed Test 24: utils/helpers/responseMocker.test.js
+
+### Output:
+```
+node[10464]: pthread_create: Resource temporarily unavailable
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 10464 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
+
+```
+
+### Duration: 3249ms
+
+---
+
+## Failed Test 25: utils/helpers/qerrorsStub.test.js
+
+### Output:
+```
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 10426 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
+
+```
+
+### Duration: 3883ms
+
+---
+
+## Failed Test 26: utils/helpers/keyGenerator.test.js
+
+### Output:
+```
+npm error code EAGAIN
+npm error syscall spawn sh
+npm error path /home/runner/workspace
+npm error errno -11
+npm error spawn sh EAGAIN
+npm error command sh -c jest --testPathPatterns utils/helpers/keyGenerator.test.js --no-coverage --cache
+npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-08-19T14_56_16_850Z-debug-0.log
+
+```
+
+### Duration: 7754ms
+
+---
+
+## Failed Test 27: utils/mockAxios.test.js
+
+### Output:
+```
+
+  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[10584]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
+  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
+
+----- Native stack trace -----
+
+ 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+ 6: 0x7fca2c08e4d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 7: 0x7fca2c08e59b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 10584 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
+
+```
+
+### Duration: 1756ms
+
+---
+
+## Failed Test 28: utils/helpers/consoleMocker.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 14378ms
+
+---
+
+## Failed Test 29: tests/integration/example__get.test.js
+
+### Output:
+```
+Test timeout after 30 seconds
+```
+
+### Duration: 30000ms
+
+---
+
+## Failed Test 30: utils/sendEmail.test.js
 
 ### Output:
 ```
@@ -290,16 +674,186 @@ Aborted (core dumped)
 
 ```
 
-### Duration: 16660ms
+### Duration: 12108ms
 
 ---
 
-## Failed Test 21: test/logUtils.test.js
+## Failed Test 31: utils/models/apiLogModel.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 17054ms
+
+---
+
+## Failed Test 32: utils/helpers/envManager.test.js
+
+### Output:
+```
+Test timeout after 30 seconds
+```
+
+### Duration: 30000ms
+
+---
+
+## Failed Test 33: utils/testHelpers.test.js
+
+### Output:
+```
+/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 11572 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
+
+```
+
+### Duration: 2713ms
+
+---
+
+## Failed Test 34: utils/testing/performanceTestHelper.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 13055ms
+
+---
+
+## Failed Test 35: utils/testSuite.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 15568ms
+
+---
+
+## Failed Test 36: utils/testing/assertionHelper.test.js
+
+### Output:
+```
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+Emitted 'error' event on ChildProcess instance at:
+    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  errno: -11,
+  code: 'EAGAIN',
+  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
+  spawnargs: [
+    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
+  ]
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 15511ms
+
+---
+
+## Failed Test 37: utils/testing/testDataFactory.test.js
+
+### Output:
+```
+Error: A jest worker process (pid=12579) was terminated by another process: signal=SIGABRT, exitCode=null. Operating system logs may contain more information on why this occurred.
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:968:23)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12)
+
+```
+
+### Duration: 12909ms
+
+---
+
+## Failed Test 38: utils/testing/mockManager.test.js
 
 ### Output:
 ```
 
-  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[20218]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
+  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[12594]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
   #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
 
 ----- Native stack trace -----
@@ -309,12 +863,11 @@ Aborted (core dumped)
  3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
  4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
  5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 6: 0x7f070a1b04d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
- 7: 0x7f070a1b059b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 6: 0x7fdaa74354d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 7: 0x7fdaa743559b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
  8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
-node[20216]: pthread_create: Resource temporarily unavailable
 
-  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[20210]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
+  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[12597]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
   #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
 
 ----- Native stack trace -----
@@ -324,544 +877,32 @@ node[20216]: pthread_create: Resource temporarily unavailable
  3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
  4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
  5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 6: 0x7fb5db6694d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
- 7: 0x7fb5db66959b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 6: 0x7f6f50d9e4d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
+ 7: 0x7f6f50d9e59b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
  8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
-FAIL test/logUtils.test.js
+node[12627]: pthread_create: Resource temporarily unavailable
+node[12629]: pthread_create: Resource temporarily unavailable
+FAIL utils/testing/mockManager.test.js
   ● Test suite failed to run
 
-    A jest worker process (pid=20210) was terminated by another process: signal=SIGABRT, exitCode=null. Operating system logs may contain more information on why this occurred.
+    A jest worker process (pid=12594) was terminated by another process: signal=SIGABRT, exitCode=null. Operating system logs may contain more information on why this occurred.
 
       at ChildProcessWorker._onExit (node_modules/jest-worker/build/index.js:968:23)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.784 s
-Ran all test suites matching test/logUtils.test.js.
+Time:        3.669 s
+Ran all test suites matching utils/testing/mockManager.test.js.
 
 ```
 
-### Duration: 21814ms
-
----
-
-## Failed Test 22: tests/integration/utils__httpTest.test.js
-
-### Output:
-```
-
-  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[20329]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
-  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
-
------ Native stack trace -----
-
- 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 6: 0x7fc0e31d54d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
- 7: 0x7fc0e31d559b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
- 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
-/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 20329 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
-
-```
-
-### Duration: 2647ms
-
----
-
-## Failed Test 23: tests/integration/utils__httpTest__get.test.js
-
-### Output:
-```
-
-  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[20330]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
-  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
-
------ Native stack trace -----
-
- 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 6: 0x7efd0e4a94d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
- 7: 0x7efd0e4a959b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
- 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
-/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 20330 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
-
-```
-
-### Duration: 2348ms
-
----
-
-## Failed Test 24: utils/email/emailHistory.test.js
-
-### Output:
-```
-
-  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[20381]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
-  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
-
------ Native stack trace -----
-
- 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 6: 0x7fe74a9b44d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
- 7: 0x7fe74a9b459b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
- 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
-/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 20381 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
-
-```
-
-### Duration: 2078ms
-
----
-
-## Failed Test 25: utils/email/emailFormatter.test.js
-
-### Output:
-```
-/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 20368 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
-
-```
-
-### Duration: 3439ms
-
----
-
-## Failed Test 26: test/offlineIntegration.test.js
-
-### Output:
-```
-node[20186]: pthread_create: Resource temporarily unavailable
-
-  #  /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node[20530]: std::unique_ptr<long unsigned int> node::WorkerThreadsTaskRunner::DelayedTaskScheduler::Start() at ../../src/node_platform.cc:68
-  #  Assertion failed: (0) == (uv_thread_create(t.get(), start_thread, this))
-
------ Native stack trace -----
-
- 1: 0xc22b83 node::Assert(node::AssertionInfo const&) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 2: 0xcab0e5 node::WorkerThreadsTaskRunner::WorkerThreadsTaskRunner(int) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 3: 0xcab1d0 node::NodePlatform::NodePlatform(int, v8::TracingController*, v8::PageAllocator*) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 4: 0xbd1c5d  [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 5: 0xbd3bbc node::Start(int, char**) [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
- 6: 0x7f3ffaa584d8  [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
- 7: 0x7f3ffaa5859b __libc_start_main [/nix/store/g2jzxk3s7cnkhh8yq55l4fbvf639zy37-glibc-2.40-66/lib/libc.so.6]
- 8: 0xae5355 _start [/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node]
-Aborted (core dumped)
-
-```
-
-### Duration: 9774ms
-
----
-
-## Failed Test 27: utils/email/emailTemplate.test.js
-
-### Output:
-```
-/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: line 7: 20471 Aborted                 (core dumped) /nix/store/8y4ls7z2sfxbq6ch3yp45l28p29qswvx-nodejs-20.19.3-wrapped/bin/npx "$@"
-
-```
-
-### Duration: 3061ms
-
----
-
-## Failed Test 28: test/indexExports.test.js
-
-### Output:
-```
-Test timeout after 30 seconds
-```
-
-### Duration: 30000ms
-
----
-
-## Failed Test 29: test/mockAxios.test.js
-
-### Output:
-```
-Test timeout after 30 seconds
-```
-
-### Duration: 30000ms
-
----
-
-## Failed Test 30: utils/helpers/keyGenerator.test.js
-
-### Output:
-```
-node:events:502
-      throw er; // Unhandled 'error' event
-      ^
-
-Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
-    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
-Emitted 'error' event on ChildProcess instance at:
-    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
-  errno: -11,
-  code: 'EAGAIN',
-  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  spawnargs: [
-    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
-  ]
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 16575ms
-
----
-
-## Failed Test 31: utils/helpers/qerrorsStub.test.js
-
-### Output:
-```
-node:events:502
-      throw er; // Unhandled 'error' event
-      ^
-
-Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
-    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
-Emitted 'error' event on ChildProcess instance at:
-    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
-  errno: -11,
-  code: 'EAGAIN',
-  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  spawnargs: [
-    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
-  ]
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 16096ms
-
----
-
-## Failed Test 32: utils/email/emailSender.test.js
-
-### Output:
-```
-Test timeout after 30 seconds
-```
-
-### Duration: 30000ms
-
----
-
-## Failed Test 33: utils/models/apiKeyModel.test.js
-
-### Output:
-```
-node:events:502
-      throw er; // Unhandled 'error' event
-      ^
-
-Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
-    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
-Emitted 'error' event on ChildProcess instance at:
-    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
-  errno: -11,
-  code: 'EAGAIN',
-  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  spawnargs: [
-    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
-  ]
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 16941ms
-
----
-
-## Failed Test 34: utils/mockModels.test.js
-
-### Output:
-```
-node:events:502
-      throw er; // Unhandled 'error' event
-      ^
-
-Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
-    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
-Emitted 'error' event on ChildProcess instance at:
-    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
-  errno: -11,
-  code: 'EAGAIN',
-  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  spawnargs: [
-    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
-  ]
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 17586ms
-
----
-
-## Failed Test 35: utils/offlineMode.test.js
-
-### Output:
-```
-npm error code EAGAIN
-npm error syscall spawn sh
-npm error path /home/runner/workspace
-npm error errno -11
-npm error spawn sh EAGAIN
-npm error command sh -c jest --testPathPatterns utils/offlineMode.test.js --no-coverage --cache
-npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-08-19T14_48_06_415Z-debug-0.log
-
-```
-
-### Duration: 5205ms
-
----
-
-## Failed Test 36: utils/runTestSuite.test.js
-
-### Output:
-```
-npm error code EAGAIN
-npm error syscall spawn sh
-npm error path /home/runner/workspace
-npm error errno -11
-npm error spawn sh EAGAIN
-npm error command sh -c jest --testPathPatterns utils/runTestSuite.test.js --no-coverage --cache
-npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-08-19T14_48_06_666Z-debug-0.log
-
-```
-
-### Duration: 5628ms
-
----
-
-## Failed Test 37: utils/helpers/responseMocker.test.js
-
-### Output:
-```
-Test timeout after 30 seconds
-```
-
-### Duration: 30000ms
-
----
-
-## Failed Test 38: utils/sendEmail.test.js
-
-### Output:
-```
-npm error code EAGAIN
-npm error syscall spawn sh
-npm error path /home/runner/workspace
-npm error errno -11
-npm error spawn sh EAGAIN
-npm error command sh -c jest --testPathPatterns utils/sendEmail.test.js --no-coverage --cache
-npm error A complete log of this run can be found in: /home/runner/.npm/_logs/2025-08-19T14_48_07_652Z-debug-0.log
-
-```
-
-### Duration: 7199ms
-
----
-
-## Failed Test 39: utils/testEnv.test.js
-
-### Output:
-```
-node:events:502
-      throw er; // Unhandled 'error' event
-      ^
-
-Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
-    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
-Emitted 'error' event on ChildProcess instance at:
-    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
-  errno: -11,
-  code: 'EAGAIN',
-  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  spawnargs: [
-    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
-  ]
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 18933ms
-
----
-
-## Failed Test 40: utils/testHelpers.test.js
-
-### Output:
-```
-/nix/store/djy8g4cghlw19fmy6zblim1waxkr7mf2-npx/bin/npx: fork: retry: Resource temporarily unavailable
-node:events:502
-      throw er; // Unhandled 'error' event
-      ^
-
-Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
-    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
-Emitted 'error' event on ChildProcess instance at:
-    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
-  errno: -11,
-  code: 'EAGAIN',
-  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  spawnargs: [
-    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
-  ]
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 19634ms
-
----
-
-## Failed Test 41: utils/testing/databaseTestHelper.test.js
-
-### Output:
-```
-node:events:502
-      throw er; // Unhandled 'error' event
-      ^
-
-Error: spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node EAGAIN
-    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
-Emitted 'error' event on ChildProcess instance at:
-    at ChildProcess._handle.onexit (node:internal/child_process:291:12)
-    at onErrorNT (node:internal/child_process:483:16)
-    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
-  errno: -11,
-  code: 'EAGAIN',
-  syscall: 'spawn /nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  path: '/nix/store/lz7iav1hd92jbv44zf2rdd7b2mj23536-nodejs-20.19.3/bin/node',
-  spawnargs: [
-    '/home/runner/workspace/node_modules/jest-worker/build/processChild.js'
-  ]
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 17748ms
-
----
-
-## Failed Test 42: utils/models/modelFactory.test.js
-
-### Output:
-```
-Test timeout after 30 seconds
-```
-
-### Duration: 30000ms
-
----
-
-## Failed Test 43: utils/testing/assertionHelper.test.js
-
-### Output:
-```
-Test timeout after 30 seconds
-```
-
-### Duration: 30000ms
-
----
-
-## Failed Test 44: utils/testing/mockManager.test.js
-
-### Output:
-```
-Test timeout after 30 seconds
-```
-
-### Duration: 30000ms
-
----
-
-## Failed Test 45: utils/testing/performanceTestHelper.test.js
-
-### Output:
-```
-Test timeout after 30 seconds
-```
-
-### Duration: 30000ms
-
----
-
-## Failed Test 46: utils/testing/testDataFactory.test.js
-
-### Output:
-```
-Test timeout after 30 seconds
-```
-
-### Duration: 30000ms
+### Duration: 16145ms
 
 ---
 
 ## Summary
 
-- Total failed tests: 46
-- Failed test files: test/mockModels.test.js, test/integration.test.js, test/offlineMode.test.js, test/qtests-dogfood.test.js, test/resolveStubPaths.test.js, test/runTestSuite.test.js, test/safeSerialize.test.js, test/sendEmail.test.js, test/setupMultiple.test.js, test/setupResolution.test.js, test/stubMethod.test.js, test/testEnv.test.js, test/testGenerator.test.js, test/testHelpers.test.js, test/testSuite.test.js, tests/integration/example.test.js, tests/integration/example__get.test.js, tests/integration/example__post.test.js, test/mockConsole.test.js, test/moduleSystemIntegration.test.js, test/logUtils.test.js, tests/integration/utils__httpTest.test.js, tests/integration/utils__httpTest__get.test.js, utils/email/emailHistory.test.js, utils/email/emailFormatter.test.js, test/offlineIntegration.test.js, utils/email/emailTemplate.test.js, test/indexExports.test.js, test/mockAxios.test.js, utils/helpers/keyGenerator.test.js, utils/helpers/qerrorsStub.test.js, utils/email/emailSender.test.js, utils/models/apiKeyModel.test.js, utils/mockModels.test.js, utils/offlineMode.test.js, utils/runTestSuite.test.js, utils/helpers/responseMocker.test.js, utils/sendEmail.test.js, utils/testEnv.test.js, utils/testHelpers.test.js, utils/testing/databaseTestHelper.test.js, utils/models/modelFactory.test.js, utils/testing/assertionHelper.test.js, utils/testing/mockManager.test.js, utils/testing/performanceTestHelper.test.js, utils/testing/testDataFactory.test.js
-- Generated: 2025-08-19T14:49:01.948Z
+- Total failed tests: 38
+- Failed test files: lib/testGenerator.test.js, index.test.js, lib/logUtils.test.js, lib/testUtils.test.js, test/edgeCases.test.js, test/dualModuleGeneration.test.js, test/indexExports.test.js, test/comprehensive.test.js, test/httpTest.test.js, test/offlineMode.test.js, test/setupMultiple.test.js, test/safeSerialize.test.js, test/sendEmail.test.js, test/setupResolution.test.js, test/testHelpers.test.js, test/testGenerator.test.js, utils/email/emailFormatter.test.js, tests/integration/utils__httpTest.test.js, test/stubMethod.test.js, utils/email/emailSender.test.js, utils/email/emailHistory.test.js, test/testSuite.test.js, utils/helpers/moduleReloader.test.js, utils/helpers/responseMocker.test.js, utils/helpers/qerrorsStub.test.js, utils/helpers/keyGenerator.test.js, utils/mockAxios.test.js, utils/helpers/consoleMocker.test.js, tests/integration/example__get.test.js, utils/sendEmail.test.js, utils/models/apiLogModel.test.js, utils/helpers/envManager.test.js, utils/testHelpers.test.js, utils/testing/performanceTestHelper.test.js, utils/testSuite.test.js, utils/testing/assertionHelper.test.js, utils/testing/testDataFactory.test.js, utils/testing/mockManager.test.js
+- Generated: 2025-08-19T14:57:03.514Z
