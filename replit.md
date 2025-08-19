@@ -143,6 +143,17 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
   - **Direct module imports**: Eliminates testHelpers.reload() in favor of direct requires
   - **Educational comments**: Generated tests include safe usage examples and warnings
 
+#### Parallel Test Runner Performance Optimization (August 19, 2025)
+- **User-Reported Issue**: Batch-based parallel execution wastes time waiting for slowest test in each batch before starting new tests
+- **Root Cause**: Test runner used `Promise.all()` on batches, creating idle time when fast tests finish but slow tests continue
+- **Performance Impact**: CPU underutilization and longer total execution times due to batch synchronization delays
+- **Optimization Applied**: 
+  - **Continuous queue execution**: Maintains exactly max concurrency (16) tests running at all times
+  - **Immediate starts**: New test starts instantly when any running test completes
+  - **No batch waiting**: Eliminates idle time between fast and slow test completions
+  - **Real-time progress**: Progress updates immediately as each individual test finishes
+  - **Maximum efficiency**: Utilizes full system capacity until test queue is empty
+
 #### Resolution Summary
 - **Fix Verification**: Confirmed fixes with 100% test success rate (75/75 tests passing)
 - **Quality Assurance**: Enhanced test generator to be more project-agnostic and robust
@@ -152,3 +163,4 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Jest Version Compatibility**: qtests runner automatically adapts to both Jest 29 and Jest 30+ CLI parameter changes
 - **Directory Structure Agnostic**: Test generation makes no assumptions about project organization, works with any file structure
 - **Safe qtests Patterns Only**: Test generation prevents creation of hanging patterns, promotes correct qtests usage
+- **Continuous Queue Parallel Execution**: Optimized test runner maintains max concurrency at all times, no batch delays

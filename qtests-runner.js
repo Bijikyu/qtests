@@ -283,29 +283,60 @@ class TestRunner {
   }
 
   /**
-   * Run tests in parallel batches
+   * Run tests with continuous parallel execution
+   * Maintains max concurrency at all times - starts new test immediately as others finish
    */
   async runInParallel(testFiles, maxConcurrency) {
     const results = [];
-    
-    for (let i = 0; i < testFiles.length; i += maxConcurrency) {
-      const batch = testFiles.slice(i, i + maxConcurrency);
-      const batchPromises = batch.map(file => this.runTestFile(file));
-      
-      try {
-        const batchResults = await Promise.all(batchPromises);
-        results.push(...batchResults);
-        
-        // Show progress
-        const completed = Math.min(i + maxConcurrency, testFiles.length);
-        process.stdout.write(`\r${colors.dim}Progress: ${completed}/${testFiles.length} files completed${colors.reset}`);
-      } catch (error) {
-        console.error(`${colors.red}Batch error:${colors.reset}`, error);
-      }
-    }
-    
-    console.log(); // New line after progress
-    return results;
+    const queue = [...testFiles]; // Copy files to process
+    const running = new Set(); // Track currently running tests
+    let completed = 0;
+
+    return new Promise((resolve, reject) => {
+      const startNext = () => {
+        // Start new tests up to max concurrency
+        while (running.size < maxConcurrency && queue.length > 0) {
+          const testFile = queue.shift();
+          const promise = this.runTestFile(testFile);
+          
+          running.add(promise);
+          
+          promise.then((result) => {
+            results.push(result);
+            running.delete(promise);
+            completed++;
+            
+            // Update progress immediately when each test completes
+            process.stdout.write(`\r${colors.dim}Progress: ${completed}/${testFiles.length} files completed${colors.reset}`);
+            
+            // Start next test immediately if queue has more
+            startNext();
+            
+            // Check if all tests are done
+            if (completed === testFiles.length) {
+              console.log(); // New line after progress
+              resolve(results);
+            }
+          }).catch((error) => {
+            console.error(`${colors.red}Test error:${colors.reset}`, error);
+            running.delete(promise);
+            completed++;
+            
+            // Continue even if one test fails
+            process.stdout.write(`\r${colors.dim}Progress: ${completed}/${testFiles.length} files completed${colors.reset}`);
+            startNext();
+            
+            if (completed === testFiles.length) {
+              console.log(); // New line after progress
+              resolve(results);
+            }
+          });
+        }
+      };
+
+      // Start initial batch
+      startNext();
+    });
   }
 
   /**
