@@ -11,8 +11,8 @@ module.exports = {
   resetMocks: false,
   restoreMocks: false,
   
-  // Balanced memory and execution optimizations
-  workerIdleMemoryLimit: '768MB', // Balanced worker memory for stability
+  // Conservative memory optimizations for stability
+  workerIdleMemoryLimit: '1GB', // Conservative worker memory to prevent hanging
   detectLeaks: false, // Skip leak detection for speed
   logHeapUsage: false, // Disable heap logging for speed
   forceExit: true, // Force exit for faster cleanup

@@ -490,10 +490,10 @@ class TestRunner {
     const cpuCount = os.cpus().length;
     const totalMemoryGB = Math.round(os.totalmem() / (1024 ** 3));
     
-    // Conservative optimization: avoid EAGAIN resource exhaustion
-    const memoryBasedMax = Math.floor(totalMemoryGB / 1.5); // 1.5GB per worker for stability
-    const cpuBasedMax = cpuCount * 2.25; // 2.25x cores (modest increase from 2x)
-    const maxConcurrency = Math.min(testFiles.length, Math.max(8, cpuBasedMax), memoryBasedMax, 18); // Max 18 to avoid spawn limits
+    // Optimal balance: maintain performance gain without hanging
+    const memoryBasedMax = Math.floor(totalMemoryGB / 2); // 2GB per worker for stability
+    const cpuBasedMax = cpuCount * 2.125; // 2.125x cores (minimal increase from 2x)
+    const maxConcurrency = Math.min(testFiles.length, Math.max(8, cpuBasedMax), memoryBasedMax, 17); // Max 17 for stability
     
     console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores, ${totalMemoryGB}GB RAM)${colors.reset}\n`);
     
