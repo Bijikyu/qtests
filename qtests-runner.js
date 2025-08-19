@@ -54,6 +54,7 @@ class TestRunner {
     this.totalTests = 0;
     this.startTime = Date.now();
     this.results = [];
+    this.jestVersion = null;
   }
 
   /**
@@ -156,6 +157,37 @@ class TestRunner {
   }
 
   /**
+   * Get Jest version-appropriate CLI flag
+   */
+  async getJestTestPathFlag() {
+    if (this.jestVersion === null) {
+      try {
+        const { spawn } = require('child_process');
+        const versionCheck = spawn('npx', ['jest', '--version'], { stdio: 'pipe' });
+        
+        let version = '';
+        versionCheck.stdout.on('data', (data) => {
+          version += data.toString().trim();
+        });
+        
+        await new Promise((resolve) => {
+          versionCheck.on('close', () => resolve());
+        });
+        
+        // Parse version number (e.g., "30.0.0" -> 30)
+        const majorVersion = parseInt(version.split('.')[0]);
+        this.jestVersion = majorVersion;
+      } catch {
+        // Default to Jest 29 behavior if version check fails
+        this.jestVersion = 29;
+      }
+    }
+    
+    // Jest 30+ uses --testPathPatterns, earlier versions use --testPathPattern
+    return this.jestVersion >= 30 ? '--testPathPatterns' : '--testPathPattern';
+  }
+
+  /**
    * Run a single test file
    */
   async runTestFile(testFile) {
@@ -168,7 +200,8 @@ class TestRunner {
       const isJestTest = this.shouldUseJest(testFile);
       
       const command = isJestTest ? 'npx' : 'node';
-      const args = isJestTest ? ['jest', '--testPathPatterns', testFile, '--verbose'] : [testFile];
+      const testPathFlag = isJestTest ? await this.getJestTestPathFlag() : null;
+      const args = isJestTest ? ['jest', testPathFlag, testFile, '--verbose'] : [testFile];
 
       const child = spawn(command, args, {
         stdio: ['ignore', 'pipe', 'pipe'],
