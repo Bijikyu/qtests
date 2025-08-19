@@ -15,7 +15,7 @@ module.exports = {
   workerIdleMemoryLimit: '1GB', // Conservative worker memory to prevent hanging
   detectLeaks: false, // Skip leak detection for speed
   logHeapUsage: false, // Disable heap logging for speed
-  forceExit: true, // Force exit for faster cleanup
+  forceExit: false, // Let Jest handle cleanup properly in parallel mode
   
   // Fast test execution (balanced for stability)
   verbose: false,

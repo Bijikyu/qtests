@@ -178,10 +178,22 @@ class TestRunner {
   }
 
   /**
-   * Run a single test file with optimized Node.js performance flags
+   * Run a single test file with timeout protection and optimized Node.js performance flags
    */
   async runTestFile(testFile) {
     return new Promise((resolve) => {
+      // Timeout protection to prevent hanging
+      const timeout = setTimeout(() => {
+        console.log(`\n${colors.red}⚠️  TIMEOUT: ${testFile} exceeded 30 seconds${colors.reset}`);
+        resolve({
+          file: testFile,
+          success: false,
+          duration: 30000,
+          output: '',
+          error: 'Test timeout after 30 seconds',
+          code: 1
+        });
+      }, 30000); // 30 second timeout per test
       const startTime = Date.now();
       let stdout = '';
       let stderr = '';
@@ -217,6 +229,7 @@ class TestRunner {
       });
 
       child.on('close', (code) => {
+        clearTimeout(timeout); // Clear timeout on normal completion
         const duration = Date.now() - startTime;
         
         // Robust success detection for both Jest and qtests/Node.js formats
@@ -266,6 +279,7 @@ class TestRunner {
       });
 
       child.on('error', (error) => {
+        clearTimeout(timeout); // Clear timeout on error
         this.failedTests++;
         resolve({
           file: testFile,

@@ -42,7 +42,7 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Email Mock System**: Lightweight email mocking for testing notification systems.
 - **Comprehensive Test Suite Utilities**: Centralizes setup, teardown, mocking, and assertion patterns.
 - **Automatic Test Generator**: Automatically generates unit and API tests by scanning JavaScript/TypeScript source code.
-- **Lightweight Test Runner**: A simple, zero-dependency test execution engine with continuous queue parallel execution for maximum efficiency and race condition prevention. Enhanced with advanced performance optimizations including dynamic worker scaling (18 workers), optimized Jest configuration, and Node.js performance flags.
+- **Lightweight Test Runner**: A simple, zero-dependency test execution engine with continuous queue parallel execution for maximum efficiency and race condition prevention. Enhanced with advanced performance optimizations including dynamic worker scaling (17 workers), optimized Jest configuration, Node.js performance flags, and a 30-second timeout mechanism preventing complete hanging while identifying problematic tests.
 
 ### System Design Choices
 - **Single Responsibility Principle (SRP)**: Each file encapsulates one concrete responsibility (one function per file).
