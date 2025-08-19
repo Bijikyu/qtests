@@ -46,3 +46,15 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 
 ### Optional Dependencies
 - `qerrors`: Error reporting module (gracefully handled if missing).
+
+## Recent Changes (August 2025)
+
+### Universal CommonJS and ES Module Support (August 19, 2025)
+- **Enhanced Export Detection**: Test generator now intelligently detects both CommonJS (`module.exports`, `exports.name`) and ES module (`export const/function/class`) patterns in source code
+- **Dual Pattern Recognition**: Added comprehensive regex patterns to extract exports from both module systems without changing qtests' CommonJS architecture
+- **Object Export Handling**: Fixed `module.exports = { name1, name2 }` pattern recognition with proper property extraction
+- **Comment Filter Enhancement**: Added robust comment filtering to prevent false positive export detection from commented code
+- **Smart Function Mapping**: Automatically identifies function declarations and class definitions that are exported in CommonJS style
+- **Robust Import Handling**: Enhanced import detection to handle both `require()` and `import` statements without null reference errors
+- **Intelligent Test Generation**: Generates appropriate test syntax based on detected project module type while maintaining qtests' CommonJS core
+- **Comprehensive Test Coverage**: Created dual module system tests that verify CommonJS object exports, ES module exports, mixed patterns, and edge cases
