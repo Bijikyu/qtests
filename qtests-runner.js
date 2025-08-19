@@ -294,43 +294,36 @@ class TestRunner {
   }
 
   /**
-   * Determine if a test should use Jest - SIMPLIFIED for performance
+   * Determine if a test should use Jest - ULTRA FAST mode
    */
   shouldUseJest(testFile) {
-    // Skip expensive file reading - use filename patterns instead
-    const fileName = path.basename(testFile);
-    
-    // Simple heuristic: if it's in lib/ or has certain patterns, assume Jest
-    if (testFile.includes('/lib/') || fileName.includes('.test.js')) {
-      return true;
-    }
-    
-    return false; // Default to Node.js for speed
+    // Default to Node.js for maximum speed - only use Jest for lib/ files and specific test patterns
+    return testFile.includes('/lib/') || testFile.includes('offlineMode');
   }
 
   /**
-   * Group tests by complexity and execution strategy
+   * Group tests by complexity using FAST filename patterns (no I/O)
    */
   groupTestsByComplexity(testFiles) {
     const lightweight = []; // Fast module loading tests
-    const integration = []; // Integration tests - run separately
+    const integration = []; // Integration tests - run separately  
     const heavy = []; // Complex tests - run with special handling
     
     testFiles.forEach(file => {
       const fileName = path.basename(file);
-      const fileContent = this.getFileSize(file);
       
-      // Heavy integration tests (run last with higher timeout)
+      // Heavy integration tests (filename-based detection - NO I/O)
       if (fileName.includes('integration') || fileName.includes('comprehensive') || 
           fileName.includes('offlineMode') || fileName.includes('mockModels') ||
-          fileContent > 10000) {
+          fileName.includes('sendEmail') || fileName.includes('mockAxios') ||
+          fileName.includes('runTestSuite')) {
         heavy.push(file);
       }
       // Integration tests (medium priority)
-      else if (file.includes('/test/') && fileContent > 1000) {
+      else if (file.includes('/test/') && (fileName.includes('mock') || fileName.includes('http'))) {
         integration.push(file);
       }
-      // Lightweight unit tests (run first)
+      // Lightweight unit tests (run first) - everything else
       else {
         lightweight.push(file);
       }
@@ -527,10 +520,10 @@ class TestRunner {
     
     let allResults = [];
     
-    // Phase 1: Run lightweight tests first (fast feedback)
+    // Phase 1: Run lightweight tests first (fast feedback) - HIGHER CONCURRENCY
     if (lightweight.length > 0) {
       console.log(`${colors.green}📦 Phase 1: Lightweight Tests (${lightweight.length} files)${colors.reset}`);
-      const lightResults = await this.runInParallel(lightweight, maxConcurrency);
+      const lightResults = await this.runInParallel(lightweight, Math.min(12, lightweight.length)); // Higher concurrency for simple tests
       allResults = allResults.concat(lightResults);
       console.log(`${colors.dim}Phase 1 complete: ${this.passedTests}/${this.passedTests + this.failedTests} passed${colors.reset}\n`);
     }
