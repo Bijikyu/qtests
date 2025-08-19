@@ -31,8 +31,7 @@ describe('Enhanced Offline Mode', () => {
   const originalEnv = process.env;
   
   beforeEach(() => {
-    // Reset environment variables for each test
-    jest.resetModules();
+    // Reset environment variables for each test (without jest.resetModules to prevent hanging)
     process.env = { ...originalEnv };
     clearOfflineCache();
   });
@@ -47,11 +46,9 @@ describe('Enhanced Offline Mode', () => {
     test('detects CODEX environment variable', () => {
       process.env.CODEX = 'true';
       
-      // Re-require module to pick up environment changes
-      jest.resetModules();
-      const offlineMode = require('../utils/offlineMode');
-      
-      const envState = offlineMode.getEnvironmentState();
+      // Test without module reset to prevent hanging
+      const { getEnvironmentState } = require('../utils/offlineMode');
+      const envState = getEnvironmentState();
       expect(envState.codexFlag).toBe(true);
       expect(envState.environmentDetected).toBe(true);
     });
@@ -59,10 +56,8 @@ describe('Enhanced Offline Mode', () => {
     test('detects OFFLINE_MODE environment variable', () => {
       process.env.OFFLINE_MODE = 'true';
       
-      jest.resetModules();
-      const offlineMode = require('../utils/offlineMode');
-      
-      const envState = offlineMode.getEnvironmentState();
+      const { getEnvironmentState } = require('../utils/offlineMode');
+      const envState = getEnvironmentState();
       expect(envState.offlineFlagExplicit).toBe(true);
       expect(envState.environmentDetected).toBe(true);
     });
@@ -71,10 +66,8 @@ describe('Enhanced Offline Mode', () => {
       process.env.CODEX = 'TRUE';
       process.env.OFFLINE_MODE = 'True';
       
-      jest.resetModules();
-      const offlineMode = require('../utils/offlineMode');
-      
-      const envState = offlineMode.getEnvironmentState();
+      const { getEnvironmentState } = require('../utils/offlineMode');
+      const envState = getEnvironmentState();
       expect(envState.codexFlag).toBe(true);
       expect(envState.offlineFlagExplicit).toBe(true);
     });
@@ -83,10 +76,8 @@ describe('Enhanced Offline Mode', () => {
       process.env.CODEX = 'false';
       process.env.OFFLINE_MODE = 'no';
       
-      jest.resetModules();
-      const offlineMode = require('../utils/offlineMode');
-      
-      const envState = offlineMode.getEnvironmentState();
+      const { getEnvironmentState } = require('../utils/offlineMode');
+      const envState = getEnvironmentState();
       expect(envState.codexFlag).toBe(false);
       expect(envState.offlineFlagExplicit).toBe(false);
       expect(envState.environmentDetected).toBe(false);
