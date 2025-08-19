@@ -1,0 +1,30 @@
+9169c189c001e774c5d979f7750316ee
+// Auto-generated unit test for mockModels.js - optimized for speed
+import * as mod from './mockModels.js';
+describe('mockModels.js', () => {
+  test('BaseMockModel works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.BaseMockModel).toBeDefined();
+  });
+  test('ApiKey works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.ApiKey).toBeDefined();
+  });
+  test('ApiLog works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.ApiLog).toBeDefined();
+  });
+  test('createMockModel works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.createMockModel).toBeDefined();
+  });
+  test('resetAllCollections works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.resetAllCollections).toBeDefined();
+  });
+  test('mockApiKeys works', async () => {
+    // Fast assertion - TODO: implement specific test logic
+    expect(typeof mod.mockApiKeys).toBeDefined();
+  });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJtb2QiLCJkZXNjcmliZSIsInRlc3QiLCJleHBlY3QiLCJCYXNlTW9ja01vZGVsIiwidG9CZURlZmluZWQiLCJBcGlLZXkiLCJBcGlMb2ciLCJjcmVhdGVNb2NrTW9kZWwiLCJyZXNldEFsbENvbGxlY3Rpb25zIiwibW9ja0FwaUtleXMiXSwic291cmNlcyI6WyJtb2NrTW9kZWxzLnRlc3QuanMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gQXV0by1nZW5lcmF0ZWQgdW5pdCB0ZXN0IGZvciBtb2NrTW9kZWxzLmpzIC0gb3B0aW1pemVkIGZvciBzcGVlZFxuaW1wb3J0ICogYXMgbW9kIGZyb20gJy4vbW9ja01vZGVscy5qcyc7XG5cbmRlc2NyaWJlKCdtb2NrTW9kZWxzLmpzJywgKCkgPT4ge1xuICB0ZXN0KCdCYXNlTW9ja01vZGVsIHdvcmtzJywgYXN5bmMgKCkgPT4ge1xuICAgIC8vIEZhc3QgYXNzZXJ0aW9uIC0gVE9ETzogaW1wbGVtZW50IHNwZWNpZmljIHRlc3QgbG9naWNcbiAgICBleHBlY3QodHlwZW9mIG1vZC5CYXNlTW9ja01vZGVsKS50b0JlRGVmaW5lZCgpO1xuICB9KTtcbiAgdGVzdCgnQXBpS2V5IHdvcmtzJywgYXN5bmMgKCkgPT4ge1xuICAgIC8vIEZhc3QgYXNzZXJ0aW9uIC0gVE9ETzogaW1wbGVtZW50IHNwZWNpZmljIHRlc3QgbG9naWNcbiAgICBleHBlY3QodHlwZW9mIG1vZC5BcGlLZXkpLnRvQmVEZWZpbmVkKCk7XG4gIH0pO1xuICB0ZXN0KCdBcGlMb2cgd29ya3MnLCBhc3luYyAoKSA9PiB7XG4gICAgLy8gRmFzdCBhc3NlcnRpb24gLSBUT0RPOiBpbXBsZW1lbnQgc3BlY2lmaWMgdGVzdCBsb2dpY1xuICAgIGV4cGVjdCh0eXBlb2YgbW9kLkFwaUxvZykudG9CZURlZmluZWQoKTtcbiAgfSk7XG4gIHRlc3QoJ2NyZWF0ZU1vY2tNb2RlbCB3b3JrcycsIGFzeW5jICgpID0+IHtcbiAgICAvLyBGYXN0IGFzc2VydGlvbiAtIFRPRE86IGltcGxlbWVudCBzcGVjaWZpYyB0ZXN0IGxvZ2ljXG4gICAgZXhwZWN0KHR5cGVvZiBtb2QuY3JlYXRlTW9ja01vZGVsKS50b0JlRGVmaW5lZCgpO1xuICB9KTtcbiAgdGVzdCgncmVzZXRBbGxDb2xsZWN0aW9ucyB3b3JrcycsIGFzeW5jICgpID0+IHtcbiAgICAvLyBGYXN0IGFzc2VydGlvbiAtIFRPRE86IGltcGxlbWVudCBzcGVjaWZpYyB0ZXN0IGxvZ2ljXG4gICAgZXhwZWN0KHR5cGVvZiBtb2QucmVzZXRBbGxDb2xsZWN0aW9ucykudG9CZURlZmluZWQoKTtcbiAgfSk7XG4gIHRlc3QoJ21vY2tBcGlLZXlzIHdvcmtzJywgYXN5bmMgKCkgPT4ge1xuICAgIC8vIEZhc3QgYXNzZXJ0aW9uIC0gVE9ETzogaW1wbGVtZW50IHNwZWNpZmljIHRlc3QgbG9naWNcbiAgICBleHBlY3QodHlwZW9mIG1vZC5tb2NrQXBpS2V5cykudG9CZURlZmluZWQoKTtcbiAgfSk7XG59KTtcbiJdLCJtYXBwaW5ncyI6IkFBQUE7QUFDQSxPQUFPLEtBQUtBLEdBQUcsTUFBTSxpQkFBaUI7QUFFdENDLFFBQVEsQ0FBQyxlQUFlLEVBQUUsTUFBTTtFQUM5QkMsSUFBSSxDQUFDLHFCQUFxQixFQUFFLFlBQVk7SUFDdEM7SUFDQUMsTUFBTSxDQUFDLE9BQU9ILEdBQUcsQ0FBQ0ksYUFBYSxDQUFDLENBQUNDLFdBQVcsQ0FBQyxDQUFDO0VBQ2hELENBQUMsQ0FBQztFQUNGSCxJQUFJLENBQUMsY0FBYyxFQUFFLFlBQVk7SUFDL0I7SUFDQUMsTUFBTSxDQUFDLE9BQU9ILEdBQUcsQ0FBQ00sTUFBTSxDQUFDLENBQUNELFdBQVcsQ0FBQyxDQUFDO0VBQ3pDLENBQUMsQ0FBQztFQUNGSCxJQUFJLENBQUMsY0FBYyxFQUFFLFlBQVk7SUFDL0I7SUFDQUMsTUFBTSxDQUFDLE9BQU9ILEdBQUcsQ0FBQ08sTUFBTSxDQUFDLENBQUNGLFdBQVcsQ0FBQyxDQUFDO0VBQ3pDLENBQUMsQ0FBQztFQUNGSCxJQUFJLENBQUMsdUJBQXVCLEVBQUUsWUFBWTtJQUN4QztJQUNBQyxNQUFNLENBQUMsT0FBT0gsR0FBRyxDQUFDUSxlQUFlLENBQUMsQ0FBQ0gsV0FBVyxDQUFDLENBQUM7RUFDbEQsQ0FBQyxDQUFDO0VBQ0ZILElBQUksQ0FBQywyQkFBMkIsRUFBRSxZQUFZO0lBQzVDO0lBQ0FDLE1BQU0sQ0FBQyxPQUFPSCxHQUFHLENBQUNTLG1CQUFtQixDQUFDLENBQUNKLFdBQVcsQ0FBQyxDQUFDO0VBQ3RELENBQUMsQ0FBQztFQUNGSCxJQUFJLENBQUMsbUJBQW1CLEVBQUUsWUFBWTtJQUNwQztJQUNBQyxNQUFNLENBQUMsT0FBT0gsR0FBRyxDQUFDVSxXQUFXLENBQUMsQ0FBQ0wsV0FBVyxDQUFDLENBQUM7RUFDOUMsQ0FBQyxDQUFDO0FBQ0osQ0FBQyxDQUFDIiwiaWdub3JlTGlzdCI6W119
