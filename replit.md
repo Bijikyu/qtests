@@ -92,3 +92,13 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Architectural Integrity**: Protected the core test execution engine to maintain stable, predictable behavior across all qtests implementations
 - **Auto-Update Mechanism**: Modified qtests-generate to always overwrite qtests-runner.js with latest functionality, ensuring updated features are properly deployed
 - **Framework Evolution Support**: Enabled seamless updates to the test runner while maintaining its authoritative status and protection from manual AI modifications
+
+### Parallel-Safe Test Generation (August 19, 2025)
+- **Race Condition Prevention**: Completely redesigned test generation templates to eliminate race conditions in parallel test execution from the ground up
+- **Unique Test Identifiers**: Auto-generated tests now use `process.hrtime.bigint()` + random components for guaranteed uniqueness across parallel executions
+- **Isolated Mock State**: Each generated test gets isolated mock instances with test-scoped state, preventing cross-test interference
+- **Test-Scoped Data Generation**: Factory functions create unique test data per execution using session IDs and timestamps for complete isolation
+- **API Test Isolation**: Generated API tests use unique endpoint paths with test session parameters to avoid route conflicts between parallel tests
+- **Comprehensive Documentation**: All generated tests include detailed comments explaining parallel safety design patterns and race condition prevention
+- **Zero Shared State**: Eliminated all shared global variables and static counters in favor of per-test unique identifiers
+- **Template Architecture**: Both unit test and API test generation templates redesigned with parallel execution as the primary design constraint
