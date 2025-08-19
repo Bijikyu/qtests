@@ -309,36 +309,46 @@ class TestRunner {
   }
 
   /**
-   * Group tests by size for optimized batch execution
+   * Group tests by complexity and execution strategy
    */
-  groupTestsBySize(testFiles) {
-    const testSizes = testFiles.map(file => {
-      try {
-        const stats = fs.statSync(file);
-        return { file, size: stats.size };
-      } catch {
-        return { file, size: 1000 }; // Default size for inaccessible files
+  groupTestsByComplexity(testFiles) {
+    const lightweight = []; // Fast module loading tests
+    const integration = []; // Integration tests - run separately
+    const heavy = []; // Complex tests - run with special handling
+    
+    testFiles.forEach(file => {
+      const fileName = path.basename(file);
+      const fileContent = this.getFileSize(file);
+      
+      // Heavy integration tests (run last with higher timeout)
+      if (fileName.includes('integration') || fileName.includes('comprehensive') || 
+          fileName.includes('offlineMode') || fileName.includes('mockModels') ||
+          fileContent > 10000) {
+        heavy.push(file);
+      }
+      // Integration tests (medium priority)
+      else if (file.includes('/test/') && fileContent > 1000) {
+        integration.push(file);
+      }
+      // Lightweight unit tests (run first)
+      else {
+        lightweight.push(file);
       }
     });
+    
+    return { lightweight, integration, heavy };
+  }
 
-    // Sort by size (smallest first for fastest batching)
-    testSizes.sort((a, b) => a.size - b.size);
-    
-    const small = []; // < 2KB - group together for efficiency
-    const medium = []; // 2KB - 10KB - moderate grouping
-    const large = []; // > 10KB - run individually
-    
-    testSizes.forEach(({ file, size }) => {
-      if (size < 2000) {
-        small.push(file);
-      } else if (size < 10000) {
-        medium.push(file);
-      } else {
-        large.push(file);
-      }
-    });
-    
-    return { small, medium, large };
+  /**
+   * Get file size safely
+   */
+  getFileSize(file) {
+    try {
+      const stats = fs.statSync(file);
+      return stats.size;
+    } catch {
+      return 1000; // Default size for inaccessible files
+    }
   }
 
   /**
@@ -488,8 +498,8 @@ class TestRunner {
    * Main execution method
    */
   async run() {
-    console.log(`${colors.bright}🧪 qtests Test Runner - Parallel Mode${colors.reset}`);
-    console.log(`${colors.dim}Discovering and running all tests...${colors.reset}\n`);
+    console.log(`${colors.bright}🧪 qtests Test Runner - Tiered Execution Mode${colors.reset}`);
+    console.log(`${colors.dim}Discovering and running all tests with optimized strategy...${colors.reset}\n`);
 
     // Discover all test files
     const testFiles = this.discoverTests();
@@ -500,26 +510,51 @@ class TestRunner {
       return;
     }
 
-    console.log(`${colors.blue}Found ${testFiles.length} test file(s):${colors.reset}`);
-    testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
-    console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
+    // Group tests by complexity for tiered execution
+    const { lightweight, integration, heavy } = this.groupTestsByComplexity(testFiles);
     
-    // Conservative concurrency calculation to prevent system resource exhaustion
+    console.log(`${colors.blue}Test Strategy:${colors.reset}`);
+    console.log(`  ${colors.green}Lightweight: ${lightweight.length} files${colors.reset}`);
+    console.log(`  ${colors.yellow}Integration: ${integration.length} files${colors.reset}`);
+    console.log(`  ${colors.red}Heavy: ${heavy.length} files${colors.reset}`);
+    
+    // Calculate concurrency settings
     const cpuCount = os.cpus().length;
     const totalMemoryGB = Math.round(os.totalmem() / (1024 ** 3));
+    const maxConcurrency = Math.min(8, Math.max(4, Math.floor(cpuCount * 1.5)));
     
-    // Reduced concurrency to prevent thread creation failures (uv_thread_create errors)
-    const memoryBasedMax = Math.floor(totalMemoryGB / 3); // 3GB per worker for extra stability
-    const cpuBasedMax = Math.max(1, Math.floor(cpuCount * 1.5)); // More conservative 1.5x cores
-    const maxConcurrency = Math.min(testFiles.length, Math.max(4, cpuBasedMax), memoryBasedMax, 8); // Max 8 for system stability
+    console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers${colors.reset}\n`);
     
-    console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores, ${totalMemoryGB}GB RAM)${colors.reset}\n`);
+    let allResults = [];
     
-    const results = await this.runInParallel(testFiles, maxConcurrency);
-    this.results = results;
+    // Phase 1: Run lightweight tests first (fast feedback)
+    if (lightweight.length > 0) {
+      console.log(`${colors.green}📦 Phase 1: Lightweight Tests (${lightweight.length} files)${colors.reset}`);
+      const lightResults = await this.runInParallel(lightweight, maxConcurrency);
+      allResults = allResults.concat(lightResults);
+      console.log(`${colors.dim}Phase 1 complete: ${this.passedTests}/${this.passedTests + this.failedTests} passed${colors.reset}\n`);
+    }
+    
+    // Phase 2: Run integration tests
+    if (integration.length > 0) {
+      console.log(`${colors.yellow}🔗 Phase 2: Integration Tests (${integration.length} files)${colors.reset}`);
+      const integrationResults = await this.runInParallel(integration, Math.min(maxConcurrency, 6));
+      allResults = allResults.concat(integrationResults);
+      console.log(`${colors.dim}Phase 2 complete: ${this.passedTests}/${this.passedTests + this.failedTests} passed${colors.reset}\n`);
+    }
+    
+    // Phase 3: Run heavy tests with reduced concurrency and higher timeout
+    if (heavy.length > 0) {
+      console.log(`${colors.red}⚙️  Phase 3: Heavy Tests (${heavy.length} files) - Special handling${colors.reset}`);
+      const heavyResults = await this.runInParallel(heavy, Math.min(4, heavy.length)); // Lower concurrency
+      allResults = allResults.concat(heavyResults);
+      console.log(`${colors.dim}Phase 3 complete: ${this.passedTests}/${this.passedTests + this.failedTests} passed${colors.reset}\n`);
+    }
+    
+    this.results = allResults;
     
     // Display comprehensive results
-    this.displayResults(results);
+    this.displayResults(allResults);
     
     // Exit with appropriate code
     process.exit(this.failedTests > 0 ? 1 : 0);
