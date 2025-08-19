@@ -107,13 +107,13 @@ function main() {
     // Generate tests
     const results = generator.generate();
     
-    // Generate test runner automatically
+    // Generate test runner automatically (always overwrite)
     console.log('\n🏃 Generating test runner...');
     const runnerGenerated = generator.generateTestRunner();
     if (runnerGenerated) {
-      console.log('✅ Generated qtests-runner.js');
+      console.log('✅ Generated/Updated qtests-runner.js with latest functionality');
     } else {
-      console.log('⚠️  qtests-runner.js already exists');
+      console.log('❌ Failed to generate qtests-runner.js');
     }
     
     // Summary

@@ -90,3 +90,5 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **System Adaptation Policy**: Established that system changes must adapt around the test runner, not modify the runner itself
 - **Anti-Duplication Measures**: Explicitly prohibited creation of alternate, parallel, or competing test runners
 - **Architectural Integrity**: Protected the core test execution engine to maintain stable, predictable behavior across all qtests implementations
+- **Auto-Update Mechanism**: Modified qtests-generate to always overwrite qtests-runner.js with latest functionality, ensuring updated features are properly deployed
+- **Framework Evolution Support**: Enabled seamless updates to the test runner while maintaining its authoritative status and protection from manual AI modifications
