@@ -74,6 +74,8 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 
 ### Critical Jest Configuration Bug Fixes (August 19, 2025)
 
+**Summary**: Systematically resolved 8 comprehensive Jest configuration and qtests pattern issues reported by clients including property typos, setup file problems, transform configuration, CLI parameter compatibility, directory structure assumptions, and hanging test patterns.
+
 #### Jest Configuration Property Typo
 - **Client-Reported Issue**: Fixed critical typo in Jest configuration generation where `moduleNameMapping` was incorrectly used instead of `moduleNameMapper`
 - **Root Cause**: Bug was in `lib/testGenerator.js` line 626 within the ES module Jest configuration template
@@ -130,6 +132,17 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
   - **Clear customization instructions**: Added explicit comments telling users to replace placeholder with their actual file paths
   - **File organization agnostic**: Setup template now works with any project directory structure
 
+#### Hanging Test Patterns in Generated Tests
+- **Client-Reported Issue**: Fixed test generator creating hanging patterns using problematic qtests methods
+- **Root Cause**: Generated tests used `await testHelpers.withMockConsole()` and `testHelpers.reload()` patterns that cause indefinite hanging
+- **Problematic Patterns**: `await testHelpers.withMockConsole('warn', async (spy) => {})` and `testHelpers.reload('../../lib/fileIO')`
+- **Fixes Applied**:
+  - **Comprehensive pattern safeguards**: Added documentation preventing generation of hanging patterns
+  - **Safe qtests patterns**: Generator now promotes `const spy = mockConsole('warn'); ... spy.mockRestore();`
+  - **Correct async patterns**: Uses `await testHelpers.withSavedEnv(async () => {})` for environment testing
+  - **Direct module imports**: Eliminates testHelpers.reload() in favor of direct requires
+  - **Educational comments**: Generated tests include safe usage examples and warnings
+
 #### Resolution Summary
 - **Fix Verification**: Confirmed fixes with 100% test success rate (75/75 tests passing)
 - **Quality Assurance**: Enhanced test generator to be more project-agnostic and robust
@@ -138,3 +151,4 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - **Universal Success Detection**: qtests runner now recognizes success in both Jest format and native qtests/Node.js format, providing complete test framework compatibility
 - **Jest Version Compatibility**: qtests runner automatically adapts to both Jest 29 and Jest 30+ CLI parameter changes
 - **Directory Structure Agnostic**: Test generation makes no assumptions about project organization, works with any file structure
+- **Safe qtests Patterns Only**: Test generation prevents creation of hanging patterns, promotes correct qtests usage
