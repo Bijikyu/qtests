@@ -363,11 +363,13 @@ class TestRunner {
             running.delete(promise);
             completed++;
             
-            // Update progress immediately when each test completes
-            process.stdout.write(`\r${colors.dim}Progress: ${completed}/${testFiles.length} files completed${colors.reset}`);
+            // Update progress with staggered display for smoother appearance
+            if (completed % 2 === 0 || completed === testFiles.length) {
+              process.stdout.write(`\r${colors.dim}Progress: ${completed}/${testFiles.length} files completed${colors.reset}`);
+            }
             
-            // Start next test immediately if queue has more - prioritize smooth flow
-            setImmediate(startNext);
+            // Start next test immediately if queue has more
+            startNext();
             
             // Check if all tests are done
             if (completed === testFiles.length) {
@@ -500,14 +502,14 @@ class TestRunner {
     testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
     console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
     
-    // Optimized concurrency calculation for smooth progress without resource exhaustion
+    // Conservative concurrency calculation to prevent system resource exhaustion
     const cpuCount = os.cpus().length;
     const totalMemoryGB = Math.round(os.totalmem() / (1024 ** 3));
     
-    // Balanced concurrency to prevent batching while maintaining stability
-    const memoryBasedMax = Math.floor(totalMemoryGB / 2.5); // 2.5GB per worker for stability
-    const cpuBasedMax = Math.max(1, Math.floor(cpuCount * 1.75)); // Slightly higher for smoother flow
-    const maxConcurrency = Math.min(testFiles.length, Math.max(6, cpuBasedMax), memoryBasedMax, 12); // Max 12 for smooth progress
+    // Reduced concurrency to prevent thread creation failures (uv_thread_create errors)
+    const memoryBasedMax = Math.floor(totalMemoryGB / 3); // 3GB per worker for extra stability
+    const cpuBasedMax = Math.max(1, Math.floor(cpuCount * 1.5)); // More conservative 1.5x cores
+    const maxConcurrency = Math.min(testFiles.length, Math.max(4, cpuBasedMax), memoryBasedMax, 8); // Max 8 for system stability
     
     console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores, ${totalMemoryGB}GB RAM)${colors.reset}\n`);
     
