@@ -360,6 +360,62 @@ class TestRunner {
   }
 
   /**
+   * Run Jest tests in efficient batches like Jest does natively
+   */
+  async runJestBatch(jestFiles) {
+    if (jestFiles.length === 0) return [];
+    
+    return new Promise((resolve) => {
+      const startTime = Date.now();
+      
+      // Run all Jest files in a single Jest process - this is what makes Jest fast!
+      const args = ['jest', ...jestFiles, '--forceExit'];
+      
+      const child = spawn('npx', args, {
+        stdio: ['ignore', 'pipe', 'pipe'],
+        env: { ...process.env, NODE_ENV: 'test' },
+        shell: true
+      });
+
+      let stdout = '';
+      let stderr = '';
+
+      child.stdout.on('data', (data) => stdout += data.toString());
+      child.stderr.on('data', (data) => stderr += data.toString());
+
+      child.on('close', (code) => {
+        const duration = Date.now() - startTime;
+        const output = stdout + stderr;
+        
+        // Parse Jest results - Jest shows PASS/FAIL for each file
+        const results = jestFiles.map(file => {
+          const baseName = path.basename(file);
+          const hasPass = output.includes(`PASS ${file}`) || output.includes(`PASS ./${file}`) || 
+                         output.includes(`✓`) && output.includes(baseName);
+          const hasFail = output.includes(`FAIL ${file}`) || output.includes(`FAIL ./${file}`) ||
+                         output.includes(`✗`) && output.includes(baseName);
+          
+          const success = hasPass && !hasFail && code === 0;
+          
+          if (success) this.passedTests++;
+          else this.failedTests++;
+          
+          return {
+            file,
+            success,
+            duration: Math.floor(duration / jestFiles.length), // Approximate per file
+            output: success ? `PASS ${file}` : output.slice(0, 500),
+            error: success ? '' : stderr,
+            code
+          };
+        });
+        
+        resolve(results);
+      });
+    });
+  }
+
+  /**
    * Run tests with advanced parallel execution and smart grouping
    * Maintains max concurrency at all times - starts new test immediately as others finish
    */
@@ -535,12 +591,28 @@ class TestRunner {
     
     let allResults = [];
     
-    // Phase 1: Run lightweight tests first (fast feedback) - HIGHER CONCURRENCY
+    // Phase 1: Run lightweight tests with Jest-style batch execution
     if (lightweight.length > 0) {
       console.log(`${colors.green}📦 Phase 1: Lightweight Tests (${lightweight.length} files)${colors.reset}`);
-      const lightResults = await this.runInParallel(lightweight, Math.min(12, lightweight.length)); // Higher concurrency for simple tests
+      
+      // Separate Jest and Node.js tests for optimal execution
+      const lightJest = lightweight.filter(f => this.shouldUseJest(f));
+      const lightNode = lightweight.filter(f => !this.shouldUseJest(f));
+      
+      const lightResults = [];
+      if (lightJest.length > 0) {
+        console.log(`${colors.dim}Running ${lightJest.length} Jest tests in efficient batch...${colors.reset}`);
+        const jestResults = await this.runJestBatch(lightJest);
+        lightResults.push(...jestResults);
+      }
+      if (lightNode.length > 0) {
+        console.log(`${colors.dim}Running ${lightNode.length} Node.js tests individually...${colors.reset}`);
+        const nodeResults = await this.runInParallel(lightNode, Math.min(12, lightNode.length));
+        lightResults.push(...nodeResults);
+      }
+      
       allResults = allResults.concat(lightResults);
-      console.log(`${colors.dim}Phase 1 complete: ${this.passedTests}/${this.passedTests + this.failedTests} passed${colors.reset}\n`);
+      console.log(`${colors.dim}Phase 1 complete: ${lightResults.filter(r => r.success).length}/${lightweight.length} passed${colors.reset}\n`);
     }
     
     // Phase 2: Run integration tests
