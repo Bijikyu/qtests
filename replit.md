@@ -6,7 +6,11 @@ qtests is a comprehensive Node.js testing framework providing zero-dependency ut
 ## Recent Breakthrough (August 2025)
 **ARCHITECTURAL REVELATION**: Achieved 69% speed improvement by making qtests work like Jest internally. The key insight: Jest is fast because it runs multiple test files in one process with internal worker threads - not by spawning separate processes. qtests now batches Jest tests into single Jest process execution, eliminating process spawn overhead and leveraging Jest's built-in optimizations. Result: 35.1s execution time with 75/75 tests passing.
 
+**TypeScript ES Module Conversion (August 2025)**: Successfully converted the main entry point and core library files from CommonJS to TypeScript with ES Module syntax. Eliminated duplicate version maintenance by focusing exclusively on TypeScript ES Module approach. Updated all documentation to reflect modern ES Module patterns with full type safety.
+
 ## User Preferences
+- **TypeScript ES Module Only**: Project has been converted to TypeScript with ES Module syntax exclusively
+- **No Version Duplication**: User strongly dislikes having multiple versions of the same functionality (CommonJS + ES Module)
 - Preferred communication style: Simple, everyday language
 - Keep functionality simple - avoid unnecessary flags or options
 - Don't add complexity unless explicitly requested

@@ -51,26 +51,10 @@ const restore = stubMethod(myObject, 'methodName', mockImplementation);
 
 ### Method Stubbing
 
-**CommonJS:**
-```js
-const { stubMethod } = require('qtests');
-
-const myObj = { greet: name => `Hello, ${name}!` };
-
-// Stub the method
-const restore = stubMethod(myObj, 'greet', () => 'Hi!');
-console.log(myObj.greet('Brian')); // 'Hi!'
-
-// Restore original
-restore();
-console.log(myObj.greet('Brian')); // 'Hello, Brian!'
-```
-
-**ES Modules:**
-```js
+```typescript
 import { stubMethod } from 'qtests';
 
-const myObj = { greet: name => `Hello, ${name}!` };
+const myObj = { greet: (name: string) => `Hello, ${name}!` };
 
 // Stub the method
 const restore = stubMethod(myObj, 'greet', () => 'Hi!');
@@ -83,19 +67,7 @@ console.log(myObj.greet('Brian')); // 'Hello, Brian!'
 
 ### Console Mocking
 
-**CommonJS:**
-```js
-const { mockConsole } = require('qtests');
-
-const spy = mockConsole('log');
-console.log('test message');
-
-console.log(spy.mock.calls); // [['test message']]
-spy.mockRestore(); // Restore original console.log
-```
-
-**ES Modules:**
-```js
+```typescript
 import { mockConsole } from 'qtests';
 
 const spy = mockConsole('log');
@@ -107,21 +79,7 @@ spy.mockRestore(); // Restore original console.log
 
 ### Environment Management
 
-**CommonJS:**
-```js
-const { testEnv } = require('qtests');
-
-// Set test environment
-testEnv.setTestEnv(); // Sets NODE_ENV=test, DEBUG=qtests:*
-
-// Save and restore environment
-const saved = testEnv.saveEnv();
-process.env.TEST_VAR = 'modified';
-testEnv.restoreEnv(saved); // TEST_VAR removed, original state restored
-```
-
-**ES Modules:**
-```js
+```typescript
 import { testEnv } from 'qtests';
 
 // Set test environment
@@ -150,21 +108,6 @@ npx qtests-generate --src app --test-dir tests
 
 ### Programmatic Usage
 
-**CommonJS:**
-```js
-const { TestGenerator } = require('qtests');
-
-const generator = new TestGenerator({
-  SRC_DIR: 'src',
-  TEST_DIR: 'tests/integration',
-  VALID_EXTS: ['.js', '.ts', '.jsx', '.tsx']
-});
-
-const results = generator.generate();
-console.log(`Generated ${results.length} test files`);
-```
-
-**ES Modules + TypeScript:**
 ```typescript
 import { TestGenerator } from 'qtests';
 
@@ -188,9 +131,9 @@ console.log(`Generated ${results.length} test files`);
 
 ### Axios Stub
 
-```js
+```typescript
 // Automatic when using qtests/setup
-const axios = require('axios');
+import axios from 'axios';
 
 const response = await axios.get('/api');
 // Returns: { data: {}, status: 200, statusText: 'OK', headers: {}, config: {} }
@@ -200,9 +143,9 @@ await axios.post('/api', data); // Enhanced response format
 
 ### Winston Stub
 
-```js
+```typescript
 // Automatic when using qtests/setup
-const winston = require('winston');
+import winston from 'winston';
 
 const logger = winston.createLogger();
 logger.info('This produces no output'); // Silent
@@ -210,8 +153,8 @@ logger.info('This produces no output'); // Silent
 
 ## 🏃 Lightweight Test Runner
 
-```js
-const { runTestSuite, createAssertions } = require('qtests');
+```typescript
+import { runTestSuite, createAssertions } from 'qtests';
 
 const assert = createAssertions();
 
@@ -231,8 +174,8 @@ runTestSuite('My Tests', tests);
 
 ## 🌐 HTTP Testing
 
-```js
-const { httpTest } = require('qtests/lib/envUtils');
+```typescript
+import { httpTest } from 'qtests/lib/envUtils.js';
 
 // Create mock Express app
 const app = httpTest.createMockApp();
@@ -250,8 +193,8 @@ const response = await httpTest.supertest(app)
 
 ## 📧 Email Testing
 
-```js
-const { sendEmail } = require('qtests/lib/envUtils');
+```typescript
+import { sendEmail } from 'qtests/lib/envUtils.js';
 
 // Mock email sending
 const result = await sendEmail.send({
@@ -268,8 +211,8 @@ console.log(sendEmail.getHistory()); // Array of sent emails
 
 ### Offline Mode
 
-```js
-const { offlineMode } = require('qtests');
+```typescript
+import { offlineMode } from 'qtests';
 
 // Enable offline mode
 offlineMode.setOfflineMode(true);
@@ -281,8 +224,8 @@ await axios.get('/api/data'); // Returns {} instead of real request
 
 ### Integration with Jest
 
-```js
-const { testHelpers } = require('qtests');
+```typescript
+import { testHelpers } from 'qtests';
 
 test('console output', async () => {
   await testHelpers.withMockConsole('log', (spy) => {
@@ -349,33 +292,6 @@ And ensure your `tsconfig.json` supports ES modules:
 
 ### Import Patterns
 
-**CommonJS:**
-```js
-// Core utilities
-const { stubMethod, mockConsole, testEnv, TestGenerator } = require('qtests');
-
-// Advanced utilities
-const { httpTest, sendEmail, testSuite } = require('qtests/lib/envUtils');
-
-// Module stubs
-const { stubs } = require('qtests');
-await stubs.axios.get('https://example.com');
-```
-
-**ES Modules:**
-```js
-// Core utilities
-import { stubMethod, mockConsole, testEnv, TestGenerator } from 'qtests';
-
-// Advanced utilities
-import { httpTest, sendEmail, testSuite } from 'qtests/lib/envUtils.js';
-
-// Module stubs
-import { stubs } from 'qtests';
-await stubs.axios.get('https://example.com');
-```
-
-**TypeScript:**
 ```typescript
 // Core utilities with full type safety
 import { stubMethod, mockConsole, testEnv, TestGenerator, QtestsAPI } from 'qtests';
@@ -392,19 +308,7 @@ await stubs.axios.get('https://example.com');
 
 ### 1. Always Load Setup First
 
-**CommonJS:**
-```js
-// ✅ Correct
-require('qtests/setup');
-const myModule = require('./myModule');
-
-// ❌ Wrong
-const myModule = require('./myModule');
-require('qtests/setup');
-```
-
-**ES Modules:**
-```js
+```typescript
 // ✅ Correct
 import './node_modules/qtests/setup.js';
 import myModule from './myModule.js';
@@ -415,7 +319,7 @@ import './node_modules/qtests/setup.js';
 ```
 
 ### 2. Clean Up After Tests
-```js
+```typescript
 test('example', () => {
   const restore = stubMethod(obj, 'method', stub);
   const spy = mockConsole('log');
@@ -429,8 +333,8 @@ test('example', () => {
 ```
 
 ### 3. Use Environment Helpers
-```js
-const { testHelpers } = require('qtests');
+```typescript
+import { testHelpers } from 'qtests';
 
 test('environment test', async () => {
   await testHelpers.withSavedEnv(async () => {
