@@ -8,39 +8,22 @@ A comprehensive Node.js testing framework with zero dependencies. Provides intel
 npm install qtests --save-dev
 ```
 
-### CommonJS (Traditional Node.js)
-
-```js
-// Enable automatic stubbing
-require('qtests/setup');
-
-// Your modules now use qtests stubs automatically
-const axios = require('axios'); // Uses qtests stub
-const winston = require('winston'); // Uses qtests stub
-
-// Basic utilities
-const { stubMethod, mockConsole, testEnv } = require('qtests');
+**Configure your project for ES modules** by adding to `package.json`:
+```json
+{
+  "type": "module",
+  "main": "index.ts"
+}
 ```
 
-### ES Modules (Modern Node.js + TypeScript)
-
-```js
+**TypeScript setup:**
+```typescript
 // Enable automatic stubbing
 import './node_modules/qtests/setup.js';
 
 // Your modules now use qtests stubs automatically
 import axios from 'axios'; // Uses qtests stub
 import winston from 'winston'; // Uses qtests stub
-
-// Basic utilities
-import { stubMethod, mockConsole, testEnv } from 'qtests';
-```
-
-### TypeScript
-
-```typescript
-// Enable automatic stubbing
-import './node_modules/qtests/setup.js';
 
 // Import with full type safety
 import { stubMethod, mockConsole, testEnv, QtestsAPI } from 'qtests';
