@@ -48,10 +48,10 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   collectCoverageFrom: [
-    'lib/**/*.js',
-    'utils/**/*.js',
-    'index.js',
-    '!lib/stubs.js',
-    '!utils/*Stub.js'
+    'lib/**/*.ts',
+    'utils/**/*.ts',
+    'index.ts',
+    '!lib/stubs.ts',
+    '!utils/*Stub.ts'
   ]
 };

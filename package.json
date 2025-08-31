@@ -30,7 +30,7 @@
   "dependencies": {
     "@types/node": "^24.0.0",
     "axios": "^1.9.0",
-    "qerrors": "^1.2.6",
+    "qerrors": "^1.2.6"
   },
   "devDependencies": {
     "agentsqripts": "^1.0.8",

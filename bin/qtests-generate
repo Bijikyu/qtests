@@ -1,14 +1,20 @@
 #!/usr/bin/env node
 
 /**
- * qtests Test Generator CLI
+ * qtests Test Generator CLI - TypeScript ES Module Compatible
  * 
  * Command-line interface for generating unit tests and API tests
  * by scanning source code and analyzing exports, imports, and routes.
  */
 
-const { TestGenerator } = require('../lib/testGenerator');
-const path = require('path');
+import { TestGenerator } from '../lib/testGenerator.js';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Get __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Parse command line arguments
 function parseArgs(argv) {
@@ -70,12 +76,12 @@ EXAMPLES:
 
 
 DESCRIPTION:
-  Automatically generates unit tests and API tests by scanning JavaScript/TypeScript
-  source files. Detects exported functions, classes, and Express routes to create
-  appropriate test files with proper mocking setup.
+  Automatically generates TypeScript unit tests and API tests by scanning 
+  JavaScript/TypeScript source files. Detects exported functions, classes, 
+  and Express routes to create appropriate test files with proper mocking setup.
 
   Generated test files:
-  - Unit tests: Created alongside source files with .test extension
+  - Unit tests: Created alongside source files with .test.ts extension
   - API tests: Created in integration test directory with route-specific names
   - Jest configuration: Automatically creates jest.config.js and test setup files
 
@@ -84,37 +90,32 @@ For more information, visit: https://github.com/qtests/qtests
 }
 
 function showVersion() {
-  const packageJson = require('../package.json');
-  console.log(`qtests v${packageJson.version}`);
+  try {
+    const packageJsonPath = path.join(__dirname, '..', 'package.json');
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+    console.log(`qtests v${packageJson.version}`);
+  } catch (error) {
+    console.log(`qtests v1.2.0`);
+  }
 }
 
-function main() {
+async function main() {
   try {
-    console.log('🔧 qtests Test Generator\n');
+    console.log('🔧 qtests Test Generator (TypeScript ES Module)\n');
     
     const options = parseArgs(process.argv);
     const generator = new TestGenerator(options);
     
     // Display configuration
     console.log(`Configuration:`);
-    console.log(`  Source directory: ${generator.config.SRC_DIR}`);
-    console.log(`  Test directory: ${generator.config.TEST_DIR}`);
-    console.log(`  File extensions: ${generator.config.VALID_EXTS.join(', ')}`);
-    console.log(`  Known mocks: ${generator.config.KNOWN_MOCKS.join(', ')}`);
-    console.log(`  Module system: ${generator.isESModule ? 'ES Modules' : 'CommonJS'}`);
+    console.log(`  Source directory: ${generator.config?.SRC_DIR || 'src'}`);
+    console.log(`  Test directory: ${generator.config?.TEST_DIR || 'tests/integration'}`);
+    console.log(`  Module system: TypeScript ES Modules (only)`);
     console.log('');
     
     // Generate tests
-    const results = generator.generate();
-    
-    // Generate test runner automatically (always overwrite)
-    console.log('\n🏃 Generating test runner...');
-    const runnerGenerated = generator.generateTestRunner();
-    if (runnerGenerated) {
-      console.log('✅ Generated/Updated qtests-runner.js with latest functionality');
-    } else {
-      console.log('❌ Failed to generate qtests-runner.js');
-    }
+    await generator.generateTestFiles();
+    const results = generator.getResults();
     
     // Summary
     console.log('\n📊 Generation Summary:');
@@ -127,9 +128,11 @@ function main() {
     
     if (results.length > 0) {
       console.log('\n💡 Next steps:');
-      console.log('  1. Review generated test files');
+      console.log('  1. Review generated TypeScript test files');
       console.log('  2. Add specific test implementations');
       console.log('  3. Run tests with: npm test');
+    } else {
+      console.log('\n✅ All source files already have corresponding tests');
     }
     
   } catch (error) {
@@ -139,8 +142,7 @@ function main() {
 }
 
 // Run CLI if this script is executed directly
-if (require.main === module) {
-  main();
-}
-
-module.exports = { main, parseArgs, showHelp, showVersion };
+main().catch(error => {
+  console.error('❌ Unexpected error:', error.message);
+  process.exit(1);
+});
