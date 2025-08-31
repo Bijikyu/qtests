@@ -1,5 +1,5 @@
 /**
- * Mock Axios Factory for Environment-Aware Testing
+ * Mock Axios Factory for Environment-Aware Testing - TypeScript Implementation
  * 
  * This module provides factory functions for creating mock axios implementations
  * that simulate HTTP responses without making actual network requests. This is
@@ -26,8 +26,37 @@
  */
 
 // Import logging control utility for consistent framework behavior
-const { setLogging } = require('../lib/logUtils');
+import { setLogging } from '../lib/logUtils.js';
 if (process.env.NODE_ENV !== 'test') setLogging(false);
+
+// Type definitions for axios-compatible mock
+interface MockAxiosConfig {
+  defaultResponse?: any;
+  defaultStatus?: number;
+  simulateErrors?: boolean;
+}
+
+interface MockAxiosResponse {
+  data: any;
+  status: number;
+  statusText: string;
+  headers: Record<string, any>;
+  config: Record<string, any>;
+  request: Record<string, any>;
+}
+
+interface MockAxios {
+  get(url: string, config?: any): Promise<MockAxiosResponse>;
+  post(url: string, data?: any, config?: any): Promise<MockAxiosResponse>;
+  put(url: string, data?: any, config?: any): Promise<MockAxiosResponse>;
+  delete(url: string, config?: any): Promise<MockAxiosResponse>;
+  request(config?: any): Promise<MockAxiosResponse>;
+}
+
+interface UserMockAxios {
+  (config: { url: string; [key: string]: any }): Promise<MockAxiosResponse>;
+  __set: (url: string, data: any, status?: number, reject?: boolean) => void;
+}
 
 /**
  * Create a mock axios instance with simulated HTTP methods
@@ -49,11 +78,8 @@ if (process.env.NODE_ENV !== 'test') setLogging(false);
  * - Provides clean separation between mock creation and usage
  * - Follows established patterns in testing frameworks
  * 
- * @param {Object} options - Configuration options for mock behavior
- * @param {Object} options.defaultResponse - Default response data for all requests
- * @param {number} options.defaultStatus - Default HTTP status code
- * @param {boolean} options.simulateErrors - Whether to simulate network errors
- * @returns {Object} Mock axios instance with HTTP methods
+ * @param options - Configuration options for mock behavior
+ * @returns Mock axios instance with HTTP methods
  * 
  * @example
  * const mockAxios = createMockAxios();
@@ -66,7 +92,7 @@ if (process.env.NODE_ENV !== 'test') setLogging(false);
  *   defaultStatus: 200
  * });
  */
-function createMockAxios(options = {}) {
+function createMockAxios(options: MockAxiosConfig = {}): MockAxios {
   console.log(`createMockAxios is running with ${JSON.stringify(options)}`);
 
   try {
@@ -85,11 +111,11 @@ function createMockAxios(options = {}) {
      * that application code can work with mock responses identically to
      * real responses.
      * 
-     * @param {any} data - Response data payload
-     * @param {number} status - HTTP status code
-     * @returns {Object} Axios-compatible response object
+     * @param data - Response data payload
+     * @param status - HTTP status code
+     * @returns Axios-compatible response object
      */
-    function createMockResponse(data = defaultResponse, status = defaultStatus) {
+    function createMockResponse(data: any = defaultResponse, status: number = defaultStatus): MockAxiosResponse {
       return {
         data,
         status,
@@ -107,7 +133,7 @@ function createMockAxios(options = {}) {
      * commonly use. Each method returns a promise that resolves immediately
      * with a mock response, allowing tests to proceed without network delays.
      */
-    const mockAxios = {
+    const mockAxios: MockAxios = {
       /**
        * Mock GET request implementation
        * 
@@ -115,11 +141,11 @@ function createMockAxios(options = {}) {
        * with predictable response data. Accepts the same parameters as real
        * axios.get() for API compatibility.
        * 
-       * @param {string} url - Request URL (logged but not used)
-       * @param {Object} config - Request configuration (logged but not used)
-       * @returns {Promise<Object>} Promise resolving to mock response
+       * @param url - Request URL (logged but not used)
+       * @param config - Request configuration (logged but not used)
+       * @returns Promise resolving to mock response
        */
-      async get(url, config = {}) {
+      async get(url: string, config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.get is running with ${url}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
@@ -136,12 +162,12 @@ function createMockAxios(options = {}) {
        * Accepts data payload and configuration parameters for API compatibility
        * with real axios.post() method.
        * 
-       * @param {string} url - Request URL (logged but not used)
-       * @param {any} data - Request payload (logged but not used)
-       * @param {Object} config - Request configuration (logged but not used)
-       * @returns {Promise<Object>} Promise resolving to mock response
+       * @param url - Request URL (logged but not used)
+       * @param data - Request payload (logged but not used)
+       * @param config - Request configuration (logged but not used)
+       * @returns Promise resolving to mock response
        */
-      async post(url, data = {}, config = {}) {
+      async post(url: string, data: any = {}, config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.post is running with ${url}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
@@ -157,12 +183,12 @@ function createMockAxios(options = {}) {
        * Simulates HTTP PUT requests for update operations.
        * Maintains API compatibility with axios.put() method signature.
        * 
-       * @param {string} url - Request URL (logged but not used)
-       * @param {any} data - Request payload (logged but not used)
-       * @param {Object} config - Request configuration (logged but not used)
-       * @returns {Promise<Object>} Promise resolving to mock response
+       * @param url - Request URL (logged but not used)
+       * @param data - Request payload (logged but not used)
+       * @param config - Request configuration (logged but not used)
+       * @returns Promise resolving to mock response
        */
-      async put(url, data = {}, config = {}) {
+      async put(url: string, data: any = {}, config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.put is running with ${url}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
@@ -178,11 +204,11 @@ function createMockAxios(options = {}) {
        * Simulates HTTP DELETE requests for resource removal operations.
        * Maintains API compatibility with axios.delete() method signature.
        * 
-       * @param {string} url - Request URL (logged but not used)
-       * @param {Object} config - Request configuration (logged but not used)
-       * @returns {Promise<Object>} Promise resolving to mock response
+       * @param url - Request URL (logged but not used)
+       * @param config - Request configuration (logged but not used)
+       * @returns Promise resolving to mock response
        */
-      async delete(url, config = {}) {
+      async delete(url: string, config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.delete is running with ${url}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
@@ -199,10 +225,10 @@ function createMockAxios(options = {}) {
        * This method covers any HTTP methods not explicitly implemented above
        * and allows for more complex request configurations.
        * 
-       * @param {Object} config - Complete request configuration object
-       * @returns {Promise<Object>} Promise resolving to mock response
+       * @param config - Complete request configuration object
+       * @returns Promise resolving to mock response
        */
-      async request(config = {}) {
+      async request(config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.request is running with ${JSON.stringify(config)}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
@@ -216,28 +242,36 @@ function createMockAxios(options = {}) {
     console.log(`createMockAxios is returning ${mockAxios}`);
     return mockAxios;
 
-  } catch (error) {
+  } catch (error: any) {
     console.log(`createMockAxios error: ${error.message}`);
     throw error;
   }
 }
 
-/** //(introduces axios mock factory)
- * Generates a mock axios instance returning preset data. //(describe function)
- * It intercepts axios calls to return canned responses, avoiding real HTTP. //(explain mocking)
- * Rationale: enables offline tests and predictable responses. //(why)
- */ //(close introductory comment)
-function createUserMockAxios(){ // factory producing configurable axios mock
+/**
+ * Generates a mock axios instance returning preset data.
+ * It intercepts axios calls to return canned responses, avoiding real HTTP.
+ * Rationale: enables offline tests and predictable responses.
+ */
+function createUserMockAxios(): UserMockAxios {
     console.log(`createMockAxios is running with none`); // log start of factory
     try {
-        const responses = new Map(); // map to hold url responses
+        const responses = new Map<string, { data: any; status: number; reject: boolean }>(); // map to hold url responses
         responses.set('http://a', { data: { mock: true }, status: 200, reject: false }); // seed default mock
-        function mockAxios(config){ // simulate axios request/response
+        
+        function mockAxios(config: { url: string; [key: string]: any }): Promise<MockAxiosResponse> { // simulate axios request/response
             console.log(`mockAxios is running with ${JSON.stringify(config)}`); // log start
             try {
                 const mock = responses.get(config.url); // lookup response
                 if(mock){
-                    const result = { status: mock.status, data: mock.data }; // build axios style result
+                    const result: MockAxiosResponse = { 
+                        status: mock.status, 
+                        data: mock.data,
+                        statusText: mock.status === 200 ? 'OK' : 'Error',
+                        headers: {},
+                        config: {},
+                        request: {}
+                    }; // build axios style result
                     console.log(`mockAxios is returning ${JSON.stringify(result)}`); // log return
                     if(mock.reject) return Promise.reject({ response: result }); // reject when flagged
                     return Promise.resolve(result); // resolve mock success
@@ -245,16 +279,20 @@ function createUserMockAxios(){ // factory producing configurable axios mock
                 const error = { response: { status: 500, data: 'error' } }; // fallback error
                 console.log(`mockAxios is returning ${JSON.stringify(error)}`); // log error return
                 return Promise.reject(error); // reject unknown url
-            } catch(error){
+            } catch(error: any){
                 console.log(`mockAxios error ${error.message}`); // log internal error
                 return Promise.reject(error); // propagate
             }
         }
-        function axiosWrapper(config){ return mockAxios(config); } // expose axios like function
-        axiosWrapper.__set = (url, data, status = 200, reject = false) => { responses.set(url, { data, status, reject }); }; // helper to program responses
+        
+        const axiosWrapper = mockAxios as UserMockAxios;
+        axiosWrapper.__set = (url: string, data: any, status: number = 200, reject: boolean = false) => { 
+            responses.set(url, { data, status, reject }); 
+        }; // helper to program responses
+        
         console.log(`createMockAxios is returning axiosWrapper`); // log end
         return axiosWrapper; // return configured mock
-    } catch(error){
+    } catch(error: any){
         console.log(`createMockAxios error ${error.message}`); // log failure
         throw error; // rethrow for caller
     }
@@ -267,27 +305,27 @@ function createUserMockAxios(){ // factory producing configurable axios mock
  * requiring configuration options. It's useful for quick test setup where
  * custom response behavior isn't needed.
  * 
- * @returns {Object} Basic mock axios instance
+ * @returns Basic mock axios instance
  * 
  * @example
  * const axios = createSimpleMockAxios();
  * const response = await axios.get('/api/test');
  */
-function createSimpleMockAxios() {
+function createSimpleMockAxios(): MockAxios {
   console.log(`createSimpleMockAxios is running with none`);
   
   try {
     const mockAxios = createMockAxios();
     console.log(`createSimpleMockAxios is returning ${mockAxios}`);
     return mockAxios;
-  } catch (error) {
+  } catch (error: any) {
     console.log(`createSimpleMockAxios error: ${error.message}`);
     throw error;
   }
 }
 
-// Export mock axios factory utilities at bottom per requirements
-module.exports = {
+// Export mock axios factory utilities using ES module syntax
+export {
   createMockAxios, // configurable mock axios factory
   createUserMockAxios, // user-provided axios mock factory with exact implementation
   createSimpleMockAxios // simple mock axios for basic usage

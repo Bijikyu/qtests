@@ -1,20 +1,52 @@
-/** //(introduces internal supertest alternative)
- * Provides tiny HTTP client for integration tests. //(creates minimal API)
- * Rationale: avoids external supertest dependency and works in Node core. //(reason)
- */ //(close introductory comment)
+/**
+ * HTTP Testing Utilities - TypeScript Implementation
+ * 
+ * Provides tiny HTTP client for integration tests.
+ * Rationale: avoids external supertest dependency and works in Node core.
+ */
 
 // Import logging control utility for consistent framework behavior
-const { setLogging } = require('../lib/logUtils');
+import { setLogging } from '../lib/logUtils.js';
 if (process.env.NODE_ENV !== 'test') setLogging(false);
 
-const http = require('http'); //(use node http to avoid external deps)
+import http from 'http';
+import type { Server } from 'http';
 
-/** //(introduces http test factory function)
- * Creates HTTP test client for integration testing. //(describe main function)
- * Returns builder object for chaining request configuration. //(explain return)
- * Rationale: provides supertest-like API without external dependencies. //(why)
- */ //(close factory comment)
-function supertest(app) { //(lightweight supertest-like client)
+// Type definitions for HTTP testing
+interface TestResponse {
+  status: number;
+  statusCode: number; // alias for compatibility
+  headers: http.IncomingHttpHeaders;
+  body: any;
+  text: string; // raw response text
+}
+
+interface MockApp {
+  (req: http.IncomingMessage, res: http.ServerResponse): void;
+  get: (path: string | RegExp, handler: RouteHandler) => MockApp;
+  post: (path: string | RegExp, handler: RouteHandler) => MockApp;
+  put: (path: string | RegExp, handler: RouteHandler) => MockApp;
+  delete: (path: string | RegExp, handler: RouteHandler) => MockApp;
+  patch: (path: string | RegExp, handler: RouteHandler) => MockApp;
+  all: (path: string | RegExp, handler: RouteHandler) => MockApp;
+}
+
+interface RouteHandler {
+  (req: http.IncomingMessage, res: http.ServerResponse): void;
+}
+
+interface Route {
+  method: string;
+  path: string | RegExp;
+  handler: RouteHandler;
+}
+
+/**
+ * Creates HTTP test client for integration testing.
+ * Returns builder object for chaining request configuration.
+ * Rationale: provides supertest-like API without external dependencies.
+ */
+function supertest(app: Function): Super {
   console.log(`supertest is running with app`); // log factory creation
   
   // Validate app early to provide immediate feedback
@@ -28,29 +60,39 @@ function supertest(app) { //(lightweight supertest-like client)
     const client = new Super(app); // create builder instance
     console.log(`supertest is returning Super instance`); // log return
     return client; // return configured builder
-  } catch (error) {
+  } catch (error: any) {
     console.log(`supertest error ${error.message}`); // log failure
     throw error; // rethrow for caller
   }
 }
 
-class Super { //(builder for request objects)
-  constructor(app) {
+class Super {
+  private app: Function;
+  
+  constructor(app: Function) {
     this.app = app; // store app reference for server creation
   }
   
-  get(path) { return new Test(this.app, 'get', path); } //(start GET request)
-  post(path) { return new Test(this.app, 'post', path); } //(start POST request)
-  put(path) { return new Test(this.app, 'put', path); } //(start PUT request)
-  delete(path) { return new Test(this.app, 'delete', path); } //(start DELETE request)
-  patch(path) { return new Test(this.app, 'patch', path); } //(start PATCH request)
-  head(path) { return new Test(this.app, 'head', path); } //(start HEAD request)
-  options(path) { return new Test(this.app, 'options', path); } //(start OPTIONS request)
-  all(path) { return new Test(this.app, 'all', path); } //(start request with any method)
+  get(path: string): Test { return new Test(this.app, 'get', path); }
+  post(path: string): Test { return new Test(this.app, 'post', path); }
+  put(path: string): Test { return new Test(this.app, 'put', path); }
+  delete(path: string): Test { return new Test(this.app, 'delete', path); }
+  patch(path: string): Test { return new Test(this.app, 'patch', path); }
+  head(path: string): Test { return new Test(this.app, 'head', path); }
+  options(path: string): Test { return new Test(this.app, 'options', path); }
+  all(path: string): Test { return new Test(this.app, 'all', path); }
 }
 
-class Test { //(represents a single http call)
-  constructor(app, method, path) {
+class Test {
+  private app: Function;
+  private method: string;
+  private path: string;
+  private headers: Record<string, string>;
+  private body: any;
+  private expectedStatus: number | null;
+  private server: Server | null;
+  
+  constructor(app: Function, method: string, path: string) {
     console.log(`Test is running with ${method} ${path}`); // log test creation
     
     this.app = app; // application instance
@@ -62,20 +104,20 @@ class Test { //(represents a single http call)
     this.server = null; // server instance reference for cleanup
   }
   
-  set(name, value) { //(set request header)
+  set(name: string, value: string): Test {
     console.log(`Test.set is running with ${name}: ${value}`); // log header setting
     
     try {
       this.headers[name] = value; // store header
       console.log(`Test.set is returning this`); // log chaining
       return this; // enable method chaining
-    } catch (error) {
+    } catch (error: any) {
       console.log(`Test.set error ${error.message}`); // log error
       throw error; // propagate error
     }
   }
   
-  send(body) { //(attach json body)
+  send(body: any): Test {
     console.log(`Test.send is running with ${typeof body}`); // log body attachment
     
     try {
@@ -88,38 +130,39 @@ class Test { //(represents a single http call)
       
       console.log(`Test.send is returning this`); // log chaining
       return this; // enable method chaining
-    } catch (error) {
+    } catch (error: any) {
       console.log(`Test.send error ${error.message}`); // log error
       throw error; // propagate error
     }
   }
   
-  expect(status) { //(set expected status code)
+  expect(status: number): Test {
     console.log(`Test.expect is running with ${status}`); // log expectation setting
     
     try {
       this.expectedStatus = status; // store expected status
       console.log(`Test.expect is returning this`); // log chaining
       return this; // enable method chaining
-    } catch (error) {
+    } catch (error: any) {
       console.log(`Test.expect error ${error.message}`); // log error
       throw error; // propagate error
     }
   }
   
-  async end() { //(perform the request)
+  async end(): Promise<TestResponse> {
     console.log(`Test.end is running with ${this.method} ${this.path}`); // log request execution
     
     try {
-      const server = http.createServer(this.app); //(spin up ephemeral server)
+      const server = http.createServer(this.app as any);
       this.server = server; // store reference for cleanup
       
       // Start server on random available port
-      await new Promise(resolve => server.listen(0, resolve));
-      const port = server.address().port;
+      await new Promise<void>(resolve => server.listen(0, resolve));
+      const address = server.address();
+      const port = typeof address === 'object' && address ? address.port : 0;
       
       // Configure request options
-      const opts = {
+      const opts: http.RequestOptions = {
         method: this.method,
         hostname: '127.0.0.1',
         port,
@@ -131,7 +174,7 @@ class Test { //(represents a single http call)
       const response = await this.makeRequest(opts);
       
       // Clean up server
-      await new Promise(resolve => server.close(resolve));
+      await new Promise<void>(resolve => server.close(() => resolve()));
       this.server = null;
       
       // Validate expected status if specified
@@ -142,14 +185,14 @@ class Test { //(represents a single http call)
       console.log(`Test.end is returning response with status ${response.status}`); // log completion
       return response; // return response object
       
-    } catch (error) {
+    } catch (error: any) {
       console.log(`Test.end error ${error.message}`); // log error
       
       // Ensure server cleanup on error
       if (this.server) {
         try {
-          await new Promise(resolve => this.server.close(resolve));
-        } catch (cleanupError) {
+          await new Promise<void>(resolve => this.server!.close(() => resolve()));
+        } catch (cleanupError: any) {
           console.log(`Server cleanup error: ${cleanupError.message}`);
         }
         this.server = null;
@@ -166,10 +209,10 @@ class Test { //(represents a single http call)
    * parsing. It creates a promise-based wrapper around Node.js http.request
    * and automatically parses JSON responses.
    * 
-   * @param {Object} opts - HTTP request options
-   * @returns {Promise<Object>} Response object with status, headers, and body
+   * @param opts - HTTP request options
+   * @returns Response object with status, headers, and body
    */
-  makeRequest(opts) {
+  private makeRequest(opts: http.RequestOptions): Promise<TestResponse> {
     return new Promise((resolve, reject) => {
       console.log(`makeRequest is running with ${opts.method} ${opts.path}`); // log request start
       
@@ -184,22 +227,22 @@ class Test { //(represents a single http call)
         // Parse and resolve response
         res.on('end', () => {
           try {
-            let body = data;
+            let body: any = data;
             
             // Auto-parse JSON responses
             const contentType = res.headers['content-type'] || '';
             if (contentType.includes('application/json') && data) {
               try {
                 body = JSON.parse(data);
-              } catch (parseError) {
+              } catch (parseError: any) {
                 // Keep raw data if JSON parsing fails
                 console.log(`JSON parse error: ${parseError.message}`);
               }
             }
             
-            const response = {
-              status: res.statusCode,
-              statusCode: res.statusCode, // alias for compatibility
+            const response: TestResponse = {
+              status: res.statusCode || 0,
+              statusCode: res.statusCode || 0, // alias for compatibility
               headers: res.headers,
               body: body,
               text: data // raw response text
@@ -208,7 +251,7 @@ class Test { //(represents a single http call)
             console.log(`makeRequest is returning response with status ${response.status}`); // log completion
             resolve(response);
             
-          } catch (error) {
+          } catch (error: any) {
             console.log(`makeRequest response parsing error ${error.message}`); // log error
             reject(error);
           }
@@ -216,7 +259,7 @@ class Test { //(represents a single http call)
       });
       
       // Handle request errors
-      req.on('error', (error) => {
+      req.on('error', (error: Error) => {
         console.log(`makeRequest request error ${error.message}`); // log error
         reject(error);
       });
@@ -241,21 +284,21 @@ class Test { //(represents a single http call)
  * can be used with the supertest client. It provides basic routing and
  * middleware support for testing HTTP endpoints.
  * 
- * @returns {Function} Express-style application function
+ * @returns Express-style application function
  * 
  * @example
  * const app = createMockApp();
  * app.get('/test', (req, res) => res.json({ success: true }));
  * const response = await supertest(app).get('/test').end();
  */
-function createMockApp() {
+function createMockApp(): MockApp {
   console.log(`createMockApp is running with none`); // log app creation
   
   try {
-    const routes = []; // store route definitions
+    const routes: Route[] = []; // store route definitions
     
     // Express-style application function
-    function app(req, res) {
+    function app(req: http.IncomingMessage, res: http.ServerResponse): void {
       console.log(`mockApp is running with ${req.method} ${req.url}`); // log request
       
       try {
@@ -267,13 +310,13 @@ function createMockApp() {
           let pathMatch = false;
           if (r.path === req.url) {
             pathMatch = true;
-          } else if (r.path instanceof RegExp && r.path.test(req.url)) {
+          } else if (r.path instanceof RegExp && r.path.test(req.url || '')) {
             pathMatch = true;
           } else if (typeof r.path === 'string' && r.path.includes(':')) {
             // Convert Express-style parameters to regex
             const regexPath = r.path.replace(/:[\w]+/g, '[^/]+');
             const regex = new RegExp(`^${regexPath}$`);
-            pathMatch = regex.test(req.url);
+            pathMatch = regex.test(req.url || '');
           }
           
           return methodMatch && pathMatch;
@@ -291,7 +334,7 @@ function createMockApp() {
         
         console.log(`mockApp handled ${req.method} ${req.url}`); // log completion
         
-      } catch (error) {
+      } catch (error: any) {
         console.log(`mockApp error ${error.message}`); // log error
         res.statusCode = 500;
         res.setHeader('Content-Type', 'application/json');
@@ -299,48 +342,51 @@ function createMockApp() {
       }
     }
     
+    // Create mock app with HTTP method helpers
+    const mockApp = app as MockApp;
+    
     // Add HTTP method helpers
-    app.get = (path, handler) => {
+    mockApp.get = (path: string | RegExp, handler: RouteHandler): MockApp => {
       routes.push({ method: 'GET', path, handler });
-      return app;
+      return mockApp;
     };
     
-    app.post = (path, handler) => {
+    mockApp.post = (path: string | RegExp, handler: RouteHandler): MockApp => {
       routes.push({ method: 'POST', path, handler });
-      return app;
+      return mockApp;
     };
     
-    app.put = (path, handler) => {
+    mockApp.put = (path: string | RegExp, handler: RouteHandler): MockApp => {
       routes.push({ method: 'PUT', path, handler });
-      return app;
+      return mockApp;
     };
     
-    app.delete = (path, handler) => {
+    mockApp.delete = (path: string | RegExp, handler: RouteHandler): MockApp => {
       routes.push({ method: 'DELETE', path, handler });
-      return app;
+      return mockApp;
     };
     
-    app.patch = (path, handler) => {
+    mockApp.patch = (path: string | RegExp, handler: RouteHandler): MockApp => {
       routes.push({ method: 'PATCH', path, handler });
-      return app;
+      return mockApp;
     };
     
-    app.all = (path, handler) => {
+    mockApp.all = (path: string | RegExp, handler: RouteHandler): MockApp => {
       routes.push({ method: 'ALL', path, handler });
-      return app;
+      return mockApp;
     };
     
     console.log(`createMockApp is returning app`); // log return
-    return app; // return configured mock app
+    return mockApp; // return configured mock app
     
-  } catch (error) {
+  } catch (error: any) {
     console.log(`createMockApp error ${error.message}`); // log failure
     throw error; // rethrow for caller
   }
 }
 
-// Export HTTP testing utilities at bottom per requirements
-module.exports = {
+// Export HTTP testing utilities using ES module syntax
+export {
   supertest, // lightweight supertest alternative
   createMockApp // Express-style app mock for testing
 };

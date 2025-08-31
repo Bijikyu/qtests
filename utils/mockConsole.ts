@@ -1,6 +1,5 @@
-
 /**
- * Console Mocking Utilities
+ * Console Mocking Utilities - TypeScript Implementation
  * 
  * This module provides console output capture functionality for testing
  * code that logs to the console without polluting test output.
@@ -22,6 +21,13 @@
  * methods with additional mock call tracking for test verification.
  */
 
+interface MockSpy {
+  mock: {
+    calls: any[][];
+  };
+  mockRestore: () => void;
+}
+
 /**
  * Create a mock console method that captures calls without output
  * 
@@ -41,8 +47,8 @@
  * - Fallback ensures compatibility with other test frameworks
  * - Consistent API means tests work regardless of framework choice
  * 
- * @param {string} method - Console method name to mock ('log', 'error', 'warn', etc.)
- * @returns {Object} Mock object with call tracking and restoration capabilities
+ * @param method - Console method name to mock ('log', 'error', 'warn', etc.)
+ * @returns Mock object with call tracking and restoration capabilities
  * 
  * @example
  * const spy = mockConsole('log');
@@ -50,7 +56,7 @@
  * console.log(spy.mock.calls.length); // 1
  * spy.mockRestore();
  */
-function mockConsole(method) {
+function mockConsole(method: keyof Console): MockSpy {
   console.log(`mockConsole is running with ${method}`); // logging function start per requirements
   
   try {
@@ -65,19 +71,19 @@ function mockConsole(method) {
       // Jest spies automatically integrate with Jest's assertion and debugging tools
       const jestSpy = jest.spyOn(console, method).mockImplementation(() => {});
       console.log(`mockConsole is returning ${jestSpy}`); // logging return value per requirements
-      return jestSpy;
+      return jestSpy as MockSpy;
     }
     
     // Fallback implementation for non-Jest environments (Mocha, AVA, vanilla Node.js)
     // Manual implementation ensures qtests works regardless of testing framework choice
     // This approach maintains Jest-compatible API for consistent developer experience
-    let originalMethod = console[method]; // preserve original for restoration
-    let calls = []; // array to capture all method invocations with arguments
+    let originalMethod = console[method] as Function; // preserve original for restoration
+    let calls: any[][] = []; // array to capture all method invocations with arguments
     
     // Replace console method with capturing function that stores calls but produces no output
     // Spread operator (...args) captures all arguments regardless of method signature
     // Anonymous function used to avoid name conflicts and ensure proper 'this' binding
-    console[method] = function(...args) {
+    (console as any)[method] = function(...args: any[]): void {
       // Store complete argument list for each invocation
       // Arguments stored as arrays to match Jest's spy.mock.calls format
       // This enables tests to verify exactly what was logged during execution
@@ -87,26 +93,26 @@ function mockConsole(method) {
     // Create Jest-compatible mock object for consistent API across environments
     // Object structure matches Jest spy interface to minimize learning curve for developers
     // Provides same call tracking and restoration capabilities as Jest spies
-    const mockObject = {
+    const mockObject: MockSpy = {
       mock: {
         // Expose calls array with same structure as Jest spies
         // Each element is an array of arguments passed to that invocation
         calls: calls
       },
-      mockRestore: function() {
+      mockRestore: function(): void {
         // Restore original console method to prevent test pollution
         // Simple assignment ensures reliable restoration and avoids memory leaks
-        console[method] = originalMethod; // reinstate saved method for other tests
+        (console as any)[method] = originalMethod; // reinstate saved method for other tests
         if (calls) { calls.length = 0; } // clear captured calls for GC
-        this.mock.calls = null; // remove reference from mock object for GC
-        originalMethod = null; // drop reference to allow garbage collection
-        calls = null; // drop call history reference enabling GC
+        (this.mock as any).calls = null; // remove reference from mock object for GC
+        originalMethod = null as any; // drop reference to allow garbage collection
+        calls = null as any; // drop call history reference enabling GC
       }
     };
     
     console.log(`mockConsole is returning ${mockObject}`); // logging return value per requirements
     return mockObject;
-  } catch (error) {
+  } catch (error: any) {
     // Provide context for debugging console mocking failures
     // Common issues include invalid method names or console object modification conflicts
     // Error re-throwing maintains proper error handling while adding diagnostic information
@@ -115,7 +121,5 @@ function mockConsole(method) {
   }
 }
 
-// export mockConsole utilities at bottom per requirements
-module.exports = {
-  mockConsole // primary console mocking function
-};
+// Export mockConsole utilities using ES module syntax
+export { mockConsole };

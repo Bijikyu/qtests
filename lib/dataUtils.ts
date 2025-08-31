@@ -26,12 +26,12 @@
 // Import mockModels for in-memory database model simulation
 // mockModels provides Mongoose-compatible models without database dependencies
 // for testing data-dependent applications with full CRUD operations
-const mockModels = require('../utils/mockModels');
+import mockModels from '../utils/mockModels.js';
 
 // Import sendEmail utility for email system mocking
 // sendEmail provides lightweight email mocking for testing notification systems
 // without requiring external mail service configuration or actual email delivery
-const sendEmail = require('../utils/sendEmail');
+import sendEmail from '../utils/sendEmail.js';
 
 /**
  * Export data and database testing utilities
@@ -43,11 +43,11 @@ const sendEmail = require('../utils/sendEmail');
  * - sendEmail: For email system mocking and notification testing
  * 
  * Export strategy:
- * - Object export for consistent access patterns
+ * - Named exports for ES module compatibility
  * - Descriptive property names that indicate purpose
  * - Grouped by data-related functionality for developer convenience
  */
-module.exports = {
+export {
   // In-memory database model simulation with Mongoose compatibility
   mockModels,
   

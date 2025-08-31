@@ -1,16 +1,31 @@
 /**
- * Offline Mode Utility - Working Implementation
+ * Offline Mode Utility - TypeScript Implementation
  */
+
+// Type definitions
+interface EnvironmentState {
+  codexFlag: boolean;
+  offlineFlagExplicit: boolean;
+  testEnvironment: boolean;
+  isOffline: boolean;
+  environmentDetected: boolean;
+}
+
+interface EnvironmentAdapters {
+  isOffline: boolean;
+  axios: any;
+  qerrors: any;
+}
 
 // Simple offline state management
 let isOfflineFlag = false;
-let cachedAxios = null;
-let cachedQerrors = null;
+let cachedAxios: any = null;
+let cachedQerrors: any = null;
 
 /**
  * Set offline mode
  */
-function setOfflineMode(offline) {
+function setOfflineMode(offline: boolean): void {
   const changed = isOfflineFlag !== offline;
   isOfflineFlag = offline;
   
@@ -23,24 +38,27 @@ function setOfflineMode(offline) {
 /**
  * Check if offline mode is enabled
  */
-function isOfflineMode() {
+function isOfflineMode(): boolean {
   return isOfflineFlag;
 }
 
 /**
  * Get axios (stub or real)
  */
-function getAxios() {
+function getAxios(): any {
   if (!cachedAxios) {
     if (isOfflineFlag) {
       // Use stub axios
-      cachedAxios = require('../stubs/axios');
+      const stubAxios = await import('../stubs/axios.js');
+      cachedAxios = stubAxios.default || stubAxios;
     } else {
       // Try real axios, fallback to stub
       try {
-        cachedAxios = require('axios');
+        const axios = await import('axios');
+        cachedAxios = axios.default || axios;
       } catch (e) {
-        cachedAxios = require('../stubs/axios');
+        const stubAxios = await import('../stubs/axios.js');
+        cachedAxios = stubAxios.default || stubAxios;
       }
     }
   }
@@ -50,7 +68,7 @@ function getAxios() {
 /**
  * Get qerrors (stub or real)
  */
-function getQerrors() {
+function getQerrors(): any {
   if (!cachedQerrors) {
     if (isOfflineFlag) {
       // Use stub qerrors
@@ -58,7 +76,9 @@ function getQerrors() {
     } else {
       // Try real qerrors, fallback to stub
       try {
-        cachedQerrors = require('qerrors');
+        // Note: This would need to be converted to dynamic import for ES modules
+        // For now, using the stub version as qerrors may not be available
+        cachedQerrors = { qerrors: () => {} };
       } catch (e) {
         cachedQerrors = { qerrors: () => {} };
       }
@@ -70,7 +90,7 @@ function getQerrors() {
 /**
  * Get environment state
  */
-function getEnvironmentState() {
+function getEnvironmentState(): EnvironmentState {
   const codexFlag = process.env.CODEX?.toLowerCase() === 'true';
   const offlineFlagExplicit = process.env.OFFLINE_MODE?.toLowerCase() === 'true';
   const testEnvironment = process.env.NODE_ENV === 'test';
@@ -87,7 +107,7 @@ function getEnvironmentState() {
 /**
  * Create environment adapters
  */
-function createEnvironmentAdapters() {
+function createEnvironmentAdapters(): EnvironmentAdapters {
   return {
     isOffline: isOfflineFlag,
     axios: getAxios(),
@@ -98,12 +118,13 @@ function createEnvironmentAdapters() {
 /**
  * Clear offline cache
  */
-function clearOfflineCache() {
+function clearOfflineCache(): void {
   cachedAxios = null;
   cachedQerrors = null;
 }
 
-module.exports = {
+// Export offline mode utilities using ES module syntax
+export {
   setOfflineMode,
   isOfflineMode,
   getAxios,

@@ -1,26 +1,29 @@
 /**
- * Mock Models for Testing - Working Implementation
+ * Mock Models for Testing - TypeScript Implementation
  */
 
 // Collections storage
-const collections = new Map();
+const collections = new Map<string, any[]>();
 
 /**
  * Base Mock Model class
  */
 class BaseMockModel {
-  constructor(data = {}) {
+  _id: string;
+  [key: string]: any;
+
+  constructor(data: Record<string, any> = {}) {
     this._id = data._id || `mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     Object.assign(this, data);
   }
   
-  async save() {
-    const collectionName = this.constructor.modelName || 'default';
+  async save(): Promise<this> {
+    const collectionName = (this.constructor as any).modelName || 'default';
     if (!collections.has(collectionName)) {
       collections.set(collectionName, []);
     }
     
-    const collection = collections.get(collectionName);
+    const collection = collections.get(collectionName)!;
     const existingIndex = collection.findIndex(item => item._id === this._id);
     
     if (existingIndex >= 0) {
@@ -32,12 +35,12 @@ class BaseMockModel {
     return this;
   }
   
-  static getCollection() {
-    const collectionName = this.modelName || 'default';
+  static getCollection(): any[] {
+    const collectionName = (this as any).modelName || 'default';
     return collections.get(collectionName) || [];
   }
   
-  static find(query = {}) {
+  static find(query: Record<string, any> = {}): any[] {
     const collection = this.getCollection();
     if (Object.keys(query).length === 0) {
       return [...collection]; // Return copy
@@ -52,7 +55,7 @@ class BaseMockModel {
 /**
  * Create mock model class
  */
-function createMockModel(modelName) {
+function createMockModel(modelName: string) {
   class MockModel extends BaseMockModel {
     static modelName = modelName;
   }
@@ -65,8 +68,12 @@ function createMockModel(modelName) {
  */
 class ApiKey extends BaseMockModel {
   static modelName = 'ApiKey';
+  key: string;
+  name: string;
+  permissions: string[];
+  createdAt: Date;
   
-  constructor(data = {}) {
+  constructor(data: Record<string, any> = {}) {
     super(data);
     this.key = data.key || '';
     this.name = data.name || '';
@@ -80,8 +87,12 @@ class ApiKey extends BaseMockModel {
  */
 class ApiLog extends BaseMockModel {
   static modelName = 'ApiLog';
+  endpoint: string;
+  method: string;
+  statusCode: number;
+  timestamp: Date;
   
-  constructor(data = {}) {
+  constructor(data: Record<string, any> = {}) {
     super(data);
     this.endpoint = data.endpoint || '';
     this.method = data.method || 'GET';
@@ -93,11 +104,21 @@ class ApiLog extends BaseMockModel {
 /**
  * Reset all collections
  */
-function resetAllCollections() {
+function resetAllCollections(): void {
   collections.clear();
 }
 
-module.exports = {
+// Export mock model utilities using ES module syntax
+export {
+  BaseMockModel,
+  ApiKey,
+  ApiLog,
+  createMockModel,
+  resetAllCollections
+};
+
+// Default export for main functionality
+const mockModels = {
   BaseMockModel,
   ApiKey,
   ApiLog,
@@ -107,3 +128,5 @@ module.exports = {
   mockApiKeys: () => ApiKey.getCollection(),
   mockLogs: () => ApiLog.getCollection()
 };
+
+export default mockModels;

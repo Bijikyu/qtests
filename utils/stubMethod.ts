@@ -1,6 +1,5 @@
-
 /**
- * Method Stubbing Utility
+ * Method Stubbing Utility - TypeScript Implementation
  * 
  * This module provides the fundamental method replacement functionality
  * that enables isolated unit testing by replacing method implementations
@@ -49,10 +48,10 @@
  * - Stack-based restoration: Rejected due to complexity for minimal benefit
  * - Property descriptor manipulation: Current approach is simpler and sufficient
  * 
- * @param {Object} obj - The object containing the method to replace
- * @param {string} methodName - Name of the method to replace
- * @param {Function} stubFn - Function to use as replacement implementation
- * @returns {Function} Restoration function that reinstates the original method
+ * @param obj - The object containing the method to replace
+ * @param methodName - Name of the method to replace
+ * @param stubFn - Function to use as replacement implementation
+ * @returns Restoration function that reinstates the original method
  * 
  * @example
  * const restore = stubMethod(fs, 'readFileSync', () => 'mock data');
@@ -60,7 +59,7 @@
  * restore();
  * // fs.readFileSync restored to original implementation
  */
-function stubMethod(obj, methodName, stubFn) {
+function stubMethod(obj: any, methodName: string, stubFn: Function): () => void {
   console.log(`stubMethod is running with ${obj}, ${methodName}, ${stubFn}`); // logging function start per requirements
 
   try {
@@ -88,7 +87,7 @@ function stubMethod(obj, methodName, stubFn) {
     // Closure captures originalMethod and obj references for later restoration
     // Named function 'restore' provides clear intent and better debugging experience
     // Returned function pattern allows caller to control when restoration occurs
-    const restoreFunction = function restore() {
+    const restoreFunction = function restore(): void {
       // Reinstate original method only if it existed as own property, otherwise remove stub
       if (hadOwn) { // property was originally own so simply reassign
         obj[methodName] = originalMethod; // restore exact original method
@@ -99,7 +98,7 @@ function stubMethod(obj, methodName, stubFn) {
     
     console.log(`stubMethod is returning ${restoreFunction}`); // logging return value per requirements
     return restoreFunction;
-  } catch (error) {
+  } catch (error: any) {
     // Log error with context for debugging test setup issues
     // Error logging helps developers identify problems with object access or property assignment
     // We re-throw to maintain error handling contract while providing debugging information
@@ -108,5 +107,5 @@ function stubMethod(obj, methodName, stubFn) {
   }
 }
 
-// export stubMethod function at bottom per requirements
-module.exports = stubMethod;
+// Export stubMethod function using ES module syntax
+export default stubMethod;

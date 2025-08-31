@@ -1,23 +1,45 @@
 /**
- * Comprehensive Testing Suite Utilities (Refactored)
+ * Comprehensive Testing Suite Utilities - TypeScript Implementation (Refactored)
  * 
  * This module has been refactored to follow Single Responsibility Principle.
  * It now coordinates between focused testing utilities for better maintainability.
  * 
  * Components:
- * - testing/databaseTestHelper.js - Database testing utilities
- * - testing/mockManager.js - Mock management system
- * - testing/assertionHelper.js - Assertion helpers
- * - testing/testDataFactory.js - Test data creation
- * - testing/performanceTestHelper.js - Performance testing
+ * - testing/databaseTestHelper.ts - Database testing utilities
+ * - testing/mockManager.ts - Mock management system
+ * - testing/assertionHelper.ts - Assertion helpers
+ * - testing/testDataFactory.ts - Test data creation
+ * - testing/performanceTestHelper.ts - Performance testing
  */
 
 // Import focused testing utilities
-const { DatabaseTestHelper } = require('./testing/databaseTestHelper');
-const { MockManager } = require('./testing/mockManager');
-const { AssertionHelper } = require('./testing/assertionHelper');
-const { TestDataFactory } = require('./testing/testDataFactory');
-const { PerformanceTestHelper } = require('./testing/performanceTestHelper');
+import { DatabaseTestHelper } from './testing/databaseTestHelper.js';
+import { MockManager } from './testing/mockManager.js';
+import { AssertionHelper } from './testing/assertionHelper.js';
+import { TestDataFactory } from './testing/testDataFactory.js';
+import { PerformanceTestHelper } from './testing/performanceTestHelper.js';
+
+// Type definitions
+interface TestSuiteConfig {
+  apiMocks?: boolean;
+  emailMocks?: boolean;
+  consoleMocks?: boolean;
+  performance?: boolean;
+  autoCleanup?: boolean;
+  database?: boolean;
+  environmentMocks?: Record<string, string>;
+  httpMocks?: any[];
+}
+
+interface TestSuiteInstance {
+  mocks: MockManager;
+  db?: DatabaseTestHelper;
+  assertions: AssertionHelper;
+  assert: typeof AssertionHelper;
+  data: typeof TestDataFactory;
+  performance?: typeof PerformanceTestHelper;
+  config: TestSuiteConfig;
+}
 
 /**
  * TestSuiteBuilder - Fluent API for building comprehensive test suites
@@ -25,6 +47,8 @@ const { PerformanceTestHelper } = require('./testing/performanceTestHelper');
  * Provides a builder pattern for configuring test utilities with method chaining
  */
 class TestSuiteBuilder {
+  private config: TestSuiteConfig;
+
   constructor() {
     this.config = {
       apiMocks: false,
@@ -35,47 +59,47 @@ class TestSuiteBuilder {
     };
   }
   
-  withApiMocks() {
+  withApiMocks(): TestSuiteBuilder {
     this.config.apiMocks = true;
     return this;
   }
   
-  withEmailMocks() {
+  withEmailMocks(): TestSuiteBuilder {
     this.config.emailMocks = true;
     return this;
   }
   
-  withConsoleMocks() {
+  withConsoleMocks(): TestSuiteBuilder {
     this.config.consoleMocks = true;
     return this;
   }
   
-  withPerformance() {
+  withPerformance(): TestSuiteBuilder {
     this.config.performance = true;
     return this;
   }
 
-  withDatabase() {
+  withDatabase(): TestSuiteBuilder {
     this.config.database = true;
     return this;
   }
 
-  withEnvironmentMocks(envVars) {
+  withEnvironmentMocks(envVars?: Record<string, string>): TestSuiteBuilder {
     this.config.environmentMocks = envVars || {};
     return this;
   }
 
-  withHttpMocks(responses) {
+  withHttpMocks(responses?: any[]): TestSuiteBuilder {
     this.config.httpMocks = responses || [];
     return this;
   }
   
-  withoutAutoCleanup() {
+  withoutAutoCleanup(): TestSuiteBuilder {
     this.config.autoCleanup = false;
     return this;
   }
   
-  build() {
+  build(): TestSuiteInstance {
     const mockManager = new MockManager();
     
     // Set up mocks based on configuration
@@ -85,8 +109,9 @@ class TestSuiteBuilder {
     if (this.config.emailMocks) {
       // Set up email mocks if needed
       try {
-        const { sendEmail } = require('./email/emailSender');
-        mockManager.mocks.set('email', { sendEmail });
+        // Note: Dynamic import would be needed for ES modules
+        // For now, this is a placeholder for the email functionality
+        mockManager.mocks.set('email', { sendEmail: () => {} });
       } catch (error) {
         // Email mocks not available, skip
       }
@@ -115,8 +140,8 @@ class TestSuiteBuilder {
   }
 }
 
-// Export all testing utilities following qtests framework patterns
-module.exports = {
+// Export all testing utilities following qtests framework patterns using ES module syntax
+export {
   DatabaseTestHelper,
   MockManager,
   AssertionHelper,

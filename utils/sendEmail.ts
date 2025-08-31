@@ -1,16 +1,34 @@
 /**
- * Email Mock Utility for Testing - Working Implementation
+ * Email Mock Utility for Testing - TypeScript Implementation
  */
 
-const { executeWithLogs } = require('../lib/logUtils');
+import { executeWithLogs } from '../lib/logUtils.js';
+
+// Email data interface
+interface EmailData {
+  to: string;
+  subject?: string;
+  text?: string;
+  html?: string;
+  from?: string;
+  [key: string]: any;
+}
+
+interface EmailResult {
+  success: boolean;
+  messageId: string;
+  to: string;
+  subject: string;
+  timestamp: string;
+}
 
 // Simple email history storage
-let emailHistory = [];
+let emailHistory: Array<EmailData & EmailResult> = [];
 
 /**
  * Mock email sending function
  */
-function sendEmail(emailData) {
+function sendEmail(emailData: EmailData): Promise<EmailResult> {
   return executeWithLogs('sendEmail', async () => {
     // Validate basic email structure
     if (!emailData || !emailData.to) {
@@ -18,7 +36,7 @@ function sendEmail(emailData) {
     }
     
     // Create mock result
-    const result = {
+    const result: EmailResult = {
       success: true,
       messageId: `mock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       to: emailData.to,
@@ -39,14 +57,14 @@ function sendEmail(emailData) {
 /**
  * Get email history
  */
-function getEmailHistory() {
+function getEmailHistory(): Array<EmailData & EmailResult> {
   return [...emailHistory]; // Return copy
 }
 
 /**
  * Clear email history
  */
-function clearEmailHistory() {
+function clearEmailHistory(): number {
   return executeWithLogs('clearEmailHistory', () => {
     const cleared = emailHistory.length;
     emailHistory = [];
@@ -57,7 +75,7 @@ function clearEmailHistory() {
 /**
  * Validate email data
  */
-function validateEmail(emailData) {
+function validateEmail(emailData: EmailData): boolean {
   return executeWithLogs('validateEmail', () => {
     if (!emailData) return false;
     if (!emailData.to) return false;
@@ -66,10 +84,21 @@ function validateEmail(emailData) {
   }, emailData);
 }
 
-module.exports = {
+// Export email utilities using ES module syntax
+export {
+  sendEmail,
+  getEmailHistory,
+  clearEmailHistory,
+  validateEmail
+};
+
+// Default export for main functionality
+const emailUtilities = {
   sendEmail,
   getEmailHistory,
   clearEmailHistory,
   validateEmail,
   emailHistory: () => emailHistory // Function to access for debugging
 };
+
+export default emailUtilities;

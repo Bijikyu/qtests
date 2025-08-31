@@ -27,12 +27,12 @@
 // Import testHelpers for advanced testing scenarios
 // testHelpers provides module reloading, response mocking, and other
 // specialized utilities needed for integration and complex unit testing
-const testHelpers = require('../utils/testHelpers');
+import testHelpers from '../utils/testHelpers.js';
 
 // Import testSuite utilities for comprehensive test pattern elimination
 // testSuite provides centralized setup, teardown, mocking, and assertion
 // patterns to eliminate duplicate code across test suites
-const testSuite = require('../utils/testSuite');
+import testSuite from '../utils/testSuite.js';
 
 /**
  * Export advanced testing utilities
@@ -44,11 +44,11 @@ const testSuite = require('../utils/testSuite');
  * - testSuite: For comprehensive test suite management and pattern elimination
  * 
  * Export strategy:
- * - Object export for consistent access patterns
+ * - Named exports for ES module compatibility
  * - Descriptive property names that indicate purpose
  * - Grouped by advanced functionality for developer convenience
  */
-module.exports = {
+export {
   // Advanced helper functions for complex testing scenarios
   testHelpers,
   
