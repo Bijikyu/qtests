@@ -1,14 +1,15 @@
 {
   "name": "qtests",
-  "version": "1.1.9",
+  "version": "1.2.0",
   "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
-  "main": "index.js",
+  "type": "module",
+  "main": "index.ts",
   "bin": {
     "qtests-runner": "./bin/qtests-runner",
     "qtests-generate": "./bin/qtests-generate"
   },
   "scripts": {
-    "test": "node qtests-runner.js"
+    "test": "node qtests-runner.ts"
   },
   "keywords": [
     "testing",
@@ -26,6 +27,11 @@
   ],
   "author": "Q",
   "license": "MIT",
+  "dependencies": {
+    "@types/node": "^24.0.0",
+    "axios": "^1.9.0",
+    "qerrors": "^1.2.6",
+  },
   "devDependencies": {
     "agentsqripts": "^1.0.8",
     "arqitect": "^1.0.7",
@@ -37,13 +43,8 @@
     "npmcontext": "^1.0.1",
     "quantumagent": "^1.0.5",
     "repomix": "^1.2.0",
+    "ts-jest": "^29.4.1",
     "unqommented": "^1.1.0",
     "winston": "^3.17.0"
-  },
-  "dependencies": {
-    "@types/node": "^24.0.0",
-    "axios": "^1.9.0",
-    "qerrors": "^1.2.6",
-    "ts-jest": "^29.4.1"
   }
 }

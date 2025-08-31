@@ -1,12 +1,14 @@
 # qtests
 
-A comprehensive Node.js testing framework with zero dependencies. Provides intelligent test generation, method stubbing, console mocking, and drop-in replacements for popular modules.
+A comprehensive Node.js testing framework with zero dependencies. Provides intelligent test generation, method stubbing, console mocking, and drop-in replacements for popular modules. **Now with ES Module and TypeScript support!**
 
 ## 🚀 Quick Start
 
 ```bash
 npm install qtests --save-dev
 ```
+
+### CommonJS (Traditional Node.js)
 
 ```js
 // Enable automatic stubbing
@@ -20,6 +22,33 @@ const winston = require('winston'); // Uses qtests stub
 const { stubMethod, mockConsole, testEnv } = require('qtests');
 ```
 
+### ES Modules (Modern Node.js + TypeScript)
+
+```js
+// Enable automatic stubbing
+import './node_modules/qtests/setup.js';
+
+// Your modules now use qtests stubs automatically
+import axios from 'axios'; // Uses qtests stub
+import winston from 'winston'; // Uses qtests stub
+
+// Basic utilities
+import { stubMethod, mockConsole, testEnv } from 'qtests';
+```
+
+### TypeScript
+
+```typescript
+// Enable automatic stubbing
+import './node_modules/qtests/setup.js';
+
+// Import with full type safety
+import { stubMethod, mockConsole, testEnv, QtestsAPI } from 'qtests';
+
+// Use with TypeScript intellisense
+const restore = stubMethod(myObject, 'methodName', mockImplementation);
+```
+
 ## ✨ Key Features
 
 - **🤖 Intelligent Test Generation** - Automatically discovers and generates missing tests
@@ -31,12 +60,15 @@ const { stubMethod, mockConsole, testEnv } = require('qtests');
 - **🏃 Lightweight Test Runner** - Zero-dependency test execution engine
 - **🌐 HTTP Testing** - Integration testing utilities (supertest alternative)
 - **📧 Email Mocking** - Email testing without external mail services
+- **🆕 ES Module Support** - Full compatibility with modern ES Module syntax
+- **🔷 TypeScript Support** - Complete type definitions and intellisense
 - **⚡ Zero Dependencies** - No production dependencies to bloat your project
 
 ## 📖 Core Usage
 
 ### Method Stubbing
 
+**CommonJS:**
 ```js
 const { stubMethod } = require('qtests');
 
@@ -51,8 +83,24 @@ restore();
 console.log(myObj.greet('Brian')); // 'Hello, Brian!'
 ```
 
+**ES Modules:**
+```js
+import { stubMethod } from 'qtests';
+
+const myObj = { greet: name => `Hello, ${name}!` };
+
+// Stub the method
+const restore = stubMethod(myObj, 'greet', () => 'Hi!');
+console.log(myObj.greet('Brian')); // 'Hi!'
+
+// Restore original
+restore();
+console.log(myObj.greet('Brian')); // 'Hello, Brian!'
+```
+
 ### Console Mocking
 
+**CommonJS:**
 ```js
 const { mockConsole } = require('qtests');
 
@@ -63,10 +111,35 @@ console.log(spy.mock.calls); // [['test message']]
 spy.mockRestore(); // Restore original console.log
 ```
 
+**ES Modules:**
+```js
+import { mockConsole } from 'qtests';
+
+const spy = mockConsole('log');
+console.log('test message');
+
+console.log(spy.mock.calls); // [['test message']]
+spy.mockRestore(); // Restore original console.log
+```
+
 ### Environment Management
 
+**CommonJS:**
 ```js
 const { testEnv } = require('qtests');
+
+// Set test environment
+testEnv.setTestEnv(); // Sets NODE_ENV=test, DEBUG=qtests:*
+
+// Save and restore environment
+const saved = testEnv.saveEnv();
+process.env.TEST_VAR = 'modified';
+testEnv.restoreEnv(saved); // TEST_VAR removed, original state restored
+```
+
+**ES Modules:**
+```js
+import { testEnv } from 'qtests';
 
 // Set test environment
 testEnv.setTestEnv(); // Sets NODE_ENV=test, DEBUG=qtests:*
@@ -94,8 +167,23 @@ npx qtests-generate --src app --test-dir tests
 
 ### Programmatic Usage
 
+**CommonJS:**
 ```js
 const { TestGenerator } = require('qtests');
+
+const generator = new TestGenerator({
+  SRC_DIR: 'src',
+  TEST_DIR: 'tests/integration',
+  VALID_EXTS: ['.js', '.ts', '.jsx', '.tsx']
+});
+
+const results = generator.generate();
+console.log(`Generated ${results.length} test files`);
+```
+
+**ES Modules + TypeScript:**
+```typescript
+import { TestGenerator } from 'qtests';
 
 const generator = new TestGenerator({
   SRC_DIR: 'src',
@@ -248,8 +336,37 @@ test('console output', async () => {
 | `runTestSuite(name, tests)` | Execute test suite |
 | `createAssertions()` | Get assertion methods |
 
+## 🔷 TypeScript Configuration
+
+To use qtests with ES modules and TypeScript, update your `package.json`:
+
+```json
+{
+  "type": "module",
+  "main": "index.ts"
+}
+```
+
+And ensure your `tsconfig.json` supports ES modules:
+
+```json
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "ts-node": {
+    "esm": true
+  }
+}
+```
+
 ### Import Patterns
 
+**CommonJS:**
 ```js
 // Core utilities
 const { stubMethod, mockConsole, testEnv, TestGenerator } = require('qtests');
@@ -262,9 +379,37 @@ const { stubs } = require('qtests');
 await stubs.axios.get('https://example.com');
 ```
 
+**ES Modules:**
+```js
+// Core utilities
+import { stubMethod, mockConsole, testEnv, TestGenerator } from 'qtests';
+
+// Advanced utilities
+import { httpTest, sendEmail, testSuite } from 'qtests/lib/envUtils.js';
+
+// Module stubs
+import { stubs } from 'qtests';
+await stubs.axios.get('https://example.com');
+```
+
+**TypeScript:**
+```typescript
+// Core utilities with full type safety
+import { stubMethod, mockConsole, testEnv, TestGenerator, QtestsAPI } from 'qtests';
+
+// Advanced utilities
+import { httpTest, sendEmail, testSuite } from 'qtests/lib/envUtils.js';
+
+// Module stubs
+import { stubs } from 'qtests';
+await stubs.axios.get('https://example.com');
+```
+
 ## 🎯 Best Practices
 
 ### 1. Always Load Setup First
+
+**CommonJS:**
 ```js
 // ✅ Correct
 require('qtests/setup');
@@ -273,6 +418,17 @@ const myModule = require('./myModule');
 // ❌ Wrong
 const myModule = require('./myModule');
 require('qtests/setup');
+```
+
+**ES Modules:**
+```js
+// ✅ Correct
+import './node_modules/qtests/setup.js';
+import myModule from './myModule.js';
+
+// ❌ Wrong  
+import myModule from './myModule.js';
+import './node_modules/qtests/setup.js';
 ```
 
 ### 2. Clean Up After Tests
@@ -305,11 +461,15 @@ test('environment test', async () => {
 
 | Issue | Solution |
 |-------|----------|
-| Stubs not working | Ensure `require('qtests/setup')` is called first |
+| Stubs not working (CommonJS) | Ensure `require('qtests/setup')` is called first |
+| Stubs not working (ES Modules) | Ensure `import './node_modules/qtests/setup.js'` is called first |
+| TypeScript import errors | Add `"type": "module"` to package.json and update tsconfig.json |
+| ES Module syntax errors | Ensure `"module": "ES2020"` in tsconfig.json |
 | Console pollution | Use `mockConsole()` to capture output |
 | Environment leaks | Use `testHelpers.withSavedEnv()` for isolation |
 | Module not found | Import advanced utilities from `qtests/lib/envUtils` |
 | CLI not found | Use `npx qtests-generate` or install globally |
+| File extension errors | Use `.js` extensions in ES module imports |
 
 ## 📄 License
 
