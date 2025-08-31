@@ -1,28 +1,29 @@
-module.exports = {
-  preset: 'ts-jest',
+export default {
+  preset: 'ts-jest/presets/default-esm',
+  extensionsToTreatAsEsm: ['.ts'],
   testEnvironment: 'node',
-  setupFiles: ['<rootDir>/test/testSetup.js'], // (invoke exported setup for jest)
-  
+  setupFiles: ['<rootDir>/test/testSetup.js'],
+
   // Advanced Performance optimizations
-  maxWorkers: '100%', // Use all available CPU cores for maximum speed
+  maxWorkers: '100%',
   cache: true,
   cacheDirectory: '<rootDir>/.jest-cache',
   clearMocks: true,
   resetMocks: false,
   restoreMocks: false,
-  
+
   // Conservative memory optimizations for stability
-  workerIdleMemoryLimit: '1GB', // Conservative worker memory to prevent hanging
-  detectLeaks: false, // Skip leak detection for speed
-  logHeapUsage: false, // Disable heap logging for speed
-  forceExit: false, // Let Jest handle cleanup properly in parallel mode
-  
+  workerIdleMemoryLimit: '1GB',
+  detectLeaks: false,
+  logHeapUsage: false,
+  forceExit: false,
+
   // Fast test execution (balanced for stability)
   verbose: false,
-  silent: false, // Keep some output for debugging, qtests-runner handles display
-  bail: false, // Don't stop on first failure for parallel efficiency
-  passWithNoTests: true, // Don't fail on empty test suites
-  
+  silent: false,
+  bail: false,
+  passWithNoTests: true,
+
   testPathIgnorePatterns: [
     '/node_modules/',
     '/demo/',
@@ -41,10 +42,13 @@ module.exports = {
   ],
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
-      // Use tsconfig.json instead of inline config to avoid deprecation warnings
-      tsconfig: './tsconfig.json'
-    }],
-    '^.+\\.jsx?$': 'babel-jest'
+      useESM: true,
+      tsconfig: './tsconfig.json',
+      isolatedModules: true
+    }]
+  },
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1'
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   collectCoverageFrom: [
