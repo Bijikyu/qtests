@@ -1,5 +1,5 @@
 // Auto-generated API test for PATCH /api/settings - optimized for speed
-import * as httpTest from '../utils/httpTest.js';
+import * as httpTest from '../../utils/httpTest.js';
 
 describe('PATCH /api/settings', () => {
   // Shared app setup for performance

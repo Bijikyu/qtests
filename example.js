@@ -326,8 +326,10 @@ const envState = offlineMode.getEnvironmentState();
 console.log(`Environment detection: ${JSON.stringify(envState, null, 2)}`);
 
 // Create environment-aware adapters that automatically configure based on offline mode
-const adapters = offlineMode.createEnvironmentAdapters();
-console.log(`Adapters created - Offline mode: ${adapters.isOffline}`);
+(async () => {
+  const adapters = await offlineMode.createEnvironmentAdapters();
+  console.log(`Adapters created - Offline mode: ${adapters.isOffline}`);
+})();
 
 // Demonstrate HTTP client adapter usage
 async function demonstrateHttpAdapter() {
@@ -440,14 +442,16 @@ console.log('\n--- Offline Mode Toggling Demo ---');
 console.log(`Initial offline state: ${offlineMode.isOfflineMode()}`);
 
 // Toggle to offline mode and create new adapters
-offlineMode.setOfflineMode(true);
-const offlineAdapters = offlineMode.createEnvironmentAdapters();
-console.log(`After toggle - Offline state: ${offlineAdapters.isOffline}`);
+(async () => {
+  offlineMode.setOfflineMode(true);
+  const offlineAdapters = await offlineMode.createEnvironmentAdapters();
+  console.log(`After toggle - Offline state: ${offlineAdapters.isOffline}`);
 
-// Toggle back to online mode
-offlineMode.setOfflineMode(false);
-const onlineAdapters = offlineMode.createEnvironmentAdapters();
-console.log(`After toggle back - Offline state: ${onlineAdapters.isOffline}`);
+  // Toggle back to online mode
+  offlineMode.setOfflineMode(false);
+  const onlineAdapters = await offlineMode.createEnvironmentAdapters();
+  console.log(`After toggle back - Offline state: ${onlineAdapters.isOffline}`);
+})();
 
 console.log('Environment adapter demonstrations completed');
 

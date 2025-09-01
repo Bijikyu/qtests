@@ -45,7 +45,7 @@ function isOfflineMode(): boolean {
 /**
  * Get axios (stub or real)
  */
-function getAxios(): any {
+async function getAxios(): Promise<any> {
   if (!cachedAxios) {
     if (isOfflineFlag) {
       // Use stub axios
@@ -68,7 +68,7 @@ function getAxios(): any {
 /**
  * Get qerrors (stub or real)
  */
-function getQerrors(): any {
+async function getQerrors(): Promise<any> {
   if (!cachedQerrors) {
     if (isOfflineFlag) {
       // Use stub qerrors
@@ -107,11 +107,11 @@ function getEnvironmentState(): EnvironmentState {
 /**
  * Create environment adapters
  */
-function createEnvironmentAdapters(): EnvironmentAdapters {
+async function createEnvironmentAdapters(): Promise<EnvironmentAdapters> {
   return {
     isOffline: isOfflineFlag,
-    axios: getAxios(),
-    qerrors: getQerrors()
+    axios: await getAxios(),
+    qerrors: await getQerrors()
   };
 }
 

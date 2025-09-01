@@ -1,5 +1,5 @@
 // Auto-generated API test for POST /api/users - optimized for speed
-import * as httpTest from '../utils/httpTest.js';
+import * as httpTest from '../../utils/httpTest.js';
 
 describe('POST /api/users', () => {
   // Shared app setup for performance

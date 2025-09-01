@@ -1,5 +1,5 @@
 // Auto-generated API test for GET /api/status - optimized for speed
-import * as httpTest from '../utils/httpTest.js';
+import * as httpTest from '../../utils/httpTest.js';
 
 describe('GET /api/status', () => {
   // Shared app setup for performance
