@@ -2,7 +2,7 @@ export default {
   preset: 'ts-jest/presets/default-esm',
   extensionsToTreatAsEsm: ['.ts'],
   testEnvironment: 'node',
-  setupFiles: ['<rootDir>/test/testSetup.js'],
+  setupFilesAfterEnv: ['<rootDir>/setup.ts'],
 
   // Advanced Performance optimizations
   maxWorkers: '100%',
@@ -43,8 +43,7 @@ export default {
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {
       useESM: true,
-      tsconfig: './tsconfig.json',
-      isolatedModules: true
+      tsconfig: './tsconfig.json'
     }]
   },
   moduleNameMapper: {
