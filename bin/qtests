@@ -1,0 +1,208 @@
+#!/usr/bin/env node
+
+/**
+ * qtests CLI Entry Point
+ * 
+ * Command-line interface for the qtests framework. Provides test discovery,
+ * execution, and reporting with familiar Jest/Mocha-like command line options.
+ */
+
+import { fileURLToPath } from 'node:url';
+import { dirname, resolve } from 'node:path';
+import process from 'node:process';
+
+// Import runner components
+import { run } from '../lib/runner/runner.js';
+import { discoverTestFiles, loadAllTestFiles, getDefaultTestPatterns } from '../lib/runner/loader.js';
+import { printSpecReport } from '../lib/reporters/specReporter.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+/**
+ * Command line argument parser
+ */
+function parseArgs(argv: string[]): {
+  command?: string;
+  testPattern?: RegExp;
+  testPathPattern?: RegExp;
+  timeout?: number;
+  bail?: boolean;
+  retries?: number;
+  help?: boolean;
+  cwd: string;
+} {
+  const args = argv.slice(2); // Remove 'node' and script name
+  const options: any = {
+    cwd: process.cwd()
+  };
+  
+  for (let i = 0; i < args.length; i++) {
+    const arg = args[i];
+    const nextArg = args[i + 1];
+    
+    switch (arg) {
+      case 'run':
+        options.command = 'run';
+        break;
+        
+      case '--help':
+      case '-h':
+        options.help = true;
+        break;
+        
+      case '--testNamePattern':
+      case '-t':
+        if (nextArg) {
+          options.testPattern = new RegExp(nextArg, 'i');
+          i++; // Skip next arg since we consumed it
+        }
+        break;
+        
+      case '--testPathPattern':
+        if (nextArg) {
+          options.testPathPattern = new RegExp(nextArg, 'i');
+          i++; // Skip next arg since we consumed it
+        }
+        break;
+        
+      case '--timeout':
+        if (nextArg && !isNaN(Number(nextArg))) {
+          options.timeout = Number(nextArg);
+          i++; // Skip next arg since we consumed it
+        }
+        break;
+        
+      case '--bail':
+        options.bail = true;
+        break;
+        
+      case '--retries':
+        if (nextArg && !isNaN(Number(nextArg))) {
+          options.retries = Number(nextArg);
+          i++; // Skip next arg since we consumed it
+        }
+        break;
+    }
+  }
+  
+  return options;
+}
+
+/**
+ * Display help information
+ */
+function showHelp(): void {
+  console.log(`
+qtests - Fast, isolated unit testing for Node.js
+
+Usage:
+  qtests [command] [options]
+
+Commands:
+  run                    Run tests (default command)
+
+Options:
+  -t, --testNamePattern  Run tests matching this pattern
+  --testPathPattern      Run test files matching this pattern
+  --timeout <ms>         Test timeout in milliseconds (default: 5000)
+  --bail                 Stop on first test failure
+  --retries <count>      Number of retries for failed tests
+  -h, --help            Show this help message
+
+Examples:
+  qtests run                          # Run all tests
+  qtests run -t "user"               # Run tests matching "user"
+  qtests run --testPathPattern "auth" # Run test files matching "auth"
+  qtests run --timeout 10000         # Set 10 second timeout
+  qtests run --bail                  # Stop on first failure
+`);
+}
+
+/**
+ * Main CLI function
+ */
+async function main(): Promise<void> {
+  const options = parseArgs(process.argv);
+  
+  if (options.help) {
+    showHelp();
+    process.exit(0);
+  }
+  
+  // Default to 'run' command if no command specified
+  const command = options.command || 'run';
+  
+  if (command === 'run') {
+    try {
+      console.log('🔍 Discovering test files...');
+      
+      // Discover test files
+      const testFiles = discoverTestFiles({
+        cwd: options.cwd,
+        patterns: getDefaultTestPatterns(),
+        ignore: ['**/node_modules/**']
+      });
+      
+      // Filter test files by path pattern if provided
+      const filteredFiles = options.testPathPattern
+        ? testFiles.filter(file => options.testPathPattern!.test(file))
+        : testFiles;
+      
+      if (filteredFiles.length === 0) {
+        console.log('❌ No test files found');
+        process.exit(1);
+      }
+      
+      console.log(`📁 Found ${filteredFiles.length} test file(s)`);
+      
+      // Load all test files
+      console.log('📥 Loading test files...');
+      await loadAllTestFiles(filteredFiles);
+      
+      // Run tests
+      console.log('🚀 Running tests...\n');
+      const result = await run({
+        filterName: options.testPattern,
+        timeoutMs: options.timeout,
+        bail: options.bail,
+        retries: options.retries
+      });
+      
+      // Print results
+      printSpecReport(result);
+      
+      // Exit with appropriate code
+      const exitCode = result.failed > 0 ? 1 : 0;
+      process.exit(exitCode);
+      
+    } catch (error: any) {
+      console.error(`❌ Error running tests: ${error.message}`);
+      console.error(error.stack);
+      process.exit(1);
+    }
+  } else {
+    console.error(`❌ Unknown command: ${command}`);
+    showHelp();
+    process.exit(1);
+  }
+}
+
+// Handle uncaught errors gracefully
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught exception:', error.message);
+  console.error(error.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled promise rejection:', reason);
+  process.exit(1);
+});
+
+// Run the CLI
+main().catch((error) => {
+  console.error('❌ Fatal error:', error.message);
+  console.error(error.stack);
+  process.exit(1);
+});
