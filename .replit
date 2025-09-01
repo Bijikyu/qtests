@@ -38,18 +38,18 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "npx tsx bin/qtests-generate"
+args = "./bin/qtests-ts-generate"
 
 [[workflows.workflow]]
 name = "Test Suite"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npx tsx qtests-runner.ts"
-
 [workflows.workflow.metadata]
 outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "./bin/qtests-ts-runner"
 
 [[ports]]
 localPort = 32833

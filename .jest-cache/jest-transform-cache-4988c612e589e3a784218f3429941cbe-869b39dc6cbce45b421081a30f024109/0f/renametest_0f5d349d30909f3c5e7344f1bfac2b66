@@ -1,0 +1,47 @@
+e7208576e4713a12ed14f375baf2a5a7
+"use strict";
+// Lightweight unit test for rename.js - TypeScript ES module
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+describe('rename.js basic exports', () => {
+    test('module loads without errors', async () => {
+        // TypeScript ES module dynamic import
+        const module = await Promise.resolve().then(() => __importStar(require('./rename.js')));
+        expect(module).toBeDefined();
+        expect(typeof module).toBe('object');
+        // Check for expected exports
+        expect(module.newName).toBeDefined();
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9zcmMvcmVuYW1lLnRlc3QudHMiLCJtYXBwaW5ncyI6IjtBQUFBLDZEQUE2RDs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUU3RCxRQUFRLENBQUMseUJBQXlCLEVBQUUsR0FBRyxFQUFFO0lBQ3ZDLElBQUksQ0FBQyw2QkFBNkIsRUFBRSxLQUFLLElBQUksRUFBRTtRQUM3QyxzQ0FBc0M7UUFDdEMsTUFBTSxNQUFNLEdBQUcsd0RBQWEsYUFBYSxHQUFDLENBQUM7UUFDM0MsTUFBTSxDQUFDLE1BQU0sQ0FBQyxDQUFDLFdBQVcsRUFBRSxDQUFDO1FBQzdCLE1BQU0sQ0FBQyxPQUFPLE1BQU0sQ0FBQyxDQUFDLElBQUksQ0FBQyxRQUFRLENBQUMsQ0FBQztRQUNyQyw2QkFBNkI7UUFDN0IsTUFBTSxDQUFDLE1BQU0sQ0FBQyxPQUFPLENBQUMsQ0FBQyxXQUFXLEVBQUUsQ0FBQztJQUN2QyxDQUFDLENBQUMsQ0FBQztBQUNMLENBQUMsQ0FBQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3Jrc3BhY2Uvc3JjL3JlbmFtZS50ZXN0LnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIExpZ2h0d2VpZ2h0IHVuaXQgdGVzdCBmb3IgcmVuYW1lLmpzIC0gVHlwZVNjcmlwdCBFUyBtb2R1bGVcblxuZGVzY3JpYmUoJ3JlbmFtZS5qcyBiYXNpYyBleHBvcnRzJywgKCkgPT4ge1xuICB0ZXN0KCdtb2R1bGUgbG9hZHMgd2l0aG91dCBlcnJvcnMnLCBhc3luYyAoKSA9PiB7XG4gICAgLy8gVHlwZVNjcmlwdCBFUyBtb2R1bGUgZHluYW1pYyBpbXBvcnRcbiAgICBjb25zdCBtb2R1bGUgPSBhd2FpdCBpbXBvcnQoJy4vcmVuYW1lLmpzJyk7XG4gICAgZXhwZWN0KG1vZHVsZSkudG9CZURlZmluZWQoKTtcbiAgICBleHBlY3QodHlwZW9mIG1vZHVsZSkudG9CZSgnb2JqZWN0Jyk7XG4gICAgLy8gQ2hlY2sgZm9yIGV4cGVjdGVkIGV4cG9ydHNcbiAgICBleHBlY3QobW9kdWxlLm5ld05hbWUpLnRvQmVEZWZpbmVkKCk7XG4gIH0pO1xufSk7XG4iXSwidmVyc2lvbiI6M30=

@@ -1,0 +1,2 @@
+76062190bbcc384971a6abaa33d049a2
+export function newName() { return "works"; }
