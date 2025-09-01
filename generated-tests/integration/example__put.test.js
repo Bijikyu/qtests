@@ -1,5 +1,5 @@
 // Auto-generated API test for PUT /api/users/:id - optimized for speed
-import { httpTest } from '../../utils/httpTest.js';
+import { httpTest } from 'qtests/utils/httpTest';
 
 describe('PUT /api/users/:id', () => {
   // Shared app setup for performance

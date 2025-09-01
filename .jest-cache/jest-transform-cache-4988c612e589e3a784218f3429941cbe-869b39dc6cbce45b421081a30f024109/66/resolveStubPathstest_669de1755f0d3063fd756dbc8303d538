@@ -1,0 +1,51 @@
+e548adca7163333f0ffd24889ce58b94
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+// Simplified stub path resolution tests for TypeScript ES modules
+describe('Stub Path Resolution Tests', () => {
+    test('stubs resolve correctly after setup', async () => {
+        await Promise.resolve().then(() => __importStar(require('../setup.js'))); // activate stub resolution
+        // Test that stub paths resolve without throwing
+        expect(() => require('axios')).not.toThrow();
+        expect(() => require('winston')).not.toThrow();
+    });
+    test('stub modules provide expected interfaces', () => {
+        const axios = require('axios');
+        const winston = require('winston');
+        expect(typeof axios.get).toBe('function');
+        expect(typeof winston.createLogger).toBe('function');
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvcmVzb2x2ZVN0dWJQYXRocy50ZXN0LnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSxrRUFBa0U7QUFDbEUsUUFBUSxDQUFDLDRCQUE0QixFQUFFLEdBQUcsRUFBRTtJQUMxQyxJQUFJLENBQUMscUNBQXFDLEVBQUUsS0FBSyxJQUFJLEVBQUU7UUFDckQsd0RBQWEsYUFBYSxHQUFDLENBQUMsQ0FBQywyQkFBMkI7UUFFeEQsZ0RBQWdEO1FBQ2hELE1BQU0sQ0FBQyxHQUFHLEVBQUUsQ0FBQyxPQUFPLENBQUMsT0FBTyxDQUFDLENBQUMsQ0FBQyxHQUFHLENBQUMsT0FBTyxFQUFFLENBQUM7UUFDN0MsTUFBTSxDQUFDLEdBQUcsRUFBRSxDQUFDLE9BQU8sQ0FBQyxTQUFTLENBQUMsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxPQUFPLEVBQUUsQ0FBQztJQUNqRCxDQUFDLENBQUMsQ0FBQztJQUVILElBQUksQ0FBQywwQ0FBMEMsRUFBRSxHQUFHLEVBQUU7UUFDcEQsTUFBTSxLQUFLLEdBQUcsT0FBTyxDQUFDLE9BQU8sQ0FBQyxDQUFDO1FBQy9CLE1BQU0sT0FBTyxHQUFHLE9BQU8sQ0FBQyxTQUFTLENBQUMsQ0FBQztRQUVuQyxNQUFNLENBQUMsT0FBTyxLQUFLLENBQUMsR0FBRyxDQUFDLENBQUMsSUFBSSxDQUFDLFVBQVUsQ0FBQyxDQUFDO1FBQzFDLE1BQU0sQ0FBQyxPQUFPLE9BQU8sQ0FBQyxZQUFZLENBQUMsQ0FBQyxJQUFJLENBQUMsVUFBVSxDQUFDLENBQUM7SUFDdkQsQ0FBQyxDQUFDLENBQUM7QUFDTCxDQUFDLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL21hbnVhbC10ZXN0cy9yZXNvbHZlU3R1YlBhdGhzLnRlc3QudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gU2ltcGxpZmllZCBzdHViIHBhdGggcmVzb2x1dGlvbiB0ZXN0cyBmb3IgVHlwZVNjcmlwdCBFUyBtb2R1bGVzXG5kZXNjcmliZSgnU3R1YiBQYXRoIFJlc29sdXRpb24gVGVzdHMnLCAoKSA9PiB7XG4gIHRlc3QoJ3N0dWJzIHJlc29sdmUgY29ycmVjdGx5IGFmdGVyIHNldHVwJywgYXN5bmMgKCkgPT4ge1xuICAgIGF3YWl0IGltcG9ydCgnLi4vc2V0dXAuanMnKTsgLy8gYWN0aXZhdGUgc3R1YiByZXNvbHV0aW9uXG4gICAgXG4gICAgLy8gVGVzdCB0aGF0IHN0dWIgcGF0aHMgcmVzb2x2ZSB3aXRob3V0IHRocm93aW5nXG4gICAgZXhwZWN0KCgpID0+IHJlcXVpcmUoJ2F4aW9zJykpLm5vdC50b1Rocm93KCk7XG4gICAgZXhwZWN0KCgpID0+IHJlcXVpcmUoJ3dpbnN0b24nKSkubm90LnRvVGhyb3coKTtcbiAgfSk7XG5cbiAgdGVzdCgnc3R1YiBtb2R1bGVzIHByb3ZpZGUgZXhwZWN0ZWQgaW50ZXJmYWNlcycsICgpID0+IHtcbiAgICBjb25zdCBheGlvcyA9IHJlcXVpcmUoJ2F4aW9zJyk7XG4gICAgY29uc3Qgd2luc3RvbiA9IHJlcXVpcmUoJ3dpbnN0b24nKTtcbiAgICBcbiAgICBleHBlY3QodHlwZW9mIGF4aW9zLmdldCkudG9CZSgnZnVuY3Rpb24nKTtcbiAgICBleHBlY3QodHlwZW9mIHdpbnN0b24uY3JlYXRlTG9nZ2VyKS50b0JlKCdmdW5jdGlvbicpO1xuICB9KTtcbn0pOyJdLCJ2ZXJzaW9uIjozfQ==

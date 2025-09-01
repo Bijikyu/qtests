@@ -1,5 +1,5 @@
 // Auto-generated API test for PUT /api/calculate/:operation - optimized for speed
-import { httpTest } from '../../utils/httpTest.js';
+import { httpTest } from 'qtests/utils/httpTest';
 
 describe('PUT /api/calculate/:operation', () => {
   // Shared app setup for performance

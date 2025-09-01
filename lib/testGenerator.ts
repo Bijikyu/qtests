@@ -403,11 +403,11 @@ class TestGenerator {
     // Generate unique test session for API isolation
     lines.push(`// Unique API test session for parallel execution safety`);
     lines.push(`const apiTestSession = \`\${process.hrtime.bigint()}-\${Math.random().toString(36).substr(2, 9)}\`;`);
-    lines.push(`const uniqueRoute = '${route}' + (${route}.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;`);
+    lines.push(`const uniqueRoute = '${route}' + ('${route}'.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;`);
     lines.push(``);
     
     // TypeScript ES module import
-    lines.push(`import { httpTest } from '../../utils/httpTest.js';`, '');
+    lines.push(`import { httpTest } from 'qtests/utils/httpTest';`, '');
     
     // TypeScript test suite
     lines.push(`describe(\`${method.toUpperCase()} ${route} [API-\${apiTestSession}]\`, () => {`);
@@ -584,7 +584,8 @@ export default {
     }]
   },
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1'
+    '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^qtests/(.*)$': '<rootDir>/$1'  // Allow qtests to import from itself during testing
   }
 };
 `.trim();

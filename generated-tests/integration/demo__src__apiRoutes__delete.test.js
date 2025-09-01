@@ -1,5 +1,5 @@
 // Auto-generated API test for DELETE /api/history - optimized for speed
-import { httpTest } from '../../utils/httpTest.js';
+import { httpTest } from 'qtests/utils/httpTest';
 
 describe('DELETE /api/history', () => {
   // Shared app setup for performance

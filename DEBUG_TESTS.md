@@ -31,18 +31,18 @@ FAIL generated-tests/example__get.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/example__get.test.ts:7
+    const uniqueRoute = '/api/status' + (/api/status.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+                                         ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Invalid regular expression flags
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.529 s
+Time:        7.332 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__get.test.ts.
 FAIL generated-tests/example__get.test.ts
   ● Test suite failed to run
@@ -69,18 +69,18 @@ FAIL generated-tests/example__get.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/example__get.test.ts:7
+    const uniqueRoute = '/api/status' + (/api/status.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+                                         ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Invalid regular expression flags
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.954 s
+Time:        3.254 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -99,7 +99,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20832ms
+### Duration: 21899ms
 
 ---
 
@@ -132,18 +132,18 @@ FAIL generated-tests/example__post.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/example__post.test.ts:7
+    const uniqueRoute = '/api/users' + (/api/users.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+                                        ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Invalid regular expression flags
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.681 s
+Time:        5.815 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__post.test.ts.
 FAIL generated-tests/example__post.test.ts
   ● Test suite failed to run
@@ -170,18 +170,18 @@ FAIL generated-tests/example__post.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/example__post.test.ts:7
+    const uniqueRoute = '/api/users' + (/api/users.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+                                        ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Invalid regular expression flags
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.53 s
+Time:        3.222 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__post.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -200,7 +200,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21573ms
+### Duration: 20646ms
 
 ---
 
@@ -211,78 +211,52 @@ Node.js v20.19.3
 FAIL generated-tests/example__put.test.ts
   ● Test suite failed to run
 
-    Jest encountered an unexpected token
+    [96mgenerated-tests/example__put.test.ts[0m:[93m6[0m:[93m52[0m - [91merror[0m[90m TS1109: [0mExpression expected.
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                   ~[0m
+    [96mgenerated-tests/example__put.test.ts[0m:[93m6[0m:[93m55[0m - [91merror[0m[90m TS1005: [0m',' expected.
 
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                      ~[0m
+    [96mgenerated-tests/example__put.test.ts[0m:[93m6[0m:[93m64[0m - [91merror[0m[90m TS1005: [0m',' expected.
 
-    By default "node_modules" folder is ignored by transformers.
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                               ~[0m
+    [96mgenerated-tests/example__put.test.ts[0m:[93m6[0m:[93m81[0m - [91merror[0m[90m TS1005: [0m';' expected.
 
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                                                ~[0m
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.409 s
+Time:        5.34 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__put.test.ts.
 FAIL generated-tests/example__put.test.ts
   ● Test suite failed to run
 
-    Jest encountered an unexpected token
+    [96mgenerated-tests/example__put.test.ts[0m:[93m6[0m:[93m52[0m - [91merror[0m[90m TS1109: [0mExpression expected.
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                   ~[0m
+    [96mgenerated-tests/example__put.test.ts[0m:[93m6[0m:[93m55[0m - [91merror[0m[90m TS1005: [0m',' expected.
 
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                      ~[0m
+    [96mgenerated-tests/example__put.test.ts[0m:[93m6[0m:[93m64[0m - [91merror[0m[90m TS1005: [0m',' expected.
 
-    By default "node_modules" folder is ignored by transformers.
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                               ~[0m
+    [96mgenerated-tests/example__put.test.ts[0m:[93m6[0m:[93m81[0m - [91merror[0m[90m TS1005: [0m';' expected.
 
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                                                ~[0m
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.655 s
+Time:        4.03 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__put.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -301,7 +275,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21626ms
+### Duration: 19564ms
 
 ---
 
@@ -334,18 +308,18 @@ FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.596 s
+Time:        3.821 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
   ● Test suite failed to run
@@ -372,18 +346,18 @@ FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.32 s
+Time:        6.53 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -407,7 +381,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21501ms
+### Duration: 19724ms
 
 ---
 
@@ -440,18 +414,18 @@ FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.747 s
+Time:        4.265 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
   ● Test suite failed to run
@@ -478,18 +452,18 @@ FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.427 s
+Time:        5.611 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -513,7 +487,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20977ms
+### Duration: 20275ms
 
 ---
 
@@ -546,18 +520,18 @@ FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.834 s
+Time:        6.298 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
   ● Test suite failed to run
@@ -584,18 +558,18 @@ FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.065 s
+Time:        4.602 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -619,7 +593,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21982ms
+### Duration: 21423ms
 
 ---
 
@@ -652,18 +626,18 @@ FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.441 s
+Time:        5.216 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
   ● Test suite failed to run
@@ -690,18 +664,18 @@ FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.508 s
+Time:        3.472 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -725,7 +699,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19439ms
+### Duration: 21484ms
 
 ---
 
@@ -758,18 +732,18 @@ FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.272 s
+Time:        5.717 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
   ● Test suite failed to run
@@ -796,18 +770,18 @@ FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.647 s
+Time:        4.424 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -831,7 +805,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21276ms
+### Duration: 18025ms
 
 ---
 
@@ -840,7 +814,7 @@ Node.js v20.19.3
 ### Output:
 ```
 FAIL generated-tests/integration/example.test.ts
-  ● Test suite failed to run
+  ● Example Integration Tests › example integration works
 
     Jest encountered an unexpected token
 
@@ -864,21 +838,36 @@ FAIL generated-tests/integration/example.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at generated-tests/integration/example.test.ts:5:17
+      at Object.<anonymous> (generated-tests/integration/example.test.ts:5:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.785 s
+Time:        8.227 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example.test.ts.
 FAIL generated-tests/integration/example.test.ts
-  ● Test suite failed to run
+  Example Integration Tests
+    ✕ example integration works (19 ms)
+
+  ● Example Integration Tests › example integration works
 
     Jest encountered an unexpected token
 
@@ -902,18 +891,30 @@ FAIL generated-tests/integration/example.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at generated-tests/integration/example.test.ts:5:17
+      at Object.<anonymous> (generated-tests/integration/example.test.ts:5:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.513 s
+Time:        3.62 s, estimated 4 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -932,7 +933,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21908ms
+### Duration: 21856ms
 
 ---
 
@@ -965,18 +966,18 @@ FAIL generated-tests/integration/example__get.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/example__get.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.542 s
+Time:        7.118 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.js.
 FAIL generated-tests/integration/example__get.test.js
   ● Test suite failed to run
@@ -1003,18 +1004,18 @@ FAIL generated-tests/integration/example__get.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/example__get.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.906 s
+Time:        5.231 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -1038,7 +1039,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21984ms
+### Duration: 21282ms
 
 ---
 
@@ -1071,18 +1072,18 @@ FAIL generated-tests/integration/example__get.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/example__get.test.ts:7
+    const uniqueRoute = '/api/status' + (/api/status.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+                                         ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Invalid regular expression flags
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.614 s
+Time:        6.241 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.ts.
 FAIL generated-tests/integration/example__get.test.ts
   ● Test suite failed to run
@@ -1109,18 +1110,18 @@ FAIL generated-tests/integration/example__get.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/example__get.test.ts:7
+    const uniqueRoute = '/api/status' + (/api/status.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+                                         ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Invalid regular expression flags
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.399 s
+Time:        4.925 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1139,7 +1140,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21869ms
+### Duration: 20378ms
 
 ---
 
@@ -1172,18 +1173,18 @@ FAIL generated-tests/integration/example__post.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/example__post.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.206 s
+Time:        5.658 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.js.
 FAIL generated-tests/integration/example__post.test.js
   ● Test suite failed to run
@@ -1210,42 +1211,18 @@ FAIL generated-tests/integration/example__post.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/example__post.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.213 s
+Time:        4.632 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -1269,7 +1246,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21211ms
+### Duration: 20816ms
 
 ---
 
@@ -1302,18 +1279,18 @@ FAIL generated-tests/integration/example__post.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/example__post.test.ts:7
+    const uniqueRoute = '/api/users' + (/api/users.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+                                        ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Invalid regular expression flags
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.64 s
+Time:        4.795 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.ts.
 FAIL generated-tests/integration/example__post.test.ts
   ● Test suite failed to run
@@ -1340,18 +1317,18 @@ FAIL generated-tests/integration/example__post.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/example__post.test.ts:7
+    const uniqueRoute = '/api/users' + (/api/users.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+                                        ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Invalid regular expression flags
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.545 s
+Time:        5.623 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1370,7 +1347,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21853ms
+### Duration: 20270ms
 
 ---
 
@@ -1403,18 +1380,18 @@ FAIL generated-tests/integration/example__put.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/example__put.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.575 s
+Time:        6.084 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.js.
 FAIL generated-tests/integration/example__put.test.js
   ● Test suite failed to run
@@ -1441,18 +1418,18 @@ FAIL generated-tests/integration/example__put.test.js
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/generated-tests/integration/example__put.test.js:2
+    import { httpTest } from 'qtests/lib/envUtils';
+    ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.945 s
+Time:        4.9 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -1476,7 +1453,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19580ms
+### Duration: 20874ms
 
 ---
 
@@ -1487,78 +1464,52 @@ Node.js v20.19.3
 FAIL generated-tests/integration/example__put.test.ts
   ● Test suite failed to run
 
-    Jest encountered an unexpected token
+    [96mgenerated-tests/integration/example__put.test.ts[0m:[93m6[0m:[93m52[0m - [91merror[0m[90m TS1109: [0mExpression expected.
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                   ~[0m
+    [96mgenerated-tests/integration/example__put.test.ts[0m:[93m6[0m:[93m55[0m - [91merror[0m[90m TS1005: [0m',' expected.
 
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                      ~[0m
+    [96mgenerated-tests/integration/example__put.test.ts[0m:[93m6[0m:[93m64[0m - [91merror[0m[90m TS1005: [0m',' expected.
 
-    By default "node_modules" folder is ignored by transformers.
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                               ~[0m
+    [96mgenerated-tests/integration/example__put.test.ts[0m:[93m6[0m:[93m81[0m - [91merror[0m[90m TS1005: [0m';' expected.
 
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                                                ~[0m
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.805 s
+Time:        4.766 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.ts.
 FAIL generated-tests/integration/example__put.test.ts
   ● Test suite failed to run
 
-    Jest encountered an unexpected token
+    [96mgenerated-tests/integration/example__put.test.ts[0m:[93m6[0m:[93m52[0m - [91merror[0m[90m TS1109: [0mExpression expected.
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                   ~[0m
+    [96mgenerated-tests/integration/example__put.test.ts[0m:[93m6[0m:[93m55[0m - [91merror[0m[90m TS1005: [0m',' expected.
 
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                      ~[0m
+    [96mgenerated-tests/integration/example__put.test.ts[0m:[93m6[0m:[93m64[0m - [91merror[0m[90m TS1005: [0m',' expected.
 
-    By default "node_modules" folder is ignored by transformers.
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                               ~[0m
+    [96mgenerated-tests/integration/example__put.test.ts[0m:[93m6[0m:[93m81[0m - [91merror[0m[90m TS1005: [0m';' expected.
 
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+    [7m6[0m const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                                                                                ~[0m
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.738 s
+Time:        5.273 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1577,7 +1528,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21810ms
+### Duration: 21158ms
 
 ---
 
@@ -1588,78 +1539,28 @@ Node.js v20.19.3
 FAIL generated-tests/integration/utils__httpTest__get.test.ts
   ● Test suite failed to run
 
-    Jest encountered an unexpected token
+    [96mgenerated-tests/integration/utils__httpTest__get.test.ts[0m:[93m6[0m:[93m32[0m - [91merror[0m[90m TS1161: [0mUnterminated regular expression literal.
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+    [7m6[0m const uniqueRoute = '/test' + (/test.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.442 s
+Time:        4.276 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts.
 FAIL generated-tests/integration/utils__httpTest__get.test.ts
   ● Test suite failed to run
 
-    Jest encountered an unexpected token
+    [96mgenerated-tests/integration/utils__httpTest__get.test.ts[0m:[93m6[0m:[93m32[0m - [91merror[0m[90m TS1161: [0mUnterminated regular expression literal.
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+    [7m6[0m const uniqueRoute = '/test' + (/test.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+    [7m [0m [91m                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.622 s
+Time:        3.532 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1678,7 +1579,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21820ms
+### Duration: 21588ms
 
 ---
 
@@ -1687,7 +1588,7 @@ Node.js v20.19.3
 ### Output:
 ```
 FAIL ./index.test.ts
-  ● Test suite failed to run
+  ● index.ts basic exports › module exports exist
 
     Jest encountered an unexpected token
 
@@ -1711,21 +1612,36 @@ FAIL ./index.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at index.test.ts:5:17
+      at Object.<anonymous> (index.test.ts:5:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.967 s
+Time:        3.61 s
 Ran all test suites matching /home/runner/workspace/index.test.ts.
 FAIL ./index.test.ts
-  ● Test suite failed to run
+  index.ts basic exports
+    ✕ module exports exist (31 ms)
+
+  ● index.ts basic exports › module exports exist
 
     Jest encountered an unexpected token
 
@@ -1749,18 +1665,30 @@ FAIL ./index.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at index.test.ts:5:17
+      at Object.<anonymous> (index.test.ts:5:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.343 s
+Time:        4.193 s
 Ran all test suites matching /home/runner/workspace/index.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1779,230 +1707,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21636ms
+### Duration: 14167ms
 
 ---
 
-## Failed Test 18: /home/runner/workspace/lib/coreUtils.test.ts
-
-### Output:
-```
-FAIL lib/coreUtils.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.055 s
-Ran all test suites matching /home/runner/workspace/lib/coreUtils.test.ts.
-FAIL lib/coreUtils.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.52 s
-Ran all test suites matching /home/runner/workspace/lib/coreUtils.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/lib/coreUtils.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 21205ms
-
----
-
-## Failed Test 19: /home/runner/workspace/lib/dataUtils.test.ts
-
-### Output:
-```
-FAIL lib/dataUtils.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.025 s
-Ran all test suites matching /home/runner/workspace/lib/dataUtils.test.ts.
-FAIL lib/dataUtils.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.67 s
-Ran all test suites matching /home/runner/workspace/lib/dataUtils.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/lib/dataUtils.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 21440ms
-
----
-
-## Failed Test 20: /home/runner/workspace/lib/envUtils.test.ts
+## Failed Test 18: /home/runner/workspace/lib/envUtils.test.ts
 
 ### Output:
 ```
 FAIL lib/envUtils.test.ts
-  ● Test suite failed to run
+  ● envUtils.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -2026,21 +1740,35 @@ FAIL lib/envUtils.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at lib/envUtils.test.ts:4:17
+      at Object.<anonymous> (lib/envUtils.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.882 s
+Time:        5.512 s
 Ran all test suites matching /home/runner/workspace/lib/envUtils.test.ts.
 FAIL lib/envUtils.test.ts
-  ● Test suite failed to run
+  envUtils.ts basic exports
+    ✕ module loads without errors (38 ms)
+
+  ● envUtils.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -2064,18 +1792,29 @@ FAIL lib/envUtils.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at lib/envUtils.test.ts:4:17
+      at Object.<anonymous> (lib/envUtils.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.691 s
+Time:        2.999 s
 Ran all test suites matching /home/runner/workspace/lib/envUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2094,16 +1833,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18661ms
+### Duration: 17266ms
 
 ---
 
-## Failed Test 21: /home/runner/workspace/lib/httpUtils.test.ts
+## Failed Test 19: /home/runner/workspace/lib/httpUtils.test.ts
 
 ### Output:
 ```
 FAIL lib/httpUtils.test.ts
-  ● Test suite failed to run
+  ● httpUtils.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -2127,33 +1866,35 @@ FAIL lib/httpUtils.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      37 | // offlineMode automatically switches between real and stub implementations
+      38 | // based on whether the test should simulate offline conditions
+    > 39 | import offlineMode from '../utils/offlineMode.js';
+         | ^
+      40 |
+      41 | /**
+      42 |  * Export HTTP testing utilities
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/httpUtils.ts:39:1)
+      at lib/httpUtils.test.ts:4:17
+      at Object.<anonymous> (lib/httpUtils.test.ts:4:17)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.686 s
+Time:        6.349 s
 Ran all test suites matching /home/runner/workspace/lib/httpUtils.test.ts.
 FAIL lib/httpUtils.test.ts
-  ● Test suite failed to run
+  httpUtils.ts basic exports
+    ✕ module loads without errors (16 ms)
+
+  ● httpUtils.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -2177,18 +1918,29 @@ FAIL lib/httpUtils.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      37 | // offlineMode automatically switches between real and stub implementations
+      38 | // based on whether the test should simulate offline conditions
+    > 39 | import offlineMode from '../utils/offlineMode.js';
+         | ^
+      40 |
+      41 | /**
+      42 |  * Export HTTP testing utilities
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/httpUtils.ts:39:1)
+      at lib/httpUtils.test.ts:4:17
+      at Object.<anonymous> (lib/httpUtils.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.958 s
+Time:        3.881 s
 Ran all test suites matching /home/runner/workspace/lib/httpUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2207,291 +1959,60 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21369ms
+### Duration: 19570ms
 
 ---
 
-## Failed Test 22: /home/runner/workspace/lib/logUtils.test.ts
-
-### Output:
-```
-FAIL lib/logUtils.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.176 s
-Ran all test suites matching /home/runner/workspace/lib/logUtils.test.ts.
-FAIL lib/logUtils.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.677 s
-Ran all test suites matching /home/runner/workspace/lib/logUtils.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/lib/logUtils.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 20861ms
-
----
-
-## Failed Test 23: /home/runner/workspace/lib/setup.test.ts
-
-### Output:
-```
-FAIL lib/setup.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.639 s
-Ran all test suites matching /home/runner/workspace/lib/setup.test.ts.
-FAIL lib/setup.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.07 s
-Ran all test suites matching /home/runner/workspace/lib/setup.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/lib/setup.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 19771ms
-
----
-
-## Failed Test 24: /home/runner/workspace/lib/stubs.test.ts
+## Failed Test 20: /home/runner/workspace/lib/stubs.test.ts
 
 ### Output:
 ```
 FAIL lib/stubs.test.ts
-  ● Test suite failed to run
+  ● stubs.ts basic exports › module loads without errors
 
-    Jest encountered an unexpected token
+    expect(received).toBeDefined()
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+    Received: undefined
 
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+       8 |     expect(typeof module).toBe('object');
+       9 |     // Check for expected exports
+    > 10 |     expect(module.stubs).toBeDefined();
+         |                          ^
+      11 |   });
+      12 | });
+      13 |
 
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/stubs.test.ts:10:26)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.288 s
+Time:        5.755 s
 Ran all test suites matching /home/runner/workspace/lib/stubs.test.ts.
 FAIL lib/stubs.test.ts
-  ● Test suite failed to run
+  stubs.ts basic exports
+    ✕ module loads without errors (11 ms)
 
-    Jest encountered an unexpected token
+  ● stubs.ts basic exports › module loads without errors
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+    expect(received).toBeDefined()
 
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+    Received: undefined
 
-    By default "node_modules" folder is ignored by transformers.
+       8 |     expect(typeof module).toBe('object');
+       9 |     // Check for expected exports
+    > 10 |     expect(module.stubs).toBeDefined();
+         |                          ^
+      11 |   });
+      12 | });
+      13 |
 
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/stubs.test.ts:10:26)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.995 s
+Time:        3.552 s
 Ran all test suites matching /home/runner/workspace/lib/stubs.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2510,16 +2031,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19260ms
+### Duration: 19437ms
 
 ---
 
-## Failed Test 25: /home/runner/workspace/lib/testGenerator.test.ts
+## Failed Test 21: /home/runner/workspace/lib/testGenerator.test.ts
 
 ### Output:
 ```
 FAIL lib/testGenerator.test.ts
-  ● Test suite failed to run
+  ● testGenerator.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -2543,21 +2064,34 @@ FAIL lib/testGenerator.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/lib/testGenerator.ts:26
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      2 | describe('testGenerator.ts basic exports', () => {
+      3 |   test('module loads without errors', async () => {
+    > 4 |     const mod = await import('./testGenerator.js');
+        |                 ^
+      5 |     expect(mod).toBeDefined();
+      6 |     expect(typeof mod).toBe('object');
+      7 |   });
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at lib/testGenerator.test.ts:4:17
+      at Object.<anonymous> (lib/testGenerator.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.818 s
+Time:        8.018 s
 Ran all test suites matching /home/runner/workspace/lib/testGenerator.test.ts.
 FAIL lib/testGenerator.test.ts
-  ● Test suite failed to run
+  testGenerator.ts basic exports
+    ✕ module loads without errors (11 ms)
+
+  ● testGenerator.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -2581,18 +2115,28 @@ FAIL lib/testGenerator.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/lib/testGenerator.ts:26
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      2 | describe('testGenerator.ts basic exports', () => {
+      3 |   test('module loads without errors', async () => {
+    > 4 |     const mod = await import('./testGenerator.js');
+        |                 ^
+      5 |     expect(mod).toBeDefined();
+      6 |     expect(typeof mod).toBe('object');
+      7 |   });
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at lib/testGenerator.test.ts:4:17
+      at Object.<anonymous> (lib/testGenerator.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.06 s
+Time:        2.316 s
 Ran all test suites matching /home/runner/workspace/lib/testGenerator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2611,16 +2155,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20107ms
+### Duration: 19847ms
 
 ---
 
-## Failed Test 26: /home/runner/workspace/lib/testUtils.test.ts
+## Failed Test 22: /home/runner/workspace/lib/testUtils.test.ts
 
 ### Output:
 ```
 FAIL lib/testUtils.test.ts
-  ● Test suite failed to run
+  ● testUtils.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -2644,21 +2188,36 @@ FAIL lib/testUtils.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      13 |
+      14 | // Import focused helper utilities
+    > 15 | import { reload, moduleReloadLock } from './helpers/moduleReloader.js';
+         | ^
+      16 | import { stubQerrors } from './helpers/qerrorsStub.js';
+      17 | import { withMockConsole } from './helpers/consoleMocker.js';
+      18 | import { createJsonRes, createRes } from './helpers/responseMocker.js';
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (utils/testHelpers.ts:15:1)
+      at Object.<anonymous> (lib/testUtils.ts:30:1)
+      at lib/testUtils.test.ts:4:17
+      at Object.<anonymous> (lib/testUtils.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.79 s
+Time:        7.709 s
 Ran all test suites matching /home/runner/workspace/lib/testUtils.test.ts.
 FAIL lib/testUtils.test.ts
-  ● Test suite failed to run
+  testUtils.ts basic exports
+    ✕ module loads without errors (11 ms)
+
+  ● testUtils.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -2682,18 +2241,30 @@ FAIL lib/testUtils.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      13 |
+      14 | // Import focused helper utilities
+    > 15 | import { reload, moduleReloadLock } from './helpers/moduleReloader.js';
+         | ^
+      16 | import { stubQerrors } from './helpers/qerrorsStub.js';
+      17 | import { withMockConsole } from './helpers/consoleMocker.js';
+      18 | import { createJsonRes, createRes } from './helpers/responseMocker.js';
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (utils/testHelpers.ts:15:1)
+      at Object.<anonymous> (lib/testUtils.ts:30:1)
+      at lib/testUtils.test.ts:4:17
+      at Object.<anonymous> (lib/testUtils.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.88 s
+Time:        2.516 s
 Ran all test suites matching /home/runner/workspace/lib/testUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2712,11 +2283,11 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21216ms
+### Duration: 19854ms
 
 ---
 
-## Failed Test 27: /home/runner/workspace/manual-tests/axiosStub.test.ts
+## Failed Test 23: /home/runner/workspace/manual-tests/axiosStub.test.ts
 
 ### Output:
 ```
@@ -2745,18 +2316,29 @@ FAIL manual-tests/axiosStub.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at Object.<anonymous> (manual-tests/axiosStub.test.ts:1:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.793 s
+Time:        6.376 s
 Ran all test suites matching /home/runner/workspace/manual-tests/axiosStub.test.ts.
 FAIL manual-tests/axiosStub.test.ts
   ● Test suite failed to run
@@ -2783,18 +2365,29 @@ FAIL manual-tests/axiosStub.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at Object.<anonymous> (manual-tests/axiosStub.test.ts:1:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.919 s
+Time:        3.349 s
 Ran all test suites matching /home/runner/workspace/manual-tests/axiosStub.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2813,16 +2406,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18887ms
+### Duration: 19108ms
 
 ---
 
-## Failed Test 28: /home/runner/workspace/manual-tests/comprehensive.test.ts
+## Failed Test 24: /home/runner/workspace/manual-tests/comprehensive.test.ts
 
 ### Output:
 ```
 FAIL manual-tests/comprehensive.test.ts
-  ● Test suite failed to run
+  ● Comprehensive Tests › comprehensive functionality works
 
     Jest encountered an unexpected token
 
@@ -2846,33 +2439,36 @@ FAIL manual-tests/comprehensive.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at manual-tests/comprehensive.test.ts:4:17
+      at Object.<anonymous> (manual-tests/comprehensive.test.ts:4:17)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.057 s
+Time:        5.894 s
 Ran all test suites matching /home/runner/workspace/manual-tests/comprehensive.test.ts.
 FAIL manual-tests/comprehensive.test.ts
-  ● Test suite failed to run
+  Comprehensive Tests
+    ✕ comprehensive functionality works (22 ms)
+
+  ● Comprehensive Tests › comprehensive functionality works
 
     Jest encountered an unexpected token
 
@@ -2896,18 +2492,30 @@ FAIL manual-tests/comprehensive.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at manual-tests/comprehensive.test.ts:4:17
+      at Object.<anonymous> (manual-tests/comprehensive.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.845 s
+Time:        3.45 s
 Ran all test suites matching /home/runner/workspace/manual-tests/comprehensive.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2926,16 +2534,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 17521ms
+### Duration: 19303ms
 
 ---
 
-## Failed Test 29: /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts
+## Failed Test 25: /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts
 
 ### Output:
 ```
 FAIL manual-tests/dualModuleGeneration.test.ts
-  ● Test suite failed to run
+  ● Dual Module Generation Tests › TypeScript ES module generation works
 
     Jest encountered an unexpected token
 
@@ -2959,21 +2567,34 @@ FAIL manual-tests/dualModuleGeneration.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/lib/testGenerator.ts:26
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      3 |   test('TypeScript ES module generation works', async () => {
+      4 |     // Simple test for TypeScript ES module functionality
+    > 5 |     const testModule = await import('../lib/testGenerator.js');
+        |                        ^
+      6 |     expect(testModule).toBeDefined();
+      7 |   });
+      8 | });
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at manual-tests/dualModuleGeneration.test.ts:5:24
+      at Object.<anonymous> (manual-tests/dualModuleGeneration.test.ts:5:24)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.427 s
+Time:        8.125 s
 Ran all test suites matching /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts.
 FAIL manual-tests/dualModuleGeneration.test.ts
-  ● Test suite failed to run
+  Dual Module Generation Tests
+    ✕ TypeScript ES module generation works (15 ms)
+
+  ● Dual Module Generation Tests › TypeScript ES module generation works
 
     Jest encountered an unexpected token
 
@@ -2997,18 +2618,28 @@ FAIL manual-tests/dualModuleGeneration.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/lib/testGenerator.ts:26
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      3 |   test('TypeScript ES module generation works', async () => {
+      4 |     // Simple test for TypeScript ES module functionality
+    > 5 |     const testModule = await import('../lib/testGenerator.js');
+        |                        ^
+      6 |     expect(testModule).toBeDefined();
+      7 |   });
+      8 | });
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at manual-tests/dualModuleGeneration.test.ts:5:24
+      at Object.<anonymous> (manual-tests/dualModuleGeneration.test.ts:5:24)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.044 s
+Time:        3.611 s
 Ran all test suites matching /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3027,16 +2658,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20835ms
+### Duration: 19698ms
 
 ---
 
-## Failed Test 30: /home/runner/workspace/manual-tests/edgeCases.test.ts
+## Failed Test 26: /home/runner/workspace/manual-tests/edgeCases.test.ts
 
 ### Output:
 ```
 FAIL manual-tests/edgeCases.test.ts
-  ● Test suite failed to run
+  ● Edge Cases Tests › handles edge cases correctly
 
     Jest encountered an unexpected token
 
@@ -3060,21 +2691,36 @@ FAIL manual-tests/edgeCases.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at manual-tests/edgeCases.test.ts:4:17
+      at Object.<anonymous> (manual-tests/edgeCases.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.806 s
+Time:        4.372 s
 Ran all test suites matching /home/runner/workspace/manual-tests/edgeCases.test.ts.
 FAIL manual-tests/edgeCases.test.ts
-  ● Test suite failed to run
+  Edge Cases Tests
+    ✕ handles edge cases correctly (20 ms)
+
+  ● Edge Cases Tests › handles edge cases correctly
 
     Jest encountered an unexpected token
 
@@ -3098,18 +2744,30 @@ FAIL manual-tests/edgeCases.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at manual-tests/edgeCases.test.ts:4:17
+      at Object.<anonymous> (manual-tests/edgeCases.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.501 s
+Time:        3.973 s
 Ran all test suites matching /home/runner/workspace/manual-tests/edgeCases.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3128,117 +2786,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21327ms
+### Duration: 17406ms
 
 ---
 
-## Failed Test 31: /home/runner/workspace/manual-tests/httpTest.test.ts
-
-### Output:
-```
-FAIL manual-tests/httpTest.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.533 s
-Ran all test suites matching /home/runner/workspace/manual-tests/httpTest.test.ts.
-FAIL manual-tests/httpTest.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.133 s
-Ran all test suites matching /home/runner/workspace/manual-tests/httpTest.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/manual-tests/httpTest.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 21640ms
-
----
-
-## Failed Test 32: /home/runner/workspace/manual-tests/indexExports.test.ts
+## Failed Test 27: /home/runner/workspace/manual-tests/indexExports.test.ts
 
 ### Output:
 ```
 FAIL manual-tests/indexExports.test.ts
-  ● Test suite failed to run
+  ● Index Exports Tests › index exports are available
 
     Jest encountered an unexpected token
 
@@ -3262,21 +2819,36 @@ FAIL manual-tests/indexExports.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at manual-tests/indexExports.test.ts:4:17
+      at Object.<anonymous> (manual-tests/indexExports.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.082 s
+Time:        6.135 s
 Ran all test suites matching /home/runner/workspace/manual-tests/indexExports.test.ts.
 FAIL manual-tests/indexExports.test.ts
-  ● Test suite failed to run
+  Index Exports Tests
+    ✕ index exports are available (23 ms)
+
+  ● Index Exports Tests › index exports are available
 
     Jest encountered an unexpected token
 
@@ -3300,18 +2872,30 @@ FAIL manual-tests/indexExports.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at manual-tests/indexExports.test.ts:4:17
+      at Object.<anonymous> (manual-tests/indexExports.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.19 s
+Time:        3.12 s
 Ran all test suites matching /home/runner/workspace/manual-tests/indexExports.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3330,16 +2914,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20842ms
+### Duration: 19233ms
 
 ---
 
-## Failed Test 33: /home/runner/workspace/manual-tests/integration.test.ts
+## Failed Test 28: /home/runner/workspace/manual-tests/integration.test.ts
 
 ### Output:
 ```
 FAIL manual-tests/integration.test.ts
-  ● Test suite failed to run
+  ● Integration Tests › core modules integrate correctly
 
     Jest encountered an unexpected token
 
@@ -3363,21 +2947,36 @@ FAIL manual-tests/integration.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at manual-tests/integration.test.ts:4:19
+      at Object.<anonymous> (manual-tests/integration.test.ts:4:19)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.114 s
+Time:        7.505 s
 Ran all test suites matching /home/runner/workspace/manual-tests/integration.test.ts.
 FAIL manual-tests/integration.test.ts
-  ● Test suite failed to run
+  Integration Tests
+    ✕ core modules integrate correctly (20 ms)
+
+  ● Integration Tests › core modules integrate correctly
 
     Jest encountered an unexpected token
 
@@ -3401,18 +3000,30 @@ FAIL manual-tests/integration.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at manual-tests/integration.test.ts:4:19
+      at Object.<anonymous> (manual-tests/integration.test.ts:4:19)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.796 s
+Time:        4.213 s
 Ran all test suites matching /home/runner/workspace/manual-tests/integration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3431,225 +3042,11 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19762ms
+### Duration: 21140ms
 
 ---
 
-## Failed Test 34: /home/runner/workspace/manual-tests/logUtils.test.ts
-
-### Output:
-```
-FAIL manual-tests/logUtils.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.034 s
-Ran all test suites matching /home/runner/workspace/manual-tests/logUtils.test.ts.
-FAIL manual-tests/logUtils.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.028 s
-Ran all test suites matching /home/runner/workspace/manual-tests/logUtils.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/manual-tests/logUtils.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 21621ms
-
----
-
-## Failed Test 35: /home/runner/workspace/manual-tests/mockAxios.test.ts
-
-### Output:
-```
-FAIL manual-tests/mockAxios.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.198 s
-Ran all test suites matching /home/runner/workspace/manual-tests/mockAxios.test.ts.
-FAIL manual-tests/mockAxios.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.918 s
-Ran all test suites matching /home/runner/workspace/manual-tests/mockAxios.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/manual-tests/mockAxios.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 20714ms
-
----
-
-## Failed Test 36: /home/runner/workspace/manual-tests/mockConsole.test.ts
+## Failed Test 29: /home/runner/workspace/manual-tests/mockConsole.test.ts
 
 ### Output:
 ```
@@ -3678,42 +3075,28 @@ FAIL manual-tests/mockConsole.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      13 |
+      14 | // Import focused helper utilities
+    > 15 | import { reload, moduleReloadLock } from './helpers/moduleReloader.js';
+         | ^
+      16 | import { stubQerrors } from './helpers/qerrorsStub.js';
+      17 | import { withMockConsole } from './helpers/consoleMocker.js';
+      18 | import { createJsonRes, createRes } from './helpers/responseMocker.js';
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (utils/testHelpers.ts:15:1)
+      at Object.<anonymous> (manual-tests/mockConsole.test.ts:1:1)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.934 s
+Time:        6.494 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockConsole.test.ts.
 FAIL manual-tests/mockConsole.test.ts
   ● Test suite failed to run
@@ -3740,18 +3123,28 @@ FAIL manual-tests/mockConsole.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      13 |
+      14 | // Import focused helper utilities
+    > 15 | import { reload, moduleReloadLock } from './helpers/moduleReloader.js';
+         | ^
+      16 | import { stubQerrors } from './helpers/qerrorsStub.js';
+      17 | import { withMockConsole } from './helpers/consoleMocker.js';
+      18 | import { createJsonRes, createRes } from './helpers/responseMocker.js';
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (utils/testHelpers.ts:15:1)
+      at Object.<anonymous> (manual-tests/mockConsole.test.ts:1:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.935 s
+Time:        4.811 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockConsole.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3770,242 +3163,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18986ms
+### Duration: 21949ms
 
 ---
 
-## Failed Test 37: /home/runner/workspace/manual-tests/mockModels.test.ts
-
-### Output:
-```
-FAIL manual-tests/mockModels.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.504 s
-Ran all test suites matching /home/runner/workspace/manual-tests/mockModels.test.ts.
-FAIL manual-tests/mockModels.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.062 s
-Ran all test suites matching /home/runner/workspace/manual-tests/mockModels.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/manual-tests/mockModels.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 20136ms
-
----
-
-## Failed Test 38: /home/runner/workspace/manual-tests/mockUtils.test.ts
-
-### Output:
-```
-FAIL manual-tests/mockUtils.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.603 s
-Ran all test suites matching /home/runner/workspace/manual-tests/mockUtils.test.ts.
-FAIL manual-tests/mockUtils.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.487 s
-Ran all test suites matching /home/runner/workspace/manual-tests/mockUtils.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/manual-tests/mockUtils.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 21331ms
-
----
-
-## Failed Test 39: /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts
+## Failed Test 30: /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts
 
 ### Output:
 ```
 FAIL manual-tests/moduleSystemIntegration.test.ts
-  ● Test suite failed to run
+  ● Module System Integration Tests › ES module integration works
 
     Jest encountered an unexpected token
 
@@ -4029,21 +3196,60 @@ FAIL manual-tests/moduleSystemIntegration.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at manual-tests/moduleSystemIntegration.test.ts:4:17
+      at Object.<anonymous> (manual-tests/moduleSystemIntegration.test.ts:4:17)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.28 s
+Time:        7.073 s
 Ran all test suites matching /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts.
 FAIL manual-tests/moduleSystemIntegration.test.ts
-  ● Test suite failed to run
+  Module System Integration Tests
+    ✕ ES module integration works (61 ms)
+
+  ● Module System Integration Tests › ES module integration works
 
     Jest encountered an unexpected token
 
@@ -4067,18 +3273,30 @@ FAIL manual-tests/moduleSystemIntegration.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at manual-tests/moduleSystemIntegration.test.ts:4:17
+      at Object.<anonymous> (manual-tests/moduleSystemIntegration.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.969 s
+Time:        2.917 s
 Ran all test suites matching /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4097,11 +3315,11 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19872ms
+### Duration: 21803ms
 
 ---
 
-## Failed Test 40: /home/runner/workspace/manual-tests/offlineIntegration.test.ts
+## Failed Test 31: /home/runner/workspace/manual-tests/offlineIntegration.test.ts
 
 ### Output:
 ```
@@ -4130,18 +3348,38 @@ FAIL manual-tests/offlineIntegration.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      1 | // Simplified offline integration tests for TypeScript ES modules
+    > 2 | import { isOfflineMode, setOfflineMode } from '../utils/offlineMode.js';
+        | ^
+      3 |
+      4 | describe('Offline Integration Tests', () => {
+      5 |   test('offline mode can be toggled', () => {
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (manual-tests/offlineIntegration.test.ts:2:1)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.378 s
+Time:        7.708 s
 Ran all test suites matching /home/runner/workspace/manual-tests/offlineIntegration.test.ts.
 FAIL manual-tests/offlineIntegration.test.ts
   ● Test suite failed to run
@@ -4168,18 +3406,26 @@ FAIL manual-tests/offlineIntegration.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      1 | // Simplified offline integration tests for TypeScript ES modules
+    > 2 | import { isOfflineMode, setOfflineMode } from '../utils/offlineMode.js';
+        | ^
+      3 |
+      4 | describe('Offline Integration Tests', () => {
+      5 |   test('offline mode can be toggled', () => {
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (manual-tests/offlineIntegration.test.ts:2:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.975 s
+Time:        4.848 s
 Ran all test suites matching /home/runner/workspace/manual-tests/offlineIntegration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4198,16 +3444,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20585ms
+### Duration: 21544ms
 
 ---
 
-## Failed Test 41: /home/runner/workspace/manual-tests/offlineMode.test.ts
+## Failed Test 32: /home/runner/workspace/manual-tests/offlineMode.test.ts
 
 ### Output:
 ```
 FAIL manual-tests/offlineMode.test.ts
-  ● Test suite failed to run
+  ● Offline Mode Tests › offline mode functions correctly
 
     Jest encountered an unexpected token
 
@@ -4231,21 +3477,34 @@ FAIL manual-tests/offlineMode.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      2 | describe('Offline Mode Tests', () => {
+      3 |   test('offline mode functions correctly', async () => {
+    > 4 |     const mod = await import('../utils/offlineMode.js');
+        |                 ^
+      5 |     expect(mod).toBeDefined();
+      6 |     expect(typeof mod).toBe('object');
+      7 |   });
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at manual-tests/offlineMode.test.ts:4:17
+      at Object.<anonymous> (manual-tests/offlineMode.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.866 s
+Time:        6.409 s
 Ran all test suites matching /home/runner/workspace/manual-tests/offlineMode.test.ts.
 FAIL manual-tests/offlineMode.test.ts
-  ● Test suite failed to run
+  Offline Mode Tests
+    ✕ offline mode functions correctly (23 ms)
+
+  ● Offline Mode Tests › offline mode functions correctly
 
     Jest encountered an unexpected token
 
@@ -4269,18 +3528,28 @@ FAIL manual-tests/offlineMode.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      2 | describe('Offline Mode Tests', () => {
+      3 |   test('offline mode functions correctly', async () => {
+    > 4 |     const mod = await import('../utils/offlineMode.js');
+        |                 ^
+      5 |     expect(mod).toBeDefined();
+      6 |     expect(typeof mod).toBe('object');
+      7 |   });
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at manual-tests/offlineMode.test.ts:4:17
+      at Object.<anonymous> (manual-tests/offlineMode.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.39 s
+Time:        4.557 s
 Ran all test suites matching /home/runner/workspace/manual-tests/offlineMode.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4299,16 +3568,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20480ms
+### Duration: 21534ms
 
 ---
 
-## Failed Test 42: /home/runner/workspace/manual-tests/performance.test.ts
+## Failed Test 33: /home/runner/workspace/manual-tests/performance.test.ts
 
 ### Output:
 ```
 FAIL manual-tests/performance.test.ts
-  ● Test suite failed to run
+  ● Performance Tests › performance is acceptable
 
     Jest encountered an unexpected token
 
@@ -4332,33 +3601,36 @@ FAIL manual-tests/performance.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at manual-tests/performance.test.ts:5:17
+      at Object.<anonymous> (manual-tests/performance.test.ts:5:17)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.209 s
+Time:        6.335 s
 Ran all test suites matching /home/runner/workspace/manual-tests/performance.test.ts.
 FAIL manual-tests/performance.test.ts
-  ● Test suite failed to run
+  Performance Tests
+    ✕ performance is acceptable (20 ms)
+
+  ● Performance Tests › performance is acceptable
 
     Jest encountered an unexpected token
 
@@ -4382,18 +3654,30 @@ FAIL manual-tests/performance.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      15 | // Import environment management utilities using ES module syntax
+      16 | import { testEnv } from '../utils/testEnv.js';
+    > 17 | import { offlineMode } from '../utils/offlineMode.js';
+         | ^
+      18 | import { testHelpers } from '../utils/testHelpers.js';
+      19 |
+      20 | // Export the core utilities that our TypeScript index needs
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (lib/envUtils.ts:17:1)
+      at Object.<anonymous> (index.ts:17:1)
+      at manual-tests/performance.test.ts:5:17
+      at Object.<anonymous> (manual-tests/performance.test.ts:5:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.984 s
+Time:        3.021 s
 Ran all test suites matching /home/runner/workspace/manual-tests/performance.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4412,16 +3696,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21229ms
+### Duration: 21979ms
 
 ---
 
-## Failed Test 43: /home/runner/workspace/manual-tests/qtests-dogfood.test.ts
+## Failed Test 34: /home/runner/workspace/manual-tests/resolveStubPaths.test.ts
 
 ### Output:
 ```
-FAIL manual-tests/qtests-dogfood.test.ts
-  ● Test suite failed to run
+FAIL manual-tests/resolveStubPaths.test.ts
+  ● Stub Path Resolution Tests › stubs resolve correctly after setup
 
     Jest encountered an unexpected token
 
@@ -4451,7 +3735,17 @@ FAIL manual-tests/qtests-dogfood.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
+      2 | describe('Stub Path Resolution Tests', () => {
+      3 |   test('stubs resolve correctly after setup', async () => {
+    > 4 |     await import('../setup.js'); // activate stub resolution
+        |     ^
+      5 |     
+      6 |     // Test that stub paths resolve without throwing
+      7 |     expect(() => require('axios')).not.toThrow();
+
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at manual-tests/resolveStubPaths.test.ts:4:5
+      at Object.<anonymous> (manual-tests/resolveStubPaths.test.ts:4:5)
 
 Unable to check memory usage Error: write EPIPE
     at target._send (node:internal/child_process:878:20)
@@ -4466,113 +3760,16 @@ Unable to check memory usage Error: write EPIPE
   syscall: 'write'
 }
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 passed, 2 total
 Snapshots:   0 total
-Time:        3.856 s
-Ran all test suites matching /home/runner/workspace/manual-tests/qtests-dogfood.test.ts.
-FAIL manual-tests/qtests-dogfood.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.522 s
-Ran all test suites matching /home/runner/workspace/manual-tests/qtests-dogfood.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/manual-tests/qtests-dogfood.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 19867ms
-
----
-
-## Failed Test 44: /home/runner/workspace/manual-tests/resolveStubPaths.test.ts
-
-### Output:
-```
-FAIL manual-tests/resolveStubPaths.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        7.2 s
+Time:        7.141 s
 Ran all test suites matching /home/runner/workspace/manual-tests/resolveStubPaths.test.ts.
 FAIL manual-tests/resolveStubPaths.test.ts
-  ● Test suite failed to run
+  Stub Path Resolution Tests
+    ✕ stubs resolve correctly after setup (11 ms)
+    ✓ stub modules provide expected interfaces (287 ms)
+
+  ● Stub Path Resolution Tests › stubs resolve correctly after setup
 
     Jest encountered an unexpected token
 
@@ -4602,12 +3799,22 @@ FAIL manual-tests/resolveStubPaths.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
+      2 | describe('Stub Path Resolution Tests', () => {
+      3 |   test('stubs resolve correctly after setup', async () => {
+    > 4 |     await import('../setup.js'); // activate stub resolution
+        |     ^
+      5 |     
+      6 |     // Test that stub paths resolve without throwing
+      7 |     expect(() => require('axios')).not.toThrow();
+
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at manual-tests/resolveStubPaths.test.ts:4:5
+      at Object.<anonymous> (manual-tests/resolveStubPaths.test.ts:4:5)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 passed, 2 total
 Snapshots:   0 total
-Time:        2.701 s
+Time:        4.407 s
 Ran all test suites matching /home/runner/workspace/manual-tests/resolveStubPaths.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4626,350 +3833,11 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21501ms
+### Duration: 21955ms
 
 ---
 
-## Failed Test 45: /home/runner/workspace/manual-tests/runTestSuite.test.ts
-
-### Output:
-```
-FAIL manual-tests/runTestSuite.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.423 s
-Ran all test suites matching /home/runner/workspace/manual-tests/runTestSuite.test.ts.
-FAIL manual-tests/runTestSuite.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        1.317 s
-Ran all test suites matching /home/runner/workspace/manual-tests/runTestSuite.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/manual-tests/runTestSuite.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 21938ms
-
----
-
-## Failed Test 46: /home/runner/workspace/manual-tests/safeSerialize.test.ts
-
-### Output:
-```
-FAIL manual-tests/safeSerialize.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.234 s
-Ran all test suites matching /home/runner/workspace/manual-tests/safeSerialize.test.ts.
-FAIL manual-tests/safeSerialize.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.148 s
-Ran all test suites matching /home/runner/workspace/manual-tests/safeSerialize.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/manual-tests/safeSerialize.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 18321ms
-
----
-
-## Failed Test 47: /home/runner/workspace/manual-tests/sendEmail.test.ts
-
-### Output:
-```
-FAIL manual-tests/sendEmail.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.755 s
-Ran all test suites matching /home/runner/workspace/manual-tests/sendEmail.test.ts.
-FAIL manual-tests/sendEmail.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.003 s
-Ran all test suites matching /home/runner/workspace/manual-tests/sendEmail.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/manual-tests/sendEmail.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 20294ms
-
----
-
-## Failed Test 48: /home/runner/workspace/manual-tests/setupMultiple.test.ts
+## Failed Test 35: /home/runner/workspace/manual-tests/setupMultiple.test.ts
 
 ### Output:
 ```
@@ -5004,12 +3872,20 @@ FAIL manual-tests/setupMultiple.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
+      1 | // Simplified setup test to prevent child process spawning issues
+    > 2 | import '../setup.js'; // activate stub resolution for test environment
+        | ^
+      3 |
+      4 | describe('setup multiple calls', () => {
+      5 |   test('setup can be called multiple times safely', async () => {
+
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (manual-tests/setupMultiple.test.ts:2:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.019 s
+Time:        7.335 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupMultiple.test.ts.
 FAIL manual-tests/setupMultiple.test.ts
   ● Test suite failed to run
@@ -5042,12 +3918,20 @@ FAIL manual-tests/setupMultiple.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
+      1 | // Simplified setup test to prevent child process spawning issues
+    > 2 | import '../setup.js'; // activate stub resolution for test environment
+        | ^
+      3 |
+      4 | describe('setup multiple calls', () => {
+      5 |   test('setup can be called multiple times safely', async () => {
+
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (manual-tests/setupMultiple.test.ts:2:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.261 s
+Time:        3.777 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupMultiple.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5066,11 +3950,11 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20447ms
+### Duration: 21775ms
 
 ---
 
-## Failed Test 49: /home/runner/workspace/manual-tests/setupResolution.test.ts
+## Failed Test 36: /home/runner/workspace/manual-tests/setupResolution.test.ts
 
 ### Output:
 ```
@@ -5105,12 +3989,20 @@ FAIL manual-tests/setupResolution.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
+      1 | // Simplified setup resolution test for TypeScript ES modules
+    > 2 | import '../setup.js'; // activate stub resolution
+        | ^
+      3 |
+      4 | describe('setup resolution functionality', () => {
+      5 |   test('setup modifies module resolution', () => {
+
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (manual-tests/setupResolution.test.ts:2:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.206 s
+Time:        5.376 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupResolution.test.ts.
 FAIL manual-tests/setupResolution.test.ts
   ● Test suite failed to run
@@ -5143,12 +4035,20 @@ FAIL manual-tests/setupResolution.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
+      1 | // Simplified setup resolution test for TypeScript ES modules
+    > 2 | import '../setup.js'; // activate stub resolution
+        | ^
+      3 |
+      4 | describe('setup resolution functionality', () => {
+      5 |   test('setup modifies module resolution', () => {
+
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (manual-tests/setupResolution.test.ts:2:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.908 s
+Time:        1.719 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupResolution.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5167,89 +4067,55 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18570ms
+### Duration: 15341ms
 
 ---
 
-## Failed Test 50: /home/runner/workspace/manual-tests/stubMethod.test.ts
+## Failed Test 37: /home/runner/workspace/manual-tests/stubMethod.test.ts
 
 ### Output:
 ```
 FAIL manual-tests/stubMethod.test.ts
-  ● Test suite failed to run
+  ● stubMethod replaces and restores methods
 
-    Jest encountered an unexpected token
+    TypeError: (0 , stubMethod_js_1.stubMethod) is not a function
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+      3 | test('stubMethod replaces and restores methods', () => {
+      4 |   const obj = { method: () => 'original' };
+    > 5 |   const stub = stubMethod(obj, 'method', () => 'stubbed');
+        |                          ^
+      6 |   
+      7 |   expect(obj.method()).toBe('stubbed');
+      8 |   stub.restore();
 
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (manual-tests/stubMethod.test.ts:5:26)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.895 s
+Time:        7.302 s
 Ran all test suites matching /home/runner/workspace/manual-tests/stubMethod.test.ts.
 FAIL manual-tests/stubMethod.test.ts
-  ● Test suite failed to run
+  ✕ stubMethod replaces and restores methods (6 ms)
 
-    Jest encountered an unexpected token
+  ● stubMethod replaces and restores methods
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+    TypeError: (0 , stubMethod_js_1.stubMethod) is not a function
 
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+      3 | test('stubMethod replaces and restores methods', () => {
+      4 |   const obj = { method: () => 'original' };
+    > 5 |   const stub = stubMethod(obj, 'method', () => 'stubbed');
+        |                          ^
+      6 |   
+      7 |   expect(obj.method()).toBe('stubbed');
+      8 |   stub.restore();
 
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (manual-tests/stubMethod.test.ts:5:26)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.243 s
+Time:        1.735 s
 Ran all test suites matching /home/runner/workspace/manual-tests/stubMethod.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5268,190 +4134,82 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18206ms
+### Duration: 15003ms
 
 ---
 
-## Failed Test 51: /home/runner/workspace/manual-tests/testEnv.test.ts
-
-### Output:
-```
-FAIL manual-tests/testEnv.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.575 s
-Ran all test suites matching /home/runner/workspace/manual-tests/testEnv.test.ts.
-FAIL manual-tests/testEnv.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.636 s
-Ran all test suites matching /home/runner/workspace/manual-tests/testEnv.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/manual-tests/testEnv.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 18057ms
-
----
-
-## Failed Test 52: /home/runner/workspace/manual-tests/testGenerator.test.ts
+## Failed Test 38: /home/runner/workspace/manual-tests/testGenerator.test.ts
 
 ### Output:
 ```
 FAIL manual-tests/testGenerator.test.ts
-  ● Test suite failed to run
+  ● testGenerator.ts basic exports › module loads without errors
 
-    Jest encountered an unexpected token
+    Configuration error:
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+    Could not locate module ./testGenerator.js mapped as:
+    $1.
 
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+    Please check your configuration for these entries:
+    {
+      "moduleNameMapper": {
+        "/^(\.{1,2}\/.*)\.js$/": "$1"
+      },
+      "resolver": undefined
+    }
 
-    By default "node_modules" folder is ignored by transformers.
+      2 | describe('testGenerator.ts basic exports', () => {
+      3 |   test('module loads without errors', async () => {
+    > 4 |     const mod = await import('./testGenerator.js');
+        |                 ^
+      5 |     expect(mod).toBeDefined();
+      6 |     expect(typeof mod).toBe('object');
+      7 |   });
 
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at createNoMappedModuleFoundError (node_modules/jest-resolve/build/index.js:1117:17)
+      at manual-tests/testGenerator.test.ts:4:17
+      at Object.<anonymous> (manual-tests/testGenerator.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.641 s
+Time:        6.351 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testGenerator.test.ts.
 FAIL manual-tests/testGenerator.test.ts
-  ● Test suite failed to run
+  testGenerator.ts basic exports
+    ✕ module loads without errors (5 ms)
 
-    Jest encountered an unexpected token
+  ● testGenerator.ts basic exports › module loads without errors
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+    Configuration error:
 
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+    Could not locate module ./testGenerator.js mapped as:
+    $1.
 
-    By default "node_modules" folder is ignored by transformers.
+    Please check your configuration for these entries:
+    {
+      "moduleNameMapper": {
+        "/^(\.{1,2}\/.*)\.js$/": "$1"
+      },
+      "resolver": undefined
+    }
 
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+      2 | describe('testGenerator.ts basic exports', () => {
+      3 |   test('module loads without errors', async () => {
+    > 4 |     const mod = await import('./testGenerator.js');
+        |                 ^
+      5 |     expect(mod).toBeDefined();
+      6 |     expect(typeof mod).toBe('object');
+      7 |   });
 
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at createNoMappedModuleFoundError (node_modules/jest-resolve/build/index.js:1117:17)
+      at manual-tests/testGenerator.test.ts:4:17
+      at Object.<anonymous> (manual-tests/testGenerator.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.223 s
+Time:        1.639 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testGenerator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5470,11 +4228,11 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18458ms
+### Duration: 15347ms
 
 ---
 
-## Failed Test 53: /home/runner/workspace/manual-tests/testHelpers.test.ts
+## Failed Test 39: /home/runner/workspace/manual-tests/testHelpers.test.ts
 
 ### Output:
 ```
@@ -5503,18 +4261,28 @@ FAIL manual-tests/testHelpers.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      13 |
+      14 | // Import focused helper utilities
+    > 15 | import { reload, moduleReloadLock } from './helpers/moduleReloader.js';
+         | ^
+      16 | import { stubQerrors } from './helpers/qerrorsStub.js';
+      17 | import { withMockConsole } from './helpers/consoleMocker.js';
+      18 | import { createJsonRes, createRes } from './helpers/responseMocker.js';
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (utils/testHelpers.ts:15:1)
+      at Object.<anonymous> (manual-tests/testHelpers.test.ts:2:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.147 s
+Time:        5.261 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testHelpers.test.ts.
 FAIL manual-tests/testHelpers.test.ts
   ● Test suite failed to run
@@ -5541,18 +4309,28 @@ FAIL manual-tests/testHelpers.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      13 |
+      14 | // Import focused helper utilities
+    > 15 | import { reload, moduleReloadLock } from './helpers/moduleReloader.js';
+         | ^
+      16 | import { stubQerrors } from './helpers/qerrorsStub.js';
+      17 | import { withMockConsole } from './helpers/consoleMocker.js';
+      18 | import { createJsonRes, createRes } from './helpers/responseMocker.js';
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (utils/testHelpers.ts:15:1)
+      at Object.<anonymous> (manual-tests/testHelpers.test.ts:2:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.505 s
+Time:        1.62 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testHelpers.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5571,112 +4349,11 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19072ms
+### Duration: 15553ms
 
 ---
 
-## Failed Test 54: /home/runner/workspace/manual-tests/testSuite.test.ts
-
-### Output:
-```
-FAIL manual-tests/testSuite.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.849 s
-Ran all test suites matching /home/runner/workspace/manual-tests/testSuite.test.ts.
-FAIL manual-tests/testSuite.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.88 s
-Ran all test suites matching /home/runner/workspace/manual-tests/testSuite.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/manual-tests/testSuite.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 18355ms
-
----
-
-## Failed Test 55: /home/runner/workspace/setup.test.ts
+## Failed Test 40: /home/runner/workspace/setup.test.ts
 
 ### Output:
 ```
@@ -5711,12 +4388,20 @@ FAIL ./setup.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
+      1 | // Auto-generated unit test for setup.ts - optimized for speed
+    > 2 | import * as mod from './setup.ts';
+        | ^
+      3 |
+      4 | describe('setup.ts', () => {
+      5 |   test('setupComplete works', async () => {
+
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (setup.test.ts:2:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.016 s
+Time:        5.39 s
 Ran all test suites matching /home/runner/workspace/setup.test.ts.
 FAIL ./setup.test.ts
   ● Test suite failed to run
@@ -5749,12 +4434,20 @@ FAIL ./setup.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
+      1 | // Auto-generated unit test for setup.ts - optimized for speed
+    > 2 | import * as mod from './setup.ts';
+        | ^
+      3 |
+      4 | describe('setup.ts', () => {
+      5 |   test('setupComplete works', async () => {
+
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (setup.test.ts:2:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.047 s
+Time:        1.651 s
 Ran all test suites matching /home/runner/workspace/setup.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5773,860 +4466,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18295ms
+### Duration: 15494ms
 
 ---
 
-## Failed Test 56: /home/runner/workspace/utils/email/emailFormatter.test.ts
-
-### Output:
-```
-FAIL utils/email/emailFormatter.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.829 s
-Ran all test suites matching /home/runner/workspace/utils/email/emailFormatter.test.ts.
-FAIL utils/email/emailFormatter.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.162 s
-Ran all test suites matching /home/runner/workspace/utils/email/emailFormatter.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/email/emailFormatter.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 18383ms
-
----
-
-## Failed Test 57: /home/runner/workspace/utils/email/emailHistory.test.ts
-
-### Output:
-```
-FAIL utils/email/emailHistory.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.876 s
-Ran all test suites matching /home/runner/workspace/utils/email/emailHistory.test.ts.
-FAIL utils/email/emailHistory.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.635 s
-Ran all test suites matching /home/runner/workspace/utils/email/emailHistory.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/email/emailHistory.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 18617ms
-
----
-
-## Failed Test 58: /home/runner/workspace/utils/email/emailSender.test.ts
-
-### Output:
-```
-FAIL utils/email/emailSender.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.193 s
-Ran all test suites matching /home/runner/workspace/utils/email/emailSender.test.ts.
-FAIL utils/email/emailSender.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.02 s
-Ran all test suites matching /home/runner/workspace/utils/email/emailSender.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/email/emailSender.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 18868ms
-
----
-
-## Failed Test 59: /home/runner/workspace/utils/email/emailTemplate.test.ts
-
-### Output:
-```
-FAIL utils/email/emailTemplate.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.587 s
-Ran all test suites matching /home/runner/workspace/utils/email/emailTemplate.test.ts.
-FAIL utils/email/emailTemplate.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.246 s
-Ran all test suites matching /home/runner/workspace/utils/email/emailTemplate.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/email/emailTemplate.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 18473ms
-
----
-
-## Failed Test 60: /home/runner/workspace/utils/email/emailValidator.test.ts
-
-### Output:
-```
-FAIL utils/email/emailValidator.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.877 s
-Ran all test suites matching /home/runner/workspace/utils/email/emailValidator.test.ts.
-FAIL utils/email/emailValidator.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.688 s
-Ran all test suites matching /home/runner/workspace/utils/email/emailValidator.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/email/emailValidator.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 16900ms
-
----
-
-## Failed Test 61: /home/runner/workspace/utils/helpers/consoleMocker.test.ts
-
-### Output:
-```
-FAIL utils/helpers/consoleMocker.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.7 s
-Ran all test suites matching /home/runner/workspace/utils/helpers/consoleMocker.test.ts.
-FAIL utils/helpers/consoleMocker.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.142 s
-Ran all test suites matching /home/runner/workspace/utils/helpers/consoleMocker.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/helpers/consoleMocker.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 19298ms
-
----
-
-## Failed Test 62: /home/runner/workspace/utils/helpers/envManager.test.ts
-
-### Output:
-```
-FAIL utils/helpers/envManager.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.854 s
-Ran all test suites matching /home/runner/workspace/utils/helpers/envManager.test.ts.
-FAIL utils/helpers/envManager.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.166 s
-Ran all test suites matching /home/runner/workspace/utils/helpers/envManager.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/helpers/envManager.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 16497ms
-
----
-
-## Failed Test 63: /home/runner/workspace/utils/helpers/keyGenerator.test.ts
-
-### Output:
-```
-FAIL utils/helpers/keyGenerator.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.152 s
-Ran all test suites matching /home/runner/workspace/utils/helpers/keyGenerator.test.ts.
-FAIL utils/helpers/keyGenerator.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.912 s
-Ran all test suites matching /home/runner/workspace/utils/helpers/keyGenerator.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/helpers/keyGenerator.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 20184ms
-
----
-
-## Failed Test 64: /home/runner/workspace/utils/helpers/moduleReloader.test.ts
+## Failed Test 41: /home/runner/workspace/utils/helpers/moduleReloader.test.ts
 
 ### Output:
 ```
 FAIL utils/helpers/moduleReloader.test.ts
-  ● Test suite failed to run
+  ● moduleReloader.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -6650,21 +4499,34 @@ FAIL utils/helpers/moduleReloader.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      2 | describe('moduleReloader.ts basic exports', () => {
+      3 |   test('module loads without errors', async () => {
+    > 4 |     const mod = await import('./moduleReloader.js');
+        |                 ^
+      5 |     expect(mod).toBeDefined();
+      6 |     expect(typeof mod).toBe('object');
+      7 |   });
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at utils/helpers/moduleReloader.test.ts:4:17
+      at Object.<anonymous> (utils/helpers/moduleReloader.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.141 s
+Time:        7.375 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/moduleReloader.test.ts.
 FAIL utils/helpers/moduleReloader.test.ts
-  ● Test suite failed to run
+  moduleReloader.ts basic exports
+    ✕ module loads without errors (12 ms)
+
+  ● moduleReloader.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -6688,30 +4550,28 @@ FAIL utils/helpers/moduleReloader.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      2 | describe('moduleReloader.ts basic exports', () => {
+      3 |   test('module loads without errors', async () => {
+    > 4 |     const mod = await import('./moduleReloader.js');
+        |                 ^
+      5 |     expect(mod).toBeDefined();
+      6 |     expect(typeof mod).toBe('object');
+      7 |   });
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at utils/helpers/moduleReloader.test.ts:4:17
+      at Object.<anonymous> (utils/helpers/moduleReloader.test.ts:4:17)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.702 s
+Time:        1.244 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/moduleReloader.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -6730,1110 +4590,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19361ms
+### Duration: 14898ms
 
 ---
 
-## Failed Test 65: /home/runner/workspace/utils/helpers/qerrorsStub.test.ts
-
-### Output:
-```
-FAIL utils/helpers/qerrorsStub.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.572 s
-Ran all test suites matching /home/runner/workspace/utils/helpers/qerrorsStub.test.ts.
-FAIL utils/helpers/qerrorsStub.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.169 s
-Ran all test suites matching /home/runner/workspace/utils/helpers/qerrorsStub.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/helpers/qerrorsStub.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 20086ms
-
----
-
-## Failed Test 66: /home/runner/workspace/utils/helpers/responseMocker.test.ts
-
-### Output:
-```
-FAIL utils/helpers/responseMocker.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.667 s
-Ran all test suites matching /home/runner/workspace/utils/helpers/responseMocker.test.ts.
-FAIL utils/helpers/responseMocker.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.154 s
-Ran all test suites matching /home/runner/workspace/utils/helpers/responseMocker.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/helpers/responseMocker.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 15571ms
-
----
-
-## Failed Test 67: /home/runner/workspace/utils/httpTest.test.ts
-
-### Output:
-```
-FAIL utils/httpTest.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.313 s
-Ran all test suites matching /home/runner/workspace/utils/httpTest.test.ts.
-FAIL utils/httpTest.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.219 s
-Ran all test suites matching /home/runner/workspace/utils/httpTest.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/httpTest.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 20028ms
-
----
-
-## Failed Test 68: /home/runner/workspace/utils/mockAxios.test.ts
-
-### Output:
-```
-FAIL utils/mockAxios.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.655 s
-Ran all test suites matching /home/runner/workspace/utils/mockAxios.test.ts.
-FAIL utils/mockAxios.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.007 s
-Ran all test suites matching /home/runner/workspace/utils/mockAxios.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/mockAxios.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 20185ms
-
----
-
-## Failed Test 69: /home/runner/workspace/utils/mockConsole.test.ts
-
-### Output:
-```
-FAIL utils/mockConsole.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.846 s
-Ran all test suites matching /home/runner/workspace/utils/mockConsole.test.ts.
-FAIL utils/mockConsole.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.03 s
-Ran all test suites matching /home/runner/workspace/utils/mockConsole.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/mockConsole.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 15969ms
-
----
-
-## Failed Test 70: /home/runner/workspace/utils/mockModels.test.ts
-
-### Output:
-```
-FAIL utils/mockModels.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.565 s
-Ran all test suites matching /home/runner/workspace/utils/mockModels.test.ts.
-FAIL utils/mockModels.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.61 s
-Ran all test suites matching /home/runner/workspace/utils/mockModels.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/mockModels.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 19774ms
-
----
-
-## Failed Test 71: /home/runner/workspace/utils/models/apiKeyModel.test.ts
-
-### Output:
-```
-FAIL utils/models/apiKeyModel.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.621 s
-Ran all test suites matching /home/runner/workspace/utils/models/apiKeyModel.test.ts.
-FAIL utils/models/apiKeyModel.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.389 s
-Ran all test suites matching /home/runner/workspace/utils/models/apiKeyModel.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/models/apiKeyModel.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 19062ms
-
----
-
-## Failed Test 72: /home/runner/workspace/utils/models/apiLogModel.test.ts
-
-### Output:
-```
-FAIL utils/models/apiLogModel.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        7.056 s
-Ran all test suites matching /home/runner/workspace/utils/models/apiLogModel.test.ts.
-FAIL utils/models/apiLogModel.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.312 s
-Ran all test suites matching /home/runner/workspace/utils/models/apiLogModel.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/models/apiLogModel.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 20471ms
-
----
-
-## Failed Test 73: /home/runner/workspace/utils/models/baseMockModel.test.ts
-
-### Output:
-```
-FAIL utils/models/baseMockModel.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.838 s
-Ran all test suites matching /home/runner/workspace/utils/models/baseMockModel.test.ts.
-FAIL utils/models/baseMockModel.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.555 s
-Ran all test suites matching /home/runner/workspace/utils/models/baseMockModel.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/models/baseMockModel.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 19559ms
-
----
-
-## Failed Test 74: /home/runner/workspace/utils/models/modelFactory.test.ts
-
-### Output:
-```
-FAIL utils/models/modelFactory.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.46 s
-Ran all test suites matching /home/runner/workspace/utils/models/modelFactory.test.ts.
-FAIL utils/models/modelFactory.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.678 s
-Ran all test suites matching /home/runner/workspace/utils/models/modelFactory.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/models/modelFactory.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 20114ms
-
----
-
-## Failed Test 75: /home/runner/workspace/utils/offlineMode.test.ts
+## Failed Test 42: /home/runner/workspace/utils/offlineMode.test.ts
 
 ### Output:
 ```
 FAIL utils/offlineMode.test.ts
-  ● Test suite failed to run
+  ● offlineMode.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -7857,21 +4623,34 @@ FAIL utils/offlineMode.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      2 | describe('offlineMode.ts basic exports', () => {
+      3 |   test('module loads without errors', async () => {
+    > 4 |     const mod = await import('./offlineMode.js');
+        |                 ^
+      5 |     expect(mod).toBeDefined();
+      6 |     expect(typeof mod).toBe('object');
+      7 |   });
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at utils/offlineMode.test.ts:4:17
+      at Object.<anonymous> (utils/offlineMode.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.253 s
+Time:        4.609 s
 Ran all test suites matching /home/runner/workspace/utils/offlineMode.test.ts.
 FAIL utils/offlineMode.test.ts
-  ● Test suite failed to run
+  offlineMode.ts basic exports
+    ✕ module loads without errors (8 ms)
+
+  ● offlineMode.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -7895,18 +4674,28 @@ FAIL utils/offlineMode.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/utils/offlineMode.ts:74
+                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
+                                  ^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: await is only valid in async functions and the top level bodies of modules
+
+      2 | describe('offlineMode.ts basic exports', () => {
+      3 |   test('module loads without errors', async () => {
+    > 4 |     const mod = await import('./offlineMode.js');
+        |                 ^
+      5 |     expect(mod).toBeDefined();
+      6 |     expect(typeof mod).toBe('object');
+      7 |   });
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at utils/offlineMode.test.ts:4:17
+      at Object.<anonymous> (utils/offlineMode.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.798 s
+Time:        1.416 s
 Ran all test suites matching /home/runner/workspace/utils/offlineMode.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -7925,420 +4714,16 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20191ms
+### Duration: 14437ms
 
 ---
 
-## Failed Test 76: /home/runner/workspace/utils/runTestSuite.test.ts
-
-### Output:
-```
-FAIL utils/runTestSuite.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.575 s
-Ran all test suites matching /home/runner/workspace/utils/runTestSuite.test.ts.
-FAIL utils/runTestSuite.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.612 s
-Ran all test suites matching /home/runner/workspace/utils/runTestSuite.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/runTestSuite.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 20176ms
-
----
-
-## Failed Test 77: /home/runner/workspace/utils/sendEmail.test.ts
-
-### Output:
-```
-FAIL utils/sendEmail.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.002 s
-Ran all test suites matching /home/runner/workspace/utils/sendEmail.test.ts.
-FAIL utils/sendEmail.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.231 s
-Ran all test suites matching /home/runner/workspace/utils/sendEmail.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/sendEmail.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 19077ms
-
----
-
-## Failed Test 78: /home/runner/workspace/utils/stubMethod.test.ts
-
-### Output:
-```
-FAIL utils/stubMethod.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.419 s
-Ran all test suites matching /home/runner/workspace/utils/stubMethod.test.ts.
-FAIL utils/stubMethod.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.053 s
-Ran all test suites matching /home/runner/workspace/utils/stubMethod.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/stubMethod.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 20178ms
-
----
-
-## Failed Test 79: /home/runner/workspace/utils/testEnv.test.ts
-
-### Output:
-```
-FAIL utils/testEnv.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.185 s
-Ran all test suites matching /home/runner/workspace/utils/testEnv.test.ts.
-FAIL utils/testEnv.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.302 s
-Ran all test suites matching /home/runner/workspace/utils/testEnv.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/testEnv.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 8814ms
-
----
-
-## Failed Test 80: /home/runner/workspace/utils/testHelpers.test.ts
+## Failed Test 43: /home/runner/workspace/utils/testHelpers.test.ts
 
 ### Output:
 ```
 FAIL utils/testHelpers.test.ts
-  ● Test suite failed to run
+  ● testHelpers.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -8362,21 +4747,35 @@ FAIL utils/testHelpers.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      13 |
+      14 | // Import focused helper utilities
+    > 15 | import { reload, moduleReloadLock } from './helpers/moduleReloader.js';
+         | ^
+      16 | import { stubQerrors } from './helpers/qerrorsStub.js';
+      17 | import { withMockConsole } from './helpers/consoleMocker.js';
+      18 | import { createJsonRes, createRes } from './helpers/responseMocker.js';
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (utils/testHelpers.ts:15:1)
+      at utils/testHelpers.test.ts:4:17
+      at Object.<anonymous> (utils/testHelpers.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.89 s
+Time:        4.014 s
 Ran all test suites matching /home/runner/workspace/utils/testHelpers.test.ts.
 FAIL utils/testHelpers.test.ts
-  ● Test suite failed to run
+  testHelpers.ts basic exports
+    ✕ module loads without errors (107 ms)
+
+  ● testHelpers.ts basic exports › module loads without errors
 
     Jest encountered an unexpected token
 
@@ -8400,18 +4799,29 @@ FAIL utils/testHelpers.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
+    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__filename' has already been declared
+
+      13 |
+      14 | // Import focused helper utilities
+    > 15 | import { reload, moduleReloadLock } from './helpers/moduleReloader.js';
+         | ^
+      16 | import { stubQerrors } from './helpers/qerrorsStub.js';
+      17 | import { withMockConsole } from './helpers/consoleMocker.js';
+      18 | import { createJsonRes, createRes } from './helpers/responseMocker.js';
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+      at Object.<anonymous> (utils/testHelpers.ts:15:1)
+      at utils/testHelpers.test.ts:4:17
+      at Object.<anonymous> (utils/testHelpers.test.ts:4:17)
 
 Test Suites: 1 failed, 1 total
-Tests:       0 total
+Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.26 s
+Time:        1.302 s
 Ran all test suites matching /home/runner/workspace/utils/testHelpers.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8430,618 +4840,12 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 10048ms
-
----
-
-## Failed Test 81: /home/runner/workspace/utils/testSuite.test.ts
-
-### Output:
-```
-FAIL utils/testSuite.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.668 s
-Ran all test suites matching /home/runner/workspace/utils/testSuite.test.ts.
-FAIL utils/testSuite.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.122 s
-Ran all test suites matching /home/runner/workspace/utils/testSuite.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/testSuite.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 9719ms
-
----
-
-## Failed Test 82: /home/runner/workspace/utils/testing/assertionHelper.test.ts
-
-### Output:
-```
-FAIL utils/testing/assertionHelper.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.591 s
-Ran all test suites matching /home/runner/workspace/utils/testing/assertionHelper.test.ts.
-FAIL utils/testing/assertionHelper.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.61 s
-Ran all test suites matching /home/runner/workspace/utils/testing/assertionHelper.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/testing/assertionHelper.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 9830ms
-
----
-
-## Failed Test 83: /home/runner/workspace/utils/testing/databaseTestHelper.test.ts
-
-### Output:
-```
-FAIL utils/testing/databaseTestHelper.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.964 s
-Ran all test suites matching /home/runner/workspace/utils/testing/databaseTestHelper.test.ts.
-FAIL utils/testing/databaseTestHelper.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.46 s
-Ran all test suites matching /home/runner/workspace/utils/testing/databaseTestHelper.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/testing/databaseTestHelper.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 9973ms
-
----
-
-## Failed Test 84: /home/runner/workspace/utils/testing/mockManager.test.ts
-
-### Output:
-```
-FAIL utils/testing/mockManager.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.983 s
-Ran all test suites matching /home/runner/workspace/utils/testing/mockManager.test.ts.
-FAIL utils/testing/mockManager.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.279 s
-Ran all test suites matching /home/runner/workspace/utils/testing/mockManager.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/testing/mockManager.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 9677ms
-
----
-
-## Failed Test 85: /home/runner/workspace/utils/testing/performanceTestHelper.test.ts
-
-### Output:
-```
-FAIL utils/testing/performanceTestHelper.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.539 s
-Ran all test suites matching /home/runner/workspace/utils/testing/performanceTestHelper.test.ts.
-FAIL utils/testing/performanceTestHelper.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.646 s
-Ran all test suites matching /home/runner/workspace/utils/testing/performanceTestHelper.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/testing/performanceTestHelper.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 9492ms
-
----
-
-## Failed Test 86: /home/runner/workspace/utils/testing/testDataFactory.test.ts
-
-### Output:
-```
-FAIL utils/testing/testDataFactory.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.903 s
-Ran all test suites matching /home/runner/workspace/utils/testing/testDataFactory.test.ts.
-FAIL utils/testing/testDataFactory.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.182 s
-Ran all test suites matching /home/runner/workspace/utils/testing/testDataFactory.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/testing/testDataFactory.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 9909ms
+### Duration: 9133ms
 
 ---
 
 ## Summary
 
-- Total failed tests: 86
-- Failed test files: /home/runner/workspace/generated-tests/example__get.test.ts, /home/runner/workspace/generated-tests/example__post.test.ts, /home/runner/workspace/generated-tests/example__put.test.ts, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js, /home/runner/workspace/generated-tests/integration/example.test.ts, /home/runner/workspace/generated-tests/integration/example__get.test.js, /home/runner/workspace/generated-tests/integration/example__get.test.ts, /home/runner/workspace/generated-tests/integration/example__post.test.js, /home/runner/workspace/generated-tests/integration/example__post.test.ts, /home/runner/workspace/generated-tests/integration/example__put.test.js, /home/runner/workspace/generated-tests/integration/example__put.test.ts, /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts, /home/runner/workspace/index.test.ts, /home/runner/workspace/lib/coreUtils.test.ts, /home/runner/workspace/lib/dataUtils.test.ts, /home/runner/workspace/lib/envUtils.test.ts, /home/runner/workspace/lib/httpUtils.test.ts, /home/runner/workspace/lib/logUtils.test.ts, /home/runner/workspace/lib/setup.test.ts, /home/runner/workspace/lib/stubs.test.ts, /home/runner/workspace/lib/testGenerator.test.ts, /home/runner/workspace/lib/testUtils.test.ts, /home/runner/workspace/manual-tests/axiosStub.test.ts, /home/runner/workspace/manual-tests/comprehensive.test.ts, /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts, /home/runner/workspace/manual-tests/edgeCases.test.ts, /home/runner/workspace/manual-tests/httpTest.test.ts, /home/runner/workspace/manual-tests/indexExports.test.ts, /home/runner/workspace/manual-tests/integration.test.ts, /home/runner/workspace/manual-tests/logUtils.test.ts, /home/runner/workspace/manual-tests/mockAxios.test.ts, /home/runner/workspace/manual-tests/mockConsole.test.ts, /home/runner/workspace/manual-tests/mockModels.test.ts, /home/runner/workspace/manual-tests/mockUtils.test.ts, /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts, /home/runner/workspace/manual-tests/offlineIntegration.test.ts, /home/runner/workspace/manual-tests/offlineMode.test.ts, /home/runner/workspace/manual-tests/performance.test.ts, /home/runner/workspace/manual-tests/qtests-dogfood.test.ts, /home/runner/workspace/manual-tests/resolveStubPaths.test.ts, /home/runner/workspace/manual-tests/runTestSuite.test.ts, /home/runner/workspace/manual-tests/safeSerialize.test.ts, /home/runner/workspace/manual-tests/sendEmail.test.ts, /home/runner/workspace/manual-tests/setupMultiple.test.ts, /home/runner/workspace/manual-tests/setupResolution.test.ts, /home/runner/workspace/manual-tests/stubMethod.test.ts, /home/runner/workspace/manual-tests/testEnv.test.ts, /home/runner/workspace/manual-tests/testGenerator.test.ts, /home/runner/workspace/manual-tests/testHelpers.test.ts, /home/runner/workspace/manual-tests/testSuite.test.ts, /home/runner/workspace/setup.test.ts, /home/runner/workspace/utils/email/emailFormatter.test.ts, /home/runner/workspace/utils/email/emailHistory.test.ts, /home/runner/workspace/utils/email/emailSender.test.ts, /home/runner/workspace/utils/email/emailTemplate.test.ts, /home/runner/workspace/utils/email/emailValidator.test.ts, /home/runner/workspace/utils/helpers/consoleMocker.test.ts, /home/runner/workspace/utils/helpers/envManager.test.ts, /home/runner/workspace/utils/helpers/keyGenerator.test.ts, /home/runner/workspace/utils/helpers/moduleReloader.test.ts, /home/runner/workspace/utils/helpers/qerrorsStub.test.ts, /home/runner/workspace/utils/helpers/responseMocker.test.ts, /home/runner/workspace/utils/httpTest.test.ts, /home/runner/workspace/utils/mockAxios.test.ts, /home/runner/workspace/utils/mockConsole.test.ts, /home/runner/workspace/utils/mockModels.test.ts, /home/runner/workspace/utils/models/apiKeyModel.test.ts, /home/runner/workspace/utils/models/apiLogModel.test.ts, /home/runner/workspace/utils/models/baseMockModel.test.ts, /home/runner/workspace/utils/models/modelFactory.test.ts, /home/runner/workspace/utils/offlineMode.test.ts, /home/runner/workspace/utils/runTestSuite.test.ts, /home/runner/workspace/utils/sendEmail.test.ts, /home/runner/workspace/utils/stubMethod.test.ts, /home/runner/workspace/utils/testEnv.test.ts, /home/runner/workspace/utils/testHelpers.test.ts, /home/runner/workspace/utils/testSuite.test.ts, /home/runner/workspace/utils/testing/assertionHelper.test.ts, /home/runner/workspace/utils/testing/databaseTestHelper.test.ts, /home/runner/workspace/utils/testing/mockManager.test.ts, /home/runner/workspace/utils/testing/performanceTestHelper.test.ts, /home/runner/workspace/utils/testing/testDataFactory.test.ts
-- Generated: 2025-09-01T10:37:27.055Z
+- Total failed tests: 43
+- Failed test files: /home/runner/workspace/generated-tests/example__get.test.ts, /home/runner/workspace/generated-tests/example__post.test.ts, /home/runner/workspace/generated-tests/example__put.test.ts, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js, /home/runner/workspace/generated-tests/integration/example.test.ts, /home/runner/workspace/generated-tests/integration/example__get.test.js, /home/runner/workspace/generated-tests/integration/example__get.test.ts, /home/runner/workspace/generated-tests/integration/example__post.test.js, /home/runner/workspace/generated-tests/integration/example__post.test.ts, /home/runner/workspace/generated-tests/integration/example__put.test.js, /home/runner/workspace/generated-tests/integration/example__put.test.ts, /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts, /home/runner/workspace/index.test.ts, /home/runner/workspace/lib/envUtils.test.ts, /home/runner/workspace/lib/httpUtils.test.ts, /home/runner/workspace/lib/stubs.test.ts, /home/runner/workspace/lib/testGenerator.test.ts, /home/runner/workspace/lib/testUtils.test.ts, /home/runner/workspace/manual-tests/axiosStub.test.ts, /home/runner/workspace/manual-tests/comprehensive.test.ts, /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts, /home/runner/workspace/manual-tests/edgeCases.test.ts, /home/runner/workspace/manual-tests/indexExports.test.ts, /home/runner/workspace/manual-tests/integration.test.ts, /home/runner/workspace/manual-tests/mockConsole.test.ts, /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts, /home/runner/workspace/manual-tests/offlineIntegration.test.ts, /home/runner/workspace/manual-tests/offlineMode.test.ts, /home/runner/workspace/manual-tests/performance.test.ts, /home/runner/workspace/manual-tests/resolveStubPaths.test.ts, /home/runner/workspace/manual-tests/setupMultiple.test.ts, /home/runner/workspace/manual-tests/setupResolution.test.ts, /home/runner/workspace/manual-tests/stubMethod.test.ts, /home/runner/workspace/manual-tests/testGenerator.test.ts, /home/runner/workspace/manual-tests/testHelpers.test.ts, /home/runner/workspace/setup.test.ts, /home/runner/workspace/utils/helpers/moduleReloader.test.ts, /home/runner/workspace/utils/offlineMode.test.ts, /home/runner/workspace/utils/testHelpers.test.ts
+- Generated: 2025-09-01T10:41:57.815Z

@@ -5,7 +5,7 @@
 const apiTestSession = `${process.hrtime.bigint()}-${Math.random().toString(36).substr(2, 9)}`;
 const uniqueRoute = '/test' + (/test.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
 
-import { httpTest } from '../../utils/httpTest.js';
+import { httpTest } from 'qtests/utils/httpTest';
 
 describe(`GET /test [API-${apiTestSession}]`, () => {
   // Test data factory for unique request/response data
