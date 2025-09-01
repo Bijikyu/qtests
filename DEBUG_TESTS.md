@@ -27,7 +27,7 @@ Analyze and address the following test failures:
       at Object.supertest (utils/httpTest.ts:61:13)
 
   console.log
-    Test is running with get /api/status?testSession=169226648608662-y17b1yvko
+    Test is running with get /api/status?testSession=169397402963892-cfzo16xon
 
       at new Test (utils/httpTest.ts:96:13)
 
@@ -75,7 +75,7 @@ FAIL generated-tests/example__get.test.ts
       at Object.supertest (utils/httpTest.ts:61:13)
 
     console.log
-      Test is running with get /api/status?testSession=169215515105631-92ibwldpx
+      Test is running with get /api/status?testSession=169387436952994-wxemlalcg
 
       at new Test (utils/httpTest.ts:96:13)
 
@@ -99,7 +99,7 @@ FAIL generated-tests/example__get.test.ts
 
       at Test.expect (utils/httpTest.ts:144:15)
 
-  ● GET /api/status [API-169215515105631-92ibwldpx] › should succeed with unique test data
+  ● GET /api/status [API-169387436952994-wxemlalcg] › should succeed with unique test data
 
     expect(received).toBe(expected) // Object.is equality
 
@@ -119,13 +119,13 @@ FAIL generated-tests/example__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.485 s
+Time:        5.436 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__get.test.ts.
 FAIL generated-tests/example__get.test.ts
-  GET /api/status [API-169226648608662-y17b1yvko]
-    ✕ should succeed with unique test data (119 ms)
+  GET /api/status [API-169397402963892-cfzo16xon]
+    ✕ should succeed with unique test data (480 ms)
 
-  ● GET /api/status [API-169226648608662-y17b1yvko] › should succeed with unique test data
+  ● GET /api/status [API-169397402963892-cfzo16xon] › should succeed with unique test data
 
     expect(received).toBe(expected) // Object.is equality
 
@@ -145,7 +145,7 @@ FAIL generated-tests/example__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.773 s
+Time:        4.85 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -164,7 +164,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23057ms
+### Duration: 21276ms
 
 ---
 
@@ -193,7 +193,7 @@ Node.js v20.19.3
       at Object.supertest (utils/httpTest.ts:61:13)
 
   console.log
-    Test is running with post /api/users?testSession=169225311497154-4w2qnduda
+    Test is running with post /api/users?testSession=169398318389979-oxwmhqd3h
 
       at new Test (utils/httpTest.ts:96:13)
 
@@ -241,7 +241,7 @@ FAIL generated-tests/example__post.test.ts
       at Object.supertest (utils/httpTest.ts:61:13)
 
     console.log
-      Test is running with post /api/users?testSession=169214076090608-gn0jbyoof
+      Test is running with post /api/users?testSession=169389032267310-mnri9p6ht
 
       at new Test (utils/httpTest.ts:96:13)
 
@@ -265,7 +265,7 @@ FAIL generated-tests/example__post.test.ts
 
       at Test.expect (utils/httpTest.ts:144:15)
 
-  ● POST /api/users [API-169214076090608-gn0jbyoof] › should succeed with unique test data
+  ● POST /api/users [API-169389032267310-mnri9p6ht] › should succeed with unique test data
 
     expect(received).toBe(expected) // Object.is equality
 
@@ -282,40 +282,16 @@ FAIL generated-tests/example__post.test.ts
 
       at Object.<anonymous> (generated-tests/example__post.test.ts:37:30)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.623 s
+Time:        8.452 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__post.test.ts.
 FAIL generated-tests/example__post.test.ts
-  POST /api/users [API-169225311497154-4w2qnduda]
-    ✕ should succeed with unique test data (193 ms)
+  POST /api/users [API-169398318389979-oxwmhqd3h]
+    ✕ should succeed with unique test data (151 ms)
 
-  ● POST /api/users [API-169225311497154-4w2qnduda] › should succeed with unique test data
+  ● POST /api/users [API-169398318389979-oxwmhqd3h] › should succeed with unique test data
 
     expect(received).toBe(expected) // Object.is equality
 
@@ -335,7 +311,7 @@ FAIL generated-tests/example__post.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.048 s
+Time:        4.369 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__post.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -354,7 +330,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22140ms
+### Duration: 21543ms
 
 ---
 
@@ -383,7 +359,7 @@ Node.js v20.19.3
       at Object.supertest (utils/httpTest.ts:61:13)
 
   console.log
-    Test is running with put /api/users/:id?testSession=169223139079585-jcdjt2mm9
+    Test is running with put /api/users/:id?testSession=169397387189762-cs0dpt1c2
 
       at new Test (utils/httpTest.ts:96:13)
 
@@ -431,7 +407,7 @@ FAIL generated-tests/example__put.test.ts
       at Object.supertest (utils/httpTest.ts:61:13)
 
     console.log
-      Test is running with put /api/users/:id?testSession=169213368464941-bdtk2ijjf
+      Test is running with put /api/users/:id?testSession=169388458682886-0b0iar7y9
 
       at new Test (utils/httpTest.ts:96:13)
 
@@ -455,7 +431,7 @@ FAIL generated-tests/example__put.test.ts
 
       at Test.expect (utils/httpTest.ts:144:15)
 
-  ● PUT /api/users/:id [API-169213368464941-bdtk2ijjf] › should succeed with unique test data
+  ● PUT /api/users/:id [API-169388458682886-0b0iar7y9] › should succeed with unique test data
 
     expect(received).toBe(expected) // Object.is equality
 
@@ -475,13 +451,13 @@ FAIL generated-tests/example__put.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.064 s
+Time:        8.392 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__put.test.ts.
 FAIL generated-tests/example__put.test.ts
-  PUT /api/users/:id [API-169223139079585-jcdjt2mm9]
-    ✕ should succeed with unique test data (239 ms)
+  PUT /api/users/:id [API-169397387189762-cs0dpt1c2]
+    ✕ should succeed with unique test data (249 ms)
 
-  ● PUT /api/users/:id [API-169223139079585-jcdjt2mm9] › should succeed with unique test data
+  ● PUT /api/users/:id [API-169397387189762-cs0dpt1c2] › should succeed with unique test data
 
     expect(received).toBe(expected) // Object.is equality
 
@@ -501,7 +477,7 @@ FAIL generated-tests/example__put.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.116 s
+Time:        4.199 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__put.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -520,7 +496,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20124ms
+### Duration: 21038ms
 
 ---
 
@@ -554,7 +530,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -564,7 +540,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.765 s
+Time:        4.344 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
   ● Test suite failed to run
@@ -592,7 +568,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -602,13 +578,13 @@ FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.515 s
+Time:        6.149 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
           ^
 
-Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generated-tests/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js
     at finalizeResolution (node:internal/modules/esm/resolve:283:11)
     at moduleResolve (node:internal/modules/esm/resolve:952:10)
     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
@@ -618,14 +594,14 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generat
     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
     at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
   code: 'ERR_MODULE_NOT_FOUND',
-  url: 'file:///home/runner/workspace/generated-tests/utils/httpTest.js'
+  url: 'file:///home/runner/workspace/utils/httpTest.js'
 }
 
 Node.js v20.19.3
 
 ```
 
-### Duration: 22675ms
+### Duration: 21084ms
 
 ---
 
@@ -659,7 +635,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -669,7 +645,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.9 s
+Time:        4.296 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
   ● Test suite failed to run
@@ -697,7 +673,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -707,13 +683,13 @@ FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.144 s
+Time:        5.204 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
           ^
 
-Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generated-tests/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js
     at finalizeResolution (node:internal/modules/esm/resolve:283:11)
     at moduleResolve (node:internal/modules/esm/resolve:952:10)
     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
@@ -723,14 +699,14 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generat
     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
     at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
   code: 'ERR_MODULE_NOT_FOUND',
-  url: 'file:///home/runner/workspace/generated-tests/utils/httpTest.js'
+  url: 'file:///home/runner/workspace/utils/httpTest.js'
 }
 
 Node.js v20.19.3
 
 ```
 
-### Duration: 22013ms
+### Duration: 19007ms
 
 ---
 
@@ -764,7 +740,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -774,7 +750,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.687 s
+Time:        4.71 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
   ● Test suite failed to run
@@ -802,7 +778,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -812,13 +788,13 @@ FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.883 s
+Time:        3.328 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
           ^
 
-Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generated-tests/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js
     at finalizeResolution (node:internal/modules/esm/resolve:283:11)
     at moduleResolve (node:internal/modules/esm/resolve:952:10)
     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
@@ -828,14 +804,14 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generat
     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
     at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
   code: 'ERR_MODULE_NOT_FOUND',
-  url: 'file:///home/runner/workspace/generated-tests/utils/httpTest.js'
+  url: 'file:///home/runner/workspace/utils/httpTest.js'
 }
 
 Node.js v20.19.3
 
 ```
 
-### Duration: 22588ms
+### Duration: 15797ms
 
 ---
 
@@ -869,17 +845,29 @@ FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.357 s
+Time:        4.776 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
   ● Test suite failed to run
@@ -907,7 +895,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -917,13 +905,13 @@ FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.039 s
+Time:        6.411 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
           ^
 
-Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generated-tests/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js
     at finalizeResolution (node:internal/modules/esm/resolve:283:11)
     at moduleResolve (node:internal/modules/esm/resolve:952:10)
     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
@@ -933,14 +921,14 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generat
     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
     at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
   code: 'ERR_MODULE_NOT_FOUND',
-  url: 'file:///home/runner/workspace/generated-tests/utils/httpTest.js'
+  url: 'file:///home/runner/workspace/utils/httpTest.js'
 }
 
 Node.js v20.19.3
 
 ```
 
-### Duration: 23000ms
+### Duration: 20874ms
 
 ---
 
@@ -974,7 +962,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -984,7 +972,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.909 s
+Time:        8.758 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
   ● Test suite failed to run
@@ -1012,7 +1000,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -1022,13 +1010,13 @@ FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.755 s
+Time:        2.882 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
           ^
 
-Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generated-tests/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js
     at finalizeResolution (node:internal/modules/esm/resolve:283:11)
     at moduleResolve (node:internal/modules/esm/resolve:952:10)
     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
@@ -1038,14 +1026,14 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generat
     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
     at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
   code: 'ERR_MODULE_NOT_FOUND',
-  url: 'file:///home/runner/workspace/generated-tests/utils/httpTest.js'
+  url: 'file:///home/runner/workspace/utils/httpTest.js'
 }
 
 Node.js v20.19.3
 
 ```
 
-### Duration: 21376ms
+### Duration: 22063ms
 
 ---
 
@@ -1102,11 +1090,11 @@ FAIL generated-tests/integration/example.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.335 s
+Time:        5.51 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example.test.ts.
 FAIL generated-tests/integration/example.test.ts
   Example Integration Tests
-    ✕ example integration works (215 ms)
+    ✕ example integration works (100 ms)
 
   ● Example Integration Tests › example integration works
 
@@ -1156,7 +1144,7 @@ FAIL generated-tests/integration/example.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.105 s
+Time:        5.929 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1175,7 +1163,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20892ms
+### Duration: 21288ms
 
 ---
 
@@ -1209,7 +1197,7 @@ FAIL generated-tests/integration/example__get.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/example__get.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -1219,7 +1207,7 @@ FAIL generated-tests/integration/example__get.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.819 s
+Time:        5.498 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.js.
 FAIL generated-tests/integration/example__get.test.js
   ● Test suite failed to run
@@ -1247,23 +1235,35 @@ FAIL generated-tests/integration/example__get.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/example__get.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.925 s
+Time:        4.427 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
           ^
 
-Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generated-tests/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/example__get.test.js
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/example__get.test.js
     at finalizeResolution (node:internal/modules/esm/resolve:283:11)
     at moduleResolve (node:internal/modules/esm/resolve:952:10)
     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
@@ -1273,14 +1273,14 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generat
     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
     at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
   code: 'ERR_MODULE_NOT_FOUND',
-  url: 'file:///home/runner/workspace/generated-tests/utils/httpTest.js'
+  url: 'file:///home/runner/workspace/utils/httpTest.js'
 }
 
 Node.js v20.19.3
 
 ```
 
-### Duration: 21808ms
+### Duration: 19183ms
 
 ---
 
@@ -1318,7 +1318,7 @@ FAIL generated-tests/integration/example__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.315 s
+Time:        5.35 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.ts.
 FAIL generated-tests/integration/example__get.test.ts
   ● Test suite failed to run
@@ -1350,7 +1350,7 @@ FAIL generated-tests/integration/example__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.23 s
+Time:        6.167 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1369,7 +1369,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23216ms
+### Duration: 20964ms
 
 ---
 
@@ -1403,7 +1403,7 @@ FAIL generated-tests/integration/example__post.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/example__post.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -1413,7 +1413,7 @@ FAIL generated-tests/integration/example__post.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.186 s
+Time:        5.56 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.js.
 FAIL generated-tests/integration/example__post.test.js
   ● Test suite failed to run
@@ -1441,7 +1441,7 @@ FAIL generated-tests/integration/example__post.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/example__post.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -1451,13 +1451,13 @@ FAIL generated-tests/integration/example__post.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.755 s
+Time:        4.4 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
           ^
 
-Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generated-tests/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/example__post.test.js
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/example__post.test.js
     at finalizeResolution (node:internal/modules/esm/resolve:283:11)
     at moduleResolve (node:internal/modules/esm/resolve:952:10)
     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
@@ -1467,14 +1467,14 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generat
     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
     at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
   code: 'ERR_MODULE_NOT_FOUND',
-  url: 'file:///home/runner/workspace/generated-tests/utils/httpTest.js'
+  url: 'file:///home/runner/workspace/utils/httpTest.js'
 }
 
 Node.js v20.19.3
 
 ```
 
-### Duration: 20752ms
+### Duration: 22051ms
 
 ---
 
@@ -1512,7 +1512,7 @@ FAIL generated-tests/integration/example__post.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        8.429 s
+Time:        6.962 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.ts.
 FAIL generated-tests/integration/example__post.test.ts
   ● Test suite failed to run
@@ -1544,7 +1544,7 @@ FAIL generated-tests/integration/example__post.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.646 s
+Time:        4.662 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1563,7 +1563,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23013ms
+### Duration: 21142ms
 
 ---
 
@@ -1597,7 +1597,7 @@ FAIL generated-tests/integration/example__put.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/example__put.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -1607,7 +1607,7 @@ FAIL generated-tests/integration/example__put.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        8.337 s
+Time:        7.212 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.js.
 FAIL generated-tests/integration/example__put.test.js
   ● Test suite failed to run
@@ -1635,7 +1635,7 @@ FAIL generated-tests/integration/example__put.test.js
     Details:
 
     /home/runner/workspace/generated-tests/integration/example__put.test.js:2
-    import * as httpTest from '../utils/httpTest.js';
+    import * as httpTest from '../../utils/httpTest.js';
     ^^^^^^
 
     SyntaxError: Cannot use import statement outside a module
@@ -1645,13 +1645,13 @@ FAIL generated-tests/integration/example__put.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.967 s
+Time:        4.365 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
           ^
 
-Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generated-tests/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/example__put.test.js
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/utils/httpTest.js' imported from /home/runner/workspace/generated-tests/integration/example__put.test.js
     at finalizeResolution (node:internal/modules/esm/resolve:283:11)
     at moduleResolve (node:internal/modules/esm/resolve:952:10)
     at defaultResolve (node:internal/modules/esm/resolve:1188:11)
@@ -1661,14 +1661,14 @@ Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/home/runner/workspace/generat
     at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:236:38)
     at ModuleJob._link (node:internal/modules/esm/module_job:130:49) {
   code: 'ERR_MODULE_NOT_FOUND',
-  url: 'file:///home/runner/workspace/generated-tests/utils/httpTest.js'
+  url: 'file:///home/runner/workspace/utils/httpTest.js'
 }
 
 Node.js v20.19.3
 
 ```
 
-### Duration: 23413ms
+### Duration: 21234ms
 
 ---
 
@@ -1706,7 +1706,7 @@ FAIL generated-tests/integration/example__put.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.083 s
+Time:        6.334 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.ts.
 FAIL generated-tests/integration/example__put.test.ts
   ● Test suite failed to run
@@ -1738,7 +1738,7 @@ FAIL generated-tests/integration/example__put.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.391 s
+Time:        5.219 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1757,7 +1757,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22619ms
+### Duration: 21611ms
 
 ---
 
@@ -1795,7 +1795,7 @@ FAIL generated-tests/integration/utils__httpTest__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.721 s
+Time:        5.82 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts.
 FAIL generated-tests/integration/utils__httpTest__get.test.ts
   ● Test suite failed to run
@@ -1827,7 +1827,7 @@ FAIL generated-tests/integration/utils__httpTest__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.119 s
+Time:        5.222 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1846,7 +1846,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22011ms
+### Duration: 21242ms
 
 ---
 
@@ -1903,11 +1903,11 @@ FAIL ./index.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        7.512 s
+Time:        6.956 s
 Ran all test suites matching /home/runner/workspace/index.test.ts.
 FAIL ./index.test.ts
   index.ts basic exports
-    ✕ module exports exist (21 ms)
+    ✕ module exports exist (40 ms)
 
   ● index.ts basic exports › module exports exist
 
@@ -1957,7 +1957,7 @@ FAIL ./index.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.74 s
+Time:        2.837 s
 Ran all test suites matching /home/runner/workspace/index.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1976,7 +1976,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 17296ms
+### Duration: 17126ms
 
 ---
 
@@ -2032,11 +2032,11 @@ FAIL lib/envUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.119 s
+Time:        6.923 s
 Ran all test suites matching /home/runner/workspace/lib/envUtils.test.ts.
 FAIL lib/envUtils.test.ts
   envUtils.ts basic exports
-    ✕ module loads without errors (18 ms)
+    ✕ module loads without errors (24 ms)
 
   ● envUtils.ts basic exports › module loads without errors
 
@@ -2085,7 +2085,7 @@ FAIL lib/envUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.123 s
+Time:        2.88 s
 Ran all test suites matching /home/runner/workspace/lib/envUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2104,7 +2104,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 16938ms
+### Duration: 18655ms
 
 ---
 
@@ -2132,11 +2132,11 @@ FAIL lib/stubs.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.864 s
+Time:        7.036 s
 Ran all test suites matching /home/runner/workspace/lib/stubs.test.ts.
 FAIL lib/stubs.test.ts
   stubs.ts basic exports
-    ✕ module loads without errors (9 ms)
+    ✕ module loads without errors (27 ms)
 
   ● stubs.ts basic exports › module loads without errors
 
@@ -2157,7 +2157,7 @@ FAIL lib/stubs.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.452 s
+Time:        2.735 s
 Ran all test suites matching /home/runner/workspace/lib/stubs.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2176,7 +2176,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 16584ms
+### Duration: 17864ms
 
 ---
 
@@ -2230,11 +2230,11 @@ FAIL lib/testGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        8.245 s
+Time:        4.4 s
 Ran all test suites matching /home/runner/workspace/lib/testGenerator.test.ts.
 FAIL lib/testGenerator.test.ts
   testGenerator.ts basic exports
-    ✕ module loads without errors (11 ms)
+    ✕ module loads without errors (15 ms)
 
   ● testGenerator.ts basic exports › module loads without errors
 
@@ -2281,7 +2281,7 @@ FAIL lib/testGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.15 s
+Time:        3.434 s
 Ran all test suites matching /home/runner/workspace/lib/testGenerator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2300,7 +2300,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 17247ms
+### Duration: 17628ms
 
 ---
 
@@ -2356,11 +2356,11 @@ FAIL lib/testUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.818 s
+Time:        5.794 s
 Ran all test suites matching /home/runner/workspace/lib/testUtils.test.ts.
 FAIL lib/testUtils.test.ts
   testUtils.ts basic exports
-    ✕ module loads without errors (20 ms)
+    ✕ module loads without errors (16 ms)
 
   ● testUtils.ts basic exports › module loads without errors
 
@@ -2409,7 +2409,7 @@ FAIL lib/testUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.232 s
+Time:        3.1 s
 Ran all test suites matching /home/runner/workspace/lib/testUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2428,7 +2428,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 16241ms
+### Duration: 18579ms
 
 ---
 
@@ -2484,7 +2484,7 @@ FAIL manual-tests/axiosStub.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.419 s
+Time:        5.921 s
 Ran all test suites matching /home/runner/workspace/manual-tests/axiosStub.test.ts.
 FAIL manual-tests/axiosStub.test.ts
   ● Test suite failed to run
@@ -2534,7 +2534,7 @@ FAIL manual-tests/axiosStub.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.801 s
+Time:        3.809 s
 Ran all test suites matching /home/runner/workspace/manual-tests/axiosStub.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2553,7 +2553,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 16682ms
+### Duration: 18156ms
 
 ---
 
@@ -2610,11 +2610,11 @@ FAIL manual-tests/comprehensive.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.002 s
+Time:        6.275 s
 Ran all test suites matching /home/runner/workspace/manual-tests/comprehensive.test.ts.
 FAIL manual-tests/comprehensive.test.ts
   Comprehensive Tests
-    ✕ comprehensive functionality works (31 ms)
+    ✕ comprehensive functionality works (24 ms)
 
   ● Comprehensive Tests › comprehensive functionality works
 
@@ -2664,7 +2664,7 @@ FAIL manual-tests/comprehensive.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.829 s
+Time:        2.542 s
 Ran all test suites matching /home/runner/workspace/manual-tests/comprehensive.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2683,7 +2683,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 13898ms
+### Duration: 18636ms
 
 ---
 
@@ -2737,11 +2737,11 @@ FAIL manual-tests/dualModuleGeneration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.116 s
+Time:        6.769 s
 Ran all test suites matching /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts.
 FAIL manual-tests/dualModuleGeneration.test.ts
   Dual Module Generation Tests
-    ✕ TypeScript ES module generation works (15 ms)
+    ✕ TypeScript ES module generation works (13 ms)
 
   ● Dual Module Generation Tests › TypeScript ES module generation works
 
@@ -2788,7 +2788,7 @@ FAIL manual-tests/dualModuleGeneration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.522 s
+Time:        3.109 s
 Ran all test suites matching /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2807,7 +2807,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 16673ms
+### Duration: 17884ms
 
 ---
 
@@ -2864,11 +2864,11 @@ FAIL manual-tests/edgeCases.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.275 s
+Time:        6.119 s
 Ran all test suites matching /home/runner/workspace/manual-tests/edgeCases.test.ts.
 FAIL manual-tests/edgeCases.test.ts
   Edge Cases Tests
-    ✕ handles edge cases correctly (119 ms)
+    ✕ handles edge cases correctly (60 ms)
 
   ● Edge Cases Tests › handles edge cases correctly
 
@@ -2918,7 +2918,7 @@ FAIL manual-tests/edgeCases.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.002 s
+Time:        3.882 s
 Ran all test suites matching /home/runner/workspace/manual-tests/edgeCases.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2937,7 +2937,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 15648ms
+### Duration: 18507ms
 
 ---
 
@@ -2994,11 +2994,11 @@ FAIL manual-tests/indexExports.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.598 s
+Time:        5.164 s
 Ran all test suites matching /home/runner/workspace/manual-tests/indexExports.test.ts.
 FAIL manual-tests/indexExports.test.ts
   Index Exports Tests
-    ✕ index exports are available (44 ms)
+    ✕ index exports are available (24 ms)
 
   ● Index Exports Tests › index exports are available
 
@@ -3048,7 +3048,7 @@ FAIL manual-tests/indexExports.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.104 s
+Time:        3.009 s
 Ran all test suites matching /home/runner/workspace/manual-tests/indexExports.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3067,7 +3067,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 16553ms
+### Duration: 18203ms
 
 ---
 
@@ -3124,11 +3124,11 @@ FAIL manual-tests/integration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.651 s
+Time:        6.287 s
 Ran all test suites matching /home/runner/workspace/manual-tests/integration.test.ts.
 FAIL manual-tests/integration.test.ts
   Integration Tests
-    ✕ core modules integrate correctly (22 ms)
+    ✕ core modules integrate correctly (23 ms)
 
   ● Integration Tests › core modules integrate correctly
 
@@ -3178,7 +3178,7 @@ FAIL manual-tests/integration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        1.568 s
+Time:        2.056 s
 Ran all test suites matching /home/runner/workspace/manual-tests/integration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3197,7 +3197,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 14694ms
+### Duration: 13780ms
 
 ---
 
@@ -3251,7 +3251,7 @@ FAIL manual-tests/mockConsole.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.81 s
+Time:        4.843 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockConsole.test.ts.
 FAIL manual-tests/mockConsole.test.ts
   ● Test suite failed to run
@@ -3299,7 +3299,7 @@ FAIL manual-tests/mockConsole.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.191 s
+Time:        2.159 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockConsole.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3318,7 +3318,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 13963ms
+### Duration: 13568ms
 
 ---
 
@@ -3372,14 +3372,38 @@ FAIL manual-tests/moduleSystemIntegration.test.ts
       at manual-tests/moduleSystemIntegration.test.ts:4:17
       at Object.<anonymous> (manual-tests/moduleSystemIntegration.test.ts:4:17)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.812 s
+Time:        6.181 s
 Ran all test suites matching /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts.
 FAIL manual-tests/moduleSystemIntegration.test.ts
   Module System Integration Tests
-    ✕ ES module integration works (36 ms)
+    ✕ ES module integration works (38 ms)
 
   ● Module System Integration Tests › ES module integration works
 
@@ -3429,7 +3453,7 @@ FAIL manual-tests/moduleSystemIntegration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        1.853 s
+Time:        1.863 s
 Ran all test suites matching /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3448,7 +3472,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 13935ms
+### Duration: 14208ms
 
 ---
 
@@ -3505,11 +3529,11 @@ FAIL manual-tests/performance.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.57 s
+Time:        5.58 s
 Ran all test suites matching /home/runner/workspace/manual-tests/performance.test.ts.
 FAIL manual-tests/performance.test.ts
   Performance Tests
-    ✕ performance is acceptable (18 ms)
+    ✕ performance is acceptable (22 ms)
 
   ● Performance Tests › performance is acceptable
 
@@ -3559,7 +3583,7 @@ FAIL manual-tests/performance.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        1.606 s
+Time:        2 s
 Ran all test suites matching /home/runner/workspace/manual-tests/performance.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3578,7 +3602,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 14667ms
+### Duration: 14133ms
 
 ---
 
@@ -3632,12 +3656,12 @@ FAIL manual-tests/resolveStubPaths.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 passed, 2 total
 Snapshots:   0 total
-Time:        6.373 s
+Time:        4.691 s
 Ran all test suites matching /home/runner/workspace/manual-tests/resolveStubPaths.test.ts.
 FAIL manual-tests/resolveStubPaths.test.ts
   Stub Path Resolution Tests
-    ✕ stubs resolve correctly after setup (9 ms)
-    ✓ stub modules provide expected interfaces (99 ms)
+    ✕ stubs resolve correctly after setup (11 ms)
+    ✓ stub modules provide expected interfaces (103 ms)
 
   ● Stub Path Resolution Tests › stubs resolve correctly after setup
 
@@ -3684,7 +3708,7 @@ FAIL manual-tests/resolveStubPaths.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 passed, 2 total
 Snapshots:   0 total
-Time:        1.657 s
+Time:        1.766 s, estimated 2 s
 Ran all test suites matching /home/runner/workspace/manual-tests/resolveStubPaths.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3703,7 +3727,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 14638ms
+### Duration: 14400ms
 
 ---
 
@@ -3755,7 +3779,7 @@ FAIL manual-tests/setupMultiple.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.22 s
+Time:        4.081 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupMultiple.test.ts.
 FAIL manual-tests/setupMultiple.test.ts
   ● Test suite failed to run
@@ -3801,7 +3825,7 @@ FAIL manual-tests/setupMultiple.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.907 s
+Time:        1.859 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupMultiple.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3820,7 +3844,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 13728ms
+### Duration: 13915ms
 
 ---
 
@@ -3872,7 +3896,7 @@ FAIL manual-tests/setupResolution.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.342 s
+Time:        4.29 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupResolution.test.ts.
 FAIL manual-tests/setupResolution.test.ts
   ● Test suite failed to run
@@ -3918,7 +3942,7 @@ FAIL manual-tests/setupResolution.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.694 s
+Time:        1.488 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupResolution.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3937,7 +3961,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 14882ms
+### Duration: 12900ms
 
 ---
 
@@ -3963,10 +3987,10 @@ FAIL manual-tests/stubMethod.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.79 s
+Time:        5.249 s
 Ran all test suites matching /home/runner/workspace/manual-tests/stubMethod.test.ts.
 FAIL manual-tests/stubMethod.test.ts
-  ✕ stubMethod replaces and restores methods (8 ms)
+  ✕ stubMethod replaces and restores methods (3 ms)
 
   ● stubMethod replaces and restores methods
 
@@ -3985,7 +4009,7 @@ FAIL manual-tests/stubMethod.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        1.575 s
+Time:        1.473 s
 Ran all test suites matching /home/runner/workspace/manual-tests/stubMethod.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4004,7 +4028,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 15008ms
+### Duration: 12771ms
 
 ---
 
@@ -4043,7 +4067,7 @@ FAIL manual-tests/testGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.732 s
+Time:        4.115 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testGenerator.test.ts.
 FAIL manual-tests/testGenerator.test.ts
   testGenerator.ts basic exports
@@ -4079,7 +4103,7 @@ FAIL manual-tests/testGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.108 s
+Time:        1.64 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testGenerator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4098,7 +4122,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 14090ms
+### Duration: 12339ms
 
 ---
 
@@ -4152,7 +4176,7 @@ FAIL manual-tests/testHelpers.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.06 s
+Time:        3.725 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testHelpers.test.ts.
 FAIL manual-tests/testHelpers.test.ts
   ● Test suite failed to run
@@ -4200,7 +4224,7 @@ FAIL manual-tests/testHelpers.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.783 s
+Time:        1.536 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testHelpers.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4219,7 +4243,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 14743ms
+### Duration: 12525ms
 
 ---
 
@@ -4271,7 +4295,7 @@ FAIL ./setup.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.97 s
+Time:        4.455 s
 Ran all test suites matching /home/runner/workspace/setup.test.ts.
 FAIL ./setup.test.ts
   ● Test suite failed to run
@@ -4317,7 +4341,7 @@ FAIL ./setup.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.634 s
+Time:        1.618 s
 Ran all test suites matching /home/runner/workspace/setup.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4336,7 +4360,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 14979ms
+### Duration: 12072ms
 
 ---
 
@@ -4390,11 +4414,11 @@ FAIL utils/helpers/moduleReloader.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.662 s
+Time:        4.649 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/moduleReloader.test.ts.
 FAIL utils/helpers/moduleReloader.test.ts
   moduleReloader.ts basic exports
-    ✕ module loads without errors (8 ms)
+    ✕ module loads without errors (9 ms)
 
   ● moduleReloader.ts basic exports › module loads without errors
 
@@ -4441,7 +4465,7 @@ FAIL utils/helpers/moduleReloader.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        0.961 s, estimated 1 s
+Time:        0.974 s, estimated 1 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/moduleReloader.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4460,7 +4484,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 12819ms
+### Duration: 11814ms
 
 ---
 
@@ -4515,11 +4539,11 @@ FAIL utils/testHelpers.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.973 s
+Time:        2.397 s
 Ran all test suites matching /home/runner/workspace/utils/testHelpers.test.ts.
 FAIL utils/testHelpers.test.ts
   testHelpers.ts basic exports
-    ✕ module loads without errors (13 ms)
+    ✕ module loads without errors (11 ms)
 
   ● testHelpers.ts basic exports › module loads without errors
 
@@ -4567,7 +4591,7 @@ FAIL utils/testHelpers.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        0.998 s, estimated 1 s
+Time:        0.939 s, estimated 1 s
 Ran all test suites matching /home/runner/workspace/utils/testHelpers.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4586,7 +4610,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 7588ms
+### Duration: 6774ms
 
 ---
 
@@ -4594,4 +4618,4 @@ Node.js v20.19.3
 
 - Total failed tests: 39
 - Failed test files: /home/runner/workspace/generated-tests/example__get.test.ts, /home/runner/workspace/generated-tests/example__post.test.ts, /home/runner/workspace/generated-tests/example__put.test.ts, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js, /home/runner/workspace/generated-tests/integration/example.test.ts, /home/runner/workspace/generated-tests/integration/example__get.test.js, /home/runner/workspace/generated-tests/integration/example__get.test.ts, /home/runner/workspace/generated-tests/integration/example__post.test.js, /home/runner/workspace/generated-tests/integration/example__post.test.ts, /home/runner/workspace/generated-tests/integration/example__put.test.js, /home/runner/workspace/generated-tests/integration/example__put.test.ts, /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts, /home/runner/workspace/index.test.ts, /home/runner/workspace/lib/envUtils.test.ts, /home/runner/workspace/lib/stubs.test.ts, /home/runner/workspace/lib/testGenerator.test.ts, /home/runner/workspace/lib/testUtils.test.ts, /home/runner/workspace/manual-tests/axiosStub.test.ts, /home/runner/workspace/manual-tests/comprehensive.test.ts, /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts, /home/runner/workspace/manual-tests/edgeCases.test.ts, /home/runner/workspace/manual-tests/indexExports.test.ts, /home/runner/workspace/manual-tests/integration.test.ts, /home/runner/workspace/manual-tests/mockConsole.test.ts, /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts, /home/runner/workspace/manual-tests/performance.test.ts, /home/runner/workspace/manual-tests/resolveStubPaths.test.ts, /home/runner/workspace/manual-tests/setupMultiple.test.ts, /home/runner/workspace/manual-tests/setupResolution.test.ts, /home/runner/workspace/manual-tests/stubMethod.test.ts, /home/runner/workspace/manual-tests/testGenerator.test.ts, /home/runner/workspace/manual-tests/testHelpers.test.ts, /home/runner/workspace/setup.test.ts, /home/runner/workspace/utils/helpers/moduleReloader.test.ts, /home/runner/workspace/utils/testHelpers.test.ts
-- Generated: 2025-09-01T10:52:39.511Z
+- Generated: 2025-09-01T10:55:28.482Z

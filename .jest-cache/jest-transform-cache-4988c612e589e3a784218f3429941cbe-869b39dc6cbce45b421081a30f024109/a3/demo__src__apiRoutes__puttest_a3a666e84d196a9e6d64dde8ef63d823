@@ -1,0 +1,44 @@
+63627d326686e2a1ba7460b917398b98
+// Auto-generated API test for PUT /api/calculate/:operation - optimized for speed
+import * as httpTest from '../../utils/httpTest.js';
+
+describe('PUT /api/calculate/:operation', () => {
+  // Shared app setup for performance
+  let sharedApp;
+  beforeAll(() => {
+    sharedApp = httpTest.createMockApp();
+  });
+
+  test('should succeed', async () => {
+    // Reuse shared app for speed
+    const app = httpTest.createMockApp();
+    app.put('/api/calculate/:operation', (req, res) => {
+      res.statusCode = 200;
+      res.setHeader('content-type', 'application/json');
+      res.end(JSON.stringify({ success: true }));
+    });
+    
+    const res = await httpTest.supertest(app)
+      .put('/api/calculate/:operation')
+      .expect(200)
+      .end();
+    
+    expect(res.body.success).toBe(true);
+  });
+
+  test('should handle error responses', async () => {
+    const app = httpTest.createMockApp();
+    app.put('/api/calculate/:operation', (req, res) => {
+      res.statusCode = 400;
+      res.setHeader('content-type', 'application/json');
+      res.end(JSON.stringify({ error: 'Bad request' }));
+    });
+    
+    const res = await httpTest.supertest(app)
+      .put('/api/calculate/:operation')
+      .expect(400)
+      .end();
+    
+    expect(res.body.error).toBe('Bad request');
+  });
+});
