@@ -1,0 +1,101 @@
+a9946e6e55d401effad5491f4a8497ae
+"use strict";
+/**
+ * Setup and Initialization Utilities - TypeScript ES Module Implementation
+ *
+ * This module provides setup functionality for the qtests framework.
+ * The setup function modifies global Node.js behavior to enable automatic
+ * stub resolution, which is essential for seamless testing.
+ *
+ * Design philosophy:
+ * - Explicit setup to avoid unintended side effects
+ * - Clear separation of setup from other utilities
+ * - Comprehensive error handling and logging
+ * - Safe to call multiple times
+ *
+ * Why explicit setup is necessary:
+ * 1. Modifying Node.js module resolution is a global side effect
+ * 2. Users should explicitly opt-in to this behavior modification
+ * 3. Setup timing is critical - must happen before module requires
+ * 4. Clear separation makes it obvious when global behavior is being changed
+ *
+ * Alternative approaches considered:
+ * - Automatic setup on require: Rejected due to hidden side effects
+ * - Setup in individual utilities: Rejected due to timing complexity
+ * - Multiple setup functions: Rejected for simplicity
+ *
+ * Current approach benefits:
+ * - Clear, explicit user intent required
+ * - Single point of global behavior modification
+ * - Easy to understand and debug
+ * - Follows principle of least surprise
+ */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.setup = setup;
+/**
+ * Initialize qtests framework with automatic stub resolution
+ *
+ * This function modifies Node.js module resolution to automatically
+ * substitute stub implementations for real modules during testing.
+ *
+ * Implementation rationale:
+ * 1. Function wrapper provides explicit call syntax for users
+ * 2. Lazy loading of setup module prevents accidental side effects
+ * 3. Error handling ensures setup failures are clearly reported
+ * 4. Logging provides visibility into setup process for debugging
+ *
+ * Why a function wrapper instead of direct require:
+ * - Makes setup intention explicit in user code
+ * - Allows error handling and logging at the API level
+ * - Provides a clear point for future enhancement (parameters, options)
+ * - Follows common Node.js patterns for initialization functions
+ *
+ * Critical timing requirement:
+ * This function MUST be called before requiring any modules that need stubbing.
+ * If axios or winston are required before setup(), they will be the real modules.
+ */
+async function setup() {
+    console.log(`setup is running with none`); // logging function start per requirements
+    try {
+        await Promise.resolve().then(() => __importStar(require('../setup.js'))); // load setup implementation with ES modules
+        console.log(`setup has run resulting in module resolution modification`); // logging completion per requirements
+    }
+    catch (error) {
+        console.log(`setup error: ${error.message}`); // error logging per requirements
+        throw error;
+    }
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9saWIvc2V0dXAudHMiLCJtYXBwaW5ncyI6IjtBQUFBOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQTZCRzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFzQ0Qsc0JBQUs7QUFwQ1A7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQXFCRztBQUNILEtBQUssVUFBVSxLQUFLO0lBQ2xCLE9BQU8sQ0FBQyxHQUFHLENBQUMsNEJBQTRCLENBQUMsQ0FBQyxDQUFDLDBDQUEwQztJQUVyRixJQUFJLENBQUM7UUFDSCx3REFBYSxhQUFhLEdBQUMsQ0FBQyxDQUFDLDRDQUE0QztRQUN6RSxPQUFPLENBQUMsR0FBRyxDQUFDLDJEQUEyRCxDQUFDLENBQUMsQ0FBQyxzQ0FBc0M7SUFDbEgsQ0FBQztJQUFDLE9BQU8sS0FBVSxFQUFFLENBQUM7UUFDcEIsT0FBTyxDQUFDLEdBQUcsQ0FBQyxnQkFBZ0IsS0FBSyxDQUFDLE9BQU8sRUFBRSxDQUFDLENBQUMsQ0FBQyxpQ0FBaUM7UUFDL0UsTUFBTSxLQUFLLENBQUM7SUFDZCxDQUFDO0FBQ0gsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL2xpYi9zZXR1cC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIFNldHVwIGFuZCBJbml0aWFsaXphdGlvbiBVdGlsaXRpZXMgLSBUeXBlU2NyaXB0IEVTIE1vZHVsZSBJbXBsZW1lbnRhdGlvblxuICogXG4gKiBUaGlzIG1vZHVsZSBwcm92aWRlcyBzZXR1cCBmdW5jdGlvbmFsaXR5IGZvciB0aGUgcXRlc3RzIGZyYW1ld29yay5cbiAqIFRoZSBzZXR1cCBmdW5jdGlvbiBtb2RpZmllcyBnbG9iYWwgTm9kZS5qcyBiZWhhdmlvciB0byBlbmFibGUgYXV0b21hdGljXG4gKiBzdHViIHJlc29sdXRpb24sIHdoaWNoIGlzIGVzc2VudGlhbCBmb3Igc2VhbWxlc3MgdGVzdGluZy5cbiAqIFxuICogRGVzaWduIHBoaWxvc29waHk6XG4gKiAtIEV4cGxpY2l0IHNldHVwIHRvIGF2b2lkIHVuaW50ZW5kZWQgc2lkZSBlZmZlY3RzXG4gKiAtIENsZWFyIHNlcGFyYXRpb24gb2Ygc2V0dXAgZnJvbSBvdGhlciB1dGlsaXRpZXNcbiAqIC0gQ29tcHJlaGVuc2l2ZSBlcnJvciBoYW5kbGluZyBhbmQgbG9nZ2luZ1xuICogLSBTYWZlIHRvIGNhbGwgbXVsdGlwbGUgdGltZXNcbiAqIFxuICogV2h5IGV4cGxpY2l0IHNldHVwIGlzIG5lY2Vzc2FyeTpcbiAqIDEuIE1vZGlmeWluZyBOb2RlLmpzIG1vZHVsZSByZXNvbHV0aW9uIGlzIGEgZ2xvYmFsIHNpZGUgZWZmZWN0XG4gKiAyLiBVc2VycyBzaG91bGQgZXhwbGljaXRseSBvcHQtaW4gdG8gdGhpcyBiZWhhdmlvciBtb2RpZmljYXRpb25cbiAqIDMuIFNldHVwIHRpbWluZyBpcyBjcml0aWNhbCAtIG11c3QgaGFwcGVuIGJlZm9yZSBtb2R1bGUgcmVxdWlyZXNcbiAqIDQuIENsZWFyIHNlcGFyYXRpb24gbWFrZXMgaXQgb2J2aW91cyB3aGVuIGdsb2JhbCBiZWhhdmlvciBpcyBiZWluZyBjaGFuZ2VkXG4gKiBcbiAqIEFsdGVybmF0aXZlIGFwcHJvYWNoZXMgY29uc2lkZXJlZDpcbiAqIC0gQXV0b21hdGljIHNldHVwIG9uIHJlcXVpcmU6IFJlamVjdGVkIGR1ZSB0byBoaWRkZW4gc2lkZSBlZmZlY3RzXG4gKiAtIFNldHVwIGluIGluZGl2aWR1YWwgdXRpbGl0aWVzOiBSZWplY3RlZCBkdWUgdG8gdGltaW5nIGNvbXBsZXhpdHlcbiAqIC0gTXVsdGlwbGUgc2V0dXAgZnVuY3Rpb25zOiBSZWplY3RlZCBmb3Igc2ltcGxpY2l0eVxuICogXG4gKiBDdXJyZW50IGFwcHJvYWNoIGJlbmVmaXRzOlxuICogLSBDbGVhciwgZXhwbGljaXQgdXNlciBpbnRlbnQgcmVxdWlyZWRcbiAqIC0gU2luZ2xlIHBvaW50IG9mIGdsb2JhbCBiZWhhdmlvciBtb2RpZmljYXRpb25cbiAqIC0gRWFzeSB0byB1bmRlcnN0YW5kIGFuZCBkZWJ1Z1xuICogLSBGb2xsb3dzIHByaW5jaXBsZSBvZiBsZWFzdCBzdXJwcmlzZVxuICovXG5cbi8qKlxuICogSW5pdGlhbGl6ZSBxdGVzdHMgZnJhbWV3b3JrIHdpdGggYXV0b21hdGljIHN0dWIgcmVzb2x1dGlvblxuICogXG4gKiBUaGlzIGZ1bmN0aW9uIG1vZGlmaWVzIE5vZGUuanMgbW9kdWxlIHJlc29sdXRpb24gdG8gYXV0b21hdGljYWxseVxuICogc3Vic3RpdHV0ZSBzdHViIGltcGxlbWVudGF0aW9ucyBmb3IgcmVhbCBtb2R1bGVzIGR1cmluZyB0ZXN0aW5nLlxuICogXG4gKiBJbXBsZW1lbnRhdGlvbiByYXRpb25hbGU6XG4gKiAxLiBGdW5jdGlvbiB3cmFwcGVyIHByb3ZpZGVzIGV4cGxpY2l0IGNhbGwgc3ludGF4IGZvciB1c2Vyc1xuICogMi4gTGF6eSBsb2FkaW5nIG9mIHNldHVwIG1vZHVsZSBwcmV2ZW50cyBhY2NpZGVudGFsIHNpZGUgZWZmZWN0c1xuICogMy4gRXJyb3IgaGFuZGxpbmcgZW5zdXJlcyBzZXR1cCBmYWlsdXJlcyBhcmUgY2xlYXJseSByZXBvcnRlZFxuICogNC4gTG9nZ2luZyBwcm92aWRlcyB2aXNpYmlsaXR5IGludG8gc2V0dXAgcHJvY2VzcyBmb3IgZGVidWdnaW5nXG4gKiBcbiAqIFdoeSBhIGZ1bmN0aW9uIHdyYXBwZXIgaW5zdGVhZCBvZiBkaXJlY3QgcmVxdWlyZTpcbiAqIC0gTWFrZXMgc2V0dXAgaW50ZW50aW9uIGV4cGxpY2l0IGluIHVzZXIgY29kZVxuICogLSBBbGxvd3MgZXJyb3IgaGFuZGxpbmcgYW5kIGxvZ2dpbmcgYXQgdGhlIEFQSSBsZXZlbFxuICogLSBQcm92aWRlcyBhIGNsZWFyIHBvaW50IGZvciBmdXR1cmUgZW5oYW5jZW1lbnQgKHBhcmFtZXRlcnMsIG9wdGlvbnMpXG4gKiAtIEZvbGxvd3MgY29tbW9uIE5vZGUuanMgcGF0dGVybnMgZm9yIGluaXRpYWxpemF0aW9uIGZ1bmN0aW9uc1xuICogXG4gKiBDcml0aWNhbCB0aW1pbmcgcmVxdWlyZW1lbnQ6XG4gKiBUaGlzIGZ1bmN0aW9uIE1VU1QgYmUgY2FsbGVkIGJlZm9yZSByZXF1aXJpbmcgYW55IG1vZHVsZXMgdGhhdCBuZWVkIHN0dWJiaW5nLlxuICogSWYgYXhpb3Mgb3Igd2luc3RvbiBhcmUgcmVxdWlyZWQgYmVmb3JlIHNldHVwKCksIHRoZXkgd2lsbCBiZSB0aGUgcmVhbCBtb2R1bGVzLlxuICovXG5hc3luYyBmdW5jdGlvbiBzZXR1cCgpOiBQcm9taXNlPHZvaWQ+IHtcbiAgY29uc29sZS5sb2coYHNldHVwIGlzIHJ1bm5pbmcgd2l0aCBub25lYCk7IC8vIGxvZ2dpbmcgZnVuY3Rpb24gc3RhcnQgcGVyIHJlcXVpcmVtZW50c1xuICBcbiAgdHJ5IHtcbiAgICBhd2FpdCBpbXBvcnQoJy4uL3NldHVwLmpzJyk7IC8vIGxvYWQgc2V0dXAgaW1wbGVtZW50YXRpb24gd2l0aCBFUyBtb2R1bGVzXG4gICAgY29uc29sZS5sb2coYHNldHVwIGhhcyBydW4gcmVzdWx0aW5nIGluIG1vZHVsZSByZXNvbHV0aW9uIG1vZGlmaWNhdGlvbmApOyAvLyBsb2dnaW5nIGNvbXBsZXRpb24gcGVyIHJlcXVpcmVtZW50c1xuICB9IGNhdGNoIChlcnJvcjogYW55KSB7XG4gICAgY29uc29sZS5sb2coYHNldHVwIGVycm9yOiAke2Vycm9yLm1lc3NhZ2V9YCk7IC8vIGVycm9yIGxvZ2dpbmcgcGVyIHJlcXVpcmVtZW50c1xuICAgIHRocm93IGVycm9yO1xuICB9XG59XG5cbi8vIGV4cG9ydCBzZXR1cCB1dGlsaXRpZXMgdXNpbmcgRVMgbW9kdWxlIHN5bnRheFxuZXhwb3J0IHtcbiAgc2V0dXAgLy8gY2FsbCB0aGlzIHRvIGFjdGl2YXRlIHN0dWJzIHdoZW4gZGVzaXJlZFxufTsiXSwidmVyc2lvbiI6M30=

@@ -30,7 +30,6 @@
   "dependencies": {
     "@types/node": "^24.0.0",
     "axios": "^1.9.0",
-    "qerrors": "^1.2.6",
     "tsx": "^4.20.5"
   },
   "devDependencies": {
@@ -45,7 +44,6 @@
     "quantumagent": "^1.0.5",
     "repomix": "^1.2.0",
     "ts-jest": "^29.4.1",
-    "unqommented": "^1.1.0",
     "winston": "^3.17.0"
   }
 }
