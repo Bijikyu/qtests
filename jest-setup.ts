@@ -1,4 +1,6 @@
 // jest-setup.ts - Jest-specific setup file
+// 🚩AI: ENTRY_POINT_FOR_GENERATED_TEST_IMPORTS — qtests/setup imported first
+import 'qtests/setup';
 
 // Global test configuration for TypeScript ES modules
 beforeAll(() => {

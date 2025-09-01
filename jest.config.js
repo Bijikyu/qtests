@@ -39,7 +39,8 @@ export default {
     '<rootDir>/generated-tests/**/*.test.js',
     '<rootDir>/generated-tests/**/*.test.ts',
     '<rootDir>/**/*.test.js',
-    '<rootDir>/**/*.test.ts'
+    '<rootDir>/**/*.test.ts',
+    '<rootDir>/**/*.GenerateTest.test.ts'  // New generated test pattern
   ],
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {

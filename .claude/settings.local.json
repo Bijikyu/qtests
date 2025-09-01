@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm install)",
       "Bash(npm test)",
-      "Bash(npx jest:*)"
+      "Bash(npx jest:*)",
+      "Bash(npx tsx:*)"
     ],
     "deny": [],
     "ask": []

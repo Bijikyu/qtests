@@ -17,9 +17,18 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Parse command line arguments
+// 🚩AI: CLI_FLAGS_WIRING — add mode/scope/dry-run/force/include/exclude
 function parseArgs(argv) {
   const args = argv.slice(2);
-  const options = {};
+  const options = {
+    mode: 'heuristic', // Default mode
+    unit: false,       // Generate unit tests only
+    integration: false, // Generate integration tests only  
+    dryRun: false,     // Show planned files without writing
+    force: false,      // Allow overwriting generated files
+    include: [],       // Include globs
+    exclude: []        // Exclude globs
+  };
   
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
@@ -32,6 +41,32 @@ function parseArgs(argv) {
       case '--test-dir':
       case '-t':
         options.TEST_DIR = args[++i];
+        break;
+      case '--mode':
+        const mode = args[++i];
+        if (!['heuristic', 'ast'].includes(mode)) {
+          console.error(`Invalid mode: ${mode}. Use 'heuristic' or 'ast'`);
+          process.exit(1);
+        }
+        options.mode = mode;
+        break;
+      case '--unit':
+        options.unit = true;
+        break;
+      case '--integration':
+        options.integration = true;
+        break;
+      case '--dry-run':
+        options.dryRun = true;
+        break;
+      case '--force':
+        options.force = true;
+        break;
+      case '--include':
+        options.include.push(args[++i]);
+        break;
+      case '--exclude':
+        options.exclude.push(args[++i]);
         break;
       case '--help':
       case '-h':
@@ -57,22 +92,32 @@ function parseArgs(argv) {
 
 function showHelp() {
   console.log(`
-qtests Test Generator
+qtests Test Generator (TypeScript ESM)
 
 USAGE:
-  qtests-generate [OPTIONS]
+  qtests-ts-generate [OPTIONS]
 
 OPTIONS:
-  -s, --src <dir>       Source directory to scan (default: src)
+  -s, --src <dir>       Source directory to scan (default: .)
   -t, --test-dir <dir>  Generated test directory (default: generated-tests)
+      --mode <mode>     Analysis mode: 'heuristic' or 'ast' (default: heuristic)
+      --unit           Generate only unit tests
+      --integration    Generate only integration tests
+      --include <glob> Include files matching glob pattern (can be used multiple times)
+      --exclude <glob> Exclude files matching glob pattern (can be used multiple times)
+      --dry-run        Show planned files without writing them
+      --force          Allow overwriting generated test files
 
   -h, --help           Show this help message
   -v, --version        Show version information
 
 EXAMPLES:
-  qtests-generate                    # Scan 'src' directory with defaults
-  qtests-generate --src lib          # Scan 'lib' directory instead
-  qtests-generate -s app -t tests    # Custom source and test directories
+  qtests-ts-generate                           # Scan current directory with defaults
+  qtests-ts-generate --src lib                 # Scan 'lib' directory instead
+  qtests-ts-generate --unit --dry-run          # Preview unit tests only
+  qtests-ts-generate --mode ast --force        # Use TypeScript AST analysis, overwrite existing
+  qtests-ts-generate --include "**/*.ts"       # Only process TypeScript files
+  qtests-ts-generate --exclude "**/demo/**"    # Skip demo directories
 
 
 DESCRIPTION:
@@ -81,9 +126,10 @@ DESCRIPTION:
   and Express routes to create appropriate test files with proper mocking setup.
 
   Generated test files:
-  - Unit tests: Created alongside source files with .test.ts extension
+  - Unit tests: Created alongside source files with .GenerateTest.test.ts extension
   - API tests: Created in integration test directory with route-specific names
   - Jest configuration: Automatically creates jest.config.js and test setup files
+  - Always includes 'import qtests/setup' for proper stubbing
 
 For more information, visit: https://github.com/qtests/qtests
 `);
@@ -104,17 +150,34 @@ async function main() {
     console.log('🔧 qtests Test Generator (TypeScript ES Module)\n');
     
     const options = parseArgs(process.argv);
-    const generator = new TestGenerator(options);
     
     // Display configuration
     console.log(`Configuration:`);
-    console.log(`  Source directory: ${generator.config?.SRC_DIR || 'src'}`);
-    console.log(`  Test directory: ${generator.config?.TEST_DIR || 'tests/integration'}`);
+    console.log(`  Source directory: ${options.SRC_DIR || '.'}`);
+    console.log(`  Test directory: ${options.TEST_DIR || 'generated-tests'}`);
+    console.log(`  Analysis mode: ${options.mode}`);
+    console.log(`  Scope: ${options.unit ? 'unit only' : options.integration ? 'integration only' : 'both'}`);
+    console.log(`  Dry run: ${options.dryRun ? 'yes' : 'no'}`);
+    console.log(`  Force overwrite: ${options.force ? 'yes' : 'no'}`);
+    if (options.include.length > 0) {
+      console.log(`  Include patterns: ${options.include.join(', ')}`);
+    }
+    if (options.exclude.length > 0) {
+      console.log(`  Exclude patterns: ${options.exclude.join(', ')}`);
+    }
     console.log(`  Module system: TypeScript ES Modules (only)`);
     console.log('');
     
-    // Generate tests
-    await generator.generateTestFiles();
+    const generator = new TestGenerator(options);
+    
+    // Generate tests with new options
+    if (options.dryRun) {
+      console.log('🔍 Dry run - showing planned test files...\n');
+      await generator.generateTestFiles(true); // Pass dry-run flag
+    } else {
+      await generator.generateTestFiles();
+    }
+    
     const results = generator.getResults();
     
     // Summary
@@ -131,6 +194,10 @@ async function main() {
       console.log('  1. Review generated TypeScript test files');
       console.log('  2. Add specific test implementations');
       console.log('  3. Run tests with: npm test');
+      
+      if (options.mode === 'ast') {
+        console.log('  4. AST analysis may have generated more detailed test stubs');
+      }
     } else {
       console.log('\n✅ All source files already have corresponding tests');
     }

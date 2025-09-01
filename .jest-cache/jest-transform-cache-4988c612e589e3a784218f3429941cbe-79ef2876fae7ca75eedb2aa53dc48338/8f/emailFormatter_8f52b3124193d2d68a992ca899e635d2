@@ -1,0 +1,27 @@
+de3de25a766f658aba530691b40a25fe
+"use strict";
+/**
+ * Email Content Formatting Utility - TypeScript Implementation
+ *
+ * This module handles email content formatting and sanitization.
+ * It ensures consistent email content structure across the application.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.formatEmailContent = formatEmailContent;
+const logUtils_js_1 = require("../../lib/logUtils.js");
+/**
+ * Format email content for consistent output
+ *
+ * This function ensures email content is properly formatted and handles
+ * edge cases like undefined values or non-string content.
+ */
+function formatEmailContent(subject, body) {
+    (0, logUtils_js_1.logStart)('formatEmailContent', subject, body);
+    const formatted = {
+        subject: (subject || '').toString().trim() || '[No Subject]',
+        body: (body || '').toString().trim() || '[No Body]'
+    };
+    (0, logUtils_js_1.logReturn)('formatEmailContent', formatted);
+    return formatted;
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9lbWFpbC9lbWFpbEZvcm1hdHRlci50cyIsIm1hcHBpbmdzIjoiO0FBQUE7Ozs7O0dBS0c7O0FBNkJNLGdEQUFrQjtBQTNCM0IsdURBQTREO0FBUTVEOzs7OztHQUtHO0FBQ0gsU0FBUyxrQkFBa0IsQ0FBQyxPQUFZLEVBQUUsSUFBUztJQUNqRCxJQUFBLHNCQUFRLEVBQUMsb0JBQW9CLEVBQUUsT0FBTyxFQUFFLElBQUksQ0FBQyxDQUFDO0lBRTlDLE1BQU0sU0FBUyxHQUEwQjtRQUN2QyxPQUFPLEVBQUUsQ0FBQyxPQUFPLElBQUksRUFBRSxDQUFDLENBQUMsUUFBUSxFQUFFLENBQUMsSUFBSSxFQUFFLElBQUksY0FBYztRQUM1RCxJQUFJLEVBQUUsQ0FBQyxJQUFJLElBQUksRUFBRSxDQUFDLENBQUMsUUFBUSxFQUFFLENBQUMsSUFBSSxFQUFFLElBQUksV0FBVztLQUNwRCxDQUFDO0lBRUYsSUFBQSx1QkFBUyxFQUFDLG9CQUFvQixFQUFFLFNBQVMsQ0FBQyxDQUFDO0lBQzNDLE9BQU8sU0FBUyxDQUFDO0FBQ25CLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9lbWFpbC9lbWFpbEZvcm1hdHRlci50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEVtYWlsIENvbnRlbnQgRm9ybWF0dGluZyBVdGlsaXR5IC0gVHlwZVNjcmlwdCBJbXBsZW1lbnRhdGlvblxuICogXG4gKiBUaGlzIG1vZHVsZSBoYW5kbGVzIGVtYWlsIGNvbnRlbnQgZm9ybWF0dGluZyBhbmQgc2FuaXRpemF0aW9uLlxuICogSXQgZW5zdXJlcyBjb25zaXN0ZW50IGVtYWlsIGNvbnRlbnQgc3RydWN0dXJlIGFjcm9zcyB0aGUgYXBwbGljYXRpb24uXG4gKi9cblxuaW1wb3J0IHsgbG9nU3RhcnQsIGxvZ1JldHVybiB9IGZyb20gJy4uLy4uL2xpYi9sb2dVdGlscy5qcyc7XG5cbi8vIFR5cGUgZGVmaW5pdGlvbnNcbmludGVyZmFjZSBGb3JtYXR0ZWRFbWFpbENvbnRlbnQge1xuICBzdWJqZWN0OiBzdHJpbmc7XG4gIGJvZHk6IHN0cmluZztcbn1cblxuLyoqXG4gKiBGb3JtYXQgZW1haWwgY29udGVudCBmb3IgY29uc2lzdGVudCBvdXRwdXRcbiAqIFxuICogVGhpcyBmdW5jdGlvbiBlbnN1cmVzIGVtYWlsIGNvbnRlbnQgaXMgcHJvcGVybHkgZm9ybWF0dGVkIGFuZCBoYW5kbGVzXG4gKiBlZGdlIGNhc2VzIGxpa2UgdW5kZWZpbmVkIHZhbHVlcyBvciBub24tc3RyaW5nIGNvbnRlbnQuXG4gKi9cbmZ1bmN0aW9uIGZvcm1hdEVtYWlsQ29udGVudChzdWJqZWN0OiBhbnksIGJvZHk6IGFueSk6IEZvcm1hdHRlZEVtYWlsQ29udGVudCB7XG4gIGxvZ1N0YXJ0KCdmb3JtYXRFbWFpbENvbnRlbnQnLCBzdWJqZWN0LCBib2R5KTtcbiAgXG4gIGNvbnN0IGZvcm1hdHRlZDogRm9ybWF0dGVkRW1haWxDb250ZW50ID0ge1xuICAgIHN1YmplY3Q6IChzdWJqZWN0IHx8ICcnKS50b1N0cmluZygpLnRyaW0oKSB8fCAnW05vIFN1YmplY3RdJyxcbiAgICBib2R5OiAoYm9keSB8fCAnJykudG9TdHJpbmcoKS50cmltKCkgfHwgJ1tObyBCb2R5XSdcbiAgfTtcbiAgXG4gIGxvZ1JldHVybignZm9ybWF0RW1haWxDb250ZW50JywgZm9ybWF0dGVkKTtcbiAgcmV0dXJuIGZvcm1hdHRlZDtcbn1cblxuLy8gRXhwb3J0IHVzaW5nIEVTIG1vZHVsZSBzeW50YXhcbmV4cG9ydCB7IGZvcm1hdEVtYWlsQ29udGVudCB9OyJdLCJ2ZXJzaW9uIjozfQ==

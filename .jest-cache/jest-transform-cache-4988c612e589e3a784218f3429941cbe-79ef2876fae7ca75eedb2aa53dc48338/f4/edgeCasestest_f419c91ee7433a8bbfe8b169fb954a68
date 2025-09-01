@@ -1,0 +1,43 @@
+9d1e131b11fea9d500c26becb9ba0cf1
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+// Edge cases tests for TypeScript ES modules
+describe('Edge Cases Tests', () => {
+    test('handles edge cases correctly', async () => {
+        const mod = await Promise.resolve().then(() => __importStar(require('../index.js')));
+        expect(mod).toBeDefined();
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvZWRnZUNhc2VzLnRlc3QudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUFBLDZDQUE2QztBQUM3QyxRQUFRLENBQUMsa0JBQWtCLEVBQUUsR0FBRyxFQUFFO0lBQ2hDLElBQUksQ0FBQyw4QkFBOEIsRUFBRSxLQUFLLElBQUksRUFBRTtRQUM5QyxNQUFNLEdBQUcsR0FBRyx3REFBYSxhQUFhLEdBQUMsQ0FBQztRQUN4QyxNQUFNLENBQUMsR0FBRyxDQUFDLENBQUMsV0FBVyxFQUFFLENBQUM7SUFDNUIsQ0FBQyxDQUFDLENBQUM7QUFDTCxDQUFDLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL21hbnVhbC10ZXN0cy9lZGdlQ2FzZXMudGVzdC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBFZGdlIGNhc2VzIHRlc3RzIGZvciBUeXBlU2NyaXB0IEVTIG1vZHVsZXNcbmRlc2NyaWJlKCdFZGdlIENhc2VzIFRlc3RzJywgKCkgPT4ge1xuICB0ZXN0KCdoYW5kbGVzIGVkZ2UgY2FzZXMgY29ycmVjdGx5JywgYXN5bmMgKCkgPT4ge1xuICAgIGNvbnN0IG1vZCA9IGF3YWl0IGltcG9ydCgnLi4vaW5kZXguanMnKTtcbiAgICBleHBlY3QobW9kKS50b0JlRGVmaW5lZCgpO1xuICB9KTtcbn0pOyJdLCJ2ZXJzaW9uIjozfQ==

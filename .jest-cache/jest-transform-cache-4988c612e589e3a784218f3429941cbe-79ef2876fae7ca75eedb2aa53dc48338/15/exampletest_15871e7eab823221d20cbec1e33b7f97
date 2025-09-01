@@ -1,0 +1,44 @@
+212e1c872d2f999b522b0f1c77c2d82e
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+// Integration test for example - TypeScript ES module implementation
+describe('Example Integration Tests', () => {
+    test('example integration works', async () => {
+        // Simple integration test
+        const mod = await Promise.resolve().then(() => __importStar(require('../../index.js')));
+        expect(mod).toBeDefined();
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9nZW5lcmF0ZWQtdGVzdHMvaW50ZWdyYXRpb24vZXhhbXBsZS50ZXN0LnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7QUFBQSxxRUFBcUU7QUFDckUsUUFBUSxDQUFDLDJCQUEyQixFQUFFLEdBQUcsRUFBRTtJQUN6QyxJQUFJLENBQUMsMkJBQTJCLEVBQUUsS0FBSyxJQUFJLEVBQUU7UUFDM0MsMEJBQTBCO1FBQzFCLE1BQU0sR0FBRyxHQUFHLHdEQUFhLGdCQUFnQixHQUFDLENBQUM7UUFDM0MsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDLFdBQVcsRUFBRSxDQUFDO0lBQzVCLENBQUMsQ0FBQyxDQUFDO0FBQ0wsQ0FBQyxDQUFDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9nZW5lcmF0ZWQtdGVzdHMvaW50ZWdyYXRpb24vZXhhbXBsZS50ZXN0LnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIEludGVncmF0aW9uIHRlc3QgZm9yIGV4YW1wbGUgLSBUeXBlU2NyaXB0IEVTIG1vZHVsZSBpbXBsZW1lbnRhdGlvblxuZGVzY3JpYmUoJ0V4YW1wbGUgSW50ZWdyYXRpb24gVGVzdHMnLCAoKSA9PiB7XG4gIHRlc3QoJ2V4YW1wbGUgaW50ZWdyYXRpb24gd29ya3MnLCBhc3luYyAoKSA9PiB7XG4gICAgLy8gU2ltcGxlIGludGVncmF0aW9uIHRlc3RcbiAgICBjb25zdCBtb2QgPSBhd2FpdCBpbXBvcnQoJy4uLy4uL2luZGV4LmpzJyk7XG4gICAgZXhwZWN0KG1vZCkudG9CZURlZmluZWQoKTtcbiAgfSk7XG59KTsiXSwidmVyc2lvbiI6M30=

@@ -1,6 +1,6 @@
-# qtests Test Generator
+# qtests Test Generator (TypeScript ESM)
 
-The qtests Test Generator is a powerful tool that automatically generates unit tests and API tests by analyzing your JavaScript/TypeScript source code. It detects exported functions, classes, and Express API routes to create comprehensive test scaffolding.
+The qtests Test Generator automatically creates unit and API test scaffolding by analyzing your TypeScript/JavaScript source code. It detects exported functions, classes, and Express-style routes to generate tests that already import `qtests/setup` so stubs are active from line 1.
 
 ## Features
 
@@ -19,14 +19,14 @@ The test generator is included with the qtests package:
 npm install qtests
 ```
 
-## CLI Usage
+## CLI Usage (qtests-ts-generate)
 
 ### Basic Usage
 
-Generate tests for your `src` directory:
+Generate tests for the current project:
 
 ```bash
-qtests-generate
+qtests-ts-generate
 ```
 
 ### Custom Source Directory
@@ -34,8 +34,8 @@ qtests-generate
 Specify a different source directory:
 
 ```bash
-qtests-generate --src lib
-qtests-generate -s app
+qtests-ts-generate --src lib
+qtests-ts-generate -s app
 ```
 
 ### Custom Test Directory
@@ -43,42 +43,51 @@ qtests-generate -s app
 Specify where integration tests should be placed:
 
 ```bash
-qtests-generate --test-dir spec
-qtests-generate -t tests/integration
+qtests-ts-generate --test-dir spec
+qtests-ts-generate -t tests/integration
 ```
 
-### Combined Options
+### Filtering & Modes
 
 ```bash
-qtests-generate --src app --test-dir spec
+# Limit to TypeScript files and skip existing tests
+qtests-ts-generate --include "**/*.ts" --exclude "**/*.test.ts"
+
+# Only unit tests, dry-run preview
+qtests-ts-generate --unit --dry-run
+
+# AST mode (requires `typescript` in your project)
+qtests-ts-generate --mode ast
 ```
 
 ### Help and Version
 
 ```bash
-qtests-generate --help
-qtests-generate --version
+qtests-ts-generate --help
+qtests-ts-generate --version
 ```
 
-## Programmatic Usage
+## Programmatic Usage (TypeScript ESM)
 
-```javascript
-const { TestGenerator } = require('qtests');
+```typescript
+import { TestGenerator } from 'qtests';
 
-// Create generator with custom configuration
 const generator = new TestGenerator({
   SRC_DIR: 'src',
   TEST_DIR: 'tests/integration',
-  KNOWN_MOCKS: ['axios', 'mongoose', 'redis']
+  include: ['**/*.ts'],
+  exclude: ['**/*.test.ts'],
+  KNOWN_MOCKS: ['axios', 'mongoose', 'redis'],
+  mode: 'heuristic' // or 'ast' if you have `typescript` installed
 });
 
-// Generate tests
-const results = generator.generate();
+await generator.generateTestFiles(false); // pass true for dry-run
+const results = generator.getResults();
 
 console.log(`Generated ${results.length} test files`);
-results.forEach(result => {
-  console.log(`${result.type}: ${result.file}`);
-});
+for (const r of results) {
+  console.log(`${r.type}: ${r.file}`);
+}
 ```
 
 ## Generated Test Types
@@ -96,10 +105,11 @@ export class Calculator {
 }
 ```
 
-**Generated test (`src/math.test.js`):**
+**Generated test (`src/math.GenerateTest.test.ts`):**
 ```javascript
-// Auto-generated unit test for math.js
-import * as mod from './math.js';
+// Generated unit test for math.ts - TypeScript ES module
+import 'qtests/setup';
+import * as mod from './math.ts';
 
 describe('math.js', () => {
   test('add works', () => {
@@ -127,23 +137,26 @@ export const setupRoutes = (app) => {
 ```
 
 **Generated tests:**
-- `tests/integration/routes__get.test.ts` for GET `/api/users`
-- `tests/integration/routes__post.test.ts` for POST `/api/auth`
+- `generated-tests/routes.GenerateTest__get.test.ts` for GET `/api/users`
+- `generated-tests/routes.GenerateTest__post.test.ts` for POST `/api/auth`
 
 **Example generated API test:**
-```javascript
-// Auto-generated API test for GET /api/users
-import request from '../../src/app';
+```typescript
+// Generated integration test for GET /api/users - TypeScript ES module
+import 'qtests/setup';
+import { createMockApp, supertest } from '../utils/httpTest.js';
 
 describe('GET /api/users', () => {
-  test('should succeed', async () => {
-    const res = await request.get('/api/users');
-    expect(res.status).toBe(200);
-  });
+  it('should return success response', async () => {
+    const app = createMockApp();
+    app.get('/api/users', (req, res) => {
+      res.statusCode = 200;
+      res.setHeader('content-type', 'application/json');
+      res.end(JSON.stringify({ success: true }));
+    });
 
-  test('should handle failure', async () => {
-    const res = await request.get('/api/users').send({ bad: true });
-    expect(res.status).toBeGreaterThanOrEqual(400);
+    const res = await supertest(app).get('/api/users').expect(200);
+    expect(res.body.success).toBe(true);
   });
 });
 ```
@@ -152,10 +165,10 @@ describe('GET /api/users', () => {
 
 ### Default Configuration
 
-```javascript
+```typescript
 {
-  SRC_DIR: 'src',
-  TEST_DIR: 'tests/integration', 
+  SRC_DIR: '.',
+  TEST_DIR: 'generated-tests',
   KNOWN_MOCKS: ['axios', 'node-fetch', 'pg', 'mongoose', 'fs', 'redis'],
   VALID_EXTS: ['.ts', '.js', '.tsx', '.jsx']
 }
@@ -163,12 +176,14 @@ describe('GET /api/users', () => {
 
 ### Custom Configuration
 
-```javascript
+```typescript
 const generator = new TestGenerator({
   SRC_DIR: 'lib',              // Custom source directory
   TEST_DIR: 'spec',            // Custom test directory
   KNOWN_MOCKS: ['custom-lib'], // Additional libraries to mock
-  VALID_EXTS: ['.js', '.ts']   // File extensions to process
+  VALID_EXTS: ['.js', '.ts'],  // File extensions to process
+  include: ['**/*.ts'],        // Only process matching files
+  exclude: ['**/*.test.ts'],   // Exclude matching files
 });
 ```
 
@@ -181,10 +196,7 @@ The generator automatically adds mock setup for known libraries:
 import axios from 'axios';
 ```
 
-**Generated test includes:**
-```javascript
-jest.mock('axios');
-```
+Generated tests include `import 'qtests/setup'` so axios/winston and other known libraries are stubbed automatically — no `jest.mock` calls are required.
 
 ### Known Mock Libraries
 
@@ -195,34 +207,14 @@ jest.mock('axios');
 - `fs` - File system (for testing file operations)
 - `redis` - Redis client
 
-## Jest Configuration
+## Jest Configuration & Runner
 
-The generator automatically creates Jest configuration files:
+On non-dry runs the generator writes:
+- `jest.config.js` configured for TypeScript ESM using ts-jest
+- `setup.ts` with standard Jest setup
+- `qtests-runner.ts` and updates `package.json` test script to `npx tsx qtests-runner.ts`
 
-**`jest.config.js`:**
-```javascript
-module.exports = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  setupFilesAfterEnv: ['./tests/setup.ts'],
-  moduleFileExtensions: ['ts', 'js', 'json'],
-  roots: ['<rootDir>/src', '<rootDir>/tests'],
-};
-```
-
-**`tests/setup.ts`:**
-```javascript
-let server;
-
-beforeAll(async () => {
-  const app = require('../src/app').default || require('../src/app');
-  server = app.listen(4000, () => console.log('Test server started'));
-});
-
-afterAll(async () => {
-  if (server) server.close();
-});
-```
+In `--dry-run` mode, these files are not written.
 
 ## Integration with qtests Utilities
 
@@ -281,8 +273,18 @@ See the `examples/test-generator-demo.js` file for comprehensive usage examples 
 - Supported methods: `get`, `post`, `put`, `delete`, `patch`
 - Routes must be in string literals (not variables)
 
+### AST Mode Not Taking Effect
+
+- Install `typescript` in your project: `npm i -D typescript`
+- Use `--mode ast` or `mode: 'ast'` in the programmatic API
+- The generator falls back to heuristic scanning if the TS compiler isn’t available
+
 ### Mock Issues
 
 - Add custom libraries to `KNOWN_MOCKS` configuration
-- Verify import statements use standard syntax: `from 'library'`
-- Relative imports (`./file`) are not mocked by default
+- Stubs are automatic via `qtests/setup`; no `jest.mock` needed
+- Relative imports (`./file`) are not replaced — only external packages
+
+### Overwriting Generated Tests
+
+- Use `--force` to overwrite previously generated tests. It applies to files whose names contain `.GenerateTest` (both unit and API test files).

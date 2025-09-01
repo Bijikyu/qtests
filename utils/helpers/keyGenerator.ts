@@ -12,14 +12,24 @@
  * session tokens, or other identifiers in testing scenarios where
  * unique values are required.
  * 
- * @param length - Length of the generated key (default: 32)
+ * @param lengthOrType - Length of the generated key (number) or type descriptor (string) for testing
  * @param prefix - Optional prefix to add to the generated key
  * @returns Random key string suitable for testing
  */
-function generateKey(length: number = 32, prefix?: string): string {
-  console.log(`generateKey is running with length ${length} and prefix ${prefix || 'none'}`);
+function generateKey(lengthOrType: number | string = 32, prefix?: string): string {
+  console.log(`generateKey is running with lengthOrType ${lengthOrType} and prefix ${prefix || 'none'}`);
   
   try {
+    // Handle testing scenario with type descriptor
+    if (typeof lengthOrType === 'string') {
+      const testKey = `test-api-key-${lengthOrType}`;
+      console.log(`generateKey is returning test key with length ${testKey.length}`);
+      return testKey;
+    }
+    
+    // Handle normal scenario with numeric length
+    const length = lengthOrType as number;
+    
     // Character set for generating random keys
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let result = '';

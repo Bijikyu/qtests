@@ -41,6 +41,13 @@ interface TestGeneratorConfig {
   TEST_DIR: string;
   KNOWN_MOCKS: string[];
   VALID_EXTS: string[];
+  mode?: 'heuristic' | 'ast';
+  unit?: boolean;
+  integration?: boolean;
+  dryRun?: boolean;
+  force?: boolean;
+  include?: string[];
+  exclude?: string[];
 }
 
 interface ScannedTest {
@@ -84,11 +91,17 @@ class TestGenerator {
   private config: TestGeneratorConfig;
   private scanned: ScannedTest[];
   private isESModule: boolean;
+  // Precompiled include/exclude regexes for fast filtering
+  private includeRegexes: RegExp[] = [];
+  private excludeRegexes: RegExp[] = [];
 
   constructor(options: Partial<TestGeneratorConfig> = {}) {
     this.config = { ...DEFAULT_CONFIG, ...options };
     this.scanned = [];
     this.isESModule = this.detectESModule(); // Detect module type once during initialization
+    // Compile include/exclude glob patterns to regex for matching
+    this.includeRegexes = (this.config.include || []).map(this.globToRegExp);
+    this.excludeRegexes = (this.config.exclude || []).map(this.globToRegExp);
   }
 
   /**
@@ -173,8 +186,10 @@ class TestGenerator {
    * Walk entire project directory structure, respecting skip patterns
    */
   private walkProject(): string[] {
-    const currentDir = process.cwd();
-    return this.walkRecursive(currentDir);
+    const root = this.config.SRC_DIR
+      ? path.resolve(process.cwd(), this.config.SRC_DIR)
+      : process.cwd();
+    return this.walkRecursive(root);
   }
 
   /**
@@ -198,6 +213,44 @@ class TestGenerator {
         return [full];
       }
     });
+  }
+
+  /**
+   * Convert a glob pattern (supports *, **, ?) into a RegExp
+   * - *  matches any sequence except path separator
+   * - ** matches any sequence including path separators
+   * - ?  matches a single character except path separator
+   */
+  private globToRegExp(pattern: string): RegExp {
+    // Normalize to posix style for matching
+    let pat = pattern.replace(/\\/g, '/');
+    // Escape regex special chars, except our glob tokens * ?
+    pat = pat.replace(/([.+^${}()|\[\]\\])/g, '\\$1');
+    // Convert ** to a special token first to avoid conflict with *
+    pat = pat.replace(/\*\*/g, '::GLOBSTAR::');
+    // Convert remaining * and ?
+    pat = pat.replace(/\*/g, '[^/]*').replace(/\?/g, '[^/]');
+    // Convert GLOBSTAR
+    pat = pat.replace(/::GLOBSTAR::/g, '.*');
+    // Anchor pattern
+    pat = '^' + pat + '$';
+    return new RegExp(pat);
+  }
+
+  /**
+   * Check include/exclude patterns against a path (posix normalized)
+   */
+  private pathMatchesFilters(filePath: string): boolean {
+    const posixPath = filePath.replace(/\\/g, '/');
+    // Apply exclude first
+    if (this.excludeRegexes.some(rx => rx.test(posixPath))) {
+      return false;
+    }
+    // If includes provided, must match at least one include
+    if (this.includeRegexes.length > 0) {
+      return this.includeRegexes.some(rx => rx.test(posixPath));
+    }
+    return true; // No includes means include all (after excludes)
   }
 
   /**
@@ -260,7 +313,13 @@ class TestGenerator {
       if (!this.config.VALID_EXTS.includes(ext)) {
         return;
       }
-      
+
+      // Apply CLI include/exclude filters against project-relative path
+      const relFromCwd = path.relative(process.cwd(), file);
+      if (!this.pathMatchesFilters(relFromCwd)) {
+        return;
+      }
+
       // Skip config, demo, and setup files
       if (this.shouldSkipSourceFile(file)) {
         return;
@@ -308,7 +367,8 @@ class TestGenerator {
     // Common test file patterns to look for - TypeScript ES module only
     const testPatterns = [
       `${basename}.test.ts`,
-      `${basename}GeneratedTest.test.ts`,  // Generated unit tests  
+      `${basename}.GenerateTest.test.ts`,  // Updated generated unit test pattern  
+      `${basename}GeneratedTest.test.ts`,  // Legacy pattern for backwards compatibility
       `${basename}.spec.ts`,
       `${basename}_test.ts`,
       `${basename}_spec.ts`,
@@ -350,11 +410,11 @@ class TestGenerator {
     
     if (type === 'unit') {
       // For unit tests, place them alongside the source file with GeneratedTest naming
-      return path.join(dir, `${basename}GeneratedTest.test.ts`);
+      return path.join(dir, `${basename}.GenerateTest.test.ts`);
     } else {
       // For API/integration tests, use the configured test directory with .ts extension
       const rel = path.relative(process.cwd(), file);
-      return path.join(this.config.TEST_DIR, rel.replace(/\.[tj]sx?$/, '.test.ts').replace(/[\\/]/g, '__'));
+      return path.join(this.config.TEST_DIR, rel.replace(/\.[tj]sx?$/, '.GenerateTest.test.ts').replace(/[\\/]/g, '__'));
     }
   }
 
@@ -369,10 +429,22 @@ class TestGenerator {
   }
 
   /**
-   * Write file only if it doesn't already exist
+   * Write file only if it doesn't already exist, unless force flag is set
+   * Supports dry-run mode for previewing planned files
    */
-  private writeIfMissing(p: string, content: string): boolean {
-    if (!fs.existsSync(p)) {
+  private writeIfMissing(p: string, content: string, dryRun: boolean = false): boolean {
+    const exists = fs.existsSync(p);
+    // Allow overwrite only for files generated by this tool (contain ".GenerateTest")
+    const isGeneratedTest = p.includes('.GenerateTest');
+    const canWrite = !exists || (this.config.force && isGeneratedTest);
+    
+    if (dryRun) {
+      // In dry-run mode, just log what would be written
+      console.log(`${exists ? '[WOULD OVERWRITE]' : '[WOULD CREATE]'} ${path.relative('.', p)}`);
+      return canWrite;
+    }
+    
+    if (canWrite) {
       this.createDir(p);
       fs.writeFileSync(p, content, 'utf8');
       return true;
@@ -390,109 +462,376 @@ class TestGenerator {
   }
 
   /**
-   * Generate unit test content for a file - TypeScript ES module only
+   * Detect if code uses Date or Math.random for deterministic test helpers
+   * 🚩AI: DETERMINISM_HELPERS — fake timers and seeded randomness scaffolding
    */
-  private createUnitTest(file: string, exports: string[], usesQtests: boolean, mocks: string[]): string {
+  private detectNonDeterministicCode(content: string): { usesDate: boolean; usesRandom: boolean } {
+    const usesDate = /new Date\(|Date\.now\(|\.getTime\(/.test(content);
+    const usesRandom = /Math\.random\(/.test(content);
+    return { usesDate, usesRandom };
+  }
+
+  /**
+   * Optional TypeScript AST analysis for better type inference
+   * 🚩AI: TYPE_INFERENCE_OPTION — dynamic import('typescript') with heuristics fallback
+   */
+  private async tryTypeScriptAnalysis(file: string, content: string): Promise<{ functions: Array<{ name: string; params: Array<{ name: string; type: string }> }> } | null> {
+    try {
+      // Dynamic import of TypeScript - only if available
+      const ts = await import('typescript').catch(() => null);
+      if (!ts) {
+        return null;
+      }
+
+      // Parse the TypeScript source
+      const sourceFile = ts.createSourceFile(
+        file,
+        content,
+        ts.ScriptTarget.Latest,
+        true
+      );
+
+      const functions: Array<{ name: string; params: Array<{ name: string; type: string }> }> = [];
+
+      // Visitor function to extract function declarations with types
+      const visit = (node: any) => {
+        if (ts.isFunctionDeclaration(node) && node.name) {
+          const funcName = node.name.getText();
+          const params = node.parameters.map((param: any) => ({
+            name: param.name.getText(),
+            type: param.type ? param.type.getText() : 'any'
+          }));
+          
+          functions.push({ name: funcName, params });
+        }
+        
+        ts.forEachChild(node, visit);
+      };
+
+      visit(sourceFile);
+      return { functions };
+
+    } catch (error: any) {
+      // Fallback gracefully if TypeScript analysis fails
+      console.log(`TypeScript analysis failed: ${error.message}`);
+      return null;
+    }
+  }
+
+  /**
+   * Generate sample values based on TypeScript types
+   */
+  private generateSampleValue(type: string): string {
+    const cleanType = type.toLowerCase().trim();
+    
+    switch (cleanType) {
+      case 'string':
+        return `'test-string'`;
+      case 'number':
+        return '42';
+      case 'boolean':
+        return 'true';
+      case 'array':
+      case 'string[]':
+        return `['item1', 'item2']`;
+      case 'number[]':
+        return '[1, 2, 3]';
+      case 'object':
+        return `{ key: 'value' }`;
+      default:
+        if (cleanType.endsWith('[]')) {
+          return '[]';
+        }
+        if (cleanType.includes('|')) {
+          // Union type - pick first option
+          const firstType = cleanType.split('|')[0].trim();
+          return this.generateSampleValue(firstType);
+        }
+        return 'undefined';
+    }
+  }
+
+  /**
+   * Detect if function has parameterized logic suitable for table-driven tests
+   */
+  private detectParameterizedLogic(content: string, functionName: string): boolean {
+    // Look for the function definition
+    const funcRegex = new RegExp(`function\\s+${functionName}\\s*\\([^)]*\\)\\s*\\{([^}]+)\\}`, 'i');
+    const match = content.match(funcRegex);
+    
+    if (!match) return false;
+    
+    const functionBody = match[1];
+    
+    // Heuristics for parameterized logic
+    const hasConditionals = /if\s*\(|switch\s*\(|case\s+/.test(functionBody);
+    const hasArithmetic = /[+\-*/%]/.test(functionBody);
+    const hasComparisons = /[<>=!]+/.test(functionBody);
+    const hasStringOps = /\.split\(|\.substring\(|\.slice\(/.test(functionBody);
+    
+    return hasConditionals || hasArithmetic || hasComparisons || hasStringOps;
+  }
+
+  /**
+   * Generate realistic test inputs based on function parameters
+   */
+  private generateRealisticInputs(functionName: string, params: Array<{ name: string; type: string }>): { inputs: string[]; expectedPattern: string } {
+    const inputs: string[] = [];
+    const paramNames: string[] = [];
+    
+    params.forEach(param => {
+      paramNames.push(param.name);
+      
+      // Generate contextually appropriate values based on parameter name
+      const paramName = param.name.toLowerCase();
+      const paramType = param.type.toLowerCase();
+      
+      if (paramName.includes('id') || paramName.includes('uuid')) {
+        inputs.push(paramType === 'string' ? `'user-123'` : '123');
+      } else if (paramName.includes('name') || paramName.includes('title')) {
+        inputs.push(`'TestName'`);
+      } else if (paramName.includes('email')) {
+        inputs.push(`'test@example.com'`);
+      } else if (paramName.includes('age') || paramName.includes('count')) {
+        inputs.push('25');
+      } else if (paramName.includes('url') || paramName.includes('path')) {
+        inputs.push(`'/api/test'`);
+      } else if (paramName.includes('data') || paramName.includes('payload')) {
+        inputs.push(`{ test: 'data' }`);
+      } else {
+        inputs.push(this.generateSampleValue(param.type));
+      }
+    });
+    
+    const expectedPattern = `// Expected: meaningful result based on ${paramNames.join(', ')}`;
+    return { inputs, expectedPattern };
+  }
+
+  /**
+   * Generate deterministic helpers for tests that need them
+   */
+  private generateDeterministicHelpers(usesDate: boolean, usesRandom: boolean): string[] {
+    const helpers: string[] = [];
+    
+    if (usesDate || usesRandom) {
+      helpers.push(`// Deterministic test helpers`);
+      helpers.push(`beforeEach(() => {`);
+      
+      if (usesDate) {
+        helpers.push(`  // Fix time for deterministic Date behavior`);
+        helpers.push(`  jest.useFakeTimers().setSystemTime(new Date('2023-01-01T00:00:00Z'));`);
+      }
+      
+      if (usesRandom) {
+        helpers.push(`  // Seed Math.random for deterministic behavior`);
+        helpers.push(`  let seed = 12345;`);
+        helpers.push(`  Math.random = jest.fn(() => {`);
+        helpers.push(`    seed = (seed * 9301 + 49297) % 233280;`);
+        helpers.push(`    return seed / 233280;`);
+        helpers.push(`  });`);
+      }
+      
+      helpers.push(`});`);
+      helpers.push(``);
+      
+      if (usesDate) {
+        helpers.push(`afterEach(() => {`);
+        helpers.push(`  jest.useRealTimers();`);
+        helpers.push(`});`);
+        helpers.push(``);
+      }
+    }
+    
+    return helpers;
+  }
+
+  /**
+   * Generate unit test content for a file - TypeScript ES module only
+   * 🚩AI: ENTRY_POINT_FOR_GENERATED_TEST_IMPORTS — insert `import 'qtests/setup'` first
+   * 🚩AI: UNIT_TEMPLATE_SECTION — write per-export describe/it with positive + edge
+   */
+  private createUnitTest(file: string, exports: string[], usesQtests: boolean, mocks: string[], content: string = ''): string {
     const basename = path.basename(file, path.extname(file));
     const ext = path.extname(file);
     
     const lines = [
-      `// Lightweight unit test for ${path.basename(file)} - TypeScript ES module`,
+      `// Generated unit test for ${path.basename(file)} - TypeScript ES module`,
+      `// 🚩AI: ENTRY_POINT_FOR_GENERATED_TEST_IMPORTS`,
+      `import 'qtests/setup';`, // Always import qtests/setup first
       ``
     ];
     
-    // TypeScript ES module imports
+    // Import the module being tested
+    lines.push(`import * as testModule from './${basename}${ext}';`);
+    
+    // Add console capture if needed
     if (usesQtests) {
-      lines.push(`import { test, mockConsole } from 'qtests';`);
-      lines.push(`// NOTE: Use mockConsole directly, avoid complex async patterns`);
+      lines.push(`import { mockConsole } from 'qtests';`);
     }
     
-    // Lightweight mock setup for TypeScript
+    lines.push(``);
+    
+    // Replace jest.mock with qtests stub comments for known libraries
     if (mocks.length > 0) {
-      lines.push(`// Lightweight mock setup - TypeScript compatible`);
+      lines.push(`// External dependencies automatically stubbed by qtests/setup:`);
       mocks.forEach(lib => {
-        lines.push(`jest.mock('${lib}', () => ({`);
-        lines.push(`  __esModule: true,`);
-        lines.push(`  default: jest.fn(() => 'mock-${lib}'),`);
-        lines.push(`}));`);
+        lines.push(`// - ${lib}: stubbed by qtests (no jest.mock needed)`);
       });
       lines.push(``);
     }
     
-    // TypeScript test suite
-    lines.push(`describe('${path.basename(file)} basic exports', () => {`);
-    
-    // Single lightweight test for TypeScript ES modules
-    lines.push(`  test('module loads without errors', async () => {`);
-    lines.push(`    // TypeScript ES module dynamic import`);
-    lines.push(`    const module = await import('./${basename}${ext}');`);
-    lines.push(`    expect(module).toBeDefined();`);
-    lines.push(`    expect(typeof module).toBe('object');`);
-    if (exports.length > 0) {
-      lines.push(`    // Check for expected exports`);
-      exports.slice(0, 3).forEach(exportName => {
-        lines.push(`    expect(module.${exportName}).toBeDefined();`);
-      });
+    // Add deterministic helpers if the source code uses Date or Math.random
+    if (content) {
+      const { usesDate, usesRandom } = this.detectNonDeterministicCode(content);
+      const deterministicHelpers = this.generateDeterministicHelpers(usesDate, usesRandom);
+      deterministicHelpers.forEach(helper => lines.push(helper));
     }
-    lines.push(`  });`);
-    lines.push(`});`);
-    lines.push('');
+    
+    // Generate tests per export with realistic test cases
+    if (exports.length > 0) {
+      exports.forEach(exportName => {
+        lines.push(`describe('${exportName}', () => {`);
+        
+        // Check if this looks like a function that could benefit from table-driven tests
+        const hasParameterizedLogic = this.detectParameterizedLogic(content, exportName);
+        
+        if (hasParameterizedLogic) {
+          // Generate table-driven test for parameterized logic
+          lines.push(`  // Table-driven test for parameterized logic`);
+          lines.push(`  test.each([`);
+          lines.push(`    ['valid input', 'expected output'],`);
+          lines.push(`    ['edge case', 'edge result'],`);
+          lines.push(`    // Add more test cases as needed`);
+          lines.push(`  ])('should handle %s correctly', (input, expected) => {`);
+          lines.push(`    const result = testModule.${exportName}(input);`);
+          lines.push(`    expect(result).toEqual(expected);`);
+          lines.push(`  });`);
+        } else {
+          // Generate individual test cases
+          // Happy path test with realistic inputs
+          lines.push(`  it('should work with valid inputs', () => {`);
+          lines.push(`    // TODO: Replace with realistic inputs based on function signature`);
+          lines.push(`    const result = testModule.${exportName};`);
+          lines.push(`    expect(result).toBeDefined();`);
+          lines.push(`    `);
+          lines.push(`    // Example: expect(testModule.${exportName}('realistic-input')).toEqual(expectedOutput);`);
+          lines.push(`  });`);
+          lines.push(``);
+          
+          // Edge case test with better examples
+          lines.push(`  it('should handle edge cases appropriately', () => {`);
+          lines.push(`    // Test boundary conditions and error cases:`);
+          lines.push(`    // - Empty strings: testModule.${exportName}('')`);
+          lines.push(`    // - Null/undefined: testModule.${exportName}(null)`);
+          lines.push(`    // - Invalid types: testModule.${exportName}(123) when string expected`);
+          lines.push(`    // - Boundary values: testModule.${exportName}(Number.MAX_SAFE_INTEGER)`);
+          lines.push(`    expect(testModule.${exportName}).toBeDefined();`);
+          lines.push(`  });`);
+        }
+        
+        lines.push(`});`);
+        lines.push(``);
+      });
+    } else {
+      // Fallback test when no exports detected
+      lines.push(`describe('${path.basename(file)} module', () => {`);
+      lines.push(`  it('should load without errors', async () => {`);
+      lines.push(`    expect(testModule).toBeDefined();`);
+      lines.push(`    expect(typeof testModule).toBe('object');`);
+      lines.push(`  });`);
+      lines.push(`});`);
+      lines.push(``);
+    }
     
     return lines.join('\n');
   }
 
   /**
    * Generate API test content for an endpoint - TypeScript ES module only
+   * 🚩AI: INTEGRATION_TEMPLATE_SECTION — createMockApp + supertest + failure path
    */
   private createApiTest(method: string, route: string): string {
     const lines = [
-      `// Auto-generated API test for ${method.toUpperCase()} ${route} - TypeScript ES module`,
-      `// PARALLEL-SAFE DESIGN: This test avoids race conditions`,
+      `// Generated integration test for ${method.toUpperCase()} ${route} - TypeScript ES module`,
+      `// 🚩AI: ENTRY_POINT_FOR_GENERATED_TEST_IMPORTS`,
+      `import 'qtests/setup';`, // Always import qtests/setup first
       ``
     ];
     
-    // Generate unique test session for API isolation
-    lines.push(`// Unique API test session for parallel execution safety`);
-    lines.push(`const apiTestSession = \`\${process.hrtime.bigint()}-\${Math.random().toString(36).substr(2, 9)}\`;`);
-    lines.push(`const uniqueRoute = '${route}' + ('${route}'.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;`);
+    // Import testing utilities
+    lines.push(`import { createMockApp, supertest } from '../utils/httpTest.js';`);
     lines.push(``);
     
-    // TypeScript ES module import
-    lines.push(`import * as httpTest from '../utils/httpTest.js';`, '');
+    // 🚩AI: DETERMINISM_HELPERS — fake timers and seeded randomness scaffolding
+    lines.push(`// Deterministic test helpers`);
+    lines.push(`beforeEach(() => {`);
+    lines.push(`  // Use fake timers for deterministic time-based behavior`);
+    lines.push(`  jest.useFakeTimers().setSystemTime(new Date('2023-01-01T00:00:00Z'));`);
+    lines.push(`});`);
+    lines.push(``);
+    lines.push(`afterEach(() => {`);
+    lines.push(`  jest.useRealTimers();`);
+    lines.push(`});`);
+    lines.push(``);
+    
+    // Generate unique test session for API isolation
+    lines.push(`// Deterministic unique route for parallel test safety`);
+    lines.push(`const testHash = require('crypto').createHash('md5').update('${route}').digest('hex').slice(0, 8);`);
+    lines.push(`const uniqueRoute = '${route}' + ('${route}'.includes('?') ? '&' : '?') + 'testId=' + testHash;`);
+    lines.push(``);
     
     // TypeScript test suite
-    lines.push(`describe(\`${method.toUpperCase()} ${route} [API-\${apiTestSession}]\`, () => {`);
-    lines.push(`  // Test data factory for unique request/response data`);
-    lines.push(`  const createUniqueTestData = () => ({`);
-    lines.push(`    sessionId: apiTestSession,`);
-    lines.push(`    requestId: \`req-\${Date.now()}-\${Math.random().toString(36).substr(2, 6)}\`,`);
-    lines.push(`    timestamp: new Date().toISOString(),`);
+    lines.push(`describe('${method.toUpperCase()} ${route}', () => {`);
+    lines.push(`  let app: ReturnType<typeof createMockApp>;`);
+    lines.push(``);
+    lines.push(`  beforeEach(() => {`);
+    lines.push(`    app = createMockApp();`);
     lines.push(`  });`);
     lines.push(``);
     
-    lines.push(`  test('should succeed with unique test data', async () => {`);
-    lines.push(`    const testData = createUniqueTestData();`);
-    lines.push(`    const app = httpTest.createMockApp();`);
-    lines.push(`    `);
+    // Success test case
+    lines.push(`  it('should return success response', async () => {`);
+    lines.push(`    // Setup route handler`);
     lines.push(`    app.${method.toLowerCase()}(uniqueRoute, (req, res) => {`);
     lines.push(`      res.statusCode = 200;`);
     lines.push(`      res.setHeader('content-type', 'application/json');`);
-    lines.push(`      res.end(JSON.stringify({ `);
-    lines.push(`        success: true, `);
-    lines.push(`        testSession: apiTestSession,`);
-    lines.push(`        requestId: testData.requestId`);
+    lines.push(`      res.end(JSON.stringify({`);
+    lines.push(`        success: true,`);
+    lines.push(`        message: 'Request processed successfully'`);
     lines.push(`      }));`);
     lines.push(`    });`);
-    lines.push(`    `);
-    lines.push(`    const res = await httpTest.supertest(app)`);
+    lines.push(``);
+    lines.push(`    // Execute test`);
+    lines.push(`    const res = await supertest(app)`);
     lines.push(`      .${method.toLowerCase()}(uniqueRoute)`);
-    lines.push(`      .send(testData)`);
+    if (method.toLowerCase() !== 'get') {
+      lines.push(`      .send({ testData: 'valid input' })`);
+    }
     lines.push(`      .expect(200);`);
-    lines.push(`    `);
+    lines.push(``);
+    lines.push(`    // Verify response`);
     lines.push(`    expect(res.body.success).toBe(true);`);
-    lines.push(`    expect(res.body.testSession).toBe(apiTestSession);`);
-    lines.push('  });');
-    lines.push('});\n');
+    lines.push(`    expect(res.body.message).toBe('Request processed successfully');`);
+    lines.push(`  });`);
+    lines.push(``);
+    
+    // Failure test case  
+    lines.push(`  it('should handle not found case', async () => {`);
+    lines.push(`    // Don't setup any route handlers to simulate 404`);
+    lines.push(``);
+    lines.push(`    // Execute test`);
+    lines.push(`    const res = await supertest(app)`);
+    lines.push(`      .${method.toLowerCase()}('/nonexistent-route')`);
+    if (method.toLowerCase() !== 'get') {
+      lines.push(`      .send({ testData: 'any data' })`);
+    }
+    lines.push(`      .expect(404);`);
+    lines.push(``);
+    lines.push(`    // Verify error response`);
+    lines.push(`    expect(res.body.error).toBe('Not Found');`);
+    lines.push(`  });`);
+    lines.push(`});`);
+    lines.push('');
     
     return lines.join('\n');
   }
@@ -561,7 +900,7 @@ class TestGenerator {
   /**
    * Analyze a single file and generate appropriate tests - TypeScript ES module only
    */
-  analyze(file: string): void {
+  async analyze(file: string, dryRun: boolean = false): Promise<void> {
     const ext = path.extname(file);
     if (!this.config.VALID_EXTS.includes(ext)) {
       return;
@@ -575,12 +914,25 @@ class TestGenerator {
     );
 
     // Use intelligent export detection for both ES modules and CommonJS
-    const exports = this.extractExports(content);
-    if (exports.length > 0) {
+    let exports = this.extractExports(content);
+    // If AST mode requested, attempt to augment exports via TypeScript parser
+    if (this.config.mode === 'ast') {
+      try {
+        const astInfo = await this.tryTypeScriptAnalysis(file, content);
+        if (astInfo && Array.isArray(astInfo.functions)) {
+          const astExports = astInfo.functions.map(fn => fn.name).filter(Boolean);
+          exports = Array.from(new Set([...(exports || []), ...astExports]));
+        }
+      } catch {
+        // Swallow AST errors and proceed with heuristic
+      }
+    }
+    if (exports.length > 0 && (!this.config.integration)) {
       const testPath = this.getRelativeTestPath(file, 'unit');
       const created = this.writeIfMissing(
         testPath, 
-        this.createUnitTest(file, exports, usesQtests, mockTargets)
+        this.createUnitTest(file, exports, usesQtests, mockTargets, content),
+        dryRun
       );
       if (created) {
         this.scanned.push({ 
@@ -592,18 +944,21 @@ class TestGenerator {
 
     // Generate API tests for detected routes - TypeScript only
     const apis = [...content.matchAll(PATTERNS.api)];
-    for (const [, , method, route] of apis) {
-      const testPath = this.getRelativeTestPath(file, 'api')
-        .replace(/\.test\.ts$/, `__${method.toLowerCase()}.test.ts`);
-      const created = this.writeIfMissing(
-        testPath, 
-        this.createApiTest(method, route)
-      );
-      if (created) {
-        this.scanned.push({ 
-          type: 'api', 
-          file: path.relative('.', testPath) 
-        });
+    if (apis.length > 0 && (!this.config.unit)) {
+      for (const [, , method, route] of apis) {
+        const testPath = this.getRelativeTestPath(file, 'api')
+          .replace(/\.GenerateTest\.test\.ts$/, `.GenerateTest__${method.toLowerCase()}.test.ts`);
+        const created = this.writeIfMissing(
+          testPath, 
+          this.createApiTest(method, route),
+          dryRun
+        );
+        if (created) {
+          this.scanned.push({ 
+            type: 'api', 
+            file: path.relative('.', testPath) 
+          });
+        }
       }
     }
   }
@@ -736,7 +1091,7 @@ testProcess.on('exit', (code) => {
   /**
    * Scan for files without tests and generate them - TypeScript ES module only
    */
-  async generateTestFiles(): Promise<void> {
+  async generateTestFiles(dryRun: boolean = false): Promise<void> {
     console.log('🔍 Scanning for files that need TypeScript tests...');
     
     const allFiles = this.walkProject();
@@ -744,20 +1099,19 @@ testProcess.on('exit', (code) => {
     
     console.log(`📁 Found ${sourceFiles.length} source files without tests`);
     
-    if (sourceFiles.length === 0) {
-      console.log('✅ All source files already have corresponding tests');
-      return;
-    }
-    
     // Generate tests for each source file
     for (const file of sourceFiles) {
-      this.analyze(file);
+      await this.analyze(file, dryRun);
     }
-    
-    // Always set up Jest configuration and runner to ensure they're up-to-date
-    this.scaffoldJestSetup();
-    this.generateQtestsRunner();
-    this.updatePackageJsonTestScript();
+
+    // On non-dry runs, always scaffold Jest and runner even if there were no new files
+    if (!dryRun) {
+      this.scaffoldJestSetup();
+      this.generateQtestsRunner();
+      this.updatePackageJsonTestScript();
+    } else {
+      console.log('ℹ️ Dry run: Skipping Jest config and runner generation');
+    }
     
     console.log(`📝 Generated ${this.scanned.length} TypeScript test files:`);
     this.scanned.forEach(test => {

@@ -1,0 +1,34 @@
+38f1a13278ca6a6635e71ddad2c0002c
+"use strict";
+/**
+ * Advanced Testing Helper Utilities - TypeScript Implementation (Refactored)
+ *
+ * This module has been refactored to follow Single Responsibility Principle.
+ * It now coordinates between focused helper utilities for better maintainability.
+ *
+ * Components:
+ * - helpers/moduleReloader.ts - Module cache management and reloading
+ * - helpers/qerrorsStub.ts - QErrors stubbing functionality
+ * - helpers/consoleMocker.ts - Console mocking utilities
+ * - helpers/responseMocker.ts - Response object mocking for API testing
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateKey = exports.withSavedEnv = exports.restoreEnvVars = exports.backupEnvVars = exports.createRes = exports.createJsonRes = exports.withMockConsole = exports.stubQerrors = exports.moduleReloadLock = exports.reload = void 0;
+// Import focused helper utilities
+const moduleReloader_js_1 = require("./helpers/moduleReloader.js");
+Object.defineProperty(exports, "reload", { enumerable: true, get: function () { return moduleReloader_js_1.reload; } });
+Object.defineProperty(exports, "moduleReloadLock", { enumerable: true, get: function () { return moduleReloader_js_1.moduleReloadLock; } });
+const qerrorsStub_js_1 = require("./helpers/qerrorsStub.js");
+Object.defineProperty(exports, "stubQerrors", { enumerable: true, get: function () { return qerrorsStub_js_1.stubQerrors; } });
+const consoleMocker_js_1 = require("./helpers/consoleMocker.js");
+Object.defineProperty(exports, "withMockConsole", { enumerable: true, get: function () { return consoleMocker_js_1.withMockConsole; } });
+const responseMocker_js_1 = require("./helpers/responseMocker.js");
+Object.defineProperty(exports, "createJsonRes", { enumerable: true, get: function () { return responseMocker_js_1.createJsonRes; } });
+Object.defineProperty(exports, "createRes", { enumerable: true, get: function () { return responseMocker_js_1.createRes; } });
+const envManager_js_1 = require("./helpers/envManager.js");
+Object.defineProperty(exports, "backupEnvVars", { enumerable: true, get: function () { return envManager_js_1.backupEnvVars; } });
+Object.defineProperty(exports, "restoreEnvVars", { enumerable: true, get: function () { return envManager_js_1.restoreEnvVars; } });
+Object.defineProperty(exports, "withSavedEnv", { enumerable: true, get: function () { return envManager_js_1.withSavedEnv; } });
+const keyGenerator_js_1 = require("./helpers/keyGenerator.js");
+Object.defineProperty(exports, "generateKey", { enumerable: true, get: function () { return keyGenerator_js_1.generateKey; } });
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy90ZXN0SGVscGVycy50cyIsIm1hcHBpbmdzIjoiO0FBQUE7Ozs7Ozs7Ozs7O0dBV0c7OztBQUVILGtDQUFrQztBQUNsQyxtRUFBdUU7QUFTckUsdUZBVE8sMEJBQU0sT0FTUDtBQUNOLGlHQVZlLG9DQUFnQixPQVVmO0FBVGxCLDZEQUF1RDtBQVVyRCw0RkFWTyw0QkFBVyxPQVVQO0FBVGIsaUVBQTZEO0FBVTNELGdHQVZPLGtDQUFlLE9BVVA7QUFUakIsbUVBQXVFO0FBVXJFLDhGQVZPLGlDQUFhLE9BVVA7QUFDYiwwRkFYc0IsNkJBQVMsT0FXdEI7QUFWWCwyREFBc0Y7QUFXcEYsOEZBWE8sNkJBQWEsT0FXUDtBQUNiLCtGQVpzQiw4QkFBYyxPQVl0QjtBQUNkLDZGQWJzQyw0QkFBWSxPQWF0QztBQVpkLCtEQUF3RDtBQWF0RCw0RkFiTyw2QkFBVyxPQWFQIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3Jrc3BhY2UvdXRpbHMvdGVzdEhlbHBlcnMudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBBZHZhbmNlZCBUZXN0aW5nIEhlbHBlciBVdGlsaXRpZXMgLSBUeXBlU2NyaXB0IEltcGxlbWVudGF0aW9uIChSZWZhY3RvcmVkKVxuICogXG4gKiBUaGlzIG1vZHVsZSBoYXMgYmVlbiByZWZhY3RvcmVkIHRvIGZvbGxvdyBTaW5nbGUgUmVzcG9uc2liaWxpdHkgUHJpbmNpcGxlLlxuICogSXQgbm93IGNvb3JkaW5hdGVzIGJldHdlZW4gZm9jdXNlZCBoZWxwZXIgdXRpbGl0aWVzIGZvciBiZXR0ZXIgbWFpbnRhaW5hYmlsaXR5LlxuICogXG4gKiBDb21wb25lbnRzOlxuICogLSBoZWxwZXJzL21vZHVsZVJlbG9hZGVyLnRzIC0gTW9kdWxlIGNhY2hlIG1hbmFnZW1lbnQgYW5kIHJlbG9hZGluZ1xuICogLSBoZWxwZXJzL3FlcnJvcnNTdHViLnRzIC0gUUVycm9ycyBzdHViYmluZyBmdW5jdGlvbmFsaXR5XG4gKiAtIGhlbHBlcnMvY29uc29sZU1vY2tlci50cyAtIENvbnNvbGUgbW9ja2luZyB1dGlsaXRpZXNcbiAqIC0gaGVscGVycy9yZXNwb25zZU1vY2tlci50cyAtIFJlc3BvbnNlIG9iamVjdCBtb2NraW5nIGZvciBBUEkgdGVzdGluZ1xuICovXG5cbi8vIEltcG9ydCBmb2N1c2VkIGhlbHBlciB1dGlsaXRpZXNcbmltcG9ydCB7IHJlbG9hZCwgbW9kdWxlUmVsb2FkTG9jayB9IGZyb20gJy4vaGVscGVycy9tb2R1bGVSZWxvYWRlci5qcyc7XG5pbXBvcnQgeyBzdHViUWVycm9ycyB9IGZyb20gJy4vaGVscGVycy9xZXJyb3JzU3R1Yi5qcyc7XG5pbXBvcnQgeyB3aXRoTW9ja0NvbnNvbGUgfSBmcm9tICcuL2hlbHBlcnMvY29uc29sZU1vY2tlci5qcyc7XG5pbXBvcnQgeyBjcmVhdGVKc29uUmVzLCBjcmVhdGVSZXMgfSBmcm9tICcuL2hlbHBlcnMvcmVzcG9uc2VNb2NrZXIuanMnO1xuaW1wb3J0IHsgYmFja3VwRW52VmFycywgcmVzdG9yZUVudlZhcnMsIHdpdGhTYXZlZEVudiB9IGZyb20gJy4vaGVscGVycy9lbnZNYW5hZ2VyLmpzJztcbmltcG9ydCB7IGdlbmVyYXRlS2V5IH0gZnJvbSAnLi9oZWxwZXJzL2tleUdlbmVyYXRvci5qcyc7XG5cbi8vIEV4cG9ydCBhbGwgaGVscGVyIHV0aWxpdGllcyBmb2xsb3dpbmcgcXRlc3RzIGZyYW1ld29yayBwYXR0ZXJucyB1c2luZyBFUyBtb2R1bGUgc3ludGF4XG5leHBvcnQge1xuICByZWxvYWQsXG4gIG1vZHVsZVJlbG9hZExvY2ssXG4gIHN0dWJRZXJyb3JzLFxuICB3aXRoTW9ja0NvbnNvbGUsXG4gIGNyZWF0ZUpzb25SZXMsXG4gIGNyZWF0ZVJlcyxcbiAgYmFja3VwRW52VmFycyxcbiAgcmVzdG9yZUVudlZhcnMsXG4gIHdpdGhTYXZlZEVudixcbiAgZ2VuZXJhdGVLZXlcbn07Il0sInZlcnNpb24iOjN9
