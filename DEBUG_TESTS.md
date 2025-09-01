@@ -6,149 +6,81 @@ Analyze and address the following test failures:
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL ./index.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        24.041 s
+Time:        6.138 s
 Ran all test suites matching /home/runner/workspace/index.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL ./index.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        15.543 s
+Time:        3.919 s
 Ran all test suites matching /home/runner/workspace/index.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -167,7 +99,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 51822ms
+### Duration: 20374ms
 
 ---
 
@@ -175,149 +107,93 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/coreUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
 
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        19.787 s
+Time:        5.287 s
 Ran all test suites matching /home/runner/workspace/lib/coreUtils.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/coreUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        15.994 s
+Time:        2.882 s
 Ran all test suites matching /home/runner/workspace/lib/coreUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -336,7 +212,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 49714ms
+### Duration: 20459ms
 
 ---
 
@@ -344,149 +220,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/dataUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        23.35 s
+Time:        5.721 s
 Ran all test suites matching /home/runner/workspace/lib/dataUtils.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/dataUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        14.009 s
+Time:        4.179 s
 Ran all test suites matching /home/runner/workspace/lib/dataUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -505,7 +313,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 52254ms
+### Duration: 20097ms
 
 ---
 
@@ -513,149 +321,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/envUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        24.065 s
+Time:        6.41 s
 Ran all test suites matching /home/runner/workspace/lib/envUtils.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/envUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        14.391 s
+Time:        4.164 s
 Ran all test suites matching /home/runner/workspace/lib/envUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -674,7 +414,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 52190ms
+### Duration: 19987ms
 
 ---
 
@@ -682,149 +422,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/httpUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        22.544 s
+Time:        4.593 s
 Ran all test suites matching /home/runner/workspace/lib/httpUtils.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/httpUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        14.485 s
+Time:        4.828 s
 Ran all test suites matching /home/runner/workspace/lib/httpUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -843,7 +515,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 50291ms
+### Duration: 19831ms
 
 ---
 
@@ -851,150 +523,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/logUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
 
-A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        20.741 s
+Time:        4.35 s
 Ran all test suites matching /home/runner/workspace/lib/logUtils.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/logUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        15.415 s
+Time:        4.208 s
 Ran all test suites matching /home/runner/workspace/lib/logUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1013,7 +616,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 50461ms
+### Duration: 18707ms
 
 ---
 
@@ -1021,149 +624,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/setup.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        23.121 s
+Time:        4.746 s
 Ran all test suites matching /home/runner/workspace/lib/setup.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/setup.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        14.892 s
+Time:        4.438 s
 Ran all test suites matching /home/runner/workspace/lib/setup.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1182,7 +717,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 51374ms
+### Duration: 19772ms
 
 ---
 
@@ -1190,150 +725,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/stubs.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
 
-A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        26.712 s
+Time:        6.758 s
 Ran all test suites matching /home/runner/workspace/lib/stubs.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/stubs.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        12.712 s
+Time:        4.241 s
 Ran all test suites matching /home/runner/workspace/lib/stubs.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1352,7 +818,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 51317ms
+### Duration: 19087ms
 
 ---
 
@@ -1360,150 +826,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/testGenerator.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
 
-A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        23.646 s
+Time:        4.657 s
 Ran all test suites matching /home/runner/workspace/lib/testGenerator.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/testGenerator.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        16.129 s
+Time:        4.403 s
 Ran all test suites matching /home/runner/workspace/lib/testGenerator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1522,7 +919,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 50598ms
+### Duration: 17335ms
 
 ---
 
@@ -1530,149 +927,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/testUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        24.026 s
+Time:        6.927 s
 Ran all test suites matching /home/runner/workspace/lib/testUtils.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL lib/testUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        15.751 s
+Time:        3.648 s
 Ran all test suites matching /home/runner/workspace/lib/testUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1691,7 +1020,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 51745ms
+### Duration: 19797ms
 
 ---
 
@@ -1699,15 +1028,6 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-(node:18561) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 FAIL ./setup.test.ts
   ● Test suite failed to run
 
@@ -1739,24 +1059,13 @@ FAIL ./setup.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
-      1 | // Auto-generated unit test for setup.ts - optimized for speed
-    > 2 | import * as mod from './setup.ts';
-        | ^
-      3 |
-      4 | describe('setup.ts', () => {
-      5 |   test('setupComplete works', async () => {
-
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (setup.test.ts:2:1)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        8.132 s
+Time:        4.191 s
 Ran all test suites matching /home/runner/workspace/setup.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
 FAIL ./setup.test.ts
   ● Test suite failed to run
 
@@ -1788,26 +1097,12 @@ FAIL ./setup.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
-      1 | // Auto-generated unit test for setup.ts - optimized for speed
-    > 2 | import * as mod from './setup.ts';
-        | ^
-      3 |
-      4 | describe('setup.ts', () => {
-      5 |   test('setupComplete works', async () => {
-
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (setup.test.ts:2:1)
 
-(node:19116) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.231 s
+Time:        4.71 s
 Ran all test suites matching /home/runner/workspace/setup.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1826,7 +1121,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 30752ms
+### Duration: 16742ms
 
 ---
 
@@ -1834,9 +1129,6 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
 FAIL test/axiosStub.test.ts
   ● Test suite failed to run
 
@@ -1862,39 +1154,19 @@ FAIL test/axiosStub.test.ts
 
     Details:
 
-    /home/runner/workspace/utils/offlineMode.ts:74
-                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
-                                  ^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: await is only valid in async functions and the top level bodies of modules
-
-      15 | // Import environment management utilities using ES module syntax
-      16 | import { testEnv } from '../utils/testEnv.js';
-    > 17 | import { offlineMode } from '../utils/offlineMode.js';
-         | ^
-      18 | import { testHelpers } from '../utils/testHelpers.js';
-      19 |
-      20 | // Export the core utilities that our TypeScript index needs
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (lib/envUtils.ts:17:1)
-      at Object.<anonymous> (index.ts:17:1)
-      at Object.<anonymous> (test/axiosStub.test.ts:1:1)
 
-(node:18789) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        9.836 s
+Time:        5.692 s
 Ran all test suites matching /home/runner/workspace/test/axiosStub.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
 FAIL test/axiosStub.test.ts
   ● Test suite failed to run
 
@@ -1920,35 +1192,18 @@ FAIL test/axiosStub.test.ts
 
     Details:
 
-    /home/runner/workspace/utils/offlineMode.ts:74
-                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
-                                  ^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: await is only valid in async functions and the top level bodies of modules
-
-      15 | // Import environment management utilities using ES module syntax
-      16 | import { testEnv } from '../utils/testEnv.js';
-    > 17 | import { offlineMode } from '../utils/offlineMode.js';
-         | ^
-      18 | import { testHelpers } from '../utils/testHelpers.js';
-      19 |
-      20 | // Export the core utilities that our TypeScript index needs
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (lib/envUtils.ts:17:1)
-      at Object.<anonymous> (index.ts:17:1)
-      at Object.<anonymous> (test/axiosStub.test.ts:1:1)
 
-(node:19308) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        9.31 s
+Time:        4.889 s
 Ran all test suites matching /home/runner/workspace/test/axiosStub.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1967,7 +1222,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 34856ms
+### Duration: 19356ms
 
 ---
 
@@ -1975,150 +1230,93 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/comprehensive.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
 
-A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        25.929 s
+Time:        4.315 s
 Ran all test suites matching /home/runner/workspace/test/comprehensive.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/comprehensive.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        14.302 s
+Time:        4.274 s
 Ran all test suites matching /home/runner/workspace/test/comprehensive.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2137,7 +1335,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 52204ms
+### Duration: 18836ms
 
 ---
 
@@ -2145,149 +1343,93 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/dualModuleGeneration.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
 
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        25.417 s
+Time:        6.022 s
 Ran all test suites matching /home/runner/workspace/test/dualModuleGeneration.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/dualModuleGeneration.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        14.787 s
+Time:        3.561 s
 Ran all test suites matching /home/runner/workspace/test/dualModuleGeneration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2306,7 +1448,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 50637ms
+### Duration: 20093ms
 
 ---
 
@@ -2314,173 +1456,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/edgeCases.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        18.39 s
+Time:        5.901 s
 Ran all test suites matching /home/runner/workspace/test/edgeCases.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/edgeCases.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        14.997 s
+Time:        3.607 s
 Ran all test suites matching /home/runner/workspace/test/edgeCases.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2499,7 +1549,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 43387ms
+### Duration: 19321ms
 
 ---
 
@@ -2507,149 +1557,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/httpTest.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        18.645 s
+Time:        5.804 s
 Ran all test suites matching /home/runner/workspace/test/httpTest.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/httpTest.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        13.975 s
+Time:        3.529 s
 Ran all test suites matching /home/runner/workspace/test/httpTest.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2668,7 +1650,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 42751ms
+### Duration: 21950ms
 
 ---
 
@@ -2676,149 +1658,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/indexExports.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        19.767 s
+Time:        4.81 s
 Ran all test suites matching /home/runner/workspace/test/indexExports.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/indexExports.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        14.43 s
+Time:        4.839 s
 Ran all test suites matching /home/runner/workspace/test/indexExports.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2837,7 +1751,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 42365ms
+### Duration: 21390ms
 
 ---
 
@@ -2845,149 +1759,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/integration.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        18.657 s
+Time:        4.788 s
 Ran all test suites matching /home/runner/workspace/test/integration.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/integration.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        13.964 s
+Time:        4.936 s
 Ran all test suites matching /home/runner/workspace/test/integration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3006,7 +1852,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 41055ms
+### Duration: 21042ms
 
 ---
 
@@ -3014,144 +1860,76 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/logUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        17.456 s
+Time:        4.694 s
 Ran all test suites matching /home/runner/workspace/test/logUtils.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/logUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Unable to check memory usage Error: write EPIPE
     at target._send (node:internal/child_process:878:20)
@@ -3168,7 +1946,7 @@ Unable to check memory usage Error: write EPIPE
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        14.852 s
+Time:        4.168 s
 Ran all test suites matching /home/runner/workspace/test/logUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3187,7 +1965,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 40685ms
+### Duration: 17912ms
 
 ---
 
@@ -3195,149 +1973,93 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/mockAxios.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
 
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        15.351 s
+Time:        6.406 s
 Ran all test suites matching /home/runner/workspace/test/mockAxios.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/mockAxios.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        17.101 s
+Time:        3.829 s
 Ran all test suites matching /home/runner/workspace/test/mockAxios.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3356,7 +2078,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 42155ms
+### Duration: 21695ms
 
 ---
 
@@ -3364,9 +2086,6 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
 FAIL test/mockConsole.test.ts
   ● Test suite failed to run
 
@@ -3392,62 +2111,19 @@ FAIL test/mockConsole.test.ts
 
     Details:
 
-    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
-    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
           ^
 
-    SyntaxError: Identifier '__filename' has already been declared
-
-      13 |
-      14 | // Import focused helper utilities
-    > 15 | import { reload, moduleReloadLock } from './helpers/moduleReloader.js';
-         | ^
-      16 | import { stubQerrors } from './helpers/qerrorsStub.js';
-      17 | import { withMockConsole } from './helpers/consoleMocker.js';
-      18 | import { createJsonRes, createRes } from './helpers/responseMocker.js';
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (utils/testHelpers.ts:15:1)
-      at Object.<anonymous> (test/mockConsole.test.ts:1:1)
 
-(node:21663) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.294 s
+Time:        5.594 s
 Ran all test suites matching /home/runner/workspace/test/mockConsole.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
 FAIL test/mockConsole.test.ts
   ● Test suite failed to run
 
@@ -3473,34 +2149,18 @@ FAIL test/mockConsole.test.ts
 
     Details:
 
-    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
-    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
           ^
 
-    SyntaxError: Identifier '__filename' has already been declared
-
-      13 |
-      14 | // Import focused helper utilities
-    > 15 | import { reload, moduleReloadLock } from './helpers/moduleReloader.js';
-         | ^
-      16 | import { stubQerrors } from './helpers/qerrorsStub.js';
-      17 | import { withMockConsole } from './helpers/consoleMocker.js';
-      18 | import { createJsonRes, createRes } from './helpers/responseMocker.js';
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (utils/testHelpers.ts:15:1)
-      at Object.<anonymous> (test/mockConsole.test.ts:1:1)
 
-(node:22012) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.98 s
+Time:        4.628 s
 Ran all test suites matching /home/runner/workspace/test/mockConsole.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3519,7 +2179,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21671ms
+### Duration: 20971ms
 
 ---
 
@@ -3527,149 +2187,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/mockModels.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        14.151 s
+Time:        4.049 s
 Ran all test suites matching /home/runner/workspace/test/mockModels.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/mockModels.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        15.785 s
+Time:        4.817 s
 Ran all test suites matching /home/runner/workspace/test/mockModels.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3688,7 +2280,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 40609ms
+### Duration: 18314ms
 
 ---
 
@@ -3696,149 +2288,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/mockUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        17.067 s
+Time:        6.525 s
 Ran all test suites matching /home/runner/workspace/test/mockUtils.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/mockUtils.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        13.402 s
+Time:        4.11 s
 Ran all test suites matching /home/runner/workspace/test/mockUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3857,7 +2381,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 40690ms
+### Duration: 22006ms
 
 ---
 
@@ -3865,149 +2389,93 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/moduleSystemIntegration.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
 
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        18.726 s
+Time:        6.198 s
 Ran all test suites matching /home/runner/workspace/test/moduleSystemIntegration.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/moduleSystemIntegration.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        16.014 s
+Time:        3.497 s
 Ran all test suites matching /home/runner/workspace/test/moduleSystemIntegration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4026,7 +2494,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 42999ms
+### Duration: 21744ms
 
 ---
 
@@ -4034,9 +2502,6 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
 FAIL test/offlineIntegration.test.ts
   ● Test suite failed to run
 
@@ -4062,36 +2527,19 @@ FAIL test/offlineIntegration.test.ts
 
     Details:
 
-    /home/runner/workspace/utils/offlineMode.ts:74
-                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
-                                  ^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: await is only valid in async functions and the top level bodies of modules
-
-      1 | // Simplified offline integration tests for TypeScript ES modules
-    > 2 | import { isOfflineMode, setOfflineMode } from '../utils/offlineMode.js';
-        | ^
-      3 |
-      4 | describe('Offline Integration Tests', () => {
-      5 |   test('offline mode can be toggled', () => {
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (test/offlineIntegration.test.ts:2:1)
 
-(node:21353) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.978 s
+Time:        4.521 s
 Ran all test suites matching /home/runner/workspace/test/offlineIntegration.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
 FAIL test/offlineIntegration.test.ts
   ● Test suite failed to run
 
@@ -4117,32 +2565,18 @@ FAIL test/offlineIntegration.test.ts
 
     Details:
 
-    /home/runner/workspace/utils/offlineMode.ts:74
-                const stubAxios = await Promise.resolve().then(() => __importStar(require('../stubs/axios.js')));
-                                  ^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: await is only valid in async functions and the top level bodies of modules
-
-      1 | // Simplified offline integration tests for TypeScript ES modules
-    > 2 | import { isOfflineMode, setOfflineMode } from '../utils/offlineMode.js';
-        | ^
-      3 |
-      4 | describe('Offline Integration Tests', () => {
-      5 |   test('offline mode can be toggled', () => {
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (test/offlineIntegration.test.ts:2:1)
 
-(node:22053) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.908 s
+Time:        4.332 s
 Ran all test suites matching /home/runner/workspace/test/offlineIntegration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4161,7 +2595,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20888ms
+### Duration: 20466ms
 
 ---
 
@@ -4169,149 +2603,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/offlineMode.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        18.652 s
+Time:        5.838 s
 Ran all test suites matching /home/runner/workspace/test/offlineMode.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/offlineMode.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        14.303 s
+Time:        5.375 s
 Ran all test suites matching /home/runner/workspace/test/offlineMode.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4330,7 +2696,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 42524ms
+### Duration: 21355ms
 
 ---
 
@@ -4338,149 +2704,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/performance.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        16.936 s
+Time:        6.04 s
 Ran all test suites matching /home/runner/workspace/test/performance.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/performance.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        14.804 s
+Time:        5.617 s
 Ran all test suites matching /home/runner/workspace/test/performance.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4499,7 +2797,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 40949ms
+### Duration: 20497ms
 
 ---
 
@@ -4507,149 +2805,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/qtests-dogfood.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        20.58 s
+Time:        6.483 s
 Ran all test suites matching /home/runner/workspace/test/qtests-dogfood.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/qtests-dogfood.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        12.654 s
+Time:        5.198 s
 Ran all test suites matching /home/runner/workspace/test/qtests-dogfood.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4668,7 +2898,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 43949ms
+### Duration: 21597ms
 
 ---
 
@@ -4676,149 +2906,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/resolveStubPaths.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        23.632 s
+Time:        5.701 s
 Ran all test suites matching /home/runner/workspace/test/resolveStubPaths.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/resolveStubPaths.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        11.128 s
+Time:        3.598 s
 Ran all test suites matching /home/runner/workspace/test/resolveStubPaths.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4837,7 +2999,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 44227ms
+### Duration: 21323ms
 
 ---
 
@@ -4845,149 +3007,81 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/runTestSuite.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        20.039 s
+Time:        6.098 s
 Ran all test suites matching /home/runner/workspace/test/runTestSuite.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/runTestSuite.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        13.253 s
+Time:        7.215 s
 Ran all test suites matching /home/runner/workspace/test/runTestSuite.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5006,7 +3100,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 43161ms
+### Duration: 20744ms
 
 ---
 
@@ -5014,101 +3108,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/safeSerialize.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        16.334 s
+Time:        3.827 s
 Ran all test suites matching /home/runner/workspace/test/safeSerialize.test.ts.
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL test/safeSerialize.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        3.934 s
+Ran all test suites matching /home/runner/workspace/test/safeSerialize.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -5126,7 +3201,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23442ms
+### Duration: 19161ms
 
 ---
 
@@ -5134,89 +3209,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/sendEmail.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        16.525 s
+Time:        6.442 s
 Ran all test suites matching /home/runner/workspace/test/sendEmail.test.ts.
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL test/sendEmail.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.653 s
+Ran all test suites matching /home/runner/workspace/test/sendEmail.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -5234,7 +3302,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23421ms
+### Duration: 21175ms
 
 ---
 
@@ -5242,9 +3310,6 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
 FAIL test/setupMultiple.test.ts
   ● Test suite failed to run
 
@@ -5276,30 +3341,13 @@ FAIL test/setupMultiple.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
-      1 | // Simplified setup test to prevent child process spawning issues
-    > 2 | import '../setup.js'; // activate stub resolution for test environment
-        | ^
-      3 |
-      4 | describe('setup multiple calls', () => {
-      5 |   test('setup can be called multiple times safely', async () => {
-
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (test/setupMultiple.test.ts:2:1)
 
-(node:24073) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.48 s
+Time:        6.652 s
 Ran all test suites matching /home/runner/workspace/test/setupMultiple.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
 FAIL test/setupMultiple.test.ts
   ● Test suite failed to run
 
@@ -5331,26 +3379,12 @@ FAIL test/setupMultiple.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
-      1 | // Simplified setup test to prevent child process spawning issues
-    > 2 | import '../setup.js'; // activate stub resolution for test environment
-        | ^
-      3 |
-      4 | describe('setup multiple calls', () => {
-      5 |   test('setup can be called multiple times safely', async () => {
-
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (test/setupMultiple.test.ts:2:1)
 
-(node:24954) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.514 s
+Time:        4.283 s
 Ran all test suites matching /home/runner/workspace/test/setupMultiple.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5369,7 +3403,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18190ms
+### Duration: 20168ms
 
 ---
 
@@ -5377,9 +3411,6 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
 FAIL test/setupResolution.test.ts
   ● Test suite failed to run
 
@@ -5411,30 +3442,13 @@ FAIL test/setupResolution.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
-      1 | // Simplified setup resolution test for TypeScript ES modules
-    > 2 | import '../setup.js'; // activate stub resolution
-        | ^
-      3 |
-      4 | describe('setup resolution functionality', () => {
-      5 |   test('setup modifies module resolution', () => {
-
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (test/setupResolution.test.ts:2:1)
 
-(node:24125) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.833 s
+Time:        3.68 s
 Ran all test suites matching /home/runner/workspace/test/setupResolution.test.ts.
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
 FAIL test/setupResolution.test.ts
   ● Test suite failed to run
 
@@ -5466,26 +3480,12 @@ FAIL test/setupResolution.test.ts
 
     SyntaxError: Identifier 'require' has already been declared
 
-      1 | // Simplified setup resolution test for TypeScript ES modules
-    > 2 | import '../setup.js'; // activate stub resolution
-        | ^
-      3 |
-      4 | describe('setup resolution functionality', () => {
-      5 |   test('setup modifies module resolution', () => {
-
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (test/setupResolution.test.ts:2:1)
 
-(node:24865) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.809 s
+Time:        3.602 s
 Ran all test suites matching /home/runner/workspace/test/setupResolution.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5504,7 +3504,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 17522ms
+### Duration: 18012ms
 
 ---
 
@@ -5512,89 +3512,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/stubMethod.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        17.13 s
+Time:        4.7 s
 Ran all test suites matching /home/runner/workspace/test/stubMethod.test.ts.
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL test/stubMethod.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.194 s
+Ran all test suites matching /home/runner/workspace/test/stubMethod.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -5612,7 +3605,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22684ms
+### Duration: 20323ms
 
 ---
 
@@ -5620,89 +3613,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/testEnv.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        16.326 s
+Time:        6.168 s
 Ran all test suites matching /home/runner/workspace/test/testEnv.test.ts.
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL test/testEnv.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.261 s
+Ran all test suites matching /home/runner/workspace/test/testEnv.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -5720,7 +3706,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23560ms
+### Duration: 20435ms
 
 ---
 
@@ -5728,89 +3714,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/testGenerator.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        19.763 s
+Time:        6.322 s
 Ran all test suites matching /home/runner/workspace/test/testGenerator.test.ts.
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL test/testGenerator.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        3.254 s
+Ran all test suites matching /home/runner/workspace/test/testGenerator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -5828,7 +3807,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 24051ms
+### Duration: 21032ms
 
 ---
 
@@ -5836,9 +3815,6 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
 FAIL test/testHelpers.test.ts
   ● Test suite failed to run
 
@@ -5864,30 +3840,26 @@ FAIL test/testHelpers.test.ts
 
     Details:
 
-    /home/runner/workspace/utils/helpers/moduleReloader.ts:50
-    const __filename = (0, url_1.fileURLToPath)(import.meta.url);
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
           ^
 
-    SyntaxError: Identifier '__filename' has already been declared
-
-      13 |
-      14 | // Import focused helper utilities
-    > 15 | import { reload, moduleReloadLock } from './helpers/moduleReloader.js';
-         | ^
-      16 | import { stubQerrors } from './helpers/qerrorsStub.js';
-      17 | import { withMockConsole } from './helpers/consoleMocker.js';
-      18 | import { createJsonRes, createRes } from './helpers/responseMocker.js';
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at Object.<anonymous> (utils/testHelpers.ts:15:1)
-      at Object.<anonymous> (test/testHelpers.test.ts:2:1)
 
-(node:24687) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Unable to check memory usage Error: write EPIPE
     at target._send (node:internal/child_process:878:20)
     at target.send (node:internal/child_process:751:19)
@@ -5903,19 +3875,46 @@ Unable to check memory usage Error: write EPIPE
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.174 s
+Time:        6.29 s
 Ran all test suites matching /home/runner/workspace/test/testHelpers.test.ts.
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL test/testHelpers.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.137 s
+Ran all test suites matching /home/runner/workspace/test/testHelpers.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -5933,7 +3932,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19887ms
+### Duration: 21336ms
 
 ---
 
@@ -5941,89 +3940,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL test/testSuite.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        17.387 s
+Time:        7.419 s
 Ran all test suites matching /home/runner/workspace/test/testSuite.test.ts.
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL test/testSuite.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        3.462 s
+Ran all test suites matching /home/runner/workspace/test/testSuite.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -6041,7 +4033,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23087ms
+### Duration: 21436ms
 
 ---
 
@@ -6074,24 +4066,18 @@ FAIL tests/integration/demo__src__apiRoutes__delete.test.js
 
     Details:
 
-    /home/runner/workspace/tests/integration/demo__src__apiRoutes__delete.test.js:2
-    import { httpTest } from 'qtests/lib/envUtils';
-    ^^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: Cannot use import statement outside a module
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-(node:24358) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.88 s
+Time:        3.913 s
 Ran all test suites matching /home/runner/workspace/tests/integration/demo__src__apiRoutes__delete.test.js.
 FAIL tests/integration/demo__src__apiRoutes__delete.test.js
   ● Test suite failed to run
@@ -6118,24 +4104,18 @@ FAIL tests/integration/demo__src__apiRoutes__delete.test.js
 
     Details:
 
-    /home/runner/workspace/tests/integration/demo__src__apiRoutes__delete.test.js:2
-    import { httpTest } from 'qtests/lib/envUtils';
-    ^^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: Cannot use import statement outside a module
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-(node:25056) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.497 s
+Time:        4.805 s
 Ran all test suites matching /home/runner/workspace/tests/integration/demo__src__apiRoutes__delete.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -6159,7 +4139,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21132ms
+### Duration: 18919ms
 
 ---
 
@@ -6192,24 +4172,18 @@ FAIL tests/integration/demo__src__apiRoutes__get.test.js
 
     Details:
 
-    /home/runner/workspace/tests/integration/demo__src__apiRoutes__get.test.js:2
-    import { httpTest } from 'qtests/lib/envUtils';
-    ^^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: Cannot use import statement outside a module
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-(node:24628) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.797 s
+Time:        8.394 s
 Ran all test suites matching /home/runner/workspace/tests/integration/demo__src__apiRoutes__get.test.js.
 FAIL tests/integration/demo__src__apiRoutes__get.test.js
   ● Test suite failed to run
@@ -6236,24 +4210,18 @@ FAIL tests/integration/demo__src__apiRoutes__get.test.js
 
     Details:
 
-    /home/runner/workspace/tests/integration/demo__src__apiRoutes__get.test.js:2
-    import { httpTest } from 'qtests/lib/envUtils';
-    ^^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: Cannot use import statement outside a module
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-(node:25275) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.008 s
+Time:        4.119 s
 Ran all test suites matching /home/runner/workspace/tests/integration/demo__src__apiRoutes__get.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -6277,7 +4245,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22217ms
+### Duration: 20897ms
 
 ---
 
@@ -6310,24 +4278,18 @@ FAIL tests/integration/demo__src__apiRoutes__patch.test.js
 
     Details:
 
-    /home/runner/workspace/tests/integration/demo__src__apiRoutes__patch.test.js:2
-    import { httpTest } from 'qtests/lib/envUtils';
-    ^^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: Cannot use import statement outside a module
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-(node:24393) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.157 s
+Time:        5.353 s
 Ran all test suites matching /home/runner/workspace/tests/integration/demo__src__apiRoutes__patch.test.js.
 FAIL tests/integration/demo__src__apiRoutes__patch.test.js
   ● Test suite failed to run
@@ -6354,24 +4316,18 @@ FAIL tests/integration/demo__src__apiRoutes__patch.test.js
 
     Details:
 
-    /home/runner/workspace/tests/integration/demo__src__apiRoutes__patch.test.js:2
-    import { httpTest } from 'qtests/lib/envUtils';
-    ^^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: Cannot use import statement outside a module
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-(node:25132) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.261 s
+Time:        4.864 s
 Ran all test suites matching /home/runner/workspace/tests/integration/demo__src__apiRoutes__patch.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -6395,7 +4351,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21563ms
+### Duration: 20389ms
 
 ---
 
@@ -6428,24 +4384,18 @@ FAIL tests/integration/demo__src__apiRoutes__post.test.js
 
     Details:
 
-    /home/runner/workspace/tests/integration/demo__src__apiRoutes__post.test.js:2
-    import { httpTest } from 'qtests/lib/envUtils';
-    ^^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: Cannot use import statement outside a module
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-(node:24561) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.17 s
+Time:        5.411 s
 Ran all test suites matching /home/runner/workspace/tests/integration/demo__src__apiRoutes__post.test.js.
 FAIL tests/integration/demo__src__apiRoutes__post.test.js
   ● Test suite failed to run
@@ -6472,24 +4422,18 @@ FAIL tests/integration/demo__src__apiRoutes__post.test.js
 
     Details:
 
-    /home/runner/workspace/tests/integration/demo__src__apiRoutes__post.test.js:2
-    import { httpTest } from 'qtests/lib/envUtils';
-    ^^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: Cannot use import statement outside a module
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-(node:25228) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.967 s
+Time:        4.929 s
 Ran all test suites matching /home/runner/workspace/tests/integration/demo__src__apiRoutes__post.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -6513,7 +4457,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21854ms
+### Duration: 19847ms
 
 ---
 
@@ -6546,24 +4490,18 @@ FAIL tests/integration/demo__src__apiRoutes__put.test.js
 
     Details:
 
-    /home/runner/workspace/tests/integration/demo__src__apiRoutes__put.test.js:2
-    import { httpTest } from 'qtests/lib/envUtils';
-    ^^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: Cannot use import statement outside a module
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-(node:24546) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.856 s
+Time:        6.482 s
 Ran all test suites matching /home/runner/workspace/tests/integration/demo__src__apiRoutes__put.test.js.
 FAIL tests/integration/demo__src__apiRoutes__put.test.js
   ● Test suite failed to run
@@ -6590,24 +4528,18 @@ FAIL tests/integration/demo__src__apiRoutes__put.test.js
 
     Details:
 
-    /home/runner/workspace/tests/integration/demo__src__apiRoutes__put.test.js:2
-    import { httpTest } from 'qtests/lib/envUtils';
-    ^^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: Cannot use import statement outside a module
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-(node:25152) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.819 s
+Time:        5.203 s
 Ran all test suites matching /home/runner/workspace/tests/integration/demo__src__apiRoutes__put.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -6631,7 +4563,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21498ms
+### Duration: 20914ms
 
 ---
 
@@ -6639,89 +4571,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
-ts-jest[config] (WARN) 
-    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/runner/workspace/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
-  
-node:internal/modules/esm/utils:270
-    throw new ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG();
-          ^
-
-TypeError: A dynamic import callback was invoked without --experimental-vm-modules
-    at importModuleDynamicallyCallback (node:internal/modules/esm/utils:270:11)
-    at /home/runner/workspace/test/testSetup.js:3:21
-    at processTicksAndRejections (node:internal/process/task_queues:95:5) {
-  code: 'ERR_VM_DYNAMIC_IMPORT_CALLBACK_MISSING_FLAG'
-}
-
-Node.js v20.19.3
 FAIL tests/integration/example.test.ts
   ● Test suite failed to run
 
-    Jest worker encountered 4 child process exceptions, exceeding retry limit
+    Jest encountered an unexpected token
 
-      at ChildProcessWorker.initialize (node_modules/jest-worker/build/index.js:805:21)
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        16.346 s
+Time:        4.396 s
 Ran all test suites matching /home/runner/workspace/tests/integration/example.test.ts.
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL tests/integration/example.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.632 s
+Ran all test suites matching /home/runner/workspace/tests/integration/example.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -6739,7 +4664,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22931ms
+### Duration: 20007ms
 
 ---
 
@@ -6772,24 +4697,18 @@ FAIL tests/integration/example__get.test.js
 
     Details:
 
-    /home/runner/workspace/tests/integration/example__get.test.js:2
-    import { httpTest } from 'qtests/lib/envUtils';
-    ^^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: Cannot use import statement outside a module
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-(node:24522) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.869 s
+Time:        6.113 s
 Ran all test suites matching /home/runner/workspace/tests/integration/example__get.test.js.
 FAIL tests/integration/example__get.test.js
   ● Test suite failed to run
@@ -6816,24 +4735,18 @@ FAIL tests/integration/example__get.test.js
 
     Details:
 
-    /home/runner/workspace/tests/integration/example__get.test.js:2
-    import { httpTest } from 'qtests/lib/envUtils';
-    ^^^^^^
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
 
-    SyntaxError: Cannot use import statement outside a module
+    SyntaxError: Identifier 'require' has already been declared
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-(node:25096) [JEST-01] DeprecationWarning: 'currentlyRunningTest' property was accessed on [Object] after it was soft deleted
-  Jest deletes objects that were set on the global scope between test files to reduce memory leaks.
-  Currently it only "soft" deletes them and emits this warning if those objects were accessed after their deletion.
-  In future versions of Jest, this behavior will change to "on", which will likely fail tests.
-  You can change the behavior in your test configuration now to reduce memory usage.
-(Use `node --trace-deprecation ...` to show where the warning was created)
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.18 s
+Time:        4.759 s
 Ran all test suites matching /home/runner/workspace/tests/integration/example__get.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -6857,7 +4770,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19984ms
+### Duration: 20192ms
 
 ---
 
@@ -6865,28 +4778,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL tests/integration/example__get.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.467 s
+Ran all test suites matching /home/runner/workspace/tests/integration/example__get.test.ts.
+FAIL tests/integration/example__get.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.243 s
+Ran all test suites matching /home/runner/workspace/tests/integration/example__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -6904,7 +4871,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6751ms
+### Duration: 21724ms
 
 ---
 
@@ -6912,28 +4879,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL tests/integration/example__post.test.js
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.007 s
+Ran all test suites matching /home/runner/workspace/tests/integration/example__post.test.js.
+FAIL tests/integration/example__post.test.js
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        3.86 s
+Ran all test suites matching /home/runner/workspace/tests/integration/example__post.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
     ^
@@ -6956,7 +4977,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 4722ms
+### Duration: 19039ms
 
 ---
 
@@ -6964,28 +4985,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL tests/integration/example__post.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.096 s
+Ran all test suites matching /home/runner/workspace/tests/integration/example__post.test.ts.
+FAIL tests/integration/example__post.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.434 s
+Ran all test suites matching /home/runner/workspace/tests/integration/example__post.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7003,7 +5078,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6519ms
+### Duration: 21486ms
 
 ---
 
@@ -7011,28 +5086,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL tests/integration/example__put.test.js
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.548 s
+Ran all test suites matching /home/runner/workspace/tests/integration/example__put.test.js.
+FAIL tests/integration/example__put.test.js
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.105 s
+Ran all test suites matching /home/runner/workspace/tests/integration/example__put.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
     ^
@@ -7055,7 +5184,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6118ms
+### Duration: 21416ms
 
 ---
 
@@ -7063,28 +5192,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL tests/integration/example__put.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.439 s
+Ran all test suites matching /home/runner/workspace/tests/integration/example__put.test.ts.
+FAIL tests/integration/example__put.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.818 s
+Ran all test suites matching /home/runner/workspace/tests/integration/example__put.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7102,7 +5285,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6432ms
+### Duration: 21772ms
 
 ---
 
@@ -7110,28 +5293,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL tests/integration/utils__httpTest__get.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.837 s
+Ran all test suites matching /home/runner/workspace/tests/integration/utils__httpTest__get.test.ts.
+FAIL tests/integration/utils__httpTest__get.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.133 s
+Ran all test suites matching /home/runner/workspace/tests/integration/utils__httpTest__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7149,7 +5386,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 5637ms
+### Duration: 21636ms
 
 ---
 
@@ -7157,28 +5394,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/email/emailFormatter.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.432 s
+Ran all test suites matching /home/runner/workspace/utils/email/emailFormatter.test.ts.
+FAIL utils/email/emailFormatter.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.581 s
+Ran all test suites matching /home/runner/workspace/utils/email/emailFormatter.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7196,7 +5487,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6707ms
+### Duration: 21808ms
 
 ---
 
@@ -7204,28 +5495,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/email/emailHistory.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.615 s
+Ran all test suites matching /home/runner/workspace/utils/email/emailHistory.test.ts.
+FAIL utils/email/emailHistory.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.739 s
+Ran all test suites matching /home/runner/workspace/utils/email/emailHistory.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7243,7 +5588,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6594ms
+### Duration: 21732ms
 
 ---
 
@@ -7251,28 +5596,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/email/emailSender.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.54 s
+Ran all test suites matching /home/runner/workspace/utils/email/emailSender.test.ts.
+FAIL utils/email/emailSender.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.871 s
+Ran all test suites matching /home/runner/workspace/utils/email/emailSender.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7290,7 +5689,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6442ms
+### Duration: 21543ms
 
 ---
 
@@ -7298,28 +5697,94 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/email/emailTemplate.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.102 s
+Ran all test suites matching /home/runner/workspace/utils/email/emailTemplate.test.ts.
+FAIL utils/email/emailTemplate.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.364 s
+Ran all test suites matching /home/runner/workspace/utils/email/emailTemplate.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7337,7 +5802,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6222ms
+### Duration: 21176ms
 
 ---
 
@@ -7345,28 +5810,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/email/emailValidator.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.178 s
+Ran all test suites matching /home/runner/workspace/utils/email/emailValidator.test.ts.
+FAIL utils/email/emailValidator.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.127 s
+Ran all test suites matching /home/runner/workspace/utils/email/emailValidator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7384,7 +5903,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6386ms
+### Duration: 20797ms
 
 ---
 
@@ -7392,28 +5911,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/helpers/consoleMocker.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        7.738 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/consoleMocker.test.ts.
+FAIL utils/helpers/consoleMocker.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.352 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/consoleMocker.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7431,7 +6004,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6547ms
+### Duration: 21904ms
 
 ---
 
@@ -7439,28 +6012,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/helpers/envManager.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        3.578 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/envManager.test.ts.
+FAIL utils/helpers/envManager.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.789 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/envManager.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7478,7 +6105,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6363ms
+### Duration: 18963ms
 
 ---
 
@@ -7486,28 +6113,106 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/helpers/keyGenerator.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        7.062 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/keyGenerator.test.ts.
+FAIL utils/helpers/keyGenerator.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.387 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/keyGenerator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7525,7 +6230,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 5392ms
+### Duration: 20443ms
 
 ---
 
@@ -7533,28 +6238,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/helpers/moduleReloader.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.612 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/moduleReloader.test.ts.
+FAIL utils/helpers/moduleReloader.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.576 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/moduleReloader.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7572,7 +6331,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 5388ms
+### Duration: 21231ms
 
 ---
 
@@ -7580,28 +6339,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/helpers/qerrorsStub.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.319 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/qerrorsStub.test.ts.
+FAIL utils/helpers/qerrorsStub.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.661 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/qerrorsStub.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7619,7 +6432,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6162ms
+### Duration: 21614ms
 
 ---
 
@@ -7627,28 +6440,94 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/helpers/responseMocker.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        7.256 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/responseMocker.test.ts.
+FAIL utils/helpers/responseMocker.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.863 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/responseMocker.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7666,7 +6545,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6127ms
+### Duration: 25087ms
 
 ---
 
@@ -7674,28 +6553,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/httpTest.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        9.291 s
+Ran all test suites matching /home/runner/workspace/utils/httpTest.test.ts.
+FAIL utils/httpTest.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.489 s
+Ran all test suites matching /home/runner/workspace/utils/httpTest.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7713,7 +6646,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6224ms
+### Duration: 24346ms
 
 ---
 
@@ -7721,28 +6654,106 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/mockAxios.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        9.408 s
+Ran all test suites matching /home/runner/workspace/utils/mockAxios.test.ts.
+FAIL utils/mockAxios.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.741 s
+Ran all test suites matching /home/runner/workspace/utils/mockAxios.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7760,7 +6771,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6082ms
+### Duration: 25318ms
 
 ---
 
@@ -7768,28 +6779,94 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/mockConsole.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.481 s
+Ran all test suites matching /home/runner/workspace/utils/mockConsole.test.ts.
+FAIL utils/mockConsole.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.925 s
+Ran all test suites matching /home/runner/workspace/utils/mockConsole.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7807,7 +6884,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6549ms
+### Duration: 24592ms
 
 ---
 
@@ -7815,28 +6892,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/mockModels.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.894 s
+Ran all test suites matching /home/runner/workspace/utils/mockModels.test.ts.
+FAIL utils/mockModels.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.142 s
+Ran all test suites matching /home/runner/workspace/utils/mockModels.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7854,7 +6985,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6019ms
+### Duration: 24106ms
 
 ---
 
@@ -7862,28 +6993,94 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/models/apiKeyModel.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        11.384 s
+Ran all test suites matching /home/runner/workspace/utils/models/apiKeyModel.test.ts.
+FAIL utils/models/apiKeyModel.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        3.089 s
+Ran all test suites matching /home/runner/workspace/utils/models/apiKeyModel.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7901,7 +7098,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6331ms
+### Duration: 25603ms
 
 ---
 
@@ -7909,28 +7106,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/models/apiLogModel.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        8.16 s
+Ran all test suites matching /home/runner/workspace/utils/models/apiLogModel.test.ts.
+FAIL utils/models/apiLogModel.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.996 s
+Ran all test suites matching /home/runner/workspace/utils/models/apiLogModel.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7948,7 +7199,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 5669ms
+### Duration: 25380ms
 
 ---
 
@@ -7956,28 +7207,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/models/baseMockModel.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.506 s
+Ran all test suites matching /home/runner/workspace/utils/models/baseMockModel.test.ts.
+FAIL utils/models/baseMockModel.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.886 s
+Ran all test suites matching /home/runner/workspace/utils/models/baseMockModel.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -7995,7 +7300,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6276ms
+### Duration: 25019ms
 
 ---
 
@@ -8003,28 +7308,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/models/modelFactory.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        8.984 s
+Ran all test suites matching /home/runner/workspace/utils/models/modelFactory.test.ts.
+FAIL utils/models/modelFactory.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.05 s
+Ran all test suites matching /home/runner/workspace/utils/models/modelFactory.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -8042,7 +7401,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 5590ms
+### Duration: 25348ms
 
 ---
 
@@ -8050,28 +7409,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/offlineMode.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.653 s
+Ran all test suites matching /home/runner/workspace/utils/offlineMode.test.ts.
+FAIL utils/offlineMode.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.348 s
+Ran all test suites matching /home/runner/workspace/utils/offlineMode.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -8089,7 +7502,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6210ms
+### Duration: 24822ms
 
 ---
 
@@ -8097,28 +7510,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/runTestSuite.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        7.647 s
+Ran all test suites matching /home/runner/workspace/utils/runTestSuite.test.ts.
+FAIL utils/runTestSuite.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.623 s
+Ran all test suites matching /home/runner/workspace/utils/runTestSuite.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -8136,7 +7603,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6303ms
+### Duration: 24942ms
 
 ---
 
@@ -8144,28 +7611,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/sendEmail.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.046 s
+Ran all test suites matching /home/runner/workspace/utils/sendEmail.test.ts.
+FAIL utils/sendEmail.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.993 s
+Ran all test suites matching /home/runner/workspace/utils/sendEmail.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -8183,7 +7704,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 5855ms
+### Duration: 23290ms
 
 ---
 
@@ -8191,28 +7712,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/stubMethod.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        8.69 s
+Ran all test suites matching /home/runner/workspace/utils/stubMethod.test.ts.
+FAIL utils/stubMethod.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.366 s
+Ran all test suites matching /home/runner/workspace/utils/stubMethod.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -8230,7 +7805,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6519ms
+### Duration: 25179ms
 
 ---
 
@@ -8238,28 +7813,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/testEnv.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.57 s
+Ran all test suites matching /home/runner/workspace/utils/testEnv.test.ts.
+FAIL utils/testEnv.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.951 s
+Ran all test suites matching /home/runner/workspace/utils/testEnv.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -8277,7 +7906,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6300ms
+### Duration: 22991ms
 
 ---
 
@@ -8285,28 +7914,82 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/testHelpers.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.536 s
+Ran all test suites matching /home/runner/workspace/utils/testHelpers.test.ts.
+FAIL utils/testHelpers.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.789 s
+Ran all test suites matching /home/runner/workspace/utils/testHelpers.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -8324,7 +8007,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6164ms
+### Duration: 23761ms
 
 ---
 
@@ -8332,28 +8015,106 @@ Node.js v20.19.3
 
 ### Output:
 ```
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
-ReferenceError: module is not defined
-    at file:///home/runner/workspace/jest.config.js:1:1
-    at ModuleJobSync.runSync (node:internal/modules/esm/module_job:387:35)
-    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:323:47)
-    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
-    at Module._compile (node:internal/modules/cjs/loader:1511:5)
-    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
-    at Module.load (node:internal/modules/cjs/loader:1275:32)
-    at Module._load (node:internal/modules/cjs/loader:1096:12)
-    at Module.require (node:internal/modules/cjs/loader:1298:19)
-    at require (node:internal/modules/helpers:182:18)
+FAIL utils/testSuite.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        7.534 s
+Ran all test suites matching /home/runner/workspace/utils/testSuite.test.ts.
+FAIL utils/testSuite.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.595 s
+Ran all test suites matching /home/runner/workspace/utils/testSuite.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
         ^
@@ -8371,7 +8132,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 5625ms
+### Duration: 23827ms
 
 ---
 
@@ -8415,7 +8176,7 @@ FAIL utils/testing/assertionHelper.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.833 s
+Time:        1.985 s
 Ran all test suites matching /home/runner/workspace/utils/testing/assertionHelper.test.ts.
 FAIL utils/testing/assertionHelper.test.ts
   ● Test suite failed to run
@@ -8453,7 +8214,7 @@ FAIL utils/testing/assertionHelper.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.991 s
+Time:        1.712 s
 Ran all test suites matching /home/runner/workspace/utils/testing/assertionHelper.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8472,7 +8233,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 8057ms
+### Duration: 6744ms
 
 ---
 
@@ -8516,7 +8277,7 @@ FAIL utils/testing/databaseTestHelper.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.198 s
+Time:        1.959 s
 Ran all test suites matching /home/runner/workspace/utils/testing/databaseTestHelper.test.ts.
 FAIL utils/testing/databaseTestHelper.test.ts
   ● Test suite failed to run
@@ -8551,22 +8312,10 @@ FAIL utils/testing/databaseTestHelper.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.074 s
+Time:        1.746 s
 Ran all test suites matching /home/runner/workspace/utils/testing/databaseTestHelper.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8585,7 +8334,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 8019ms
+### Duration: 6788ms
 
 ---
 
@@ -8629,7 +8378,7 @@ FAIL utils/testing/mockManager.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.193 s
+Time:        1.833 s
 Ran all test suites matching /home/runner/workspace/utils/testing/mockManager.test.ts.
 FAIL utils/testing/mockManager.test.ts
   ● Test suite failed to run
@@ -8667,7 +8416,7 @@ FAIL utils/testing/mockManager.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.859 s
+Time:        1.855 s
 Ran all test suites matching /home/runner/workspace/utils/testing/mockManager.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8686,7 +8435,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 7703ms
+### Duration: 6800ms
 
 ---
 
@@ -8730,7 +8479,7 @@ FAIL utils/testing/performanceTestHelper.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.022 s
+Time:        1.903 s
 Ran all test suites matching /home/runner/workspace/utils/testing/performanceTestHelper.test.ts.
 FAIL utils/testing/performanceTestHelper.test.ts
   ● Test suite failed to run
@@ -8768,7 +8517,7 @@ FAIL utils/testing/performanceTestHelper.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.024 s
+Time:        1.636 s
 Ran all test suites matching /home/runner/workspace/utils/testing/performanceTestHelper.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8787,7 +8536,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 7971ms
+### Duration: 6624ms
 
 ---
 
@@ -8831,7 +8580,7 @@ FAIL utils/testing/testDataFactory.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.966 s
+Time:        2.016 s
 Ran all test suites matching /home/runner/workspace/utils/testing/testDataFactory.test.ts.
 FAIL utils/testing/testDataFactory.test.ts
   ● Test suite failed to run
@@ -8869,7 +8618,7 @@ FAIL utils/testing/testDataFactory.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.12 s
+Time:        1.639 s
 Ran all test suites matching /home/runner/workspace/utils/testing/testDataFactory.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8888,7 +8637,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 7830ms
+### Duration: 6781ms
 
 ---
 
@@ -8896,4 +8645,4 @@ Node.js v20.19.3
 
 - Total failed tests: 83
 - Failed test files: /home/runner/workspace/index.test.ts, /home/runner/workspace/lib/coreUtils.test.ts, /home/runner/workspace/lib/dataUtils.test.ts, /home/runner/workspace/lib/envUtils.test.ts, /home/runner/workspace/lib/httpUtils.test.ts, /home/runner/workspace/lib/logUtils.test.ts, /home/runner/workspace/lib/setup.test.ts, /home/runner/workspace/lib/stubs.test.ts, /home/runner/workspace/lib/testGenerator.test.ts, /home/runner/workspace/lib/testUtils.test.ts, /home/runner/workspace/setup.test.ts, /home/runner/workspace/test/axiosStub.test.ts, /home/runner/workspace/test/comprehensive.test.ts, /home/runner/workspace/test/dualModuleGeneration.test.ts, /home/runner/workspace/test/edgeCases.test.ts, /home/runner/workspace/test/httpTest.test.ts, /home/runner/workspace/test/indexExports.test.ts, /home/runner/workspace/test/integration.test.ts, /home/runner/workspace/test/logUtils.test.ts, /home/runner/workspace/test/mockAxios.test.ts, /home/runner/workspace/test/mockConsole.test.ts, /home/runner/workspace/test/mockModels.test.ts, /home/runner/workspace/test/mockUtils.test.ts, /home/runner/workspace/test/moduleSystemIntegration.test.ts, /home/runner/workspace/test/offlineIntegration.test.ts, /home/runner/workspace/test/offlineMode.test.ts, /home/runner/workspace/test/performance.test.ts, /home/runner/workspace/test/qtests-dogfood.test.ts, /home/runner/workspace/test/resolveStubPaths.test.ts, /home/runner/workspace/test/runTestSuite.test.ts, /home/runner/workspace/test/safeSerialize.test.ts, /home/runner/workspace/test/sendEmail.test.ts, /home/runner/workspace/test/setupMultiple.test.ts, /home/runner/workspace/test/setupResolution.test.ts, /home/runner/workspace/test/stubMethod.test.ts, /home/runner/workspace/test/testEnv.test.ts, /home/runner/workspace/test/testGenerator.test.ts, /home/runner/workspace/test/testHelpers.test.ts, /home/runner/workspace/test/testSuite.test.ts, /home/runner/workspace/tests/integration/demo__src__apiRoutes__delete.test.js, /home/runner/workspace/tests/integration/demo__src__apiRoutes__get.test.js, /home/runner/workspace/tests/integration/demo__src__apiRoutes__patch.test.js, /home/runner/workspace/tests/integration/demo__src__apiRoutes__post.test.js, /home/runner/workspace/tests/integration/demo__src__apiRoutes__put.test.js, /home/runner/workspace/tests/integration/example.test.ts, /home/runner/workspace/tests/integration/example__get.test.js, /home/runner/workspace/tests/integration/example__get.test.ts, /home/runner/workspace/tests/integration/example__post.test.js, /home/runner/workspace/tests/integration/example__post.test.ts, /home/runner/workspace/tests/integration/example__put.test.js, /home/runner/workspace/tests/integration/example__put.test.ts, /home/runner/workspace/tests/integration/utils__httpTest__get.test.ts, /home/runner/workspace/utils/email/emailFormatter.test.ts, /home/runner/workspace/utils/email/emailHistory.test.ts, /home/runner/workspace/utils/email/emailSender.test.ts, /home/runner/workspace/utils/email/emailTemplate.test.ts, /home/runner/workspace/utils/email/emailValidator.test.ts, /home/runner/workspace/utils/helpers/consoleMocker.test.ts, /home/runner/workspace/utils/helpers/envManager.test.ts, /home/runner/workspace/utils/helpers/keyGenerator.test.ts, /home/runner/workspace/utils/helpers/moduleReloader.test.ts, /home/runner/workspace/utils/helpers/qerrorsStub.test.ts, /home/runner/workspace/utils/helpers/responseMocker.test.ts, /home/runner/workspace/utils/httpTest.test.ts, /home/runner/workspace/utils/mockAxios.test.ts, /home/runner/workspace/utils/mockConsole.test.ts, /home/runner/workspace/utils/mockModels.test.ts, /home/runner/workspace/utils/models/apiKeyModel.test.ts, /home/runner/workspace/utils/models/apiLogModel.test.ts, /home/runner/workspace/utils/models/baseMockModel.test.ts, /home/runner/workspace/utils/models/modelFactory.test.ts, /home/runner/workspace/utils/offlineMode.test.ts, /home/runner/workspace/utils/runTestSuite.test.ts, /home/runner/workspace/utils/sendEmail.test.ts, /home/runner/workspace/utils/stubMethod.test.ts, /home/runner/workspace/utils/testEnv.test.ts, /home/runner/workspace/utils/testHelpers.test.ts, /home/runner/workspace/utils/testSuite.test.ts, /home/runner/workspace/utils/testing/assertionHelper.test.ts, /home/runner/workspace/utils/testing/databaseTestHelper.test.ts, /home/runner/workspace/utils/testing/mockManager.test.ts, /home/runner/workspace/utils/testing/performanceTestHelper.test.ts, /home/runner/workspace/utils/testing/testDataFactory.test.ts
-- Generated: 2025-09-01T10:13:17.860Z
+- Generated: 2025-09-01T10:17:04.570Z
