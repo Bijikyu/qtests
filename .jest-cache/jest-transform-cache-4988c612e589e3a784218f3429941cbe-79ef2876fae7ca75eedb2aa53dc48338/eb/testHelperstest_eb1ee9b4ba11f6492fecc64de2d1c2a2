@@ -1,0 +1,11 @@
+31816787a9c9bdef72e50b8c9c94ba13
+"use strict";
+// Lightweight unit test for testHelpers.ts - no complex operations
+describe('testHelpers.ts basic exports', () => {
+    test('module loads without errors', async () => {
+        const mod = await import('./testHelpers.js');
+        expect(mod).toBeDefined();
+        expect(typeof mod).toBe('object');
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy90ZXN0SGVscGVycy50ZXN0LnRzIiwibWFwcGluZ3MiOiI7QUFBQSxtRUFBbUU7QUFDbkUsUUFBUSxDQUFDLDhCQUE4QixFQUFFLEdBQUcsRUFBRTtJQUM1QyxJQUFJLENBQUMsNkJBQTZCLEVBQUUsS0FBSyxJQUFJLEVBQUU7UUFDN0MsTUFBTSxHQUFHLEdBQUcsTUFBTSxNQUFNLENBQUMsa0JBQWtCLENBQUMsQ0FBQztRQUM3QyxNQUFNLENBQUMsR0FBRyxDQUFDLENBQUMsV0FBVyxFQUFFLENBQUM7UUFDMUIsTUFBTSxDQUFDLE9BQU8sR0FBRyxDQUFDLENBQUMsSUFBSSxDQUFDLFFBQVEsQ0FBQyxDQUFDO0lBQ3BDLENBQUMsQ0FBQyxDQUFDO0FBQ0wsQ0FBQyxDQUFDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy90ZXN0SGVscGVycy50ZXN0LnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIExpZ2h0d2VpZ2h0IHVuaXQgdGVzdCBmb3IgdGVzdEhlbHBlcnMudHMgLSBubyBjb21wbGV4IG9wZXJhdGlvbnNcbmRlc2NyaWJlKCd0ZXN0SGVscGVycy50cyBiYXNpYyBleHBvcnRzJywgKCkgPT4ge1xuICB0ZXN0KCdtb2R1bGUgbG9hZHMgd2l0aG91dCBlcnJvcnMnLCBhc3luYyAoKSA9PiB7XG4gICAgY29uc3QgbW9kID0gYXdhaXQgaW1wb3J0KCcuL3Rlc3RIZWxwZXJzLmpzJyk7XG4gICAgZXhwZWN0KG1vZCkudG9CZURlZmluZWQoKTtcbiAgICBleHBlY3QodHlwZW9mIG1vZCkudG9CZSgnb2JqZWN0Jyk7XG4gIH0pO1xufSk7Il0sInZlcnNpb24iOjN9

@@ -1,0 +1,11 @@
+75f453246fe3151aa40cd4f03d9f5d3c
+"use strict";
+// Lightweight unit test for emailFormatter.ts - no complex operations
+describe('emailFormatter.ts basic exports', () => {
+    test('module loads without errors', async () => {
+        const mod = await import('./emailFormatter.js');
+        expect(mod).toBeDefined();
+        expect(typeof mod).toBe('object');
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9lbWFpbC9lbWFpbEZvcm1hdHRlci50ZXN0LnRzIiwibWFwcGluZ3MiOiI7QUFBQSxzRUFBc0U7QUFDdEUsUUFBUSxDQUFDLGlDQUFpQyxFQUFFLEdBQUcsRUFBRTtJQUMvQyxJQUFJLENBQUMsNkJBQTZCLEVBQUUsS0FBSyxJQUFJLEVBQUU7UUFDN0MsTUFBTSxHQUFHLEdBQUcsTUFBTSxNQUFNLENBQUMscUJBQXFCLENBQUMsQ0FBQztRQUNoRCxNQUFNLENBQUMsR0FBRyxDQUFDLENBQUMsV0FBVyxFQUFFLENBQUM7UUFDMUIsTUFBTSxDQUFDLE9BQU8sR0FBRyxDQUFDLENBQUMsSUFBSSxDQUFDLFFBQVEsQ0FBQyxDQUFDO0lBQ3BDLENBQUMsQ0FBQyxDQUFDO0FBQ0wsQ0FBQyxDQUFDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9lbWFpbC9lbWFpbEZvcm1hdHRlci50ZXN0LnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIExpZ2h0d2VpZ2h0IHVuaXQgdGVzdCBmb3IgZW1haWxGb3JtYXR0ZXIudHMgLSBubyBjb21wbGV4IG9wZXJhdGlvbnNcbmRlc2NyaWJlKCdlbWFpbEZvcm1hdHRlci50cyBiYXNpYyBleHBvcnRzJywgKCkgPT4ge1xuICB0ZXN0KCdtb2R1bGUgbG9hZHMgd2l0aG91dCBlcnJvcnMnLCBhc3luYyAoKSA9PiB7XG4gICAgY29uc3QgbW9kID0gYXdhaXQgaW1wb3J0KCcuL2VtYWlsRm9ybWF0dGVyLmpzJyk7XG4gICAgZXhwZWN0KG1vZCkudG9CZURlZmluZWQoKTtcbiAgICBleHBlY3QodHlwZW9mIG1vZCkudG9CZSgnb2JqZWN0Jyk7XG4gIH0pO1xufSk7Il0sInZlcnNpb24iOjN9

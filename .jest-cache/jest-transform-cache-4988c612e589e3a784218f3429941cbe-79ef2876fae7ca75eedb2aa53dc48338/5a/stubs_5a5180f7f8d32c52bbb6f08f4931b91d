@@ -1,0 +1,69 @@
+c1601d5ed7715c3373c01dbed8c6e96f
+"use strict";
+/**
+ * Stub Library Registry
+ *
+ * This module provides a centralized registry of all available stubs
+ * in the qtests framework. Stubs are organized under a namespace to
+ * prevent naming conflicts and make it clear these are replacement modules.
+ *
+ * Design philosophy:
+ * - Centralized registry for easy discovery
+ * - Namespace organization to prevent conflicts
+ * - Clear separation between real and stub modules
+ * - Easy to extend with new stubs
+ *
+ * Why a centralized registry is important:
+ * 1. Provides single source of truth for all available stubs
+ * 2. Makes it easy for developers to discover what stubs are available
+ * 3. Prevents naming conflicts with real modules in user code
+ * 4. Enables consistent patterns for adding new stubs
+ * 5. Groups related functionality for better organization
+ *
+ * Alternative approaches considered:
+ * - Individual stub exports at top level: Rejected due to namespace pollution
+ * - Automatic stub discovery: Rejected due to complexity and unpredictability
+ * - Category-based organization: Current approach is simpler for small stub count
+ *
+ * Registry pattern benefits:
+ * - Clear separation of concerns (registry vs individual stubs)
+ * - Easy to understand what stubs are available
+ * - Consistent access patterns for all stubs
+ * - Simple to extend with new stub categories
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * Export stub library registry
+ *
+ * All stubs are organized under the stubs namespace to:
+ * 1. Group related mock implementations together
+ * 2. Prevent naming conflicts with real modules in user code
+ * 3. Make it clear these are replacement/mock implementations
+ * 4. Provide consistent access patterns: stubs.axios, stubs.winston
+ *
+ * Namespace design rationale:
+ * - Using property names that match the real module names for intuitive access
+ * - Each property points to a complete stub module that can replace the real one
+ * - Stub modules provide the same API surface as their real counterparts
+ * - Registry acts as a discovery mechanism and access point
+ *
+ * Extension pattern:
+ * To add new stubs, simply add them to this registry:
+ * - Create the stub module in ../stubs/[module-name]
+ * - Add the require statement and property to this exports object
+ * - The stub becomes available as stubs.[module-name]
+ */
+// Import stub modules using ES module syntax
+const axios_js_1 = __importDefault(require("../stubs/axios.js")); // http client library stub
+const winston_js_1 = __importDefault(require("../stubs/winston.js")); // logging library stub
+// Export stub library registry using ES module syntax
+const stubs = {
+    axios: axios_js_1.default, // http client library stub
+    winston: // http client library stub
+    winston_js_1.default // logging library stub
+};
+exports.default = stubs;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9saWIvc3R1YnMudHMiLCJtYXBwaW5ncyI6IjtBQUNBOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0E4Qkc7Ozs7O0FBRUg7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0dBb0JHO0FBQ0gsNkNBQTZDO0FBQzdDLGlFQUFzQyxDQUFDLDJCQUEyQjtBQUNsRSxxRUFBMEMsQ0FBQyx1QkFBdUI7QUFFbEUsc0RBQXNEO0FBQ3RELE1BQU0sS0FBSyxHQUFHO0lBQ1osS0FBSyxFQUFMLGtCQUFLLEVBQUUsMkJBQTJCO0lBQ2xDLE9BQU8sRUFEQSwyQkFBMkI7SUFDbEMsb0JBQU8sQ0FBQyx1QkFBdUI7Q0FDaEMsQ0FBQztBQUVGLGtCQUFlLEtBQUssQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL2xpYi9zdHVicy50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJcbi8qKlxuICogU3R1YiBMaWJyYXJ5IFJlZ2lzdHJ5XG4gKiBcbiAqIFRoaXMgbW9kdWxlIHByb3ZpZGVzIGEgY2VudHJhbGl6ZWQgcmVnaXN0cnkgb2YgYWxsIGF2YWlsYWJsZSBzdHVic1xuICogaW4gdGhlIHF0ZXN0cyBmcmFtZXdvcmsuIFN0dWJzIGFyZSBvcmdhbml6ZWQgdW5kZXIgYSBuYW1lc3BhY2UgdG9cbiAqIHByZXZlbnQgbmFtaW5nIGNvbmZsaWN0cyBhbmQgbWFrZSBpdCBjbGVhciB0aGVzZSBhcmUgcmVwbGFjZW1lbnQgbW9kdWxlcy5cbiAqIFxuICogRGVzaWduIHBoaWxvc29waHk6XG4gKiAtIENlbnRyYWxpemVkIHJlZ2lzdHJ5IGZvciBlYXN5IGRpc2NvdmVyeVxuICogLSBOYW1lc3BhY2Ugb3JnYW5pemF0aW9uIHRvIHByZXZlbnQgY29uZmxpY3RzXG4gKiAtIENsZWFyIHNlcGFyYXRpb24gYmV0d2VlbiByZWFsIGFuZCBzdHViIG1vZHVsZXNcbiAqIC0gRWFzeSB0byBleHRlbmQgd2l0aCBuZXcgc3R1YnNcbiAqIFxuICogV2h5IGEgY2VudHJhbGl6ZWQgcmVnaXN0cnkgaXMgaW1wb3J0YW50OlxuICogMS4gUHJvdmlkZXMgc2luZ2xlIHNvdXJjZSBvZiB0cnV0aCBmb3IgYWxsIGF2YWlsYWJsZSBzdHVic1xuICogMi4gTWFrZXMgaXQgZWFzeSBmb3IgZGV2ZWxvcGVycyB0byBkaXNjb3ZlciB3aGF0IHN0dWJzIGFyZSBhdmFpbGFibGVcbiAqIDMuIFByZXZlbnRzIG5hbWluZyBjb25mbGljdHMgd2l0aCByZWFsIG1vZHVsZXMgaW4gdXNlciBjb2RlXG4gKiA0LiBFbmFibGVzIGNvbnNpc3RlbnQgcGF0dGVybnMgZm9yIGFkZGluZyBuZXcgc3R1YnNcbiAqIDUuIEdyb3VwcyByZWxhdGVkIGZ1bmN0aW9uYWxpdHkgZm9yIGJldHRlciBvcmdhbml6YXRpb25cbiAqIFxuICogQWx0ZXJuYXRpdmUgYXBwcm9hY2hlcyBjb25zaWRlcmVkOlxuICogLSBJbmRpdmlkdWFsIHN0dWIgZXhwb3J0cyBhdCB0b3AgbGV2ZWw6IFJlamVjdGVkIGR1ZSB0byBuYW1lc3BhY2UgcG9sbHV0aW9uXG4gKiAtIEF1dG9tYXRpYyBzdHViIGRpc2NvdmVyeTogUmVqZWN0ZWQgZHVlIHRvIGNvbXBsZXhpdHkgYW5kIHVucHJlZGljdGFiaWxpdHlcbiAqIC0gQ2F0ZWdvcnktYmFzZWQgb3JnYW5pemF0aW9uOiBDdXJyZW50IGFwcHJvYWNoIGlzIHNpbXBsZXIgZm9yIHNtYWxsIHN0dWIgY291bnRcbiAqIFxuICogUmVnaXN0cnkgcGF0dGVybiBiZW5lZml0czpcbiAqIC0gQ2xlYXIgc2VwYXJhdGlvbiBvZiBjb25jZXJucyAocmVnaXN0cnkgdnMgaW5kaXZpZHVhbCBzdHVicylcbiAqIC0gRWFzeSB0byB1bmRlcnN0YW5kIHdoYXQgc3R1YnMgYXJlIGF2YWlsYWJsZVxuICogLSBDb25zaXN0ZW50IGFjY2VzcyBwYXR0ZXJucyBmb3IgYWxsIHN0dWJzXG4gKiAtIFNpbXBsZSB0byBleHRlbmQgd2l0aCBuZXcgc3R1YiBjYXRlZ29yaWVzXG4gKi9cblxuLyoqXG4gKiBFeHBvcnQgc3R1YiBsaWJyYXJ5IHJlZ2lzdHJ5XG4gKiBcbiAqIEFsbCBzdHVicyBhcmUgb3JnYW5pemVkIHVuZGVyIHRoZSBzdHVicyBuYW1lc3BhY2UgdG86XG4gKiAxLiBHcm91cCByZWxhdGVkIG1vY2sgaW1wbGVtZW50YXRpb25zIHRvZ2V0aGVyXG4gKiAyLiBQcmV2ZW50IG5hbWluZyBjb25mbGljdHMgd2l0aCByZWFsIG1vZHVsZXMgaW4gdXNlciBjb2RlXG4gKiAzLiBNYWtlIGl0IGNsZWFyIHRoZXNlIGFyZSByZXBsYWNlbWVudC9tb2NrIGltcGxlbWVudGF0aW9uc1xuICogNC4gUHJvdmlkZSBjb25zaXN0ZW50IGFjY2VzcyBwYXR0ZXJuczogc3R1YnMuYXhpb3MsIHN0dWJzLndpbnN0b25cbiAqIFxuICogTmFtZXNwYWNlIGRlc2lnbiByYXRpb25hbGU6XG4gKiAtIFVzaW5nIHByb3BlcnR5IG5hbWVzIHRoYXQgbWF0Y2ggdGhlIHJlYWwgbW9kdWxlIG5hbWVzIGZvciBpbnR1aXRpdmUgYWNjZXNzXG4gKiAtIEVhY2ggcHJvcGVydHkgcG9pbnRzIHRvIGEgY29tcGxldGUgc3R1YiBtb2R1bGUgdGhhdCBjYW4gcmVwbGFjZSB0aGUgcmVhbCBvbmVcbiAqIC0gU3R1YiBtb2R1bGVzIHByb3ZpZGUgdGhlIHNhbWUgQVBJIHN1cmZhY2UgYXMgdGhlaXIgcmVhbCBjb3VudGVycGFydHNcbiAqIC0gUmVnaXN0cnkgYWN0cyBhcyBhIGRpc2NvdmVyeSBtZWNoYW5pc20gYW5kIGFjY2VzcyBwb2ludFxuICogXG4gKiBFeHRlbnNpb24gcGF0dGVybjpcbiAqIFRvIGFkZCBuZXcgc3R1YnMsIHNpbXBseSBhZGQgdGhlbSB0byB0aGlzIHJlZ2lzdHJ5OlxuICogLSBDcmVhdGUgdGhlIHN0dWIgbW9kdWxlIGluIC4uL3N0dWJzL1ttb2R1bGUtbmFtZV1cbiAqIC0gQWRkIHRoZSByZXF1aXJlIHN0YXRlbWVudCBhbmQgcHJvcGVydHkgdG8gdGhpcyBleHBvcnRzIG9iamVjdFxuICogLSBUaGUgc3R1YiBiZWNvbWVzIGF2YWlsYWJsZSBhcyBzdHVicy5bbW9kdWxlLW5hbWVdXG4gKi9cbi8vIEltcG9ydCBzdHViIG1vZHVsZXMgdXNpbmcgRVMgbW9kdWxlIHN5bnRheFxuaW1wb3J0IGF4aW9zIGZyb20gJy4uL3N0dWJzL2F4aW9zLmpzJzsgLy8gaHR0cCBjbGllbnQgbGlicmFyeSBzdHViXG5pbXBvcnQgd2luc3RvbiBmcm9tICcuLi9zdHVicy93aW5zdG9uLmpzJzsgLy8gbG9nZ2luZyBsaWJyYXJ5IHN0dWJcblxuLy8gRXhwb3J0IHN0dWIgbGlicmFyeSByZWdpc3RyeSB1c2luZyBFUyBtb2R1bGUgc3ludGF4XG5jb25zdCBzdHVicyA9IHtcbiAgYXhpb3MsIC8vIGh0dHAgY2xpZW50IGxpYnJhcnkgc3R1YlxuICB3aW5zdG9uIC8vIGxvZ2dpbmcgbGlicmFyeSBzdHViXG59O1xuXG5leHBvcnQgZGVmYXVsdCBzdHVicztcbiJdLCJ2ZXJzaW9uIjozfQ==

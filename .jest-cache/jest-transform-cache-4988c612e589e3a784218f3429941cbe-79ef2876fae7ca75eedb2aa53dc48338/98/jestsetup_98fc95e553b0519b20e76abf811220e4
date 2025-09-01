@@ -1,0 +1,16 @@
+c1e08c178158e417ac4e6b3b47e13c9d
+// jest-setup.ts - Jest-specific setup file
+import 'jest';
+// Global test configuration for TypeScript ES modules
+beforeAll(() => {
+    // Set test environment
+    process.env.NODE_ENV = 'test';
+    // Configure test timeouts
+    jest.setTimeout(10000);
+});
+// Cleanup after each test to prevent interference
+afterEach(() => {
+    // Clear all mocks
+    jest.clearAllMocks();
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9qZXN0LXNldHVwLnRzIiwibWFwcGluZ3MiOiJBQUFBLDJDQUEyQztBQUMzQyxPQUFPLE1BQU0sQ0FBQztBQUVkLHNEQUFzRDtBQUN0RCxTQUFTLENBQUMsR0FBRyxFQUFFO0lBQ2IsdUJBQXVCO0lBQ3ZCLE9BQU8sQ0FBQyxHQUFHLENBQUMsUUFBUSxHQUFHLE1BQU0sQ0FBQztJQUU5QiwwQkFBMEI7SUFDMUIsSUFBSSxDQUFDLFVBQVUsQ0FBQyxLQUFLLENBQUMsQ0FBQztBQUN6QixDQUFDLENBQUMsQ0FBQztBQUVILGtEQUFrRDtBQUNsRCxTQUFTLENBQUMsR0FBRyxFQUFFO0lBQ2Isa0JBQWtCO0lBQ2xCLElBQUksQ0FBQyxhQUFhLEVBQUUsQ0FBQztBQUN2QixDQUFDLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL2plc3Qtc2V0dXAudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gamVzdC1zZXR1cC50cyAtIEplc3Qtc3BlY2lmaWMgc2V0dXAgZmlsZVxuaW1wb3J0ICdqZXN0JztcblxuLy8gR2xvYmFsIHRlc3QgY29uZmlndXJhdGlvbiBmb3IgVHlwZVNjcmlwdCBFUyBtb2R1bGVzXG5iZWZvcmVBbGwoKCkgPT4ge1xuICAvLyBTZXQgdGVzdCBlbnZpcm9ubWVudFxuICBwcm9jZXNzLmVudi5OT0RFX0VOViA9ICd0ZXN0JztcbiAgXG4gIC8vIENvbmZpZ3VyZSB0ZXN0IHRpbWVvdXRzXG4gIGplc3Quc2V0VGltZW91dCgxMDAwMCk7XG59KTtcblxuLy8gQ2xlYW51cCBhZnRlciBlYWNoIHRlc3QgdG8gcHJldmVudCBpbnRlcmZlcmVuY2VcbmFmdGVyRWFjaCgoKSA9PiB7XG4gIC8vIENsZWFyIGFsbCBtb2Nrc1xuICBqZXN0LmNsZWFyQWxsTW9ja3MoKTtcbn0pOyJdLCJ2ZXJzaW9uIjozfQ==

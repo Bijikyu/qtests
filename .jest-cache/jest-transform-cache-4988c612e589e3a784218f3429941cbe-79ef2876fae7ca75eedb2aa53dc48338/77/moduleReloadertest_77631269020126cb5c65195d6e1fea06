@@ -1,0 +1,11 @@
+dc8b451b6022a7bed3b01b2e36a4c077
+"use strict";
+// Lightweight unit test for moduleReloader.ts - no complex operations
+describe('moduleReloader.ts basic exports', () => {
+    test('module loads without errors', async () => {
+        const mod = await import('./moduleReloader.js');
+        expect(mod).toBeDefined();
+        expect(typeof mod).toBe('object');
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9oZWxwZXJzL21vZHVsZVJlbG9hZGVyLnRlc3QudHMiLCJtYXBwaW5ncyI6IjtBQUFBLHNFQUFzRTtBQUN0RSxRQUFRLENBQUMsaUNBQWlDLEVBQUUsR0FBRyxFQUFFO0lBQy9DLElBQUksQ0FBQyw2QkFBNkIsRUFBRSxLQUFLLElBQUksRUFBRTtRQUM3QyxNQUFNLEdBQUcsR0FBRyxNQUFNLE1BQU0sQ0FBQyxxQkFBcUIsQ0FBQyxDQUFDO1FBQ2hELE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxXQUFXLEVBQUUsQ0FBQztRQUMxQixNQUFNLENBQUMsT0FBTyxHQUFHLENBQUMsQ0FBQyxJQUFJLENBQUMsUUFBUSxDQUFDLENBQUM7SUFDcEMsQ0FBQyxDQUFDLENBQUM7QUFDTCxDQUFDLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL3V0aWxzL2hlbHBlcnMvbW9kdWxlUmVsb2FkZXIudGVzdC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBMaWdodHdlaWdodCB1bml0IHRlc3QgZm9yIG1vZHVsZVJlbG9hZGVyLnRzIC0gbm8gY29tcGxleCBvcGVyYXRpb25zXG5kZXNjcmliZSgnbW9kdWxlUmVsb2FkZXIudHMgYmFzaWMgZXhwb3J0cycsICgpID0+IHtcbiAgdGVzdCgnbW9kdWxlIGxvYWRzIHdpdGhvdXQgZXJyb3JzJywgYXN5bmMgKCkgPT4ge1xuICAgIGNvbnN0IG1vZCA9IGF3YWl0IGltcG9ydCgnLi9tb2R1bGVSZWxvYWRlci5qcycpO1xuICAgIGV4cGVjdChtb2QpLnRvQmVEZWZpbmVkKCk7XG4gICAgZXhwZWN0KHR5cGVvZiBtb2QpLnRvQmUoJ29iamVjdCcpO1xuICB9KTtcbn0pOyJdLCJ2ZXJzaW9uIjozfQ==

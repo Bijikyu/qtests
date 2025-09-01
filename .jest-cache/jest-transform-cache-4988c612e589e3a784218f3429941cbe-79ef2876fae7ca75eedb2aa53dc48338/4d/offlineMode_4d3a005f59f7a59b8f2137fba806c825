@@ -1,0 +1,107 @@
+6133191beb551b94154ce0095b791e43
+/**
+ * Offline Mode Utility - TypeScript Implementation
+ */
+// Simple offline state management
+let isOfflineFlag = false;
+let cachedAxios = null;
+let cachedQerrors = null;
+/**
+ * Set offline mode
+ */
+function setOfflineMode(offline) {
+    const changed = isOfflineFlag !== offline;
+    isOfflineFlag = offline;
+    // Clear cache when mode changes
+    if (changed) {
+        clearOfflineCache();
+    }
+}
+/**
+ * Check if offline mode is enabled
+ */
+function isOfflineMode() {
+    return isOfflineFlag;
+}
+/**
+ * Get axios (stub or real)
+ */
+async function getAxios() {
+    if (!cachedAxios) {
+        if (isOfflineFlag) {
+            // Use stub axios
+            const stubAxios = await import('../stubs/axios.js');
+            cachedAxios = stubAxios.default || stubAxios;
+        }
+        else {
+            // Try real axios, fallback to stub
+            try {
+                const axios = await import('axios');
+                cachedAxios = axios.default || axios;
+            }
+            catch (e) {
+                const stubAxios = await import('../stubs/axios.js');
+                cachedAxios = stubAxios.default || stubAxios;
+            }
+        }
+    }
+    return cachedAxios;
+}
+/**
+ * Get qerrors (stub or real)
+ */
+async function getQerrors() {
+    if (!cachedQerrors) {
+        if (isOfflineFlag) {
+            // Use stub qerrors
+            cachedQerrors = { qerrors: () => { } };
+        }
+        else {
+            // Try real qerrors, fallback to stub
+            try {
+                // Note: This would need to be converted to dynamic import for ES modules
+                // For now, using the stub version as qerrors may not be available
+                cachedQerrors = { qerrors: () => { } };
+            }
+            catch (e) {
+                cachedQerrors = { qerrors: () => { } };
+            }
+        }
+    }
+    return cachedQerrors;
+}
+/**
+ * Get environment state
+ */
+function getEnvironmentState() {
+    const codexFlag = process.env.CODEX?.toLowerCase() === 'true';
+    const offlineFlagExplicit = process.env.OFFLINE_MODE?.toLowerCase() === 'true';
+    const testEnvironment = process.env.NODE_ENV === 'test';
+    return {
+        codexFlag,
+        offlineFlagExplicit,
+        testEnvironment,
+        isOffline: isOfflineFlag,
+        environmentDetected: codexFlag || offlineFlagExplicit
+    };
+}
+/**
+ * Create environment adapters
+ */
+async function createEnvironmentAdapters() {
+    return {
+        isOffline: isOfflineFlag,
+        axios: await getAxios(),
+        qerrors: await getQerrors()
+    };
+}
+/**
+ * Clear offline cache
+ */
+function clearOfflineCache() {
+    cachedAxios = null;
+    cachedQerrors = null;
+}
+// Export offline mode utilities using ES module syntax
+export { setOfflineMode, isOfflineMode, getAxios, getQerrors, getEnvironmentState, createEnvironmentAdapters, clearOfflineCache };
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9vZmZsaW5lTW9kZS50cyIsIm1hcHBpbmdzIjoiQUFBQTs7R0FFRztBQWlCSCxrQ0FBa0M7QUFDbEMsSUFBSSxhQUFhLEdBQUcsS0FBSyxDQUFDO0FBQzFCLElBQUksV0FBVyxHQUFRLElBQUksQ0FBQztBQUM1QixJQUFJLGFBQWEsR0FBUSxJQUFJLENBQUM7QUFFOUI7O0dBRUc7QUFDSCxTQUFTLGNBQWMsQ0FBQyxPQUFnQjtJQUN0QyxNQUFNLE9BQU8sR0FBRyxhQUFhLEtBQUssT0FBTyxDQUFDO0lBQzFDLGFBQWEsR0FBRyxPQUFPLENBQUM7SUFFeEIsZ0NBQWdDO0lBQ2hDLElBQUksT0FBTyxFQUFFLENBQUM7UUFDWixpQkFBaUIsRUFBRSxDQUFDO0lBQ3RCLENBQUM7QUFDSCxDQUFDO0FBRUQ7O0dBRUc7QUFDSCxTQUFTLGFBQWE7SUFDcEIsT0FBTyxhQUFhLENBQUM7QUFDdkIsQ0FBQztBQUVEOztHQUVHO0FBQ0gsS0FBSyxVQUFVLFFBQVE7SUFDckIsSUFBSSxDQUFDLFdBQVcsRUFBRSxDQUFDO1FBQ2pCLElBQUksYUFBYSxFQUFFLENBQUM7WUFDbEIsaUJBQWlCO1lBQ2pCLE1BQU0sU0FBUyxHQUFHLE1BQU0sTUFBTSxDQUFDLG1CQUFtQixDQUFDLENBQUM7WUFDcEQsV0FBVyxHQUFHLFNBQVMsQ0FBQyxPQUFPLElBQUksU0FBUyxDQUFDO1FBQy9DLENBQUM7YUFBTSxDQUFDO1lBQ04sbUNBQW1DO1lBQ25DLElBQUksQ0FBQztnQkFDSCxNQUFNLEtBQUssR0FBRyxNQUFNLE1BQU0sQ0FBQyxPQUFPLENBQUMsQ0FBQztnQkFDcEMsV0FBVyxHQUFHLEtBQUssQ0FBQyxPQUFPLElBQUksS0FBSyxDQUFDO1lBQ3ZDLENBQUM7WUFBQyxPQUFPLENBQUMsRUFBRSxDQUFDO2dCQUNYLE1BQU0sU0FBUyxHQUFHLE1BQU0sTUFBTSxDQUFDLG1CQUFtQixDQUFDLENBQUM7Z0JBQ3BELFdBQVcsR0FBRyxTQUFTLENBQUMsT0FBTyxJQUFJLFNBQVMsQ0FBQztZQUMvQyxDQUFDO1FBQ0gsQ0FBQztJQUNILENBQUM7SUFDRCxPQUFPLFdBQVcsQ0FBQztBQUNyQixDQUFDO0FBRUQ7O0dBRUc7QUFDSCxLQUFLLFVBQVUsVUFBVTtJQUN2QixJQUFJLENBQUMsYUFBYSxFQUFFLENBQUM7UUFDbkIsSUFBSSxhQUFhLEVBQUUsQ0FBQztZQUNsQixtQkFBbUI7WUFDbkIsYUFBYSxHQUFHLEVBQUUsT0FBTyxFQUFFLEdBQUcsRUFBRSxHQUFFLENBQUMsRUFBRSxDQUFDO1FBQ3hDLENBQUM7YUFBTSxDQUFDO1lBQ04scUNBQXFDO1lBQ3JDLElBQUksQ0FBQztnQkFDSCx5RUFBeUU7Z0JBQ3pFLGtFQUFrRTtnQkFDbEUsYUFBYSxHQUFHLEVBQUUsT0FBTyxFQUFFLEdBQUcsRUFBRSxHQUFFLENBQUMsRUFBRSxDQUFDO1lBQ3hDLENBQUM7WUFBQyxPQUFPLENBQUMsRUFBRSxDQUFDO2dCQUNYLGFBQWEsR0FBRyxFQUFFLE9BQU8sRUFBRSxHQUFHLEVBQUUsR0FBRSxDQUFDLEVBQUUsQ0FBQztZQUN4QyxDQUFDO1FBQ0gsQ0FBQztJQUNILENBQUM7SUFDRCxPQUFPLGFBQWEsQ0FBQztBQUN2QixDQUFDO0FBRUQ7O0dBRUc7QUFDSCxTQUFTLG1CQUFtQjtJQUMxQixNQUFNLFNBQVMsR0FBRyxPQUFPLENBQUMsR0FBRyxDQUFDLEtBQUssRUFBRSxXQUFXLEVBQUUsS0FBSyxNQUFNLENBQUM7SUFDOUQsTUFBTSxtQkFBbUIsR0FBRyxPQUFPLENBQUMsR0FBRyxDQUFDLFlBQVksRUFBRSxXQUFXLEVBQUUsS0FBSyxNQUFNLENBQUM7SUFDL0UsTUFBTSxlQUFlLEdBQUcsT0FBTyxDQUFDLEdBQUcsQ0FBQyxRQUFRLEtBQUssTUFBTSxDQUFDO0lBRXhELE9BQU87UUFDTCxTQUFTO1FBQ1QsbUJBQW1CO1FBQ25CLGVBQWU7UUFDZixTQUFTLEVBQUUsYUFBYTtRQUN4QixtQkFBbUIsRUFBRSxTQUFTLElBQUksbUJBQW1CO0tBQ3RELENBQUM7QUFDSixDQUFDO0FBRUQ7O0dBRUc7QUFDSCxLQUFLLFVBQVUseUJBQXlCO0lBQ3RDLE9BQU87UUFDTCxTQUFTLEVBQUUsYUFBYTtRQUN4QixLQUFLLEVBQUUsTUFBTSxRQUFRLEVBQUU7UUFDdkIsT0FBTyxFQUFFLE1BQU0sVUFBVSxFQUFFO0tBQzVCLENBQUM7QUFDSixDQUFDO0FBRUQ7O0dBRUc7QUFDSCxTQUFTLGlCQUFpQjtJQUN4QixXQUFXLEdBQUcsSUFBSSxDQUFDO0lBQ25CLGFBQWEsR0FBRyxJQUFJLENBQUM7QUFDdkIsQ0FBQztBQUVELHVEQUF1RDtBQUN2RCxPQUFPLEVBQ0wsY0FBYyxFQUNkLGFBQWEsRUFDYixRQUFRLEVBQ1IsVUFBVSxFQUNWLG1CQUFtQixFQUNuQix5QkFBeUIsRUFDekIsaUJBQWlCLEVBQ2xCLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9vZmZsaW5lTW9kZS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIE9mZmxpbmUgTW9kZSBVdGlsaXR5IC0gVHlwZVNjcmlwdCBJbXBsZW1lbnRhdGlvblxuICovXG5cbi8vIFR5cGUgZGVmaW5pdGlvbnNcbmludGVyZmFjZSBFbnZpcm9ubWVudFN0YXRlIHtcbiAgY29kZXhGbGFnOiBib29sZWFuO1xuICBvZmZsaW5lRmxhZ0V4cGxpY2l0OiBib29sZWFuO1xuICB0ZXN0RW52aXJvbm1lbnQ6IGJvb2xlYW47XG4gIGlzT2ZmbGluZTogYm9vbGVhbjtcbiAgZW52aXJvbm1lbnREZXRlY3RlZDogYm9vbGVhbjtcbn1cblxuaW50ZXJmYWNlIEVudmlyb25tZW50QWRhcHRlcnMge1xuICBpc09mZmxpbmU6IGJvb2xlYW47XG4gIGF4aW9zOiBhbnk7XG4gIHFlcnJvcnM6IGFueTtcbn1cblxuLy8gU2ltcGxlIG9mZmxpbmUgc3RhdGUgbWFuYWdlbWVudFxubGV0IGlzT2ZmbGluZUZsYWcgPSBmYWxzZTtcbmxldCBjYWNoZWRBeGlvczogYW55ID0gbnVsbDtcbmxldCBjYWNoZWRRZXJyb3JzOiBhbnkgPSBudWxsO1xuXG4vKipcbiAqIFNldCBvZmZsaW5lIG1vZGVcbiAqL1xuZnVuY3Rpb24gc2V0T2ZmbGluZU1vZGUob2ZmbGluZTogYm9vbGVhbik6IHZvaWQge1xuICBjb25zdCBjaGFuZ2VkID0gaXNPZmZsaW5lRmxhZyAhPT0gb2ZmbGluZTtcbiAgaXNPZmZsaW5lRmxhZyA9IG9mZmxpbmU7XG4gIFxuICAvLyBDbGVhciBjYWNoZSB3aGVuIG1vZGUgY2hhbmdlc1xuICBpZiAoY2hhbmdlZCkge1xuICAgIGNsZWFyT2ZmbGluZUNhY2hlKCk7XG4gIH1cbn1cblxuLyoqXG4gKiBDaGVjayBpZiBvZmZsaW5lIG1vZGUgaXMgZW5hYmxlZFxuICovXG5mdW5jdGlvbiBpc09mZmxpbmVNb2RlKCk6IGJvb2xlYW4ge1xuICByZXR1cm4gaXNPZmZsaW5lRmxhZztcbn1cblxuLyoqXG4gKiBHZXQgYXhpb3MgKHN0dWIgb3IgcmVhbClcbiAqL1xuYXN5bmMgZnVuY3Rpb24gZ2V0QXhpb3MoKTogUHJvbWlzZTxhbnk+IHtcbiAgaWYgKCFjYWNoZWRBeGlvcykge1xuICAgIGlmIChpc09mZmxpbmVGbGFnKSB7XG4gICAgICAvLyBVc2Ugc3R1YiBheGlvc1xuICAgICAgY29uc3Qgc3R1YkF4aW9zID0gYXdhaXQgaW1wb3J0KCcuLi9zdHVicy9heGlvcy5qcycpO1xuICAgICAgY2FjaGVkQXhpb3MgPSBzdHViQXhpb3MuZGVmYXVsdCB8fCBzdHViQXhpb3M7XG4gICAgfSBlbHNlIHtcbiAgICAgIC8vIFRyeSByZWFsIGF4aW9zLCBmYWxsYmFjayB0byBzdHViXG4gICAgICB0cnkge1xuICAgICAgICBjb25zdCBheGlvcyA9IGF3YWl0IGltcG9ydCgnYXhpb3MnKTtcbiAgICAgICAgY2FjaGVkQXhpb3MgPSBheGlvcy5kZWZhdWx0IHx8IGF4aW9zO1xuICAgICAgfSBjYXRjaCAoZSkge1xuICAgICAgICBjb25zdCBzdHViQXhpb3MgPSBhd2FpdCBpbXBvcnQoJy4uL3N0dWJzL2F4aW9zLmpzJyk7XG4gICAgICAgIGNhY2hlZEF4aW9zID0gc3R1YkF4aW9zLmRlZmF1bHQgfHwgc3R1YkF4aW9zO1xuICAgICAgfVxuICAgIH1cbiAgfVxuICByZXR1cm4gY2FjaGVkQXhpb3M7XG59XG5cbi8qKlxuICogR2V0IHFlcnJvcnMgKHN0dWIgb3IgcmVhbClcbiAqL1xuYXN5bmMgZnVuY3Rpb24gZ2V0UWVycm9ycygpOiBQcm9taXNlPGFueT4ge1xuICBpZiAoIWNhY2hlZFFlcnJvcnMpIHtcbiAgICBpZiAoaXNPZmZsaW5lRmxhZykge1xuICAgICAgLy8gVXNlIHN0dWIgcWVycm9yc1xuICAgICAgY2FjaGVkUWVycm9ycyA9IHsgcWVycm9yczogKCkgPT4ge30gfTtcbiAgICB9IGVsc2Uge1xuICAgICAgLy8gVHJ5IHJlYWwgcWVycm9ycywgZmFsbGJhY2sgdG8gc3R1YlxuICAgICAgdHJ5IHtcbiAgICAgICAgLy8gTm90ZTogVGhpcyB3b3VsZCBuZWVkIHRvIGJlIGNvbnZlcnRlZCB0byBkeW5hbWljIGltcG9ydCBmb3IgRVMgbW9kdWxlc1xuICAgICAgICAvLyBGb3Igbm93LCB1c2luZyB0aGUgc3R1YiB2ZXJzaW9uIGFzIHFlcnJvcnMgbWF5IG5vdCBiZSBhdmFpbGFibGVcbiAgICAgICAgY2FjaGVkUWVycm9ycyA9IHsgcWVycm9yczogKCkgPT4ge30gfTtcbiAgICAgIH0gY2F0Y2ggKGUpIHtcbiAgICAgICAgY2FjaGVkUWVycm9ycyA9IHsgcWVycm9yczogKCkgPT4ge30gfTtcbiAgICAgIH1cbiAgICB9XG4gIH1cbiAgcmV0dXJuIGNhY2hlZFFlcnJvcnM7XG59XG5cbi8qKlxuICogR2V0IGVudmlyb25tZW50IHN0YXRlXG4gKi9cbmZ1bmN0aW9uIGdldEVudmlyb25tZW50U3RhdGUoKTogRW52aXJvbm1lbnRTdGF0ZSB7XG4gIGNvbnN0IGNvZGV4RmxhZyA9IHByb2Nlc3MuZW52LkNPREVYPy50b0xvd2VyQ2FzZSgpID09PSAndHJ1ZSc7XG4gIGNvbnN0IG9mZmxpbmVGbGFnRXhwbGljaXQgPSBwcm9jZXNzLmVudi5PRkZMSU5FX01PREU/LnRvTG93ZXJDYXNlKCkgPT09ICd0cnVlJztcbiAgY29uc3QgdGVzdEVudmlyb25tZW50ID0gcHJvY2Vzcy5lbnYuTk9ERV9FTlYgPT09ICd0ZXN0JztcbiAgXG4gIHJldHVybiB7XG4gICAgY29kZXhGbGFnLFxuICAgIG9mZmxpbmVGbGFnRXhwbGljaXQsXG4gICAgdGVzdEVudmlyb25tZW50LFxuICAgIGlzT2ZmbGluZTogaXNPZmZsaW5lRmxhZyxcbiAgICBlbnZpcm9ubWVudERldGVjdGVkOiBjb2RleEZsYWcgfHwgb2ZmbGluZUZsYWdFeHBsaWNpdFxuICB9O1xufVxuXG4vKipcbiAqIENyZWF0ZSBlbnZpcm9ubWVudCBhZGFwdGVyc1xuICovXG5hc3luYyBmdW5jdGlvbiBjcmVhdGVFbnZpcm9ubWVudEFkYXB0ZXJzKCk6IFByb21pc2U8RW52aXJvbm1lbnRBZGFwdGVycz4ge1xuICByZXR1cm4ge1xuICAgIGlzT2ZmbGluZTogaXNPZmZsaW5lRmxhZyxcbiAgICBheGlvczogYXdhaXQgZ2V0QXhpb3MoKSxcbiAgICBxZXJyb3JzOiBhd2FpdCBnZXRRZXJyb3JzKClcbiAgfTtcbn1cblxuLyoqXG4gKiBDbGVhciBvZmZsaW5lIGNhY2hlXG4gKi9cbmZ1bmN0aW9uIGNsZWFyT2ZmbGluZUNhY2hlKCk6IHZvaWQge1xuICBjYWNoZWRBeGlvcyA9IG51bGw7XG4gIGNhY2hlZFFlcnJvcnMgPSBudWxsO1xufVxuXG4vLyBFeHBvcnQgb2ZmbGluZSBtb2RlIHV0aWxpdGllcyB1c2luZyBFUyBtb2R1bGUgc3ludGF4XG5leHBvcnQge1xuICBzZXRPZmZsaW5lTW9kZSxcbiAgaXNPZmZsaW5lTW9kZSxcbiAgZ2V0QXhpb3MsXG4gIGdldFFlcnJvcnMsXG4gIGdldEVudmlyb25tZW50U3RhdGUsXG4gIGNyZWF0ZUVudmlyb25tZW50QWRhcHRlcnMsXG4gIGNsZWFyT2ZmbGluZUNhY2hlXG59OyJdLCJ2ZXJzaW9uIjozfQ==

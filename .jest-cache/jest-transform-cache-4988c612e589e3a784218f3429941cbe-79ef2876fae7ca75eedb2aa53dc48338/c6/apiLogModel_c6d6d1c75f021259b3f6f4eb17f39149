@@ -1,0 +1,51 @@
+140ea044ef8654d4758adc4b84d99f1d
+/**
+ * API Log Model - TypeScript Implementation
+ *
+ * This class focuses solely on API log model functionality and behavior.
+ * It extends BaseMockModel with logging-specific methods and properties.
+ */
+import { BaseMockModel } from './baseMockModel.js';
+// Legacy array for backwards compatibility
+const mockLogs = [];
+/**
+ * API Log Model Class
+ *
+ * Provides Mongoose-compatible API log model for testing scenarios.
+ * Includes logging-specific validation and query methods.
+ */
+class ApiLog extends BaseMockModel {
+    constructor(data = {}) {
+        super(data);
+        // Set default values specific to ApiLog
+        if (!this.timestamp)
+            this.timestamp = new Date();
+        if (!this.level)
+            this.level = 'info';
+    }
+    // Override getCollection to use legacy array for backwards compatibility
+    static getCollection() {
+        return mockLogs;
+    }
+    // Legacy methods for backward compatibility
+    static find(query = {}) {
+        console.log(`ApiLog.find is running with ${JSON.stringify(query)}`);
+        const filtered = query.allowedApi
+            ? mockLogs.filter(l => l.allowedApi === query.allowedApi)
+            : mockLogs;
+        const chain = {
+            data: filtered,
+            sort: () => chain,
+            skip: () => chain,
+            limit: () => chain,
+            lean: () => {
+                console.log(`ApiLog.find.lean is returning ${chain.data.length} logs`);
+                return Promise.resolve(chain.data);
+            }
+        };
+        return chain;
+    }
+}
+// Export using ES module syntax
+export { ApiLog, mockLogs };
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9tb2RlbHMvYXBpTG9nTW9kZWwudHMiLCJtYXBwaW5ncyI6IkFBQUE7Ozs7O0dBS0c7QUFFSCxPQUFPLEVBQUUsYUFBYSxFQUFFLE1BQU0sb0JBQW9CLENBQUM7QUFvQm5ELDJDQUEyQztBQUMzQyxNQUFNLFFBQVEsR0FBVSxFQUFFLENBQUM7QUFFM0I7Ozs7O0dBS0c7QUFDSCxNQUFNLE1BQU8sU0FBUSxhQUFhO0lBTWhDLFlBQVksT0FBbUIsRUFBRTtRQUMvQixLQUFLLENBQUMsSUFBSSxDQUFDLENBQUM7UUFDWix3Q0FBd0M7UUFDeEMsSUFBSSxDQUFDLElBQUksQ0FBQyxTQUFTO1lBQUUsSUFBSSxDQUFDLFNBQVMsR0FBRyxJQUFJLElBQUksRUFBRSxDQUFDO1FBQ2pELElBQUksQ0FBQyxJQUFJLENBQUMsS0FBSztZQUFFLElBQUksQ0FBQyxLQUFLLEdBQUcsTUFBTSxDQUFDO0lBQ3ZDLENBQUM7SUFFRCx5RUFBeUU7SUFDekUsTUFBTSxDQUFDLGFBQWE7UUFDbEIsT0FBTyxRQUFRLENBQUM7SUFDbEIsQ0FBQztJQUVELDRDQUE0QztJQUM1QyxNQUFNLENBQUMsSUFBSSxDQUFDLFFBQXFELEVBQUU7UUFDakUsT0FBTyxDQUFDLEdBQUcsQ0FBQywrQkFBK0IsSUFBSSxDQUFDLFNBQVMsQ0FBQyxLQUFLLENBQUMsRUFBRSxDQUFDLENBQUM7UUFDcEUsTUFBTSxRQUFRLEdBQUcsS0FBSyxDQUFDLFVBQVU7WUFDL0IsQ0FBQyxDQUFDLFFBQVEsQ0FBQyxNQUFNLENBQUMsQ0FBQyxDQUFDLEVBQUUsQ0FBQyxDQUFDLENBQUMsVUFBVSxLQUFLLEtBQUssQ0FBQyxVQUFVLENBQUM7WUFDekQsQ0FBQyxDQUFDLFFBQVEsQ0FBQztRQUViLE1BQU0sS0FBSyxHQUFrQjtZQUMzQixJQUFJLEVBQUUsUUFBUTtZQUNkLElBQUksRUFBRSxHQUFHLEVBQUUsQ0FBQyxLQUFLO1lBQ2pCLElBQUksRUFBRSxHQUFHLEVBQUUsQ0FBQyxLQUFLO1lBQ2pCLEtBQUssRUFBRSxHQUFHLEVBQUUsQ0FBQyxLQUFLO1lBQ2xCLElBQUksRUFBRSxHQUFHLEVBQUU7Z0JBQ1QsT0FBTyxDQUFDLEdBQUcsQ0FBQyxpQ0FBaUMsS0FBSyxDQUFDLElBQUksQ0FBQyxNQUFNLE9BQU8sQ0FBQyxDQUFDO2dCQUN2RSxPQUFPLE9BQU8sQ0FBQyxPQUFPLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQyxDQUFDO1lBQ3JDLENBQUM7U0FDRixDQUFDO1FBQ0YsT0FBTyxLQUFLLENBQUM7SUFDZixDQUFDO0NBQ0Y7QUFFRCxnQ0FBZ0M7QUFDaEMsT0FBTyxFQUFFLE1BQU0sRUFBRSxRQUFRLEVBQUUsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL3V0aWxzL21vZGVscy9hcGlMb2dNb2RlbC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEFQSSBMb2cgTW9kZWwgLSBUeXBlU2NyaXB0IEltcGxlbWVudGF0aW9uXG4gKiBcbiAqIFRoaXMgY2xhc3MgZm9jdXNlcyBzb2xlbHkgb24gQVBJIGxvZyBtb2RlbCBmdW5jdGlvbmFsaXR5IGFuZCBiZWhhdmlvci5cbiAqIEl0IGV4dGVuZHMgQmFzZU1vY2tNb2RlbCB3aXRoIGxvZ2dpbmctc3BlY2lmaWMgbWV0aG9kcyBhbmQgcHJvcGVydGllcy5cbiAqL1xuXG5pbXBvcnQgeyBCYXNlTW9ja01vZGVsIH0gZnJvbSAnLi9iYXNlTW9ja01vZGVsLmpzJztcblxuLy8gVHlwZSBkZWZpbml0aW9uc1xuaW50ZXJmYWNlIEFwaUxvZ0RhdGEge1xuICBfaWQ/OiBzdHJpbmc7XG4gIGxldmVsPzogc3RyaW5nO1xuICBtZXNzYWdlPzogc3RyaW5nO1xuICB0aW1lc3RhbXA/OiBEYXRlO1xuICBhbGxvd2VkQXBpPzogc3RyaW5nO1xuICBba2V5OiBzdHJpbmddOiBhbnk7XG59XG5cbmludGVyZmFjZSBMb2dRdWVyeUNoYWluIHtcbiAgZGF0YTogYW55W107XG4gIHNvcnQ6ICgpID0+IExvZ1F1ZXJ5Q2hhaW47XG4gIHNraXA6ICgpID0+IExvZ1F1ZXJ5Q2hhaW47XG4gIGxpbWl0OiAoKSA9PiBMb2dRdWVyeUNoYWluO1xuICBsZWFuOiAoKSA9PiBQcm9taXNlPGFueVtdPjtcbn1cblxuLy8gTGVnYWN5IGFycmF5IGZvciBiYWNrd2FyZHMgY29tcGF0aWJpbGl0eVxuY29uc3QgbW9ja0xvZ3M6IGFueVtdID0gW107XG5cbi8qKlxuICogQVBJIExvZyBNb2RlbCBDbGFzc1xuICogXG4gKiBQcm92aWRlcyBNb25nb29zZS1jb21wYXRpYmxlIEFQSSBsb2cgbW9kZWwgZm9yIHRlc3Rpbmcgc2NlbmFyaW9zLlxuICogSW5jbHVkZXMgbG9nZ2luZy1zcGVjaWZpYyB2YWxpZGF0aW9uIGFuZCBxdWVyeSBtZXRob2RzLlxuICovXG5jbGFzcyBBcGlMb2cgZXh0ZW5kcyBCYXNlTW9ja01vZGVsIHtcbiAgcHVibGljIGxldmVsPzogc3RyaW5nO1xuICBwdWJsaWMgbWVzc2FnZT86IHN0cmluZztcbiAgcHVibGljIHRpbWVzdGFtcD86IERhdGU7XG4gIHB1YmxpYyBhbGxvd2VkQXBpPzogc3RyaW5nO1xuXG4gIGNvbnN0cnVjdG9yKGRhdGE6IEFwaUxvZ0RhdGEgPSB7fSkge1xuICAgIHN1cGVyKGRhdGEpO1xuICAgIC8vIFNldCBkZWZhdWx0IHZhbHVlcyBzcGVjaWZpYyB0byBBcGlMb2dcbiAgICBpZiAoIXRoaXMudGltZXN0YW1wKSB0aGlzLnRpbWVzdGFtcCA9IG5ldyBEYXRlKCk7XG4gICAgaWYgKCF0aGlzLmxldmVsKSB0aGlzLmxldmVsID0gJ2luZm8nO1xuICB9XG4gIFxuICAvLyBPdmVycmlkZSBnZXRDb2xsZWN0aW9uIHRvIHVzZSBsZWdhY3kgYXJyYXkgZm9yIGJhY2t3YXJkcyBjb21wYXRpYmlsaXR5XG4gIHN0YXRpYyBnZXRDb2xsZWN0aW9uKCk6IGFueVtdIHtcbiAgICByZXR1cm4gbW9ja0xvZ3M7XG4gIH1cbiAgXG4gIC8vIExlZ2FjeSBtZXRob2RzIGZvciBiYWNrd2FyZCBjb21wYXRpYmlsaXR5XG4gIHN0YXRpYyBmaW5kKHF1ZXJ5OiB7IGFsbG93ZWRBcGk/OiBzdHJpbmc7IFtrZXk6IHN0cmluZ106IGFueSB9ID0ge30pOiBMb2dRdWVyeUNoYWluIHtcbiAgICBjb25zb2xlLmxvZyhgQXBpTG9nLmZpbmQgaXMgcnVubmluZyB3aXRoICR7SlNPTi5zdHJpbmdpZnkocXVlcnkpfWApO1xuICAgIGNvbnN0IGZpbHRlcmVkID0gcXVlcnkuYWxsb3dlZEFwaSBcbiAgICAgID8gbW9ja0xvZ3MuZmlsdGVyKGwgPT4gbC5hbGxvd2VkQXBpID09PSBxdWVyeS5hbGxvd2VkQXBpKSBcbiAgICAgIDogbW9ja0xvZ3M7XG4gICAgXG4gICAgY29uc3QgY2hhaW46IExvZ1F1ZXJ5Q2hhaW4gPSB7IFxuICAgICAgZGF0YTogZmlsdGVyZWQsXG4gICAgICBzb3J0OiAoKSA9PiBjaGFpbixcbiAgICAgIHNraXA6ICgpID0+IGNoYWluLFxuICAgICAgbGltaXQ6ICgpID0+IGNoYWluLFxuICAgICAgbGVhbjogKCkgPT4ge1xuICAgICAgICBjb25zb2xlLmxvZyhgQXBpTG9nLmZpbmQubGVhbiBpcyByZXR1cm5pbmcgJHtjaGFpbi5kYXRhLmxlbmd0aH0gbG9nc2ApO1xuICAgICAgICByZXR1cm4gUHJvbWlzZS5yZXNvbHZlKGNoYWluLmRhdGEpO1xuICAgICAgfVxuICAgIH07XG4gICAgcmV0dXJuIGNoYWluO1xuICB9XG59XG5cbi8vIEV4cG9ydCB1c2luZyBFUyBtb2R1bGUgc3ludGF4XG5leHBvcnQgeyBBcGlMb2csIG1vY2tMb2dzIH07Il0sInZlcnNpb24iOjN9

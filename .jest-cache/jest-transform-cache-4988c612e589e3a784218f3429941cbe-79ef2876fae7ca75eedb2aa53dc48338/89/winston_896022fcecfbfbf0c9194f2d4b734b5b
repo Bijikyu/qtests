@@ -1,0 +1,72 @@
+5822f6b66ee364eaa93d3a182af83076
+"use strict";
+/**
+ * Winston Logging Library Stub for Testing - TypeScript Implementation
+ *
+ * This module provides a complete no-op replacement for the winston logging
+ * library. When tests require('winston') after qtests/setup, they get this
+ * stub instead of real winston, preventing log output during test execution.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+const noop = () => { }; // shared no-op function for all stub methods
+const winstonStub = {
+    /**
+     * Creates a no-op logger instance
+     */
+    createLogger: () => ({
+        error: noop, // Silent - no error output during tests
+        warn: noop, // Silent - no warning output during tests
+        info: noop, // Silent - no info output during tests
+        debug: noop, // Silent - no debug output during tests
+        verbose: noop, // Silent - no verbose output during tests
+        silly: noop // Silent - no silly output during tests
+    }),
+    /**
+     * Winston format utilities stub
+     */
+    format: {
+        colorize: () => ({}),
+        combine: () => ({}),
+        label: () => ({}),
+        timestamp: () => ({}),
+        printf: () => ({}),
+        json: () => ({}),
+        simple: () => ({})
+    },
+    /**
+     * Winston transport stubs
+     */
+    transports: {
+        Console: class ConsoleTransportStub {
+            constructor() {
+                // No-op constructor
+            }
+        },
+        File: class FileTransportStub {
+            constructor() {
+                // No-op constructor
+            }
+        }
+    },
+    /**
+     * Color configuration stub
+     */
+    addColors: noop,
+    /**
+     * Logger container stub
+     */
+    loggers: {
+        add: noop,
+        get: () => ({
+            error: noop,
+            warn: noop,
+            info: noop,
+            debug: noop,
+            verbose: noop,
+            silly: noop
+        })
+    }
+};
+// Export winston stub using ES module syntax
+exports.default = winstonStub;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9zdHVicy93aW5zdG9uLnRzIiwibWFwcGluZ3MiOiI7QUFBQTs7Ozs7O0dBTUc7O0FBa0NILE1BQU0sSUFBSSxHQUFHLEdBQUcsRUFBRSxHQUFFLENBQUMsQ0FBQyxDQUFDLDZDQUE2QztBQUVwRSxNQUFNLFdBQVcsR0FBZ0I7SUFDL0I7O09BRUc7SUFDSCxZQUFZLEVBQUUsR0FBZSxFQUFFLENBQUMsQ0FBQztRQUMvQixLQUFLLEVBQUUsSUFBSSxFQUFJLHdDQUF3QztRQUN2RCxJQUFJLEVBQUUsSUFBSSxFQUFLLDBDQUEwQztRQUN6RCxJQUFJLEVBQUUsSUFBSSxFQUFLLHVDQUF1QztRQUN0RCxLQUFLLEVBQUUsSUFBSSxFQUFJLHdDQUF3QztRQUN2RCxPQUFPLEVBQUUsSUFBSSxFQUFFLDBDQUEwQztRQUN6RCxLQUFLLEVBQUUsSUFBSSxDQUFJLHdDQUF3QztLQUN4RCxDQUFDO0lBRUY7O09BRUc7SUFDSCxNQUFNLEVBQUU7UUFDTixRQUFRLEVBQUUsR0FBRyxFQUFFLENBQUMsQ0FBQyxFQUFFLENBQUM7UUFDcEIsT0FBTyxFQUFFLEdBQUcsRUFBRSxDQUFDLENBQUMsRUFBRSxDQUFDO1FBQ25CLEtBQUssRUFBRSxHQUFHLEVBQUUsQ0FBQyxDQUFDLEVBQUUsQ0FBQztRQUNqQixTQUFTLEVBQUUsR0FBRyxFQUFFLENBQUMsQ0FBQyxFQUFFLENBQUM7UUFDckIsTUFBTSxFQUFFLEdBQUcsRUFBRSxDQUFDLENBQUMsRUFBRSxDQUFDO1FBQ2xCLElBQUksRUFBRSxHQUFHLEVBQUUsQ0FBQyxDQUFDLEVBQUUsQ0FBQztRQUNoQixNQUFNLEVBQUUsR0FBRyxFQUFFLENBQUMsQ0FBQyxFQUFFLENBQUM7S0FDbkI7SUFFRDs7T0FFRztJQUNILFVBQVUsRUFBRTtRQUNWLE9BQU8sRUFBRSxNQUFNLG9CQUFvQjtZQUNqQztnQkFDRSxvQkFBb0I7WUFDdEIsQ0FBQztTQUNGO1FBQ0QsSUFBSSxFQUFFLE1BQU0saUJBQWlCO1lBQzNCO2dCQUNFLG9CQUFvQjtZQUN0QixDQUFDO1NBQ0Y7S0FDRjtJQUVEOztPQUVHO0lBQ0gsU0FBUyxFQUFFLElBQUk7SUFFZjs7T0FFRztJQUNILE9BQU8sRUFBRTtRQUNQLEdBQUcsRUFBRSxJQUFJO1FBQ1QsR0FBRyxFQUFFLEdBQWUsRUFBRSxDQUFDLENBQUM7WUFDdEIsS0FBSyxFQUFFLElBQUk7WUFDWCxJQUFJLEVBQUUsSUFBSTtZQUNWLElBQUksRUFBRSxJQUFJO1lBQ1YsS0FBSyxFQUFFLElBQUk7WUFDWCxPQUFPLEVBQUUsSUFBSTtZQUNiLEtBQUssRUFBRSxJQUFJO1NBQ1osQ0FBQztLQUNIO0NBQ0YsQ0FBQztBQUVGLDZDQUE2QztBQUM3QyxrQkFBZSxXQUFXLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9zdHVicy93aW5zdG9uLnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8qKlxuICogV2luc3RvbiBMb2dnaW5nIExpYnJhcnkgU3R1YiBmb3IgVGVzdGluZyAtIFR5cGVTY3JpcHQgSW1wbGVtZW50YXRpb25cbiAqIFxuICogVGhpcyBtb2R1bGUgcHJvdmlkZXMgYSBjb21wbGV0ZSBuby1vcCByZXBsYWNlbWVudCBmb3IgdGhlIHdpbnN0b24gbG9nZ2luZ1xuICogbGlicmFyeS4gV2hlbiB0ZXN0cyByZXF1aXJlKCd3aW5zdG9uJykgYWZ0ZXIgcXRlc3RzL3NldHVwLCB0aGV5IGdldCB0aGlzXG4gKiBzdHViIGluc3RlYWQgb2YgcmVhbCB3aW5zdG9uLCBwcmV2ZW50aW5nIGxvZyBvdXRwdXQgZHVyaW5nIHRlc3QgZXhlY3V0aW9uLlxuICovXG5cbi8vIFR5cGUgZGVmaW5pdGlvbnMgZm9yIHdpbnN0b24gc3R1YlxuaW50ZXJmYWNlIExvZ2dlclN0dWIge1xuICBlcnJvcjogKC4uLmFyZ3M6IGFueVtdKSA9PiB2b2lkO1xuICB3YXJuOiAoLi4uYXJnczogYW55W10pID0+IHZvaWQ7XG4gIGluZm86ICguLi5hcmdzOiBhbnlbXSkgPT4gdm9pZDtcbiAgZGVidWc6ICguLi5hcmdzOiBhbnlbXSkgPT4gdm9pZDtcbiAgdmVyYm9zZTogKC4uLmFyZ3M6IGFueVtdKSA9PiB2b2lkO1xuICBzaWxseTogKC4uLmFyZ3M6IGFueVtdKSA9PiB2b2lkO1xufVxuXG5pbnRlcmZhY2UgV2luc3RvblN0dWIge1xuICBjcmVhdGVMb2dnZXI6IChvcHRpb25zPzogYW55KSA9PiBMb2dnZXJTdHViO1xuICBmb3JtYXQ6IHtcbiAgICBjb2xvcml6ZTogKC4uLmFyZ3M6IGFueVtdKSA9PiBhbnk7XG4gICAgY29tYmluZTogKC4uLmFyZ3M6IGFueVtdKSA9PiBhbnk7XG4gICAgbGFiZWw6ICguLi5hcmdzOiBhbnlbXSkgPT4gYW55O1xuICAgIHRpbWVzdGFtcDogKC4uLmFyZ3M6IGFueVtdKSA9PiBhbnk7XG4gICAgcHJpbnRmOiAoLi4uYXJnczogYW55W10pID0+IGFueTtcbiAgICBqc29uOiAoLi4uYXJnczogYW55W10pID0+IGFueTtcbiAgICBzaW1wbGU6ICguLi5hcmdzOiBhbnlbXSkgPT4gYW55O1xuICB9O1xuICB0cmFuc3BvcnRzOiB7XG4gICAgQ29uc29sZTogbmV3ICguLi5hcmdzOiBhbnlbXSkgPT4gYW55O1xuICAgIEZpbGU6IG5ldyAoLi4uYXJnczogYW55W10pID0+IGFueTtcbiAgfTtcbiAgYWRkQ29sb3JzOiAoLi4uYXJnczogYW55W10pID0+IHZvaWQ7XG4gIGxvZ2dlcnM6IHtcbiAgICBhZGQ6ICguLi5hcmdzOiBhbnlbXSkgPT4gdm9pZDtcbiAgICBnZXQ6ICguLi5hcmdzOiBhbnlbXSkgPT4gTG9nZ2VyU3R1YjtcbiAgfTtcbn1cblxuY29uc3Qgbm9vcCA9ICgpID0+IHt9OyAvLyBzaGFyZWQgbm8tb3AgZnVuY3Rpb24gZm9yIGFsbCBzdHViIG1ldGhvZHNcblxuY29uc3Qgd2luc3RvblN0dWI6IFdpbnN0b25TdHViID0ge1xuICAvKipcbiAgICogQ3JlYXRlcyBhIG5vLW9wIGxvZ2dlciBpbnN0YW5jZVxuICAgKi9cbiAgY3JlYXRlTG9nZ2VyOiAoKTogTG9nZ2VyU3R1YiA9PiAoe1xuICAgIGVycm9yOiBub29wLCAgIC8vIFNpbGVudCAtIG5vIGVycm9yIG91dHB1dCBkdXJpbmcgdGVzdHNcbiAgICB3YXJuOiBub29wLCAgICAvLyBTaWxlbnQgLSBubyB3YXJuaW5nIG91dHB1dCBkdXJpbmcgdGVzdHNcbiAgICBpbmZvOiBub29wLCAgICAvLyBTaWxlbnQgLSBubyBpbmZvIG91dHB1dCBkdXJpbmcgdGVzdHNcbiAgICBkZWJ1Zzogbm9vcCwgICAvLyBTaWxlbnQgLSBubyBkZWJ1ZyBvdXRwdXQgZHVyaW5nIHRlc3RzXG4gICAgdmVyYm9zZTogbm9vcCwgLy8gU2lsZW50IC0gbm8gdmVyYm9zZSBvdXRwdXQgZHVyaW5nIHRlc3RzXG4gICAgc2lsbHk6IG5vb3AgICAgLy8gU2lsZW50IC0gbm8gc2lsbHkgb3V0cHV0IGR1cmluZyB0ZXN0c1xuICB9KSxcblxuICAvKipcbiAgICogV2luc3RvbiBmb3JtYXQgdXRpbGl0aWVzIHN0dWJcbiAgICovXG4gIGZvcm1hdDoge1xuICAgIGNvbG9yaXplOiAoKSA9PiAoe30pLFxuICAgIGNvbWJpbmU6ICgpID0+ICh7fSksXG4gICAgbGFiZWw6ICgpID0+ICh7fSksXG4gICAgdGltZXN0YW1wOiAoKSA9PiAoe30pLFxuICAgIHByaW50ZjogKCkgPT4gKHt9KSxcbiAgICBqc29uOiAoKSA9PiAoe30pLFxuICAgIHNpbXBsZTogKCkgPT4gKHt9KVxuICB9LFxuXG4gIC8qKlxuICAgKiBXaW5zdG9uIHRyYW5zcG9ydCBzdHVic1xuICAgKi9cbiAgdHJhbnNwb3J0czoge1xuICAgIENvbnNvbGU6IGNsYXNzIENvbnNvbGVUcmFuc3BvcnRTdHViIHtcbiAgICAgIGNvbnN0cnVjdG9yKCkge1xuICAgICAgICAvLyBOby1vcCBjb25zdHJ1Y3RvclxuICAgICAgfVxuICAgIH0sXG4gICAgRmlsZTogY2xhc3MgRmlsZVRyYW5zcG9ydFN0dWIge1xuICAgICAgY29uc3RydWN0b3IoKSB7XG4gICAgICAgIC8vIE5vLW9wIGNvbnN0cnVjdG9yXG4gICAgICB9XG4gICAgfVxuICB9LFxuXG4gIC8qKlxuICAgKiBDb2xvciBjb25maWd1cmF0aW9uIHN0dWJcbiAgICovXG4gIGFkZENvbG9yczogbm9vcCxcblxuICAvKipcbiAgICogTG9nZ2VyIGNvbnRhaW5lciBzdHViXG4gICAqL1xuICBsb2dnZXJzOiB7XG4gICAgYWRkOiBub29wLFxuICAgIGdldDogKCk6IExvZ2dlclN0dWIgPT4gKHtcbiAgICAgIGVycm9yOiBub29wLFxuICAgICAgd2Fybjogbm9vcCxcbiAgICAgIGluZm86IG5vb3AsXG4gICAgICBkZWJ1Zzogbm9vcCxcbiAgICAgIHZlcmJvc2U6IG5vb3AsXG4gICAgICBzaWxseTogbm9vcFxuICAgIH0pXG4gIH1cbn07XG5cbi8vIEV4cG9ydCB3aW5zdG9uIHN0dWIgdXNpbmcgRVMgbW9kdWxlIHN5bnRheFxuZXhwb3J0IGRlZmF1bHQgd2luc3RvblN0dWI7Il0sInZlcnNpb24iOjN9

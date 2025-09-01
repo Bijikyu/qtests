@@ -1,0 +1,16 @@
+35068914be885c5c206de79c569c342a
+"use strict";
+// Lightweight unit test for esm-globals.ts - TypeScript ES module
+describe('esm-globals.ts basic exports', () => {
+    test('module loads without errors', async () => {
+        // TypeScript ES module dynamic import
+        const module = await import('./esm-globals.ts');
+        expect(module).toBeDefined();
+        expect(typeof module).toBe('object');
+        // Check for expected exports
+        expect(module.__filename).toBeDefined();
+        expect(module.__dirname).toBeDefined();
+        expect(module.getModuleFilename).toBeDefined();
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9lc20tZ2xvYmFsc0dlbmVyYXRlZFRlc3QudGVzdC50cyIsIm1hcHBpbmdzIjoiO0FBQUEsa0VBQWtFO0FBRWxFLFFBQVEsQ0FBQyw4QkFBOEIsRUFBRSxHQUFHLEVBQUU7SUFDNUMsSUFBSSxDQUFDLDZCQUE2QixFQUFFLEtBQUssSUFBSSxFQUFFO1FBQzdDLHNDQUFzQztRQUN0QyxNQUFNLE1BQU0sR0FBRyxNQUFNLE1BQU0sQ0FBQyxrQkFBa0IsQ0FBQyxDQUFDO1FBQ2hELE1BQU0sQ0FBQyxNQUFNLENBQUMsQ0FBQyxXQUFXLEVBQUUsQ0FBQztRQUM3QixNQUFNLENBQUMsT0FBTyxNQUFNLENBQUMsQ0FBQyxJQUFJLENBQUMsUUFBUSxDQUFDLENBQUM7UUFDckMsNkJBQTZCO1FBQzdCLE1BQU0sQ0FBQyxNQUFNLENBQUMsVUFBVSxDQUFDLENBQUMsV0FBVyxFQUFFLENBQUM7UUFDeEMsTUFBTSxDQUFDLE1BQU0sQ0FBQyxTQUFTLENBQUMsQ0FBQyxXQUFXLEVBQUUsQ0FBQztRQUN2QyxNQUFNLENBQUMsTUFBTSxDQUFDLGlCQUFpQixDQUFDLENBQUMsV0FBVyxFQUFFLENBQUM7SUFDakQsQ0FBQyxDQUFDLENBQUM7QUFDTCxDQUFDLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL3V0aWxzL2VzbS1nbG9iYWxzR2VuZXJhdGVkVGVzdC50ZXN0LnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIExpZ2h0d2VpZ2h0IHVuaXQgdGVzdCBmb3IgZXNtLWdsb2JhbHMudHMgLSBUeXBlU2NyaXB0IEVTIG1vZHVsZVxuXG5kZXNjcmliZSgnZXNtLWdsb2JhbHMudHMgYmFzaWMgZXhwb3J0cycsICgpID0+IHtcbiAgdGVzdCgnbW9kdWxlIGxvYWRzIHdpdGhvdXQgZXJyb3JzJywgYXN5bmMgKCkgPT4ge1xuICAgIC8vIFR5cGVTY3JpcHQgRVMgbW9kdWxlIGR5bmFtaWMgaW1wb3J0XG4gICAgY29uc3QgbW9kdWxlID0gYXdhaXQgaW1wb3J0KCcuL2VzbS1nbG9iYWxzLnRzJyk7XG4gICAgZXhwZWN0KG1vZHVsZSkudG9CZURlZmluZWQoKTtcbiAgICBleHBlY3QodHlwZW9mIG1vZHVsZSkudG9CZSgnb2JqZWN0Jyk7XG4gICAgLy8gQ2hlY2sgZm9yIGV4cGVjdGVkIGV4cG9ydHNcbiAgICBleHBlY3QobW9kdWxlLl9fZmlsZW5hbWUpLnRvQmVEZWZpbmVkKCk7XG4gICAgZXhwZWN0KG1vZHVsZS5fX2Rpcm5hbWUpLnRvQmVEZWZpbmVkKCk7XG4gICAgZXhwZWN0KG1vZHVsZS5nZXRNb2R1bGVGaWxlbmFtZSkudG9CZURlZmluZWQoKTtcbiAgfSk7XG59KTtcbiJdLCJ2ZXJzaW9uIjozfQ==

@@ -1,0 +1,11 @@
+e35ccb379a6d5c5ff958ba271b1f8ea2
+"use strict";
+// Lightweight unit test for mockModels functionality
+describe('mockModels basic functionality', () => {
+    test('mockModels module loads correctly', async () => {
+        const mod = await import('../utils/mockModels.js');
+        expect(mod).toBeDefined();
+        expect(typeof mod).toBe('object');
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvbW9ja01vZGVscy50ZXN0LnRzIiwibWFwcGluZ3MiOiI7QUFBQSxxREFBcUQ7QUFDckQsUUFBUSxDQUFDLGdDQUFnQyxFQUFFLEdBQUcsRUFBRTtJQUM5QyxJQUFJLENBQUMsbUNBQW1DLEVBQUUsS0FBSyxJQUFJLEVBQUU7UUFDbkQsTUFBTSxHQUFHLEdBQUcsTUFBTSxNQUFNLENBQUMsd0JBQXdCLENBQUMsQ0FBQztRQUNuRCxNQUFNLENBQUMsR0FBRyxDQUFDLENBQUMsV0FBVyxFQUFFLENBQUM7UUFDMUIsTUFBTSxDQUFDLE9BQU8sR0FBRyxDQUFDLENBQUMsSUFBSSxDQUFDLFFBQVEsQ0FBQyxDQUFDO0lBQ3BDLENBQUMsQ0FBQyxDQUFDO0FBQ0wsQ0FBQyxDQUFDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvbW9ja01vZGVscy50ZXN0LnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIExpZ2h0d2VpZ2h0IHVuaXQgdGVzdCBmb3IgbW9ja01vZGVscyBmdW5jdGlvbmFsaXR5XG5kZXNjcmliZSgnbW9ja01vZGVscyBiYXNpYyBmdW5jdGlvbmFsaXR5JywgKCkgPT4ge1xuICB0ZXN0KCdtb2NrTW9kZWxzIG1vZHVsZSBsb2FkcyBjb3JyZWN0bHknLCBhc3luYyAoKSA9PiB7XG4gICAgY29uc3QgbW9kID0gYXdhaXQgaW1wb3J0KCcuLi91dGlscy9tb2NrTW9kZWxzLmpzJyk7XG4gICAgZXhwZWN0KG1vZCkudG9CZURlZmluZWQoKTtcbiAgICBleHBlY3QodHlwZW9mIG1vZCkudG9CZSgnb2JqZWN0Jyk7XG4gIH0pO1xufSk7Il0sInZlcnNpb24iOjN9

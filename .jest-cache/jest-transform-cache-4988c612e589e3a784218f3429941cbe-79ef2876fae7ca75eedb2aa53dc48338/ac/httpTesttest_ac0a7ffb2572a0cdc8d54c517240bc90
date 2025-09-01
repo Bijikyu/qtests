@@ -1,0 +1,11 @@
+be470e558d7777ef5e00305866125cc1
+"use strict";
+// Lightweight unit test for httpTest functionality
+describe('httpTest basic functionality', () => {
+    test('httpTest module loads correctly', async () => {
+        const mod = await import('../utils/httpTest.js');
+        expect(mod).toBeDefined();
+        expect(typeof mod).toBe('object');
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvaHR0cFRlc3QudGVzdC50cyIsIm1hcHBpbmdzIjoiO0FBQUEsbURBQW1EO0FBQ25ELFFBQVEsQ0FBQyw4QkFBOEIsRUFBRSxHQUFHLEVBQUU7SUFDNUMsSUFBSSxDQUFDLGlDQUFpQyxFQUFFLEtBQUssSUFBSSxFQUFFO1FBQ2pELE1BQU0sR0FBRyxHQUFHLE1BQU0sTUFBTSxDQUFDLHNCQUFzQixDQUFDLENBQUM7UUFDakQsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDLFdBQVcsRUFBRSxDQUFDO1FBQzFCLE1BQU0sQ0FBQyxPQUFPLEdBQUcsQ0FBQyxDQUFDLElBQUksQ0FBQyxRQUFRLENBQUMsQ0FBQztJQUNwQyxDQUFDLENBQUMsQ0FBQztBQUNMLENBQUMsQ0FBQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3Jrc3BhY2UvbWFudWFsLXRlc3RzL2h0dHBUZXN0LnRlc3QudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gTGlnaHR3ZWlnaHQgdW5pdCB0ZXN0IGZvciBodHRwVGVzdCBmdW5jdGlvbmFsaXR5XG5kZXNjcmliZSgnaHR0cFRlc3QgYmFzaWMgZnVuY3Rpb25hbGl0eScsICgpID0+IHtcbiAgdGVzdCgnaHR0cFRlc3QgbW9kdWxlIGxvYWRzIGNvcnJlY3RseScsIGFzeW5jICgpID0+IHtcbiAgICBjb25zdCBtb2QgPSBhd2FpdCBpbXBvcnQoJy4uL3V0aWxzL2h0dHBUZXN0LmpzJyk7XG4gICAgZXhwZWN0KG1vZCkudG9CZURlZmluZWQoKTtcbiAgICBleHBlY3QodHlwZW9mIG1vZCkudG9CZSgnb2JqZWN0Jyk7XG4gIH0pO1xufSk7Il0sInZlcnNpb24iOjN9

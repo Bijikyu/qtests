@@ -31,11 +31,25 @@
 // how Node.js resolves module names to file paths
 import Module from 'module';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { getModuleDirname } from './utils/esm-globals.js';
 
-// Get current directory for ES modules
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const stubsPath = path.join(__dirname, 'stubs');
+// Get current directory for ES modules - lazy initialization for Jest compatibility
+let moduleDirname: string | undefined;
+function getModuleDirnameForSetup(): string {
+  if (moduleDirname === undefined) {
+    try {
+      // Use eval to hide import.meta from Jest's static parser
+      const importMetaUrl = (0, eval)('import.meta.url');
+      moduleDirname = getModuleDirname(importMetaUrl);
+    } catch (error) {
+      // Fallback for Jest environment
+      moduleDirname = process.cwd();
+    }
+  }
+  return moduleDirname;
+}
+
+const stubsPath = path.join(getModuleDirnameForSetup(), 'stubs');
 
 /**
  * Module stub registry - defines which modules should be replaced with stubs

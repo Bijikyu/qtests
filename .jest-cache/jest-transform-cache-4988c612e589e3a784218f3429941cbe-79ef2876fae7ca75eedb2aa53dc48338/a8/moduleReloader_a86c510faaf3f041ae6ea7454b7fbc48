@@ -1,0 +1,99 @@
+375160e2d663d9d8664a79656b4a70d4
+"use strict";
+/**
+ * Module Reloading Utility - TypeScript Implementation
+ *
+ * This module provides functionality for reloading modules from Node.js cache
+ * for isolated testing scenarios. It focuses solely on module cache management.
+ */
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.moduleReloadLock = void 0;
+exports.reload = reload;
+const path_1 = __importDefault(require("path"));
+const esm_globals_js_1 = require("../esm-globals.js");
+// For ES modules, we need to get __dirname equivalent
+const moduleDirname = (0, esm_globals_js_1.getModuleDirname)(import.meta.url);
+// Thread-safe module reloading lock to prevent race conditions
+const moduleReloadLock = new Set();
+exports.moduleReloadLock = moduleReloadLock;
+/**
+ * Reload a module from cache for isolated testing
+ *
+ * This function clears a module from Node.js require cache and reloads it,
+ * enabling tests to verify module loading behavior and ensure fresh module
+ * state between tests.
+ *
+ * Note: In ES modules, dynamic imports don't have the same caching behavior as CommonJS require.
+ * This function provides a compatibility layer for testing scenarios.
+ *
+ * @param relPath - Relative path to module that should be reloaded
+ * @returns The freshly loaded module object
+ * @throws Error if module cannot be found or loaded
+ */
+async function reload(relPath) {
+    console.log(`reload is running with ${relPath}`);
+    // Resolve relative to the utils directory (parent of helpers)
+    const fullPath = path_1.default.resolve(moduleDirname, '..', relPath);
+    if (moduleReloadLock.has(fullPath)) {
+        console.log(`reload has run resulting in skip`);
+        try {
+            return await Promise.resolve(`${fullPath}`).then(s => __importStar(require(s)));
+        }
+        catch (error) {
+            console.log(`reload error during skip: ${error.message}`);
+            throw error;
+        }
+    }
+    try {
+        moduleReloadLock.add(fullPath);
+        // For ES modules, we use dynamic import with cache busting
+        const cacheBuster = `?t=${Date.now()}`;
+        const moduleUrl = `${fullPath}${cacheBuster}`;
+        const mod = await Promise.resolve(`${moduleUrl}`).then(s => __importStar(require(s)));
+        moduleReloadLock.delete(fullPath);
+        console.log(`reload is returning module`);
+        return mod;
+    }
+    catch (err) {
+        moduleReloadLock.delete(fullPath);
+        console.log(`reload error ${err.message}`);
+        throw err;
+    }
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9oZWxwZXJzL21vZHVsZVJlbG9hZGVyLnRzIiwibWFwcGluZ3MiOiI7QUFBQTs7Ozs7R0FLRzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBNkRELHdCQUFNO0FBM0RSLGdEQUF3QjtBQUN4QixzREFBcUQ7QUFFckQsc0RBQXNEO0FBQ3RELE1BQU0sYUFBYSxHQUFHLElBQUEsaUNBQWdCLEVBQUMsTUFBTSxDQUFDLElBQUksQ0FBQyxHQUFHLENBQUMsQ0FBQztBQUV4RCwrREFBK0Q7QUFDL0QsTUFBTSxnQkFBZ0IsR0FBRyxJQUFJLEdBQUcsRUFBVSxDQUFDO0FBcUR6Qyw0Q0FBZ0I7QUFuRGxCOzs7Ozs7Ozs7Ozs7O0dBYUc7QUFDSCxLQUFLLFVBQVUsTUFBTSxDQUFDLE9BQWU7SUFDbkMsT0FBTyxDQUFDLEdBQUcsQ0FBQywwQkFBMEIsT0FBTyxFQUFFLENBQUMsQ0FBQztJQUVqRCw4REFBOEQ7SUFDOUQsTUFBTSxRQUFRLEdBQUcsY0FBSSxDQUFDLE9BQU8sQ0FBQyxhQUFhLEVBQUUsSUFBSSxFQUFFLE9BQU8sQ0FBQyxDQUFDO0lBRTVELElBQUksZ0JBQWdCLENBQUMsR0FBRyxDQUFDLFFBQVEsQ0FBQyxFQUFFLENBQUM7UUFDbkMsT0FBTyxDQUFDLEdBQUcsQ0FBQyxrQ0FBa0MsQ0FBQyxDQUFDO1FBQ2hELElBQUksQ0FBQztZQUNILE9BQU8seUJBQWEsUUFBUSx1Q0FBQyxDQUFDO1FBQ2hDLENBQUM7UUFBQyxPQUFPLEtBQVUsRUFBRSxDQUFDO1lBQ3BCLE9BQU8sQ0FBQyxHQUFHLENBQUMsNkJBQTZCLEtBQUssQ0FBQyxPQUFPLEVBQUUsQ0FBQyxDQUFDO1lBQzFELE1BQU0sS0FBSyxDQUFDO1FBQ2QsQ0FBQztJQUNILENBQUM7SUFFRCxJQUFJLENBQUM7UUFDSCxnQkFBZ0IsQ0FBQyxHQUFHLENBQUMsUUFBUSxDQUFDLENBQUM7UUFFL0IsMkRBQTJEO1FBQzNELE1BQU0sV0FBVyxHQUFHLE1BQU0sSUFBSSxDQUFDLEdBQUcsRUFBRSxFQUFFLENBQUM7UUFDdkMsTUFBTSxTQUFTLEdBQUcsR0FBRyxRQUFRLEdBQUcsV0FBVyxFQUFFLENBQUM7UUFDOUMsTUFBTSxHQUFHLEdBQUcseUJBQWEsU0FBUyx1Q0FBQyxDQUFDO1FBRXBDLGdCQUFnQixDQUFDLE1BQU0sQ0FBQyxRQUFRLENBQUMsQ0FBQztRQUNsQyxPQUFPLENBQUMsR0FBRyxDQUFDLDRCQUE0QixDQUFDLENBQUM7UUFDMUMsT0FBTyxHQUFHLENBQUM7SUFDYixDQUFDO0lBQUMsT0FBTyxHQUFRLEVBQUUsQ0FBQztRQUNsQixnQkFBZ0IsQ0FBQyxNQUFNLENBQUMsUUFBUSxDQUFDLENBQUM7UUFDbEMsT0FBTyxDQUFDLEdBQUcsQ0FBQyxnQkFBZ0IsR0FBRyxDQUFDLE9BQU8sRUFBRSxDQUFDLENBQUM7UUFDM0MsTUFBTSxHQUFHLENBQUM7SUFDWixDQUFDO0FBQ0gsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL3V0aWxzL2hlbHBlcnMvbW9kdWxlUmVsb2FkZXIudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBNb2R1bGUgUmVsb2FkaW5nIFV0aWxpdHkgLSBUeXBlU2NyaXB0IEltcGxlbWVudGF0aW9uXG4gKiBcbiAqIFRoaXMgbW9kdWxlIHByb3ZpZGVzIGZ1bmN0aW9uYWxpdHkgZm9yIHJlbG9hZGluZyBtb2R1bGVzIGZyb20gTm9kZS5qcyBjYWNoZVxuICogZm9yIGlzb2xhdGVkIHRlc3Rpbmcgc2NlbmFyaW9zLiBJdCBmb2N1c2VzIHNvbGVseSBvbiBtb2R1bGUgY2FjaGUgbWFuYWdlbWVudC5cbiAqL1xuXG5pbXBvcnQgcGF0aCBmcm9tICdwYXRoJztcbmltcG9ydCB7IGdldE1vZHVsZURpcm5hbWUgfSBmcm9tICcuLi9lc20tZ2xvYmFscy5qcyc7XG5cbi8vIEZvciBFUyBtb2R1bGVzLCB3ZSBuZWVkIHRvIGdldCBfX2Rpcm5hbWUgZXF1aXZhbGVudFxuY29uc3QgbW9kdWxlRGlybmFtZSA9IGdldE1vZHVsZURpcm5hbWUoaW1wb3J0Lm1ldGEudXJsKTtcblxuLy8gVGhyZWFkLXNhZmUgbW9kdWxlIHJlbG9hZGluZyBsb2NrIHRvIHByZXZlbnQgcmFjZSBjb25kaXRpb25zXG5jb25zdCBtb2R1bGVSZWxvYWRMb2NrID0gbmV3IFNldDxzdHJpbmc+KCk7XG5cbi8qKlxuICogUmVsb2FkIGEgbW9kdWxlIGZyb20gY2FjaGUgZm9yIGlzb2xhdGVkIHRlc3RpbmdcbiAqIFxuICogVGhpcyBmdW5jdGlvbiBjbGVhcnMgYSBtb2R1bGUgZnJvbSBOb2RlLmpzIHJlcXVpcmUgY2FjaGUgYW5kIHJlbG9hZHMgaXQsXG4gKiBlbmFibGluZyB0ZXN0cyB0byB2ZXJpZnkgbW9kdWxlIGxvYWRpbmcgYmVoYXZpb3IgYW5kIGVuc3VyZSBmcmVzaCBtb2R1bGVcbiAqIHN0YXRlIGJldHdlZW4gdGVzdHMuXG4gKiBcbiAqIE5vdGU6IEluIEVTIG1vZHVsZXMsIGR5bmFtaWMgaW1wb3J0cyBkb24ndCBoYXZlIHRoZSBzYW1lIGNhY2hpbmcgYmVoYXZpb3IgYXMgQ29tbW9uSlMgcmVxdWlyZS5cbiAqIFRoaXMgZnVuY3Rpb24gcHJvdmlkZXMgYSBjb21wYXRpYmlsaXR5IGxheWVyIGZvciB0ZXN0aW5nIHNjZW5hcmlvcy5cbiAqIFxuICogQHBhcmFtIHJlbFBhdGggLSBSZWxhdGl2ZSBwYXRoIHRvIG1vZHVsZSB0aGF0IHNob3VsZCBiZSByZWxvYWRlZFxuICogQHJldHVybnMgVGhlIGZyZXNobHkgbG9hZGVkIG1vZHVsZSBvYmplY3RcbiAqIEB0aHJvd3MgRXJyb3IgaWYgbW9kdWxlIGNhbm5vdCBiZSBmb3VuZCBvciBsb2FkZWRcbiAqL1xuYXN5bmMgZnVuY3Rpb24gcmVsb2FkKHJlbFBhdGg6IHN0cmluZyk6IFByb21pc2U8YW55PiB7XG4gIGNvbnNvbGUubG9nKGByZWxvYWQgaXMgcnVubmluZyB3aXRoICR7cmVsUGF0aH1gKTtcblxuICAvLyBSZXNvbHZlIHJlbGF0aXZlIHRvIHRoZSB1dGlscyBkaXJlY3RvcnkgKHBhcmVudCBvZiBoZWxwZXJzKVxuICBjb25zdCBmdWxsUGF0aCA9IHBhdGgucmVzb2x2ZShtb2R1bGVEaXJuYW1lLCAnLi4nLCByZWxQYXRoKTtcblxuICBpZiAobW9kdWxlUmVsb2FkTG9jay5oYXMoZnVsbFBhdGgpKSB7XG4gICAgY29uc29sZS5sb2coYHJlbG9hZCBoYXMgcnVuIHJlc3VsdGluZyBpbiBza2lwYCk7XG4gICAgdHJ5IHtcbiAgICAgIHJldHVybiBhd2FpdCBpbXBvcnQoZnVsbFBhdGgpO1xuICAgIH0gY2F0Y2ggKGVycm9yOiBhbnkpIHtcbiAgICAgIGNvbnNvbGUubG9nKGByZWxvYWQgZXJyb3IgZHVyaW5nIHNraXA6ICR7ZXJyb3IubWVzc2FnZX1gKTtcbiAgICAgIHRocm93IGVycm9yO1xuICAgIH1cbiAgfVxuXG4gIHRyeSB7XG4gICAgbW9kdWxlUmVsb2FkTG9jay5hZGQoZnVsbFBhdGgpO1xuICAgIFxuICAgIC8vIEZvciBFUyBtb2R1bGVzLCB3ZSB1c2UgZHluYW1pYyBpbXBvcnQgd2l0aCBjYWNoZSBidXN0aW5nXG4gICAgY29uc3QgY2FjaGVCdXN0ZXIgPSBgP3Q9JHtEYXRlLm5vdygpfWA7XG4gICAgY29uc3QgbW9kdWxlVXJsID0gYCR7ZnVsbFBhdGh9JHtjYWNoZUJ1c3Rlcn1gO1xuICAgIGNvbnN0IG1vZCA9IGF3YWl0IGltcG9ydChtb2R1bGVVcmwpO1xuICAgIFxuICAgIG1vZHVsZVJlbG9hZExvY2suZGVsZXRlKGZ1bGxQYXRoKTtcbiAgICBjb25zb2xlLmxvZyhgcmVsb2FkIGlzIHJldHVybmluZyBtb2R1bGVgKTtcbiAgICByZXR1cm4gbW9kO1xuICB9IGNhdGNoIChlcnI6IGFueSkge1xuICAgIG1vZHVsZVJlbG9hZExvY2suZGVsZXRlKGZ1bGxQYXRoKTtcbiAgICBjb25zb2xlLmxvZyhgcmVsb2FkIGVycm9yICR7ZXJyLm1lc3NhZ2V9YCk7XG4gICAgdGhyb3cgZXJyO1xuICB9XG59XG5cbi8vIEV4cG9ydCBtb2R1bGUgcmVsb2FkaW5nIHV0aWxpdGllcyB1c2luZyBFUyBtb2R1bGUgc3ludGF4XG5leHBvcnQge1xuICByZWxvYWQsXG4gIG1vZHVsZVJlbG9hZExvY2tcbn07Il0sInZlcnNpb24iOjN9

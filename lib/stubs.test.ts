@@ -7,6 +7,6 @@ describe('stubs.ts basic exports', () => {
     expect(module).toBeDefined();
     expect(typeof module).toBe('object');
     // Check for expected exports
-    expect(module.stubs).toBeDefined();
+    expect(module.default).toBeDefined();
   });
 });

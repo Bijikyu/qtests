@@ -7,7 +7,7 @@
 
 // Import logging control utility for consistent framework behavior
 import { setLogging } from '../lib/logUtils.js';
-if (process.env.NODE_ENV !== 'test') setLogging(false);
+if (process.env.NODE_ENV === 'test') setLogging(false);
 
 import http from 'http';
 import type { Server } from 'http';
@@ -136,13 +136,13 @@ class Test {
     }
   }
   
-  expect(status: number): Test {
+  expect(status: number): Promise<TestResponse> {
     console.log(`Test.expect is running with ${status}`); // log expectation setting
     
     try {
       this.expectedStatus = status; // store expected status
-      console.log(`Test.expect is returning this`); // log chaining
-      return this; // enable method chaining
+      console.log(`Test.expect is executing request immediately`); // log execution
+      return this.end(); // execute request immediately and return promise
     } catch (error: any) {
       console.log(`Test.expect error ${error.message}`); // log error
       throw error; // propagate error

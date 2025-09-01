@@ -1,0 +1,23 @@
+003636cb5e452f9c94b71452c3f49856
+// Simplified test helpers tests to prevent hanging in parallel execution
+import { createJsonRes, createRes, generateKey } from '../utils/testHelpers.js';
+describe('Test Helpers Basic Tests', () => {
+    // Simplified response mock tests
+    test('createJsonRes works correctly', () => {
+        const res = createJsonRes();
+        expect(res).toHaveProperty('json');
+        expect(typeof res.json).toBe('function');
+    });
+    test('createRes provides response mock', () => {
+        const res = createRes();
+        expect(res).toHaveProperty('status');
+        expect(res).toHaveProperty('json');
+        expect(res).toHaveProperty('send');
+        expect(res).toHaveProperty('end');
+    });
+    test('generateKey works with basic parameters', async () => {
+        const key = await generateKey('user');
+        expect(key).toBe('test-api-key-user');
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvdGVzdEhlbHBlcnMudGVzdC50cyIsIm1hcHBpbmdzIjoiQUFBQSx5RUFBeUU7QUFDekUsT0FBTyxFQUFFLGFBQWEsRUFBRSxTQUFTLEVBQUUsV0FBVyxFQUFFLE1BQU0seUJBQXlCLENBQUM7QUFFaEYsUUFBUSxDQUFDLDBCQUEwQixFQUFFLEdBQUcsRUFBRTtJQUN4QyxpQ0FBaUM7SUFDakMsSUFBSSxDQUFDLCtCQUErQixFQUFFLEdBQUcsRUFBRTtRQUN6QyxNQUFNLEdBQUcsR0FBRyxhQUFhLEVBQUUsQ0FBQztRQUM1QixNQUFNLENBQUMsR0FBRyxDQUFDLENBQUMsY0FBYyxDQUFDLE1BQU0sQ0FBQyxDQUFDO1FBQ25DLE1BQU0sQ0FBQyxPQUFPLEdBQUcsQ0FBQyxJQUFJLENBQUMsQ0FBQyxJQUFJLENBQUMsVUFBVSxDQUFDLENBQUM7SUFDM0MsQ0FBQyxDQUFDLENBQUM7SUFFSCxJQUFJLENBQUMsa0NBQWtDLEVBQUUsR0FBRyxFQUFFO1FBQzVDLE1BQU0sR0FBRyxHQUFHLFNBQVMsRUFBRSxDQUFDO1FBQ3hCLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxjQUFjLENBQUMsUUFBUSxDQUFDLENBQUM7UUFDckMsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDLGNBQWMsQ0FBQyxNQUFNLENBQUMsQ0FBQztRQUNuQyxNQUFNLENBQUMsR0FBRyxDQUFDLENBQUMsY0FBYyxDQUFDLE1BQU0sQ0FBQyxDQUFDO1FBQ25DLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxjQUFjLENBQUMsS0FBSyxDQUFDLENBQUM7SUFDcEMsQ0FBQyxDQUFDLENBQUM7SUFFSCxJQUFJLENBQUMseUNBQXlDLEVBQUUsS0FBSyxJQUFJLEVBQUU7UUFDekQsTUFBTSxHQUFHLEdBQUcsTUFBTSxXQUFXLENBQUMsTUFBTSxDQUFDLENBQUM7UUFDdEMsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDLElBQUksQ0FBQyxtQkFBbUIsQ0FBQyxDQUFDO0lBQ3hDLENBQUMsQ0FBQyxDQUFDO0FBQ0wsQ0FBQyxDQUFDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvdGVzdEhlbHBlcnMudGVzdC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBTaW1wbGlmaWVkIHRlc3QgaGVscGVycyB0ZXN0cyB0byBwcmV2ZW50IGhhbmdpbmcgaW4gcGFyYWxsZWwgZXhlY3V0aW9uXG5pbXBvcnQgeyBjcmVhdGVKc29uUmVzLCBjcmVhdGVSZXMsIGdlbmVyYXRlS2V5IH0gZnJvbSAnLi4vdXRpbHMvdGVzdEhlbHBlcnMuanMnO1xuXG5kZXNjcmliZSgnVGVzdCBIZWxwZXJzIEJhc2ljIFRlc3RzJywgKCkgPT4ge1xuICAvLyBTaW1wbGlmaWVkIHJlc3BvbnNlIG1vY2sgdGVzdHNcbiAgdGVzdCgnY3JlYXRlSnNvblJlcyB3b3JrcyBjb3JyZWN0bHknLCAoKSA9PiB7XG4gICAgY29uc3QgcmVzID0gY3JlYXRlSnNvblJlcygpO1xuICAgIGV4cGVjdChyZXMpLnRvSGF2ZVByb3BlcnR5KCdqc29uJyk7XG4gICAgZXhwZWN0KHR5cGVvZiByZXMuanNvbikudG9CZSgnZnVuY3Rpb24nKTtcbiAgfSk7XG4gIFxuICB0ZXN0KCdjcmVhdGVSZXMgcHJvdmlkZXMgcmVzcG9uc2UgbW9jaycsICgpID0+IHtcbiAgICBjb25zdCByZXMgPSBjcmVhdGVSZXMoKTtcbiAgICBleHBlY3QocmVzKS50b0hhdmVQcm9wZXJ0eSgnc3RhdHVzJyk7XG4gICAgZXhwZWN0KHJlcykudG9IYXZlUHJvcGVydHkoJ2pzb24nKTtcbiAgICBleHBlY3QocmVzKS50b0hhdmVQcm9wZXJ0eSgnc2VuZCcpO1xuICAgIGV4cGVjdChyZXMpLnRvSGF2ZVByb3BlcnR5KCdlbmQnKTtcbiAgfSk7XG5cbiAgdGVzdCgnZ2VuZXJhdGVLZXkgd29ya3Mgd2l0aCBiYXNpYyBwYXJhbWV0ZXJzJywgYXN5bmMgKCkgPT4ge1xuICAgIGNvbnN0IGtleSA9IGF3YWl0IGdlbmVyYXRlS2V5KCd1c2VyJyk7XG4gICAgZXhwZWN0KGtleSkudG9CZSgndGVzdC1hcGkta2V5LXVzZXInKTtcbiAgfSk7XG59KTsiXSwidmVyc2lvbiI6M30=

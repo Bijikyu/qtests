@@ -109,3 +109,4 @@ function stubMethod(obj: any, methodName: string, stubFn: Function): () => void 
 
 // Export stubMethod function using ES module syntax
 export default stubMethod;
+export { stubMethod };

@@ -1,0 +1,137 @@
+081386d1fddd3a175bc7b7ecd70d45b1
+/**
+ * Logging Utilities for Function Call Tracing
+ *
+ * Provides standardized logging for function entry and exit points throughout
+ * the qtests module. This is essential for debugging test setup issues and
+ * understanding the flow of mock creation and cleanup.
+ *
+ * Design philosophy:
+ * - Consistent format: all logs follow the same pattern for easy parsing
+ * - Minimal overhead: simple console output without external dependencies
+ * - Debugging focus: optimized for troubleshooting rather than production
+ * - JSON serialization: handles complex arguments safely
+ *
+ * Why dedicated logging utilities:
+ * - Consistent formatting across all qtests functions
+ * - Easy to disable by modifying this single file
+ * - Helps users understand what qtests is doing during test setup
+ * - Essential for debugging complex test environment issues
+ */
+// Import util for safe inspection fallback
+import util from 'util';
+let LOG_ENABLED = true; // global log flag default true
+function setLogging(enabled) {
+    LOG_ENABLED = enabled; // update flag state
+}
+/**
+ * Safely converts values to strings for logging
+ *
+ * Attempts JSON serialization first, then falls back to util.inspect.
+ * Returns '[unserializable]' if both methods fail.
+ *
+ * @param value - Value to serialize for log output
+ * @returns Serialized representation
+ */
+function safeSerialize(value) {
+    if (value === undefined)
+        return 'undefined'; // handle undefined explicitly for clarity
+    try {
+        // Attempt JSON serialization as primary strategy for most values
+        // JSON.stringify chosen first because it produces clean, readable output
+        // Handles primitive types, arrays, and plain objects efficiently
+        // Fails gracefully on circular references, functions, symbols
+        const serialized = JSON.stringify(value);
+        if (serialized !== undefined)
+            return serialized; // check for unsupported types
+        const inspected = util.inspect(value, { depth: null }); // fallback for functions or symbols
+        return inspected;
+    }
+    catch (error) {
+        // Handle JSON serialization failures with util.inspect fallback
+        // Common failures: circular references, BigInt
+        try {
+            // Use util.inspect for complex objects that JSON.stringify cannot handle
+            const inspected = util.inspect(value, {
+                depth: null,
+                showHidden: false,
+                colors: false,
+                customInspect: true,
+                showProxy: true,
+                maxArrayLength: 100,
+                maxStringLength: 100,
+                breakLength: 80,
+                compact: true,
+                sorted: false,
+                getters: false
+            });
+            return inspected;
+        }
+        catch (inspectError) {
+            // Final fallback when both JSON and util.inspect fail
+            // This should be extremely rare but provides safety
+            return '[unserializable]';
+        }
+    }
+}
+/**
+ * Logs function entry with name and arguments
+ *
+ * @param name - Function name for identification
+ * @param args - Function arguments to serialize and log
+ */
+function logStart(name, ...args) {
+    if (!LOG_ENABLED)
+        return; // respect global log flag
+    const serializedArgs = args.map(arg => safeSerialize(arg)).join(', ');
+    console.log(`${name}(${serializedArgs})`);
+}
+/**
+ * Logs function return value
+ *
+ * @param name - Function name for identification
+ * @param value - Return value to serialize and log
+ */
+function logReturn(name, value) {
+    if (!LOG_ENABLED)
+        return; // respect global log flag
+    const serializedValue = safeSerialize(value);
+    console.log(`${name} -> ${serializedValue}`);
+}
+/**
+ * Executes a function with entry/exit logging
+ *
+ * Provides automatic logging wrapper for functions that need
+ * detailed execution tracing for debugging purposes.
+ *
+ * @param name - Function name for log identification
+ * @param fn - Function to execute with logging
+ * @param args - Arguments to pass to the function
+ * @returns The result of the function execution
+ */
+function executeWithLogs(name, fn, ...args) {
+    try {
+        // Log function entry with arguments for debugging visibility
+        // This helps track the sequence of function calls during test setup
+        logStart(name, ...args);
+        // Execute the wrapped function with provided arguments
+        // Function execution is not modified, only instrumented with logging
+        const result = fn(...args);
+        // Log function exit with return value for completeness
+        // Return value logging helps verify expected function behavior
+        logReturn(name, result);
+        return result;
+    }
+    catch (error) {
+        // Log errors for debugging while preserving original error handling
+        // Error message logging helps identify issues in wrapped function execution
+        // Re-throwing maintains original error handling contract while adding diagnostics
+        if (LOG_ENABLED)
+            console.log(`${name} encountered ${error.message}`);
+        console.log(`executeWithLogs error: ${error.message}`);
+        throw error;
+    }
+}
+// Export all logging utilities using ES module syntax
+export { logStart, logReturn, executeWithLogs, safeSerialize, setLogging };
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,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SUFBSSxFQUFFLEdBQUcsSUFBSSxDQUFDLENBQUM7UUFFeEIsdURBQXVEO1FBQ3ZELHFFQUFxRTtRQUNyRSxNQUFNLE1BQU0sR0FBRyxFQUFFLENBQUMsR0FBRyxJQUFJLENBQUMsQ0FBQztRQUUzQix1REFBdUQ7UUFDdkQsK0RBQStEO1FBQy9ELFNBQVMsQ0FBQyxJQUFJLEVBQUUsTUFBTSxDQUFDLENBQUM7UUFFeEIsT0FBTyxNQUFNLENBQUM7SUFDaEIsQ0FBQztJQUFDLE9BQU8sS0FBVSxFQUFFLENBQUM7UUFDcEIsb0VBQW9FO1FBQ3BFLDRFQUE0RTtRQUM1RSxrRkFBa0Y7UUFDbEYsSUFBSSxXQUFXO1lBQUUsT0FBTyxDQUFDLEdBQUcsQ0FBQyxHQUFHLElBQUksZ0JBQWdCLEtBQUssQ0FBQyxPQUFPLEVBQUUsQ0FBQyxDQUFDO1FBQ3JFLE9BQU8sQ0FBQyxHQUFHLENBQUMsMEJBQTBCLEtBQUssQ0FBQyxPQUFPLEVBQUUsQ0FBQyxDQUFDO1FBQ3ZELE1BQU0sS0FBSyxDQUFDO0lBQ2QsQ0FBQztBQUNILENBQUM7QUFFRCxzREFBc0Q7QUFDdEQsT0FBTyxFQUFFLFFBQVEsRUFBRSxTQUFTLEVBQUUsZUFBZSxFQUFFLGFBQWEsRUFBRSxVQUFVLEVBQUUsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL2xpYi9sb2dVdGlscy50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIExvZ2dpbmcgVXRpbGl0aWVzIGZvciBGdW5jdGlvbiBDYWxsIFRyYWNpbmdcbiAqIFxuICogUHJvdmlkZXMgc3RhbmRhcmRpemVkIGxvZ2dpbmcgZm9yIGZ1bmN0aW9uIGVudHJ5IGFuZCBleGl0IHBvaW50cyB0aHJvdWdob3V0XG4gKiB0aGUgcXRlc3RzIG1vZHVsZS4gVGhpcyBpcyBlc3NlbnRpYWwgZm9yIGRlYnVnZ2luZyB0ZXN0IHNldHVwIGlzc3VlcyBhbmRcbiAqIHVuZGVyc3RhbmRpbmcgdGhlIGZsb3cgb2YgbW9jayBjcmVhdGlvbiBhbmQgY2xlYW51cC5cbiAqIFxuICogRGVzaWduIHBoaWxvc29waHk6XG4gKiAtIENvbnNpc3RlbnQgZm9ybWF0OiBhbGwgbG9ncyBmb2xsb3cgdGhlIHNhbWUgcGF0dGVybiBmb3IgZWFzeSBwYXJzaW5nXG4gKiAtIE1pbmltYWwgb3ZlcmhlYWQ6IHNpbXBsZSBjb25zb2xlIG91dHB1dCB3aXRob3V0IGV4dGVybmFsIGRlcGVuZGVuY2llc1xuICogLSBEZWJ1Z2dpbmcgZm9jdXM6IG9wdGltaXplZCBmb3IgdHJvdWJsZXNob290aW5nIHJhdGhlciB0aGFuIHByb2R1Y3Rpb25cbiAqIC0gSlNPTiBzZXJpYWxpemF0aW9uOiBoYW5kbGVzIGNvbXBsZXggYXJndW1lbnRzIHNhZmVseVxuICogXG4gKiBXaHkgZGVkaWNhdGVkIGxvZ2dpbmcgdXRpbGl0aWVzOlxuICogLSBDb25zaXN0ZW50IGZvcm1hdHRpbmcgYWNyb3NzIGFsbCBxdGVzdHMgZnVuY3Rpb25zXG4gKiAtIEVhc3kgdG8gZGlzYWJsZSBieSBtb2RpZnlpbmcgdGhpcyBzaW5nbGUgZmlsZVxuICogLSBIZWxwcyB1c2VycyB1bmRlcnN0YW5kIHdoYXQgcXRlc3RzIGlzIGRvaW5nIGR1cmluZyB0ZXN0IHNldHVwXG4gKiAtIEVzc2VudGlhbCBmb3IgZGVidWdnaW5nIGNvbXBsZXggdGVzdCBlbnZpcm9ubWVudCBpc3N1ZXNcbiAqL1xuXG4vLyBJbXBvcnQgdXRpbCBmb3Igc2FmZSBpbnNwZWN0aW9uIGZhbGxiYWNrXG5pbXBvcnQgdXRpbCBmcm9tICd1dGlsJztcblxubGV0IExPR19FTkFCTEVEID0gdHJ1ZTsgLy8gZ2xvYmFsIGxvZyBmbGFnIGRlZmF1bHQgdHJ1ZVxuXG5mdW5jdGlvbiBzZXRMb2dnaW5nKGVuYWJsZWQ6IGJvb2xlYW4pOiB2b2lkIHtcbiAgTE9HX0VOQUJMRUQgPSBlbmFibGVkOyAvLyB1cGRhdGUgZmxhZyBzdGF0ZVxufVxuXG4vKipcbiAqIFNhZmVseSBjb252ZXJ0cyB2YWx1ZXMgdG8gc3RyaW5ncyBmb3IgbG9nZ2luZ1xuICpcbiAqIEF0dGVtcHRzIEpTT04gc2VyaWFsaXphdGlvbiBmaXJzdCwgdGhlbiBmYWxscyBiYWNrIHRvIHV0aWwuaW5zcGVjdC5cbiAqIFJldHVybnMgJ1t1bnNlcmlhbGl6YWJsZV0nIGlmIGJvdGggbWV0aG9kcyBmYWlsLlxuICpcbiAqIEBwYXJhbSB2YWx1ZSAtIFZhbHVlIHRvIHNlcmlhbGl6ZSBmb3IgbG9nIG91dHB1dFxuICogQHJldHVybnMgU2VyaWFsaXplZCByZXByZXNlbnRhdGlvblxuICovXG5mdW5jdGlvbiBzYWZlU2VyaWFsaXplKHZhbHVlOiBhbnkpOiBzdHJpbmcge1xuICBpZiAodmFsdWUgPT09IHVuZGVmaW5lZCkgcmV0dXJuICd1bmRlZmluZWQnOyAvLyBoYW5kbGUgdW5kZWZpbmVkIGV4cGxpY2l0bHkgZm9yIGNsYXJpdHlcbiAgdHJ5IHtcbiAgICAvLyBBdHRlbXB0IEpTT04gc2VyaWFsaXphdGlvbiBhcyBwcmltYXJ5IHN0cmF0ZWd5IGZvciBtb3N0IHZhbHVlc1xuICAgIC8vIEpTT04uc3RyaW5naWZ5IGNob3NlbiBmaXJzdCBiZWNhdXNlIGl0IHByb2R1Y2VzIGNsZWFuLCByZWFkYWJsZSBvdXRwdXRcbiAgICAvLyBIYW5kbGVzIHByaW1pdGl2ZSB0eXBlcywgYXJyYXlzLCBhbmQgcGxhaW4gb2JqZWN0cyBlZmZpY2llbnRseVxuICAgIC8vIEZhaWxzIGdyYWNlZnVsbHkgb24gY2lyY3VsYXIgcmVmZXJlbmNlcywgZnVuY3Rpb25zLCBzeW1ib2xzXG4gICAgY29uc3Qgc2VyaWFsaXplZCA9IEpTT04uc3RyaW5naWZ5KHZhbHVlKTtcbiAgICBpZiAoc2VyaWFsaXplZCAhPT0gdW5kZWZpbmVkKSByZXR1cm4gc2VyaWFsaXplZDsgLy8gY2hlY2sgZm9yIHVuc3VwcG9ydGVkIHR5cGVzXG4gICAgY29uc3QgaW5zcGVjdGVkID0gdXRpbC5pbnNwZWN0KHZhbHVlLCB7IGRlcHRoOiBudWxsIH0pOyAvLyBmYWxsYmFjayBmb3IgZnVuY3Rpb25zIG9yIHN5bWJvbHNcbiAgICByZXR1cm4gaW5zcGVjdGVkO1xuICB9IGNhdGNoIChlcnJvcikge1xuICAgIC8vIEhhbmRsZSBKU09OIHNlcmlhbGl6YXRpb24gZmFpbHVyZXMgd2l0aCB1dGlsLmluc3BlY3QgZmFsbGJhY2tcbiAgICAvLyBDb21tb24gZmFpbHVyZXM6IGNpcmN1bGFyIHJlZmVyZW5jZXMsIEJpZ0ludFxuICAgIHRyeSB7XG4gICAgICAvLyBVc2UgdXRpbC5pbnNwZWN0IGZvciBjb21wbGV4IG9iamVjdHMgdGhhdCBKU09OLnN0cmluZ2lmeSBjYW5ub3QgaGFuZGxlXG4gICAgICBjb25zdCBpbnNwZWN0ZWQgPSB1dGlsLmluc3BlY3QodmFsdWUsIHsgXG4gICAgICAgIGRlcHRoOiBudWxsLFxuICAgICAgICBzaG93SGlkZGVuOiBmYWxzZSxcbiAgICAgICAgY29sb3JzOiBmYWxzZSxcbiAgICAgICAgY3VzdG9tSW5zcGVjdDogdHJ1ZSxcbiAgICAgICAgc2hvd1Byb3h5OiB0cnVlLFxuICAgICAgICBtYXhBcnJheUxlbmd0aDogMTAwLFxuICAgICAgICBtYXhTdHJpbmdMZW5ndGg6IDEwMCxcbiAgICAgICAgYnJlYWtMZW5ndGg6IDgwLFxuICAgICAgICBjb21wYWN0OiB0cnVlLFxuICAgICAgICBzb3J0ZWQ6IGZhbHNlLFxuICAgICAgICBnZXR0ZXJzOiBmYWxzZSBcbiAgICAgIH0pO1xuICAgICAgcmV0dXJuIGluc3BlY3RlZDtcbiAgICB9IGNhdGNoIChpbnNwZWN0RXJyb3IpIHtcbiAgICAgIC8vIEZpbmFsIGZhbGxiYWNrIHdoZW4gYm90aCBKU09OIGFuZCB1dGlsLmluc3BlY3QgZmFpbFxuICAgICAgLy8gVGhpcyBzaG91bGQgYmUgZXh0cmVtZWx5IHJhcmUgYnV0IHByb3ZpZGVzIHNhZmV0eVxuICAgICAgcmV0dXJuICdbdW5zZXJpYWxpemFibGVdJztcbiAgICB9XG4gIH1cbn1cblxuLyoqXG4gKiBMb2dzIGZ1bmN0aW9uIGVudHJ5IHdpdGggbmFtZSBhbmQgYXJndW1lbnRzXG4gKlxuICogQHBhcmFtIG5hbWUgLSBGdW5jdGlvbiBuYW1lIGZvciBpZGVudGlmaWNhdGlvblxuICogQHBhcmFtIGFyZ3MgLSBGdW5jdGlvbiBhcmd1bWVudHMgdG8gc2VyaWFsaXplIGFuZCBsb2dcbiAqL1xuZnVuY3Rpb24gbG9nU3RhcnQobmFtZTogc3RyaW5nLCAuLi5hcmdzOiBhbnlbXSk6IHZvaWQge1xuICBpZiAoIUxPR19FTkFCTEVEKSByZXR1cm47IC8vIHJlc3BlY3QgZ2xvYmFsIGxvZyBmbGFnXG4gIGNvbnN0IHNlcmlhbGl6ZWRBcmdzID0gYXJncy5tYXAoYXJnID0+IHNhZmVTZXJpYWxpemUoYXJnKSkuam9pbignLCAnKTtcbiAgY29uc29sZS5sb2coYCR7bmFtZX0oJHtzZXJpYWxpemVkQXJnc30pYCk7XG59XG5cbi8qKlxuICogTG9ncyBmdW5jdGlvbiByZXR1cm4gdmFsdWVcbiAqXG4gKiBAcGFyYW0gbmFtZSAtIEZ1bmN0aW9uIG5hbWUgZm9yIGlkZW50aWZpY2F0aW9uICBcbiAqIEBwYXJhbSB2YWx1ZSAtIFJldHVybiB2YWx1ZSB0byBzZXJpYWxpemUgYW5kIGxvZ1xuICovXG5mdW5jdGlvbiBsb2dSZXR1cm4obmFtZTogc3RyaW5nLCB2YWx1ZTogYW55KTogdm9pZCB7XG4gIGlmICghTE9HX0VOQUJMRUQpIHJldHVybjsgLy8gcmVzcGVjdCBnbG9iYWwgbG9nIGZsYWdcbiAgY29uc3Qgc2VyaWFsaXplZFZhbHVlID0gc2FmZVNlcmlhbGl6ZSh2YWx1ZSk7XG4gIGNvbnNvbGUubG9nKGAke25hbWV9IC0+ICR7c2VyaWFsaXplZFZhbHVlfWApO1xufVxuXG4vKipcbiAqIEV4ZWN1dGVzIGEgZnVuY3Rpb24gd2l0aCBlbnRyeS9leGl0IGxvZ2dpbmdcbiAqXG4gKiBQcm92aWRlcyBhdXRvbWF0aWMgbG9nZ2luZyB3cmFwcGVyIGZvciBmdW5jdGlvbnMgdGhhdCBuZWVkXG4gKiBkZXRhaWxlZCBleGVjdXRpb24gdHJhY2luZyBmb3IgZGVidWdnaW5nIHB1cnBvc2VzLlxuICpcbiAqIEBwYXJhbSBuYW1lIC0gRnVuY3Rpb24gbmFtZSBmb3IgbG9nIGlkZW50aWZpY2F0aW9uXG4gKiBAcGFyYW0gZm4gLSBGdW5jdGlvbiB0byBleGVjdXRlIHdpdGggbG9nZ2luZ1xuICogQHBhcmFtIGFyZ3MgLSBBcmd1bWVudHMgdG8gcGFzcyB0byB0aGUgZnVuY3Rpb25cbiAqIEByZXR1cm5zIFRoZSByZXN1bHQgb2YgdGhlIGZ1bmN0aW9uIGV4ZWN1dGlvblxuICovXG5mdW5jdGlvbiBleGVjdXRlV2l0aExvZ3M8VD4obmFtZTogc3RyaW5nLCBmbjogKC4uLmFyZ3M6IGFueVtdKSA9PiBULCAuLi5hcmdzOiBhbnlbXSk6IFQge1xuICB0cnkge1xuICAgIC8vIExvZyBmdW5jdGlvbiBlbnRyeSB3aXRoIGFyZ3VtZW50cyBmb3IgZGVidWdnaW5nIHZpc2liaWxpdHlcbiAgICAvLyBUaGlzIGhlbHBzIHRyYWNrIHRoZSBzZXF1ZW5jZSBvZiBmdW5jdGlvbiBjYWxscyBkdXJpbmcgdGVzdCBzZXR1cFxuICAgIGxvZ1N0YXJ0KG5hbWUsIC4uLmFyZ3MpO1xuICAgIFxuICAgIC8vIEV4ZWN1dGUgdGhlIHdyYXBwZWQgZnVuY3Rpb24gd2l0aCBwcm92aWRlZCBhcmd1bWVudHNcbiAgICAvLyBGdW5jdGlvbiBleGVjdXRpb24gaXMgbm90IG1vZGlmaWVkLCBvbmx5IGluc3RydW1lbnRlZCB3aXRoIGxvZ2dpbmdcbiAgICBjb25zdCByZXN1bHQgPSBmbiguLi5hcmdzKTtcbiAgICBcbiAgICAvLyBMb2cgZnVuY3Rpb24gZXhpdCB3aXRoIHJldHVybiB2YWx1ZSBmb3IgY29tcGxldGVuZXNzXG4gICAgLy8gUmV0dXJuIHZhbHVlIGxvZ2dpbmcgaGVscHMgdmVyaWZ5IGV4cGVjdGVkIGZ1bmN0aW9uIGJlaGF2aW9yXG4gICAgbG9nUmV0dXJuKG5hbWUsIHJlc3VsdCk7XG4gICAgXG4gICAgcmV0dXJuIHJlc3VsdDtcbiAgfSBjYXRjaCAoZXJyb3I6IGFueSkge1xuICAgIC8vIExvZyBlcnJvcnMgZm9yIGRlYnVnZ2luZyB3aGlsZSBwcmVzZXJ2aW5nIG9yaWdpbmFsIGVycm9yIGhhbmRsaW5nXG4gICAgLy8gRXJyb3IgbWVzc2FnZSBsb2dnaW5nIGhlbHBzIGlkZW50aWZ5IGlzc3VlcyBpbiB3cmFwcGVkIGZ1bmN0aW9uIGV4ZWN1dGlvblxuICAgIC8vIFJlLXRocm93aW5nIG1haW50YWlucyBvcmlnaW5hbCBlcnJvciBoYW5kbGluZyBjb250cmFjdCB3aGlsZSBhZGRpbmcgZGlhZ25vc3RpY3NcbiAgICBpZiAoTE9HX0VOQUJMRUQpIGNvbnNvbGUubG9nKGAke25hbWV9IGVuY291bnRlcmVkICR7ZXJyb3IubWVzc2FnZX1gKTtcbiAgICBjb25zb2xlLmxvZyhgZXhlY3V0ZVdpdGhMb2dzIGVycm9yOiAke2Vycm9yLm1lc3NhZ2V9YCk7XG4gICAgdGhyb3cgZXJyb3I7XG4gIH1cbn1cblxuLy8gRXhwb3J0IGFsbCBsb2dnaW5nIHV0aWxpdGllcyB1c2luZyBFUyBtb2R1bGUgc3ludGF4XG5leHBvcnQgeyBsb2dTdGFydCwgbG9nUmV0dXJuLCBleGVjdXRlV2l0aExvZ3MsIHNhZmVTZXJpYWxpemUsIHNldExvZ2dpbmcgfTsiXSwidmVyc2lvbiI6M30=

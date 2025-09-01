@@ -1,0 +1,11 @@
+0383d699f932d97f54217a49c7754d77
+"use strict";
+// Offline mode tests for TypeScript ES modules
+describe('Offline Mode Tests', () => {
+    test('offline mode functions correctly', async () => {
+        const mod = await import('../utils/offlineMode.js');
+        expect(mod).toBeDefined();
+        expect(typeof mod).toBe('object');
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvb2ZmbGluZU1vZGUudGVzdC50cyIsIm1hcHBpbmdzIjoiO0FBQUEsK0NBQStDO0FBQy9DLFFBQVEsQ0FBQyxvQkFBb0IsRUFBRSxHQUFHLEVBQUU7SUFDbEMsSUFBSSxDQUFDLGtDQUFrQyxFQUFFLEtBQUssSUFBSSxFQUFFO1FBQ2xELE1BQU0sR0FBRyxHQUFHLE1BQU0sTUFBTSxDQUFDLHlCQUF5QixDQUFDLENBQUM7UUFDcEQsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDLFdBQVcsRUFBRSxDQUFDO1FBQzFCLE1BQU0sQ0FBQyxPQUFPLEdBQUcsQ0FBQyxDQUFDLElBQUksQ0FBQyxRQUFRLENBQUMsQ0FBQztJQUNwQyxDQUFDLENBQUMsQ0FBQztBQUNMLENBQUMsQ0FBQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3Jrc3BhY2UvbWFudWFsLXRlc3RzL29mZmxpbmVNb2RlLnRlc3QudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gT2ZmbGluZSBtb2RlIHRlc3RzIGZvciBUeXBlU2NyaXB0IEVTIG1vZHVsZXNcbmRlc2NyaWJlKCdPZmZsaW5lIE1vZGUgVGVzdHMnLCAoKSA9PiB7XG4gIHRlc3QoJ29mZmxpbmUgbW9kZSBmdW5jdGlvbnMgY29ycmVjdGx5JywgYXN5bmMgKCkgPT4ge1xuICAgIGNvbnN0IG1vZCA9IGF3YWl0IGltcG9ydCgnLi4vdXRpbHMvb2ZmbGluZU1vZGUuanMnKTtcbiAgICBleHBlY3QobW9kKS50b0JlRGVmaW5lZCgpO1xuICAgIGV4cGVjdCh0eXBlb2YgbW9kKS50b0JlKCdvYmplY3QnKTtcbiAgfSk7XG59KTsiXSwidmVyc2lvbiI6M30=

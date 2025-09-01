@@ -1,0 +1,54 @@
+68acd49b57571513e9a8944bc89886c9
+"use strict";
+/**
+ * qtests - Main Entry Point
+ *
+ * This module serves as the unified export point for all qtests functionality.
+ * The architecture is designed to provide a clean, intuitive API where users
+ * can access all testing utilities through a single import.
+ *
+ * Design rationale:
+ * - Single entry point reduces cognitive load for users
+ * - Organized by functionality (core, environment, setup, stubs) for clarity
+ * - Each category is kept in separate lib files for maintainability
+ * - Maintains backward compatibility with existing API
+ */
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.stubs = exports.setup = exports.createAssertions = exports.runTestSuites = exports.runTestSuite = exports.TestGenerator = exports.testHelpers = exports.offlineMode = exports.testEnv = exports.mockConsole = exports.stubMethod = void 0;
+// Import organized utility categories from lib directory
+const coreUtils_js_1 = require("./lib/coreUtils.js");
+Object.defineProperty(exports, "stubMethod", { enumerable: true, get: function () { return coreUtils_js_1.stubMethod; } });
+Object.defineProperty(exports, "mockConsole", { enumerable: true, get: function () { return coreUtils_js_1.mockConsole; } });
+const envUtils_js_1 = require("./lib/envUtils.js");
+Object.defineProperty(exports, "testEnv", { enumerable: true, get: function () { return envUtils_js_1.testEnv; } });
+Object.defineProperty(exports, "offlineMode", { enumerable: true, get: function () { return envUtils_js_1.offlineMode; } });
+Object.defineProperty(exports, "testHelpers", { enumerable: true, get: function () { return envUtils_js_1.testHelpers; } });
+const setup_js_1 = require("./lib/setup.js");
+Object.defineProperty(exports, "setup", { enumerable: true, get: function () { return setup_js_1.setup; } });
+const stubs_js_1 = __importDefault(require("./lib/stubs.js"));
+exports.stubs = stubs_js_1.default;
+const testGenerator_js_1 = require("./lib/testGenerator.js");
+Object.defineProperty(exports, "TestGenerator", { enumerable: true, get: function () { return testGenerator_js_1.TestGenerator; } });
+const runTestSuite_js_1 = require("./utils/runTestSuite.js");
+Object.defineProperty(exports, "runTestSuite", { enumerable: true, get: function () { return runTestSuite_js_1.runTestSuite; } });
+Object.defineProperty(exports, "runTestSuites", { enumerable: true, get: function () { return runTestSuite_js_1.runTestSuites; } });
+Object.defineProperty(exports, "createAssertions", { enumerable: true, get: function () { return runTestSuite_js_1.createAssertions; } });
+// Default export for backward compatibility
+const qtests = {
+    stubMethod: coreUtils_js_1.stubMethod,
+    mockConsole: coreUtils_js_1.mockConsole,
+    testEnv: envUtils_js_1.testEnv,
+    offlineMode: envUtils_js_1.offlineMode,
+    testHelpers: envUtils_js_1.testHelpers,
+    TestGenerator: testGenerator_js_1.TestGenerator,
+    runTestSuite: runTestSuite_js_1.runTestSuite,
+    runTestSuites: runTestSuite_js_1.runTestSuites,
+    createAssertions: runTestSuite_js_1.createAssertions,
+    setup: setup_js_1.setup,
+    stubs: stubs_js_1.default
+};
+exports.default = qtests;
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9pbmRleC50cyIsIm1hcHBpbmdzIjoiO0FBQUE7Ozs7Ozs7Ozs7OztHQVlHOzs7Ozs7QUFFSCx5REFBeUQ7QUFDekQscURBQTZEO0FBd0IzRCwyRkF4Qk8seUJBQVUsT0F3QlA7QUFDViw0RkF6Qm1CLDBCQUFXLE9BeUJuQjtBQXhCYixtREFBc0U7QUF5QnBFLHdGQXpCTyxxQkFBTyxPQXlCUDtBQUNQLDRGQTFCZ0IseUJBQVcsT0EwQmhCO0FBQ1gsNEZBM0I2Qix5QkFBVyxPQTJCN0I7QUExQmIsNkNBQXVDO0FBK0JyQyxzRkEvQk8sZ0JBQUssT0ErQlA7QUE5QlAsOERBQW1DO0FBK0JqQyxnQkEvQkssa0JBQUssQ0ErQkw7QUE5QlAsNkRBQXVEO0FBeUJyRCw4RkF6Qk8sZ0NBQWEsT0F5QlA7QUF4QmYsNkRBQXdGO0FBeUJ0Riw2RkF6Qk8sOEJBQVksT0F5QlA7QUFDWiw4RkExQnFCLCtCQUFhLE9BMEJyQjtBQUNiLGlHQTNCb0Msa0NBQWdCLE9BMkJwQztBQUtsQiw0Q0FBNEM7QUFDNUMsTUFBTSxNQUFNLEdBQWM7SUFDeEIsVUFBVSxFQUFWLHlCQUFVO0lBQ1YsV0FBVyxFQUFYLDBCQUFXO0lBQ1gsT0FBTyxFQUFQLHFCQUFPO0lBQ1AsV0FBVyxFQUFYLHlCQUFXO0lBQ1gsV0FBVyxFQUFYLHlCQUFXO0lBQ1gsYUFBYSxFQUFiLGdDQUFhO0lBQ2IsWUFBWSxFQUFaLDhCQUFZO0lBQ1osYUFBYSxFQUFiLCtCQUFhO0lBQ2IsZ0JBQWdCLEVBQWhCLGtDQUFnQjtJQUNoQixLQUFLLEVBQUwsZ0JBQUs7SUFDTCxLQUFLLEVBQUwsa0JBQUs7Q0FDTixDQUFDO0FBRUYsa0JBQWUsTUFBTSxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3Jrc3BhY2UvaW5kZXgudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBxdGVzdHMgLSBNYWluIEVudHJ5IFBvaW50XG4gKiBcbiAqIFRoaXMgbW9kdWxlIHNlcnZlcyBhcyB0aGUgdW5pZmllZCBleHBvcnQgcG9pbnQgZm9yIGFsbCBxdGVzdHMgZnVuY3Rpb25hbGl0eS5cbiAqIFRoZSBhcmNoaXRlY3R1cmUgaXMgZGVzaWduZWQgdG8gcHJvdmlkZSBhIGNsZWFuLCBpbnR1aXRpdmUgQVBJIHdoZXJlIHVzZXJzXG4gKiBjYW4gYWNjZXNzIGFsbCB0ZXN0aW5nIHV0aWxpdGllcyB0aHJvdWdoIGEgc2luZ2xlIGltcG9ydC5cbiAqIFxuICogRGVzaWduIHJhdGlvbmFsZTpcbiAqIC0gU2luZ2xlIGVudHJ5IHBvaW50IHJlZHVjZXMgY29nbml0aXZlIGxvYWQgZm9yIHVzZXJzXG4gKiAtIE9yZ2FuaXplZCBieSBmdW5jdGlvbmFsaXR5IChjb3JlLCBlbnZpcm9ubWVudCwgc2V0dXAsIHN0dWJzKSBmb3IgY2xhcml0eVxuICogLSBFYWNoIGNhdGVnb3J5IGlzIGtlcHQgaW4gc2VwYXJhdGUgbGliIGZpbGVzIGZvciBtYWludGFpbmFiaWxpdHlcbiAqIC0gTWFpbnRhaW5zIGJhY2t3YXJkIGNvbXBhdGliaWxpdHkgd2l0aCBleGlzdGluZyBBUElcbiAqL1xuXG4vLyBJbXBvcnQgb3JnYW5pemVkIHV0aWxpdHkgY2F0ZWdvcmllcyBmcm9tIGxpYiBkaXJlY3RvcnlcbmltcG9ydCB7IHN0dWJNZXRob2QsIG1vY2tDb25zb2xlIH0gZnJvbSAnLi9saWIvY29yZVV0aWxzLmpzJztcbmltcG9ydCB7IHRlc3RFbnYsIG9mZmxpbmVNb2RlLCB0ZXN0SGVscGVycyB9IGZyb20gJy4vbGliL2VudlV0aWxzLmpzJztcbmltcG9ydCB7IHNldHVwIH0gZnJvbSAnLi9saWIvc2V0dXAuanMnO1xuaW1wb3J0IHN0dWJzIGZyb20gJy4vbGliL3N0dWJzLmpzJztcbmltcG9ydCB7IFRlc3RHZW5lcmF0b3IgfSBmcm9tICcuL2xpYi90ZXN0R2VuZXJhdG9yLmpzJztcbmltcG9ydCB7IHJ1blRlc3RTdWl0ZSwgcnVuVGVzdFN1aXRlcywgY3JlYXRlQXNzZXJ0aW9ucyB9IGZyb20gJy4vdXRpbHMvcnVuVGVzdFN1aXRlLmpzJztcblxuLy8gVHlwZSBkZWZpbml0aW9ucyBmb3IgdGhlIG1haW4gbW9kdWxlIGV4cG9ydHNcbmV4cG9ydCBpbnRlcmZhY2UgUXRlc3RzQVBJIHtcbiAgc3R1Yk1ldGhvZDogdHlwZW9mIHN0dWJNZXRob2Q7XG4gIG1vY2tDb25zb2xlOiB0eXBlb2YgbW9ja0NvbnNvbGU7XG4gIHRlc3RFbnY6IHR5cGVvZiB0ZXN0RW52O1xuICBvZmZsaW5lTW9kZTogdHlwZW9mIG9mZmxpbmVNb2RlO1xuICB0ZXN0SGVscGVyczogdHlwZW9mIHRlc3RIZWxwZXJzO1xuICBUZXN0R2VuZXJhdG9yOiB0eXBlb2YgVGVzdEdlbmVyYXRvcjtcbiAgcnVuVGVzdFN1aXRlOiB0eXBlb2YgcnVuVGVzdFN1aXRlO1xuICBydW5UZXN0U3VpdGVzOiB0eXBlb2YgcnVuVGVzdFN1aXRlcztcbiAgY3JlYXRlQXNzZXJ0aW9uczogdHlwZW9mIGNyZWF0ZUFzc2VydGlvbnM7XG4gIHNldHVwOiB0eXBlb2Ygc2V0dXA7XG4gIHN0dWJzOiB0eXBlb2Ygc3R1YnM7XG59XG5cbi8vIE5hbWVkIGV4cG9ydHMgZm9yIEVTIG1vZHVsZSBjb21wYXRpYmlsaXR5XG5leHBvcnQge1xuICBzdHViTWV0aG9kLCAvLyBtZXRob2QgcmVwbGFjZW1lbnQgdXRpbGl0eSBmb3IgaXNvbGF0aW5nIGRlcGVuZGVuY2llc1xuICBtb2NrQ29uc29sZSwgLy8gY29uc29sZSBvdXRwdXQgY2FwdHVyZSBmb3IgdGVzdGluZyBsb2dnaW5nIGJlaGF2aW9yXG4gIHRlc3RFbnYsIC8vIGVudmlyb25tZW50IGFuZCBtb2NrIG1hbmFnZW1lbnQgZm9yIGNvbXBsZXggdGVzdCBzY2VuYXJpb3NcbiAgb2ZmbGluZU1vZGUsIC8vIG9mZmxpbmUvb25saW5lIG1vZGUgdXRpbGl0eSB3aXRoIGF1dG9tYXRpYyBzd2l0Y2hpbmdcbiAgdGVzdEhlbHBlcnMsIC8vIGFkdmFuY2VkIHRlc3RpbmcgdXRpbGl0aWVzIGZvciBtb2R1bGUgcmVsb2FkaW5nIGFuZCBtb2NraW5nXG4gIFRlc3RHZW5lcmF0b3IsIC8vIGF1dG9tYXRpYyB0ZXN0IGdlbmVyYXRpb24gZnJvbSBzb3VyY2UgY29kZSBhbmFseXNpc1xuICBydW5UZXN0U3VpdGUsIC8vIGxpZ2h0d2VpZ2h0IHRlc3QgcnVubmVyIGZvciBzaW1wbGUgdGVzdCBzY2VuYXJpb3NcbiAgcnVuVGVzdFN1aXRlcywgLy8gcnVuIG11bHRpcGxlIHRlc3Qgc3VpdGVzIHdpdGggb3ZlcmFsbCBzdW1tYXJ5XG4gIGNyZWF0ZUFzc2VydGlvbnMsIC8vIGJhc2ljIGFzc2VydGlvbiBoZWxwZXJzIGZvciB0ZXN0IHdyaXRpbmdcbiAgc2V0dXAsIC8vIGNhbGwgdGhpcyB0byBhY3RpdmF0ZSBzdHVicyB3aGVuIGRlc2lyZWRcbiAgc3R1YnMgLy8gc3R1YiBsaWJyYXJ5IG9yZ2FuaXplZCB1bmRlciBuYW1lc3BhY2Vcbn07XG5cbi8vIERlZmF1bHQgZXhwb3J0IGZvciBiYWNrd2FyZCBjb21wYXRpYmlsaXR5XG5jb25zdCBxdGVzdHM6IFF0ZXN0c0FQSSA9IHtcbiAgc3R1Yk1ldGhvZCxcbiAgbW9ja0NvbnNvbGUsXG4gIHRlc3RFbnYsXG4gIG9mZmxpbmVNb2RlLFxuICB0ZXN0SGVscGVycyxcbiAgVGVzdEdlbmVyYXRvcixcbiAgcnVuVGVzdFN1aXRlLFxuICBydW5UZXN0U3VpdGVzLFxuICBjcmVhdGVBc3NlcnRpb25zLFxuICBzZXR1cCxcbiAgc3R1YnNcbn07XG5cbmV4cG9ydCBkZWZhdWx0IHF0ZXN0czsiXSwidmVyc2lvbiI6M30=

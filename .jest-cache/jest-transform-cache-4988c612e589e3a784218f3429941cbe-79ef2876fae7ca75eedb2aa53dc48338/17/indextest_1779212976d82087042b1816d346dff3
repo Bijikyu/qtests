@@ -1,0 +1,12 @@
+33bcb596710bea89b2976872a127fad4
+"use strict";
+// Lightweight unit test for index.ts - no complex module loading
+describe('index.ts basic exports', () => {
+    test('module exports exist', async () => {
+        // Simple existence check without loading complex dependencies
+        const mod = await import('./index.js');
+        expect(mod).toBeDefined();
+        expect(typeof mod).toBe('object');
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9pbmRleC50ZXN0LnRzIiwibWFwcGluZ3MiOiI7QUFBQSxpRUFBaUU7QUFDakUsUUFBUSxDQUFDLHdCQUF3QixFQUFFLEdBQUcsRUFBRTtJQUN0QyxJQUFJLENBQUMsc0JBQXNCLEVBQUUsS0FBSyxJQUFJLEVBQUU7UUFDdEMsOERBQThEO1FBQzlELE1BQU0sR0FBRyxHQUFHLE1BQU0sTUFBTSxDQUFDLFlBQVksQ0FBQyxDQUFDO1FBQ3ZDLE1BQU0sQ0FBQyxHQUFHLENBQUMsQ0FBQyxXQUFXLEVBQUUsQ0FBQztRQUMxQixNQUFNLENBQUMsT0FBTyxHQUFHLENBQUMsQ0FBQyxJQUFJLENBQUMsUUFBUSxDQUFDLENBQUM7SUFDcEMsQ0FBQyxDQUFDLENBQUM7QUFDTCxDQUFDLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL2luZGV4LnRlc3QudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gTGlnaHR3ZWlnaHQgdW5pdCB0ZXN0IGZvciBpbmRleC50cyAtIG5vIGNvbXBsZXggbW9kdWxlIGxvYWRpbmdcbmRlc2NyaWJlKCdpbmRleC50cyBiYXNpYyBleHBvcnRzJywgKCkgPT4ge1xuICB0ZXN0KCdtb2R1bGUgZXhwb3J0cyBleGlzdCcsIGFzeW5jICgpID0+IHtcbiAgICAvLyBTaW1wbGUgZXhpc3RlbmNlIGNoZWNrIHdpdGhvdXQgbG9hZGluZyBjb21wbGV4IGRlcGVuZGVuY2llc1xuICAgIGNvbnN0IG1vZCA9IGF3YWl0IGltcG9ydCgnLi9pbmRleC5qcycpO1xuICAgIGV4cGVjdChtb2QpLnRvQmVEZWZpbmVkKCk7XG4gICAgZXhwZWN0KHR5cGVvZiBtb2QpLnRvQmUoJ29iamVjdCcpO1xuICB9KTtcbn0pOyJdLCJ2ZXJzaW9uIjozfQ==

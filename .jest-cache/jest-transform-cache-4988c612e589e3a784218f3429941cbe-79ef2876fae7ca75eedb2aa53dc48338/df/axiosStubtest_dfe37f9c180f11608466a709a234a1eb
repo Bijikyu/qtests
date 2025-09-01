@@ -1,0 +1,16 @@
+4952188d7f861f9fddc84c8e5e241012
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const index_js_1 = require("../index.js"); // import main index for stubs
+// Test to ensure new axios.get stub exists and resolves correctly
+test('stubs.axios.get returns enhanced response object', async () => {
+    const result = await index_js_1.stubs.axios.get('https://example.com'); // call get on stub
+    expect(result).toEqual({
+        data: {},
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {}
+    }); // should resolve to enhanced response format
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvYXhpb3NTdHViLnRlc3QudHMiLCJtYXBwaW5ncyI6Ijs7QUFBQSwwQ0FBb0MsQ0FBQyw4QkFBOEI7QUFFbkUsa0VBQWtFO0FBQ2xFLElBQUksQ0FBQyxrREFBa0QsRUFBRSxLQUFLLElBQUksRUFBRTtJQUNsRSxNQUFNLE1BQU0sR0FBRyxNQUFNLGdCQUFLLENBQUMsS0FBSyxDQUFDLEdBQUcsQ0FBQyxxQkFBcUIsQ0FBQyxDQUFDLENBQUMsbUJBQW1CO0lBQ2hGLE1BQU0sQ0FBQyxNQUFNLENBQUMsQ0FBQyxPQUFPLENBQUM7UUFDckIsSUFBSSxFQUFFLEVBQUU7UUFDUixNQUFNLEVBQUUsR0FBRztRQUNYLFVBQVUsRUFBRSxJQUFJO1FBQ2hCLE9BQU8sRUFBRSxFQUFFO1FBQ1gsTUFBTSxFQUFFLEVBQUU7S0FDWCxDQUFDLENBQUMsQ0FBQyw2Q0FBNkM7QUFDbkQsQ0FBQyxDQUFDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvYXhpb3NTdHViLnRlc3QudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgc3R1YnMgfSBmcm9tICcuLi9pbmRleC5qcyc7IC8vIGltcG9ydCBtYWluIGluZGV4IGZvciBzdHVic1xuXG4vLyBUZXN0IHRvIGVuc3VyZSBuZXcgYXhpb3MuZ2V0IHN0dWIgZXhpc3RzIGFuZCByZXNvbHZlcyBjb3JyZWN0bHlcbnRlc3QoJ3N0dWJzLmF4aW9zLmdldCByZXR1cm5zIGVuaGFuY2VkIHJlc3BvbnNlIG9iamVjdCcsIGFzeW5jICgpID0+IHtcbiAgY29uc3QgcmVzdWx0ID0gYXdhaXQgc3R1YnMuYXhpb3MuZ2V0KCdodHRwczovL2V4YW1wbGUuY29tJyk7IC8vIGNhbGwgZ2V0IG9uIHN0dWJcbiAgZXhwZWN0KHJlc3VsdCkudG9FcXVhbCh7XG4gICAgZGF0YToge30sXG4gICAgc3RhdHVzOiAyMDAsXG4gICAgc3RhdHVzVGV4dDogJ09LJyxcbiAgICBoZWFkZXJzOiB7fSxcbiAgICBjb25maWc6IHt9XG4gIH0pOyAvLyBzaG91bGQgcmVzb2x2ZSB0byBlbmhhbmNlZCByZXNwb25zZSBmb3JtYXRcbn0pOyJdLCJ2ZXJzaW9uIjozfQ==

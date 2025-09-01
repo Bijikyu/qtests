@@ -1,0 +1,17 @@
+4ff9ef003b70e38692ea60fa3b4cb6d9
+// Simplified stub path resolution tests for TypeScript ES modules
+import axios from 'axios';
+import winston from 'winston';
+describe('Stub Path Resolution Tests', () => {
+    test('stubs resolve correctly after setup', async () => {
+        await import('../setup.js'); // activate stub resolution
+        // Test that stub modules are available
+        expect(axios).toBeDefined();
+        expect(winston).toBeDefined();
+    });
+    test('stub modules provide expected interfaces', () => {
+        expect(typeof axios.get).toBe('function');
+        expect(typeof winston.createLogger).toBe('function');
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvcmVzb2x2ZVN0dWJQYXRocy50ZXN0LnRzIiwibWFwcGluZ3MiOiJBQUFBLGtFQUFrRTtBQUNsRSxPQUFPLEtBQUssTUFBTSxPQUFPLENBQUM7QUFDMUIsT0FBTyxPQUFPLE1BQU0sU0FBUyxDQUFDO0FBRTlCLFFBQVEsQ0FBQyw0QkFBNEIsRUFBRSxHQUFHLEVBQUU7SUFDMUMsSUFBSSxDQUFDLHFDQUFxQyxFQUFFLEtBQUssSUFBSSxFQUFFO1FBQ3JELE1BQU0sTUFBTSxDQUFDLGFBQWEsQ0FBQyxDQUFDLENBQUMsMkJBQTJCO1FBRXhELHVDQUF1QztRQUN2QyxNQUFNLENBQUMsS0FBSyxDQUFDLENBQUMsV0FBVyxFQUFFLENBQUM7UUFDNUIsTUFBTSxDQUFDLE9BQU8sQ0FBQyxDQUFDLFdBQVcsRUFBRSxDQUFDO0lBQ2hDLENBQUMsQ0FBQyxDQUFDO0lBRUgsSUFBSSxDQUFDLDBDQUEwQyxFQUFFLEdBQUcsRUFBRTtRQUNwRCxNQUFNLENBQUMsT0FBTyxLQUFLLENBQUMsR0FBRyxDQUFDLENBQUMsSUFBSSxDQUFDLFVBQVUsQ0FBQyxDQUFDO1FBQzFDLE1BQU0sQ0FBQyxPQUFPLE9BQU8sQ0FBQyxZQUFZLENBQUMsQ0FBQyxJQUFJLENBQUMsVUFBVSxDQUFDLENBQUM7SUFDdkQsQ0FBQyxDQUFDLENBQUM7QUFDTCxDQUFDLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL21hbnVhbC10ZXN0cy9yZXNvbHZlU3R1YlBhdGhzLnRlc3QudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gU2ltcGxpZmllZCBzdHViIHBhdGggcmVzb2x1dGlvbiB0ZXN0cyBmb3IgVHlwZVNjcmlwdCBFUyBtb2R1bGVzXG5pbXBvcnQgYXhpb3MgZnJvbSAnYXhpb3MnO1xuaW1wb3J0IHdpbnN0b24gZnJvbSAnd2luc3Rvbic7XG5cbmRlc2NyaWJlKCdTdHViIFBhdGggUmVzb2x1dGlvbiBUZXN0cycsICgpID0+IHtcbiAgdGVzdCgnc3R1YnMgcmVzb2x2ZSBjb3JyZWN0bHkgYWZ0ZXIgc2V0dXAnLCBhc3luYyAoKSA9PiB7XG4gICAgYXdhaXQgaW1wb3J0KCcuLi9zZXR1cC5qcycpOyAvLyBhY3RpdmF0ZSBzdHViIHJlc29sdXRpb25cbiAgICBcbiAgICAvLyBUZXN0IHRoYXQgc3R1YiBtb2R1bGVzIGFyZSBhdmFpbGFibGVcbiAgICBleHBlY3QoYXhpb3MpLnRvQmVEZWZpbmVkKCk7XG4gICAgZXhwZWN0KHdpbnN0b24pLnRvQmVEZWZpbmVkKCk7XG4gIH0pO1xuXG4gIHRlc3QoJ3N0dWIgbW9kdWxlcyBwcm92aWRlIGV4cGVjdGVkIGludGVyZmFjZXMnLCAoKSA9PiB7XG4gICAgZXhwZWN0KHR5cGVvZiBheGlvcy5nZXQpLnRvQmUoJ2Z1bmN0aW9uJyk7XG4gICAgZXhwZWN0KHR5cGVvZiB3aW5zdG9uLmNyZWF0ZUxvZ2dlcikudG9CZSgnZnVuY3Rpb24nKTtcbiAgfSk7XG59KTsiXSwidmVyc2lvbiI6M30=

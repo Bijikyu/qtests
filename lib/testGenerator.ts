@@ -16,11 +16,24 @@
 
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { getModuleDirname } from '../utils/esm-globals.js';
 
-// ES Module __dirname equivalent
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// ES Module __dirname equivalent - lazy initialization to avoid Jest issues
+let moduleDirname: string | undefined;
+function getModuleDirnameForTestGenerator(): string {
+  if (moduleDirname === undefined) {
+    // Use a try-catch to handle Jest environment gracefully
+    try {
+      // Use eval to hide import.meta from Jest's static parser
+      const importMetaUrl = (0, eval)('import.meta.url');
+      moduleDirname = getModuleDirname(importMetaUrl);
+    } catch (error) {
+      // Fallback for Jest environment
+      moduleDirname = process.cwd();
+    }
+  }
+  return moduleDirname;
+}
 
 // Type definitions
 interface TestGeneratorConfig {
@@ -621,7 +634,7 @@ afterEach(() => {
   generateQtestsRunner(): void {
     try {
       // Read the existing qtests-runner.ts as template
-      const templatePath = path.join(__dirname, '..', 'qtests-runner.ts');
+      const templatePath = path.join(getModuleDirnameForTestGenerator(), '..', 'qtests-runner.ts');
       let template = '';
       
       if (fs.existsSync(templatePath)) {

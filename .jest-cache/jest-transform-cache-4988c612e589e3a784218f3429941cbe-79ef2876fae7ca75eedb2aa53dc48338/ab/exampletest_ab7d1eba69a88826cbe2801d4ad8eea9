@@ -1,0 +1,11 @@
+56971b173d44677f3e7423cfaa61c903
+"use strict";
+// Integration test for example - TypeScript ES module implementation
+describe('Example Integration Tests', () => {
+    test('example integration works', async () => {
+        // Simple integration test
+        const mod = await import('../../index.js');
+        expect(mod).toBeDefined();
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9nZW5lcmF0ZWQtdGVzdHMvaW50ZWdyYXRpb24vZXhhbXBsZS50ZXN0LnRzIiwibWFwcGluZ3MiOiI7QUFBQSxxRUFBcUU7QUFDckUsUUFBUSxDQUFDLDJCQUEyQixFQUFFLEdBQUcsRUFBRTtJQUN6QyxJQUFJLENBQUMsMkJBQTJCLEVBQUUsS0FBSyxJQUFJLEVBQUU7UUFDM0MsMEJBQTBCO1FBQzFCLE1BQU0sR0FBRyxHQUFHLE1BQU0sTUFBTSxDQUFDLGdCQUFnQixDQUFDLENBQUM7UUFDM0MsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDLFdBQVcsRUFBRSxDQUFDO0lBQzVCLENBQUMsQ0FBQyxDQUFDO0FBQ0wsQ0FBQyxDQUFDLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9nZW5lcmF0ZWQtdGVzdHMvaW50ZWdyYXRpb24vZXhhbXBsZS50ZXN0LnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIEludGVncmF0aW9uIHRlc3QgZm9yIGV4YW1wbGUgLSBUeXBlU2NyaXB0IEVTIG1vZHVsZSBpbXBsZW1lbnRhdGlvblxuZGVzY3JpYmUoJ0V4YW1wbGUgSW50ZWdyYXRpb24gVGVzdHMnLCAoKSA9PiB7XG4gIHRlc3QoJ2V4YW1wbGUgaW50ZWdyYXRpb24gd29ya3MnLCBhc3luYyAoKSA9PiB7XG4gICAgLy8gU2ltcGxlIGludGVncmF0aW9uIHRlc3RcbiAgICBjb25zdCBtb2QgPSBhd2FpdCBpbXBvcnQoJy4uLy4uL2luZGV4LmpzJyk7XG4gICAgZXhwZWN0KG1vZCkudG9CZURlZmluZWQoKTtcbiAgfSk7XG59KTsiXSwidmVyc2lvbiI6M30=

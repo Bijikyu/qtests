@@ -1,0 +1,110 @@
+9650fc856070bcec0bd30f4e8cbd6823
+/**
+ * Method Stubbing Utility - TypeScript Implementation
+ *
+ * This module provides the fundamental method replacement functionality
+ * that enables isolated unit testing by replacing method implementations
+ * with controlled test doubles.
+ *
+ * Core concept:
+ * Stubbing temporarily replaces a method on an object with a test implementation,
+ * allowing tests to control the behavior of dependencies and verify interactions
+ * without executing the real method code.
+ *
+ * Design philosophy:
+ * - Simple, predictable API that follows common stubbing patterns
+ * - Automatic restoration to prevent test pollution
+ * - Flexible replacement function support
+ * - Framework-agnostic implementation
+ *
+ * Why manual stubbing vs mocking libraries:
+ * 1. Zero dependencies - works in any Node.js environment
+ * 2. Simple implementation is easy to understand and debug
+ * 3. Predictable behavior without complex library-specific semantics
+ * 4. Minimal API surface reduces learning curve
+ * 5. Complete control over restoration behavior
+ */
+/**
+ * Replace a method on an object with a test implementation
+ *
+ * This function temporarily replaces a method with a stub implementation,
+ * providing a restoration function to return the object to its original state.
+ *
+ * Implementation strategy:
+ * 1. Store original method reference before replacement
+ * 2. Replace method with provided stub function
+ * 3. Return restoration function that reinstates original method
+ * 4. Use closure to maintain access to original method and object
+ *
+ * Why this approach:
+ * - Closure pattern ensures original method is preserved correctly
+ * - Restoration function provides clear, explicit cleanup
+ * - No global state management required
+ * - Works with any object and method combination
+ * - Simple implementation is easy to debug when tests fail
+ *
+ * Alternative approaches considered:
+ * - Automatic restoration via setTimeout: Rejected due to unpredictable timing
+ * - Stack-based restoration: Rejected due to complexity for minimal benefit
+ * - Property descriptor manipulation: Current approach is simpler and sufficient
+ *
+ * @param obj - The object containing the method to replace
+ * @param methodName - Name of the method to replace
+ * @param stubFn - Function to use as replacement implementation
+ * @returns Restoration function that reinstates the original method
+ *
+ * @example
+ * const restore = stubMethod(fs, 'readFileSync', () => 'mock data');
+ * // fs.readFileSync now returns 'mock data'
+ * restore();
+ * // fs.readFileSync restored to original implementation
+ */
+function stubMethod(obj, methodName, stubFn) {
+    console.log(`stubMethod is running with ${obj}, ${methodName}, ${stubFn}`); // logging function start per requirements
+    try {
+        if (typeof obj !== 'object' || obj === null) { // ensure obj is valid before accessing properties
+            throw new Error(`stubMethod expected object but received ${obj}`); // informative error for invalid obj
+        }
+        if (!(methodName in obj)) { // confirm property exists on target object
+            throw new Error(`stubMethod could not find ${methodName} on provided object`); // error when method missing
+        }
+        if (typeof stubFn !== 'function') { // verify stubFn is callable
+            throw new Error('stubMethod stubFn must be a function'); // error when stubFn invalid
+        }
+        // Store original method reference before replacement
+        // This is critical for restoration - without this reference, the original method is lost forever
+        // We must capture this before any modification to ensure we can restore exact original behavior
+        const originalMethod = obj[methodName]; // capture original reference
+        const hadOwn = Object.prototype.hasOwnProperty.call(obj, methodName); // track if property was own before stubbing
+        // Replace method directly on the object for immediate effect
+        // Direct property assignment chosen over Object.defineProperty for simplicity and performance
+        // This approach works for 99% of use cases and avoids descriptor complexity
+        obj[methodName] = stubFn;
+        // Create restoration function using closure pattern
+        // Closure captures originalMethod and obj references for later restoration
+        // Named function 'restore' provides clear intent and better debugging experience
+        // Returned function pattern allows caller to control when restoration occurs
+        const restoreFunction = function restore() {
+            // Reinstate original method only if it existed as own property, otherwise remove stub
+            if (hadOwn) { // property was originally own so simply reassign
+                obj[methodName] = originalMethod; // restore exact original method
+            }
+            else {
+                delete obj[methodName]; // remove stub so prototype chain resolves original
+            }
+        };
+        console.log(`stubMethod is returning ${restoreFunction}`); // logging return value per requirements
+        return restoreFunction;
+    }
+    catch (error) {
+        // Log error with context for debugging test setup issues
+        // Error logging helps developers identify problems with object access or property assignment
+        // We re-throw to maintain error handling contract while providing debugging information
+        console.log(`stubMethod error: ${error.message}`);
+        throw error;
+    }
+}
+// Export stubMethod function using ES module syntax
+export default stubMethod;
+export { stubMethod };
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9zdHViTWV0aG9kLnRzIiwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7R0F3Qkc7QUFFSDs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztHQWtDRztBQUNILFNBQVMsVUFBVSxDQUFDLEdBQVEsRUFBRSxVQUFrQixFQUFFLE1BQWdCO0lBQ2hFLE9BQU8sQ0FBQyxHQUFHLENBQUMsOEJBQThCLEdBQUcsS0FBSyxVQUFVLEtBQUssTUFBTSxFQUFFLENBQUMsQ0FBQyxDQUFDLDBDQUEwQztJQUV0SCxJQUFJLENBQUM7UUFDSCxJQUFJLE9BQU8sR0FBRyxLQUFLLFFBQVEsSUFBSSxHQUFHLEtBQUssSUFBSSxFQUFFLENBQUMsQ0FBQyxrREFBa0Q7WUFDL0YsTUFBTSxJQUFJLEtBQUssQ0FBQywyQ0FBMkMsR0FBRyxFQUFFLENBQUMsQ0FBQyxDQUFDLG9DQUFvQztRQUN6RyxDQUFDO1FBQ0QsSUFBSSxDQUFDLENBQUMsVUFBVSxJQUFJLEdBQUcsQ0FBQyxFQUFFLENBQUMsQ0FBQywyQ0FBMkM7WUFDckUsTUFBTSxJQUFJLEtBQUssQ0FBQyw2QkFBNkIsVUFBVSxxQkFBcUIsQ0FBQyxDQUFDLENBQUMsNEJBQTRCO1FBQzdHLENBQUM7UUFDRCxJQUFJLE9BQU8sTUFBTSxLQUFLLFVBQVUsRUFBRSxDQUFDLENBQUMsNEJBQTRCO1lBQzlELE1BQU0sSUFBSSxLQUFLLENBQUMsc0NBQXNDLENBQUMsQ0FBQyxDQUFDLDRCQUE0QjtRQUN2RixDQUFDO1FBQ0QscURBQXFEO1FBQ3JELGlHQUFpRztRQUNqRyxnR0FBZ0c7UUFDaEcsTUFBTSxjQUFjLEdBQUcsR0FBRyxDQUFDLFVBQVUsQ0FBQyxDQUFDLENBQUMsNkJBQTZCO1FBQ3JFLE1BQU0sTUFBTSxHQUFHLE1BQU0sQ0FBQyxTQUFTLENBQUMsY0FBYyxDQUFDLElBQUksQ0FBQyxHQUFHLEVBQUUsVUFBVSxDQUFDLENBQUMsQ0FBQyw0Q0FBNEM7UUFFbEgsNkRBQTZEO1FBQzdELDhGQUE4RjtRQUM5Riw0RUFBNEU7UUFDNUUsR0FBRyxDQUFDLFVBQVUsQ0FBQyxHQUFHLE1BQU0sQ0FBQztRQUV6QixvREFBb0Q7UUFDcEQsMkVBQTJFO1FBQzNFLGlGQUFpRjtRQUNqRiw2RUFBNkU7UUFDN0UsTUFBTSxlQUFlLEdBQUcsU0FBUyxPQUFPO1lBQ3RDLHNGQUFzRjtZQUN0RixJQUFJLE1BQU0sRUFBRSxDQUFDLENBQUMsaURBQWlEO2dCQUM3RCxHQUFHLENBQUMsVUFBVSxDQUFDLEdBQUcsY0FBYyxDQUFDLENBQUMsZ0NBQWdDO1lBQ3BFLENBQUM7aUJBQU0sQ0FBQztnQkFDTixPQUFPLEdBQUcsQ0FBQyxVQUFVLENBQUMsQ0FBQyxDQUFDLG1EQUFtRDtZQUM3RSxDQUFDO1FBQ0gsQ0FBQyxDQUFDO1FBRUYsT0FBTyxDQUFDLEdBQUcsQ0FBQywyQkFBMkIsZUFBZSxFQUFFLENBQUMsQ0FBQyxDQUFDLHdDQUF3QztRQUNuRyxPQUFPLGVBQWUsQ0FBQztJQUN6QixDQUFDO0lBQUMsT0FBTyxLQUFVLEVBQUUsQ0FBQztRQUNwQix5REFBeUQ7UUFDekQsNkZBQTZGO1FBQzdGLHdGQUF3RjtRQUN4RixPQUFPLENBQUMsR0FBRyxDQUFDLHFCQUFxQixLQUFLLENBQUMsT0FBTyxFQUFFLENBQUMsQ0FBQztRQUNsRCxNQUFNLEtBQUssQ0FBQztJQUNkLENBQUM7QUFDSCxDQUFDO0FBRUQsb0RBQW9EO0FBQ3BELGVBQWUsVUFBVSxDQUFDO0FBQzFCLE9BQU8sRUFBRSxVQUFVLEVBQUUsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL3V0aWxzL3N0dWJNZXRob2QudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLyoqXG4gKiBNZXRob2QgU3R1YmJpbmcgVXRpbGl0eSAtIFR5cGVTY3JpcHQgSW1wbGVtZW50YXRpb25cbiAqIFxuICogVGhpcyBtb2R1bGUgcHJvdmlkZXMgdGhlIGZ1bmRhbWVudGFsIG1ldGhvZCByZXBsYWNlbWVudCBmdW5jdGlvbmFsaXR5XG4gKiB0aGF0IGVuYWJsZXMgaXNvbGF0ZWQgdW5pdCB0ZXN0aW5nIGJ5IHJlcGxhY2luZyBtZXRob2QgaW1wbGVtZW50YXRpb25zXG4gKiB3aXRoIGNvbnRyb2xsZWQgdGVzdCBkb3VibGVzLlxuICogXG4gKiBDb3JlIGNvbmNlcHQ6XG4gKiBTdHViYmluZyB0ZW1wb3JhcmlseSByZXBsYWNlcyBhIG1ldGhvZCBvbiBhbiBvYmplY3Qgd2l0aCBhIHRlc3QgaW1wbGVtZW50YXRpb24sXG4gKiBhbGxvd2luZyB0ZXN0cyB0byBjb250cm9sIHRoZSBiZWhhdmlvciBvZiBkZXBlbmRlbmNpZXMgYW5kIHZlcmlmeSBpbnRlcmFjdGlvbnNcbiAqIHdpdGhvdXQgZXhlY3V0aW5nIHRoZSByZWFsIG1ldGhvZCBjb2RlLlxuICogXG4gKiBEZXNpZ24gcGhpbG9zb3BoeTpcbiAqIC0gU2ltcGxlLCBwcmVkaWN0YWJsZSBBUEkgdGhhdCBmb2xsb3dzIGNvbW1vbiBzdHViYmluZyBwYXR0ZXJuc1xuICogLSBBdXRvbWF0aWMgcmVzdG9yYXRpb24gdG8gcHJldmVudCB0ZXN0IHBvbGx1dGlvblxuICogLSBGbGV4aWJsZSByZXBsYWNlbWVudCBmdW5jdGlvbiBzdXBwb3J0XG4gKiAtIEZyYW1ld29yay1hZ25vc3RpYyBpbXBsZW1lbnRhdGlvblxuICogXG4gKiBXaHkgbWFudWFsIHN0dWJiaW5nIHZzIG1vY2tpbmcgbGlicmFyaWVzOlxuICogMS4gWmVybyBkZXBlbmRlbmNpZXMgLSB3b3JrcyBpbiBhbnkgTm9kZS5qcyBlbnZpcm9ubWVudFxuICogMi4gU2ltcGxlIGltcGxlbWVudGF0aW9uIGlzIGVhc3kgdG8gdW5kZXJzdGFuZCBhbmQgZGVidWdcbiAqIDMuIFByZWRpY3RhYmxlIGJlaGF2aW9yIHdpdGhvdXQgY29tcGxleCBsaWJyYXJ5LXNwZWNpZmljIHNlbWFudGljc1xuICogNC4gTWluaW1hbCBBUEkgc3VyZmFjZSByZWR1Y2VzIGxlYXJuaW5nIGN1cnZlXG4gKiA1LiBDb21wbGV0ZSBjb250cm9sIG92ZXIgcmVzdG9yYXRpb24gYmVoYXZpb3JcbiAqL1xuXG4vKipcbiAqIFJlcGxhY2UgYSBtZXRob2Qgb24gYW4gb2JqZWN0IHdpdGggYSB0ZXN0IGltcGxlbWVudGF0aW9uXG4gKiBcbiAqIFRoaXMgZnVuY3Rpb24gdGVtcG9yYXJpbHkgcmVwbGFjZXMgYSBtZXRob2Qgd2l0aCBhIHN0dWIgaW1wbGVtZW50YXRpb24sXG4gKiBwcm92aWRpbmcgYSByZXN0b3JhdGlvbiBmdW5jdGlvbiB0byByZXR1cm4gdGhlIG9iamVjdCB0byBpdHMgb3JpZ2luYWwgc3RhdGUuXG4gKiBcbiAqIEltcGxlbWVudGF0aW9uIHN0cmF0ZWd5OlxuICogMS4gU3RvcmUgb3JpZ2luYWwgbWV0aG9kIHJlZmVyZW5jZSBiZWZvcmUgcmVwbGFjZW1lbnRcbiAqIDIuIFJlcGxhY2UgbWV0aG9kIHdpdGggcHJvdmlkZWQgc3R1YiBmdW5jdGlvbiAgXG4gKiAzLiBSZXR1cm4gcmVzdG9yYXRpb24gZnVuY3Rpb24gdGhhdCByZWluc3RhdGVzIG9yaWdpbmFsIG1ldGhvZFxuICogNC4gVXNlIGNsb3N1cmUgdG8gbWFpbnRhaW4gYWNjZXNzIHRvIG9yaWdpbmFsIG1ldGhvZCBhbmQgb2JqZWN0XG4gKiBcbiAqIFdoeSB0aGlzIGFwcHJvYWNoOlxuICogLSBDbG9zdXJlIHBhdHRlcm4gZW5zdXJlcyBvcmlnaW5hbCBtZXRob2QgaXMgcHJlc2VydmVkIGNvcnJlY3RseVxuICogLSBSZXN0b3JhdGlvbiBmdW5jdGlvbiBwcm92aWRlcyBjbGVhciwgZXhwbGljaXQgY2xlYW51cFxuICogLSBObyBnbG9iYWwgc3RhdGUgbWFuYWdlbWVudCByZXF1aXJlZFxuICogLSBXb3JrcyB3aXRoIGFueSBvYmplY3QgYW5kIG1ldGhvZCBjb21iaW5hdGlvblxuICogLSBTaW1wbGUgaW1wbGVtZW50YXRpb24gaXMgZWFzeSB0byBkZWJ1ZyB3aGVuIHRlc3RzIGZhaWxcbiAqIFxuICogQWx0ZXJuYXRpdmUgYXBwcm9hY2hlcyBjb25zaWRlcmVkOlxuICogLSBBdXRvbWF0aWMgcmVzdG9yYXRpb24gdmlhIHNldFRpbWVvdXQ6IFJlamVjdGVkIGR1ZSB0byB1bnByZWRpY3RhYmxlIHRpbWluZ1xuICogLSBTdGFjay1iYXNlZCByZXN0b3JhdGlvbjogUmVqZWN0ZWQgZHVlIHRvIGNvbXBsZXhpdHkgZm9yIG1pbmltYWwgYmVuZWZpdFxuICogLSBQcm9wZXJ0eSBkZXNjcmlwdG9yIG1hbmlwdWxhdGlvbjogQ3VycmVudCBhcHByb2FjaCBpcyBzaW1wbGVyIGFuZCBzdWZmaWNpZW50XG4gKiBcbiAqIEBwYXJhbSBvYmogLSBUaGUgb2JqZWN0IGNvbnRhaW5pbmcgdGhlIG1ldGhvZCB0byByZXBsYWNlXG4gKiBAcGFyYW0gbWV0aG9kTmFtZSAtIE5hbWUgb2YgdGhlIG1ldGhvZCB0byByZXBsYWNlXG4gKiBAcGFyYW0gc3R1YkZuIC0gRnVuY3Rpb24gdG8gdXNlIGFzIHJlcGxhY2VtZW50IGltcGxlbWVudGF0aW9uXG4gKiBAcmV0dXJucyBSZXN0b3JhdGlvbiBmdW5jdGlvbiB0aGF0IHJlaW5zdGF0ZXMgdGhlIG9yaWdpbmFsIG1ldGhvZFxuICogXG4gKiBAZXhhbXBsZVxuICogY29uc3QgcmVzdG9yZSA9IHN0dWJNZXRob2QoZnMsICdyZWFkRmlsZVN5bmMnLCAoKSA9PiAnbW9jayBkYXRhJyk7XG4gKiAvLyBmcy5yZWFkRmlsZVN5bmMgbm93IHJldHVybnMgJ21vY2sgZGF0YSdcbiAqIHJlc3RvcmUoKTtcbiAqIC8vIGZzLnJlYWRGaWxlU3luYyByZXN0b3JlZCB0byBvcmlnaW5hbCBpbXBsZW1lbnRhdGlvblxuICovXG5mdW5jdGlvbiBzdHViTWV0aG9kKG9iajogYW55LCBtZXRob2ROYW1lOiBzdHJpbmcsIHN0dWJGbjogRnVuY3Rpb24pOiAoKSA9PiB2b2lkIHtcbiAgY29uc29sZS5sb2coYHN0dWJNZXRob2QgaXMgcnVubmluZyB3aXRoICR7b2JqfSwgJHttZXRob2ROYW1lfSwgJHtzdHViRm59YCk7IC8vIGxvZ2dpbmcgZnVuY3Rpb24gc3RhcnQgcGVyIHJlcXVpcmVtZW50c1xuXG4gIHRyeSB7XG4gICAgaWYgKHR5cGVvZiBvYmogIT09ICdvYmplY3QnIHx8IG9iaiA9PT0gbnVsbCkgeyAvLyBlbnN1cmUgb2JqIGlzIHZhbGlkIGJlZm9yZSBhY2Nlc3NpbmcgcHJvcGVydGllc1xuICAgICAgdGhyb3cgbmV3IEVycm9yKGBzdHViTWV0aG9kIGV4cGVjdGVkIG9iamVjdCBidXQgcmVjZWl2ZWQgJHtvYmp9YCk7IC8vIGluZm9ybWF0aXZlIGVycm9yIGZvciBpbnZhbGlkIG9ialxuICAgIH1cbiAgICBpZiAoIShtZXRob2ROYW1lIGluIG9iaikpIHsgLy8gY29uZmlybSBwcm9wZXJ0eSBleGlzdHMgb24gdGFyZ2V0IG9iamVjdFxuICAgICAgdGhyb3cgbmV3IEVycm9yKGBzdHViTWV0aG9kIGNvdWxkIG5vdCBmaW5kICR7bWV0aG9kTmFtZX0gb24gcHJvdmlkZWQgb2JqZWN0YCk7IC8vIGVycm9yIHdoZW4gbWV0aG9kIG1pc3NpbmdcbiAgICB9XG4gICAgaWYgKHR5cGVvZiBzdHViRm4gIT09ICdmdW5jdGlvbicpIHsgLy8gdmVyaWZ5IHN0dWJGbiBpcyBjYWxsYWJsZVxuICAgICAgdGhyb3cgbmV3IEVycm9yKCdzdHViTWV0aG9kIHN0dWJGbiBtdXN0IGJlIGEgZnVuY3Rpb24nKTsgLy8gZXJyb3Igd2hlbiBzdHViRm4gaW52YWxpZFxuICAgIH1cbiAgICAvLyBTdG9yZSBvcmlnaW5hbCBtZXRob2QgcmVmZXJlbmNlIGJlZm9yZSByZXBsYWNlbWVudFxuICAgIC8vIFRoaXMgaXMgY3JpdGljYWwgZm9yIHJlc3RvcmF0aW9uIC0gd2l0aG91dCB0aGlzIHJlZmVyZW5jZSwgdGhlIG9yaWdpbmFsIG1ldGhvZCBpcyBsb3N0IGZvcmV2ZXJcbiAgICAvLyBXZSBtdXN0IGNhcHR1cmUgdGhpcyBiZWZvcmUgYW55IG1vZGlmaWNhdGlvbiB0byBlbnN1cmUgd2UgY2FuIHJlc3RvcmUgZXhhY3Qgb3JpZ2luYWwgYmVoYXZpb3JcbiAgICBjb25zdCBvcmlnaW5hbE1ldGhvZCA9IG9ialttZXRob2ROYW1lXTsgLy8gY2FwdHVyZSBvcmlnaW5hbCByZWZlcmVuY2VcbiAgICBjb25zdCBoYWRPd24gPSBPYmplY3QucHJvdG90eXBlLmhhc093blByb3BlcnR5LmNhbGwob2JqLCBtZXRob2ROYW1lKTsgLy8gdHJhY2sgaWYgcHJvcGVydHkgd2FzIG93biBiZWZvcmUgc3R1YmJpbmdcbiAgICBcbiAgICAvLyBSZXBsYWNlIG1ldGhvZCBkaXJlY3RseSBvbiB0aGUgb2JqZWN0IGZvciBpbW1lZGlhdGUgZWZmZWN0XG4gICAgLy8gRGlyZWN0IHByb3BlcnR5IGFzc2lnbm1lbnQgY2hvc2VuIG92ZXIgT2JqZWN0LmRlZmluZVByb3BlcnR5IGZvciBzaW1wbGljaXR5IGFuZCBwZXJmb3JtYW5jZVxuICAgIC8vIFRoaXMgYXBwcm9hY2ggd29ya3MgZm9yIDk5JSBvZiB1c2UgY2FzZXMgYW5kIGF2b2lkcyBkZXNjcmlwdG9yIGNvbXBsZXhpdHlcbiAgICBvYmpbbWV0aG9kTmFtZV0gPSBzdHViRm47XG4gICAgXG4gICAgLy8gQ3JlYXRlIHJlc3RvcmF0aW9uIGZ1bmN0aW9uIHVzaW5nIGNsb3N1cmUgcGF0dGVyblxuICAgIC8vIENsb3N1cmUgY2FwdHVyZXMgb3JpZ2luYWxNZXRob2QgYW5kIG9iaiByZWZlcmVuY2VzIGZvciBsYXRlciByZXN0b3JhdGlvblxuICAgIC8vIE5hbWVkIGZ1bmN0aW9uICdyZXN0b3JlJyBwcm92aWRlcyBjbGVhciBpbnRlbnQgYW5kIGJldHRlciBkZWJ1Z2dpbmcgZXhwZXJpZW5jZVxuICAgIC8vIFJldHVybmVkIGZ1bmN0aW9uIHBhdHRlcm4gYWxsb3dzIGNhbGxlciB0byBjb250cm9sIHdoZW4gcmVzdG9yYXRpb24gb2NjdXJzXG4gICAgY29uc3QgcmVzdG9yZUZ1bmN0aW9uID0gZnVuY3Rpb24gcmVzdG9yZSgpOiB2b2lkIHtcbiAgICAgIC8vIFJlaW5zdGF0ZSBvcmlnaW5hbCBtZXRob2Qgb25seSBpZiBpdCBleGlzdGVkIGFzIG93biBwcm9wZXJ0eSwgb3RoZXJ3aXNlIHJlbW92ZSBzdHViXG4gICAgICBpZiAoaGFkT3duKSB7IC8vIHByb3BlcnR5IHdhcyBvcmlnaW5hbGx5IG93biBzbyBzaW1wbHkgcmVhc3NpZ25cbiAgICAgICAgb2JqW21ldGhvZE5hbWVdID0gb3JpZ2luYWxNZXRob2Q7IC8vIHJlc3RvcmUgZXhhY3Qgb3JpZ2luYWwgbWV0aG9kXG4gICAgICB9IGVsc2Uge1xuICAgICAgICBkZWxldGUgb2JqW21ldGhvZE5hbWVdOyAvLyByZW1vdmUgc3R1YiBzbyBwcm90b3R5cGUgY2hhaW4gcmVzb2x2ZXMgb3JpZ2luYWxcbiAgICAgIH1cbiAgICB9O1xuICAgIFxuICAgIGNvbnNvbGUubG9nKGBzdHViTWV0aG9kIGlzIHJldHVybmluZyAke3Jlc3RvcmVGdW5jdGlvbn1gKTsgLy8gbG9nZ2luZyByZXR1cm4gdmFsdWUgcGVyIHJlcXVpcmVtZW50c1xuICAgIHJldHVybiByZXN0b3JlRnVuY3Rpb247XG4gIH0gY2F0Y2ggKGVycm9yOiBhbnkpIHtcbiAgICAvLyBMb2cgZXJyb3Igd2l0aCBjb250ZXh0IGZvciBkZWJ1Z2dpbmcgdGVzdCBzZXR1cCBpc3N1ZXNcbiAgICAvLyBFcnJvciBsb2dnaW5nIGhlbHBzIGRldmVsb3BlcnMgaWRlbnRpZnkgcHJvYmxlbXMgd2l0aCBvYmplY3QgYWNjZXNzIG9yIHByb3BlcnR5IGFzc2lnbm1lbnRcbiAgICAvLyBXZSByZS10aHJvdyB0byBtYWludGFpbiBlcnJvciBoYW5kbGluZyBjb250cmFjdCB3aGlsZSBwcm92aWRpbmcgZGVidWdnaW5nIGluZm9ybWF0aW9uXG4gICAgY29uc29sZS5sb2coYHN0dWJNZXRob2QgZXJyb3I6ICR7ZXJyb3IubWVzc2FnZX1gKTtcbiAgICB0aHJvdyBlcnJvcjtcbiAgfVxufVxuXG4vLyBFeHBvcnQgc3R1Yk1ldGhvZCBmdW5jdGlvbiB1c2luZyBFUyBtb2R1bGUgc3ludGF4XG5leHBvcnQgZGVmYXVsdCBzdHViTWV0aG9kO1xuZXhwb3J0IHsgc3R1Yk1ldGhvZCB9OyJdLCJ2ZXJzaW9uIjozfQ==

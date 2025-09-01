@@ -2,9 +2,9 @@ import { stubMethod } from '../utils/stubMethod.js'; // import stubMethod utilit
 
 test('stubMethod replaces and restores methods', () => {
   const obj = { method: () => 'original' };
-  const stub = stubMethod(obj, 'method', () => 'stubbed');
+  const restore = stubMethod(obj, 'method', () => 'stubbed');
   
   expect(obj.method()).toBe('stubbed');
-  stub.restore();
+  restore();
   expect(obj.method()).toBe('original');
 });

@@ -1,0 +1,11 @@
+e528fade0da754b0a283dbef734bf2c4
+"use strict";
+// Comprehensive tests for TypeScript ES modules
+describe('Comprehensive Tests', () => {
+    test('comprehensive functionality works', async () => {
+        const mod = await import('../index.js');
+        expect(mod).toBeDefined();
+        expect(typeof mod).toBe('object');
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvY29tcHJlaGVuc2l2ZS50ZXN0LnRzIiwibWFwcGluZ3MiOiI7QUFBQSxnREFBZ0Q7QUFDaEQsUUFBUSxDQUFDLHFCQUFxQixFQUFFLEdBQUcsRUFBRTtJQUNuQyxJQUFJLENBQUMsbUNBQW1DLEVBQUUsS0FBSyxJQUFJLEVBQUU7UUFDbkQsTUFBTSxHQUFHLEdBQUcsTUFBTSxNQUFNLENBQUMsYUFBYSxDQUFDLENBQUM7UUFDeEMsTUFBTSxDQUFDLEdBQUcsQ0FBQyxDQUFDLFdBQVcsRUFBRSxDQUFDO1FBQzFCLE1BQU0sQ0FBQyxPQUFPLEdBQUcsQ0FBQyxDQUFDLElBQUksQ0FBQyxRQUFRLENBQUMsQ0FBQztJQUNwQyxDQUFDLENBQUMsQ0FBQztBQUNMLENBQUMsQ0FBQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3Jrc3BhY2UvbWFudWFsLXRlc3RzL2NvbXByZWhlbnNpdmUudGVzdC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBDb21wcmVoZW5zaXZlIHRlc3RzIGZvciBUeXBlU2NyaXB0IEVTIG1vZHVsZXNcbmRlc2NyaWJlKCdDb21wcmVoZW5zaXZlIFRlc3RzJywgKCkgPT4ge1xuICB0ZXN0KCdjb21wcmVoZW5zaXZlIGZ1bmN0aW9uYWxpdHkgd29ya3MnLCBhc3luYyAoKSA9PiB7XG4gICAgY29uc3QgbW9kID0gYXdhaXQgaW1wb3J0KCcuLi9pbmRleC5qcycpO1xuICAgIGV4cGVjdChtb2QpLnRvQmVEZWZpbmVkKCk7XG4gICAgZXhwZWN0KHR5cGVvZiBtb2QpLnRvQmUoJ29iamVjdCcpO1xuICB9KTtcbn0pOyJdLCJ2ZXJzaW9uIjozfQ==

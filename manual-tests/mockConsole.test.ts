@@ -38,7 +38,8 @@ test('mockConsole tracks calls after reimplementation', () => withMockConsole('l
 test('mockRestore clears calls and resets method', async () => { // verify fallback clean up
   const saved = (global as any).jest; // save jest reference for restoration
   (global as any).jest = undefined; // force fallback path by removing jest
-  delete require.cache[require.resolve('../utils/mockConsole.js')]; // ensure fallback load
+  
+  // ES modules don't have require.cache - skip cache manipulation
   const { mockConsole } = await import('../utils/mockConsole.js'); // dynamic import after change
   const orig = console.log; // store original method for comparison
   const spy = mockConsole('log'); // create manual spy using fallback
@@ -50,5 +51,4 @@ test('mockRestore clears calls and resets method', async () => { // verify fallb
   const cleared = spy.mock.calls === null || spy.mock.calls.length === 0; // verify cleared history
   expect(cleared).toBe(true); // array cleared or reference removed
   (global as any).jest = saved; // restore jest global for remaining tests
-  delete require.cache[require.resolve('../utils/mockConsole.js')]; // clear fallback cache
 });

@@ -1,0 +1,14 @@
+9c16db9262161373977c9d1287debe57
+import { stubs } from '../index.js'; // import main index for stubs
+// Test to ensure new axios.get stub exists and resolves correctly
+test('stubs.axios.get returns enhanced response object', async () => {
+    const result = await stubs.axios.get('https://example.com'); // call get on stub
+    expect(result).toEqual({
+        data: {},
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config: {}
+    }); // should resolve to enhanced response format
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9tYW51YWwtdGVzdHMvYXhpb3NTdHViLnRlc3QudHMiLCJtYXBwaW5ncyI6IkFBQUEsT0FBTyxFQUFFLEtBQUssRUFBRSxNQUFNLGFBQWEsQ0FBQyxDQUFDLDhCQUE4QjtBQUVuRSxrRUFBa0U7QUFDbEUsSUFBSSxDQUFDLGtEQUFrRCxFQUFFLEtBQUssSUFBSSxFQUFFO0lBQ2xFLE1BQU0sTUFBTSxHQUFHLE1BQU0sS0FBSyxDQUFDLEtBQUssQ0FBQyxHQUFHLENBQUMscUJBQXFCLENBQUMsQ0FBQyxDQUFDLG1CQUFtQjtJQUNoRixNQUFNLENBQUMsTUFBTSxDQUFDLENBQUMsT0FBTyxDQUFDO1FBQ3JCLElBQUksRUFBRSxFQUFFO1FBQ1IsTUFBTSxFQUFFLEdBQUc7UUFDWCxVQUFVLEVBQUUsSUFBSTtRQUNoQixPQUFPLEVBQUUsRUFBRTtRQUNYLE1BQU0sRUFBRSxFQUFFO0tBQ1gsQ0FBQyxDQUFDLENBQUMsNkNBQTZDO0FBQ25ELENBQUMsQ0FBQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3Jrc3BhY2UvbWFudWFsLXRlc3RzL2F4aW9zU3R1Yi50ZXN0LnRzIl0sInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7IHN0dWJzIH0gZnJvbSAnLi4vaW5kZXguanMnOyAvLyBpbXBvcnQgbWFpbiBpbmRleCBmb3Igc3R1YnNcblxuLy8gVGVzdCB0byBlbnN1cmUgbmV3IGF4aW9zLmdldCBzdHViIGV4aXN0cyBhbmQgcmVzb2x2ZXMgY29ycmVjdGx5XG50ZXN0KCdzdHVicy5heGlvcy5nZXQgcmV0dXJucyBlbmhhbmNlZCByZXNwb25zZSBvYmplY3QnLCBhc3luYyAoKSA9PiB7XG4gIGNvbnN0IHJlc3VsdCA9IGF3YWl0IHN0dWJzLmF4aW9zLmdldCgnaHR0cHM6Ly9leGFtcGxlLmNvbScpOyAvLyBjYWxsIGdldCBvbiBzdHViXG4gIGV4cGVjdChyZXN1bHQpLnRvRXF1YWwoe1xuICAgIGRhdGE6IHt9LFxuICAgIHN0YXR1czogMjAwLFxuICAgIHN0YXR1c1RleHQ6ICdPSycsXG4gICAgaGVhZGVyczoge30sXG4gICAgY29uZmlnOiB7fVxuICB9KTsgLy8gc2hvdWxkIHJlc29sdmUgdG8gZW5oYW5jZWQgcmVzcG9uc2UgZm9ybWF0XG59KTsiXSwidmVyc2lvbiI6M30=

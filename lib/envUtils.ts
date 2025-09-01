@@ -13,9 +13,80 @@
  */
 
 // Import environment management utilities using ES module syntax
-import { testEnv } from '../utils/testEnv.js';
-import { offlineMode } from '../utils/offlineMode.js';
-import { testHelpers } from '../utils/testHelpers.js';
+import {
+  defaultEnv,
+  setTestEnv,
+  saveEnv,
+  restoreEnv,
+  attachMockSpies,
+  makeLoggedMock,
+  createScheduleMock,
+  createQerrorsMock,
+  createAxiosMock,
+  resetMocks,
+  initSearchTest
+} from '../utils/testEnv.js';
+import { 
+  setOfflineMode,
+  isOfflineMode,
+  getAxios,
+  getQerrors,
+  getEnvironmentState,
+  createEnvironmentAdapters,
+  clearOfflineCache
+} from '../utils/offlineMode.js';
+import {
+  reload,
+  moduleReloadLock,
+  stubQerrors,
+  withMockConsole,
+  createJsonRes,
+  createRes,
+  backupEnvVars,
+  restoreEnvVars,
+  withSavedEnv,
+  generateKey
+} from '../utils/testHelpers.js';
+
+// Create testEnv object from individual functions
+const testEnv = {
+  defaultEnv,
+  setTestEnv,
+  saveEnv,
+  restoreEnv,
+  attachMockSpies,
+  makeLoggedMock,
+  createScheduleMock,
+  createQerrorsMock,
+  createAxiosMock,
+  resetMocks,
+  initSearchTest
+};
+
+// Create offlineMode object from individual functions
+const offlineMode = {
+  setOfflineMode,
+  isOfflineMode,
+  getAxios,
+  getQerrors,
+  getEnvironmentState,
+  createEnvironmentAdapters,
+  clearOfflineCache
+};
+
+// Create testHelpers object from individual functions
+const testHelpers = {
+  reload,
+  moduleReloadLock,
+  stubQerrors,
+  withMockConsole,
+  createJsonRes,
+  createRes,
+  backupEnvVars,
+  restoreEnvVars,
+  withSavedEnv,
+  generateKey
+};
 
 // Export the core utilities that our TypeScript index needs
 export {

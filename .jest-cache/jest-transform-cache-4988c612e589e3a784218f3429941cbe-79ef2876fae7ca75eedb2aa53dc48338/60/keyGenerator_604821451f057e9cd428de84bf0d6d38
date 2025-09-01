@@ -1,0 +1,42 @@
+3b7c4d10e7d05069bc73797b9291c60f
+"use strict";
+/**
+ * Key Generation Utility - TypeScript Implementation
+ *
+ * This module provides functionality for generating random keys and identifiers
+ * for testing scenarios where unique values are needed.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.generateKey = generateKey;
+/**
+ * Generate a random key for testing purposes
+ *
+ * This function creates a random string that can be used as API keys,
+ * session tokens, or other identifiers in testing scenarios where
+ * unique values are required.
+ *
+ * @param length - Length of the generated key (default: 32)
+ * @param prefix - Optional prefix to add to the generated key
+ * @returns Random key string suitable for testing
+ */
+function generateKey(length = 32, prefix) {
+    console.log(`generateKey is running with length ${length} and prefix ${prefix || 'none'}`);
+    try {
+        // Character set for generating random keys
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        // Generate random characters
+        for (let i = 0; i < length; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        // Add prefix if provided
+        const finalKey = prefix ? `${prefix}_${result}` : result;
+        console.log(`generateKey is returning key with length ${finalKey.length}`);
+        return finalKey;
+    }
+    catch (err) {
+        console.log(`generateKey error ${err.message}`);
+        throw err;
+    }
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9oZWxwZXJzL2tleUdlbmVyYXRvci50cyIsIm1hcHBpbmdzIjoiO0FBQUE7Ozs7O0dBS0c7O0FBd0NELGtDQUFXO0FBdENiOzs7Ozs7Ozs7O0dBVUc7QUFDSCxTQUFTLFdBQVcsQ0FBQyxTQUFpQixFQUFFLEVBQUUsTUFBZTtJQUN2RCxPQUFPLENBQUMsR0FBRyxDQUFDLHNDQUFzQyxNQUFNLGVBQWUsTUFBTSxJQUFJLE1BQU0sRUFBRSxDQUFDLENBQUM7SUFFM0YsSUFBSSxDQUFDO1FBQ0gsMkNBQTJDO1FBQzNDLE1BQU0sS0FBSyxHQUFHLGdFQUFnRSxDQUFDO1FBQy9FLElBQUksTUFBTSxHQUFHLEVBQUUsQ0FBQztRQUVoQiw2QkFBNkI7UUFDN0IsS0FBSyxJQUFJLENBQUMsR0FBRyxDQUFDLEVBQUUsQ0FBQyxHQUFHLE1BQU0sRUFBRSxDQUFDLEVBQUUsRUFBRSxDQUFDO1lBQ2hDLE1BQU0sSUFBSSxLQUFLLENBQUMsTUFBTSxDQUFDLElBQUksQ0FBQyxLQUFLLENBQUMsSUFBSSxDQUFDLE1BQU0sRUFBRSxHQUFHLEtBQUssQ0FBQyxNQUFNLENBQUMsQ0FBQyxDQUFDO1FBQ25FLENBQUM7UUFFRCx5QkFBeUI7UUFDekIsTUFBTSxRQUFRLEdBQUcsTUFBTSxDQUFDLENBQUMsQ0FBQyxHQUFHLE1BQU0sSUFBSSxNQUFNLEVBQUUsQ0FBQyxDQUFDLENBQUMsTUFBTSxDQUFDO1FBRXpELE9BQU8sQ0FBQyxHQUFHLENBQUMsNENBQTRDLFFBQVEsQ0FBQyxNQUFNLEVBQUUsQ0FBQyxDQUFDO1FBQzNFLE9BQU8sUUFBUSxDQUFDO0lBRWxCLENBQUM7SUFBQyxPQUFPLEdBQVEsRUFBRSxDQUFDO1FBQ2xCLE9BQU8sQ0FBQyxHQUFHLENBQUMscUJBQXFCLEdBQUcsQ0FBQyxPQUFPLEVBQUUsQ0FBQyxDQUFDO1FBQ2hELE1BQU0sR0FBRyxDQUFDO0lBQ1osQ0FBQztBQUNILENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9oZWxwZXJzL2tleUdlbmVyYXRvci50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEtleSBHZW5lcmF0aW9uIFV0aWxpdHkgLSBUeXBlU2NyaXB0IEltcGxlbWVudGF0aW9uXG4gKiBcbiAqIFRoaXMgbW9kdWxlIHByb3ZpZGVzIGZ1bmN0aW9uYWxpdHkgZm9yIGdlbmVyYXRpbmcgcmFuZG9tIGtleXMgYW5kIGlkZW50aWZpZXJzXG4gKiBmb3IgdGVzdGluZyBzY2VuYXJpb3Mgd2hlcmUgdW5pcXVlIHZhbHVlcyBhcmUgbmVlZGVkLlxuICovXG5cbi8qKlxuICogR2VuZXJhdGUgYSByYW5kb20ga2V5IGZvciB0ZXN0aW5nIHB1cnBvc2VzXG4gKiBcbiAqIFRoaXMgZnVuY3Rpb24gY3JlYXRlcyBhIHJhbmRvbSBzdHJpbmcgdGhhdCBjYW4gYmUgdXNlZCBhcyBBUEkga2V5cyxcbiAqIHNlc3Npb24gdG9rZW5zLCBvciBvdGhlciBpZGVudGlmaWVycyBpbiB0ZXN0aW5nIHNjZW5hcmlvcyB3aGVyZVxuICogdW5pcXVlIHZhbHVlcyBhcmUgcmVxdWlyZWQuXG4gKiBcbiAqIEBwYXJhbSBsZW5ndGggLSBMZW5ndGggb2YgdGhlIGdlbmVyYXRlZCBrZXkgKGRlZmF1bHQ6IDMyKVxuICogQHBhcmFtIHByZWZpeCAtIE9wdGlvbmFsIHByZWZpeCB0byBhZGQgdG8gdGhlIGdlbmVyYXRlZCBrZXlcbiAqIEByZXR1cm5zIFJhbmRvbSBrZXkgc3RyaW5nIHN1aXRhYmxlIGZvciB0ZXN0aW5nXG4gKi9cbmZ1bmN0aW9uIGdlbmVyYXRlS2V5KGxlbmd0aDogbnVtYmVyID0gMzIsIHByZWZpeD86IHN0cmluZyk6IHN0cmluZyB7XG4gIGNvbnNvbGUubG9nKGBnZW5lcmF0ZUtleSBpcyBydW5uaW5nIHdpdGggbGVuZ3RoICR7bGVuZ3RofSBhbmQgcHJlZml4ICR7cHJlZml4IHx8ICdub25lJ31gKTtcbiAgXG4gIHRyeSB7XG4gICAgLy8gQ2hhcmFjdGVyIHNldCBmb3IgZ2VuZXJhdGluZyByYW5kb20ga2V5c1xuICAgIGNvbnN0IGNoYXJzID0gJ0FCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXowMTIzNDU2Nzg5JztcbiAgICBsZXQgcmVzdWx0ID0gJyc7XG4gICAgXG4gICAgLy8gR2VuZXJhdGUgcmFuZG9tIGNoYXJhY3RlcnNcbiAgICBmb3IgKGxldCBpID0gMDsgaSA8IGxlbmd0aDsgaSsrKSB7XG4gICAgICByZXN1bHQgKz0gY2hhcnMuY2hhckF0KE1hdGguZmxvb3IoTWF0aC5yYW5kb20oKSAqIGNoYXJzLmxlbmd0aCkpO1xuICAgIH1cbiAgICBcbiAgICAvLyBBZGQgcHJlZml4IGlmIHByb3ZpZGVkXG4gICAgY29uc3QgZmluYWxLZXkgPSBwcmVmaXggPyBgJHtwcmVmaXh9XyR7cmVzdWx0fWAgOiByZXN1bHQ7XG4gICAgXG4gICAgY29uc29sZS5sb2coYGdlbmVyYXRlS2V5IGlzIHJldHVybmluZyBrZXkgd2l0aCBsZW5ndGggJHtmaW5hbEtleS5sZW5ndGh9YCk7XG4gICAgcmV0dXJuIGZpbmFsS2V5O1xuICAgIFxuICB9IGNhdGNoIChlcnI6IGFueSkge1xuICAgIGNvbnNvbGUubG9nKGBnZW5lcmF0ZUtleSBlcnJvciAke2Vyci5tZXNzYWdlfWApO1xuICAgIHRocm93IGVycjtcbiAgfVxufVxuXG4vLyBFeHBvcnQga2V5IGdlbmVyYXRpb24gdXRpbGl0aWVzIHVzaW5nIEVTIG1vZHVsZSBzeW50YXhcbmV4cG9ydCB7XG4gIGdlbmVyYXRlS2V5XG59OyJdLCJ2ZXJzaW9uIjozfQ==

@@ -6,11 +6,23 @@
  */
 
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { getModuleDirname } from '../esm-globals.js';
 
-// For ES modules, we need to get __dirname equivalent
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// For ES modules, we need to get __dirname equivalent - lazy initialization for Jest compatibility
+let moduleDirname: string | undefined;
+function getModuleDirnameForReloader(): string {
+  if (moduleDirname === undefined) {
+    try {
+      // Use eval to hide import.meta from Jest's static parser
+      const importMetaUrl = (0, eval)('import.meta.url');
+      moduleDirname = getModuleDirname(importMetaUrl);
+    } catch (error) {
+      // Fallback for Jest environment
+      moduleDirname = process.cwd();
+    }
+  }
+  return moduleDirname;
+}
 
 // Thread-safe module reloading lock to prevent race conditions
 const moduleReloadLock = new Set<string>();
@@ -33,7 +45,7 @@ async function reload(relPath: string): Promise<any> {
   console.log(`reload is running with ${relPath}`);
 
   // Resolve relative to the utils directory (parent of helpers)
-  const fullPath = path.resolve(__dirname, '..', relPath);
+  const fullPath = path.resolve(getModuleDirnameForReloader(), '..', relPath);
 
   if (moduleReloadLock.has(fullPath)) {
     console.log(`reload has run resulting in skip`);

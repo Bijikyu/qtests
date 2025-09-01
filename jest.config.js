@@ -49,7 +49,10 @@ export default {
   },
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
-    '^qtests/(.*)$': '<rootDir>/$1'  // Allow qtests to import from itself during testing
+    '^qtests/(.*)$': '<rootDir>/$1',  // Allow qtests to import from itself during testing
+    '^../utils/esm-globals.js$': '<rootDir>/utils/__mocks__/esm-globals.ts',
+    '^./esm-globals.js$': '<rootDir>/utils/__mocks__/esm-globals.ts',
+    '^utils/esm-globals.js$': '<rootDir>/utils/__mocks__/esm-globals.ts'
   },
   moduleDirectories: ['node_modules', '<rootDir>'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
