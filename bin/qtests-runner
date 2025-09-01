@@ -5,9 +5,10 @@
 // Install: npm install -g qtests
 // Run with: qtests-runner
 
-const fs = require('fs');
-const path = require('path');
-const { spawn } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { spawn } from 'child_process';
+import os from 'os';
 
 // ANSI color codes for terminal output
 const colors = {
@@ -250,7 +251,7 @@ class TestRunner {
     console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
     
     // Run tests in parallel with aggressive concurrency for speed
-    const cpuCount = require('os').cpus().length;
+    const cpuCount = os.cpus().length;
     const maxConcurrency = Math.min(testFiles.length, Math.max(4, cpuCount * 2)); // Use 2x CPU cores for I/O-bound tests
     console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores)${colors.reset}\n`);
     
@@ -294,12 +295,10 @@ class TestRunner {
 }
 
 // Run the test suite
-if (require.main === module) {
-  const runner = new TestRunner();
-  runner.run().catch(error => {
-    console.error(`${colors.red}Test runner error:${colors.reset}`, error);
-    process.exit(1);
-  });
-}
+const runner = new TestRunner();
+runner.run().catch(error => {
+  console.error(`${colors.red}Test runner error:${colors.reset}`, error);
+  process.exit(1);
+});
 
-module.exports = TestRunner;
+export default TestRunner;
