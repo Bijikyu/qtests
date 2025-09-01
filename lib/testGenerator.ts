@@ -162,7 +162,9 @@ class TestGenerator {
     const skipPatterns = [
       'node_modules', '.git', '.next', 'dist', 'build', 'coverage',
       '.vscode', '.idea', 'docs', 'documentation', 'assets', 'public', 'static',
-      '.replit_cache', '.config', '.npm', 'logs'
+      '.replit_cache', '.config', '.npm', 'logs',
+      'examples', 'demo', 'demos', 'samples', 'bin',  // Skip demo/example directories
+      'manual-tests', 'fixtures', 'test-fixtures'      // Skip manual test directories
     ];
     return skipPatterns.includes(dirName) || dirName.startsWith('.');
   }
@@ -213,6 +215,37 @@ class TestGenerator {
   }
 
   /**
+   * Check if file should be skipped as a source file (config, setup, etc.)
+   */
+  private shouldSkipSourceFile(file: string): boolean {
+    const basename = path.basename(file);
+    const dirname = path.dirname(file);
+    
+    // Skip files in test-related directories
+    if (dirname.includes('manual-tests') || dirname.includes('fixtures')) {
+      return true;
+    }
+    
+    const skipPatterns = [
+      /^jest\.config\./,          // Jest config files
+      /^jest-setup\./,            // Jest setup files
+      /^setup\./,                 // Setup files
+      /^config\./,                // Config files  
+      /-demo\./,                  // Demo files
+      /-example\./,               // Example files
+      /\.config\./,               // Any config files
+      /^example\./,               // Files named "example.*"
+      /^demo\./,                  // Files named "demo.*"
+      /qtests-runner\./,          // Generated runner files
+      /setupMultiple/,            // Test setup helpers
+      /reloadCheck/,              // Test utilities
+      /testSetup/,                // Test setup files
+    ];
+    
+    return skipPatterns.some(pattern => pattern.test(basename));
+  }
+
+  /**
    * Categorize discovered files into source files and existing tests
    */
   private categorizeFiles(files: string[]): FileCategorization {
@@ -225,6 +258,11 @@ class TestGenerator {
       
       // Skip files with invalid extensions
       if (!this.config.VALID_EXTS.includes(ext)) {
+        return;
+      }
+      
+      // Skip config, demo, and setup files
+      if (this.shouldSkipSourceFile(file)) {
         return;
       }
       

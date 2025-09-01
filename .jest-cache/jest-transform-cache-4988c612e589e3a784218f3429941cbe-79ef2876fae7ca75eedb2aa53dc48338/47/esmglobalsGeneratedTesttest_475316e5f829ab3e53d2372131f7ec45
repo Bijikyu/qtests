@@ -1,0 +1,49 @@
+e86faeaf21d0dc7c4ebc885d62fadc56
+"use strict";
+// Lightweight unit test for esm-globals.ts - TypeScript ES module
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+describe('esm-globals.ts basic exports', () => {
+    test('module loads without errors', async () => {
+        // TypeScript ES module dynamic import
+        const module = await Promise.resolve().then(() => __importStar(require('./esm-globals.ts')));
+        expect(module).toBeDefined();
+        expect(typeof module).toBe('object');
+        // Check for expected exports
+        expect(module.__filename).toBeDefined();
+        expect(module.__dirname).toBeDefined();
+        expect(module.getModuleFilename).toBeDefined();
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9lc20tZ2xvYmFsc0dlbmVyYXRlZFRlc3QudGVzdC50cyIsIm1hcHBpbmdzIjoiO0FBQUEsa0VBQWtFOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O0FBRWxFLFFBQVEsQ0FBQyw4QkFBOEIsRUFBRSxHQUFHLEVBQUU7SUFDNUMsSUFBSSxDQUFDLDZCQUE2QixFQUFFLEtBQUssSUFBSSxFQUFFO1FBQzdDLHNDQUFzQztRQUN0QyxNQUFNLE1BQU0sR0FBRyx3REFBYSxrQkFBa0IsR0FBQyxDQUFDO1FBQ2hELE1BQU0sQ0FBQyxNQUFNLENBQUMsQ0FBQyxXQUFXLEVBQUUsQ0FBQztRQUM3QixNQUFNLENBQUMsT0FBTyxNQUFNLENBQUMsQ0FBQyxJQUFJLENBQUMsUUFBUSxDQUFDLENBQUM7UUFDckMsNkJBQTZCO1FBQzdCLE1BQU0sQ0FBQyxNQUFNLENBQUMsVUFBVSxDQUFDLENBQUMsV0FBVyxFQUFFLENBQUM7UUFDeEMsTUFBTSxDQUFDLE1BQU0sQ0FBQyxTQUFTLENBQUMsQ0FBQyxXQUFXLEVBQUUsQ0FBQztRQUN2QyxNQUFNLENBQUMsTUFBTSxDQUFDLGlCQUFpQixDQUFDLENBQUMsV0FBVyxFQUFFLENBQUM7SUFDakQsQ0FBQyxDQUFDLENBQUM7QUFDTCxDQUFDLENBQUMsQ0FBQyIsIm5hbWVzIjpbXSwic291cmNlcyI6WyIvaG9tZS9ydW5uZXIvd29ya3NwYWNlL3V0aWxzL2VzbS1nbG9iYWxzR2VuZXJhdGVkVGVzdC50ZXN0LnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIExpZ2h0d2VpZ2h0IHVuaXQgdGVzdCBmb3IgZXNtLWdsb2JhbHMudHMgLSBUeXBlU2NyaXB0IEVTIG1vZHVsZVxuXG5kZXNjcmliZSgnZXNtLWdsb2JhbHMudHMgYmFzaWMgZXhwb3J0cycsICgpID0+IHtcbiAgdGVzdCgnbW9kdWxlIGxvYWRzIHdpdGhvdXQgZXJyb3JzJywgYXN5bmMgKCkgPT4ge1xuICAgIC8vIFR5cGVTY3JpcHQgRVMgbW9kdWxlIGR5bmFtaWMgaW1wb3J0XG4gICAgY29uc3QgbW9kdWxlID0gYXdhaXQgaW1wb3J0KCcuL2VzbS1nbG9iYWxzLnRzJyk7XG4gICAgZXhwZWN0KG1vZHVsZSkudG9CZURlZmluZWQoKTtcbiAgICBleHBlY3QodHlwZW9mIG1vZHVsZSkudG9CZSgnb2JqZWN0Jyk7XG4gICAgLy8gQ2hlY2sgZm9yIGV4cGVjdGVkIGV4cG9ydHNcbiAgICBleHBlY3QobW9kdWxlLl9fZmlsZW5hbWUpLnRvQmVEZWZpbmVkKCk7XG4gICAgZXhwZWN0KG1vZHVsZS5fX2Rpcm5hbWUpLnRvQmVEZWZpbmVkKCk7XG4gICAgZXhwZWN0KG1vZHVsZS5nZXRNb2R1bGVGaWxlbmFtZSkudG9CZURlZmluZWQoKTtcbiAgfSk7XG59KTtcbiJdLCJ2ZXJzaW9uIjozfQ==
