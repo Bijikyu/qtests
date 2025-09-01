@@ -407,7 +407,7 @@ class TestGenerator {
     lines.push(``);
     
     // TypeScript ES module import
-    lines.push(`import { httpTest } from 'qtests/utils/httpTest';`, '');
+    lines.push(`import * as httpTest from '../utils/httpTest.js';`, '');
     
     // TypeScript test suite
     lines.push(`describe(\`${method.toUpperCase()} ${route} [API-\${apiTestSession}]\`, () => {`);

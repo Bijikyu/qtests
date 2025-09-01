@@ -1,0 +1,44 @@
+36b522176b8488daa932a4e6be01d2ed
+// Auto-generated API test for POST /api/calculate - optimized for speed
+import * as httpTest from '../utils/httpTest.js';
+
+describe('POST /api/calculate', () => {
+  // Shared app setup for performance
+  let sharedApp;
+  beforeAll(() => {
+    sharedApp = httpTest.createMockApp();
+  });
+
+  test('should succeed', async () => {
+    // Reuse shared app for speed
+    const app = httpTest.createMockApp();
+    app.post('/api/calculate', (req, res) => {
+      res.statusCode = 200;
+      res.setHeader('content-type', 'application/json');
+      res.end(JSON.stringify({ success: true }));
+    });
+    
+    const res = await httpTest.supertest(app)
+      .post('/api/calculate')
+      .expect(200)
+      .end();
+    
+    expect(res.body.success).toBe(true);
+  });
+
+  test('should handle error responses', async () => {
+    const app = httpTest.createMockApp();
+    app.post('/api/calculate', (req, res) => {
+      res.statusCode = 400;
+      res.setHeader('content-type', 'application/json');
+      res.end(JSON.stringify({ error: 'Bad request' }));
+    });
+    
+    const res = await httpTest.supertest(app)
+      .post('/api/calculate')
+      .expect(400)
+      .end();
+    
+    expect(res.body.error).toBe('Bad request');
+  });
+});

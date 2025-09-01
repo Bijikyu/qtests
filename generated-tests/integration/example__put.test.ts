@@ -3,9 +3,9 @@
 
 // Unique API test session for parallel execution safety
 const apiTestSession = `${process.hrtime.bigint()}-${Math.random().toString(36).substr(2, 9)}`;
-const uniqueRoute = '/api/users/:id' + (/api/users/:id.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+const uniqueRoute = '/api/users/:id' + ('/api/users/:id'.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
 
-import { httpTest } from 'qtests/utils/httpTest';
+import * as httpTest from '../utils/httpTest.js';
 
 describe(`PUT /api/users/:id [API-${apiTestSession}]`, () => {
   // Test data factory for unique request/response data

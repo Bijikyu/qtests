@@ -51,6 +51,7 @@ export default {
     '^(\\.{1,2}/.*)\\.js$': '$1',
     '^qtests/(.*)$': '<rootDir>/$1'  // Allow qtests to import from itself during testing
   },
+  moduleDirectories: ['node_modules', '<rootDir>'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   collectCoverageFrom: [
     'lib/**/*.ts',

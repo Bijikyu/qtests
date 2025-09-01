@@ -1,5 +1,5 @@
 // Auto-generated API test for PATCH /api/settings - optimized for speed
-import { httpTest } from 'qtests/utils/httpTest';
+import * as httpTest from '../utils/httpTest.js';
 
 describe('PATCH /api/settings', () => {
   // Shared app setup for performance

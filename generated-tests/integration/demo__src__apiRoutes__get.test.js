@@ -1,5 +1,5 @@
 // Auto-generated API test for GET /api/health - optimized for speed
-import { httpTest } from 'qtests/utils/httpTest';
+import * as httpTest from '../utils/httpTest.js';
 
 describe('GET /api/health', () => {
   // Shared app setup for performance
