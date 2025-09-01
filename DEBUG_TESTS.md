@@ -42,7 +42,7 @@ FAIL generated-tests/example__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.343 s
+Time:        5.644 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__get.test.ts.
 FAIL generated-tests/example__get.test.ts
   ● Test suite failed to run
@@ -80,7 +80,7 @@ FAIL generated-tests/example__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.74 s
+Time:        4.509 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -99,7 +99,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23085ms
+### Duration: 21685ms
 
 ---
 
@@ -143,7 +143,7 @@ FAIL generated-tests/example__post.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.665 s
+Time:        5.851 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__post.test.ts.
 FAIL generated-tests/example__post.test.ts
   ● Test suite failed to run
@@ -181,7 +181,7 @@ FAIL generated-tests/example__post.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.468 s
+Time:        5.283 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__post.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -200,7 +200,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22845ms
+### Duration: 22754ms
 
 ---
 
@@ -244,7 +244,7 @@ FAIL generated-tests/example__put.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.713 s
+Time:        7.056 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__put.test.ts.
 FAIL generated-tests/example__put.test.ts
   ● Test suite failed to run
@@ -282,7 +282,7 @@ FAIL generated-tests/example__put.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.357 s
+Time:        5.192 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__put.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -301,7 +301,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22938ms
+### Duration: 22825ms
 
 ---
 
@@ -345,7 +345,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.239 s
+Time:        7.64 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
   ● Test suite failed to run
@@ -395,7 +395,7 @@ Unable to check memory usage Error: write EPIPE
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.813 s
+Time:        4.159 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -419,7 +419,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20923ms
+### Duration: 22909ms
 
 ---
 
@@ -460,22 +460,10 @@ FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.361 s
+Time:        7.636 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
   ● Test suite failed to run
@@ -513,7 +501,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.433 s
+Time:        3.622 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -537,7 +525,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22013ms
+### Duration: 23086ms
 
 ---
 
@@ -593,7 +581,7 @@ Unable to check memory usage Error: write EPIPE
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.658 s
+Time:        6.243 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
   ● Test suite failed to run
@@ -628,10 +616,22 @@ FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.144 s
+Time:        4.641 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -655,7 +655,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22743ms
+### Duration: 22103ms
 
 ---
 
@@ -699,7 +699,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.691 s
+Time:        6.316 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
   ● Test suite failed to run
@@ -737,7 +737,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.475 s
+Time:        5.153 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -761,7 +761,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21095ms
+### Duration: 22073ms
 
 ---
 
@@ -805,7 +805,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.84 s
+Time:        3.948 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
   ● Test suite failed to run
@@ -843,7 +843,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.954 s
+Time:        6.521 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -867,7 +867,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22884ms
+### Duration: 21436ms
 
 ---
 
@@ -911,7 +911,7 @@ FAIL generated-tests/integration/example.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.329 s
+Time:        4.191 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example.test.ts.
 FAIL generated-tests/integration/example.test.ts
   ● Test suite failed to run
@@ -949,7 +949,7 @@ FAIL generated-tests/integration/example.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.435 s
+Time:        6.555 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -968,7 +968,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20130ms
+### Duration: 19644ms
 
 ---
 
@@ -1012,7 +1012,7 @@ FAIL generated-tests/integration/example__get.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.464 s
+Time:        7.26 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.js.
 FAIL generated-tests/integration/example__get.test.js
   ● Test suite failed to run
@@ -1050,7 +1050,7 @@ FAIL generated-tests/integration/example__get.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.35 s
+Time:        3.045 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -1074,7 +1074,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23184ms
+### Duration: 23129ms
 
 ---
 
@@ -1118,7 +1118,7 @@ FAIL generated-tests/integration/example__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.421 s
+Time:        6.389 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.ts.
 FAIL generated-tests/integration/example__get.test.ts
   ● Test suite failed to run
@@ -1156,7 +1156,7 @@ FAIL generated-tests/integration/example__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.031 s
+Time:        5.796 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1175,7 +1175,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23615ms
+### Duration: 22445ms
 
 ---
 
@@ -1219,7 +1219,7 @@ FAIL generated-tests/integration/example__post.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.9 s
+Time:        5.732 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.js.
 FAIL generated-tests/integration/example__post.test.js
   ● Test suite failed to run
@@ -1257,7 +1257,7 @@ FAIL generated-tests/integration/example__post.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.956 s
+Time:        4.29 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -1281,7 +1281,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22190ms
+### Duration: 21882ms
 
 ---
 
@@ -1325,7 +1325,7 @@ FAIL generated-tests/integration/example__post.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.863 s
+Time:        5.229 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.ts.
 FAIL generated-tests/integration/example__post.test.ts
   ● Test suite failed to run
@@ -1363,7 +1363,7 @@ FAIL generated-tests/integration/example__post.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.76 s
+Time:        5.209 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1382,7 +1382,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23335ms
+### Duration: 20735ms
 
 ---
 
@@ -1426,7 +1426,7 @@ FAIL generated-tests/integration/example__put.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.576 s
+Time:        3.281 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.js.
 FAIL generated-tests/integration/example__put.test.js
   ● Test suite failed to run
@@ -1461,10 +1461,34 @@ FAIL generated-tests/integration/example__put.test.js
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.073 s
+Time:        5.851 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.js.
 node:internal/modules/run_main:123
     triggerUncaughtException(
@@ -1488,7 +1512,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22199ms
+### Duration: 19363ms
 
 ---
 
@@ -1532,7 +1556,7 @@ FAIL generated-tests/integration/example__put.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.693 s
+Time:        8.998 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.ts.
 FAIL generated-tests/integration/example__put.test.ts
   ● Test suite failed to run
@@ -1570,7 +1594,7 @@ FAIL generated-tests/integration/example__put.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.694 s
+Time:        3.85 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1589,7 +1613,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22404ms
+### Duration: 22577ms
 
 ---
 
@@ -1633,7 +1657,7 @@ FAIL generated-tests/integration/utils__httpTest__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.117 s
+Time:        6.085 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts.
 FAIL generated-tests/integration/utils__httpTest__get.test.ts
   ● Test suite failed to run
@@ -1671,7 +1695,7 @@ FAIL generated-tests/integration/utils__httpTest__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.014 s
+Time:        6.621 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1690,7 +1714,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23393ms
+### Duration: 22146ms
 
 ---
 
@@ -1734,7 +1758,7 @@ FAIL ./index.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.611 s
+Time:        4.629 s
 Ran all test suites matching /home/runner/workspace/index.test.ts.
 FAIL ./index.test.ts
   ● Test suite failed to run
@@ -1772,7 +1796,7 @@ FAIL ./index.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.53 s
+Time:        5.834 s
 Ran all test suites matching /home/runner/workspace/index.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1791,7 +1815,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22761ms
+### Duration: 21657ms
 
 ---
 
@@ -1835,7 +1859,7 @@ FAIL lib/coreUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        8.435 s
+Time:        4.153 s
 Ran all test suites matching /home/runner/workspace/lib/coreUtils.test.ts.
 FAIL lib/coreUtils.test.ts
   ● Test suite failed to run
@@ -1873,7 +1897,7 @@ FAIL lib/coreUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.535 s
+Time:        5.619 s
 Ran all test suites matching /home/runner/workspace/lib/coreUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1892,7 +1916,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22526ms
+### Duration: 20686ms
 
 ---
 
@@ -1936,7 +1960,7 @@ FAIL lib/dataUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.557 s
+Time:        4.62 s
 Ran all test suites matching /home/runner/workspace/lib/dataUtils.test.ts.
 FAIL lib/dataUtils.test.ts
   ● Test suite failed to run
@@ -1974,7 +1998,7 @@ FAIL lib/dataUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.485 s
+Time:        6.021 s
 Ran all test suites matching /home/runner/workspace/lib/dataUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1993,7 +2017,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21820ms
+### Duration: 21250ms
 
 ---
 
@@ -2034,22 +2058,10 @@ FAIL lib/envUtils.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.022 s
+Time:        6.008 s
 Ran all test suites matching /home/runner/workspace/lib/envUtils.test.ts.
 FAIL lib/envUtils.test.ts
   ● Test suite failed to run
@@ -2087,7 +2099,7 @@ FAIL lib/envUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.815 s
+Time:        6.234 s
 Ran all test suites matching /home/runner/workspace/lib/envUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2106,7 +2118,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22552ms
+### Duration: 22482ms
 
 ---
 
@@ -2150,7 +2162,7 @@ FAIL lib/httpUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.208 s
+Time:        6.522 s
 Ran all test suites matching /home/runner/workspace/lib/httpUtils.test.ts.
 FAIL lib/httpUtils.test.ts
   ● Test suite failed to run
@@ -2188,7 +2200,7 @@ FAIL lib/httpUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.842 s
+Time:        4.242 s
 Ran all test suites matching /home/runner/workspace/lib/httpUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2207,7 +2219,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21839ms
+### Duration: 22062ms
 
 ---
 
@@ -2248,10 +2260,22 @@ FAIL lib/logUtils.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.394 s
+Time:        4.002 s
 Ran all test suites matching /home/runner/workspace/lib/logUtils.test.ts.
 FAIL lib/logUtils.test.ts
   ● Test suite failed to run
@@ -2289,7 +2313,7 @@ FAIL lib/logUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.363 s
+Time:        6.121 s
 Ran all test suites matching /home/runner/workspace/lib/logUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2308,7 +2332,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20268ms
+### Duration: 19036ms
 
 ---
 
@@ -2352,7 +2376,7 @@ FAIL lib/setup.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.103 s
+Time:        5.697 s
 Ran all test suites matching /home/runner/workspace/lib/setup.test.ts.
 FAIL lib/setup.test.ts
   ● Test suite failed to run
@@ -2390,7 +2414,7 @@ FAIL lib/setup.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.483 s
+Time:        5.781 s
 Ran all test suites matching /home/runner/workspace/lib/setup.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2409,7 +2433,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22243ms
+### Duration: 22683ms
 
 ---
 
@@ -2453,7 +2477,7 @@ FAIL lib/stubs.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.658 s
+Time:        6.461 s
 Ran all test suites matching /home/runner/workspace/lib/stubs.test.ts.
 FAIL lib/stubs.test.ts
   ● Test suite failed to run
@@ -2488,10 +2512,22 @@ FAIL lib/stubs.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.479 s
+Time:        4.28 s
 Ran all test suites matching /home/runner/workspace/lib/stubs.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2510,7 +2546,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22820ms
+### Duration: 21469ms
 
 ---
 
@@ -2554,7 +2590,7 @@ FAIL lib/testGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.264 s
+Time:        6.723 s
 Ran all test suites matching /home/runner/workspace/lib/testGenerator.test.ts.
 FAIL lib/testGenerator.test.ts
   ● Test suite failed to run
@@ -2592,7 +2628,7 @@ FAIL lib/testGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.254 s
+Time:        4.459 s
 Ran all test suites matching /home/runner/workspace/lib/testGenerator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2611,7 +2647,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22482ms
+### Duration: 22460ms
 
 ---
 
@@ -2655,7 +2691,7 @@ FAIL lib/testUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.696 s
+Time:        4.491 s
 Ran all test suites matching /home/runner/workspace/lib/testUtils.test.ts.
 FAIL lib/testUtils.test.ts
   ● Test suite failed to run
@@ -2693,7 +2729,7 @@ FAIL lib/testUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.582 s
+Time:        6.2 s
 Ran all test suites matching /home/runner/workspace/lib/testUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2712,7 +2748,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22673ms
+### Duration: 22606ms
 
 ---
 
@@ -2753,10 +2789,22 @@ FAIL manual-tests/axiosStub.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.408 s
+Time:        4.91 s
 Ran all test suites matching /home/runner/workspace/manual-tests/axiosStub.test.ts.
 FAIL manual-tests/axiosStub.test.ts
   ● Test suite failed to run
@@ -2794,7 +2842,7 @@ FAIL manual-tests/axiosStub.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.582 s
+Time:        5.244 s
 Ran all test suites matching /home/runner/workspace/manual-tests/axiosStub.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2813,7 +2861,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21485ms
+### Duration: 22351ms
 
 ---
 
@@ -2857,7 +2905,7 @@ FAIL manual-tests/comprehensive.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.585 s
+Time:        7.33 s
 Ran all test suites matching /home/runner/workspace/manual-tests/comprehensive.test.ts.
 FAIL manual-tests/comprehensive.test.ts
   ● Test suite failed to run
@@ -2895,7 +2943,7 @@ FAIL manual-tests/comprehensive.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.652 s
+Time:        4.703 s
 Ran all test suites matching /home/runner/workspace/manual-tests/comprehensive.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2914,7 +2962,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20792ms
+### Duration: 22689ms
 
 ---
 
@@ -2958,7 +3006,7 @@ FAIL manual-tests/dualModuleGeneration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.833 s
+Time:        5.974 s
 Ran all test suites matching /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts.
 FAIL manual-tests/dualModuleGeneration.test.ts
   ● Test suite failed to run
@@ -2996,7 +3044,7 @@ FAIL manual-tests/dualModuleGeneration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.211 s
+Time:        4.685 s
 Ran all test suites matching /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3015,7 +3063,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21267ms
+### Duration: 20592ms
 
 ---
 
@@ -3059,7 +3107,7 @@ FAIL manual-tests/edgeCases.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.047 s
+Time:        4.338 s
 Ran all test suites matching /home/runner/workspace/manual-tests/edgeCases.test.ts.
 FAIL manual-tests/edgeCases.test.ts
   ● Test suite failed to run
@@ -3097,7 +3145,7 @@ FAIL manual-tests/edgeCases.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.81 s
+Time:        6.152 s
 Ran all test suites matching /home/runner/workspace/manual-tests/edgeCases.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3116,7 +3164,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22223ms
+### Duration: 22472ms
 
 ---
 
@@ -3160,7 +3208,7 @@ FAIL manual-tests/httpTest.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.827 s
+Time:        7.995 s
 Ran all test suites matching /home/runner/workspace/manual-tests/httpTest.test.ts.
 FAIL manual-tests/httpTest.test.ts
   ● Test suite failed to run
@@ -3198,7 +3246,7 @@ FAIL manual-tests/httpTest.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.235 s
+Time:        3.23 s
 Ran all test suites matching /home/runner/workspace/manual-tests/httpTest.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3217,7 +3265,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21908ms
+### Duration: 23064ms
 
 ---
 
@@ -3261,7 +3309,7 @@ FAIL manual-tests/indexExports.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.113 s
+Time:        6.621 s
 Ran all test suites matching /home/runner/workspace/manual-tests/indexExports.test.ts.
 FAIL manual-tests/indexExports.test.ts
   ● Test suite failed to run
@@ -3299,7 +3347,7 @@ FAIL manual-tests/indexExports.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.458 s
+Time:        5.753 s
 Ran all test suites matching /home/runner/workspace/manual-tests/indexExports.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3318,7 +3366,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19453ms
+### Duration: 21323ms
 
 ---
 
@@ -3362,7 +3410,7 @@ FAIL manual-tests/integration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.192 s
+Time:        5.489 s
 Ran all test suites matching /home/runner/workspace/manual-tests/integration.test.ts.
 FAIL manual-tests/integration.test.ts
   ● Test suite failed to run
@@ -3400,7 +3448,7 @@ FAIL manual-tests/integration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.259 s
+Time:        4.848 s
 Ran all test suites matching /home/runner/workspace/manual-tests/integration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3419,7 +3467,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22280ms
+### Duration: 21061ms
 
 ---
 
@@ -3460,22 +3508,10 @@ FAIL manual-tests/logUtils.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.723 s
+Time:        5.968 s
 Ran all test suites matching /home/runner/workspace/manual-tests/logUtils.test.ts.
 FAIL manual-tests/logUtils.test.ts
   ● Test suite failed to run
@@ -3510,22 +3546,10 @@ FAIL manual-tests/logUtils.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.642 s
+Time:        3.399 s
 Ran all test suites matching /home/runner/workspace/manual-tests/logUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3544,7 +3568,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23270ms
+### Duration: 22523ms
 
 ---
 
@@ -3588,7 +3612,7 @@ FAIL manual-tests/mockAxios.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.444 s
+Time:        7.809 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockAxios.test.ts.
 FAIL manual-tests/mockAxios.test.ts
   ● Test suite failed to run
@@ -3626,7 +3650,7 @@ FAIL manual-tests/mockAxios.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.854 s
+Time:        3.434 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockAxios.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3645,7 +3669,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23978ms
+### Duration: 22252ms
 
 ---
 
@@ -3689,7 +3713,7 @@ FAIL manual-tests/mockConsole.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.464 s
+Time:        5.268 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockConsole.test.ts.
 FAIL manual-tests/mockConsole.test.ts
   ● Test suite failed to run
@@ -3727,7 +3751,7 @@ FAIL manual-tests/mockConsole.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.743 s
+Time:        6.283 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockConsole.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3746,7 +3770,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22654ms
+### Duration: 22144ms
 
 ---
 
@@ -3790,7 +3814,7 @@ FAIL manual-tests/mockModels.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.948 s
+Time:        4.855 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockModels.test.ts.
 FAIL manual-tests/mockModels.test.ts
   ● Test suite failed to run
@@ -3828,7 +3852,7 @@ FAIL manual-tests/mockModels.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.485 s
+Time:        6.643 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockModels.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3847,7 +3871,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20261ms
+### Duration: 21337ms
 
 ---
 
@@ -3891,7 +3915,7 @@ FAIL manual-tests/mockUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.621 s
+Time:        8.153 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockUtils.test.ts.
 FAIL manual-tests/mockUtils.test.ts
   ● Test suite failed to run
@@ -3929,7 +3953,7 @@ FAIL manual-tests/mockUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.945 s
+Time:        3.013 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3948,7 +3972,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23380ms
+### Duration: 23249ms
 
 ---
 
@@ -3992,7 +4016,7 @@ FAIL manual-tests/moduleSystemIntegration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.224 s
+Time:        8.77 s
 Ran all test suites matching /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts.
 FAIL manual-tests/moduleSystemIntegration.test.ts
   ● Test suite failed to run
@@ -4030,7 +4054,7 @@ FAIL manual-tests/moduleSystemIntegration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.79 s
+Time:        5.244 s
 Ran all test suites matching /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4049,7 +4073,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22721ms
+### Duration: 22543ms
 
 ---
 
@@ -4093,7 +4117,7 @@ FAIL manual-tests/offlineIntegration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.266 s
+Time:        6.283 s
 Ran all test suites matching /home/runner/workspace/manual-tests/offlineIntegration.test.ts.
 FAIL manual-tests/offlineIntegration.test.ts
   ● Test suite failed to run
@@ -4131,7 +4155,7 @@ FAIL manual-tests/offlineIntegration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.763 s
+Time:        4.469 s
 Ran all test suites matching /home/runner/workspace/manual-tests/offlineIntegration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4150,7 +4174,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23141ms
+### Duration: 21222ms
 
 ---
 
@@ -4191,22 +4215,10 @@ FAIL manual-tests/offlineMode.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.568 s
+Time:        6.91 s
 Ran all test suites matching /home/runner/workspace/manual-tests/offlineMode.test.ts.
 FAIL manual-tests/offlineMode.test.ts
   ● Test suite failed to run
@@ -4244,7 +4256,7 @@ FAIL manual-tests/offlineMode.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.259 s
+Time:        4.041 s
 Ran all test suites matching /home/runner/workspace/manual-tests/offlineMode.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4263,7 +4275,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19540ms
+### Duration: 23038ms
 
 ---
 
@@ -4304,10 +4316,22 @@ FAIL manual-tests/performance.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.054 s
+Time:        4.265 s
 Ran all test suites matching /home/runner/workspace/manual-tests/performance.test.ts.
 FAIL manual-tests/performance.test.ts
   ● Test suite failed to run
@@ -4342,22 +4366,10 @@ FAIL manual-tests/performance.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.1 s
+Time:        4.25 s
 Ran all test suites matching /home/runner/workspace/manual-tests/performance.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4376,7 +4388,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21783ms
+### Duration: 21906ms
 
 ---
 
@@ -4417,22 +4429,10 @@ FAIL manual-tests/qtests-dogfood.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.234 s
+Time:        6.162 s
 Ran all test suites matching /home/runner/workspace/manual-tests/qtests-dogfood.test.ts.
 FAIL manual-tests/qtests-dogfood.test.ts
   ● Test suite failed to run
@@ -4467,10 +4467,22 @@ FAIL manual-tests/qtests-dogfood.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.357 s
+Time:        4.432 s
 Ran all test suites matching /home/runner/workspace/manual-tests/qtests-dogfood.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4489,7 +4501,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22834ms
+### Duration: 20934ms
 
 ---
 
@@ -4530,22 +4542,10 @@ FAIL manual-tests/resolveStubPaths.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.801 s
+Time:        5.848 s
 Ran all test suites matching /home/runner/workspace/manual-tests/resolveStubPaths.test.ts.
 FAIL manual-tests/resolveStubPaths.test.ts
   ● Test suite failed to run
@@ -4580,10 +4580,34 @@ FAIL manual-tests/resolveStubPaths.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.822 s
+Time:        5.681 s
 Ran all test suites matching /home/runner/workspace/manual-tests/resolveStubPaths.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4602,7 +4626,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20773ms
+### Duration: 20093ms
 
 ---
 
@@ -4646,7 +4670,7 @@ FAIL manual-tests/runTestSuite.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.121 s
+Time:        5.912 s
 Ran all test suites matching /home/runner/workspace/manual-tests/runTestSuite.test.ts.
 FAIL manual-tests/runTestSuite.test.ts
   ● Test suite failed to run
@@ -4684,7 +4708,7 @@ FAIL manual-tests/runTestSuite.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.488 s
+Time:        4.302 s
 Ran all test suites matching /home/runner/workspace/manual-tests/runTestSuite.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4703,7 +4727,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21763ms
+### Duration: 22871ms
 
 ---
 
@@ -4747,7 +4771,7 @@ FAIL manual-tests/safeSerialize.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.249 s
+Time:        6.775 s
 Ran all test suites matching /home/runner/workspace/manual-tests/safeSerialize.test.ts.
 FAIL manual-tests/safeSerialize.test.ts
   ● Test suite failed to run
@@ -4785,7 +4809,7 @@ FAIL manual-tests/safeSerialize.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.185 s
+Time:        5.498 s
 Ran all test suites matching /home/runner/workspace/manual-tests/safeSerialize.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4804,7 +4828,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23023ms
+### Duration: 21546ms
 
 ---
 
@@ -4845,6 +4869,18 @@ FAIL manual-tests/sendEmail.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
@@ -4886,7 +4922,7 @@ FAIL manual-tests/sendEmail.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.994 s
+Time:        5.125 s
 Ran all test suites matching /home/runner/workspace/manual-tests/sendEmail.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4905,7 +4941,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21825ms
+### Duration: 22821ms
 
 ---
 
@@ -4949,7 +4985,7 @@ FAIL manual-tests/setupMultiple.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.973 s
+Time:        5.821 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupMultiple.test.ts.
 FAIL manual-tests/setupMultiple.test.ts
   ● Test suite failed to run
@@ -4987,7 +5023,7 @@ FAIL manual-tests/setupMultiple.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.768 s
+Time:        5.168 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupMultiple.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5006,7 +5042,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20880ms
+### Duration: 21681ms
 
 ---
 
@@ -5047,22 +5083,10 @@ FAIL manual-tests/setupResolution.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.765 s
+Time:        6.204 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupResolution.test.ts.
 FAIL manual-tests/setupResolution.test.ts
   ● Test suite failed to run
@@ -5097,22 +5121,10 @@ FAIL manual-tests/setupResolution.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.876 s
+Time:        5.279 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupResolution.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5131,7 +5143,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 14997ms
+### Duration: 19570ms
 
 ---
 
@@ -5172,10 +5184,34 @@ FAIL manual-tests/stubMethod.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.976 s
+Time:        4.111 s
 Ran all test suites matching /home/runner/workspace/manual-tests/stubMethod.test.ts.
 FAIL manual-tests/stubMethod.test.ts
   ● Test suite failed to run
@@ -5213,7 +5249,7 @@ FAIL manual-tests/stubMethod.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.615 s
+Time:        5.394 s
 Ran all test suites matching /home/runner/workspace/manual-tests/stubMethod.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5232,7 +5268,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18076ms
+### Duration: 19963ms
 
 ---
 
@@ -5276,7 +5312,7 @@ FAIL manual-tests/testEnv.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.34 s
+Time:        4.095 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testEnv.test.ts.
 FAIL manual-tests/testEnv.test.ts
   ● Test suite failed to run
@@ -5314,7 +5350,7 @@ FAIL manual-tests/testEnv.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.625 s
+Time:        6.832 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testEnv.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5333,7 +5369,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18746ms
+### Duration: 19005ms
 
 ---
 
@@ -5377,7 +5413,7 @@ FAIL manual-tests/testGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.519 s
+Time:        4.878 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testGenerator.test.ts.
 FAIL manual-tests/testGenerator.test.ts
   ● Test suite failed to run
@@ -5415,7 +5451,7 @@ FAIL manual-tests/testGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.854 s
+Time:        3.934 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testGenerator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5434,7 +5470,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19119ms
+### Duration: 20204ms
 
 ---
 
@@ -5475,22 +5511,10 @@ FAIL manual-tests/testHelpers.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.432 s
+Time:        4.008 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testHelpers.test.ts.
 FAIL manual-tests/testHelpers.test.ts
   ● Test suite failed to run
@@ -5528,7 +5552,7 @@ FAIL manual-tests/testHelpers.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.518 s
+Time:        5.327 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testHelpers.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5547,7 +5571,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19428ms
+### Duration: 19388ms
 
 ---
 
@@ -5588,34 +5612,10 @@ FAIL manual-tests/testSuite.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.502 s
+Time:        5.474 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testSuite.test.ts.
 FAIL manual-tests/testSuite.test.ts
   ● Test suite failed to run
@@ -5653,7 +5653,7 @@ FAIL manual-tests/testSuite.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.01 s
+Time:        4.069 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testSuite.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5672,7 +5672,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19510ms
+### Duration: 20109ms
 
 ---
 
@@ -5716,7 +5716,7 @@ FAIL ./setup.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.696 s
+Time:        7.151 s
 Ran all test suites matching /home/runner/workspace/setup.test.ts.
 FAIL ./setup.test.ts
   ● Test suite failed to run
@@ -5754,7 +5754,7 @@ FAIL ./setup.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.439 s
+Time:        3.687 s
 Ran all test suites matching /home/runner/workspace/setup.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5773,7 +5773,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19507ms
+### Duration: 20492ms
 
 ---
 
@@ -5814,10 +5814,22 @@ FAIL utils/email/emailFormatter.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.239 s
+Time:        6.716 s
 Ran all test suites matching /home/runner/workspace/utils/email/emailFormatter.test.ts.
 FAIL utils/email/emailFormatter.test.ts
   ● Test suite failed to run
@@ -5855,7 +5867,7 @@ FAIL utils/email/emailFormatter.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.671 s
+Time:        4.71 s
 Ran all test suites matching /home/runner/workspace/utils/email/emailFormatter.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5874,7 +5886,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18025ms
+### Duration: 20114ms
 
 ---
 
@@ -5915,10 +5927,22 @@ FAIL utils/email/emailHistory.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.012 s
+Time:        4.942 s
 Ran all test suites matching /home/runner/workspace/utils/email/emailHistory.test.ts.
 FAIL utils/email/emailHistory.test.ts
   ● Test suite failed to run
@@ -5956,7 +5980,7 @@ FAIL utils/email/emailHistory.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.804 s
+Time:        5.886 s
 Ran all test suites matching /home/runner/workspace/utils/email/emailHistory.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -5975,7 +5999,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20186ms
+### Duration: 19008ms
 
 ---
 
@@ -6019,7 +6043,7 @@ FAIL utils/email/emailSender.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.331 s
+Time:        5.798 s
 Ran all test suites matching /home/runner/workspace/utils/email/emailSender.test.ts.
 FAIL utils/email/emailSender.test.ts
   ● Test suite failed to run
@@ -6057,7 +6081,7 @@ FAIL utils/email/emailSender.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.114 s
+Time:        3.501 s
 Ran all test suites matching /home/runner/workspace/utils/email/emailSender.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -6076,7 +6100,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19441ms
+### Duration: 20168ms
 
 ---
 
@@ -6117,22 +6141,10 @@ FAIL utils/email/emailTemplate.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.883 s
+Time:        3.899 s
 Ran all test suites matching /home/runner/workspace/utils/email/emailTemplate.test.ts.
 FAIL utils/email/emailTemplate.test.ts
   ● Test suite failed to run
@@ -6170,7 +6182,7 @@ FAIL utils/email/emailTemplate.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.744 s
+Time:        4.661 s
 Ran all test suites matching /home/runner/workspace/utils/email/emailTemplate.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -6189,7 +6201,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19492ms
+### Duration: 18799ms
 
 ---
 
@@ -6233,173 +6245,9 @@ FAIL utils/email/emailValidator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.819 s
+Time:        4.782 s
 Ran all test suites matching /home/runner/workspace/utils/email/emailValidator.test.ts.
 FAIL utils/email/emailValidator.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.187 s
-Ran all test suites matching /home/runner/workspace/utils/email/emailValidator.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/email/emailValidator.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 19374ms
-
----
-
-## Failed Test 61: /home/runner/workspace/utils/helpers/consoleMocker.test.ts
-
-### Output:
-```
-FAIL utils/helpers/consoleMocker.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.099 s
-Ran all test suites matching /home/runner/workspace/utils/helpers/consoleMocker.test.ts.
-FAIL utils/helpers/consoleMocker.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        3.31 s
-Ran all test suites matching /home/runner/workspace/utils/helpers/consoleMocker.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/helpers/consoleMocker.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 19647ms
-
----
-
-## Failed Test 62: /home/runner/workspace/utils/helpers/envManager.test.ts
-
-### Output:
-```
-FAIL utils/helpers/envManager.test.ts
   ● Test suite failed to run
 
     Jest encountered an unexpected token
@@ -6447,7 +6295,183 @@ Unable to check memory usage Error: write EPIPE
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.911 s
+Time:        3.334 s
+Ran all test suites matching /home/runner/workspace/utils/email/emailValidator.test.ts.
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/email/emailValidator.test.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
+    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 19392ms
+
+---
+
+## Failed Test 61: /home/runner/workspace/utils/helpers/consoleMocker.test.ts
+
+### Output:
+```
+FAIL utils/helpers/consoleMocker.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.288 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/consoleMocker.test.ts.
+FAIL utils/helpers/consoleMocker.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.609 s
+Ran all test suites matching /home/runner/workspace/utils/helpers/consoleMocker.test.ts.
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/helpers/consoleMocker.test.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
+    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 19466ms
+
+---
+
+## Failed Test 62: /home/runner/workspace/utils/helpers/envManager.test.ts
+
+### Output:
+```
+FAIL utils/helpers/envManager.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.086 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/envManager.test.ts.
 FAIL utils/helpers/envManager.test.ts
   ● Test suite failed to run
@@ -6485,7 +6509,7 @@ FAIL utils/helpers/envManager.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.73 s
+Time:        5.365 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/envManager.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -6504,7 +6528,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19283ms
+### Duration: 19587ms
 
 ---
 
@@ -6548,7 +6572,7 @@ FAIL utils/helpers/keyGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.224 s
+Time:        6.483 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/keyGenerator.test.ts.
 FAIL utils/helpers/keyGenerator.test.ts
   ● Test suite failed to run
@@ -6586,7 +6610,7 @@ FAIL utils/helpers/keyGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.071 s
+Time:        3.762 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/keyGenerator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -6605,7 +6629,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21266ms
+### Duration: 21040ms
 
 ---
 
@@ -6649,7 +6673,7 @@ FAIL utils/helpers/moduleReloader.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.476 s
+Time:        6.37 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/moduleReloader.test.ts.
 FAIL utils/helpers/moduleReloader.test.ts
   ● Test suite failed to run
@@ -6687,7 +6711,7 @@ FAIL utils/helpers/moduleReloader.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.943 s
+Time:        4.936 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/moduleReloader.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -6706,7 +6730,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23273ms
+### Duration: 20324ms
 
 ---
 
@@ -6747,10 +6771,22 @@ FAIL utils/helpers/qerrorsStub.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.051 s
+Time:        4.15 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/qerrorsStub.test.ts.
 FAIL utils/helpers/qerrorsStub.test.ts
   ● Test suite failed to run
@@ -6788,7 +6824,7 @@ FAIL utils/helpers/qerrorsStub.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.033 s
+Time:        5.558 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/qerrorsStub.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -6807,7 +6843,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22765ms
+### Duration: 17857ms
 
 ---
 
@@ -6848,34 +6884,10 @@ FAIL utils/helpers/responseMocker.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.934 s
+Time:        5.398 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/responseMocker.test.ts.
 FAIL utils/helpers/responseMocker.test.ts
   ● Test suite failed to run
@@ -6913,7 +6925,7 @@ FAIL utils/helpers/responseMocker.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.3 s
+Time:        4.923 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/responseMocker.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -6932,7 +6944,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19554ms
+### Duration: 20711ms
 
 ---
 
@@ -6976,7 +6988,7 @@ FAIL utils/httpTest.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.92 s
+Time:        4.666 s
 Ran all test suites matching /home/runner/workspace/utils/httpTest.test.ts.
 FAIL utils/httpTest.test.ts
   ● Test suite failed to run
@@ -7014,7 +7026,7 @@ FAIL utils/httpTest.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.627 s
+Time:        6.712 s
 Ran all test suites matching /home/runner/workspace/utils/httpTest.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -7033,7 +7045,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22843ms
+### Duration: 20258ms
 
 ---
 
@@ -7041,44 +7053,6 @@ Node.js v20.19.3
 
 ### Output:
 ```
-FAIL utils/mockAxios.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.038 s
-Ran all test suites matching /home/runner/workspace/utils/mockAxios.test.ts.
 FAIL utils/mockAxios.test.ts
   ● Test suite failed to run
 
@@ -7127,7 +7101,45 @@ Unable to check memory usage Error: write EPIPE
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.36 s
+Time:        4.106 s
+Ran all test suites matching /home/runner/workspace/utils/mockAxios.test.ts.
+FAIL utils/mockAxios.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.097 s
 Ran all test suites matching /home/runner/workspace/utils/mockAxios.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -7146,7 +7158,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20562ms
+### Duration: 18750ms
 
 ---
 
@@ -7190,7 +7202,7 @@ FAIL utils/mockConsole.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.125 s
+Time:        6.19 s
 Ran all test suites matching /home/runner/workspace/utils/mockConsole.test.ts.
 FAIL utils/mockConsole.test.ts
   ● Test suite failed to run
@@ -7228,7 +7240,7 @@ FAIL utils/mockConsole.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.411 s
+Time:        3.335 s
 Ran all test suites matching /home/runner/workspace/utils/mockConsole.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -7247,7 +7259,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20875ms
+### Duration: 20515ms
 
 ---
 
@@ -7291,7 +7303,7 @@ FAIL utils/mockModels.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.275 s
+Time:        4.998 s
 Ran all test suites matching /home/runner/workspace/utils/mockModels.test.ts.
 FAIL utils/mockModels.test.ts
   ● Test suite failed to run
@@ -7329,7 +7341,7 @@ FAIL utils/mockModels.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.865 s
+Time:        4.672 s
 Ran all test suites matching /home/runner/workspace/utils/mockModels.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -7348,7 +7360,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22086ms
+### Duration: 20974ms
 
 ---
 
@@ -7392,7 +7404,7 @@ FAIL utils/models/apiKeyModel.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.324 s
+Time:        4.819 s
 Ran all test suites matching /home/runner/workspace/utils/models/apiKeyModel.test.ts.
 FAIL utils/models/apiKeyModel.test.ts
   ● Test suite failed to run
@@ -7430,7 +7442,7 @@ FAIL utils/models/apiKeyModel.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.58 s
+Time:        4.99 s
 Ran all test suites matching /home/runner/workspace/utils/models/apiKeyModel.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -7449,7 +7461,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21442ms
+### Duration: 21079ms
 
 ---
 
@@ -7493,7 +7505,7 @@ FAIL utils/models/apiLogModel.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.046 s
+Time:        6.563 s
 Ran all test suites matching /home/runner/workspace/utils/models/apiLogModel.test.ts.
 FAIL utils/models/apiLogModel.test.ts
   ● Test suite failed to run
@@ -7531,7 +7543,7 @@ FAIL utils/models/apiLogModel.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.649 s
+Time:        6.259 s
 Ran all test suites matching /home/runner/workspace/utils/models/apiLogModel.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -7550,7 +7562,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23291ms
+### Duration: 20602ms
 
 ---
 
@@ -7559,6 +7571,347 @@ Node.js v20.19.3
 ### Output:
 ```
 FAIL utils/models/baseMockModel.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.85 s
+Ran all test suites matching /home/runner/workspace/utils/models/baseMockModel.test.ts.
+FAIL utils/models/baseMockModel.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.136 s
+Ran all test suites matching /home/runner/workspace/utils/models/baseMockModel.test.ts.
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/models/baseMockModel.test.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
+    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 20789ms
+
+---
+
+## Failed Test 74: /home/runner/workspace/utils/models/modelFactory.test.ts
+
+### Output:
+```
+FAIL utils/models/modelFactory.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.96 s
+Ran all test suites matching /home/runner/workspace/utils/models/modelFactory.test.ts.
+FAIL utils/models/modelFactory.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        7.368 s
+Ran all test suites matching /home/runner/workspace/utils/models/modelFactory.test.ts.
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/models/modelFactory.test.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
+    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 20528ms
+
+---
+
+## Failed Test 75: /home/runner/workspace/utils/offlineMode.test.ts
+
+### Output:
+```
+FAIL utils/offlineMode.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        6.061 s
+Ran all test suites matching /home/runner/workspace/utils/offlineMode.test.ts.
+FAIL utils/offlineMode.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        4.371 s
+Ran all test suites matching /home/runner/workspace/utils/offlineMode.test.ts.
+node:internal/modules/esm/get_format:189
+  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
+        ^
+
+TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/offlineMode.test.ts
+    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
+    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
+    at defaultLoad (node:internal/modules/esm/load:145:22)
+    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
+    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
+  code: 'ERR_UNKNOWN_FILE_EXTENSION'
+}
+
+Node.js v20.19.3
+
+```
+
+### Duration: 19112ms
+
+---
+
+## Failed Test 76: /home/runner/workspace/utils/runTestSuite.test.ts
+
+### Output:
+```
+FAIL utils/runTestSuite.test.ts
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation, specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/setup.ts:40
+    const require = (0, module_1.createRequire)(import.meta.url);
+          ^
+
+    SyntaxError: Identifier 'require' has already been declared
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
+
+Test Suites: 1 failed, 1 total
+Tests:       0 total
+Snapshots:   0 total
+Time:        5.783 s
+Ran all test suites matching /home/runner/workspace/utils/runTestSuite.test.ts.
+FAIL utils/runTestSuite.test.ts
   ● Test suite failed to run
 
     Jest encountered an unexpected token
@@ -7606,348 +7959,7 @@ Unable to check memory usage Error: write EPIPE
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.349 s
-Ran all test suites matching /home/runner/workspace/utils/models/baseMockModel.test.ts.
-FAIL utils/models/baseMockModel.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.106 s
-Ran all test suites matching /home/runner/workspace/utils/models/baseMockModel.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/models/baseMockModel.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 19492ms
-
----
-
-## Failed Test 74: /home/runner/workspace/utils/models/modelFactory.test.ts
-
-### Output:
-```
-FAIL utils/models/modelFactory.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        5.248 s
-Ran all test suites matching /home/runner/workspace/utils/models/modelFactory.test.ts.
-FAIL utils/models/modelFactory.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        7.403 s
-Ran all test suites matching /home/runner/workspace/utils/models/modelFactory.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/models/modelFactory.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 22825ms
-
----
-
-## Failed Test 75: /home/runner/workspace/utils/offlineMode.test.ts
-
-### Output:
-```
-FAIL utils/offlineMode.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        7.343 s
-Ran all test suites matching /home/runner/workspace/utils/offlineMode.test.ts.
-FAIL utils/offlineMode.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        2.3 s
-Ran all test suites matching /home/runner/workspace/utils/offlineMode.test.ts.
-node:internal/modules/esm/get_format:189
-  throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
-        ^
-
-TypeError [ERR_UNKNOWN_FILE_EXTENSION]: Unknown file extension ".ts" for /home/runner/workspace/utils/offlineMode.test.ts
-    at Object.getFileProtocolModuleFormat [as file:] (node:internal/modules/esm/get_format:189:9)
-    at defaultGetFormat (node:internal/modules/esm/get_format:232:36)
-    at defaultLoad (node:internal/modules/esm/load:145:22)
-    at async ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:477:45)
-    at async ModuleJob._link (node:internal/modules/esm/module_job:110:19) {
-  code: 'ERR_UNKNOWN_FILE_EXTENSION'
-}
-
-Node.js v20.19.3
-
-```
-
-### Duration: 23452ms
-
----
-
-## Failed Test 76: /home/runner/workspace/utils/runTestSuite.test.ts
-
-### Output:
-```
-FAIL utils/runTestSuite.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        4.282 s
-Ran all test suites matching /home/runner/workspace/utils/runTestSuite.test.ts.
-FAIL utils/runTestSuite.test.ts
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation, specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
-
-    SyntaxError: Identifier 'require' has already been declared
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-
-Test Suites: 1 failed, 1 total
-Tests:       0 total
-Snapshots:   0 total
-Time:        6.25 s
+Time:        5.551 s
 Ran all test suites matching /home/runner/workspace/utils/runTestSuite.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -7966,7 +7978,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19645ms
+### Duration: 20087ms
 
 ---
 
@@ -8010,7 +8022,7 @@ FAIL utils/sendEmail.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.686 s
+Time:        4.634 s
 Ran all test suites matching /home/runner/workspace/utils/sendEmail.test.ts.
 FAIL utils/sendEmail.test.ts
   ● Test suite failed to run
@@ -8048,7 +8060,7 @@ FAIL utils/sendEmail.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.701 s
+Time:        5.331 s
 Ran all test suites matching /home/runner/workspace/utils/sendEmail.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8067,7 +8079,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22878ms
+### Duration: 19557ms
 
 ---
 
@@ -8111,7 +8123,7 @@ FAIL utils/stubMethod.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.368 s
+Time:        5.205 s
 Ran all test suites matching /home/runner/workspace/utils/stubMethod.test.ts.
 FAIL utils/stubMethod.test.ts
   ● Test suite failed to run
@@ -8149,7 +8161,7 @@ FAIL utils/stubMethod.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.39 s
+Time:        4.298 s
 Ran all test suites matching /home/runner/workspace/utils/stubMethod.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8168,7 +8180,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 23081ms
+### Duration: 20812ms
 
 ---
 
@@ -8212,7 +8224,7 @@ FAIL utils/testEnv.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.362 s
+Time:        3.867 s
 Ran all test suites matching /home/runner/workspace/utils/testEnv.test.ts.
 FAIL utils/testEnv.test.ts
   ● Test suite failed to run
@@ -8250,7 +8262,7 @@ FAIL utils/testEnv.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.976 s
+Time:        3.419 s
 Ran all test suites matching /home/runner/workspace/utils/testEnv.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8269,7 +8281,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 10756ms
+### Duration: 13935ms
 
 ---
 
@@ -8310,10 +8322,22 @@ FAIL utils/testHelpers.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.074 s
+Time:        2.922 s
 Ran all test suites matching /home/runner/workspace/utils/testHelpers.test.ts.
 FAIL utils/testHelpers.test.ts
   ● Test suite failed to run
@@ -8348,10 +8372,22 @@ FAIL utils/testHelpers.test.ts
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.326 s
+Time:        2.979 s
 Ran all test suites matching /home/runner/workspace/utils/testHelpers.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8370,7 +8406,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 10926ms
+### Duration: 12275ms
 
 ---
 
@@ -8414,7 +8450,7 @@ FAIL utils/testSuite.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.657 s
+Time:        3.93 s
 Ran all test suites matching /home/runner/workspace/utils/testSuite.test.ts.
 FAIL utils/testSuite.test.ts
   ● Test suite failed to run
@@ -8452,7 +8488,7 @@ FAIL utils/testSuite.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.486 s
+Time:        3.444 s
 Ran all test suites matching /home/runner/workspace/utils/testSuite.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8471,7 +8507,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 10004ms
+### Duration: 13075ms
 
 ---
 
@@ -8515,7 +8551,7 @@ FAIL utils/testing/assertionHelper.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.43 s
+Time:        3.576 s
 Ran all test suites matching /home/runner/workspace/utils/testing/assertionHelper.test.ts.
 FAIL utils/testing/assertionHelper.test.ts
   ● Test suite failed to run
@@ -8553,7 +8589,7 @@ FAIL utils/testing/assertionHelper.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.813 s
+Time:        3.61 s
 Ran all test suites matching /home/runner/workspace/utils/testing/assertionHelper.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8572,7 +8608,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 10519ms
+### Duration: 13263ms
 
 ---
 
@@ -8616,7 +8652,7 @@ FAIL utils/testing/databaseTestHelper.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.69 s
+Time:        4.385 s
 Ran all test suites matching /home/runner/workspace/utils/testing/databaseTestHelper.test.ts.
 FAIL utils/testing/databaseTestHelper.test.ts
   ● Test suite failed to run
@@ -8654,7 +8690,7 @@ FAIL utils/testing/databaseTestHelper.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.671 s
+Time:        2.69 s
 Ran all test suites matching /home/runner/workspace/utils/testing/databaseTestHelper.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8673,7 +8709,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 10323ms
+### Duration: 14176ms
 
 ---
 
@@ -8717,7 +8753,7 @@ FAIL utils/testing/mockManager.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.972 s
+Time:        4.22 s
 Ran all test suites matching /home/runner/workspace/utils/testing/mockManager.test.ts.
 FAIL utils/testing/mockManager.test.ts
   ● Test suite failed to run
@@ -8755,7 +8791,7 @@ FAIL utils/testing/mockManager.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.391 s
+Time:        2.78 s
 Ran all test suites matching /home/runner/workspace/utils/testing/mockManager.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8774,7 +8810,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 10687ms
+### Duration: 13194ms
 
 ---
 
@@ -8818,7 +8854,7 @@ FAIL utils/testing/performanceTestHelper.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.623 s
+Time:        4.97 s
 Ran all test suites matching /home/runner/workspace/utils/testing/performanceTestHelper.test.ts.
 FAIL utils/testing/performanceTestHelper.test.ts
   ● Test suite failed to run
@@ -8856,7 +8892,7 @@ FAIL utils/testing/performanceTestHelper.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.476 s
+Time:        3.057 s
 Ran all test suites matching /home/runner/workspace/utils/testing/performanceTestHelper.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8875,7 +8911,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 10786ms
+### Duration: 14027ms
 
 ---
 
@@ -8919,7 +8955,7 @@ FAIL utils/testing/testDataFactory.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.278 s
+Time:        3.556 s
 Ran all test suites matching /home/runner/workspace/utils/testing/testDataFactory.test.ts.
 FAIL utils/testing/testDataFactory.test.ts
   ● Test suite failed to run
@@ -8957,7 +8993,7 @@ FAIL utils/testing/testDataFactory.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.813 s
+Time:        3.524 s
 Ran all test suites matching /home/runner/workspace/utils/testing/testDataFactory.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -8976,7 +9012,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 10160ms
+### Duration: 13695ms
 
 ---
 
@@ -8984,4 +9020,4 @@ Node.js v20.19.3
 
 - Total failed tests: 86
 - Failed test files: /home/runner/workspace/generated-tests/example__get.test.ts, /home/runner/workspace/generated-tests/example__post.test.ts, /home/runner/workspace/generated-tests/example__put.test.ts, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js, /home/runner/workspace/generated-tests/integration/example.test.ts, /home/runner/workspace/generated-tests/integration/example__get.test.js, /home/runner/workspace/generated-tests/integration/example__get.test.ts, /home/runner/workspace/generated-tests/integration/example__post.test.js, /home/runner/workspace/generated-tests/integration/example__post.test.ts, /home/runner/workspace/generated-tests/integration/example__put.test.js, /home/runner/workspace/generated-tests/integration/example__put.test.ts, /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts, /home/runner/workspace/index.test.ts, /home/runner/workspace/lib/coreUtils.test.ts, /home/runner/workspace/lib/dataUtils.test.ts, /home/runner/workspace/lib/envUtils.test.ts, /home/runner/workspace/lib/httpUtils.test.ts, /home/runner/workspace/lib/logUtils.test.ts, /home/runner/workspace/lib/setup.test.ts, /home/runner/workspace/lib/stubs.test.ts, /home/runner/workspace/lib/testGenerator.test.ts, /home/runner/workspace/lib/testUtils.test.ts, /home/runner/workspace/manual-tests/axiosStub.test.ts, /home/runner/workspace/manual-tests/comprehensive.test.ts, /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts, /home/runner/workspace/manual-tests/edgeCases.test.ts, /home/runner/workspace/manual-tests/httpTest.test.ts, /home/runner/workspace/manual-tests/indexExports.test.ts, /home/runner/workspace/manual-tests/integration.test.ts, /home/runner/workspace/manual-tests/logUtils.test.ts, /home/runner/workspace/manual-tests/mockAxios.test.ts, /home/runner/workspace/manual-tests/mockConsole.test.ts, /home/runner/workspace/manual-tests/mockModels.test.ts, /home/runner/workspace/manual-tests/mockUtils.test.ts, /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts, /home/runner/workspace/manual-tests/offlineIntegration.test.ts, /home/runner/workspace/manual-tests/offlineMode.test.ts, /home/runner/workspace/manual-tests/performance.test.ts, /home/runner/workspace/manual-tests/qtests-dogfood.test.ts, /home/runner/workspace/manual-tests/resolveStubPaths.test.ts, /home/runner/workspace/manual-tests/runTestSuite.test.ts, /home/runner/workspace/manual-tests/safeSerialize.test.ts, /home/runner/workspace/manual-tests/sendEmail.test.ts, /home/runner/workspace/manual-tests/setupMultiple.test.ts, /home/runner/workspace/manual-tests/setupResolution.test.ts, /home/runner/workspace/manual-tests/stubMethod.test.ts, /home/runner/workspace/manual-tests/testEnv.test.ts, /home/runner/workspace/manual-tests/testGenerator.test.ts, /home/runner/workspace/manual-tests/testHelpers.test.ts, /home/runner/workspace/manual-tests/testSuite.test.ts, /home/runner/workspace/setup.test.ts, /home/runner/workspace/utils/email/emailFormatter.test.ts, /home/runner/workspace/utils/email/emailHistory.test.ts, /home/runner/workspace/utils/email/emailSender.test.ts, /home/runner/workspace/utils/email/emailTemplate.test.ts, /home/runner/workspace/utils/email/emailValidator.test.ts, /home/runner/workspace/utils/helpers/consoleMocker.test.ts, /home/runner/workspace/utils/helpers/envManager.test.ts, /home/runner/workspace/utils/helpers/keyGenerator.test.ts, /home/runner/workspace/utils/helpers/moduleReloader.test.ts, /home/runner/workspace/utils/helpers/qerrorsStub.test.ts, /home/runner/workspace/utils/helpers/responseMocker.test.ts, /home/runner/workspace/utils/httpTest.test.ts, /home/runner/workspace/utils/mockAxios.test.ts, /home/runner/workspace/utils/mockConsole.test.ts, /home/runner/workspace/utils/mockModels.test.ts, /home/runner/workspace/utils/models/apiKeyModel.test.ts, /home/runner/workspace/utils/models/apiLogModel.test.ts, /home/runner/workspace/utils/models/baseMockModel.test.ts, /home/runner/workspace/utils/models/modelFactory.test.ts, /home/runner/workspace/utils/offlineMode.test.ts, /home/runner/workspace/utils/runTestSuite.test.ts, /home/runner/workspace/utils/sendEmail.test.ts, /home/runner/workspace/utils/stubMethod.test.ts, /home/runner/workspace/utils/testEnv.test.ts, /home/runner/workspace/utils/testHelpers.test.ts, /home/runner/workspace/utils/testSuite.test.ts, /home/runner/workspace/utils/testing/assertionHelper.test.ts, /home/runner/workspace/utils/testing/databaseTestHelper.test.ts, /home/runner/workspace/utils/testing/mockManager.test.ts, /home/runner/workspace/utils/testing/performanceTestHelper.test.ts, /home/runner/workspace/utils/testing/testDataFactory.test.ts
-- Generated: 2025-09-01T10:24:26.785Z
+- Generated: 2025-09-01T10:32:19.500Z
