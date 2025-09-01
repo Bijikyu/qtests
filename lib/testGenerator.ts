@@ -583,13 +583,13 @@ afterEach(() => {
       if (fs.existsSync(templatePath)) {
         template = fs.readFileSync(templatePath, 'utf8');
       } else {
-        // Fallback template for TypeScript ES modules
+        // Fallback template for TypeScript ES modules with correct Jest configuration
         template = `
 // Generated qtests runner - TypeScript ES module compatible
 import { spawn } from 'child_process';
 import path from 'path';
 
-// Run tests with TypeScript support
+// Run tests with TypeScript support and correct Jest arguments
 const args = process.argv.slice(2);
 const testProcess = spawn('jest', args, {
   stdio: 'inherit',
@@ -602,18 +602,18 @@ testProcess.on('exit', (code) => {
 `.trim();
       }
 
-      // Always overwrite qtests-runner.js to ensure latest functionality
-      const outputPath = path.join(process.cwd(), 'qtests-runner.js');
+      // Always overwrite qtests-runner.ts to ensure latest functionality and TypeScript compliance
+      const outputPath = path.join(process.cwd(), 'qtests-runner.ts');
       fs.writeFileSync(outputPath, template, 'utf8');
       
-      console.log('✅ Generated qtests-runner.js for TypeScript ES modules');
+      console.log('✅ Generated qtests-runner.ts for TypeScript ES modules');
     } catch (error: any) {
-      console.error('Failed to generate qtests-runner.js:', error.message);
+      console.error('Failed to generate qtests-runner.ts:', error.message);
     }
   }
 
   /**
-   * Update package.json test script to use qtests-runner.js
+   * Update package.json test script to use qtests-runner.ts
    */
   updatePackageJsonTestScript(): void {
     try {
@@ -629,10 +629,10 @@ testProcess.on('exit', (code) => {
         packageJson.scripts = {};
       }
       
-      packageJson.scripts.test = 'node qtests-runner.js';
+      packageJson.scripts.test = 'npx tsx qtests-runner.ts';
       
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2), 'utf8');
-      console.log('✅ Updated package.json test script to use qtests-runner.js');
+      console.log('✅ Updated package.json test script to use qtests-runner.ts');
     } catch (error: any) {
       console.log('⚠️  Could not update package.json:', error.message);
     }

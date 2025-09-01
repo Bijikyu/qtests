@@ -25,6 +25,10 @@ author = "agent"
 task = "workflow.run"
 args = "Generate Tests"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Test Suite"
+
 [[workflows.workflow]]
 name = "Generate Tests"
 author = "agent"
@@ -32,6 +36,17 @@ author = "agent"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node bin/qtests-generate"
+
+[[workflows.workflow]]
+name = "Test Suite"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx tsx qtests-runner.ts"
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [[ports]]
 localPort = 32833
