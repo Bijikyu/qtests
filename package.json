@@ -5,11 +5,11 @@
   "type": "module",
   "main": "index.ts",
   "bin": {
-    "qtests-runner": "./bin/qtests-ts-runner",
-    "qtests-generate": "./bin/qtests-ts-generate"
+    "qtests-ts-runner": "./bin/qtests-ts-runner",
+    "qtests-ts-generate": "./bin/qtests-ts-generate"
   },
   "scripts": {
-    "test": "npx tsx qtests-runner.ts"
+    "test": "npx tsx qtests-ts-runner.ts"
   },
   "keywords": [
     "testing",
