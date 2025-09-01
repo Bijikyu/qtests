@@ -2,7 +2,7 @@
 let server;
 
 beforeAll(async () => {
-  const app = require('../src/app').default || require('../src/app');
+  import app from '../src/app'.default || require('../src/app');
   server = app.listen(4000, () => console.log('Test server started'));
 });
 

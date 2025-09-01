@@ -29,12 +29,9 @@
 // Import Node.js Module constructor for accessing module resolution internals
 // This gives us access to the private _resolveFilename method that controls
 // how Node.js resolves module names to file paths
-import { createRequire } from 'module';
+import Module from 'module';
 import path from 'path';
 import { fileURLToPath } from 'url';
-
-const require = createRequire(import.meta.url);
-const Module = require('module');
 
 // Get current directory for ES modules
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -66,10 +63,10 @@ const separator = process.platform === 'win32' ? ';' : ':';
 process.env.NODE_PATH = stubsPath + (currentNodePath ? separator + currentNodePath : '');
 
 // Force Node.js to recognize the updated NODE_PATH for dynamic module resolution
-Module._initPaths();
+(Module as any)._initPaths();
 
 // Store original Module._load function for delegation to maintain normal module loading behavior
-const origLoad = Module._load;
+const origLoad = (Module as any)._load;
 
 /**
  * Enhanced Module._load replacement that handles stub substitution
@@ -77,7 +74,7 @@ const origLoad = Module._load;
  * This function intercepts all module loading requests and redirects known
  * modules to their stub implementations when appropriate.
  */
-Module._load = function(id: string, parent: any, isMain?: boolean): any {
+(Module as any)._load = function(id: string, parent: any, isMain?: boolean): any {
   // Check if this module should be stubbed
   if (STUB_REGISTRY[id]) {
     const stubPath = path.join(stubsPath, STUB_REGISTRY[id]);

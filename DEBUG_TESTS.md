@@ -27,7 +27,7 @@ Analyze and address the following test failures:
       at Object.supertest (utils/httpTest.ts:61:13)
 
   console.log
-    Test is running with get /api/status?testSession=169397402963892-cfzo16xon
+    Test is running with get /api/status?testSession=169660579102403-nvde4mm5k
 
       at new Test (utils/httpTest.ts:96:13)
 
@@ -75,7 +75,7 @@ FAIL generated-tests/example__get.test.ts
       at Object.supertest (utils/httpTest.ts:61:13)
 
     console.log
-      Test is running with get /api/status?testSession=169387436952994-wxemlalcg
+      Test is running with get /api/status?testSession=169649654403186-qyz4fop2e
 
       at new Test (utils/httpTest.ts:96:13)
 
@@ -99,7 +99,7 @@ FAIL generated-tests/example__get.test.ts
 
       at Test.expect (utils/httpTest.ts:144:15)
 
-  ● GET /api/status [API-169387436952994-wxemlalcg] › should succeed with unique test data
+  ● GET /api/status [API-169649654403186-qyz4fop2e] › should succeed with unique test data
 
     expect(received).toBe(expected) // Object.is equality
 
@@ -119,13 +119,13 @@ FAIL generated-tests/example__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.436 s
+Time:        5.904 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__get.test.ts.
 FAIL generated-tests/example__get.test.ts
-  GET /api/status [API-169397402963892-cfzo16xon]
-    ✕ should succeed with unique test data (480 ms)
+  GET /api/status [API-169660579102403-nvde4mm5k]
+    ✕ should succeed with unique test data (160 ms)
 
-  ● GET /api/status [API-169397402963892-cfzo16xon] › should succeed with unique test data
+  ● GET /api/status [API-169660579102403-nvde4mm5k] › should succeed with unique test data
 
     expect(received).toBe(expected) // Object.is equality
 
@@ -145,7 +145,7 @@ FAIL generated-tests/example__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.85 s
+Time:        4.213 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -164,7 +164,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21276ms
+### Duration: 24243ms
 
 ---
 
@@ -193,7 +193,7 @@ Node.js v20.19.3
       at Object.supertest (utils/httpTest.ts:61:13)
 
   console.log
-    Test is running with post /api/users?testSession=169398318389979-oxwmhqd3h
+    Test is running with post /api/users?testSession=169660792492014-fagh3grqx
 
       at new Test (utils/httpTest.ts:96:13)
 
@@ -241,7 +241,7 @@ FAIL generated-tests/example__post.test.ts
       at Object.supertest (utils/httpTest.ts:61:13)
 
     console.log
-      Test is running with post /api/users?testSession=169389032267310-mnri9p6ht
+      Test is running with post /api/users?testSession=169650980707295-80wfb9mt5
 
       at new Test (utils/httpTest.ts:96:13)
 
@@ -265,7 +265,7 @@ FAIL generated-tests/example__post.test.ts
 
       at Test.expect (utils/httpTest.ts:144:15)
 
-  ● POST /api/users [API-169389032267310-mnri9p6ht] › should succeed with unique test data
+  ● POST /api/users [API-169650980707295-80wfb9mt5] › should succeed with unique test data
 
     expect(received).toBe(expected) // Object.is equality
 
@@ -285,13 +285,13 @@ FAIL generated-tests/example__post.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        8.452 s
+Time:        9.447 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__post.test.ts.
 FAIL generated-tests/example__post.test.ts
-  POST /api/users [API-169398318389979-oxwmhqd3h]
-    ✕ should succeed with unique test data (151 ms)
+  POST /api/users [API-169660792492014-fagh3grqx]
+    ✕ should succeed with unique test data (206 ms)
 
-  ● POST /api/users [API-169398318389979-oxwmhqd3h] › should succeed with unique test data
+  ● POST /api/users [API-169660792492014-fagh3grqx] › should succeed with unique test data
 
     expect(received).toBe(expected) // Object.is equality
 
@@ -311,7 +311,7 @@ FAIL generated-tests/example__post.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.369 s
+Time:        6.01 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__post.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -330,7 +330,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21543ms
+### Duration: 24396ms
 
 ---
 
@@ -359,7 +359,7 @@ Node.js v20.19.3
       at Object.supertest (utils/httpTest.ts:61:13)
 
   console.log
-    Test is running with put /api/users/:id?testSession=169397387189762-cs0dpt1c2
+    Test is running with put /api/users/:id?testSession=169658506362598-0swj3au92
 
       at new Test (utils/httpTest.ts:96:13)
 
@@ -407,7 +407,7 @@ FAIL generated-tests/example__put.test.ts
       at Object.supertest (utils/httpTest.ts:61:13)
 
     console.log
-      Test is running with put /api/users/:id?testSession=169388458682886-0b0iar7y9
+      Test is running with put /api/users/:id?testSession=169648301936558-2i7at4ihq
 
       at new Test (utils/httpTest.ts:96:13)
 
@@ -431,7 +431,7 @@ FAIL generated-tests/example__put.test.ts
 
       at Test.expect (utils/httpTest.ts:144:15)
 
-  ● PUT /api/users/:id [API-169388458682886-0b0iar7y9] › should succeed with unique test data
+  ● PUT /api/users/:id [API-169648301936558-2i7at4ihq] › should succeed with unique test data
 
     expect(received).toBe(expected) // Object.is equality
 
@@ -448,16 +448,28 @@ FAIL generated-tests/example__put.test.ts
 
       at Object.<anonymous> (generated-tests/example__put.test.ts:37:30)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        8.392 s
+Time:        5.896 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__put.test.ts.
 FAIL generated-tests/example__put.test.ts
-  PUT /api/users/:id [API-169397387189762-cs0dpt1c2]
-    ✕ should succeed with unique test data (249 ms)
+  PUT /api/users/:id [API-169658506362598-0swj3au92]
+    ✕ should succeed with unique test data (168 ms)
 
-  ● PUT /api/users/:id [API-169397387189762-cs0dpt1c2] › should succeed with unique test data
+  ● PUT /api/users/:id [API-169658506362598-0swj3au92] › should succeed with unique test data
 
     expect(received).toBe(expected) // Object.is equality
 
@@ -477,7 +489,7 @@ FAIL generated-tests/example__put.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.199 s
+Time:        4.685 s
 Ran all test suites matching /home/runner/workspace/generated-tests/example__put.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -496,7 +508,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21038ms
+### Duration: 22344ms
 
 ---
 
@@ -540,7 +552,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.344 s
+Time:        4.956 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
   ● Test suite failed to run
@@ -578,7 +590,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__delete.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.149 s
+Time:        5.313 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
@@ -601,7 +613,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21084ms
+### Duration: 20206ms
 
 ---
 
@@ -645,7 +657,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.296 s
+Time:        7.663 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
   ● Test suite failed to run
@@ -683,7 +695,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__get.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.204 s
+Time:        6.2 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
@@ -706,7 +718,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19007ms
+### Duration: 24231ms
 
 ---
 
@@ -750,7 +762,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.71 s
+Time:        2.887 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
   ● Test suite failed to run
@@ -788,7 +800,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__patch.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.328 s
+Time:        5.439 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
@@ -811,7 +823,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 15797ms
+### Duration: 18612ms
 
 ---
 
@@ -852,22 +864,10 @@ FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.776 s
+Time:        5.634 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
   ● Test suite failed to run
@@ -905,7 +905,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__post.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.411 s
+Time:        4.9 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
@@ -928,7 +928,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20874ms
+### Duration: 23734ms
 
 ---
 
@@ -972,7 +972,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        8.758 s
+Time:        6.143 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js.
 FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
   ● Test suite failed to run
@@ -1010,7 +1010,7 @@ FAIL generated-tests/integration/demo__src__apiRoutes__put.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.882 s
+Time:        5.605 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
@@ -1033,7 +1033,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22063ms
+### Duration: 23223ms
 
 ---
 
@@ -1090,11 +1090,11 @@ FAIL generated-tests/integration/example.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.51 s
+Time:        5.588 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example.test.ts.
 FAIL generated-tests/integration/example.test.ts
   Example Integration Tests
-    ✕ example integration works (100 ms)
+    ✕ example integration works (229 ms)
 
   ● Example Integration Tests › example integration works
 
@@ -1144,7 +1144,7 @@ FAIL generated-tests/integration/example.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.929 s
+Time:        6.739 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1163,7 +1163,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21288ms
+### Duration: 21843ms
 
 ---
 
@@ -1207,7 +1207,7 @@ FAIL generated-tests/integration/example__get.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.498 s
+Time:        7.412 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.js.
 FAIL generated-tests/integration/example__get.test.js
   ● Test suite failed to run
@@ -1242,22 +1242,10 @@ FAIL generated-tests/integration/example__get.test.js
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.427 s
+Time:        5.363 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
@@ -1280,7 +1268,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 19183ms
+### Duration: 21886ms
 
 ---
 
@@ -1318,7 +1306,7 @@ FAIL generated-tests/integration/example__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.35 s
+Time:        7.527 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.ts.
 FAIL generated-tests/integration/example__get.test.ts
   ● Test suite failed to run
@@ -1350,7 +1338,7 @@ FAIL generated-tests/integration/example__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.167 s
+Time:        5.414 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1369,7 +1357,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 20964ms
+### Duration: 24382ms
 
 ---
 
@@ -1413,7 +1401,7 @@ FAIL generated-tests/integration/example__post.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.56 s
+Time:        7.63 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.js.
 FAIL generated-tests/integration/example__post.test.js
   ● Test suite failed to run
@@ -1451,7 +1439,7 @@ FAIL generated-tests/integration/example__post.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.4 s
+Time:        3.089 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
@@ -1474,7 +1462,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 22051ms
+### Duration: 24376ms
 
 ---
 
@@ -1512,7 +1500,7 @@ FAIL generated-tests/integration/example__post.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.962 s
+Time:        5.673 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.ts.
 FAIL generated-tests/integration/example__post.test.ts
   ● Test suite failed to run
@@ -1544,7 +1532,7 @@ FAIL generated-tests/integration/example__post.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.662 s
+Time:        4.626 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__post.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1563,7 +1551,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21142ms
+### Duration: 22204ms
 
 ---
 
@@ -1607,7 +1595,7 @@ FAIL generated-tests/integration/example__put.test.js
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        7.212 s
+Time:        5.851 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.js.
 FAIL generated-tests/integration/example__put.test.js
   ● Test suite failed to run
@@ -1642,10 +1630,22 @@ FAIL generated-tests/integration/example__put.test.js
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.365 s
+Time:        3.797 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.js.
 node:internal/modules/esm/resolve:283
     throw new ERR_MODULE_NOT_FOUND(
@@ -1668,7 +1668,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21234ms
+### Duration: 20804ms
 
 ---
 
@@ -1706,7 +1706,7 @@ FAIL generated-tests/integration/example__put.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        6.334 s
+Time:        5.707 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.ts.
 FAIL generated-tests/integration/example__put.test.ts
   ● Test suite failed to run
@@ -1735,10 +1735,22 @@ FAIL generated-tests/integration/example__put.test.ts
       at createNoMappedModuleFoundError (node_modules/jest-resolve/build/index.js:1117:17)
       at Object.<anonymous> (generated-tests/integration/example__put.test.ts:8:1)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.219 s
+Time:        7.031 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/example__put.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1757,7 +1769,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21611ms
+### Duration: 23670ms
 
 ---
 
@@ -1795,7 +1807,7 @@ FAIL generated-tests/integration/utils__httpTest__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.82 s
+Time:        8.036 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts.
 FAIL generated-tests/integration/utils__httpTest__get.test.ts
   ● Test suite failed to run
@@ -1827,7 +1839,7 @@ FAIL generated-tests/integration/utils__httpTest__get.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.222 s
+Time:        4.203 s
 Ran all test suites matching /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1846,7 +1858,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 21242ms
+### Duration: 24114ms
 
 ---
 
@@ -1903,11 +1915,11 @@ FAIL ./index.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.956 s
+Time:        6.616 s
 Ran all test suites matching /home/runner/workspace/index.test.ts.
 FAIL ./index.test.ts
   index.ts basic exports
-    ✕ module exports exist (40 ms)
+    ✕ module exports exist (26 ms)
 
   ● index.ts basic exports › module exports exist
 
@@ -1957,7 +1969,7 @@ FAIL ./index.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.837 s
+Time:        2.803 s
 Ran all test suites matching /home/runner/workspace/index.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -1976,7 +1988,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 17126ms
+### Duration: 17926ms
 
 ---
 
@@ -2032,11 +2044,11 @@ FAIL lib/envUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.923 s
+Time:        5.966 s
 Ran all test suites matching /home/runner/workspace/lib/envUtils.test.ts.
 FAIL lib/envUtils.test.ts
   envUtils.ts basic exports
-    ✕ module loads without errors (24 ms)
+    ✕ module loads without errors (42 ms)
 
   ● envUtils.ts basic exports › module loads without errors
 
@@ -2085,7 +2097,7 @@ FAIL lib/envUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.88 s
+Time:        2.778 s
 Ran all test suites matching /home/runner/workspace/lib/envUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2104,7 +2116,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18655ms
+### Duration: 17401ms
 
 ---
 
@@ -2132,11 +2144,11 @@ FAIL lib/stubs.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        7.036 s
+Time:        5.542 s
 Ran all test suites matching /home/runner/workspace/lib/stubs.test.ts.
 FAIL lib/stubs.test.ts
   stubs.ts basic exports
-    ✕ module loads without errors (27 ms)
+    ✕ module loads without errors (11 ms)
 
   ● stubs.ts basic exports › module loads without errors
 
@@ -2157,7 +2169,7 @@ FAIL lib/stubs.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.735 s
+Time:        3.369 s
 Ran all test suites matching /home/runner/workspace/lib/stubs.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2176,7 +2188,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 17864ms
+### Duration: 17782ms
 
 ---
 
@@ -2230,11 +2242,11 @@ FAIL lib/testGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.4 s
+Time:        5.827 s
 Ran all test suites matching /home/runner/workspace/lib/testGenerator.test.ts.
 FAIL lib/testGenerator.test.ts
   testGenerator.ts basic exports
-    ✕ module loads without errors (15 ms)
+    ✕ module loads without errors (17 ms)
 
   ● testGenerator.ts basic exports › module loads without errors
 
@@ -2281,7 +2293,7 @@ FAIL lib/testGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.434 s
+Time:        3.244 s
 Ran all test suites matching /home/runner/workspace/lib/testGenerator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2300,7 +2312,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 17628ms
+### Duration: 17867ms
 
 ---
 
@@ -2356,11 +2368,11 @@ FAIL lib/testUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.794 s
+Time:        4.686 s
 Ran all test suites matching /home/runner/workspace/lib/testUtils.test.ts.
 FAIL lib/testUtils.test.ts
   testUtils.ts basic exports
-    ✕ module loads without errors (16 ms)
+    ✕ module loads without errors (13 ms)
 
   ● testUtils.ts basic exports › module loads without errors
 
@@ -2409,7 +2421,7 @@ FAIL lib/testUtils.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.1 s
+Time:        3.132 s
 Ran all test suites matching /home/runner/workspace/lib/testUtils.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2428,7 +2440,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18579ms
+### Duration: 17737ms
 
 ---
 
@@ -2484,7 +2496,7 @@ FAIL manual-tests/axiosStub.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        5.921 s
+Time:        6.337 s
 Ran all test suites matching /home/runner/workspace/manual-tests/axiosStub.test.ts.
 FAIL manual-tests/axiosStub.test.ts
   ● Test suite failed to run
@@ -2534,7 +2546,7 @@ FAIL manual-tests/axiosStub.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.809 s
+Time:        2.728 s
 Ran all test suites matching /home/runner/workspace/manual-tests/axiosStub.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2553,7 +2565,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18156ms
+### Duration: 17867ms
 
 ---
 
@@ -2610,11 +2622,11 @@ FAIL manual-tests/comprehensive.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.275 s
+Time:        4.793 s
 Ran all test suites matching /home/runner/workspace/manual-tests/comprehensive.test.ts.
 FAIL manual-tests/comprehensive.test.ts
   Comprehensive Tests
-    ✕ comprehensive functionality works (24 ms)
+    ✕ comprehensive functionality works (23 ms)
 
   ● Comprehensive Tests › comprehensive functionality works
 
@@ -2664,7 +2676,7 @@ FAIL manual-tests/comprehensive.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.542 s
+Time:        2.877 s
 Ran all test suites matching /home/runner/workspace/manual-tests/comprehensive.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2683,7 +2695,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18636ms
+### Duration: 16517ms
 
 ---
 
@@ -2737,11 +2749,11 @@ FAIL manual-tests/dualModuleGeneration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.769 s
+Time:        3.817 s
 Ran all test suites matching /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts.
 FAIL manual-tests/dualModuleGeneration.test.ts
   Dual Module Generation Tests
-    ✕ TypeScript ES module generation works (13 ms)
+    ✕ TypeScript ES module generation works (15 ms)
 
   ● Dual Module Generation Tests › TypeScript ES module generation works
 
@@ -2788,7 +2800,7 @@ FAIL manual-tests/dualModuleGeneration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.109 s
+Time:        4.079 s
 Ran all test suites matching /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2807,7 +2819,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 17884ms
+### Duration: 16763ms
 
 ---
 
@@ -2864,11 +2876,11 @@ FAIL manual-tests/edgeCases.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.119 s
+Time:        5.645 s
 Ran all test suites matching /home/runner/workspace/manual-tests/edgeCases.test.ts.
 FAIL manual-tests/edgeCases.test.ts
   Edge Cases Tests
-    ✕ handles edge cases correctly (60 ms)
+    ✕ handles edge cases correctly (27 ms)
 
   ● Edge Cases Tests › handles edge cases correctly
 
@@ -2918,7 +2930,7 @@ FAIL manual-tests/edgeCases.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.882 s
+Time:        3.597 s
 Ran all test suites matching /home/runner/workspace/manual-tests/edgeCases.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -2937,7 +2949,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18507ms
+### Duration: 17818ms
 
 ---
 
@@ -2994,11 +3006,11 @@ FAIL manual-tests/indexExports.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.164 s
+Time:        4.038 s
 Ran all test suites matching /home/runner/workspace/manual-tests/indexExports.test.ts.
 FAIL manual-tests/indexExports.test.ts
   Index Exports Tests
-    ✕ index exports are available (24 ms)
+    ✕ index exports are available (68 ms)
 
   ● Index Exports Tests › index exports are available
 
@@ -3048,7 +3060,7 @@ FAIL manual-tests/indexExports.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        3.009 s
+Time:        2.986 s
 Ran all test suites matching /home/runner/workspace/manual-tests/indexExports.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3067,7 +3079,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 18203ms
+### Duration: 15699ms
 
 ---
 
@@ -3124,11 +3136,11 @@ FAIL manual-tests/integration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.287 s
+Time:        5.143 s
 Ran all test suites matching /home/runner/workspace/manual-tests/integration.test.ts.
 FAIL manual-tests/integration.test.ts
   Integration Tests
-    ✕ core modules integrate correctly (23 ms)
+    ✕ core modules integrate correctly (28 ms)
 
   ● Integration Tests › core modules integrate correctly
 
@@ -3178,7 +3190,7 @@ FAIL manual-tests/integration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.056 s
+Time:        2.113 s
 Ran all test suites matching /home/runner/workspace/manual-tests/integration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3197,7 +3209,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 13780ms
+### Duration: 15718ms
 
 ---
 
@@ -3251,7 +3263,7 @@ FAIL manual-tests/mockConsole.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.843 s
+Time:        6.019 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockConsole.test.ts.
 FAIL manual-tests/mockConsole.test.ts
   ● Test suite failed to run
@@ -3299,7 +3311,7 @@ FAIL manual-tests/mockConsole.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        2.159 s
+Time:        2.309 s
 Ran all test suites matching /home/runner/workspace/manual-tests/mockConsole.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3318,7 +3330,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 13568ms
+### Duration: 16060ms
 
 ---
 
@@ -3372,38 +3384,14 @@ FAIL manual-tests/moduleSystemIntegration.test.ts
       at manual-tests/moduleSystemIntegration.test.ts:4:17
       at Object.<anonymous> (manual-tests/moduleSystemIntegration.test.ts:4:17)
 
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
-Unable to check memory usage Error: write EPIPE
-    at target._send (node:internal/child_process:878:20)
-    at target.send (node:internal/child_process:751:19)
-    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
-    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
-    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
-    at ChildProcess.emit (node:events:524:28)
-    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
-  errno: -32,
-  code: 'EPIPE',
-  syscall: 'write'
-}
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        6.181 s
+Time:        6.852 s
 Ran all test suites matching /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts.
 FAIL manual-tests/moduleSystemIntegration.test.ts
   Module System Integration Tests
-    ✕ ES module integration works (38 ms)
+    ✕ ES module integration works (29 ms)
 
   ● Module System Integration Tests › ES module integration works
 
@@ -3453,7 +3441,7 @@ FAIL manual-tests/moduleSystemIntegration.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        1.863 s
+Time:        2.138 s
 Ran all test suites matching /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3472,7 +3460,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 14208ms
+### Duration: 15970ms
 
 ---
 
@@ -3529,11 +3517,11 @@ FAIL manual-tests/performance.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.58 s
+Time:        6.916 s
 Ran all test suites matching /home/runner/workspace/manual-tests/performance.test.ts.
 FAIL manual-tests/performance.test.ts
   Performance Tests
-    ✕ performance is acceptable (22 ms)
+    ✕ performance is acceptable (21 ms)
 
   ● Performance Tests › performance is acceptable
 
@@ -3583,7 +3571,7 @@ FAIL manual-tests/performance.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2 s
+Time:        1.822 s
 Ran all test suites matching /home/runner/workspace/manual-tests/performance.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3602,7 +3590,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 14133ms
+### Duration: 16223ms
 
 ---
 
@@ -3611,7 +3599,7 @@ Node.js v20.19.3
 ### Output:
 ```
 FAIL manual-tests/resolveStubPaths.test.ts
-  ● Stub Path Resolution Tests › stubs resolve correctly after setup
+  ● Test suite failed to run
 
     Jest encountered an unexpected token
 
@@ -3635,35 +3623,33 @@ FAIL manual-tests/resolveStubPaths.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/manual-tests/resolveStubPaths.test.ts:44
+            import axios from 'axios';
+            ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
-
-      2 | describe('Stub Path Resolution Tests', () => {
-      3 |   test('stubs resolve correctly after setup', async () => {
-    > 4 |     await import('../setup.js'); // activate stub resolution
-        |     ^
-      5 |     
-      6 |     // Test that stub paths resolve without throwing
-      7 |     expect(() => require('axios')).not.toThrow();
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at manual-tests/resolveStubPaths.test.ts:4:5
-      at Object.<anonymous> (manual-tests/resolveStubPaths.test.ts:4:5)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
-Tests:       1 failed, 1 passed, 2 total
+Tests:       0 total
 Snapshots:   0 total
-Time:        4.691 s
+Time:        5.519 s
 Ran all test suites matching /home/runner/workspace/manual-tests/resolveStubPaths.test.ts.
 FAIL manual-tests/resolveStubPaths.test.ts
-  Stub Path Resolution Tests
-    ✕ stubs resolve correctly after setup (11 ms)
-    ✓ stub modules provide expected interfaces (103 ms)
-
-  ● Stub Path Resolution Tests › stubs resolve correctly after setup
+  ● Test suite failed to run
 
     Jest encountered an unexpected token
 
@@ -3687,28 +3673,18 @@ FAIL manual-tests/resolveStubPaths.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
-          ^
+    /home/runner/workspace/manual-tests/resolveStubPaths.test.ts:44
+            import axios from 'axios';
+            ^^^^^^
 
-    SyntaxError: Identifier 'require' has already been declared
-
-      2 | describe('Stub Path Resolution Tests', () => {
-      3 |   test('stubs resolve correctly after setup', async () => {
-    > 4 |     await import('../setup.js'); // activate stub resolution
-        |     ^
-      5 |     
-      6 |     // Test that stub paths resolve without throwing
-      7 |     expect(() => require('axios')).not.toThrow();
+    SyntaxError: Cannot use import statement outside a module
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
-      at manual-tests/resolveStubPaths.test.ts:4:5
-      at Object.<anonymous> (manual-tests/resolveStubPaths.test.ts:4:5)
 
 Test Suites: 1 failed, 1 total
-Tests:       1 failed, 1 passed, 2 total
+Tests:       0 total
 Snapshots:   0 total
-Time:        1.766 s, estimated 2 s
+Time:        2.192 s
 Ran all test suites matching /home/runner/workspace/manual-tests/resolveStubPaths.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3727,7 +3703,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 14400ms
+### Duration: 16136ms
 
 ---
 
@@ -3760,11 +3736,11 @@ FAIL manual-tests/setupMultiple.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/setup.ts:41
+    const __dirname = path_1.default.dirname((0, url_1.fileURLToPath)(import.meta.url));
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__dirname' has already been declared
 
       1 | // Simplified setup test to prevent child process spawning issues
     > 2 | import '../setup.js'; // activate stub resolution for test environment
@@ -3776,10 +3752,22 @@ FAIL manual-tests/setupMultiple.test.ts
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
       at Object.<anonymous> (manual-tests/setupMultiple.test.ts:2:1)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.081 s
+Time:        7.177 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupMultiple.test.ts.
 FAIL manual-tests/setupMultiple.test.ts
   ● Test suite failed to run
@@ -3806,11 +3794,11 @@ FAIL manual-tests/setupMultiple.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/setup.ts:41
+    const __dirname = path_1.default.dirname((0, url_1.fileURLToPath)(import.meta.url));
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__dirname' has already been declared
 
       1 | // Simplified setup test to prevent child process spawning issues
     > 2 | import '../setup.js'; // activate stub resolution for test environment
@@ -3825,7 +3813,7 @@ FAIL manual-tests/setupMultiple.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.859 s
+Time:        1.704 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupMultiple.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3844,7 +3832,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 13915ms
+### Duration: 16195ms
 
 ---
 
@@ -3877,11 +3865,11 @@ FAIL manual-tests/setupResolution.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/setup.ts:41
+    const __dirname = path_1.default.dirname((0, url_1.fileURLToPath)(import.meta.url));
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__dirname' has already been declared
 
       1 | // Simplified setup resolution test for TypeScript ES modules
     > 2 | import '../setup.js'; // activate stub resolution
@@ -3893,10 +3881,34 @@ FAIL manual-tests/setupResolution.test.ts
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1316:40)
       at Object.<anonymous> (manual-tests/setupResolution.test.ts:2:1)
 
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
+Unable to check memory usage Error: write EPIPE
+    at target._send (node:internal/child_process:878:20)
+    at target.send (node:internal/child_process:751:19)
+    at ChildProcessWorker.checkMemoryUsage (/home/runner/workspace/node_modules/jest-worker/build/index.js:1072:19)
+    at ChildProcessWorker._onProcessEnd (/home/runner/workspace/node_modules/jest-worker/build/index.js:988:16)
+    at ChildProcessWorker._onExit (/home/runner/workspace/node_modules/jest-worker/build/index.js:969:14)
+    at ChildProcess.emit (node:events:524:28)
+    at ChildProcess._handle.onexit (node:internal/child_process:293:12) {
+  errno: -32,
+  code: 'EPIPE',
+  syscall: 'write'
+}
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.29 s
+Time:        5.822 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupResolution.test.ts.
 FAIL manual-tests/setupResolution.test.ts
   ● Test suite failed to run
@@ -3923,11 +3935,11 @@ FAIL manual-tests/setupResolution.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/setup.ts:41
+    const __dirname = path_1.default.dirname((0, url_1.fileURLToPath)(import.meta.url));
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__dirname' has already been declared
 
       1 | // Simplified setup resolution test for TypeScript ES modules
     > 2 | import '../setup.js'; // activate stub resolution
@@ -3942,7 +3954,7 @@ FAIL manual-tests/setupResolution.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.488 s
+Time:        1.477 s
 Ran all test suites matching /home/runner/workspace/manual-tests/setupResolution.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -3961,7 +3973,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 12900ms
+### Duration: 14506ms
 
 ---
 
@@ -3987,10 +3999,10 @@ FAIL manual-tests/stubMethod.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        5.249 s
+Time:        5.584 s
 Ran all test suites matching /home/runner/workspace/manual-tests/stubMethod.test.ts.
 FAIL manual-tests/stubMethod.test.ts
-  ✕ stubMethod replaces and restores methods (3 ms)
+  ✕ stubMethod replaces and restores methods (4 ms)
 
   ● stubMethod replaces and restores methods
 
@@ -4009,7 +4021,7 @@ FAIL manual-tests/stubMethod.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        1.473 s
+Time:        1.624 s
 Ran all test suites matching /home/runner/workspace/manual-tests/stubMethod.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4028,7 +4040,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 12771ms
+### Duration: 14421ms
 
 ---
 
@@ -4067,11 +4079,11 @@ FAIL manual-tests/testGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.115 s
+Time:        5.251 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testGenerator.test.ts.
 FAIL manual-tests/testGenerator.test.ts
   testGenerator.ts basic exports
-    ✕ module loads without errors (6 ms)
+    ✕ module loads without errors (5 ms)
 
   ● testGenerator.ts basic exports › module loads without errors
 
@@ -4103,7 +4115,7 @@ FAIL manual-tests/testGenerator.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        1.64 s
+Time:        1.687 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testGenerator.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4122,7 +4134,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 12339ms
+### Duration: 13358ms
 
 ---
 
@@ -4176,7 +4188,7 @@ FAIL manual-tests/testHelpers.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        3.725 s
+Time:        6.088 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testHelpers.test.ts.
 FAIL manual-tests/testHelpers.test.ts
   ● Test suite failed to run
@@ -4224,7 +4236,7 @@ FAIL manual-tests/testHelpers.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.536 s
+Time:        1.286 s
 Ran all test suites matching /home/runner/workspace/manual-tests/testHelpers.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4243,7 +4255,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 12525ms
+### Duration: 14994ms
 
 ---
 
@@ -4276,11 +4288,11 @@ FAIL ./setup.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/setup.ts:41
+    const __dirname = path_1.default.dirname((0, url_1.fileURLToPath)(import.meta.url));
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__dirname' has already been declared
 
       1 | // Auto-generated unit test for setup.ts - optimized for speed
     > 2 | import * as mod from './setup.ts';
@@ -4295,7 +4307,7 @@ FAIL ./setup.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        4.455 s
+Time:        5.545 s
 Ran all test suites matching /home/runner/workspace/setup.test.ts.
 FAIL ./setup.test.ts
   ● Test suite failed to run
@@ -4322,11 +4334,11 @@ FAIL ./setup.test.ts
 
     Details:
 
-    /home/runner/workspace/setup.ts:40
-    const require = (0, module_1.createRequire)(import.meta.url);
+    /home/runner/workspace/setup.ts:41
+    const __dirname = path_1.default.dirname((0, url_1.fileURLToPath)(import.meta.url));
           ^
 
-    SyntaxError: Identifier 'require' has already been declared
+    SyntaxError: Identifier '__dirname' has already been declared
 
       1 | // Auto-generated unit test for setup.ts - optimized for speed
     > 2 | import * as mod from './setup.ts';
@@ -4341,7 +4353,7 @@ FAIL ./setup.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       0 total
 Snapshots:   0 total
-Time:        1.618 s
+Time:        1.469 s
 Ran all test suites matching /home/runner/workspace/setup.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4360,7 +4372,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 12072ms
+### Duration: 14758ms
 
 ---
 
@@ -4414,11 +4426,11 @@ FAIL utils/helpers/moduleReloader.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        4.649 s
+Time:        4.692 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/moduleReloader.test.ts.
 FAIL utils/helpers/moduleReloader.test.ts
   moduleReloader.ts basic exports
-    ✕ module loads without errors (9 ms)
+    ✕ module loads without errors (8 ms)
 
   ● moduleReloader.ts basic exports › module loads without errors
 
@@ -4465,7 +4477,7 @@ FAIL utils/helpers/moduleReloader.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        0.974 s, estimated 1 s
+Time:        1.015 s
 Ran all test suites matching /home/runner/workspace/utils/helpers/moduleReloader.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4484,7 +4496,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 11814ms
+### Duration: 12763ms
 
 ---
 
@@ -4539,11 +4551,11 @@ FAIL utils/testHelpers.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        2.397 s
+Time:        3.174 s
 Ran all test suites matching /home/runner/workspace/utils/testHelpers.test.ts.
 FAIL utils/testHelpers.test.ts
   testHelpers.ts basic exports
-    ✕ module loads without errors (11 ms)
+    ✕ module loads without errors (12 ms)
 
   ● testHelpers.ts basic exports › module loads without errors
 
@@ -4591,7 +4603,7 @@ FAIL utils/testHelpers.test.ts
 Test Suites: 1 failed, 1 total
 Tests:       1 failed, 1 total
 Snapshots:   0 total
-Time:        0.939 s, estimated 1 s
+Time:        0.964 s, estimated 1 s
 Ran all test suites matching /home/runner/workspace/utils/testHelpers.test.ts.
 node:internal/modules/esm/get_format:189
   throw new ERR_UNKNOWN_FILE_EXTENSION(ext, filepath);
@@ -4610,7 +4622,7 @@ Node.js v20.19.3
 
 ```
 
-### Duration: 6774ms
+### Duration: 7642ms
 
 ---
 
@@ -4618,4 +4630,4 @@ Node.js v20.19.3
 
 - Total failed tests: 39
 - Failed test files: /home/runner/workspace/generated-tests/example__get.test.ts, /home/runner/workspace/generated-tests/example__post.test.ts, /home/runner/workspace/generated-tests/example__put.test.ts, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__delete.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__get.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__patch.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__post.test.js, /home/runner/workspace/generated-tests/integration/demo__src__apiRoutes__put.test.js, /home/runner/workspace/generated-tests/integration/example.test.ts, /home/runner/workspace/generated-tests/integration/example__get.test.js, /home/runner/workspace/generated-tests/integration/example__get.test.ts, /home/runner/workspace/generated-tests/integration/example__post.test.js, /home/runner/workspace/generated-tests/integration/example__post.test.ts, /home/runner/workspace/generated-tests/integration/example__put.test.js, /home/runner/workspace/generated-tests/integration/example__put.test.ts, /home/runner/workspace/generated-tests/integration/utils__httpTest__get.test.ts, /home/runner/workspace/index.test.ts, /home/runner/workspace/lib/envUtils.test.ts, /home/runner/workspace/lib/stubs.test.ts, /home/runner/workspace/lib/testGenerator.test.ts, /home/runner/workspace/lib/testUtils.test.ts, /home/runner/workspace/manual-tests/axiosStub.test.ts, /home/runner/workspace/manual-tests/comprehensive.test.ts, /home/runner/workspace/manual-tests/dualModuleGeneration.test.ts, /home/runner/workspace/manual-tests/edgeCases.test.ts, /home/runner/workspace/manual-tests/indexExports.test.ts, /home/runner/workspace/manual-tests/integration.test.ts, /home/runner/workspace/manual-tests/mockConsole.test.ts, /home/runner/workspace/manual-tests/moduleSystemIntegration.test.ts, /home/runner/workspace/manual-tests/performance.test.ts, /home/runner/workspace/manual-tests/resolveStubPaths.test.ts, /home/runner/workspace/manual-tests/setupMultiple.test.ts, /home/runner/workspace/manual-tests/setupResolution.test.ts, /home/runner/workspace/manual-tests/stubMethod.test.ts, /home/runner/workspace/manual-tests/testGenerator.test.ts, /home/runner/workspace/manual-tests/testHelpers.test.ts, /home/runner/workspace/setup.test.ts, /home/runner/workspace/utils/helpers/moduleReloader.test.ts, /home/runner/workspace/utils/testHelpers.test.ts
-- Generated: 2025-09-01T10:55:28.482Z
+- Generated: 2025-09-01T10:59:55.557Z
