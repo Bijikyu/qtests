@@ -35,7 +35,10 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node bin/qtests-generate"
+args = "npx tsx bin/qtests-generate"
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [[workflows.workflow]]
 name = "Test Suite"

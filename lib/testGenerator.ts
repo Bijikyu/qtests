@@ -16,6 +16,11 @@
 
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+// ES Module __dirname equivalent
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Type definitions
 interface TestGeneratorConfig {
@@ -576,8 +581,8 @@ afterEach(() => {
    */
   generateQtestsRunner(): void {
     try {
-      // Read the existing qtests-runner.js as template
-      const templatePath = path.join(__dirname, '..', 'qtests-runner.js');
+      // Read the existing qtests-runner.ts as template
+      const templatePath = path.join(__dirname, '..', 'qtests-runner.ts');
       let template = '';
       
       if (fs.existsSync(templatePath)) {
