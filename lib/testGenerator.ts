@@ -567,7 +567,7 @@ export default {
   preset: 'ts-jest/presets/default-esm',
   extensionsToTreatAsEsm: ['.ts'],
   testEnvironment: 'node',
-  setupFilesAfterEnv: ['./tests/setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/setup.ts'],
   moduleFileExtensions: ['ts', 'js', 'json'],
   roots: ['<rootDir>'],
   transform: {
@@ -584,7 +584,7 @@ export default {
 
     // Generate TypeScript ES module setup
     const setup = `
-// tests/setup.ts - TypeScript ES Module setup (PARALLEL-SAFE)
+// setup.ts - TypeScript ES Module setup (PARALLEL-SAFE)
 import 'jest';
 
 // Global test configuration for TypeScript ES modules
@@ -604,7 +604,7 @@ afterEach(() => {
 `.trim();
 
     this.writeIfMissing('jest.config.js', config);
-    this.writeIfMissing('tests/setup.ts', setup);
+    this.writeIfMissing('setup.ts', setup);
   }
 
   /**
