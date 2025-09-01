@@ -6,10 +6,10 @@
   "main": "index.ts",
   "bin": {
     "qtests-runner": "./bin/qtests-runner",
-    "qtests-generate": "./bin/qtests-generate"
+    "qtests-generate": "npx tsx bin/qtests-generate"
   },
   "scripts": {
-    "test": "npx tsx qtests-runner.ts"
+    "test": "node qtests-runner.js"
   },
   "keywords": [
     "testing",
