@@ -695,12 +695,10 @@ testProcess.on('exit', (code) => {
       this.analyze(file);
     }
     
-    // Set up Jest configuration if tests were generated
-    if (this.scanned.length > 0) {
-      this.scaffoldJestSetup();
-      this.generateQtestsRunner();
-      this.updatePackageJsonTestScript();
-    }
+    // Always set up Jest configuration and runner to ensure they're up-to-date
+    this.scaffoldJestSetup();
+    this.generateQtestsRunner();
+    this.updatePackageJsonTestScript();
     
     console.log(`📝 Generated ${this.scanned.length} TypeScript test files:`);
     this.scanned.forEach(test => {
