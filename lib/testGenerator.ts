@@ -54,6 +54,10 @@ const PATTERNS = {
   api: /\b(app|router)\.(get|post|put|delete|patch)\s*\(\s*['"`]([^'"`]+)['"`]/gi,
   // ES module exports: export const, export function, export class
   exportsES: /^\s*export\s+(?:const|function|class)\s+([a-zA-Z0-9_]+)/gm,
+  // ES module named exports: export { name1, name2, name3 }
+  exportsNamed: /export\s*\{\s*([^}]+)\s*\}/g,
+  // ES module default exports: export default SomeName
+  exportsDefault: /export\s+default\s+([a-zA-Z0-9_]+)/g,
   // CommonJS exports: module.exports = {}, module.exports.name =, exports.name =
   exportsCommonJS: /(?:module\.exports\.([a-zA-Z0-9_]+)\s*=|exports\.([a-zA-Z0-9_]+)\s*=|module\.exports\s*=\s*([a-zA-Z0-9_]+))/gm,
   // Function declarations that might be exported
@@ -274,8 +278,13 @@ class TestGenerator {
     
     // Check if any of these test files exist
     const allTestPaths = [...sameDirectoryTests, ...testDirectoryTests];
-    return allTestPaths.some(testPath => 
-      allFiles.some(file => path.resolve(file) === path.resolve(testPath))
+    
+    // Normalize paths for comparison - convert both to absolute paths
+    const normalizedAllFiles = allFiles.map(file => path.resolve(file));
+    const normalizedTestPaths = allTestPaths.map(testPath => path.resolve(testPath));
+    
+    return normalizedTestPaths.some(testPath => 
+      normalizedAllFiles.includes(testPath)
     );
   }
 
@@ -450,6 +459,28 @@ class TestGenerator {
     // Extract ES module exports (export const/function/class)
     const esExports = [...cleanContent.matchAll(PATTERNS.exportsES)];
     esExports.forEach(match => {
+      if (match[1]) exports.add(match[1]);
+    });
+    
+    // Extract ES module named exports: export { name1, name2, name3 }
+    const namedExports = [...cleanContent.matchAll(PATTERNS.exportsNamed)];
+    namedExports.forEach(match => {
+      if (match[1]) {
+        // Parse the named exports list
+        const exportList = match[1].split(',').map(name => name.trim());
+        exportList.forEach(name => {
+          // Handle potential aliases: "name as alias" -> use "name"
+          const cleanName = name.split(' as ')[0].trim();
+          if (cleanName && /^[a-zA-Z0-9_]+$/.test(cleanName)) {
+            exports.add(cleanName);
+          }
+        });
+      }
+    });
+    
+    // Extract ES module default exports: export default SomeName
+    const defaultExports = [...cleanContent.matchAll(PATTERNS.exportsDefault)];
+    defaultExports.forEach(match => {
       if (match[1]) exports.add(match[1]);
     });
     
