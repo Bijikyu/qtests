@@ -257,7 +257,7 @@ class TestGenerator {
     // Common test file patterns to look for - TypeScript ES module only
     const testPatterns = [
       `${basename}.test.ts`,
-      `${basename}.GeneratedTest.test.ts`,  // Generated unit tests  
+      `${basename}GeneratedTest.test.ts`,  // Generated unit tests  
       `${basename}.spec.ts`,
       `${basename}_test.ts`,
       `${basename}_spec.ts`,
@@ -298,8 +298,8 @@ class TestGenerator {
     const basename = path.basename(file, path.extname(file));
     
     if (type === 'unit') {
-      // For unit tests, place them alongside the source file with .GeneratedTest. naming
-      return path.join(dir, `${basename}.GeneratedTest.test.ts`);
+      // For unit tests, place them alongside the source file with GeneratedTest naming
+      return path.join(dir, `${basename}GeneratedTest.test.ts`);
     } else {
       // For API/integration tests, use the configured test directory with .ts extension
       const rel = path.relative(process.cwd(), file);
