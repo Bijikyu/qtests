@@ -9,7 +9,7 @@
     "qtests-ts-generate": "./bin/qtests-ts-generate"
   },
   "scripts": {
-    "test": "npx tsx qtests-runner.ts"
+    "test": "npx tsx qtests-ts-runner.ts"
   },
   "keywords": [
     "testing",
