@@ -52,10 +52,6 @@ task = "shell.exec"
 args = "./bin/qtests-ts-runner"
 
 [[ports]]
-localPort = 32833
-externalPort = 9000
-
-[[ports]]
 localPort = 35425
 externalPort = 6800
 
