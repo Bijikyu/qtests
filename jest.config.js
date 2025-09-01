@@ -34,9 +34,10 @@ export default {
     '/utils/winstonStub.js'
   ],
   testMatch: [
-    '<rootDir>/test/**/*.test.js',
-    '<rootDir>/tests/**/*.test.js',
-    '<rootDir>/tests/**/*.test.ts',
+    '<rootDir>/manual-tests/**/*.test.js',
+    '<rootDir>/manual-tests/**/*.test.ts',
+    '<rootDir>/generated-tests/**/*.test.js',
+    '<rootDir>/generated-tests/**/*.test.ts',
     '<rootDir>/**/*.test.js',
     '<rootDir>/**/*.test.ts'
   ],

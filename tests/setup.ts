@@ -1,11 +1,17 @@
-// tests/setup.ts
-let server;
+// tests/setup.ts - TypeScript ES Module setup (PARALLEL-SAFE)
+import 'jest';
 
-beforeAll(async () => {
-  const app = require('../src/app').default || require('../src/app');
-  server = app.listen(4000, () => console.log('Test server started'));
+// Global test configuration for TypeScript ES modules
+beforeAll(() => {
+  // Set test environment
+  process.env.NODE_ENV = 'test';
+  
+  // Configure test timeouts
+  jest.setTimeout(10000);
 });
 
-afterAll(async () => {
-  if (server) server.close();
+// Cleanup after each test to prevent interference
+afterEach(() => {
+  // Clear all mocks
+  jest.clearAllMocks();
 });

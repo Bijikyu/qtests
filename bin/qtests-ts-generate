@@ -64,7 +64,7 @@ USAGE:
 
 OPTIONS:
   -s, --src <dir>       Source directory to scan (default: src)
-  -t, --test-dir <dir>  Integration test directory (default: tests/integration)
+  -t, --test-dir <dir>  Generated test directory (default: generated-tests)
 
   -h, --help           Show this help message
   -v, --version        Show version information

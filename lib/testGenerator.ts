@@ -43,7 +43,7 @@ interface FileCategorization {
 // Configuration constants - TypeScript ES module only
 const DEFAULT_CONFIG: TestGeneratorConfig = {
   SRC_DIR: '.',
-  TEST_DIR: 'tests/integration',
+  TEST_DIR: 'generated-tests',
   KNOWN_MOCKS: ['axios', 'node-fetch', 'pg', 'mongoose', 'fs', 'redis'],
   VALID_EXTS: ['.ts', '.js', '.tsx', '.jsx']
 };
