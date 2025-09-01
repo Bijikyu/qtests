@@ -31,15 +31,18 @@ qtests-ts-generate --exclude "**/demo/**"    # Skip demo directories
 
 ## Known Side Effects  
 - Creates Jest configuration files if missing (jest.config.js) on non-dry runs
-- Updates package.json test script to use qtests-runner.ts on non-dry runs
-- Creates qtests-runner.ts for TypeScript ES module execution on non-dry runs
+- Updates package.json test script to use qtests-ts-runner.ts on non-dry runs
+- Creates qtests-ts-runner.ts for TypeScript ES module execution on non-dry runs
 - Generates test files in filesystem (unless --dry-run specified)
+- Enhanced file filtering automatically skips demo/, examples/, config/, bin/, manual-tests/, and fixtures/ directories
 
 ## Edge Cases & Caveats
 - AST mode requires TypeScript dependency (graceful fallback to heuristic)
 - Force flag only applies to generated test files (those containing `.GenerateTest` in the filename)
 - Include/exclude patterns use standard glob syntax
 - Process exits with error code 1 on invalid options or generation failures
+- **Bug Fixed (Sept 2025)**: Now correctly creates qtests-ts-runner.ts instead of qtests-runner.ts
+- **Enhanced Filtering (Sept 2025)**: Improved directory exclusion logic prevents test generation for config/demo files
 
 ## AI Agent Task Anchors  
 - `🚩AI: CLI_FLAGS_WIRING` — command-line argument parsing and validation logic
