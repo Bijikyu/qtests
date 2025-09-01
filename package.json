@@ -9,7 +9,7 @@
     "qtests-generate": "./bin/qtests-generate"
   },
   "scripts": {
-    "test": "jest"
+    "test": "node qtests-runner.js"
   },
   "keywords": [
     "testing",
