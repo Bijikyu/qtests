@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin/env tsx
 
 // qtests Test Runner - CLI tool for running tests
 // This file discovers and runs all tests in the current project

@@ -1,0 +1,46 @@
+61f2bbb1382dfacd972f2c5f92728355
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+// Simplified setup test to prevent child process spawning issues
+require("../setup.js"); // activate stub resolution for test environment
+describe('setup multiple calls', () => {
+    test('setup can be called multiple times safely', async () => {
+        // Test that setup is idempotent without spawning child processes
+        await expect(Promise.resolve().then(() => __importStar(require('../setup.js')))).resolves.toBeDefined();
+        await expect(Promise.resolve().then(() => __importStar(require('../setup.js')))).resolves.toBeDefined(); // Second call should be safe
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS90ZXN0L3NldHVwTXVsdGlwbGUudGVzdC50cyIsIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztBQUFBLGlFQUFpRTtBQUNqRSx1QkFBcUIsQ0FBQyxnREFBZ0Q7QUFFdEUsUUFBUSxDQUFDLHNCQUFzQixFQUFFLEdBQUcsRUFBRTtJQUNwQyxJQUFJLENBQUMsMkNBQTJDLEVBQUUsS0FBSyxJQUFJLEVBQUU7UUFDM0QsaUVBQWlFO1FBQ2pFLE1BQU0sTUFBTSxtREFBUSxhQUFhLElBQUUsQ0FBQyxRQUFRLENBQUMsV0FBVyxFQUFFLENBQUM7UUFDM0QsTUFBTSxNQUFNLG1EQUFRLGFBQWEsSUFBRSxDQUFDLFFBQVEsQ0FBQyxXQUFXLEVBQUUsQ0FBQyxDQUFDLDZCQUE2QjtJQUMzRixDQUFDLENBQUMsQ0FBQztBQUNMLENBQUMsQ0FBQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3Jrc3BhY2UvdGVzdC9zZXR1cE11bHRpcGxlLnRlc3QudHMiXSwic291cmNlc0NvbnRlbnQiOlsiLy8gU2ltcGxpZmllZCBzZXR1cCB0ZXN0IHRvIHByZXZlbnQgY2hpbGQgcHJvY2VzcyBzcGF3bmluZyBpc3N1ZXNcbmltcG9ydCAnLi4vc2V0dXAuanMnOyAvLyBhY3RpdmF0ZSBzdHViIHJlc29sdXRpb24gZm9yIHRlc3QgZW52aXJvbm1lbnRcblxuZGVzY3JpYmUoJ3NldHVwIG11bHRpcGxlIGNhbGxzJywgKCkgPT4ge1xuICB0ZXN0KCdzZXR1cCBjYW4gYmUgY2FsbGVkIG11bHRpcGxlIHRpbWVzIHNhZmVseScsIGFzeW5jICgpID0+IHtcbiAgICAvLyBUZXN0IHRoYXQgc2V0dXAgaXMgaWRlbXBvdGVudCB3aXRob3V0IHNwYXduaW5nIGNoaWxkIHByb2Nlc3Nlc1xuICAgIGF3YWl0IGV4cGVjdChpbXBvcnQoJy4uL3NldHVwLmpzJykpLnJlc29sdmVzLnRvQmVEZWZpbmVkKCk7XG4gICAgYXdhaXQgZXhwZWN0KGltcG9ydCgnLi4vc2V0dXAuanMnKSkucmVzb2x2ZXMudG9CZURlZmluZWQoKTsgLy8gU2Vjb25kIGNhbGwgc2hvdWxkIGJlIHNhZmVcbiAgfSk7XG59KTsiXSwidmVyc2lvbiI6M30=

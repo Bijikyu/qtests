@@ -1,0 +1,31 @@
+29ef21aa67bc12396610a8d85cc20554
+"use strict";
+/**
+ * Email Validation Utility - TypeScript Implementation
+ *
+ * This module provides email validation functionality with clear separation
+ * of concerns. It focuses solely on email format validation logic.
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateEmail = validateEmail;
+const logUtils_js_1 = require("../../lib/logUtils.js");
+/**
+ * Validate email address format
+ *
+ * This function provides basic email validation using a simple regex pattern.
+ * While not comprehensive for all edge cases, it catches common formatting
+ * errors and provides helpful feedback for testing scenarios.
+ */
+function validateEmail(email) {
+    (0, logUtils_js_1.logStart)('validateEmail', email);
+    if (!email || typeof email !== 'string') {
+        (0, logUtils_js_1.logReturn)('validateEmail', false);
+        return false;
+    }
+    // Simple email regex - sufficient for testing scenarios
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const isValid = emailRegex.test(email);
+    (0, logUtils_js_1.logReturn)('validateEmail', isValid);
+    return isValid;
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9lbWFpbC9lbWFpbFZhbGlkYXRvci50cyIsIm1hcHBpbmdzIjoiO0FBQUE7Ozs7O0dBS0c7O0FBNEJNLHNDQUFhO0FBMUJ0Qix1REFBNEQ7QUFFNUQ7Ozs7OztHQU1HO0FBQ0gsU0FBUyxhQUFhLENBQUMsS0FBYTtJQUNsQyxJQUFBLHNCQUFRLEVBQUMsZUFBZSxFQUFFLEtBQUssQ0FBQyxDQUFDO0lBRWpDLElBQUksQ0FBQyxLQUFLLElBQUksT0FBTyxLQUFLLEtBQUssUUFBUSxFQUFFLENBQUM7UUFDeEMsSUFBQSx1QkFBUyxFQUFDLGVBQWUsRUFBRSxLQUFLLENBQUMsQ0FBQztRQUNsQyxPQUFPLEtBQUssQ0FBQztJQUNmLENBQUM7SUFFRCx3REFBd0Q7SUFDeEQsTUFBTSxVQUFVLEdBQUcsNEJBQTRCLENBQUM7SUFDaEQsTUFBTSxPQUFPLEdBQUcsVUFBVSxDQUFDLElBQUksQ0FBQyxLQUFLLENBQUMsQ0FBQztJQUV2QyxJQUFBLHVCQUFTLEVBQUMsZUFBZSxFQUFFLE9BQU8sQ0FBQyxDQUFDO0lBQ3BDLE9BQU8sT0FBTyxDQUFDO0FBQ2pCLENBQUMiLCJuYW1lcyI6W10sInNvdXJjZXMiOlsiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9lbWFpbC9lbWFpbFZhbGlkYXRvci50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvKipcbiAqIEVtYWlsIFZhbGlkYXRpb24gVXRpbGl0eSAtIFR5cGVTY3JpcHQgSW1wbGVtZW50YXRpb25cbiAqIFxuICogVGhpcyBtb2R1bGUgcHJvdmlkZXMgZW1haWwgdmFsaWRhdGlvbiBmdW5jdGlvbmFsaXR5IHdpdGggY2xlYXIgc2VwYXJhdGlvblxuICogb2YgY29uY2VybnMuIEl0IGZvY3VzZXMgc29sZWx5IG9uIGVtYWlsIGZvcm1hdCB2YWxpZGF0aW9uIGxvZ2ljLlxuICovXG5cbmltcG9ydCB7IGxvZ1N0YXJ0LCBsb2dSZXR1cm4gfSBmcm9tICcuLi8uLi9saWIvbG9nVXRpbHMuanMnO1xuXG4vKipcbiAqIFZhbGlkYXRlIGVtYWlsIGFkZHJlc3MgZm9ybWF0XG4gKiBcbiAqIFRoaXMgZnVuY3Rpb24gcHJvdmlkZXMgYmFzaWMgZW1haWwgdmFsaWRhdGlvbiB1c2luZyBhIHNpbXBsZSByZWdleCBwYXR0ZXJuLlxuICogV2hpbGUgbm90IGNvbXByZWhlbnNpdmUgZm9yIGFsbCBlZGdlIGNhc2VzLCBpdCBjYXRjaGVzIGNvbW1vbiBmb3JtYXR0aW5nXG4gKiBlcnJvcnMgYW5kIHByb3ZpZGVzIGhlbHBmdWwgZmVlZGJhY2sgZm9yIHRlc3Rpbmcgc2NlbmFyaW9zLlxuICovXG5mdW5jdGlvbiB2YWxpZGF0ZUVtYWlsKGVtYWlsOiBzdHJpbmcpOiBib29sZWFuIHtcbiAgbG9nU3RhcnQoJ3ZhbGlkYXRlRW1haWwnLCBlbWFpbCk7XG4gIFxuICBpZiAoIWVtYWlsIHx8IHR5cGVvZiBlbWFpbCAhPT0gJ3N0cmluZycpIHtcbiAgICBsb2dSZXR1cm4oJ3ZhbGlkYXRlRW1haWwnLCBmYWxzZSk7XG4gICAgcmV0dXJuIGZhbHNlO1xuICB9XG4gIFxuICAvLyBTaW1wbGUgZW1haWwgcmVnZXggLSBzdWZmaWNpZW50IGZvciB0ZXN0aW5nIHNjZW5hcmlvc1xuICBjb25zdCBlbWFpbFJlZ2V4ID0gL15bXlxcc0BdK0BbXlxcc0BdK1xcLlteXFxzQF0rJC87XG4gIGNvbnN0IGlzVmFsaWQgPSBlbWFpbFJlZ2V4LnRlc3QoZW1haWwpO1xuICBcbiAgbG9nUmV0dXJuKCd2YWxpZGF0ZUVtYWlsJywgaXNWYWxpZCk7XG4gIHJldHVybiBpc1ZhbGlkO1xufVxuXG4vLyBFeHBvcnQgdXNpbmcgRVMgbW9kdWxlIHN5bnRheFxuZXhwb3J0IHsgdmFsaWRhdGVFbWFpbCB9OyJdLCJ2ZXJzaW9uIjozfQ==

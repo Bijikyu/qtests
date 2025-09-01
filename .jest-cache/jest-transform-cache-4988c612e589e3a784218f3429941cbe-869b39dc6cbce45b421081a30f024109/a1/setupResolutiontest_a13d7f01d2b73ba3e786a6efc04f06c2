@@ -1,0 +1,13 @@
+81c2e388ef54d8653b298c75973d6b66
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+// Simplified setup resolution test for TypeScript ES modules
+require("../setup.js"); // activate stub resolution
+describe('setup resolution functionality', () => {
+    test('setup modifies module resolution', () => {
+        // Test that setup affects module resolution without complex spawning
+        expect(() => require('axios')).not.toThrow(); // Should resolve to stub
+        expect(() => require('winston')).not.toThrow(); // Should resolve to stub
+    });
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS90ZXN0L3NldHVwUmVzb2x1dGlvbi50ZXN0LnRzIiwibWFwcGluZ3MiOiI7O0FBQUEsNkRBQTZEO0FBQzdELHVCQUFxQixDQUFDLDJCQUEyQjtBQUVqRCxRQUFRLENBQUMsZ0NBQWdDLEVBQUUsR0FBRyxFQUFFO0lBQzlDLElBQUksQ0FBQyxrQ0FBa0MsRUFBRSxHQUFHLEVBQUU7UUFDNUMscUVBQXFFO1FBQ3JFLE1BQU0sQ0FBQyxHQUFHLEVBQUUsQ0FBQyxPQUFPLENBQUMsT0FBTyxDQUFDLENBQUMsQ0FBQyxHQUFHLENBQUMsT0FBTyxFQUFFLENBQUMsQ0FBQyx5QkFBeUI7UUFDdkUsTUFBTSxDQUFDLEdBQUcsRUFBRSxDQUFDLE9BQU8sQ0FBQyxTQUFTLENBQUMsQ0FBQyxDQUFDLEdBQUcsQ0FBQyxPQUFPLEVBQUUsQ0FBQyxDQUFDLHlCQUF5QjtJQUMzRSxDQUFDLENBQUMsQ0FBQztBQUNMLENBQUMsQ0FBQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3Jrc3BhY2UvdGVzdC9zZXR1cFJlc29sdXRpb24udGVzdC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBTaW1wbGlmaWVkIHNldHVwIHJlc29sdXRpb24gdGVzdCBmb3IgVHlwZVNjcmlwdCBFUyBtb2R1bGVzXG5pbXBvcnQgJy4uL3NldHVwLmpzJzsgLy8gYWN0aXZhdGUgc3R1YiByZXNvbHV0aW9uXG5cbmRlc2NyaWJlKCdzZXR1cCByZXNvbHV0aW9uIGZ1bmN0aW9uYWxpdHknLCAoKSA9PiB7XG4gIHRlc3QoJ3NldHVwIG1vZGlmaWVzIG1vZHVsZSByZXNvbHV0aW9uJywgKCkgPT4ge1xuICAgIC8vIFRlc3QgdGhhdCBzZXR1cCBhZmZlY3RzIG1vZHVsZSByZXNvbHV0aW9uIHdpdGhvdXQgY29tcGxleCBzcGF3bmluZ1xuICAgIGV4cGVjdCgoKSA9PiByZXF1aXJlKCdheGlvcycpKS5ub3QudG9UaHJvdygpOyAvLyBTaG91bGQgcmVzb2x2ZSB0byBzdHViXG4gICAgZXhwZWN0KCgpID0+IHJlcXVpcmUoJ3dpbnN0b24nKSkubm90LnRvVGhyb3coKTsgLy8gU2hvdWxkIHJlc29sdmUgdG8gc3R1YlxuICB9KTtcbn0pOyJdLCJ2ZXJzaW9uIjozfQ==
