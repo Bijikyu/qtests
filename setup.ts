@@ -66,7 +66,7 @@ const separator = process.platform === 'win32' ? ';' : ':';
 process.env.NODE_PATH = stubsPath + (currentNodePath ? separator + currentNodePath : '');
 
 // Force Node.js to recognize the updated NODE_PATH for dynamic module resolution
-require('module')._initPaths();
+Module._initPaths();
 
 // Store original Module._load function for delegation to maintain normal module loading behavior
 const origLoad = Module._load;
