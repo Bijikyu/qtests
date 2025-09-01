@@ -1,5 +1,5 @@
 // Auto-generated API test for POST /api/calculate - optimized for speed
-import { httpTest } from 'qtests/lib/envUtils';
+import { httpTest } from '../../utils/httpTest.js';
 
 describe('POST /api/calculate', () => {
   // Shared app setup for performance

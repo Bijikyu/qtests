@@ -1,5 +1,5 @@
 // Auto-generated API test for POST /api/users - optimized for speed
-import { httpTest } from 'qtests/lib/envUtils';
+import { httpTest } from '../../utils/httpTest.js';
 
 describe('POST /api/users', () => {
   // Shared app setup for performance

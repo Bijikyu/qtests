@@ -2,7 +2,7 @@ export default {
   preset: 'ts-jest/presets/default-esm',
   extensionsToTreatAsEsm: ['.ts'],
   testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest-setup.ts'],
 
   // Advanced Performance optimizations
   maxWorkers: '100%',
