@@ -33,12 +33,12 @@ args = "Test Suite"
 name = "Generate Tests"
 author = "agent"
 
+[workflows.workflow.metadata]
+outputType = "console"
+
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "npx tsx bin/qtests-generate"
-
-[workflows.workflow.metadata]
-outputType = "console"
 
 [[workflows.workflow]]
 name = "Test Suite"
