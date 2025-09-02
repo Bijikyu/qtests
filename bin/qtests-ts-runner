@@ -61,15 +61,30 @@ class TestRunner {
           testFiles.push(...this.discoverTests(fullPath, depth + 1, maxDepth));
         } else if (entry.isFile()) {
           const isTestFile = TEST_PATTERNS.some(pattern => pattern.test(entry.name));
-          if (isTestFile) {
-            testFiles.push(fullPath);
+          if (!isTestFile) continue;
+          // Skip tests in __mocks__ and other ignored folders
+          if (fullPath.includes(`${path.sep}__mocks__${path.sep}`)) continue;
+          // In generated-tests, only include files that follow the GeneratedTest naming convention
+          if (fullPath.includes(`${path.sep}generated-tests${path.sep}`) && !/GeneratedTest/.test(entry.name)) {
+            continue;
           }
+          testFiles.push(fullPath);
         }
       }
     } catch (error) {
       // Silently skip directories we can't read
     }
     
+    // Optional pattern filter via env to limit scope for large repos/CI
+    const pattern = process.env.QTESTS_PATTERN;
+    if (pattern) {
+      try {
+        const rx = new RegExp(pattern);
+        return testFiles.filter(f => rx.test(f));
+      } catch {
+        return testFiles; // invalid pattern, ignore
+      }
+    }
     return testFiles;
   }
 
@@ -81,9 +96,15 @@ class TestRunner {
       let stderr = '';
       
       // Optimized test runners - Jest with parallel execution first
+      const configCandidates = [
+        path.join(process.cwd(), 'config', 'jest.config.mjs'),
+        path.join(process.cwd(), 'jest.config.mjs')
+      ];
+      const cfg = configCandidates.find(p => fs.existsSync(p));
+      const maybeCfg = cfg ? ['--config', cfg] : [];
       const runners = [
-        { cmd: 'npx', args: ['jest', testFile, '--maxWorkers=4', '--cache', '--no-coverage'] },
-        { cmd: 'npx', args: ['jest', testFile, '--verbose'] },
+        { cmd: 'npx', args: ['jest', ...maybeCfg, testFile, '--maxWorkers=4', '--cache', '--no-coverage'] },
+        { cmd: 'npx', args: ['jest', ...maybeCfg, testFile, '--verbose'] },
         { cmd: 'node', args: [testFile] }
       ];
       

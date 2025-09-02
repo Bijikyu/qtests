@@ -83,6 +83,9 @@ function parseArgs(argv) {
       case '--with-router':
         options.withRouter = true;
         break;
+      case '--migrate-generated-tests':
+        options.migrateGeneratedTests = true;
+        break;
       case '--include':
         options.include.push(args[++i]);
         break;

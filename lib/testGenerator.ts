@@ -615,11 +615,13 @@ class TestGenerator {
   private ensureLocalHttpTestUtils(): void {
     try {
       const targetDir = path.join(process.cwd(), this.config.TEST_DIR || 'generated-tests', 'utils');
-      const targetFile = path.join(targetDir, 'httpTest.js');
-      if (fs.existsSync(targetFile)) return;
+      const tsFile = path.join(targetDir, 'httpTest.ts');
+      const jsFile = path.join(targetDir, 'httpTest.js');
+      // Prefer TypeScript helper so it is transformed by ts-jest
+      if (fs.existsSync(tsFile)) return;
 
       // Minimal, dependency-free supertest-like shim and express-style matcher
-      const content = `// generated-tests/utils/httpTest.js - minimal local test http helpers (ESM)
+      const content = `// generated-tests/utils/httpTest.ts - minimal local test http helpers (ESM via ts-jest)
 export function createMockApp() {
   // Route table keyed by METHOD + space + path
   const routes = new Map();
@@ -694,8 +696,12 @@ export function supertest(app) {
 `;
 
       fs.mkdirSync(targetDir, { recursive: true });
-      fs.writeFileSync(targetFile, content, 'utf8');
-      console.log(`✅ Scaffolded local API test utils at ${path.relative(process.cwd(), targetFile)}`);
+      fs.writeFileSync(tsFile, content, 'utf8');
+      // Clean any legacy .js helper to avoid ESM/CJS parse confusion
+      if (fs.existsSync(jsFile)) {
+        try { fs.rmSync(jsFile, { force: true }); } catch {}
+      }
+      console.log(`✅ Scaffolded local API test utils at ${path.relative(process.cwd(), tsFile)}`);
     } catch (err: any) {
       console.warn('⚠️  Could not scaffold local httpTest utils:', err?.message || String(err));
     }
@@ -1387,15 +1393,20 @@ export function supertest(app) {
   scaffoldJestSetup(): void {
     const isReactProject = this.detectReactProject();
     // Generate Jest config for TypeScript ES modules with React support
-    // Derive moduleNameMapper from tsconfig paths if present
+    // Derive moduleNameMapper from tsconfig paths if present (supports config/tsconfig.json)
     let tsPathsMapper: Record<string, string> = {};
     try {
-      const tsconfigPath = path.join(process.cwd(), 'tsconfig.json');
+      const configTs = path.join(process.cwd(), 'config', 'tsconfig.json');
+      const rootTs = path.join(process.cwd(), 'tsconfig.json');
+      const tsconfigPath = fs.existsSync(configTs) ? configTs : rootTs;
+      const tsconfigDir = path.dirname(tsconfigPath);
       if (fs.existsSync(tsconfigPath)) {
         const tsjson = JSON.parse(fs.readFileSync(tsconfigPath, 'utf8')) || {};
         const baseUrl = tsjson.compilerOptions?.baseUrl || '.';
         const paths = tsjson.compilerOptions?.paths || {};
         for (const [alias, targets] of Object.entries(paths)) {
+          // Skip overly broad wildcard mapping "*" to avoid clobbering all imports in Jest
+          if (alias === '*') continue;
           const pattern = String(alias);
           const hasWildcard = pattern.includes('*');
           const jestKey = hasWildcard
@@ -1403,8 +1414,10 @@ export function supertest(app) {
             : '^' + pattern + '$';
           const firstTarget = Array.isArray(targets) ? (targets as any[])[0] : (targets as any);
           if (!firstTarget) continue;
-          const resolved = path.join('<rootDir>', baseUrl, String(firstTarget).replace('*', '$1'))
-            .replace(/\\/g, '/');
+          // Resolve absolute path from tsconfig location, then convert to <rootDir>/relative
+          const absolute = path.resolve(tsconfigDir, baseUrl, String(firstTarget).replace('*', '$1'));
+          const relativeFromRoot = path.relative(process.cwd(), absolute).replace(/\\/g, '/');
+          const resolved = `<rootDir>/${relativeFromRoot}`;
           tsPathsMapper[jestKey] = resolved;
         }
       }
@@ -1418,22 +1431,32 @@ export function supertest(app) {
         tsPathsMapper['^@/(.*)$'] = '<rootDir>/client/src/$1';
       }
     }
+    // Keep ESM treatment to TS/TSX; Jest infers .js from nearest package.json
     const extensionsToTreatAsEsm = isReactProject ? ['.ts', '.tsx'] : ['.ts'];
     const moduleFileExtensions = isReactProject ? ['ts', 'tsx', 'js', 'jsx', 'json'] : ['ts', 'js', 'json'];
-    const testEnvironment = isReactProject ? 'jsdom' : 'node';
+    // Prefer jsdom for React, but fall back to node if jest-environment-jsdom is not installed
+    let testEnvironment = isReactProject ? 'jsdom' : 'node';
+    try {
+      const hasJsdomEnv = fs.existsSync(path.join(process.cwd(), 'node_modules', 'jest-environment-jsdom'));
+      if (isReactProject && !hasJsdomEnv) {
+        testEnvironment = 'node';
+      }
+    } catch {}
     const testMatchPatterns = isReactProject
       ? [
           '**/*.test.ts',
           '**/*.test.tsx',
           '**/*.spec.ts',
           '**/*.spec.tsx',
-          // Support both old and new generated naming
+          // Support both old and new generated naming in source dirs
           '**/*.GenerateTest.test.ts',
           '**/*.GenerateTest.test.tsx',
           '**/*.GeneratedTest.test.ts',
           '**/*.GeneratedTest.test.tsx',
           '**/manual-tests/**/*.test.ts',
-          '**/generated-tests/**/*.test.ts'
+          // In generated-tests, only pick files that follow GeneratedTest naming to avoid stale old tests
+          '**/generated-tests/**/*GeneratedTest*.test.ts',
+          '**/generated-tests/**/*GeneratedTest*.test.tsx'
         ]
       : [
           '**/*.test.ts',
@@ -1441,29 +1464,59 @@ export function supertest(app) {
           '**/*.GenerateTest.test.ts',
           '**/*.GeneratedTest.test.ts',
           '**/manual-tests/**/*.test.ts',
-          '**/generated-tests/**/*.test.ts'
+          '**/generated-tests/**/*GeneratedTest*.test.ts'
         ];
 
     // Build transform config with ESM + isolatedModules. For React, provide JSX setting inline.
     // Avoid duplicate keys; prefer inline tsconfig override only when necessary.
+    // Prefer project tsconfig from config/ when present; fall back to inline override
+    const configTsPath = path.join(process.cwd(), 'config', 'tsconfig.json');
+    const usePathTsconfig = fs.existsSync(configTsPath) ? configTsPath : null;
     const transformOptions: any = isReactProject
-      ? { useESM: true, isolatedModules: true, tsconfig: { jsx: 'react-jsx' } }
-      : { useESM: true, isolatedModules: true };
-    const transformConfig = {
+      ? (usePathTsconfig
+          ? { useESM: true, isolatedModules: true, tsconfig: '<rootDir>/config/tsconfig.json' }
+          : { useESM: true, isolatedModules: true, tsconfig: { jsx: 'react-jsx' } })
+      : (usePathTsconfig
+          ? { useESM: true, isolatedModules: true, tsconfig: '<rootDir>/config/tsconfig.json' }
+          : { useESM: true, isolatedModules: true });
+    // Build transform config for TS and JS. Prefer babel-jest for JS if available, otherwise ts-jest with allowJs.
+    const hasBabelJest = fs.existsSync(path.join(process.cwd(), 'node_modules', 'babel-jest'));
+    const hasBabelPresetEnv = fs.existsSync(path.join(process.cwd(), 'node_modules', '@babel', 'preset-env'));
+    const transformConfig: Record<string, any> = {
       '^.+\\.(ts|tsx)$': ['ts-jest', transformOptions]
-    } as const;
+    };
+    if (hasBabelJest) {
+      const babelOpts = hasBabelPresetEnv ? { presets: [["@babel/preset-env", { targets: { node: 'current' } }]] } : {};
+      transformConfig['^.+\\.(js|jsx)$'] = ['babel-jest', babelOpts];
+    } else {
+      const jsTsOptions: any = { ...transformOptions };
+      // Ensure JS files are allowed through ts-jest
+      if (typeof jsTsOptions.tsconfig === 'string') {
+        // keep as-is, rely on project tsconfig allowJs if set
+      } else {
+        jsTsOptions.tsconfig = { ...(jsTsOptions.tsconfig || {}), allowJs: true };
+      }
+      transformConfig['^.+\\.(js|jsx)$'] = ['ts-jest', jsTsOptions];
+    }
 
     // Allow transforming specific ESM-heavy libs and qtests
     const transformIgnore = 'node_modules/(?!(?:qtests|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul)/)';
 
     const config = `
 // jest.config.mjs - TypeScript ES Module configuration${isReactProject ? ' (React-enabled)' : ''}
-// Use ESM export to avoid CommonJS issues under "type": "module"
+// Use ESM export to avoid CommonJS issues under \"type\": \"module\"
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, '..');
+
 export default {
   preset: 'ts-jest/presets/default-esm',
+  rootDir: PROJECT_ROOT,
   testEnvironment: '${testEnvironment}',
-  setupFilesAfterEnv: ['<rootDir>/jest-setup.ts'],
-  roots: ['<rootDir>'],
+  setupFilesAfterEnv: [path.join(PROJECT_ROOT, 'config', 'jest-setup.ts')],
+  roots: [PROJECT_ROOT],
   testMatch: ${JSON.stringify(testMatchPatterns, null, 2)},
   testPathIgnorePatterns: ${JSON.stringify(['/node_modules/', '/dist/', '/build/', '/__mocks__/'], null, 2)},
   moduleFileExtensions: ${JSON.stringify(moduleFileExtensions)},
@@ -1479,7 +1532,8 @@ export default {
 `.trim();
 
     // Generate TypeScript ES module setup with React support
-    const domPolyfills = isReactProject ? `
+    // Only apply DOM polyfills when using jsdom environment
+    const domPolyfills = (isReactProject && testEnvironment === 'jsdom') ? `
 
 // DOM polyfills for React Testing Library
 Object.defineProperty(window, 'matchMedia', {
@@ -1517,11 +1571,17 @@ Object.assign(global.navigator, { clipboard: { writeText: jest.fn().mockResolved
 // Note: keep deterministic
 global.URL.createObjectURL = jest.fn().mockReturnValue('blob:stub');` : '';
     
+    const hasJestDom = (() => {
+      try {
+        const p1 = path.join(process.cwd(), 'node_modules', '@testing-library', 'jest-dom');
+        return fs.existsSync(p1);
+      } catch { return false; }
+    })();
     const setup = `
 // jest-setup.ts - Jest setup for TypeScript ESM${isReactProject ? ' with React support' : ''}
 // Keep qtests setup FIRST to ensure global stubbing is active
 import 'qtests/setup';
-import 'jest';${isReactProject ? "\nimport '@testing-library/jest-dom';" : ''}
+import 'jest';${isReactProject && hasJestDom ? "\nimport '@testing-library/jest-dom';" : ''}
 
 // Set test environment early
 process.env.NODE_ENV = 'test';
@@ -1559,7 +1619,13 @@ afterEach(() => {
       }
     } catch {}
     writeOrUpdate(path.join('config', 'jest.config.mjs'), config, 'jest.config.mjs - TypeScript ES Module configuration');
-    writeOrUpdate('jest-setup.ts', setup, 'jest-setup.ts - Jest setup for TypeScript ESM');
+    // Write jest-setup.ts under config/
+    try {
+      if (!fs.existsSync('config')) {
+        fs.mkdirSync('config', { recursive: true });
+      }
+    } catch {}
+    writeOrUpdate(path.join('config', 'jest-setup.ts'), setup, 'jest-setup.ts - Jest setup for TypeScript ESM');
 
     // If React-mode is active, advise on jsdom dependency if missing.
     if (isReactProject) {
@@ -1664,6 +1730,10 @@ testProcess.on('exit', (code) => {
     if (!dryRun) {
       this.scaffoldJestSetup();
       this.generateQtestsRunner();
+      // Optional migration for legacy generated test files when flag is set via CLI
+      if ((this.config as any).migrateGeneratedTests) {
+        this.migrateLegacyGeneratedTests();
+      }
       // Only update package.json if requested via CLI flag
       if ((this.config as any).updatePackageScript) {
         this.updatePackageJsonTestScript();
@@ -1676,6 +1746,111 @@ testProcess.on('exit', (code) => {
     this.scanned.forEach(test => {
       console.log(`   ${test.type}: ${test.file}`);
     });
+  }
+
+  /**
+   * Migrate legacy generated test files in generated-tests/ to the new naming and local utils.
+   */
+  private migrateLegacyGeneratedTests(): void {
+    try {
+      const genRoot = path.join(process.cwd(), this.config.TEST_DIR || 'generated-tests');
+      if (!fs.existsSync(genRoot)) return;
+      // Ensure local httpTest utils exist prior to migration
+      this.ensureLocalHttpTestUtils();
+
+      const walk = (dir: string) => {
+        fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+          const full = path.join(dir, entry.name);
+          if (entry.isDirectory()) return walk(full);
+          if (!/\.test\.ts$/.test(entry.name)) return;
+          if (/GeneratedTest/.test(entry.name)) return; // already migrated
+
+          const basename = path.basename(entry.name, '.test.ts');
+          // Do not migrate or recreate tests for example.* files; remove them if present
+          if (/^example(\.|$)/i.test(basename)) {
+            try { fs.rmSync(full, { force: true }); } catch {}
+            return;
+          }
+          let targetName: string | null = null;
+          // example__get.test.ts -> example.GeneratedTest__get.test.ts
+          const apiMatch = basename.match(/^(.*)__([a-z]+)$/i);
+          if (apiMatch) {
+            targetName = `${apiMatch[1]}.GeneratedTest__${apiMatch[2].toLowerCase()}.test.ts`;
+          } else if (/\.GenerateTest$/.test(basename)) {
+            // foo.GenerateTest.test.ts -> foo.GeneratedTest.test.ts
+            targetName = `${basename.replace(/\.GenerateTest$/, '.GeneratedTest')}.test.ts`;
+          }
+          if (!targetName) return;
+
+          const content = fs.readFileSync(full, 'utf8');
+          let updated = content;
+          // Normalize import of local http utilities (drop extension)
+          updated = updated.replace(/from ['"]\.\.\/utils\/httpTest(?:\.js)?['"];?/g, "from '../utils/httpTest';");
+          // Replace namespace import with named helpers when present
+          updated = updated.replace(/import\s+\*\s+as\s+httpTest\s+from\s+['"][^'"]+['"];?/g,
+            "import { createMockApp, supertest } from '../utils/httpTest';");
+
+          const targetPath = path.join(dir, targetName);
+          fs.writeFileSync(targetPath, updated, 'utf8');
+          fs.rmSync(full, { force: true });
+          this.scanned.push({ type: 'api', file: path.relative('.', targetPath) });
+        });
+      };
+      walk(genRoot);
+      // Normalize any lingering namespace usage after migration and remove unwanted example.* tests
+      this.normalizeGeneratedTests(genRoot);
+      this.removeUnwantedExampleTests(genRoot);
+    } catch (err: any) {
+      console.warn('⚠️  Migration of legacy generated tests failed:', err?.message || String(err));
+    }
+  }
+
+  /**
+   * Normalize generated test contents to use named httpTest helpers and correct imports.
+   */
+  private normalizeGeneratedTests(root: string): void {
+    try {
+      const files: string[] = [];
+      const collect = (dir: string) => {
+        fs.readdirSync(dir, { withFileTypes: true }).forEach(e => {
+          const p = path.join(dir, e.name);
+          if (e.isDirectory()) return collect(p);
+          if (/\.test\.ts$/.test(e.name)) files.push(p);
+        });
+      };
+      collect(root);
+      files.forEach(p => {
+        try {
+          let c = fs.readFileSync(p, 'utf8');
+          const before = c;
+          c = c.replace(/import\s+\*\s+as\s+httpTest\s+from\s+['"][^'"]+['"];?/g,
+                        "import { createMockApp, supertest } from '../utils/httpTest';");
+          c = c.replace(/from ['"]\.\.\/utils\/httpTest(?:\.js)?['"];?/g, "from '../utils/httpTest';");
+          c = c.replace(/\bhttpTest\./g, '');
+          if (c !== before) {
+            fs.writeFileSync(p, c, 'utf8');
+          }
+        } catch {}
+      });
+    } catch {}
+  }
+
+  /**
+   * Remove any generated tests named after example.* to respect default skip policy.
+   */
+  private removeUnwantedExampleTests(root: string): void {
+    try {
+      const files: string[] = [];
+      const collect = (dir: string) => {
+        fs.readdirSync(dir, { withFileTypes: true }).forEach(e => {
+          const p = path.join(dir, e.name);
+          if (e.isDirectory()) return collect(p);
+          if (/\.test\.ts$/.test(e.name) && /^example\./i.test(e.name)) files.push(p);
+        });
+      };
+      collect(root);
+      files.forEach(p => { try { fs.rmSync(p, { force: true }); } catch {} });
+    } catch {}
   }
 
   /**

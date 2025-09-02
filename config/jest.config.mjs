@@ -1,10 +1,17 @@
 // jest.config.mjs - TypeScript ES Module configuration (React-enabled)
 // Use ESM export to avoid CommonJS issues under "type": "module"
+import path from 'path';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, '..');
+
 export default {
   preset: 'ts-jest/presets/default-esm',
-  testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/jest-setup.ts'],
-  roots: ['<rootDir>'],
+  rootDir: PROJECT_ROOT,
+  testEnvironment: 'node',
+  setupFilesAfterEnv: [path.join(PROJECT_ROOT, 'config', 'jest-setup.ts')],
+  roots: [PROJECT_ROOT],
   testMatch: [
   "**/*.test.ts",
   "**/*.test.tsx",
@@ -15,7 +22,8 @@ export default {
   "**/*.GeneratedTest.test.ts",
   "**/*.GeneratedTest.test.tsx",
   "**/manual-tests/**/*.test.ts",
-  "**/generated-tests/**/*.test.ts"
+  "**/generated-tests/**/*GeneratedTest*.test.ts",
+  "**/generated-tests/**/*GeneratedTest*.test.tsx"
 ],
   testPathIgnorePatterns: [
   "/node_modules/",
@@ -30,9 +38,22 @@ export default {
     {
       "useESM": true,
       "isolatedModules": true,
-      "tsconfig": {
-        "jsx": "react-jsx"
-      }
+      "tsconfig": "<rootDir>/config/tsconfig.json"
+    }
+  ],
+  "^.+\\.(js|jsx)$": [
+    "babel-jest",
+    {
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "targets": {
+              "node": "current"
+            }
+          }
+        ]
+      ]
     }
   ]
 },
@@ -40,7 +61,6 @@ export default {
   transformIgnorePatterns: ['node_modules/(?!(?:qtests|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul)/)'],
   moduleNameMapper: {
   "^(\\.{1,2}/.*)\\.js$": "$1",
-  "^qtests/(.*)$": "<rootDir>/node_modules/qtests/$1",
-  "^(.*)$": "<rootDir>/node_modules/$1"
+  "^qtests/(.*)$": "<rootDir>/node_modules/qtests/$1"
 }
 };

@@ -1,13 +1,13 @@
-// Auto-generated API test for POST /api/users - TypeScript ES module
+// Auto-generated API test for GET /test - TypeScript ES module
 // PARALLEL-SAFE DESIGN: This test avoids race conditions
 
 // Unique API test session for parallel execution safety
 const apiTestSession = `${process.hrtime.bigint()}-${Math.random().toString(36).substr(2, 9)}`;
-const uniqueRoute = '/api/users' + ('/api/users'.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
+const uniqueRoute = '/test' + ('/test'.includes('?') ? '&' : '?') + 'testSession=' + apiTestSession;
 
-import * as httpTest from '../../utils/httpTest.js';
+import { createMockApp, supertest } from '../utils/httpTest';
 
-describe(`POST /api/users [API-${apiTestSession}]`, () => {
+describe(`GET /test [API-${apiTestSession}]`, () => {
   // Test data factory for unique request/response data
   const createUniqueTestData = () => ({
     sessionId: apiTestSession,
@@ -17,9 +17,9 @@ describe(`POST /api/users [API-${apiTestSession}]`, () => {
 
   test('should succeed with unique test data', async () => {
     const testData = createUniqueTestData();
-    const app = httpTest.createMockApp();
+    const app = createMockApp();
     
-    app.post(uniqueRoute, (req, res) => {
+    app.get(uniqueRoute, (req, res) => {
       res.statusCode = 200;
       res.setHeader('content-type', 'application/json');
       res.end(JSON.stringify({ 
@@ -29,8 +29,8 @@ describe(`POST /api/users [API-${apiTestSession}]`, () => {
       }));
     });
     
-    const res = await httpTest.supertest(app)
-      .post(uniqueRoute)
+    const res = await supertest(app)
+      .get(uniqueRoute)
       .send(testData)
       .expect(200);
     
