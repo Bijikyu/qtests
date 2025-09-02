@@ -157,7 +157,7 @@ describe('TestGenerator', () => {
     const genWithRouter = new TestGenerator({ SRC_DIR: tempDir, withRouter: true });
     await genWithRouter.analyze(reactFile);
 
-    const genTestPath = path.join(tempDir, 'MyComponent.GenerateTest.test.tsx');
+    const genTestPath = path.join(tempDir, 'MyComponent.GenerateTest.test.ts');
     expect(fs.existsSync(genTestPath)).toBe(true);
     const genContent = fs.readFileSync(genTestPath, 'utf8');
     expect(genContent).toMatch(/MemoryRouter/);
@@ -175,7 +175,7 @@ describe('TestGenerator', () => {
     const gen = new TestGenerator({ SRC_DIR: tempDir });
     await gen.analyze(reactFile);
 
-    const genPath = path.join(tempDir, 'NeedsProps.GenerateTest.test.tsx');
+    const genPath = path.join(tempDir, 'NeedsProps.GenerateTest.test.ts');
     expect(fs.existsSync(genPath)).toBe(true);
     const content = fs.readFileSync(genPath, 'utf8');
     // Should not attempt to render the component

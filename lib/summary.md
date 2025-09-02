@@ -15,11 +15,15 @@ The `lib/` directory contains the core qtests framework functionality, including
 - Honors CLI/config filters: `SRC_DIR`, `include` globs, and `exclude` globs
 - Includes deterministic helpers for time and randomness in generated tests
 - Always imports `qtests/setup` first in generated tests
-- React-aware templates: JSX-free component smoke tests and hook probe component
-- Provider wrapper: auto-wraps with `QueryClientProvider` when `@tanstack/react-query` detected
+- React-aware templates: JSX-free component smoke tests and hook probe component; no direct hook invocation
+- Provider wrappers: auto-wraps with `QueryClientProvider` (when `@tanstack/react-query` present) and `FormProvider` + `useForm()` (when `react-hook-form` detected)
 - Optional Router wrapper: when `--with-router` flag is set and file imports React Router, wraps renders with `MemoryRouter`
 - Required props fallback: for components likely needing props (TS types or propTypes.isRequired), generator emits an existence test instead of rendering
-- **Enhanced Filtering (Sept 2025)**: Smart directory exclusion prevents test generation for demo/, config/, bin/, and test utility files
+- **Enhanced Filtering (Sept 2025)**: Smart directory exclusion prevents test generation in `__mocks__/`, `__tests__/`, `tests/`, `test/`, `generated-tests/`, `manual-tests/`, `node_modules/`, `dist/`, `build/`, `.git/`
+- **Export Safety Filters (Sept 2025)**: Skip reserved/falsy/non-identifier export names; no tests for `default`, `function`, `undefined`, etc.
+- **React Test Exclusivity (Sept 2025)**: When proper React tests are emitted, skip adding generic existence tests.
+- **File Extension Strategy (Sept 2025)**: Prefer `.ts` output; only emit `.tsx` when generated tests include JSX.
+- **Local API Utils (Sept 2025)**: Scaffolds `generated-tests/utils/httpTest.js` (minimal, dependency-free) for API tests.
 - **Performance Optimized (Sept 2025)**: Jest-like batch execution architecture achieving 69% speed improvement
 
 **Request/Response Flows**: 
@@ -38,7 +42,9 @@ The `lib/` directory contains the core qtests framework functionality, including
 - Test generation modifies filesystem by creating new `.GenerateTest.test.ts` files (non-dry runs)
 - AST mode attempts dynamic import of TypeScript compiler (graceful fallback)
 - Generated tests include fake timers and seeded randomness when source uses Date/Math.random
-- Non-dry runs also write `jest.config.js`, `jest-setup.ts`, generate `qtests-ts-runner.ts`. Updating `package.json` test script is opt-in via CLI flag.
+- Non-dry runs also write `jest.config.mjs`, `jest-setup.ts` (with DOM/clipboard/URL shims for React), generate `qtests-ts-runner.ts`. Updating `package.json` test script is opt-in via CLI flag.
+- Safe overwrite: if existing `jest.config.mjs`/`jest-setup.ts` contain the qtests header, they will be overwritten to correct prior generator mistakes.
+- Smarter React detection: generator now skips `node_modules`, build artifacts, and docs when scanning. This prevents false positives that forced `jsdom` and broke Node-only projects.
 - **Bug Fixes (Sept 2025)**: generateKey helper now correctly returns test keys instead of empty strings
 
 ## Edge Cases & Caveats
@@ -48,10 +54,9 @@ The `lib/` directory contains the core qtests framework functionality, including
 - AST analysis requires TypeScript dependency in host project (optional)
 - Module resolution detection prefers ES modules for TypeScript projects
 - **Recent Improvements (Sept 2025)**:
-  - Enhanced file filtering excludes examples/, demo/, bin/, manual-tests/, fixtures/ directories
-  - Generates qtests-ts-runner.ts (correct filename) instead of qtests-runner.ts
-  - All 83 tests now pass with 0 failures after bug fixes
-  - TypeScript type safety improvements throughout codebase
+  - Export-name validation avoids bogus tests; falls back to module smoke test when no safe targets
+  - JSX-free templates produce `.ts` tests; JSX emits `.tsx` when needed and Jest transforms include TSX
+  - Local `httpTest.js` ensures generated API tests run without external dependencies
 
 ## AI Agent Task Anchors
 - `🚩AI: ENTRY_POINT_FOR_GENERATED_TEST_IMPORTS` — qtests/setup import location

@@ -1,0 +1,36 @@
+6dbd8147ee55c28b5edbd034c35b073f
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.__dirname = exports.__filename = void 0;
+exports.getModuleFilename = getModuleFilename;
+exports.getModuleDirname = getModuleDirname;
+// Mock for esm-globals to avoid import.meta issues in Jest
+const url_1 = require("url");
+const path_1 = require("path");
+const path_2 = __importDefault(require("path"));
+// For Jest testing, we'll use process.cwd() as fallback since import.meta is problematic
+const mockUrl = `file://${process.cwd()}/utils/esm-globals.ts`;
+exports.__filename = (0, url_1.fileURLToPath)(mockUrl);
+exports.__dirname = (0, path_1.dirname)(exports.__filename);
+function getModuleFilename(importMetaUrl) {
+    try {
+        return (0, url_1.fileURLToPath)(importMetaUrl);
+    }
+    catch (error) {
+        // Fallback for Jest environment
+        return path_2.default.resolve(process.cwd(), 'mock-file.ts');
+    }
+}
+function getModuleDirname(importMetaUrl) {
+    try {
+        return (0, path_1.dirname)((0, url_1.fileURLToPath)(importMetaUrl));
+    }
+    catch (error) {
+        // Fallback for Jest environment - return the directory of the calling module
+        return process.cwd();
+    }
+}
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS91dGlscy9fX21vY2tzX18vZXNtLWdsb2JhbHMudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7O0FBV0EsOENBT0M7QUFFRCw0Q0FPQztBQTNCRCwyREFBMkQ7QUFDM0QsNkJBQW9DO0FBQ3BDLCtCQUErQjtBQUMvQixnREFBd0I7QUFFeEIseUZBQXlGO0FBQ3pGLE1BQU0sT0FBTyxHQUFHLFVBQVUsT0FBTyxDQUFDLEdBQUcsRUFBRSx1QkFBdUIsQ0FBQztBQUVsRCxRQUFBLFVBQVUsR0FBRyxJQUFBLG1CQUFhLEVBQUMsT0FBTyxDQUFDLENBQUM7QUFDcEMsUUFBQSxTQUFTLEdBQUcsSUFBQSxjQUFPLEVBQUMsa0JBQVUsQ0FBQyxDQUFDO0FBRTdDLFNBQWdCLGlCQUFpQixDQUFDLGFBQXFCO0lBQ3JELElBQUksQ0FBQztRQUNILE9BQU8sSUFBQSxtQkFBYSxFQUFDLGFBQWEsQ0FBQyxDQUFDO0lBQ3RDLENBQUM7SUFBQyxPQUFPLEtBQUssRUFBRSxDQUFDO1FBQ2YsZ0NBQWdDO1FBQ2hDLE9BQU8sY0FBSSxDQUFDLE9BQU8sQ0FBQyxPQUFPLENBQUMsR0FBRyxFQUFFLEVBQUUsY0FBYyxDQUFDLENBQUM7SUFDckQsQ0FBQztBQUNILENBQUM7QUFFRCxTQUFnQixnQkFBZ0IsQ0FBQyxhQUFxQjtJQUNwRCxJQUFJLENBQUM7UUFDSCxPQUFPLElBQUEsY0FBTyxFQUFDLElBQUEsbUJBQWEsRUFBQyxhQUFhLENBQUMsQ0FBQyxDQUFDO0lBQy9DLENBQUM7SUFBQyxPQUFPLEtBQUssRUFBRSxDQUFDO1FBQ2YsNkVBQTZFO1FBQzdFLE9BQU8sT0FBTyxDQUFDLEdBQUcsRUFBRSxDQUFDO0lBQ3ZCLENBQUM7QUFDSCxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3Jrc3BhY2UvdXRpbHMvX19tb2Nrc19fL2VzbS1nbG9iYWxzLnRzIl0sInNvdXJjZXNDb250ZW50IjpbIi8vIE1vY2sgZm9yIGVzbS1nbG9iYWxzIHRvIGF2b2lkIGltcG9ydC5tZXRhIGlzc3VlcyBpbiBKZXN0XG5pbXBvcnQgeyBmaWxlVVJMVG9QYXRoIH0gZnJvbSAndXJsJztcbmltcG9ydCB7IGRpcm5hbWUgfSBmcm9tICdwYXRoJztcbmltcG9ydCBwYXRoIGZyb20gJ3BhdGgnO1xuXG4vLyBGb3IgSmVzdCB0ZXN0aW5nLCB3ZSdsbCB1c2UgcHJvY2Vzcy5jd2QoKSBhcyBmYWxsYmFjayBzaW5jZSBpbXBvcnQubWV0YSBpcyBwcm9ibGVtYXRpY1xuY29uc3QgbW9ja1VybCA9IGBmaWxlOi8vJHtwcm9jZXNzLmN3ZCgpfS91dGlscy9lc20tZ2xvYmFscy50c2A7XG5cbmV4cG9ydCBjb25zdCBfX2ZpbGVuYW1lID0gZmlsZVVSTFRvUGF0aChtb2NrVXJsKTtcbmV4cG9ydCBjb25zdCBfX2Rpcm5hbWUgPSBkaXJuYW1lKF9fZmlsZW5hbWUpO1xuXG5leHBvcnQgZnVuY3Rpb24gZ2V0TW9kdWxlRmlsZW5hbWUoaW1wb3J0TWV0YVVybDogc3RyaW5nKSB7XG4gIHRyeSB7XG4gICAgcmV0dXJuIGZpbGVVUkxUb1BhdGgoaW1wb3J0TWV0YVVybCk7XG4gIH0gY2F0Y2ggKGVycm9yKSB7XG4gICAgLy8gRmFsbGJhY2sgZm9yIEplc3QgZW52aXJvbm1lbnRcbiAgICByZXR1cm4gcGF0aC5yZXNvbHZlKHByb2Nlc3MuY3dkKCksICdtb2NrLWZpbGUudHMnKTtcbiAgfVxufVxuXG5leHBvcnQgZnVuY3Rpb24gZ2V0TW9kdWxlRGlybmFtZShpbXBvcnRNZXRhVXJsOiBzdHJpbmcpIHtcbiAgdHJ5IHtcbiAgICByZXR1cm4gZGlybmFtZShmaWxlVVJMVG9QYXRoKGltcG9ydE1ldGFVcmwpKTtcbiAgfSBjYXRjaCAoZXJyb3IpIHtcbiAgICAvLyBGYWxsYmFjayBmb3IgSmVzdCBlbnZpcm9ubWVudCAtIHJldHVybiB0aGUgZGlyZWN0b3J5IG9mIHRoZSBjYWxsaW5nIG1vZHVsZVxuICAgIHJldHVybiBwcm9jZXNzLmN3ZCgpO1xuICB9XG59Il0sInZlcnNpb24iOjN9

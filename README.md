@@ -354,7 +354,7 @@ Examples:
 - `qtests-ts-generate --mode ast --force` — AST mode and overwrite generated tests
 
 Notes:
-- On real runs (no `--dry-run`), the generator writes `jest.config.js`, `jest-setup.ts`, and creates `qtests-ts-runner.ts`.
+- On real runs (no `--dry-run`), the generator writes `jest.config.mjs`, `jest-setup.ts`, and creates `qtests-ts-runner.ts`.
 - Update of `package.json` test script is now opt-in via `--update-pkg-script`.
 - In `--dry-run`, none of the above files are written.
 - Enhanced file filtering automatically skips demo/, examples/, config/, and test utility directories.
@@ -363,12 +363,21 @@ Notes:
 
 - Components: Smoke render via `React.createElement(Component, {})`, asserting container exists only.
 - Hooks: Uses a probe component to mount the hook; avoids invalid direct calls.
-- Providers: If `@tanstack/react-query` is imported, renders inside `QueryClientProvider`.
+- Providers: If `@tanstack/react-query` is imported, renders inside `QueryClientProvider`. If `react-hook-form` is detected (or `useFormContext`/`FormProvider` is referenced), wraps with `FormProvider` using `useForm()`.
 - Optional Router: With `--with-router` and when source imports `react-router(-dom)`, wraps with `MemoryRouter`.
 - Required-props fallback: If a component appears to require props (TS inline types or propTypes.isRequired), generator falls back to a safe existence test instead of rendering.
 - Non-React modules: Emits safe existence checks or a module-load smoke test.
 - Skipped directories: `__mocks__`, `__tests__`, `tests`, `test`, `generated-tests`, `manual-tests`, `node_modules`, `dist`, `build`, `.git`.
-- API tests: Local `generated-tests/utils/httpTest.ts` is scaffolded so imports like `../utils/httpTest` resolve without project config.
+- API tests: Local `generated-tests/utils/httpTest.js` is scaffolded so imports like `../utils/httpTest` resolve without project config (idempotent, no external deps).
+
+#### File Extension Strategy & JSX
+- Tests are emitted JSX-free using `React.createElement`, so unit/API tests default to `.ts`.
+- `.tsx` is only chosen when the generated test includes JSX (rare; currently templates avoid JSX).
+
+#### Safety + Sanity Filters
+- Export filtering removes reserved/falsy/non-identifiers (e.g., `default`, `function`, `undefined`).
+- If no safe export remains, the generator emits a module smoke test instead of bogus per-export tests.
+- When valid React component/hook tests are emitted, the generator does not append generic “is defined” blocks.
 
 ### qtests-ts-runner
 - Usage: `qtests-ts-runner`

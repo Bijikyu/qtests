@@ -208,7 +208,16 @@ class TestGenerator {
       
       if (entry.isDirectory()) {
         // Skip directories that shouldn't contain tests or source files
-        if (this.shouldSkipDirectory(entry.name)) {
+        // Expanded to avoid scanning dependencies or build artifacts which can
+        // incorrectly trigger React detection (e.g., node_modules containing React)
+        if (this.shouldSkipDirectory(entry.name) ||
+            entry.name === 'node_modules' ||
+            entry.name === 'dist' ||
+            entry.name === 'build' ||
+            entry.name === '.git' ||
+            entry.name === 'demo' ||
+            entry.name === 'examples' ||
+            entry.name === 'docs') {
           return [];
         }
         return this.walkRecursive(full);
@@ -277,8 +286,24 @@ class TestGenerator {
     const basename = path.basename(file);
     const dirname = path.dirname(file);
     
-    // Skip files in test-related directories
-    if (dirname.includes('manual-tests') || dirname.includes('fixtures')) {
+    // Skip files in test-related or excluded directories (path-wise guard)
+    const excludedDirs = [
+      '__mocks__',
+      '__tests__',
+      `${path.sep}test${path.sep}`,
+      `${path.sep}tests${path.sep}`,
+      'generated-tests',
+      'manual-tests',
+      'node_modules',
+      `${path.sep}dist${path.sep}`,
+      `${path.sep}build${path.sep}`,
+      `${path.sep}.git${path.sep}`,
+      'fixtures',
+      `${path.sep}demo${path.sep}`,
+      `${path.sep}examples${path.sep}`,
+      `${path.sep}docs${path.sep}`
+    ];
+    if (excludedDirs.some(seg => dirname.includes(seg))) {
       return true;
     }
     
@@ -516,9 +541,8 @@ class TestGenerator {
     const dir = path.dirname(file);
     const basename = path.basename(file, path.extname(file));
     
-    // Determine test file extension based on React usage
-    const isReactFile = this.detectReactUsage(file, content);
-    const testExt = isReactFile ? '.tsx' : '.ts';
+    // Prefer JSX-free tests: choose .tsx ONLY when emitting JSX (we do not)
+    const testExt = '.ts';
     
     if (type === 'unit') {
       // For unit tests, place them alongside the source file with GeneratedTest naming
@@ -574,32 +598,94 @@ class TestGenerator {
   }
 
   /**
-   * Ensure a local copy of API test utilities exists at generated-tests/utils/httpTest.ts
+   * Ensure a local copy of API test utilities exists at generated-tests/utils/httpTest.js
    * so that generated integration tests work without extra project wiring.
    * Idempotent: only writes if missing.
    */
   private ensureLocalHttpTestUtils(): void {
     try {
       const targetDir = path.join(process.cwd(), this.config.TEST_DIR || 'generated-tests', 'utils');
-      const targetFile = path.join(targetDir, 'httpTest.ts');
+      const targetFile = path.join(targetDir, 'httpTest.js');
       if (fs.existsSync(targetFile)) return;
 
-      // Try to read the package's httpTest.ts to copy over
-      const src = path.join(getModuleDirnameForTestGenerator(), '..', 'utils', 'httpTest.ts');
-      let content = '';
-      try {
-        content = fs.readFileSync(src, 'utf8');
-      } catch {
-        // Minimal fallback shim if the source cannot be found
-        content = [
-          `// Minimal httpTest shim for generated integration tests`,
-          `export { default as supertest } from 'supertest';`,
-          `export function createMockApp() { throw new Error('createMockApp not available in shim'); }`
-        ].join('\n');
+      // Minimal, dependency-free supertest-like shim and express-style matcher
+      const content = `// generated-tests/utils/httpTest.js - minimal local test http helpers (ESM)
+export function createMockApp() {
+  // Route table keyed by METHOD + space + path
+  const routes = new Map();
+  const add = (m, p, h) => { routes.set(m.toUpperCase() + ' ' + p, h); };
+  const app = {
+    get: (p, h) => add('GET', p, h),
+    post: (p, h) => add('POST', p, h),
+    put: (p, h) => add('PUT', p, h),
+    patch: (p, h) => add('PATCH', p, h),
+    delete: (p, h) => add('DELETE', p, h),
+    async handle(method, url, body) {
+      const key = method.toUpperCase() + ' ' + url;
+      const handler = routes.get(key);
+      const query = (() => {
+        try {
+          const qs = url.includes('?') ? url.split('?')[1] : '';
+          return Object.fromEntries(new URLSearchParams(qs));
+        } catch {
+          return {};
+        }
+      })();
+      const req = { method: method.toUpperCase(), url, body, query };
+      const res = {
+        statusCode: 404,
+        headers: {},
+        body: undefined,
+        _rawBody: undefined,
+        setHeader(name, value) { this.headers[String(name).toLowerCase()] = String(value); },
+        end(payload) {
+          this._rawBody = payload;
+          try {
+            this.body = typeof payload === 'string' ? JSON.parse(payload) : payload;
+          } catch {
+            this.body = payload;
+          }
+        }
+      };
+      if (!handler) {
+        res.statusCode = 404;
+        res.end(JSON.stringify({ error: 'Not Found' }));
+        return res;
       }
+      // Default to 200 unless handler sets otherwise
+      res.statusCode = 200;
+      await handler(req, res);
+      return res;
+    }
+  };
+  return app;
+}
+
+export function supertest(app) {
+  const make = (method) => (route) => ({
+    _payload: undefined,
+    send(data) { this._payload = data; return this; },
+    async expect(status) {
+      const res = await app.handle(method, route, this._payload);
+      if (res.statusCode !== status) {
+        throw new Error(\`Expected status \${status} but got \${res.statusCode}\`);
+      }
+      return res;
+    }
+  });
+  return {
+    get: make('GET'),
+    post: make('POST'),
+    put: make('PUT'),
+    patch: make('PATCH'),
+    delete: make('DELETE')
+  };
+}
+`;
+
       fs.mkdirSync(targetDir, { recursive: true });
       fs.writeFileSync(targetFile, content, 'utf8');
-      console.log(`✅ Scaffoled local API test utils at ${path.relative(process.cwd(), targetFile)}`);
+      console.log(`✅ Scaffolded local API test utils at ${path.relative(process.cwd(), targetFile)}`);
     } catch (err: any) {
       console.warn('⚠️  Could not scaffold local httpTest utils:', err?.message || String(err));
     }
@@ -792,8 +878,8 @@ class TestGenerator {
   /**
    * Generate React component test using React.createElement (no JSX)
    */
-  private createReactComponentTest(exportName: string, basename: string, useReactQueryProvider: boolean): string[] {
-    const renderLine = useReactQueryProvider
+  private createReactComponentTest(exportName: string, basename: string, useProviders: boolean): string[] {
+    const renderLine = useProviders
       ? `const { container } = render(React.createElement(Providers as any, {}, React.createElement(Component as any, {})));`
       : `const { container } = render(React.createElement(Component as any, {}));`;
     return [
@@ -814,8 +900,8 @@ class TestGenerator {
   /**
    * Generate React hook test using wrapper component
    */
-  private createReactHookTest(exportName: string, basename: string, useReactQueryProvider: boolean): string[] {
-    const probeRender = useReactQueryProvider
+  private createReactHookTest(exportName: string, basename: string, useProviders: boolean): string[] {
+    const probeRender = useProviders
       ? `render(React.createElement(Providers as any, {}, React.createElement(HookProbe)))`
       : `render(React.createElement(HookProbe))`;
     return [
@@ -827,8 +913,7 @@ class TestGenerator {
       `      return React.createElement('div', { 'data-testid': 'hook-result' }, String(!!hookResult));`,
       `    }`,
       `    const { getByTestId } = ${probeRender};`,
-      `    const result = getByTestId('hook-result');`,
-      `    expect(result).toBeDefined();`,
+      `    expect(getByTestId('hook-result')).toBeInTheDocument();`,
       `  });`,
       `});`,
       ``
@@ -851,9 +936,10 @@ class TestGenerator {
       ``
     ];
     
-    // Detect if this is a React file and whether it uses React Query
+    // Detect if this is a React file and whether it uses common providers
     const isReactFile = this.detectReactUsage(file, content);
     const usesReactQuery = /@tanstack\/react-query/.test(content);
+    const usesReactHookForm = /react-hook-form/.test(content) || /useFormContext|FormProvider/.test(content);
     const wantsRouter = Boolean((this.config as any).withRouter);
     const detectsRouter = /react-router(?:-dom)?/.test(content);
     const usesReactRouter = isReactFile && wantsRouter && detectsRouter;
@@ -873,21 +959,44 @@ class TestGenerator {
       if (usesReactQuery) {
         lines.push(`import { QueryClient, QueryClientProvider } from '@tanstack/react-query';`);
       }
-      if (usesReactQuery || usesReactRouter) {
-        // Compose providers deterministically: MemoryRouter (outer) -> QueryClientProvider (inner)
+      if (usesReactHookForm) {
+        lines.push(`import { FormProvider, useForm } from 'react-hook-form';`);
+      }
+      if (usesReactQuery || usesReactRouter || usesReactHookForm) {
+        // Compose providers deterministically: MemoryRouter (outer) -> QueryClientProvider -> FormProvider (inner)
         lines.push(`// Minimal provider composition for tests`);
         lines.push(`const Providers: React.FC<{ children?: React.ReactNode }> = ({ children }) => {`);
         if (usesReactQuery) {
           lines.push(`  const client = new QueryClient();`);
         }
-        if (usesReactRouter && usesReactQuery) {
-          lines.push(`  return React.createElement(MemoryRouter as any, {}, `);
+        if (usesReactHookForm) {
+          lines.push(`  const methods = useForm();`);
+        }
+        // Build nested providers without JSX using React.createElement
+        if (usesReactRouter && usesReactQuery && usesReactHookForm) {
+          lines.push(`  return React.createElement(MemoryRouter as any, {},`);
+          lines.push(`    React.createElement(QueryClientProvider as any, { client },`);
+          lines.push(`      React.createElement(FormProvider as any, methods as any, children as any)`);
+          lines.push(`    )`);
+          lines.push(`  );`);
+        } else if (usesReactRouter && usesReactQuery) {
+          lines.push(`  return React.createElement(MemoryRouter as any, {},`);
           lines.push(`    React.createElement(QueryClientProvider as any, { client }, children as any)`);
+          lines.push(`  );`);
+        } else if (usesReactRouter && usesReactHookForm) {
+          lines.push(`  return React.createElement(MemoryRouter as any, {},`);
+          lines.push(`    React.createElement(FormProvider as any, methods as any, children as any)`);
+          lines.push(`  );`);
+        } else if (usesReactQuery && usesReactHookForm) {
+          lines.push(`  return React.createElement(QueryClientProvider as any, { client },`);
+          lines.push(`    React.createElement(FormProvider as any, methods as any, children as any)`);
           lines.push(`  );`);
         } else if (usesReactRouter) {
           lines.push(`  return React.createElement(MemoryRouter as any, {}, children as any);`);
         } else if (usesReactQuery) {
           lines.push(`  return React.createElement(QueryClientProvider as any, { client }, children as any);`);
+        } else if (usesReactHookForm) {
+          lines.push(`  return React.createElement(FormProvider as any, methods as any, children as any);`);
         }
         lines.push(`};`);
       }
@@ -916,38 +1025,54 @@ class TestGenerator {
       deterministicHelpers.forEach(helper => lines.push(helper));
     }
     
-    // Generate tests per export with React-aware templates
-    if (exports.length > 0) {
-      exports.forEach(exportName => {
-        if (isReactFile && this.isReactHook(exportName)) {
-          // Generate React hook test
-          const hookTestLines = this.createReactHookTest(exportName, basename, usesReactQuery || usesReactRouter);
-          lines.push(...hookTestLines);
-        } else if (isReactFile && this.isReactComponent(exportName, content)) {
-          // If component appears to require props, fall back to safe module/exists test
-          if (this.componentRequiresProps(exportName, content)) {
-            lines.push(`describe('${exportName} Component', () => {`);
-            lines.push(`  it('is defined (fallback: required props detected)', () => {`);
-            lines.push(`    const Component = (testModule as any).default ?? (testModule as any)['${exportName}'];`);
-            lines.push(`    expect(Component).toBeDefined();`);
-            lines.push(`  });`);
-            lines.push(`});`);
-            lines.push('');
-          } else {
-            // Generate React component test
-            const componentTestLines = this.createReactComponentTest(exportName, basename, usesReactQuery || usesReactRouter);
-            lines.push(...componentTestLines);
+    // Validate export names for safety; skip reserved or falsy/non-identifiers
+    const reserved = new Set(['default', 'function', 'undefined', 'null', 'NaN', 'Infinity']);
+    const isValidIdent = (name: string) => /^[A-Za-z_$][\w$]*$/.test(name) && !reserved.has(name);
+    const safeExports = (exports || []).filter(isValidIdent);
+
+    // If React file: test only React components/hooks; avoid generic "is defined" blocks alongside
+    if (safeExports.length > 0) {
+      const reactTargets: string[] = [];
+      if (isReactFile) {
+        for (const exportName of safeExports) {
+          if (this.isReactHook(exportName) || this.isReactComponent(exportName, content)) {
+            reactTargets.push(exportName);
           }
-        } else {
-          // Generate safe existence test only (no fake function calls)
+        }
+      }
+
+      if (isReactFile && reactTargets.length > 0) {
+        // Emit only React tests; skip appending generic tests afterwards
+        for (const exportName of reactTargets) {
+          if (this.isReactHook(exportName)) {
+            const hookTestLines = this.createReactHookTest(exportName, basename, (usesReactQuery || usesReactRouter || usesReactHookForm));
+            lines.push(...hookTestLines);
+          } else if (this.isReactComponent(exportName, content)) {
+            if (this.componentRequiresProps(exportName, content)) {
+              lines.push(`describe('${exportName} Component', () => {`);
+              lines.push(`  it('is defined (fallback: required props detected)', () => {`);
+              lines.push(`    const Component = (testModule as any).default ?? (testModule as any)['${exportName}'];`);
+              lines.push(`    expect(Component).toBeDefined();`);
+              lines.push(`  });`);
+              lines.push(`});`);
+              lines.push('');
+            } else {
+              const componentTestLines = this.createReactComponentTest(exportName, basename, (usesReactQuery || usesReactRouter || usesReactHookForm));
+              lines.push(...componentTestLines);
+            }
+          }
+        }
+      } else {
+        // Non-React path or no React targets: generate safe existence tests
+        safeExports.forEach(exportName => {
           lines.push(`describe('${exportName}', () => {`);
           lines.push(`  it('is defined', () => {`);
-          lines.push(`    expect(testModule.${exportName}).toBeDefined();`);
+          lines.push(`    expect((testModule as any)['${exportName}']).toBeDefined();`);
           lines.push(`  });`);
           lines.push(`});`);
           lines.push('');
-        }
-      });
+        });
+      }
     } else {
       // Fallback test when no exports detected
       lines.push(`describe('${path.basename(file)} module', () => {`);
@@ -1233,10 +1358,12 @@ class TestGenerator {
     const extensionsToTreatAsEsm = isReactProject ? ['.ts', '.tsx'] : ['.ts'];
     const moduleFileExtensions = isReactProject ? ['ts', 'tsx', 'js', 'jsx', 'json'] : ['ts', 'js', 'json'];
     const testEnvironment = isReactProject ? 'jsdom' : 'node';
-    const testMatchPatterns = isReactProject 
+    const testMatchPatterns = isReactProject
       ? [
           '**/*.test.ts',
           '**/*.test.tsx',
+          '**/*.spec.ts',
+          '**/*.spec.tsx',
           '**/*.GenerateTest.test.ts',
           '**/*.GenerateTest.test.tsx',
           '**/manual-tests/**/*.test.ts',
@@ -1244,46 +1371,41 @@ class TestGenerator {
         ]
       : [
           '**/*.test.ts',
+          '**/*.spec.ts',
           '**/*.GenerateTest.test.ts',
           '**/manual-tests/**/*.test.ts',
           '**/generated-tests/**/*.test.ts'
         ];
-    
-    const transformConfig = isReactProject 
-      ? {
-          '^.+\\.tsx?$': ['ts-jest', {
-            useESM: true,
-            isolatedModules: true,
-            tsconfig: {
-              jsx: 'react-jsx'
-            }
-          }]
-        }
-      : {
-          '^.+\\.tsx?$': ['ts-jest', {
-            useESM: true,
-            isolatedModules: true
-          }]
-        };
-    
+
+    // Build transform config with ESM + isolatedModules. For React, provide JSX setting inline.
+    // Avoid duplicate keys; prefer inline tsconfig override only when necessary.
+    const transformOptions: any = isReactProject
+      ? { useESM: true, isolatedModules: true, tsconfig: { jsx: 'react-jsx' } }
+      : { useESM: true, isolatedModules: true };
+    const transformConfig = {
+      '^.+\\.(ts|tsx)$': ['ts-jest', transformOptions]
+    } as const;
+
+    // Allow transforming specific ESM-heavy libs and qtests
+    const transformIgnore = 'node_modules/(?!(?:qtests|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul)/)';
+
     const config = `
-// jest.config.js - TypeScript ES Module configuration${isReactProject ? ' (React-enabled)' : ''}
+// jest.config.mjs - TypeScript ES Module configuration${isReactProject ? ' (React-enabled)' : ''}
+// Use ESM export to avoid CommonJS issues under "type": "module"
 export default {
   preset: 'ts-jest/presets/default-esm',
-  extensionsToTreatAsEsm: ${JSON.stringify(extensionsToTreatAsEsm)},
   testEnvironment: '${testEnvironment}',
   setupFilesAfterEnv: ['<rootDir>/jest-setup.ts'],
-  moduleFileExtensions: ${JSON.stringify(moduleFileExtensions)},
   roots: ['<rootDir>'],
-  testMatch: ${JSON.stringify(testMatchPatterns, null, 4).replace(/\n/g, '\n  ')},
-  transform: ${JSON.stringify(transformConfig, null, 4).replace(/\n/g, '\n  ')},
-  transformIgnorePatterns: [
-    'node_modules/(?!(?:@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul)/)'
-  ],
+  testMatch: ${JSON.stringify(testMatchPatterns, null, 2)},
+  moduleFileExtensions: ${JSON.stringify(moduleFileExtensions)},
+  transform: ${JSON.stringify(transformConfig, null, 2)},
+  extensionsToTreatAsEsm: ${JSON.stringify(extensionsToTreatAsEsm)},
+  transformIgnorePatterns: ['${transformIgnore}'],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
     '^qtests/(.*)$': '<rootDir>/node_modules/qtests/$1'
-  }${isReactProject ? ',\n  // React Testing Library configuration\n  testEnvironment: \'jsdom\',\n  setupFilesAfterEnv: [\'<rootDir>/jest-setup.ts\']' : ''}
+  }
 };
 `.trim();
 
@@ -1317,7 +1439,14 @@ global.IntersectionObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
-}));` : '';
+}));
+
+// Clipboard polyfill
+Object.assign(global.navigator, { clipboard: { writeText: jest.fn().mockResolvedValue(undefined) } });
+
+// URL.createObjectURL polyfill
+// Note: keep deterministic
+global.URL.createObjectURL = jest.fn().mockReturnValue('blob:stub');` : '';
     
     const setup = `
 // jest-setup.ts - Jest setup for TypeScript ESM${isReactProject ? ' with React support' : ''}
@@ -1337,8 +1466,40 @@ afterEach(() => {
 });${domPolyfills}
 `.trim();
 
-    this.writeIfMissing('jest.config.js', config);
-    this.writeIfMissing('jest-setup.ts', setup);
+    // Safely write or update generated files. If an existing file appears to be
+    // managed by qtests (has our header), overwrite to fix prior mistakes.
+    const writeOrUpdate = (file: string, content: string, headerMarker: string) => {
+      if (!fs.existsSync(file)) {
+        fs.writeFileSync(file, content, 'utf8');
+        return;
+      }
+      try {
+        const existing = fs.readFileSync(file, 'utf8');
+        if (existing.includes(headerMarker)) {
+          fs.writeFileSync(file, content, 'utf8');
+        }
+      } catch {
+        // If we cannot read, do nothing to avoid destructive changes
+      }
+    };
+
+    writeOrUpdate('jest.config.mjs', config, 'jest.config.mjs - TypeScript ES Module configuration');
+    writeOrUpdate('jest-setup.ts', setup, 'jest-setup.ts - Jest setup for TypeScript ESM');
+
+    // If React-mode is active, advise on jsdom dependency if missing.
+    if (isReactProject) {
+      try {
+        const pkgPath = path.join(process.cwd(), 'package.json');
+        const pkgJson = fs.existsSync(pkgPath) ? JSON.parse(fs.readFileSync(pkgPath, 'utf8')) : {};
+        const hasJsdomEnv = Boolean((pkgJson.devDependencies && pkgJson.devDependencies['jest-environment-jsdom']) ||
+                                    (pkgJson.dependencies && pkgJson.dependencies['jest-environment-jsdom']));
+        if (!hasJsdomEnv) {
+          console.log('ℹ️ React detected: ensure devDependency "jest-environment-jsdom" is installed to satisfy Jest env.');
+        }
+      } catch {
+        // Non-fatal; best-effort advisory only.
+      }
+    }
   }
 
   /**

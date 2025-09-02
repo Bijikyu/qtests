@@ -1,0 +1,19 @@
+938201dd343d2846fcf24203ae207a12
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+// jest-setup.ts - Jest-specific setup file
+// 🚩AI: ENTRY_POINT_FOR_GENERATED_TEST_IMPORTS — qtests/setup imported first
+require("qtests/setup");
+// Global test configuration for TypeScript ES modules
+beforeAll(() => {
+    // Set test environment
+    process.env.NODE_ENV = 'test';
+});
+// Cleanup after each test to prevent interference
+afterEach(() => {
+    // Clear all mocks - use global functions available in Jest environment
+    if (typeof jest !== 'undefined') {
+        jest.clearAllMocks();
+    }
+});
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiL2hvbWUvcnVubmVyL3dvcmtzcGFjZS9qZXN0LXNldHVwLnRzIiwibWFwcGluZ3MiOiI7O0FBQUEsMkNBQTJDO0FBQzNDLDZFQUE2RTtBQUM3RSx3QkFBc0I7QUFFdEIsc0RBQXNEO0FBQ3RELFNBQVMsQ0FBQyxHQUFHLEVBQUU7SUFDYix1QkFBdUI7SUFDdkIsT0FBTyxDQUFDLEdBQUcsQ0FBQyxRQUFRLEdBQUcsTUFBTSxDQUFDO0FBQ2hDLENBQUMsQ0FBQyxDQUFDO0FBRUgsa0RBQWtEO0FBQ2xELFNBQVMsQ0FBQyxHQUFHLEVBQUU7SUFDYix1RUFBdUU7SUFDdkUsSUFBSSxPQUFPLElBQUksS0FBSyxXQUFXLEVBQUUsQ0FBQztRQUNoQyxJQUFJLENBQUMsYUFBYSxFQUFFLENBQUM7SUFDdkIsQ0FBQztBQUNILENBQUMsQ0FBQyxDQUFDIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIi9ob21lL3J1bm5lci93b3Jrc3BhY2UvamVzdC1zZXR1cC50cyJdLCJzb3VyY2VzQ29udGVudCI6WyIvLyBqZXN0LXNldHVwLnRzIC0gSmVzdC1zcGVjaWZpYyBzZXR1cCBmaWxlXG4vLyDwn5qpQUk6IEVOVFJZX1BPSU5UX0ZPUl9HRU5FUkFURURfVEVTVF9JTVBPUlRTIOKAlCBxdGVzdHMvc2V0dXAgaW1wb3J0ZWQgZmlyc3RcbmltcG9ydCAncXRlc3RzL3NldHVwJztcblxuLy8gR2xvYmFsIHRlc3QgY29uZmlndXJhdGlvbiBmb3IgVHlwZVNjcmlwdCBFUyBtb2R1bGVzXG5iZWZvcmVBbGwoKCkgPT4ge1xuICAvLyBTZXQgdGVzdCBlbnZpcm9ubWVudFxuICBwcm9jZXNzLmVudi5OT0RFX0VOViA9ICd0ZXN0Jztcbn0pO1xuXG4vLyBDbGVhbnVwIGFmdGVyIGVhY2ggdGVzdCB0byBwcmV2ZW50IGludGVyZmVyZW5jZVxuYWZ0ZXJFYWNoKCgpID0+IHtcbiAgLy8gQ2xlYXIgYWxsIG1vY2tzIC0gdXNlIGdsb2JhbCBmdW5jdGlvbnMgYXZhaWxhYmxlIGluIEplc3QgZW52aXJvbm1lbnRcbiAgaWYgKHR5cGVvZiBqZXN0ICE9PSAndW5kZWZpbmVkJykge1xuICAgIGplc3QuY2xlYXJBbGxNb2NrcygpO1xuICB9XG59KTsiXSwidmVyc2lvbiI6M30=
