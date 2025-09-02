@@ -24,7 +24,7 @@ The `lib/` directory contains the core qtests framework functionality, including
 - **Export Safety Filters (Sept 2025)**: Skip reserved/falsy/non-identifier export names; no tests for `default`, `function`, `undefined`, etc.
 - **React Test Exclusivity (Sept 2025)**: When proper React tests are emitted, skip adding generic existence tests.
 - **File Extension Strategy (Sept 2025)**: Prefer `.ts` output; only emit `.tsx` when generated tests include JSX.
-- **Local API Utils (Sept 2025)**: Scaffolds `generated-tests/utils/httpTest.js` (minimal, dependency-free) for API tests.
+- **Local API Utils (Sept 2025)**: Scaffolds `generated-tests/utils/httpTest.ts` (re-exports) and `generated-tests/utils/httpTest.shim.js` (implementation). The shim is minimal, dependency‑free, supports `.send()`, and exposes `req.body`.
 - **Performance Optimized (Sept 2025)**: Jest-like batch execution architecture achieving 69% speed improvement
 
 **Request/Response Flows**: 
@@ -57,7 +57,8 @@ The `lib/` directory contains the core qtests framework functionality, including
 - **Recent Improvements (Sept 2025)**:
   - Export-name validation avoids bogus tests; falls back to module smoke test when no safe targets
   - JSX-free templates produce `.ts` tests; JSX emits `.tsx` when needed and Jest transforms include TSX
-  - Local `httpTest.js` ensures generated API tests run without external dependencies
+  - Local HTTP shim pair ensures generated API tests run without external dependencies and align with generated test expectations
+  - Jest config now includes a `moduleNameMapper` for `mongoose` pointing to qtests' manual mock, preventing real DB access
 
 ## AI Agent Task Anchors
 - `🚩AI: ENTRY_POINT_FOR_GENERATED_TEST_IMPORTS` — qtests/setup import location

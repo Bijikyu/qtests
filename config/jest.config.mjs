@@ -61,6 +61,7 @@ export default {
   transformIgnorePatterns: ['node_modules/(?!(?:qtests|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul)/)'],
   moduleNameMapper: {
   "^(\\.{1,2}/.*)\\.js$": "$1",
-  "^qtests/(.*)$": "<rootDir>/node_modules/qtests/$1"
+  "^qtests/(.*)$": "<rootDir>/node_modules/qtests/$1",
+  "^mongoose$": "<rootDir>/node_modules/qtests/__mocks__/mongoose.js"
 }
 };

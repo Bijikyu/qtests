@@ -34,9 +34,11 @@ qtests-ts-generate --update-pkg-script       # Opt-in to update npm test script
 - Output: Generated `.GenerateTest.test.ts` files with qtests/setup integration
 
 ## Known Side Effects  
-- Creates Jest configuration file (jest.config.js) on non-dry runs
+- Creates Jest configuration file (jest.config.mjs) on non-dry runs
 - Creates Jest setup file (jest-setup.ts) on non-dry runs; imports `qtests/setup` first and adds DOM/browser stubs
-- Creates qtests-ts-runner.ts for TypeScript ES module execution on non-dry runs
+- Creates qtests-ts-runner.ts and configures it to pass `--config config/jest.config.mjs` and `--passWithNoTests`
+- Scaffolds local HTTP test utils: `generated-tests/utils/httpTest.ts` (re-exports) and `generated-tests/utils/httpTest.shim.js` (implementation with `.send()`)
+- Adds `moduleNameMapper` for `mongoose` pointing to qtests' manual mock to avoid real DB access in unit tests
 - Generates test files in filesystem (unless --dry-run specified)
 - Enhanced file filtering automatically skips demo/, examples/, config/, bin/, manual-tests/, and fixtures/ directories
 - Package.json test script update is now opt-in via `--update-pkg-script`

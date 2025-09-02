@@ -616,92 +616,21 @@ class TestGenerator {
     try {
       const targetDir = path.join(process.cwd(), this.config.TEST_DIR || 'generated-tests', 'utils');
       const tsFile = path.join(targetDir, 'httpTest.ts');
-      const jsFile = path.join(targetDir, 'httpTest.js');
-      // Prefer TypeScript helper so it is transformed by ts-jest
-      if (fs.existsSync(tsFile)) return;
+      const shimFile = path.join(targetDir, 'httpTest.shim.js');
 
-      // Minimal, dependency-free supertest-like shim and express-style matcher
-      const content = `// generated-tests/utils/httpTest.ts - minimal local test http helpers (ESM via ts-jest)
-export function createMockApp() {
-  // Route table keyed by METHOD + space + path
-  const routes = new Map();
-  const add = (m, p, h) => { routes.set(m.toUpperCase() + ' ' + p, h); };
-  const app = {
-    get: (p, h) => add('GET', p, h),
-    post: (p, h) => add('POST', p, h),
-    put: (p, h) => add('PUT', p, h),
-    patch: (p, h) => add('PATCH', p, h),
-    delete: (p, h) => add('DELETE', p, h),
-    async handle(method, url, body) {
-      const key = method.toUpperCase() + ' ' + url;
-      const handler = routes.get(key);
-      const query = (() => {
-        try {
-          const qs = url.includes('?') ? url.split('?')[1] : '';
-          return Object.fromEntries(new URLSearchParams(qs));
-        } catch {
-          return {};
-        }
-      })();
-      const req = { method: method.toUpperCase(), url, body, query };
-      const res = {
-        statusCode: 404,
-        headers: {},
-        body: undefined,
-        _rawBody: undefined,
-        setHeader(name, value) { this.headers[String(name).toLowerCase()] = String(value); },
-        end(payload) {
-          this._rawBody = payload;
-          try {
-            this.body = typeof payload === 'string' ? JSON.parse(payload) : payload;
-          } catch {
-            this.body = payload;
-          }
-        }
-      };
-      if (!handler) {
-        res.statusCode = 404;
-        res.end(JSON.stringify({ error: 'Not Found' }));
-        return res;
-      }
-      // Default to 200 unless handler sets otherwise
-      res.statusCode = 200;
-      await handler(req, res);
-      return res;
-    }
-  };
-  return app;
-}
-
-export function supertest(app) {
-  const make = (method) => (route) => ({
-    _payload: undefined,
-    send(data) { this._payload = data; return this; },
-    async expect(status) {
-      const res = await app.handle(method, route, this._payload);
-      if (res.statusCode !== status) {
-        throw new Error(\`Expected status \${status} but got \${res.statusCode}\`);
-      }
-      return res;
-    }
-  });
-  return {
-    get: make('GET'),
-    post: make('POST'),
-    put: make('PUT'),
-    patch: make('PATCH'),
-    delete: make('DELETE')
-  };
-}
-`;
-
+      // Ensure directory exists
       fs.mkdirSync(targetDir, { recursive: true });
-      fs.writeFileSync(tsFile, content, 'utf8');
-      // Clean any legacy .js helper to avoid ESM/CJS parse confusion
-      if (fs.existsSync(jsFile)) {
-        try { fs.rmSync(jsFile, { force: true }); } catch {}
-      }
-      console.log(`✅ Scaffolded local API test utils at ${path.relative(process.cwd(), tsFile)}`);
+
+      // TypeScript shim simply re-exports the working JS shim to avoid module mapper recursion
+      const tsContent = `// Re-export the JS shim so tests work in TS/ESM\nexport { createMockApp, supertest } from './httpTest.shim.js';\n`;
+
+      // Minimal, dependency-free supertest-like shim and express-style matcher with .send()
+      const jsContent = `// generated-tests/utils/httpTest.shim.js - minimal local test http helpers (ESM)\n// Provides a tiny Express-like app and a supertest-like client with .send()\n\nexport function createMockApp() {\n  const routes = new Map();\n  const add = (m, p, h) => { routes.set(m.toUpperCase() + ' ' + p, h); };\n\n  function app(req, res) {\n    const key = String(req?.method || '').toUpperCase() + ' ' + String(req?.url || '');\n    const handler = routes.get(key);\n\n    if (!handler) {\n      res.statusCode = 404;\n      res.setHeader('content-type', 'application/json');\n      res.end(JSON.stringify({ error: 'Not Found' }));\n      return;\n    }\n\n    try {\n      res.statusCode = 200; // default\n      handler(req, res);\n    } catch (err) {\n      res.statusCode = 500;\n      res.setHeader('content-type', 'application/json');\n      res.end(JSON.stringify({ error: 'Internal Error', message: String(err && err.message || err) }));\n    }\n  }\n\n  app.get = (p, h) => add('GET', p, h);\n  app.post = (p, h) => add('POST', p, h);\n  app.put = (p, h) => add('PUT', p, h);\n  app.patch = (p, h) => add('PATCH', p, h);\n  app.delete = (p, h) => add('DELETE', p, h);\n\n  return app;\n}\n\nexport function supertest(app) {\n  function makeReq(method, url) {\n    const state = { expected: null, body: undefined, headers: {} };\n\n    function finish(resState) {\n      const { statusCode, headers, text } = resState;\n      let body = undefined;\n      if (typeof text === 'string') {\n        try { body = JSON.parse(text); } catch {}\n      }\n      const out = { status: statusCode, headers, text, body };\n      if (typeof state.expected === 'number' && statusCode !== state.expected) {\n        throw new Error(\`Expected status \${state.expected} but got \${statusCode}\`);\n      }\n      return out;\n    }\n\n    return {\n      set(name, value) {\n        state.headers[String(name).toLowerCase()] = String(value);\n        return this;\n      },\n      send(payload) {\n        const isObject = payload !== null && typeof payload === 'object';\n        state.body = isObject ? JSON.stringify(payload) : String(payload ?? '');\n        if (!state.headers['content-type']) {\n          state.headers['content-type'] = isObject ? 'application/json' : 'text/plain';\n        }\n        return this;\n      },\n      expect(status) { state.expected = status; return this.end(); },\n      end() {\n        return new Promise((resolve) => {\n          const headers = {};\n          let bodyText = '';\n          const res = {\n            statusCode: 200,\n            setHeader: (k, v) => { headers[String(k).toLowerCase()] = String(v); },\n            end: (txt) => {\n              bodyText = typeof txt === 'string' ? txt : (txt == null ? '' : String(txt));\n              resolve(finish({ statusCode: res.statusCode, headers, text: bodyText }));\n            }\n          };\n\n          const req = { method, url, headers: { ...state.headers } };\n          if (state.body !== undefined) {\n            const ct = state.headers['content-type'] || '';\n            req.body = ct.includes('application/json') ? (() => { try { return JSON.parse(state.body); } catch { return state.body; } })() : state.body;\n          }\n          try {\n            const qs = url.includes('?') ? url.split('?')[1] : '';\n            req.query = Object.fromEntries(new URLSearchParams(qs));\n          } catch {}\n\n          app(req, res);\n        });\n      }\n    };\n  }\n\n  return {\n    get: (p) => makeReq('GET', p),\n    post: (p) => makeReq('POST', p),\n    put: (p) => makeReq('PUT', p),\n    patch: (p) => makeReq('PATCH', p),\n    delete: (p) => makeReq('DELETE', p),\n  };\n}\n`;
+
+      // Write files only if missing to remain idempotent
+      if (!fs.existsSync(tsFile)) fs.writeFileSync(tsFile, tsContent, 'utf8');
+      if (!fs.existsSync(shimFile)) fs.writeFileSync(shimFile, jsContent, 'utf8');
+      console.log(`✅ Scaffolded local API test utils at ${path.relative(process.cwd(), tsFile)} and shim ${path.relative(process.cwd(), shimFile)}`);
     } catch (err: any) {
       console.warn('⚠️  Could not scaffold local httpTest utils:', err?.message || String(err));
     }
@@ -1526,6 +1455,7 @@ export default {
   moduleNameMapper: ${JSON.stringify({
       '^(\\.{1,2}/.*)\\.js$': '$1',
       '^qtests/(.*)$': '<rootDir>/node_modules/qtests/$1',
+      '^mongoose$': '<rootDir>/node_modules/qtests/__mocks__/mongoose.js',
       ...tsPathsMapper
     }, null, 2)}
 };
@@ -1662,10 +1592,18 @@ import { spawn } from 'child_process';
 import path from 'path';
 
 // Run tests with TypeScript support and correct Jest arguments
+// Always point Jest at our ESM + ts-jest config and do not fail on empty matches
 const args = process.argv.slice(2);
-const testProcess = spawn('jest', args, {
+const jestArgs = [
+  '--config',
+  path.join(process.cwd(), 'config', 'jest.config.mjs'),
+  '--passWithNoTests',
+  ...args,
+];
+
+const testProcess = spawn('jest', jestArgs, {
   stdio: 'inherit',
-  shell: true
+  shell: true,
 });
 
 testProcess.on('exit', (code) => {
