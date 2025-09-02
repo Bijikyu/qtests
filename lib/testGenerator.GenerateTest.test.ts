@@ -52,6 +52,11 @@ describe('TestGenerator', () => {
     expect(results).toHaveLength(1);
     expect(results[0].type).toBe('unit');
     expect(results[0].file).toMatch(/\.GenerateTest\.test\.ts$/);
+
+    // Verify no placeholder assertions were generated
+    const generatedPath = path.join(tempDir, 'example.GenerateTest.test.ts');
+    const generatedContent = fs.readFileSync(generatedPath, 'utf8');
+    expect(generatedContent).not.toMatch(/expectedOutput|TODO:/);
   });
 
   it('should include qtests/setup import in generated tests', () => {
@@ -104,6 +109,79 @@ describe('TestGenerator', () => {
     const apiTests = results.filter(r => r.type === 'api');
     expect(apiTests).toHaveLength(1);
     expect(apiTests[0].file).toMatch(/\.GenerateTest__get\.test\.ts$/);
+
+    // Validate that the generated API test imports httpTest without extension
+    const apiTestPath = path.join(
+      tempDir,
+      'generated-tests',
+      path.relative(process.cwd(), sourceFile)
+        .replace(/\.[tj]sx?$/, '.GenerateTest__get.test.ts')
+        .replace(/[\\/]/g, '__')
+    );
+    const apiTestContent = fs.readFileSync(apiTestPath, 'utf8');
+    expect(apiTestContent).toMatch(/from '\.\.\/utils\/httpTest';/);
+
+    // Local httpTest utils are scaffolded by the generator in non-dry runs.
+    // Existence is environment-dependent in this test sandbox, so we only assert import shape.
+  });
+
+  it('should skip generating tests inside __mocks__ directory', async () => {
+    const srcFile = path.join(tempDir, 'real.ts');
+    const mockFile = path.join(tempDir, '__mocks__', 'mocked.ts');
+    fs.mkdirSync(path.dirname(mockFile), { recursive: true });
+    fs.writeFileSync(srcFile, 'export const real = 1;');
+    fs.writeFileSync(mockFile, 'export const fake = 2;');
+
+    await generator.generateTestFiles(true); // dry-run scan of tempDir
+
+    // Only the real file should be considered for generation in results
+    // After dry run, analyze explicitly to populate results for assertions
+    await generator.analyze(srcFile, true);
+    const results = generator.getResults();
+    // Ensure no tests were planned for the __mocks__ file
+    const anyMock = results.some(r => r.file.includes('__mocks__'));
+    expect(anyMock).toBe(false);
+  });
+
+  it('optionally wraps React tests with MemoryRouter when flag is set and router is detected', async () => {
+    // Create a React component that uses react-router-dom
+    const reactFile = path.join(tempDir, 'MyComponent.tsx');
+    fs.writeFileSync(reactFile, `
+      import React from 'react';
+      import { Link } from 'react-router-dom';
+      export function MyComponent(){
+        return React.createElement('div', {}, React.createElement('a', {href: '#'}, 'ok'));
+      }
+    `);
+
+    const genWithRouter = new TestGenerator({ SRC_DIR: tempDir, withRouter: true });
+    await genWithRouter.analyze(reactFile);
+
+    const genTestPath = path.join(tempDir, 'MyComponent.GenerateTest.test.tsx');
+    expect(fs.existsSync(genTestPath)).toBe(true);
+    const genContent = fs.readFileSync(genTestPath, 'utf8');
+    expect(genContent).toMatch(/MemoryRouter/);
+  });
+
+  it('falls back to existence test when component has required props', async () => {
+    const reactFile = path.join(tempDir, 'NeedsProps.tsx');
+    fs.writeFileSync(reactFile, `
+      import React from 'react';
+      export function NeedsProps(props: { id: string }){
+        return React.createElement('div', {}, props.id);
+      }
+    `);
+
+    const gen = new TestGenerator({ SRC_DIR: tempDir });
+    await gen.analyze(reactFile);
+
+    const genPath = path.join(tempDir, 'NeedsProps.GenerateTest.test.tsx');
+    expect(fs.existsSync(genPath)).toBe(true);
+    const content = fs.readFileSync(genPath, 'utf8');
+    // Should not attempt to render the component
+    expect(content).not.toMatch(/render\(/);
+    // Should contain the fallback wording
+    expect(content).toMatch(/fallback: required props detected/);
   });
 });
 

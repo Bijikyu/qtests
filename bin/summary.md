@@ -13,6 +13,8 @@ The `bin/` directory contains executable CLI tools for the qtests framework.
 - Safety features: `--dry-run` (preview without writing), `--force` (overwrite generated files)
 - File filtering: `--include` and `--exclude` glob patterns
 - Configurable source and test directories
+ - React-aware options: `--react` to force React mode; `--with-router` to wrap detected React Router components with `MemoryRouter`
+ - Package script update: `--update-pkg-script` opt-in to update `package.json` test script
 
 **Command Examples**:
 ```bash
@@ -22,6 +24,8 @@ qtests-ts-generate --unit --dry-run          # Preview unit tests only
 qtests-ts-generate --mode ast --force        # Use TypeScript AST analysis, overwrite existing
 qtests-ts-generate --include "**/*.ts"       # Only process TypeScript files
 qtests-ts-generate --exclude "**/demo/**"    # Skip demo directories
+qtests-ts-generate --react --with-router     # Force React mode and wrap Router components
+qtests-ts-generate --update-pkg-script       # Opt-in to update npm test script
 ```
 
 **Request/Response Flows**:
@@ -30,11 +34,12 @@ qtests-ts-generate --exclude "**/demo/**"    # Skip demo directories
 - Output: Generated `.GenerateTest.test.ts` files with qtests/setup integration
 
 ## Known Side Effects  
-- Creates Jest configuration files if missing (jest.config.js) on non-dry runs
-- Updates package.json test script to use qtests-ts-runner.ts on non-dry runs
+- Creates Jest configuration file (jest.config.js) on non-dry runs
+- Creates Jest setup file (jest-setup.ts) on non-dry runs; imports `qtests/setup` first and adds DOM/browser stubs
 - Creates qtests-ts-runner.ts for TypeScript ES module execution on non-dry runs
 - Generates test files in filesystem (unless --dry-run specified)
 - Enhanced file filtering automatically skips demo/, examples/, config/, bin/, manual-tests/, and fixtures/ directories
+- Package.json test script update is now opt-in via `--update-pkg-script`
 
 ## Edge Cases & Caveats
 - AST mode requires TypeScript dependency (graceful fallback to heuristic)

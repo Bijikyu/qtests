@@ -27,7 +27,10 @@ function parseArgs(argv) {
     dryRun: false,     // Show planned files without writing
     force: false,      // Allow overwriting generated files
     include: [],       // Include globs
-    exclude: []        // Exclude globs
+    exclude: [],       // Exclude globs
+    react: false,      // Force React template mode
+    updatePackageScript: false, // Update package.json test script
+    withRouter: false   // Optionally wrap with MemoryRouter when React Router detected
   };
   
   for (let i = 0; i < args.length; i++) {
@@ -61,6 +64,15 @@ function parseArgs(argv) {
         break;
       case '--force':
         options.force = true;
+        break;
+      case '--react':
+        options.react = true;
+        break;
+      case '--update-pkg-script':
+        options.updatePackageScript = true;
+        break;
+      case '--with-router':
+        options.withRouter = true;
         break;
       case '--include':
         options.include.push(args[++i]);
@@ -105,8 +117,11 @@ OPTIONS:
       --integration    Generate only integration tests
       --include <glob> Include files matching glob pattern (can be used multiple times)
       --exclude <glob> Exclude files matching glob pattern (can be used multiple times)
-      --dry-run        Show planned files without writing them
-      --force          Allow overwriting generated test files
+      --dry-run            Show planned files without writing them
+      --force              Allow overwriting generated test files
+      --react              Force React template mode (use jsdom, React templates)
+      --with-router        Wrap React tests with MemoryRouter when React Router is detected
+      --update-pkg-script  Update package.json test script to use qtests-ts-runner.ts
 
   -h, --help           Show this help message
   -v, --version        Show version information
@@ -159,6 +174,8 @@ async function main() {
     console.log(`  Scope: ${options.unit ? 'unit only' : options.integration ? 'integration only' : 'both'}`);
     console.log(`  Dry run: ${options.dryRun ? 'yes' : 'no'}`);
     console.log(`  Force overwrite: ${options.force ? 'yes' : 'no'}`);
+    console.log(`  Force React mode: ${options.react ? 'yes' : 'no'}`);
+    console.log(`  Update package.json script: ${options.updatePackageScript ? 'yes' : 'no'}`);
     if (options.include.length > 0) {
       console.log(`  Include patterns: ${options.include.join(', ')}`);
     }

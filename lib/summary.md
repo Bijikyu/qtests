@@ -15,6 +15,10 @@ The `lib/` directory contains the core qtests framework functionality, including
 - Honors CLI/config filters: `SRC_DIR`, `include` globs, and `exclude` globs
 - Includes deterministic helpers for time and randomness in generated tests
 - Always imports `qtests/setup` first in generated tests
+- React-aware templates: JSX-free component smoke tests and hook probe component
+- Provider wrapper: auto-wraps with `QueryClientProvider` when `@tanstack/react-query` detected
+- Optional Router wrapper: when `--with-router` flag is set and file imports React Router, wraps renders with `MemoryRouter`
+- Required props fallback: for components likely needing props (TS types or propTypes.isRequired), generator emits an existence test instead of rendering
 - **Enhanced Filtering (Sept 2025)**: Smart directory exclusion prevents test generation for demo/, config/, bin/, and test utility files
 - **Performance Optimized (Sept 2025)**: Jest-like batch execution architecture achieving 69% speed improvement
 
@@ -34,7 +38,7 @@ The `lib/` directory contains the core qtests framework functionality, including
 - Test generation modifies filesystem by creating new `.GenerateTest.test.ts` files (non-dry runs)
 - AST mode attempts dynamic import of TypeScript compiler (graceful fallback)
 - Generated tests include fake timers and seeded randomness when source uses Date/Math.random
-- Non-dry runs also write `jest.config.js`, `setup.ts`, generate `qtests-ts-runner.ts`, and update `package.json` test script
+- Non-dry runs also write `jest.config.js`, `jest-setup.ts`, generate `qtests-ts-runner.ts`. Updating `package.json` test script is opt-in via CLI flag.
 - **Bug Fixes (Sept 2025)**: generateKey helper now correctly returns test keys instead of empty strings
 
 ## Edge Cases & Caveats

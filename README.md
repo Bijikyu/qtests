@@ -119,6 +119,9 @@ npx qtests-ts-generate --include "**/*.ts" --exclude "**/*.test.ts"
 
 # Use AST mode (requires typescript) and allow overwrites of generated tests
 npx qtests-ts-generate --mode ast --force
+
+# Force React mode and add router wrapper
+npx qtests-ts-generate --react --with-router
 ```
 
 ### Programmatic Usage (TypeScript ESM)
@@ -351,9 +354,21 @@ Examples:
 - `qtests-ts-generate --mode ast --force` — AST mode and overwrite generated tests
 
 Notes:
-- On real runs (no `--dry-run`), the generator writes `jest.config.js`, `setup.ts`, creates `qtests-ts-runner.ts`, and updates `package.json` test script to `npx tsx qtests-ts-runner.ts`.
+- On real runs (no `--dry-run`), the generator writes `jest.config.js`, `jest-setup.ts`, and creates `qtests-ts-runner.ts`.
+- Update of `package.json` test script is now opt-in via `--update-pkg-script`.
 - In `--dry-run`, none of the above files are written.
 - Enhanced file filtering automatically skips demo/, examples/, config/, and test utility directories.
+
+#### React/Hook Templates and Providers
+
+- Components: Smoke render via `React.createElement(Component, {})`, asserting container exists only.
+- Hooks: Uses a probe component to mount the hook; avoids invalid direct calls.
+- Providers: If `@tanstack/react-query` is imported, renders inside `QueryClientProvider`.
+- Optional Router: With `--with-router` and when source imports `react-router(-dom)`, wraps with `MemoryRouter`.
+- Required-props fallback: If a component appears to require props (TS inline types or propTypes.isRequired), generator falls back to a safe existence test instead of rendering.
+- Non-React modules: Emits safe existence checks or a module-load smoke test.
+- Skipped directories: `__mocks__`, `__tests__`, `tests`, `test`, `generated-tests`, `manual-tests`, `node_modules`, `dist`, `build`, `.git`.
+- API tests: Local `generated-tests/utils/httpTest.ts` is scaffolded so imports like `../utils/httpTest` resolve without project config.
 
 ### qtests-ts-runner
 - Usage: `qtests-ts-runner`
