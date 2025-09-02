@@ -40,7 +40,7 @@ describe('TestGenerator', () => {
     expect(gen).toBeInstanceOf(TestGenerator);
   });
 
-  it('should generate unit test with .GenerateTest.test.ts naming', () => {
+  it('should generate unit test with .GeneratedTest.test.ts naming', () => {
     // Create a test source file
     const sourceFile = path.join(tempDir, 'example.ts');
     fs.writeFileSync(sourceFile, 'export function testFunc() { return "hello"; }');
@@ -51,10 +51,10 @@ describe('TestGenerator', () => {
     const results = generator.getResults();
     expect(results).toHaveLength(1);
     expect(results[0].type).toBe('unit');
-    expect(results[0].file).toMatch(/\.GenerateTest\.test\.ts$/);
+    expect(results[0].file).toMatch(/\.GeneratedTest\.test\.ts$/);
 
     // Verify no placeholder assertions were generated
-    const generatedPath = path.join(tempDir, 'example.GenerateTest.test.ts');
+    const generatedPath = path.join(tempDir, 'example.GeneratedTest.test.ts');
     const generatedContent = fs.readFileSync(generatedPath, 'utf8');
     expect(generatedContent).not.toMatch(/expectedOutput|TODO:/);
   });
@@ -68,7 +68,7 @@ describe('TestGenerator', () => {
     generator.analyze(sourceFile);
     
     // Check that the generated test includes qtests/setup
-    const testFile = path.join(tempDir, 'example.GenerateTest.test.ts');
+    const testFile = path.join(tempDir, 'example.GeneratedTest.test.ts');
     expect(fs.existsSync(testFile)).toBe(true);
     
     const testContent = fs.readFileSync(testFile, 'utf8');
@@ -84,7 +84,7 @@ describe('TestGenerator', () => {
     generator.analyze(sourceFile, true);
     
     // Check that no test file was actually written
-    const testFile = path.join(tempDir, 'example.GenerateTest.test.ts');
+    const testFile = path.join(tempDir, 'example.GeneratedTest.test.ts');
     expect(fs.existsSync(testFile)).toBe(false);
     
     // But results should still be tracked
@@ -108,14 +108,14 @@ describe('TestGenerator', () => {
     const results = generator.getResults();
     const apiTests = results.filter(r => r.type === 'api');
     expect(apiTests).toHaveLength(1);
-    expect(apiTests[0].file).toMatch(/\.GenerateTest__get\.test\.ts$/);
+    expect(apiTests[0].file).toMatch(/\.GeneratedTest__get\.test\.ts$/);
 
     // Validate that the generated API test imports httpTest without extension
     const apiTestPath = path.join(
       tempDir,
       'generated-tests',
       path.relative(process.cwd(), sourceFile)
-        .replace(/\.[tj]sx?$/, '.GenerateTest__get.test.ts')
+        .replace(/\.[tj]sx?$/, '.GeneratedTest__get.test.ts')
         .replace(/[\\/]/g, '__')
     );
     const apiTestContent = fs.readFileSync(apiTestPath, 'utf8');
@@ -143,7 +143,7 @@ describe('TestGenerator', () => {
     expect(anyMock).toBe(false);
   });
 
-  it('optionally wraps React tests with MemoryRouter when flag is set and router is detected', async () => {
+  it('optionally wraps React tests with MemoryRouter when flag is set and router is detected (component tests enabled)', async () => {
     // Create a React component that uses react-router-dom
     const reactFile = path.join(tempDir, 'MyComponent.tsx');
     fs.writeFileSync(reactFile, `
@@ -154,16 +154,16 @@ describe('TestGenerator', () => {
       }
     `);
 
-    const genWithRouter = new TestGenerator({ SRC_DIR: tempDir, withRouter: true });
+    const genWithRouter = new TestGenerator({ SRC_DIR: tempDir, withRouter: true, skipReactComponents: false });
     await genWithRouter.analyze(reactFile);
 
-    const genTestPath = path.join(tempDir, 'MyComponent.GenerateTest.test.ts');
+    const genTestPath = path.join(tempDir, 'MyComponent.GeneratedTest.test.ts');
     expect(fs.existsSync(genTestPath)).toBe(true);
     const genContent = fs.readFileSync(genTestPath, 'utf8');
     expect(genContent).toMatch(/MemoryRouter/);
   });
 
-  it('falls back to existence test when component has required props', async () => {
+  it('falls back to existence test when component has required props (component tests enabled)', async () => {
     const reactFile = path.join(tempDir, 'NeedsProps.tsx');
     fs.writeFileSync(reactFile, `
       import React from 'react';
@@ -172,16 +172,38 @@ describe('TestGenerator', () => {
       }
     `);
 
-    const gen = new TestGenerator({ SRC_DIR: tempDir });
+    const gen = new TestGenerator({ SRC_DIR: tempDir, skipReactComponents: false });
     await gen.analyze(reactFile);
 
-    const genPath = path.join(tempDir, 'NeedsProps.GenerateTest.test.ts');
+    const genPath = path.join(tempDir, 'NeedsProps.GeneratedTest.test.ts');
     expect(fs.existsSync(genPath)).toBe(true);
     const content = fs.readFileSync(genPath, 'utf8');
     // Should not attempt to render the component
     expect(content).not.toMatch(/render\(/);
     // Should contain the fallback wording
     expect(content).toMatch(/fallback: required props detected/);
+  });
+
+  it('skips generating tests for React components by default (hooks still generated)', async () => {
+    const hookFile = path.join(tempDir, 'useThing.ts');
+    fs.writeFileSync(hookFile, `
+      import React from 'react';
+      export function useThing(){ return React.useState(0); }
+    `);
+    const compFile = path.join(tempDir, 'OnlyComponent.tsx');
+    fs.writeFileSync(compFile, `
+      import React from 'react';
+      export function OnlyComponent(){ return React.createElement('div'); }
+    `);
+
+    const gen = new TestGenerator({ SRC_DIR: tempDir });
+    await gen.analyze(hookFile);
+    await gen.analyze(compFile);
+
+    // Hook test should be generated
+    expect(fs.existsSync(path.join(tempDir, 'useThing.GeneratedTest.test.ts'))).toBe(true);
+    // Component-only file should be skipped by default
+    expect(fs.existsSync(path.join(tempDir, 'OnlyComponent.GeneratedTest.test.ts'))).toBe(false);
   });
 });
 

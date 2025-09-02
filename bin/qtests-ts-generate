@@ -29,6 +29,8 @@ function parseArgs(argv) {
     include: [],       // Include globs
     exclude: [],       // Exclude globs
     react: false,      // Force React template mode
+    // By default we skip generating tests for React components (but still generate for hooks)
+    skipReactComponents: true,
     updatePackageScript: false, // Update package.json test script
     withRouter: false   // Optionally wrap with MemoryRouter when React Router detected
   };
@@ -67,6 +69,13 @@ function parseArgs(argv) {
         break;
       case '--react':
         options.react = true;
+        break;
+      case '--react-components':
+        // Opt-in to generating React component tests
+        options.skipReactComponents = false;
+        break;
+      case '--no-react-components':
+        options.skipReactComponents = true;
         break;
       case '--update-pkg-script':
         options.updatePackageScript = true;
@@ -120,6 +129,8 @@ OPTIONS:
       --dry-run            Show planned files without writing them
       --force              Allow overwriting generated test files
       --react              Force React template mode (use jsdom, React templates)
+      --react-components   Opt-in: generate React component tests (hooks are always supported)
+      --no-react-components  Skip generating tests for React components (default)
       --with-router        Wrap React tests with MemoryRouter when React Router is detected
       --update-pkg-script  Update package.json test script to use qtests-ts-runner.ts
 
@@ -141,7 +152,7 @@ DESCRIPTION:
   and Express routes to create appropriate test files with proper mocking setup.
 
   Generated test files:
-  - Unit tests: Created alongside source files with .GenerateTest.test.ts extension
+  - Unit tests: Created alongside source files with .GeneratedTest.test.ts extension (legacy .GenerateTest supported)
   - API tests: Created in integration test directory with route-specific names
   - Jest configuration: Automatically creates jest.config.js and test setup files
   - Always includes 'import qtests/setup' for proper stubbing
@@ -169,20 +180,22 @@ async function main() {
     // Display configuration
     console.log(`Configuration:`);
     console.log(`  Source directory: ${options.SRC_DIR || '.'}`);
-    console.log(`  Test directory: ${options.TEST_DIR || 'generated-tests'}`);
+  console.log(`  Test directory: ${options.TEST_DIR || 'generated-tests'}`);
     console.log(`  Analysis mode: ${options.mode}`);
     console.log(`  Scope: ${options.unit ? 'unit only' : options.integration ? 'integration only' : 'both'}`);
     console.log(`  Dry run: ${options.dryRun ? 'yes' : 'no'}`);
     console.log(`  Force overwrite: ${options.force ? 'yes' : 'no'}`);
-    console.log(`  Force React mode: ${options.react ? 'yes' : 'no'}`);
-    console.log(`  Update package.json script: ${options.updatePackageScript ? 'yes' : 'no'}`);
+  console.log(`  Force React mode: ${options.react ? 'yes' : 'no'}`);
+    console.log(`  Generate component tests: ${options.skipReactComponents === false ? 'yes' : 'no'}`);
+  console.log(`  Update package.json script: ${options.updatePackageScript ? 'yes' : 'no'}`);
     if (options.include.length > 0) {
       console.log(`  Include patterns: ${options.include.join(', ')}`);
     }
     if (options.exclude.length > 0) {
       console.log(`  Exclude patterns: ${options.exclude.join(', ')}`);
     }
-    console.log(`  Module system: TypeScript ES Modules (only)`);
+  console.log(`  Module system: TypeScript ES Modules (only)`);
+  console.log(`  Jest config path: config/jest.config.mjs (auto)`);
     console.log('');
     
     const generator = new TestGenerator(options);

@@ -342,7 +342,11 @@ await stubs.axios.get('https://example.com');
   - `--include <glob>`: Include only matching files (repeatable)
   - `--exclude <glob>`: Exclude matching files (repeatable)
   - `--dry-run`: Preview actions; no files written or package.json updates
-  - `--force`: Overwrite generated test files (filenames containing `.GenerateTest`)
+- `--force`: Overwrite generated test files (filenames containing `.GeneratedTest` or legacy `.GenerateTest`)
+  - `--react`: Force React mode (use jsdom, React templates)
+  - `--with-router`: Wrap React tests with MemoryRouter when React Router is detected
+  - `--react-components`: Opt-in to generating tests for React components
+  - `--no-react-components`: Skip generating tests for React components (default)
   - `-h, --help`: Show help
   - `-v, --version`: Show version
 
@@ -361,7 +365,8 @@ Notes:
 
 #### React/Hook Templates and Providers
 
-- Components: Smoke render via `React.createElement(Component, {})`, asserting container exists only.
+- Components: By default, component test generation is disabled to reduce noise. Opt-in with `--react-components`.
+  When enabled, components get a smoke render via `React.createElement(Component, {})`, asserting container exists only.
 - Hooks: Uses a probe component to mount the hook; avoids invalid direct calls.
 - Providers: If `@tanstack/react-query` is imported, renders inside `QueryClientProvider`. If `react-hook-form` is detected (or `useFormContext`/`FormProvider` is referenced), wraps with `FormProvider` using `useForm()`.
 - Optional Router: With `--with-router` and when source imports `react-router(-dom)`, wraps with `MemoryRouter`.
