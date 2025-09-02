@@ -87,6 +87,19 @@ The module prioritizes developer experience over feature completeness - providin
 - The offlineMode utilities exist because some applications need to test both online and offline scenarios within the same test suite
 - Environment variable utilities (testEnv) were added because many Node.js applications require specific env vars to function, and tests need predictable values
 
+### Runner Policies (Authoritative)
+- `bin/qtests-ts-runner` is sacrosanct: never generated, never overwritten. It must retain:
+  - Test discovery, batching/parallelism, per-file Jest execution
+  - Summary reporting and creation of `DEBUG_TESTS.md` on failures
+  - Colorized output and stable exit codes
+- The generator may only scaffold `qtests-runner.mjs` (ESM). It is safe to delete and will be recreated. The generator MUST NOT create/modify `bin/qtests-ts-runner`.
+- Jest invocation policy (all runners): always run `jest --config config/jest.config.mjs --passWithNoTests ...args`. Do not launch tests via `tsx` to avoid IPC/sandbox issues.
+- Any change to `bin/qtests-ts-runner` must be additive (no feature loss) and accompanied by tests that assert:
+  - Batching is preserved, `DEBUG_TESTS.md` is created on failures
+  - Jest is called with the required `--config` and `--passWithNoTests`
+  - No use of `tsx` in the CLI implementation
+- Respect `QTESTS_SILENT=1|true` to suppress non-essential setup logs in CI.
+
 
 <!--┌── 🚫 PROTECTED: DO NOT EDIT (READ ONLY) BELOW THIS LINE-->
 ## ADDITIONAL SPECIFIC GUIDANCE

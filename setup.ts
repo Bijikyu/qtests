@@ -106,9 +106,14 @@ const origLoad = (Module as any)._load;
   return origLoad.call(this, id, parent, isMain);
 };
 
-console.log('qtests: Global module resolution patching activated');
-console.log(`qtests: Stub registry contains: ${Object.keys(STUB_REGISTRY).join(', ')}`);
-console.log(`qtests: Stubs directory: ${stubsPath}`);
+// Honor CI silence toggle to reduce noise
+const QTESTS_SILENT = String(process.env.QTESTS_SILENT || '').toLowerCase();
+const shouldLog = !(QTESTS_SILENT === '1' || QTESTS_SILENT === 'true');
+if (shouldLog) {
+  console.log('qtests: Global module resolution patching activated');
+  console.log(`qtests: Stub registry contains: ${Object.keys(STUB_REGISTRY).join(', ')}`);
+  console.log(`qtests: Stubs directory: ${stubsPath}`);
+}
 
 // Export setup completion indicator
 export const setupComplete = true;

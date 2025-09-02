@@ -18,9 +18,9 @@ module.exports = {
     if (!models[name]) {
       models[name] = {
         find: jest.fn().mockResolvedValue([]),
-        findById: jest.fn().mockResolvedValue({}),
-        findOne: jest.fn().mockResolvedValue({}),
-        create: jest.fn().mockResolvedValue({}),
+        findById: jest.fn().mockResolvedValue(null),
+        findOne: jest.fn().mockResolvedValue(null),
+        create: jest.fn().mockImplementation(async (doc = {}) => ({ _id: 'mock-object-id', ...(doc || {}) })),
         findByIdAndUpdate: jest.fn().mockResolvedValue({}),
         findByIdAndDelete: jest.fn().mockResolvedValue({}),
         save: jest.fn().mockResolvedValue({}),
@@ -30,4 +30,3 @@ module.exports = {
   }),
   Types: { ObjectId: jest.fn().mockImplementation((id) => id || 'mock-object-id') },
 };
-

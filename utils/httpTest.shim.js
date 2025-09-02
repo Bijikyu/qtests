@@ -1,7 +1,7 @@
-// generated-tests/utils/httpTest.shim.js - minimal local test http helpers (ESM)
-// Provides a tiny Express-like app and a supertest-like client with .send()
+// utils/httpTest.shim.js - canonical http test helpers (CJS)
+// Provides a tiny Express-like app and a supertest-like client with `.send()`
 
-export function createMockApp() {
+function createMockApp() {
   const routes = new Map();
   const add = (m, p, h) => { routes.set(m.toUpperCase() + ' ' + p, h); };
 
@@ -22,20 +22,20 @@ export function createMockApp() {
     } catch (err) {
       res.statusCode = 500;
       res.setHeader('content-type', 'application/json');
-      res.end(JSON.stringify({ error: 'Internal Error', message: String(err && err.message || err) }));
+      res.end(JSON.stringify({ error: 'Internal Error', message: String((err && err.message) || err) }));
     }
   }
 
-  app.get = (p, h) => add('GET', p, h);
-  app.post = (p, h) => add('POST', p, h);
-  app.put = (p, h) => add('PUT', p, h);
-  app.patch = (p, h) => add('PATCH', p, h);
-  app.delete = (p, h) => add('DELETE', p, h);
+  app.get = (p, h) => (add('GET', p, h), app);
+  app.post = (p, h) => (add('POST', p, h), app);
+  app.put = (p, h) => (add('PUT', p, h), app);
+  app.patch = (p, h) => (add('PATCH', p, h), app);
+  app.delete = (p, h) => (add('DELETE', p, h), app);
 
   return app;
 }
 
-export function supertest(app) {
+function supertest(app) {
   function makeReq(method, url) {
     const state = { expected: null, body: undefined, headers: {} };
 
@@ -103,3 +103,6 @@ export function supertest(app) {
     delete: (p) => makeReq('DELETE', p),
   };
 }
+
+module.exports = { createMockApp, supertest };
+

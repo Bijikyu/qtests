@@ -1,9 +1,9 @@
-#!/usr/bin/env tsx
+#!/usr/bin/env node
+// IMPORTANT: This CLI is sacrosanct and not generated. Do not overwrite.
+// Provides batching, summaries, and debug report creation for failing tests.
 
-// qtests Test Runner - CLI tool for running tests
-// This file discovers and runs all tests in the current project
-// Install: npm install -g qtests
-// Run with: qtests-runner
+// qtests Test Runner - Feature-rich CLI with batching, summaries, and debug file
+// Restores original functionality while ensuring Jest is launched with project config
 
 import fs from 'fs';
 import path from 'path';
@@ -13,7 +13,7 @@ import os from 'os';
 // ANSI color codes for terminal output
 const colors = {
   green: '\u001b[32m',
-  red: '\u001b[31m',  
+  red: '\u001b[31m',
   yellow: '\u001b[33m',
   blue: '\u001b[34m',
   magenta: '\u001b[35m',
@@ -43,20 +43,15 @@ class TestRunner {
   // Discover all test files in the project (from current working directory)
   discoverTests(dir = process.cwd(), depth = 0, maxDepth = 10) {
     const testFiles = [];
-    
     if (depth > maxDepth) return testFiles;
-    
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
-      
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
-        
-        // Skip node_modules, hidden directories, and demo directory (has dependency issues)
+        // Skip node_modules, hidden directories, and demo directory
         if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'demo') {
           continue;
         }
-        
         if (entry.isDirectory()) {
           testFiles.push(...this.discoverTests(fullPath, depth + 1, maxDepth));
         } else if (entry.isFile()) {
@@ -71,10 +66,9 @@ class TestRunner {
           testFiles.push(fullPath);
         }
       }
-    } catch (error) {
+    } catch {
       // Silently skip directories we can't read
     }
-    
     // Optional pattern filter via env to limit scope for large repos/CI
     const pattern = process.env.QTESTS_PATTERN;
     if (pattern) {
@@ -88,95 +82,54 @@ class TestRunner {
     return testFiles;
   }
 
-  // Run a single test file and capture output - optimized for speed
+  // Run a single test file via Jest and capture output
   async runTestFile(testFile) {
     return new Promise((resolve) => {
       const startTime = Date.now();
       let stdout = '';
       let stderr = '';
-      
-      // Optimized test runners - Jest with parallel execution first
+
+      // Always use Jest with project config and allow empty matches
       const configCandidates = [
         path.join(process.cwd(), 'config', 'jest.config.mjs'),
         path.join(process.cwd(), 'jest.config.mjs')
       ];
-      const cfg = configCandidates.find(p => fs.existsSync(p));
-      const maybeCfg = cfg ? ['--config', cfg] : [];
-      const runners = [
-        { cmd: 'npx', args: ['jest', ...maybeCfg, testFile, '--maxWorkers=4', '--cache', '--no-coverage'] },
-        { cmd: 'npx', args: ['jest', ...maybeCfg, testFile, '--verbose'] },
-        { cmd: 'node', args: [testFile] }
-      ];
-      
-      const tryRunner = (runnerIndex = 0) => {
-        if (runnerIndex >= runners.length) {
-          resolve({
-            file: testFile,
-            success: false,
-            duration: Date.now() - startTime,
-            output: stderr || 'No test runner could execute this file',
-            stdout,
-            stderr
-          });
-          return;
-        }
-        
-        const runner = runners[runnerIndex];
-        const child = spawn(runner.cmd, runner.args, {
-          stdio: ['pipe', 'pipe', 'pipe'],
-          shell: true,
-          env: { ...process.env, NODE_ENV: 'test' } // Fast test environment
-        });
-        
-        child.stdout.on('data', (data) => {
-          stdout += data.toString();
-        });
-        
-        child.stderr.on('data', (data) => {
-          stderr += data.toString();
-        });
-        
-        child.on('close', (code) => {
-          const duration = Date.now() - startTime;
-          const output = stdout + stderr;
-          
-          if (code === 0) {
-            resolve({
-              file: testFile,
-              success: true,
-              duration,
-              output,
-              stdout,
-              stderr
-            });
-          } else if (runnerIndex === runners.length - 1) {
-            resolve({
-              file: testFile,
-              success: false,
-              duration,
-              output,
-              stdout,
-              stderr
-            });
-          } else {
-            tryRunner(runnerIndex + 1);
-          }
-        });
-        
-        child.on('error', () => {
-          tryRunner(runnerIndex + 1);
-        });
-      };
-      
-      tryRunner();
+      const cfg = configCandidates.find(p => {
+        try { return fs.existsSync(p); } catch { return false; }
+      });
+      const jestArgs = [];
+      if (cfg) {
+        jestArgs.push('--config', cfg);
+      }
+      jestArgs.push('--passWithNoTests');
+      // Target just this file for speed; keep small worker pool to reduce overhead
+      jestArgs.push(testFile, '--maxWorkers=4', '--cache', '--no-coverage');
+
+      const child = spawn('jest', jestArgs, {
+        stdio: ['pipe', 'pipe', 'pipe'],
+        shell: true,
+        env: { ...process.env, NODE_ENV: 'test' }
+      });
+
+      child.stdout.on('data', (data) => { stdout += data.toString(); });
+      child.stderr.on('data', (data) => { stderr += data.toString(); });
+
+      child.on('close', (code) => {
+        const duration = Date.now() - startTime;
+        const output = stdout + stderr;
+        resolve({ file: testFile, success: code === 0, duration, output, stdout, stderr });
+      });
+
+      child.on('error', () => {
+        const duration = Date.now() - startTime;
+        resolve({ file: testFile, success: false, duration, output: stderr || 'Runner error', stdout, stderr });
+      });
     });
   }
 
   // Print colored status indicator
   printStatus(success, text) {
-    const indicator = success ? 
-      `${colors.green}${colors.bold}✓${colors.reset}` : 
-      `${colors.red}${colors.bold}✗${colors.reset}`;
+    const indicator = success ? `${colors.green}${colors.bold}✓${colors.reset}` : `${colors.red}${colors.bold}✗${colors.reset}`;
     console.log(`${indicator} ${text}`);
   }
 
@@ -185,16 +138,10 @@ class TestRunner {
     const { file, success, duration } = result;
     const durationText = `${colors.dim}(${duration}ms)${colors.reset}`;
     const fileText = `${colors.cyan}${file}${colors.reset}`;
-    
     this.printStatus(success, `${fileText} ${durationText}`);
-    
     if (!success && result.output) {
       const lines = result.output.split('\n');
-      lines.forEach(line => {
-        if (line.trim()) {
-          console.log(`  ${colors.dim}${line}${colors.reset}`);
-        }
-      });
+      lines.forEach(line => { if (line.trim()) console.log(`  ${colors.dim}${line}${colors.reset}`); });
     }
   }
 
@@ -202,10 +149,8 @@ class TestRunner {
   generateDebugFile() {
     const failedResults = this.testResults.filter(r => !r.success);
     if (failedResults.length === 0) return;
-    
     let debugContent = '# Test Failure Analysis\n\n';
     debugContent += 'Analyze and address the following test failures:\n\n';
-    
     failedResults.forEach((result, index) => {
       debugContent += `## Failed Test ${index + 1}: ${result.file}\n\n`;
       debugContent += '### Output:\n';
@@ -215,12 +160,10 @@ class TestRunner {
       debugContent += `### Duration: ${result.duration}ms\n\n`;
       debugContent += '---\n\n';
     });
-    
     debugContent += '## Summary\n\n';
     debugContent += `- Total failed tests: ${failedResults.length}\n`;
     debugContent += `- Failed test files: ${failedResults.map(r => r.file).join(', ')}\n`;
     debugContent += `- Generated: ${new Date().toISOString()}\n`;
-    
     fs.writeFileSync('DEBUG_TESTS.md', debugContent);
     console.log(`\n${colors.yellow}📋 Debug file created: DEBUG_TESTS.md${colors.reset}`);
   }
@@ -229,28 +172,21 @@ class TestRunner {
   printSummary() {
     const duration = Date.now() - this.startTime;
     const totalFiles = this.testResults.length;
-    
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
     console.log(`${colors.bold}${colors.white}           TEST SUMMARY${colors.reset}`);
     console.log(`${colors.bold}═══════════════════════════════════════${colors.reset}`);
-    
     const allPassed = this.failedTests === 0;
     const statusColor = allPassed ? colors.green : colors.red;
     const statusText = allPassed ? 'ALL TESTS PASSED' : 'SOME TESTS FAILED';
     console.log(`${statusColor}${colors.bold}${statusText}${colors.reset}\n`);
-    
     console.log(`${colors.green}✓ Passed:${colors.reset} ${colors.bold}${this.passedTests}${colors.reset}`);
     console.log(`${colors.red}✗ Failed:${colors.reset} ${colors.bold}${this.failedTests}${colors.reset}`);
     console.log(`${colors.blue}📁 Files:${colors.reset} ${colors.bold}${totalFiles}${colors.reset}`);
     console.log(`${colors.magenta}⏱  Duration:${colors.reset} ${colors.bold}${duration}ms${colors.reset}`);
-    
     if (this.failedTests > 0) {
       console.log(`\n${colors.red}Failed test files:${colors.reset}`);
-      this.testResults
-        .filter(r => !r.success)
-        .forEach(r => console.log(`  ${colors.red}•${colors.reset} ${r.file}`));
+      this.testResults.filter(r => !r.success).forEach(r => console.log(`  ${colors.red}•${colors.reset} ${r.file}`));
     }
-    
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
   }
 
@@ -258,59 +194,40 @@ class TestRunner {
   async run() {
     console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner - Parallel Mode${colors.reset}`);
     console.log(`${colors.dim}Discovering and running all tests...\n${colors.reset}`);
-    
     const testFiles = this.discoverTests();
-    
     if (testFiles.length === 0) {
       console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
       console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
       process.exit(0);
     }
-    
     console.log(`${colors.blue}Found ${testFiles.length} test file(s):${colors.reset}`);
     testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
     console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
-    
-    // Run tests in parallel with aggressive concurrency for speed
     const cpuCount = os.cpus().length;
-    const maxConcurrency = Math.min(testFiles.length, Math.max(4, cpuCount * 2)); // Use 2x CPU cores for I/O-bound tests
+    const maxConcurrency = Math.min(testFiles.length, Math.max(4, cpuCount * 2));
     console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores)${colors.reset}\n`);
-    
+
     const runBatch = async (batch) => {
-      const promises = batch.map(async (testFile) => {
-        console.log(`${colors.dim}Starting:${colors.reset} ${testFile}`);
+      const results = await Promise.all(batch.map(async (testFile) => {
         const result = await this.runTestFile(testFile);
-        
-        if (result.success) {
-          this.passedTests++;
-        } else {
-          this.failedTests++;
-        }
-        
+        if (result.success) this.passedTests++; else this.failedTests++;
         this.printTestResult(result);
         return result;
-      });
-      
-      return await Promise.all(promises);
+      }));
+      return results;
     };
-    
-    // Process tests in batches to control resource usage
+
     for (let i = 0; i < testFiles.length; i += maxConcurrency) {
       const batch = testFiles.slice(i, i + maxConcurrency);
       const batchResults = await runBatch(batch);
       this.testResults.push(...batchResults);
-      
       if (i + maxConcurrency < testFiles.length) {
         console.log(`${colors.dim}Completed batch ${Math.floor(i / maxConcurrency) + 1}, starting next...${colors.reset}\n`);
       }
     }
-    
-    if (this.failedTests > 0) {
-      this.generateDebugFile();
-    }
-    
+
+    if (this.failedTests > 0) this.generateDebugFile();
     this.printSummary();
-    
     process.exit(this.failedTests > 0 ? 1 : 0);
   }
 }

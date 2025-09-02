@@ -463,6 +463,48 @@ class TestGenerator {
   }
 
   /**
+   * Detect files that use top-level await or import.meta which can break Jest parsing.
+   * Uses a lightweight brace-depth scanner to find 'await' at top-level and a simple
+   * substring check for 'import.meta'. This avoids heavy AST parsing while being robust enough.
+   */
+  private detectTLAorImportMeta(content: string): boolean {
+    try {
+      if (content.includes('import.meta')) return true;
+      // Remove single-line and block comments to reduce false positives
+      const src = content
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/\/\/.*$/gm, '');
+      let depth = 0;
+      let inStr: false | '"' | "'" | '`' = false;
+      for (let i = 0; i < src.length; i++) {
+        const ch = src[i];
+        const prev = i > 0 ? src[i - 1] : '';
+        if (inStr) {
+          if (ch === inStr && prev !== '\\') inStr = false;
+          continue;
+        }
+        if (ch === '"' || ch === '\'' || ch === '`') { inStr = ch as any; continue; }
+        if (ch === '{') depth++;
+        else if (ch === '}') depth = Math.max(0, depth - 1);
+        // crude token check for 'await' at depth 0
+        if (depth === 0 && ch === 'a' && src.slice(i, i + 5) === 'await') {
+          // ensure it's a standalone token boundary
+          const before = i === 0 ? '' : src[i - 1];
+          const after = src[i + 5] || '';
+          const isWord = /[A-Za-z0-9_\$]/;
+          if (!isWord.test(before) && !isWord.test(after)) {
+            return true;
+          }
+        }
+      }
+      return false;
+    } catch {
+      // On failure, be conservative and do not flag
+      return false;
+    }
+  }
+
+  /**
    * Detect if export name is likely a React hook
    */
   private isReactHook(exportName: string): boolean {
@@ -870,7 +912,7 @@ class TestGenerator {
    * 🚩AI: ENTRY_POINT_FOR_GENERATED_TEST_IMPORTS — insert `import 'qtests/setup'` first
    * 🚩AI: UNIT_TEMPLATE_SECTION — write per-export describe/it with positive + edge
    */
-  private createUnitTest(file: string, exports: string[], usesQtests: boolean, mocks: string[], content: string = ''): string {
+  private createUnitTest(file: string, exports: string[], usesQtests: boolean, mocks: string[], content: string = '', skipDueToTLA: boolean = false): string {
     const basename = path.basename(file, path.extname(file));
     const ext = path.extname(file);
     
@@ -880,6 +922,16 @@ class TestGenerator {
       `import 'qtests/setup';`, // Always import qtests/setup first
       ``
     ];
+
+    if (skipDueToTLA) {
+      lines.push(`describe.skip('${path.basename(file)} (skipped due to TLA/import.meta)', () => {`);
+      lines.push(`  it('skipped: source uses top-level await or import.meta which Jest cannot parse by default', () => {`);
+      lines.push(`    expect(true).toBe(true);`);
+      lines.push(`  });`);
+      lines.push(`});`);
+      lines.push('');
+      return lines.join('\n');
+    }
     
     // Detect if this is a React file and whether it uses common providers
     const isReactFile = this.detectReactUsage(file, content);
@@ -1237,7 +1289,8 @@ class TestGenerator {
     }
     if (exports.length > 0 && (!this.config.integration)) {
       const testPath = this.getRelativeTestPath(file, 'unit', content);
-      const unitContent = this.createUnitTest(file, exports, usesQtests, mockTargets, content);
+      const skipTLA = this.detectTLAorImportMeta(content);
+      const unitContent = this.createUnitTest(file, exports, usesQtests, mockTargets, content, skipTLA);
       // Skip writing when generator intentionally returned empty content (e.g., React component-only files)
       if (unitContent && unitContent.trim().length > 0) {
         const created = this.writeIfMissing(
@@ -1469,9 +1522,9 @@ export default {
   moduleNameMapper: ${JSON.stringify({
       '^(\\.{1,2}/.*)\\.js$': '$1',
       '^qtests/(.*)$': '<rootDir>/node_modules/qtests/$1',
-      '^mongoose$': '<rootDir>/node_modules/qtests/__mocks__/mongoose.js',
-      '^.+\\\.(css|less|scss|sass)$': '<rootDir>/config/styleMock.js',
-      '^.+\\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$': '<rootDir>/config/styleMock.js',
+      '^mongoose$': '<rootDir>/__mocks__/mongoose.js',
+      '^.+\\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/fileMock.js',
+      '^.+\\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$': '<rootDir>/__mocks__/fileMock.js',
       ...tsPathsMapper,
       ...((this.config as any).aliases || {})
     }, null, 2)}
@@ -1595,21 +1648,13 @@ afterEach(() => {
    */
   generateQtestsRunner(): void {
     try {
-      // Read the existing qtests-ts-runner.ts as template
-      const templatePath = path.join(getModuleDirnameForTestGenerator(), '..', 'qtests-ts-runner.ts');
-      let template = '';
-      
-      if (fs.existsSync(templatePath)) {
-        template = fs.readFileSync(templatePath, 'utf8');
-      } else {
-        // Fallback template for TypeScript ES modules with correct Jest configuration
-        template = `
-// Generated qtests runner - TypeScript ES module compatible
+      // Prepare template for ESM .mjs runner only (TS runner is sacrosanct and never generated)
+      const mjsTemplate = `
+// GENERATED RUNNER: qtests-runner.mjs — Node ESM runner that invokes Jest with stable config
+// This file is auto-generated by qtests. Safe to delete; generator will recreate.
 import { spawn } from 'child_process';
 import path from 'path';
 
-// Run tests with TypeScript support and correct Jest arguments
-// Always point Jest at our ESM + ts-jest config and do not fail on empty matches
 const args = process.argv.slice(2);
 const jestArgs = [
   '--config',
@@ -1618,22 +1663,21 @@ const jestArgs = [
   ...args,
 ];
 
-const testProcess = spawn('jest', jestArgs, {
-  stdio: 'inherit',
-  shell: true,
-});
-
-testProcess.on('exit', (code) => {
-  process.exit(code || 0);
-});
+const child = spawn('jest', jestArgs, { stdio: 'inherit', shell: true });
+child.on('exit', (code) => process.exit(code || 0));
 `.trim();
-      }
 
-      // Always overwrite qtests-ts-runner.ts to ensure latest functionality and TypeScript compliance
-      const outputPath = path.join(process.cwd(), 'qtests-ts-runner.ts');
-      fs.writeFileSync(outputPath, template, 'utf8');
-      
-      console.log('✅ Generated qtests-ts-runner.ts for TypeScript ES modules');
+      // Write or update qtests-runner.mjs with header marker
+      const mjsPath = path.join(process.cwd(), 'qtests-runner.mjs');
+      try {
+        const exists = fs.existsSync(mjsPath);
+        const shouldWrite = !exists || fs.readFileSync(mjsPath, 'utf8').includes('GENERATED RUNNER: qtests-runner.mjs');
+        if (shouldWrite) {
+          fs.writeFileSync(mjsPath, mjsTemplate, 'utf8');
+        }
+      } catch {}
+
+      console.log('✅ Ensured qtests ESM runner: qtests-runner.mjs');
     } catch (error: any) {
       console.error('Failed to generate qtests-ts-runner.ts:', error.message);
     }
@@ -1656,8 +1700,8 @@ testProcess.on('exit', (code) => {
         packageJson.scripts = {};
       }
       
-      // Use TypeScript runner via tsx to keep behavior consistent with ESM+TS projects
-      packageJson.scripts.test = 'npx tsx qtests-ts-runner.ts';
+      // Prefer invoking Jest directly with project config for sandbox resilience
+      packageJson.scripts.test = 'jest --config config/jest.config.mjs --passWithNoTests';
       
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2), 'utf8');
       console.log('✅ Updated package.json test script to use qtests-ts-runner.ts');

@@ -62,8 +62,8 @@ export default {
   moduleNameMapper: {
   "^(\\.{1,2}/.*)\\.js$": "$1",
   "^qtests/(.*)$": "<rootDir>/node_modules/qtests/$1",
-  "^mongoose$": "<rootDir>/node_modules/qtests/__mocks__/mongoose.js",
-  "^.+\\.(css|less|scss|sass)$": "<rootDir>/config/styleMock.js",
-  "^.+\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/config/styleMock.js"
+  "^mongoose$": "<rootDir>/__mocks__/mongoose.js",
+  "^.+\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",
+  "^.+\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/__mocks__/fileMock.js"
 }
 };
