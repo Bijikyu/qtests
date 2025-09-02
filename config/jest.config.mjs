@@ -38,7 +38,7 @@ export default {
     {
       "useESM": true,
       "isolatedModules": true,
-      "tsconfig": "<rootDir>/config/tsconfig.json"
+      "tsconfig": "<rootDir>/config/tsconfig.jest.json"
     }
   ],
   "^.+\\.(js|jsx)$": [
@@ -62,6 +62,8 @@ export default {
   moduleNameMapper: {
   "^(\\.{1,2}/.*)\\.js$": "$1",
   "^qtests/(.*)$": "<rootDir>/node_modules/qtests/$1",
-  "^mongoose$": "<rootDir>/node_modules/qtests/__mocks__/mongoose.js"
+  "^mongoose$": "<rootDir>/node_modules/qtests/__mocks__/mongoose.js",
+  "^.+\\.(css|less|scss|sass)$": "<rootDir>/config/styleMock.js",
+  "^.+\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/config/styleMock.js"
 }
 };

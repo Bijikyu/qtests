@@ -889,8 +889,12 @@ class TestGenerator {
     const detectsRouter = /react-router(?:-dom)?/.test(content);
     const usesReactRouter = isReactFile && wantsRouter && detectsRouter;
     
-    // Import the module being tested (no extension for better ts-jest compatibility)
-    lines.push(`import * as testModule from './${basename}';`);
+    // Import the module being tested lazily to avoid TLA/import.meta parse issues under Jest
+    // Use dynamic import in beforeAll so modules with top-level await are handled correctly
+    lines.push(`let testModule: any;`);
+    lines.push(`beforeAll(async () => {`);
+    lines.push(`  testModule = await import('./${basename}');`);
+    lines.push(`});`);
     
     // Add React imports if needed
     if (isReactFile) {
@@ -1360,6 +1364,13 @@ class TestGenerator {
         tsPathsMapper['^@/(.*)$'] = '<rootDir>/client/src/$1';
       }
     }
+    // Fallback for '@shared/': map to shared when present
+    if (!Object.keys(tsPathsMapper).some(k => k.startsWith('^@shared/'))) {
+      const sharedDir = path.join(process.cwd(), 'shared');
+      if (fs.existsSync(sharedDir)) {
+        tsPathsMapper['^@shared/(.*)$'] = '<rootDir>/shared/$1';
+      }
+    }
     // Keep ESM treatment to TS/TSX; Jest infers .js from nearest package.json
     const extensionsToTreatAsEsm = isReactProject ? ['.ts', '.tsx'] : ['.ts'];
     const moduleFileExtensions = isReactProject ? ['ts', 'tsx', 'js', 'jsx', 'json'] : ['ts', 'js', 'json'];
@@ -1399,14 +1410,17 @@ class TestGenerator {
     // Build transform config with ESM + isolatedModules. For React, provide JSX setting inline.
     // Avoid duplicate keys; prefer inline tsconfig override only when necessary.
     // Prefer project tsconfig from config/ when present; fall back to inline override
+    const configTsJestPath = path.join(process.cwd(), 'config', 'tsconfig.jest.json');
     const configTsPath = path.join(process.cwd(), 'config', 'tsconfig.json');
-    const usePathTsconfig = fs.existsSync(configTsPath) ? configTsPath : null;
+    const usePathTsconfig = fs.existsSync(configTsJestPath)
+      ? configTsJestPath
+      : (fs.existsSync(configTsPath) ? configTsPath : null);
     const transformOptions: any = isReactProject
       ? (usePathTsconfig
-          ? { useESM: true, isolatedModules: true, tsconfig: '<rootDir>/config/tsconfig.json' }
+          ? { useESM: true, isolatedModules: true, tsconfig: '<rootDir>/config/tsconfig.jest.json' }
           : { useESM: true, isolatedModules: true, tsconfig: { jsx: 'react-jsx' } })
       : (usePathTsconfig
-          ? { useESM: true, isolatedModules: true, tsconfig: '<rootDir>/config/tsconfig.json' }
+          ? { useESM: true, isolatedModules: true, tsconfig: '<rootDir>/config/tsconfig.jest.json' }
           : { useESM: true, isolatedModules: true });
     // Build transform config for TS and JS. Prefer babel-jest for JS if available, otherwise ts-jest with allowJs.
     const hasBabelJest = fs.existsSync(path.join(process.cwd(), 'node_modules', 'babel-jest'));
@@ -1456,7 +1470,10 @@ export default {
       '^(\\.{1,2}/.*)\\.js$': '$1',
       '^qtests/(.*)$': '<rootDir>/node_modules/qtests/$1',
       '^mongoose$': '<rootDir>/node_modules/qtests/__mocks__/mongoose.js',
-      ...tsPathsMapper
+      '^.+\\\.(css|less|scss|sass)$': '<rootDir>/config/styleMock.js',
+      '^.+\\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$': '<rootDir>/config/styleMock.js',
+      ...tsPathsMapper,
+      ...((this.config as any).aliases || {})
     }, null, 2)}
 };
 `.trim();
@@ -1639,6 +1656,7 @@ testProcess.on('exit', (code) => {
         packageJson.scripts = {};
       }
       
+      // Use TypeScript runner via tsx to keep behavior consistent with ESM+TS projects
       packageJson.scripts.test = 'npx tsx qtests-ts-runner.ts';
       
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2), 'utf8');
