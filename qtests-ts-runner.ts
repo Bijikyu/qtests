@@ -33,6 +33,11 @@ const TEST_PATTERNS = [
 ];
 
 class TestRunner {
+  passedTests: number;
+  failedTests: number;
+  testResults: any[];
+  startTime: number;
+
   constructor() {
     this.passedTests = 0;
     this.failedTests = 0;
@@ -41,8 +46,8 @@ class TestRunner {
   }
 
   // Discover all test files in the project (from current working directory)
-  discoverTests(dir = process.cwd(), depth = 0, maxDepth = 10) {
-    const testFiles = [];
+  discoverTests(dir = process.cwd(), depth = 0, maxDepth = 10): string[] {
+    const testFiles: string[] = [];
     if (depth > maxDepth) return testFiles;
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -83,7 +88,7 @@ class TestRunner {
   }
 
   // Run a single test file via Jest and capture output
-  async runTestFile(testFile) {
+  async runTestFile(testFile: string) {
     return new Promise((resolve) => {
       const startTime = Date.now();
       let stdout = '';
@@ -97,7 +102,7 @@ class TestRunner {
       const cfg = configCandidates.find(p => {
         try { return fs.existsSync(p); } catch { return false; }
       });
-      const jestArgs = [];
+      const jestArgs: string[] = [];
       if (cfg) {
         jestArgs.push('--config', cfg);
       }
@@ -128,13 +133,13 @@ class TestRunner {
   }
 
   // Print colored status indicator
-  printStatus(success, text) {
+  printStatus(success: boolean, text: string) {
     const indicator = success ? `${colors.green}${colors.bold}✓${colors.reset}` : `${colors.red}${colors.bold}✗${colors.reset}`;
     console.log(`${indicator} ${text}`);
   }
 
   // Print test file result
-  printTestResult(result) {
+  printTestResult(result: any) {
     const { file, success, duration } = result;
     const durationText = `${colors.dim}(${duration}ms)${colors.reset}`;
     const fileText = `${colors.cyan}${file}${colors.reset}`;
@@ -194,7 +199,12 @@ class TestRunner {
   async run() {
     console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner - Parallel Mode${colors.reset}`);
     console.log(`${colors.dim}Discovering and running all tests...\n${colors.reset}`);
-    const testFiles = this.discoverTests();
+    
+    // Check if specific test files were passed as arguments
+    const args = process.argv.slice(2);
+    const specificTestFiles = args.filter(arg => !arg.startsWith('--') && (arg.endsWith('.test.ts') || arg.endsWith('.test.js') || arg.endsWith('.spec.ts') || arg.endsWith('.spec.js')));
+    
+    const testFiles = specificTestFiles.length > 0 ? specificTestFiles : this.discoverTests();
     if (testFiles.length === 0) {
       console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
       console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
@@ -207,9 +217,9 @@ class TestRunner {
     const maxConcurrency = Math.min(testFiles.length, Math.max(4, cpuCount * 2));
     console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores)${colors.reset}\n`);
 
-    const runBatch = async (batch) => {
+    const runBatch = async (batch: string[]) => {
       const results = await Promise.all(batch.map(async (testFile) => {
-        const result = await this.runTestFile(testFile);
+        const result: any = await this.runTestFile(testFile);
         if (result.success) this.passedTests++; else this.failedTests++;
         this.printTestResult(result);
         return result;
