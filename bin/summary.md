@@ -36,7 +36,7 @@ qtests-ts-generate --update-pkg-script       # Opt-in to update npm test script
 ## Known Side Effects  
 - Creates Jest configuration file (jest.config.mjs) on non-dry runs
 - Creates Jest setup file (jest-setup.ts) on non-dry runs; imports `qtests/setup` first and adds DOM/browser stubs
-- Creates qtests-ts-runner.ts and configures it to pass `--config config/jest.config.mjs` and `--passWithNoTests`
+- Creates qtests-runner.mjs and configures Jest invocation with `--config config/jest.config.mjs` and `--passWithNoTests`
 - Scaffolds local HTTP test utils: `generated-tests/utils/httpTest.ts` (re-exports) and `generated-tests/utils/httpTest.shim.js` (implementation with `.send()`)
 - Adds `moduleNameMapper` for `mongoose` pointing to qtests' manual mock to avoid real DB access in unit tests
 - Generates test files in filesystem (unless --dry-run specified)
@@ -48,7 +48,7 @@ qtests-ts-generate --update-pkg-script       # Opt-in to update npm test script
 - Force flag only applies to generated test files (those containing `.GenerateTest` in the filename)
 - Include/exclude patterns use standard glob syntax
 - Process exits with error code 1 on invalid options or generation failures
-- **Bug Fixed (Sept 2025)**: Now correctly creates qtests-ts-runner.ts instead of qtests-runner.ts
+- **Policy Alignment (Sept 2025)**: Generator now correctly creates `qtests-runner.mjs` (ESM) instead of a TypeScript runner file
 - **Enhanced Filtering (Sept 2025)**: Improved directory exclusion logic prevents test generation for config/demo files
 
 ## AI Agent Task Anchors  

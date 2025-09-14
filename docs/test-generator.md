@@ -210,9 +210,9 @@ Generated tests include `import 'qtests/setup'` so axios/winston and other known
 ## Jest Configuration & Runner
 
 On non-dry runs the generator writes:
-- `jest.config.js` configured for TypeScript ESM using ts-jest
-- `setup.ts` with standard Jest setup
-- `qtests-runner.ts` and updates `package.json` test script to `npx tsx qtests-runner.ts`
+- `config/jest.config.mjs` configured for TypeScript ESM using ts-jest
+- `config/jest-setup.ts` with standard Jest setup
+- `qtests-runner.mjs` (ESM). The runner invokes Jest with `--config config/jest.config.mjs --passWithNoTests` and does not rely on `tsx`.
 
 In `--dry-run` mode, these files are not written.
 
@@ -253,7 +253,7 @@ describe('My Component', () => {
 
 - **Unit tests**: `filename.test.js` (same directory as source)
 - **API tests**: `tests/integration/filename__method.test.ts`
-- **Configuration**: `jest.config.js`, `tests/setup.ts`
+- **Configuration**: `config/jest.config.mjs`, `config/jest-setup.ts`
 
 ## Examples
 

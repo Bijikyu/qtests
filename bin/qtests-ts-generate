@@ -135,7 +135,7 @@ OPTIONS:
       --react-components   Opt-in: generate React component tests (hooks are always supported)
       --no-react-components  Skip generating tests for React components (default)
       --with-router        Wrap React tests with MemoryRouter when React Router is detected
-      --update-pkg-script  Update package.json test script to use qtests-ts-runner.ts
+      --update-pkg-script  Update package.json test script to use Jest with project config
 
   -h, --help           Show this help message
   -v, --version        Show version information

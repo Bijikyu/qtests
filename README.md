@@ -363,7 +363,7 @@ Examples:
 - `qtests-ts-generate --mode ast --force` — AST mode and overwrite generated tests
 
 Notes:
-- On real runs (no `--dry-run`), the generator writes `config/jest.config.mjs`, `config/jest-setup.ts`, and creates `qtests-ts-runner.ts`.
+- On real runs (no `--dry-run`), the generator writes `config/jest.config.mjs`, `config/jest-setup.ts`, and creates `qtests-runner.mjs`.
 - The generated runner includes `--config config/jest.config.mjs` and `--passWithNoTests`.
 - The generated Jest config includes a `moduleNameMapper` for `mongoose` pointing to qtests' manual mock, preventing real DB access in unit tests.
 - Update of `package.json` test script is now opt-in via `--update-pkg-script`.
@@ -391,7 +391,7 @@ Notes:
 - If no safe export remains, the generator emits a module smoke test instead of bogus per-export tests.
 - When valid React component/hook tests are emitted, the generator does not append generic “is defined” blocks.
 
-### qtests-ts-runner
+### qtests runner
 - Usage: `qtests-ts-runner`
 - Purpose: Discovers and runs tests in the project with a Jest-first strategy.
 - Behavior:
@@ -400,7 +400,7 @@ Notes:
   - Runs tests in parallel batches (2x CPU cores, capped by file count)
   - **Performance Optimized**: Jest-like batch execution achieving 69% speed improvement
 - Notes:
-- Automatically generated as `qtests-ts-runner.ts` by the test generator
+- Automatically generated as `qtests-runner.mjs` by the test generator
 - Always passes `--config config/jest.config.mjs` and `--passWithNoTests`
 - Works with TypeScript ESM projects via `ts-jest` (scaffolded by the generator)
 
@@ -457,7 +457,7 @@ test('environment test', async () => {
 | File extension errors | Use `.js` extensions in ES module imports |
 | Test generation creates tests for config files | Enhanced filtering now automatically skips demo/, examples/, config/, and test directories |
 | generateKey returns empty string | Fixed in latest version - now correctly returns test keys like "test-api-key-user" |
-| qtests-runner.ts vs qtests-ts-runner.ts | Use `qtests-ts-runner.ts` - the correct filename for TypeScript ES modules |
+| qtests-runner.mjs vs qtests-ts-runner.ts | Use `qtests-runner.mjs` as the generated runner; the CLI command remains `qtests-ts-runner` |
 
 ## 📄 License
 

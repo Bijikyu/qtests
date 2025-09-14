@@ -6,7 +6,7 @@ qtests is a comprehensive Node.js testing framework providing zero-dependency ut
 ## Recent Breakthrough (August 2025)
 **ARCHITECTURAL REVELATION**: Achieved 69% speed improvement by making qtests work like Jest internally. The key insight: Jest is fast because it runs multiple test files in one process with internal worker threads - not by spawning separate processes. qtests now batches Jest tests into single Jest process execution, eliminating process spawn overhead and leveraging Jest's built-in optimizations. Result: 35.1s execution time with 75/75 tests passing.
 
-**TypeScript ES Module Conversion COMPLETED (September 2025)**: Successfully converted entire framework from CommonJS to TypeScript with ES Module syntax exclusively. Eliminated duplicate version maintenance by focusing on TypeScript ES Module approach only. **FINAL SOLUTION**: Renamed bin commands to `qtests-ts-generate` and `qtests-ts-runner` to avoid npm dependency conflicts. Generator now creates TypeScript test files (.test.ts) exclusively with full type safety and ES Module patterns.
+**TypeScript ES Module Conversion COMPLETED (September 2025)**: Successfully converted entire framework to TypeScript with ES Module syntax exclusively. Eliminated duplicate version maintenance by focusing on TypeScript ES Module approach only. Bin commands are `qtests-ts-generate` and `qtests-ts-runner`. The generator creates TypeScript test files (.test.ts) and scaffolds an ESM runner `qtests-runner.mjs` that invokes Jest with `--config config/jest.config.mjs --passWithNoTests` (no `tsx` usage).
 
 ## User Preferences
 - **TypeScript ES Module Only**: Project has been converted to TypeScript with ES Module syntax exclusively

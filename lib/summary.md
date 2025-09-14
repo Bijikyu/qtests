@@ -43,7 +43,7 @@ The `lib/` directory contains the core qtests framework functionality, including
 - Test generation modifies filesystem by creating new `.GeneratedTest.test.ts` files (non-dry runs)
 - AST mode attempts dynamic import of TypeScript compiler (graceful fallback)
 - Generated tests include fake timers and seeded randomness when source uses Date/Math.random
-- Non-dry runs also write `jest.config.mjs`, `jest-setup.ts` (with DOM/clipboard/URL shims for React), generate `qtests-ts-runner.ts`. Updating `package.json` test script is opt-in via CLI flag.
+- Non-dry runs also write `jest.config.mjs`, `jest-setup.ts` (with DOM/clipboard/URL shims for React), generate `qtests-runner.mjs`. Updating `package.json` test script is opt-in via CLI flag.
 - Safe overwrite: if existing `jest.config.mjs`/`jest-setup.ts` contain the qtests header, they will be overwritten to correct prior generator mistakes.
 - Smarter React detection: generator now skips `node_modules`, build artifacts, and docs when scanning. This prevents false positives that forced `jsdom` and broke Node-only projects.
 - **Bug Fixes (Sept 2025)**: generateKey helper now correctly returns test keys instead of empty strings
