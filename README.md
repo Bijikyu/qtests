@@ -173,6 +173,32 @@ const logger = winston.createLogger();
 logger.info('This produces no output'); // Silent
 ```
 
+### Custom Module Stubs (Ad‑Hoc)
+
+When you need to stub a niche dependency (beyond the built‑ins axios/winston) without changing qtests itself, register a custom stub in tests:
+
+```ts
+// Always load setup first so axios/winston are stubbed globally
+import './node_modules/qtests/setup.js';
+
+// Then register your ad‑hoc stub(s)
+import { registerModuleStub } from 'qtests/utils/customStubs.js';
+
+registerModuleStub('external-service-client', {
+  ping: () => 'pong',
+  get: async () => ({ ok: true })
+});
+
+// Now this resolves to your in‑memory stub even if the module is not installed
+const client = require('external-service-client');
+await client.get(); // { ok: true }
+```
+
+Notes:
+- Call `registerModuleStub` BEFORE the first require/import of that module.
+- Use `unregisterModuleStub(id)` and `clearAllModuleStubs()` for cleanup in afterEach.
+- Honors `QTESTS_SILENT=1|true` to reduce noise in CI logs.
+
 ## 🏃 Lightweight Test Runner
 
 ```typescript
@@ -198,8 +224,8 @@ runTestSuite('My Tests', tests);
 
 ```typescript
 // For generated API tests, a local shim is scaffolded at:
-//   generated-tests/utils/httpTest.ts (re-exports a JS shim)
-//   generated-tests/utils/httpTest.shim.js (implementation with .send())
+//   tests/generated-tests/utils/httpTest.ts (re-exports a JS shim)
+//   tests/generated-tests/utils/httpTest.shim.js (implementation with .send())
 // You can also import the same helpers directly from qtests if preferred.
 import { httpTest } from 'qtests/lib/envUtils.js';
 
@@ -340,7 +366,7 @@ await stubs.axios.get('https://example.com');
 - Purpose: Scans source files and generates missing tests.
 - Options:
   - `-s, --src <dir>`: Source directory root to scan. Default: `.`
-  - `-t, --test-dir <dir>`: Directory for integration/API tests. Default: `generated-tests`
+  - `-t, --test-dir <dir>`: Directory for integration/API tests. Default: `tests/generated-tests`
   - `--mode <heuristic|ast>`: Analysis mode. `ast` attempts TypeScript-based analysis if `typescript` is installed; falls back otherwise. Default: `heuristic`
   - `--unit`: Generate only unit tests
   - `--integration`: Generate only integration/API tests
@@ -380,7 +406,7 @@ Notes:
 - Required-props fallback: If a component appears to require props (TS inline types or propTypes.isRequired), generator falls back to a safe existence test instead of rendering.
 - Non-React modules: Emits safe existence checks or a module-load smoke test.
 - Skipped directories: `__mocks__`, `__tests__`, `tests`, `test`, `generated-tests`, `manual-tests`, `node_modules`, `dist`, `build`, `.git`.
-- API tests: Local `generated-tests/utils/httpTest.ts` is scaffolded to re-export `httpTest.shim.js`, a minimal, dependency‑free HTTP test shim. Imports like `../utils/httpTest` resolve without extra project config. The shim supports `.send()` and exposes `req.body` to handlers.
+- API tests: Local `tests/generated-tests/utils/httpTest.ts` is scaffolded to re-export `httpTest.shim.js`, a minimal, dependency‑free HTTP test shim. Imports like `../utils/httpTest` resolve without extra project config. The shim supports `.send()` and exposes `req.body` to handlers.
 
 #### File Extension Strategy & JSX
 - Tests are emitted JSX-free using `React.createElement`, so unit/API tests default to `.ts`.

@@ -9,7 +9,7 @@
     "qtests-ts-generate": "./bin/qtests-ts-generate"
   },
   "scripts": {
-    "test": "qtests-ts-runner"
+    "test": "node qtests-runner.mjs"
   },
   "keywords": [
     "testing",

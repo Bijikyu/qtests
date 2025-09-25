@@ -23,7 +23,7 @@ describe('TestGenerator', () => {
     
     generator = new TestGenerator({
       SRC_DIR: tempDir,
-      TEST_DIR: path.join(tempDir, 'generated-tests')
+      TEST_DIR: path.join(tempDir, 'tests', 'generated-tests')
     });
   });
 
@@ -113,6 +113,7 @@ describe('TestGenerator', () => {
     // Validate that the generated API test imports httpTest without extension
     const apiTestPath = path.join(
       tempDir,
+      'tests',
       'generated-tests',
       path.relative(process.cwd(), sourceFile)
         .replace(/\.[tj]sx?$/, '.GeneratedTest__get.test.ts')

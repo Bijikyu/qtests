@@ -1,7 +1,7 @@
 // utils/httpTest.shim.js - canonical http test helpers (CJS)
 // Provides a tiny Express-like app and a supertest-like client with `.send()`
 
-function createMockApp() {
+export function createMockApp() {
   const routes = new Map();
   const add = (m, p, h) => { routes.set(m.toUpperCase() + ' ' + p, h); };
 
@@ -35,7 +35,7 @@ function createMockApp() {
   return app;
 }
 
-function supertest(app) {
+export function supertest(app) {
   function makeReq(method, url) {
     const state = { expected: null, body: undefined, headers: {} };
 
@@ -104,5 +104,4 @@ function supertest(app) {
   };
 }
 
-module.exports = { createMockApp, supertest };
-
+// ESM exports provided above

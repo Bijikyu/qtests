@@ -26,17 +26,17 @@
 // Import mockAxios factory for creating configurable HTTP client mocks
 // mockAxios provides enhanced mock HTTP clients with customizable behavior
 // for comprehensive offline testing and HTTP simulation scenarios
-import mockAxios from '../utils/mockAxios.js';
+import * as mockAxios from '../utils/mockAxios.js';
 
 // Import httpTest utilities for lightweight integration testing
 // httpTest provides supertest-like functionality without external dependencies
 // for testing HTTP endpoints and applications in Node.js core
-import httpTest from '../utils/httpTest.js';
+import * as httpTest from '../utils/httpTest.js';
 
 // Import offlineMode utility for network-free testing
 // offlineMode automatically switches between real and stub implementations
 // based on whether the test should simulate offline conditions
-import offlineMode from '../utils/offlineMode.js';
+import * as offlineMode from '../utils/offlineMode.js';
 
 /**
  * Export HTTP testing utilities

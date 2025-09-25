@@ -86,7 +86,7 @@ class TestRunner {
 
   // Run a single test file via Jest and capture output
   async runTestFile(testFile) {
-    return new Promise((resolve) => {
+    const spawnOnce = (args) => new Promise((resolve) => {
       const startTime = Date.now();
       let stdout = '';
       let stderr = '';
@@ -104,13 +104,25 @@ class TestRunner {
         jestArgs.push('--config', cfg);
       }
       jestArgs.push('--passWithNoTests');
-      // Target just this file for speed; keep small worker pool to reduce overhead
-      jestArgs.push(testFile, '--maxWorkers=4', '--cache', '--no-coverage');
+      // Per-file execution tuning: allow in-band or worker override via env
+      const fileWorkers = process.env.QTESTS_FILE_WORKERS ? String(process.env.QTESTS_FILE_WORKERS) : '';
+      const inBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
+      jestArgs.push(testFile);
+      if (inBand) {
+        jestArgs.push('--runInBand');
+      } else if (fileWorkers) {
+        jestArgs.push(`--maxWorkers=${fileWorkers}`);
+      }
+      jestArgs.push('--cache', '--no-coverage');
 
       const child = spawn('jest', jestArgs, {
         stdio: ['pipe', 'pipe', 'pipe'],
         shell: true,
-        env: { ...process.env, NODE_ENV: 'test' }
+        env: {
+          ...process.env,
+          NODE_ENV: 'test',
+          NODE_OPTIONS: [process.env.NODE_OPTIONS || '', '--experimental-vm-modules'].filter(Boolean).join(' ').trim()
+        }
       });
 
       child.stdout.on('data', (data) => { stdout += data.toString(); });
@@ -118,15 +130,31 @@ class TestRunner {
 
       child.on('close', (code) => {
         const duration = Date.now() - startTime;
-        const output = stdout + stderr;
+        let output = stdout + stderr;
+        if (code !== 0 && !output.trim()) {
+          output = 'No output captured from jest. Possible worker crash or environment restriction.';
+        }
         resolve({ file: testFile, success: code === 0, duration, output, stdout, stderr });
       });
 
-      child.on('error', () => {
+      child.on('error', (err) => {
         const duration = Date.now() - startTime;
-        resolve({ file: testFile, success: false, duration, output: stderr || 'Runner error', stdout, stderr });
+        const msg = (stderr && stderr.trim()) || (err && err.message) || 'Runner error';
+        resolve({ file: testFile, success: false, duration, output: msg, stdout, stderr });
       });
     });
+
+    // First attempt
+    const first = await spawnOnce([]);
+    // Detect worker crash signature and retry in-band automatically
+    const crashed = /A jest worker process [^\n]* crashed/i.test(first.output || '');
+    const alreadyInBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
+    if (!first.success && crashed && !alreadyInBand) {
+      process.stderr.write(`${colors.yellow}Retrying in-band due to worker crash: ${testFile}${colors.reset}\n`);
+      process.env.QTESTS_INBAND = '1';
+      return await this.runTestFile(testFile);
+    }
+    return first;
   }
 
   // Print colored status indicator
@@ -206,7 +234,12 @@ class TestRunner {
     testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
     console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
     const cpuCount = os.cpus().length;
-    const maxConcurrency = Math.min(testFiles.length, Math.max(4, cpuCount * 2));
+    const envConcurrency = parseInt(process.env.QTESTS_CONCURRENCY || '', 10);
+    const defaultConcurrency = Math.max(4, cpuCount * 2);
+    const maxConcurrency = Math.min(
+      testFiles.length,
+      Number.isFinite(envConcurrency) && envConcurrency > 0 ? envConcurrency : defaultConcurrency
+    );
     console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores)${colors.reset}\n`);
 
     const runBatch = async (batch) => {

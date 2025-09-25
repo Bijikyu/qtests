@@ -27,12 +27,12 @@
 // Import testHelpers for advanced testing scenarios
 // testHelpers provides module reloading, response mocking, and other
 // specialized utilities needed for integration and complex unit testing
-import testHelpers from '../utils/testHelpers.js';
+import * as testHelpers from '../utils/testHelpers.js';
 
 // Import testSuite utilities for comprehensive test pattern elimination
 // testSuite provides centralized setup, teardown, mocking, and assertion
 // patterns to eliminate duplicate code across test suites
-import testSuite from '../utils/testSuite.js';
+import * as testSuite from '../utils/testSuite.js';
 
 /**
  * Export advanced testing utilities

@@ -27,7 +27,9 @@ describe('qtests-runner.mjs behavior', () => {
   });
 
   afterAll(() => {
-    // Leave artifacts for debugging if needed
+    try { fs.rmSync(tmpTestsDir, { recursive: true, force: true }); } catch {}
+    try { fs.rmSync(argsCapturePath, { force: true }); } catch {}
+    try { fs.rmSync(debugFilePath, { force: true }); } catch {}
   });
 
   it('spawns jest with required args and creates DEBUG_TESTS.md on failure', async () => {
@@ -53,6 +55,9 @@ describe('qtests-runner.mjs behavior', () => {
       ...process.env,
       PATH: `${tmpBinDir}:${process.env.PATH || ''}`,
       QTESTS_PATTERN: targetTestName.replace('.', '\\.'),
+      // Ensure deterministic per-file workers to avoid race with scaffolding
+      QTESTS_FILE_WORKERS: '4',
+      QTESTS_CONCURRENCY: '1',
       NODE_ENV: 'test',
     };
 

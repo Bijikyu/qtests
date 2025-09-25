@@ -65,7 +65,9 @@ interface FileCategorization {
 // Configuration constants - TypeScript ES module only
 const DEFAULT_CONFIG: TestGeneratorConfig = {
   SRC_DIR: '.',
-  TEST_DIR: 'generated-tests',
+  // Default location for generated (non-unit) tests: under tests/generated-tests
+  // This keeps integration-like artifacts scoped within the standard tests folder.
+  TEST_DIR: 'tests/generated-tests',
   KNOWN_MOCKS: ['axios', 'node-fetch', 'pg', 'mongoose', 'fs', 'redis'],
   VALID_EXTS: ['.ts', '.js', '.tsx', '.jsx'],
   // Default behavior: do NOT generate tests for React components to avoid noise
@@ -650,13 +652,14 @@ class TestGenerator {
   }
 
   /**
-   * Ensure a local copy of API test utilities exists at generated-tests/utils/httpTest.js
+   * Ensure a local copy of API test utilities exists at tests/generated-tests/utils/httpTest.js
    * so that generated integration tests work without extra project wiring.
    * Idempotent: only writes if missing.
    */
   private ensureLocalHttpTestUtils(): void {
     try {
-      const targetDir = path.join(process.cwd(), this.config.TEST_DIR || 'generated-tests', 'utils');
+      // Respect configured TEST_DIR with a sensible default inside tests/
+      const targetDir = path.join(process.cwd(), this.config.TEST_DIR || 'tests/generated-tests', 'utils');
       const tsFile = path.join(targetDir, 'httpTest.ts');
       const shimFile = path.join(targetDir, 'httpTest.shim.js');
 
@@ -667,7 +670,7 @@ class TestGenerator {
       const tsContent = `// Re-export the JS shim so tests work in TS/ESM\nexport { createMockApp, supertest } from './httpTest.shim.js';\n`;
 
       // Minimal, dependency-free supertest-like shim and express-style matcher with .send()
-      const jsContent = `// generated-tests/utils/httpTest.shim.js - minimal local test http helpers (ESM)\n// Provides a tiny Express-like app and a supertest-like client with .send()\n\nexport function createMockApp() {\n  const routes = new Map();\n  const add = (m, p, h) => { routes.set(m.toUpperCase() + ' ' + p, h); };\n\n  function app(req, res) {\n    const key = String(req?.method || '').toUpperCase() + ' ' + String(req?.url || '');\n    const handler = routes.get(key);\n\n    if (!handler) {\n      res.statusCode = 404;\n      res.setHeader('content-type', 'application/json');\n      res.end(JSON.stringify({ error: 'Not Found' }));\n      return;\n    }\n\n    try {\n      res.statusCode = 200; // default\n      handler(req, res);\n    } catch (err) {\n      res.statusCode = 500;\n      res.setHeader('content-type', 'application/json');\n      res.end(JSON.stringify({ error: 'Internal Error', message: String(err && err.message || err) }));\n    }\n  }\n\n  app.get = (p, h) => add('GET', p, h);\n  app.post = (p, h) => add('POST', p, h);\n  app.put = (p, h) => add('PUT', p, h);\n  app.patch = (p, h) => add('PATCH', p, h);\n  app.delete = (p, h) => add('DELETE', p, h);\n\n  return app;\n}\n\nexport function supertest(app) {\n  function makeReq(method, url) {\n    const state = { expected: null, body: undefined, headers: {} };\n\n    function finish(resState) {\n      const { statusCode, headers, text } = resState;\n      let body = undefined;\n      if (typeof text === 'string') {\n        try { body = JSON.parse(text); } catch {}\n      }\n      const out = { status: statusCode, headers, text, body };\n      if (typeof state.expected === 'number' && statusCode !== state.expected) {\n        throw new Error(\`Expected status \${state.expected} but got \${statusCode}\`);\n      }\n      return out;\n    }\n\n    return {\n      set(name, value) {\n        state.headers[String(name).toLowerCase()] = String(value);\n        return this;\n      },\n      send(payload) {\n        const isObject = payload !== null && typeof payload === 'object';\n        state.body = isObject ? JSON.stringify(payload) : String(payload ?? '');\n        if (!state.headers['content-type']) {\n          state.headers['content-type'] = isObject ? 'application/json' : 'text/plain';\n        }\n        return this;\n      },\n      expect(status) { state.expected = status; return this.end(); },\n      end() {\n        return new Promise((resolve) => {\n          const headers = {};\n          let bodyText = '';\n          const res = {\n            statusCode: 200,\n            setHeader: (k, v) => { headers[String(k).toLowerCase()] = String(v); },\n            end: (txt) => {\n              bodyText = typeof txt === 'string' ? txt : (txt == null ? '' : String(txt));\n              resolve(finish({ statusCode: res.statusCode, headers, text: bodyText }));\n            }\n          };\n\n          const req = { method, url, headers: { ...state.headers } };\n          if (state.body !== undefined) {\n            const ct = state.headers['content-type'] || '';\n            req.body = ct.includes('application/json') ? (() => { try { return JSON.parse(state.body); } catch { return state.body; } })() : state.body;\n          }\n          try {\n            const qs = url.includes('?') ? url.split('?')[1] : '';\n            req.query = Object.fromEntries(new URLSearchParams(qs));\n          } catch {}\n\n          app(req, res);\n        });\n      }\n    };\n  }\n\n  return {\n    get: (p) => makeReq('GET', p),\n    post: (p) => makeReq('POST', p),\n    put: (p) => makeReq('PUT', p),\n    patch: (p) => makeReq('PATCH', p),\n    delete: (p) => makeReq('DELETE', p),\n  };\n}\n`;
+      const jsContent = `// tests/generated-tests/utils/httpTest.shim.js - minimal local test http helpers (ESM)\n// Provides a tiny Express-like app and a supertest-like client with .send()\n\nexport function createMockApp() {\n  const routes = new Map();\n  const add = (m, p, h) => { routes.set(m.toUpperCase() + ' ' + p, h); };\n\n  function app(req, res) {\n    const key = String(req?.method || '').toUpperCase() + ' ' + String(req?.url || '');\n    const handler = routes.get(key);\n\n    if (!handler) {\n      res.statusCode = 404;\n      res.setHeader('content-type', 'application/json');\n      res.end(JSON.stringify({ error: 'Not Found' }));\n      return;\n    }\n\n    try {\n      res.statusCode = 200; // default\n      handler(req, res);\n    } catch (err) {\n      res.statusCode = 500;\n      res.setHeader('content-type', 'application/json');\n      res.end(JSON.stringify({ error: 'Internal Error', message: String(err && err.message || err) }));\n    }\n  }\n\n  app.get = (p, h) => add('GET', p, h);\n  app.post = (p, h) => add('POST', p, h);\n  app.put = (p, h) => add('PUT', p, h);\n  app.patch = (p, h) => add('PATCH', p, h);\n  app.delete = (p, h) => add('DELETE', p, h);\n\n  return app;\n}\n\nexport function supertest(app) {\n  function makeReq(method, url) {\n    const state = { expected: null, body: undefined, headers: {} };\n\n    function finish(resState) {\n      const { statusCode, headers, text } = resState;\n      let body = undefined;\n      if (typeof text === 'string') {\n        try { body = JSON.parse(text); } catch {}\n      }\n      const out = { status: statusCode, headers, text, body };\n      if (typeof state.expected === 'number' && statusCode !== state.expected) {\n        throw new Error(\`Expected status \${state.expected} but got \${statusCode}\`);\n      }\n      return out;\n    }\n\n    return {\n      set(name, value) {\n        state.headers[String(name).toLowerCase()] = String(value);\n        return this;\n      },\n      send(payload) {\n        const isObject = payload !== null && typeof payload === 'object';\n        state.body = isObject ? JSON.stringify(payload) : String(payload ?? '');\n        if (!state.headers['content-type']) {\n          state.headers['content-type'] = isObject ? 'application/json' : 'text/plain';\n        }\n        return this;\n      },\n      expect(status) { state.expected = status; return this.end(); },\n      end() {\n        return new Promise((resolve) => {\n          const headers = {};\n          let bodyText = '';\n          const res = {\n            statusCode: 200,\n            setHeader: (k, v) => { headers[String(k).toLowerCase()] = String(v); },\n            end: (txt) => {\n              bodyText = typeof txt === 'string' ? txt : (txt == null ? '' : String(txt));\n              resolve(finish({ statusCode: res.statusCode, headers, text: bodyText }));\n            }\n          };\n\n          const req = { method, url, headers: { ...state.headers } };\n          if (state.body !== undefined) {\n            const ct = state.headers['content-type'] || '';\n            req.body = ct.includes('application/json') ? (() => { try { return JSON.parse(state.body); } catch { return state.body; } })() : state.body;\n          }\n          try {\n            const qs = url.includes('?') ? url.split('?')[1] : '';\n            req.query = Object.fromEntries(new URLSearchParams(qs));\n          } catch {}\n\n          app(req, res);\n        });\n      }\n    };\n  }\n\n  return {\n    get: (p) => makeReq('GET', p),\n    post: (p) => makeReq('POST', p),\n    put: (p) => makeReq('PUT', p),\n    patch: (p) => makeReq('PATCH', p),\n    delete: (p) => makeReq('DELETE', p),\n  };\n}\n`;
 
       // Write files only if missing to remain idempotent
       if (!fs.existsSync(tsFile)) fs.writeFileSync(tsFile, tsContent, 'utf8');
@@ -1652,39 +1655,35 @@ afterEach(() => {
    */
   generateQtestsRunner(): void {
     try {
-      const binRunnerPath = path.join(process.cwd(), 'bin', 'qtests-ts-runner');
-
-      if (!fs.existsSync(binRunnerPath)) {
-        console.warn('⚠️  bin/qtests-ts-runner not found, cannot generate qtests-runner.mjs');
+      // Prefer embedded template shipped with the module; fallback to local bin copy for dev repos
+      const modDir = getModuleDirnameForTestGenerator();
+      const templatePath = path.join(modDir, 'templates', 'qtests-runner.mjs.template');
+      if (fs.existsSync(templatePath)) {
+        const content = fs.readFileSync(templatePath, 'utf8');
+        fs.writeFileSync('qtests-runner.mjs', content, 'utf8');
+        console.log('✅ Generated qtests-runner.mjs (ESM) with full features');
         return;
       }
 
-      // Read the authoritative runner implementation (ESM) and adapt headers for generated file
-      const binRunnerContent = fs.readFileSync(binRunnerPath, 'utf8');
-
-      // Construct generated ESM runner content. Keep Node shebang, remove sacrosanct warnings,
-      // add a clear generated marker for tests to assert against.
-      const generatedRunnerContent = binRunnerContent
-        .replace(
-          /^#!\/usr\/bin\/env node/m,
-          '#!/usr/bin/env node'
-        )
-        .replace(
-          /\/\/ IMPORTANT: This CLI is sacrosanct and not generated\. Do not overwrite\./,
-          '// GENERATED RUNNER: qtests-runner.mjs - auto-created by qtests TestGenerator\n// Safe to delete; will be recreated as needed.\n// Mirrors bin/qtests-ts-runner behavior (batching, DEBUG_TESTS.md, stable exits).'
-        )
-        .replace(
-          /\/\/ Provides batching, summaries, and debug report creation for failing tests\./,
-          '// Provides batching, summaries, and debug report creation for failing tests.'
-        );
-
-      // Ensure the generated file clearly states its identity for assertions
-      const header = `// GENERATED RUNNER: qtests-runner.mjs\n`;
-      const finalContent = generatedRunnerContent.includes('GENERATED RUNNER: qtests-runner.mjs')
-        ? generatedRunnerContent
-        : header + generatedRunnerContent;
-
-      fs.writeFileSync('qtests-runner.mjs', finalContent, 'utf8');
+      // Fallback: read the authoritative runner from bin in repo checkouts
+      const binRunnerPath = path.join(process.cwd(), 'bin', 'qtests-ts-runner');
+      if (fs.existsSync(binRunnerPath)) {
+        const binRunnerContent = fs.readFileSync(binRunnerPath, 'utf8');
+        const generatedRunnerContent = binRunnerContent
+          .replace(/^#!\/usr\/bin\/env node/m, '#!/usr/bin/env node')
+          .replace(
+            /\/\/ IMPORTANT: This CLI is sacrosanct and not generated\. Do not overwrite\./,
+            '// GENERATED RUNNER: qtests-runner.mjs - auto-created by qtests TestGenerator\n// Safe to delete; will be recreated as needed.\n// Mirrors bin/qtests-ts-runner behavior (batching, DEBUG_TESTS.md, stable exits).'
+          );
+        const header = `// GENERATED RUNNER: qtests-runner.mjs\n`;
+        const finalContent = generatedRunnerContent.includes('GENERATED RUNNER: qtests-runner.mjs')
+          ? generatedRunnerContent
+          : header + generatedRunnerContent;
+        fs.writeFileSync('qtests-runner.mjs', finalContent, 'utf8');
+      } else {
+        console.warn('⚠️  No runner template found; expected lib/templates/qtests-runner.mjs.template or bin/qtests-ts-runner');
+        return;
+      }
       console.log('✅ Generated qtests-runner.mjs (ESM) with full features');
     } catch (error: any) {
       console.error('Failed to generate qtests-runner.mjs:', error.message);
@@ -1757,11 +1756,11 @@ afterEach(() => {
   }
 
   /**
-   * Migrate legacy generated test files in generated-tests/ to the new naming and local utils.
+   * Migrate legacy generated test files in tests/generated-tests/ to the new naming and local utils.
    */
   private migrateLegacyGeneratedTests(): void {
     try {
-      const genRoot = path.join(process.cwd(), this.config.TEST_DIR || 'generated-tests');
+      const genRoot = path.join(process.cwd(), this.config.TEST_DIR || 'tests/generated-tests');
       if (!fs.existsSync(genRoot)) return;
       // Ensure local httpTest utils exist prior to migration
       this.ensureLocalHttpTestUtils();
