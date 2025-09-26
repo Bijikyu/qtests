@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+import fs from 'fs';
+import path from 'path';
+console.error('FAKE JEST ESM CALLED');
+try {
+  fs.writeFileSync(path.join(process.cwd(), 'runner-jest-args-5.json'), JSON.stringify(process.argv.slice(2)), 'utf8');
+} catch (e) { console.error('FAKE JEST ESM WRITE ERR', e && e.message); }
+process.exit(1);

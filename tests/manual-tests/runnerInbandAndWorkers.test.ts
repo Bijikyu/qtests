@@ -21,6 +21,8 @@ describe('qtests-runner.mjs env tuning', () => {
   });
   afterEach(() => {
     try { fs.rmSync(tmpTestsDir, { recursive: true, force: true }); } catch {}
+    // Ensure any debug artifact created by the runner is removed to avoid confusion for developers
+    try { fs.rmSync(path.join(cwd, 'DEBUG_TESTS.md'), { force: true }); } catch {}
   });
 
   function writeFakeJest() {
@@ -41,6 +43,7 @@ describe('qtests-runner.mjs env tuning', () => {
       PATH: `${tmpBinDir}:${process.env.PATH || ''}`,
       QTESTS_PATTERN: 'env-runner-a.test.ts',
       QTESTS_INBAND: '1',
+      QTESTS_SUPPRESS_DEBUG: '1',
       QTESTS_CONCURRENCY: '1', // ensure single spawn
     };
     const res = await new Promise<{ code: number | null }>((resolve) => {
@@ -60,6 +63,7 @@ describe('qtests-runner.mjs env tuning', () => {
       PATH: `${tmpBinDir}:${process.env.PATH || ''}`,
       QTESTS_PATTERN: 'env-runner-a.test.ts',
       QTESTS_FILE_WORKERS: '1',
+      QTESTS_SUPPRESS_DEBUG: '1',
       QTESTS_CONCURRENCY: '1',
     };
     const res = await new Promise<{ code: number | null }>((resolve) => {

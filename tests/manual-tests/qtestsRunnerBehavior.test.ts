@@ -73,7 +73,7 @@ describe('qtests-runner.mjs behavior', () => {
     // The runner should exit non-zero because our fake jest exits 1
     expect(result.code).toBe(1);
 
-    // DEBUG_TESTS.md should be generated on failure
+    // DEBUG_TESTS.md should be generated on failure (custom path for isolation)
     expect(fs.existsSync(debugFilePath)).toBe(true);
 
     // The fake jest should have captured arguments

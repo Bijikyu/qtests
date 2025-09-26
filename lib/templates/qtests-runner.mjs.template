@@ -47,6 +47,14 @@ class TestRunner {
     this._runCLI = null;
   }
 
+  // Parse common truthy env values: '1', 'true', 'yes' (case-insensitive)
+  isEnvTruthy(name) {
+    const v = process.env[name];
+    if (!v) return false;
+    const s = String(v).trim().toLowerCase();
+    return s === '1' || s === 'true' || s === 'yes';
+  }
+
   // Discover all test files in the project (from current working directory)
   discoverTests(dir = process.cwd(), depth = 0, maxDepth = 10) {
     const testFiles = [];
@@ -273,6 +281,12 @@ class TestRunner {
   generateDebugFile() {
     const failedResults = this.testResults.filter(r => !r.success);
     if (failedResults.length === 0) return;
+    // Allow CI/tests to suppress creating a repo-root debug artifact when undesired
+    if (this.isEnvTruthy('QTESTS_SUPPRESS_DEBUG') || this.isEnvTruthy('QTESTS_NO_DEBUG_FILE')) {
+      return;
+    }
+    // Allow overriding the debug file output path to avoid cross-test interference
+    const debugFilePath = (process.env.QTESTS_DEBUG_FILE && String(process.env.QTESTS_DEBUG_FILE).trim()) || 'DEBUG_TESTS.md';
     let debugContent = '# Test Failure Analysis\n\n';
     debugContent += 'Analyze and address the following test failures:\n\n';
     failedResults.forEach((result, index) => {
@@ -288,8 +302,14 @@ class TestRunner {
     debugContent += `- Total failed tests: ${failedResults.length}\n`;
     debugContent += `- Failed test files: ${failedResults.map(r => r.file).join(', ')}\n`;
     debugContent += `- Generated: ${new Date().toISOString()}\n`;
-    fs.writeFileSync('DEBUG_TESTS.md', debugContent);
-    console.log(`\n${colors.yellow}📋 Debug file created: DEBUG_TESTS.md${colors.reset}`);
+    try {
+      fs.writeFileSync(debugFilePath, debugContent);
+    } catch {
+      // Best-effort; ignore write errors in restricted environments
+    }
+    if (!this.isEnvTruthy('QTESTS_SILENT')) {
+      console.log(`\n${colors.yellow}📋 Debug file created: ${debugFilePath}${colors.reset}`);
+    }
   }
 
   // Print comprehensive summary
@@ -316,17 +336,23 @@ class TestRunner {
 
   // Main runner method - optimized for parallel execution
   async run() {
-    console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner - Parallel Mode${colors.reset}`);
-    console.log(`${colors.dim}Discovering and running all tests...\n${colors.reset}`);
+    if (!this.isEnvTruthy('QTESTS_SILENT')) {
+      console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner - Parallel Mode${colors.reset}`);
+      console.log(`${colors.dim}Discovering and running all tests...\n${colors.reset}`);
+    }
     const testFiles = this.discoverTests();
     if (testFiles.length === 0) {
-      console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
-      console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
+      if (!this.isEnvTruthy('QTESTS_SILENT')) {
+        console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
+        console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
+      }
       process.exit(0);
     }
-    console.log(`${colors.blue}Found ${testFiles.length} test file(s):${colors.reset}`);
-    testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
-    console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
+    if (!this.isEnvTruthy('QTESTS_SILENT')) {
+      console.log(`${colors.blue}Found ${testFiles.length} test file(s):${colors.reset}`);
+      testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
+      console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
+    }
     const cpuCount = os.cpus().length;
     const envConcurrency = parseInt(process.env.QTESTS_CONCURRENCY || '', 10);
     const defaultConcurrency = Math.max(4, cpuCount * 2);
@@ -334,7 +360,9 @@ class TestRunner {
       testFiles.length,
       Number.isFinite(envConcurrency) && envConcurrency > 0 ? envConcurrency : defaultConcurrency
     );
-    console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores)${colors.reset}\n`);
+    if (!this.isEnvTruthy('QTESTS_SILENT')) {
+      console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores)${colors.reset}\n`);
+    }
 
     const runBatch = async (batch) => {
       const results = await Promise.all(batch.map(async (testFile) => {
@@ -351,7 +379,9 @@ class TestRunner {
       const batchResults = await runBatch(batch);
       this.testResults.push(...batchResults);
       if (i + maxConcurrency < testFiles.length) {
-        console.log(`${colors.dim}Completed batch ${Math.floor(i / maxConcurrency) + 1}, starting next...${colors.reset}\n`);
+        if (!this.isEnvTruthy('QTESTS_SILENT')) {
+          console.log(`${colors.dim}Completed batch ${Math.floor(i / maxConcurrency) + 1}, starting next...${colors.reset}\n`);
+        }
       }
     }
 

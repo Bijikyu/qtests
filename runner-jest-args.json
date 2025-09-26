@@ -1,0 +1,1 @@
+["--config","/home/runner/workspace/config/jest.config.mjs","--passWithNoTests","/home/runner/workspace/utils/testing/testDataFactory.test.ts","--cache","--no-coverage"]
