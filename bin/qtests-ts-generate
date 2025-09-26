@@ -7,7 +7,9 @@
  * by scanning source code and analyzing exports, imports, and routes.
  */
 
-import { TestGenerator } from '../lib/testGenerator.js';
+// Import the TypeScript source directly so the tsx runner can transpile it.
+// Using .ts avoids extension-mapping ambiguity outside of Jest.
+import { TestGenerator } from '../lib/testGenerator.ts';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';

@@ -16,6 +16,9 @@ The `bin/` directory contains executable CLI tools for the qtests framework.
  - React-aware options: `--react` to force React mode; `--with-router` to wrap detected React Router components with `MemoryRouter`
  - Package script update: `--update-pkg-script` opt-in to update `package.json` test script
 
+**Recent Update**:
+- Imports `../lib/testGenerator.ts` directly under the tsx runtime to ensure the CLI works outside Jest without relying on extension mapping.
+
 **Command Examples**:
 ```bash
 qtests-ts-generate                           # Scan current directory with defaults
