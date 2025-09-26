@@ -60,10 +60,19 @@ export default {
   extensionsToTreatAsEsm: [".ts",".tsx"],
   transformIgnorePatterns: ['node_modules/(?!(?:qtests|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul)/)'],
   moduleNameMapper: {
+  "^\\.\\./index\\.js$": "<rootDir>/index.ts",
+  "^\\.\\./setup\\.js$": "<rootDir>/setup.ts",
+  "^\\.\\./lib/(.*)\\.js$": "<rootDir>/lib/$1.ts",
+  "^\\.\\./lib/(.*)$": "<rootDir>/lib/$1.ts",
+  "^\\.\\./utils/httpTest\\.shim\\.js$": "<rootDir>/utils/httpTest.shim.js",
+  "^\\.\\./utils/(.*)\\.js$": "<rootDir>/utils/$1.ts",
+  "^(.*/httpTest\\.shim)\\.js$": "$1.js",
+  "^external-service-client$": "<rootDir>/utils/jest-proxies/external-service-client.cjs",
+  "^feature-x$": "<rootDir>/utils/jest-proxies/feature-x.cjs",
   "^(\\.{1,2}/.*)\\.js$": "$1",
   "^qtests/(.*)$": "<rootDir>/node_modules/qtests/$1",
   "^mongoose$": "<rootDir>/__mocks__/mongoose.js",
-  "^.+\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",
-  "^.+\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/__mocks__/fileMock.js"
+  "^.+\\\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",
+  "^.+\\\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/__mocks__/fileMock.js"
 }
 };

@@ -1,2 +1,2 @@
-// Re-export the canonical ESM shim from utils to avoid duplication
-export { createMockApp, supertest } from '../../utils/httpTest.shim.js';
+// Local re-export of ESM shim to avoid depending on root utils path
+export { createMockApp, supertest } from './httpTest.shim.js';

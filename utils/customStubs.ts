@@ -111,6 +111,13 @@ function unregisterModuleStub(moduleId: string): void {
     throw new Error('unregisterModuleStub: moduleId must be a non‑empty string');
   }
   delete CUSTOM_STUBS[moduleId];
+  // Hint to Jest to drop module registry so subsequent require() re-evaluates
+  try {
+    const g: any = globalThis as any;
+    if (g.jest && typeof g.jest.resetModules === 'function') {
+      g.jest.resetModules();
+    }
+  } catch {}
   if (shouldLog) {
     console.log(`qtests: custom stub unregistered for ${moduleId}`);
   }
@@ -145,3 +152,24 @@ export {
   clearAllModuleStubs
 };
 
+/**
+ * Resolve a registered stub without triggering Node resolution.
+ * Returns the concrete exports object if present, otherwise undefined.
+ */
+export function resolveModuleStub(moduleId: string): any | undefined {
+  if (!Object.prototype.hasOwnProperty.call(CUSTOM_STUBS, moduleId)) return undefined;
+  const value = CUSTOM_STUBS[moduleId];
+  try {
+    return typeof value === 'function' ? (value as Function)() : value;
+  } catch (err) {
+    return undefined;
+  }
+}
+
+// Expose a global resolver for environments where CJS interop is needed (e.g., Jest proxies)
+try {
+  const g: any = globalThis as any;
+  if (!g.__QTESTS_RESOLVE_CUSTOM_STUB) {
+    g.__QTESTS_RESOLVE_CUSTOM_STUB = (id: string) => resolveModuleStub(id);
+  }
+} catch {}
