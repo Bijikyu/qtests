@@ -1699,13 +1699,17 @@ afterEach(() => {
       // This must work when qtests is installed as a dependency in a client app.
       const modDir = getModuleDirnameForTestGenerator();
       const moduleRoot = path.resolve(modDir, '..');
+      const packageRoot = path.resolve(moduleRoot, '..');
 
       // Try multiple candidate locations to account for different publish layouts
       const candidateTemplates = [
         path.join(modDir, 'templates', 'qtests-runner.mjs.template'),
         path.join(moduleRoot, 'templates', 'qtests-runner.mjs.template'),
         path.join(moduleRoot, 'lib', 'templates', 'qtests-runner.mjs.template'),
-        path.join(moduleRoot, 'dist', 'templates', 'qtests-runner.mjs.template')
+        path.join(moduleRoot, 'dist', 'templates', 'qtests-runner.mjs.template'),
+        // When running from compiled dist/, templates typically reside at package root
+        path.join(packageRoot, 'templates', 'qtests-runner.mjs.template'),
+        path.join(packageRoot, 'lib', 'templates', 'qtests-runner.mjs.template')
       ];
       const templatePath = candidateTemplates.find(p => { try { return fs.existsSync(p); } catch { return false; } });
       if (templatePath) {
@@ -1718,6 +1722,7 @@ afterEach(() => {
       // Fallback: read the authoritative runner from our packaged bin directory (inside node_modules/qtests)
       const binRunnerCandidates = [
         path.join(moduleRoot, 'bin', 'qtests-ts-runner'),
+        path.join(packageRoot, 'bin', 'qtests-ts-runner'),
         // Dev-repo fallback for local workspaces
         path.join(process.cwd(), 'bin', 'qtests-ts-runner')
       ];

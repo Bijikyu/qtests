@@ -1,16 +1,18 @@
 {
   "name": "qtests",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
   "type": "module",
   "main": "index.ts",
   "bin": {
     "qtests-ts-runner": "./bin/qtests-ts-runner",
-    "qtests-ts-generate": "./bin/qtests-ts-generate",
-    "qtests-generate": "./bin/qtests-ts-generate"
+    "qtests-ts-generate": "./bin/qtests-generate.mjs",
+    "qtests-generate": "./bin/qtests-generate.mjs"
   },
   "scripts": {
-    "test": "node qtests-runner.mjs"
+    "test": "node qtests-runner.mjs",
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "testing",
@@ -31,8 +33,7 @@
   "dependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
-    "axios": "^1.9.0",
-    "tsx": "^4.20.5"
+    "axios": "^1.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.28.3",
@@ -49,6 +50,18 @@
     "quantumagent": "^1.0.5",
     "repomix": "^1.2.0",
     "ts-jest": "^29.4.1",
+    "tsx": "^4.20.5",
+    "typescript": "^5.6.3",
     "winston": "^3.17.0"
-  }
+  },
+  "files": [
+    "bin",
+    "dist",
+    "lib/templates",
+    "templates",
+    "qtests-runner.mjs",
+    "qtests-runner.mjs.template",
+    "README.md",
+    "LICENSE"
+  ]
 }

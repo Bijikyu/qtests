@@ -7,7 +7,7 @@ describe('package.json bin mappings', () => {
     const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
     expect(pkg.bin).toBeTruthy();
     expect(typeof pkg.bin['qtests-generate']).toBe('string');
-    expect(pkg.bin['qtests-generate']).toMatch(/bin\/qtests-ts-generate$/);
+    expect(pkg.bin['qtests-generate']).toMatch(/bin\/qtests-generate\.mjs$/);
+    expect(pkg.bin['qtests-ts-generate']).toMatch(/bin\/qtests-generate\.mjs$/);
   });
 });
-
