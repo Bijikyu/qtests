@@ -104,25 +104,29 @@ testEnv.restoreEnv(saved); // TEST_VAR removed, original state restored
 
 ```bash
 # Generate tests for entire project
-npx qtests-ts-generate
+npx qtests-generate
 
 # Custom source directory
-npx qtests-ts-generate --src lib
+npx qtests-generate --src lib
 
 # Custom source and test directories
-npx qtests-ts-generate --src app --test-dir tests/integration
+npx qtests-generate --src app --test-dir tests/integration
 
 # Only unit tests, preview without writing
-npx qtests-ts-generate --unit --dry-run
+npx qtests-generate --unit --dry-run
 
 # Restrict to TypeScript files and skip existing tests
-npx qtests-ts-generate --include "**/*.ts" --exclude "**/*.test.ts"
+npx qtests-generate --include "**/*.ts" --exclude "**/*.test.ts"
 
 # Use AST mode (requires typescript) and allow overwrites of generated tests
-npx qtests-ts-generate --mode ast --force
+npx qtests-generate --mode ast --force
 
 # Force React mode and add router wrapper
-npx qtests-ts-generate --react --with-router
+npx qtests-generate --react --with-router
+
+# Backward-compatible alias
+# (if your environment still references the old name)
+npx qtests-ts-generate
 ```
 
 ### Programmatic Usage (TypeScript ESM)
@@ -306,7 +310,7 @@ test('console output', async () => {
 | `new TestGenerator(options)` | Create test generator instance |
 | `generator.generateTestFiles(dryRun?)` | Generate missing tests (dryRun optional) |
 | `generator.getResults()` | Get list of generated files |
-| CLI: `npx qtests-ts-generate` | Command-line test generation |
+| CLI: `npx qtests-generate` | Command-line test generation (alias: `qtests-ts-generate`) |
 
 ### Test Runner
 
@@ -361,8 +365,8 @@ await stubs.axios.get('https://example.com');
 
 ## 🧰 CLI Reference
 
-### qtests-ts-generate
-- Usage: `qtests-ts-generate [options]`
+### qtests-generate (alias: qtests-ts-generate)
+- Usage: `qtests-generate [options]`
 - Purpose: Scans source files and generates missing tests.
 - Options:
   - `-s, --src <dir>`: Source directory root to scan. Default: `.`
@@ -382,11 +386,11 @@ await stubs.axios.get('https://example.com');
   - `-v, --version`: Show version
 
 Examples:
-- `qtests-ts-generate` — scan current directory with defaults
-- `qtests-ts-generate --src lib` — scan `lib` only
-- `qtests-ts-generate --unit --dry-run` — preview unit tests only
-- `qtests-ts-generate --include "**/*.ts" --exclude "**/*.test.ts"` — filter files
-- `qtests-ts-generate --mode ast --force` — AST mode and overwrite generated tests
+- `qtests-generate` — scan current directory with defaults
+- `qtests-generate --src lib` — scan `lib` only
+- `qtests-generate --unit --dry-run` — preview unit tests only
+- `qtests-generate --include "**/*.ts" --exclude "**/*.test.ts"` — filter files
+- `qtests-generate --mode ast --force` — AST mode and overwrite generated tests
 
 Notes:
 - On real runs (no `--dry-run`), the generator writes `config/jest.config.mjs`, `config/jest-setup.ts`, and creates `qtests-runner.mjs`.
@@ -426,9 +430,12 @@ Notes:
   - Runs tests in parallel batches (2x CPU cores, capped by file count)
   - **Performance Optimized**: Jest-like batch execution achieving 69% speed improvement
 - Notes:
-- Automatically generated as `qtests-runner.mjs` by the test generator
-- Always passes `--config config/jest.config.mjs` and `--passWithNoTests`
-- Works with TypeScript ESM projects via `ts-jest` (scaffolded by the generator)
+  - Automatically generated as `qtests-runner.mjs` by the test generator
+  - Always passes `--config config/jest.config.mjs` and `--passWithNoTests`
+  - Honors `QTESTS_SUPPRESS_DEBUG=1|true` to skip creating `DEBUG_TESTS.md`
+  - Honors `QTESTS_DEBUG_FILE` to set a custom debug report path/name
+  - Records Jest argv to `runner-jest-args.json` to aid debugging
+  - Works with TypeScript ESM projects via `ts-jest` (scaffolded by the generator)
 
 ### 1. Always Load Setup First
 
@@ -479,7 +486,7 @@ test('environment test', async () => {
 | Console pollution | Use `mockConsole()` to capture output |
 | Environment leaks | Use `testHelpers.withSavedEnv()` for isolation |
 | Module not found | Import advanced utilities from `qtests/lib/envUtils` |
-| CLI not found | Use `npx qtests-ts-generate` or install globally |
+| CLI not found | Use `npx qtests-generate` (alias: `qtests-ts-generate`) or install globally |
 | File extension errors | Use `.js` extensions in ES module imports |
 | Test generation creates tests for config files | Enhanced filtering now automatically skips demo/, examples/, config/, and test directories |
 | generateKey returns empty string | Fixed in latest version - now correctly returns test keys like "test-api-key-user" |

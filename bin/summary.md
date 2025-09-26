@@ -5,7 +5,7 @@ The `bin/` directory contains executable CLI tools for the qtests framework.
 
 ## Files and Their Roles
 
-### qtests-ts-generate
+### qtests-generate (alias: qtests-ts-generate)
 **Role**: Command-line interface for generating automated TypeScript tests  
 **Key Features**:
 - Supports multiple analysis modes: `heuristic` (default) and `ast` (TypeScript AST)
@@ -16,19 +16,20 @@ The `bin/` directory contains executable CLI tools for the qtests framework.
  - React-aware options: `--react` to force React mode; `--with-router` to wrap detected React Router components with `MemoryRouter`
  - Package script update: `--update-pkg-script` opt-in to update `package.json` test script
 
-**Recent Update**:
+**Recent Updates**:
+- New command name `qtests-generate` added (keeps `qtests-ts-generate` as a backward-compatible alias).
 - Imports `../lib/testGenerator.ts` directly under the tsx runtime to ensure the CLI works outside Jest without relying on extension mapping.
 
 **Command Examples**:
 ```bash
-qtests-ts-generate                           # Scan current directory with defaults
-qtests-ts-generate --src lib                 # Scan 'lib' directory instead  
-qtests-ts-generate --unit --dry-run          # Preview unit tests only
-qtests-ts-generate --mode ast --force        # Use TypeScript AST analysis, overwrite existing
-qtests-ts-generate --include "**/*.ts"       # Only process TypeScript files
-qtests-ts-generate --exclude "**/demo/**"    # Skip demo directories
-qtests-ts-generate --react --with-router     # Force React mode and wrap Router components
-qtests-ts-generate --update-pkg-script       # Opt-in to update npm test script
+qtests-generate                           # Scan current directory with defaults
+qtests-generate --src lib                 # Scan 'lib' directory instead  
+qtests-generate --unit --dry-run          # Preview unit tests only
+qtests-generate --mode ast --force        # Use TypeScript AST analysis, overwrite existing
+qtests-generate --include "**/*.ts"       # Only process TypeScript files
+qtests-generate --exclude "**/demo/**"    # Skip demo directories
+qtests-generate --react --with-router     # Force React mode and wrap Router components
+qtests-generate --update-pkg-script       # Opt-in to update npm test script
 ```
 
 **Request/Response Flows**:

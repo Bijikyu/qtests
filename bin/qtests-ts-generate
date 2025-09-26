@@ -121,7 +121,8 @@ function showHelp() {
 qtests Test Generator (TypeScript ESM)
 
 USAGE:
-  qtests-ts-generate [OPTIONS]
+  qtests-generate [OPTIONS]
+  (alias: qtests-ts-generate)
 
 OPTIONS:
   -s, --src <dir>       Source directory to scan (default: .)
@@ -143,12 +144,12 @@ OPTIONS:
   -v, --version        Show version information
 
 EXAMPLES:
-  qtests-ts-generate                           # Scan current directory with defaults
-  qtests-ts-generate --src lib                 # Scan 'lib' directory instead
-  qtests-ts-generate --unit --dry-run          # Preview unit tests only
-  qtests-ts-generate --mode ast --force        # Use TypeScript AST analysis, overwrite existing
-  qtests-ts-generate --include "**/*.ts"       # Only process TypeScript files
-  qtests-ts-generate --exclude "**/demo/**"    # Skip demo directories
+  qtests-generate                           # Scan current directory with defaults
+  qtests-generate --src lib                 # Scan 'lib' directory instead
+  qtests-generate --unit --dry-run          # Preview unit tests only
+  qtests-generate --mode ast --force        # Use TypeScript AST analysis, overwrite existing
+  qtests-generate --include "**/*.ts"       # Only process TypeScript files
+  qtests-generate --exclude "**/demo/**"    # Skip demo directories
 
 
 DESCRIPTION:

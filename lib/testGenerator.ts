@@ -1695,20 +1695,36 @@ afterEach(() => {
    */
   generateQtestsRunner(): void {
     try {
-      // Prefer embedded template shipped with the module; fallback to local bin copy for dev repos
+      // Prefer embedded template shipped with the module; fallback to our packaged bin copy.
+      // This must work when qtests is installed as a dependency in a client app.
       const modDir = getModuleDirnameForTestGenerator();
-      const templatePath = path.join(modDir, 'templates', 'qtests-runner.mjs.template');
-      if (fs.existsSync(templatePath)) {
+      const moduleRoot = path.resolve(modDir, '..');
+
+      // Try multiple candidate locations to account for different publish layouts
+      const candidateTemplates = [
+        path.join(modDir, 'templates', 'qtests-runner.mjs.template'),
+        path.join(moduleRoot, 'templates', 'qtests-runner.mjs.template'),
+        path.join(moduleRoot, 'lib', 'templates', 'qtests-runner.mjs.template'),
+        path.join(moduleRoot, 'dist', 'templates', 'qtests-runner.mjs.template')
+      ];
+      const templatePath = candidateTemplates.find(p => { try { return fs.existsSync(p); } catch { return false; } });
+      if (templatePath) {
         const content = fs.readFileSync(templatePath, 'utf8');
         fs.writeFileSync('qtests-runner.mjs', content, 'utf8');
         console.log('✅ Generated qtests-runner.mjs (ESM) with full features');
         return;
       }
 
-      // Fallback: read the authoritative runner from bin in repo checkouts
-      const binRunnerPath = path.join(process.cwd(), 'bin', 'qtests-ts-runner');
-      if (fs.existsSync(binRunnerPath)) {
+      // Fallback: read the authoritative runner from our packaged bin directory (inside node_modules/qtests)
+      const binRunnerCandidates = [
+        path.join(moduleRoot, 'bin', 'qtests-ts-runner'),
+        // Dev-repo fallback for local workspaces
+        path.join(process.cwd(), 'bin', 'qtests-ts-runner')
+      ];
+      const binRunnerPath = binRunnerCandidates.find(p => { try { return fs.existsSync(p); } catch { return false; } });
+      if (binRunnerPath) {
         const binRunnerContent = fs.readFileSync(binRunnerPath, 'utf8');
+        // Transform sacrosanct bin into a generated ESM runner file with a clear header
         const generatedRunnerContent = binRunnerContent
           .replace(/^#!\/usr\/bin\/env node/m, '#!/usr/bin/env node')
           .replace(
@@ -1720,11 +1736,13 @@ afterEach(() => {
           ? generatedRunnerContent
           : header + generatedRunnerContent;
         fs.writeFileSync('qtests-runner.mjs', finalContent, 'utf8');
-      } else {
-        console.warn('⚠️  No runner template found; expected lib/templates/qtests-runner.mjs.template or bin/qtests-ts-runner');
+        console.log('✅ Generated qtests-runner.mjs (ESM) with full features');
         return;
       }
-      console.log('✅ Generated qtests-runner.mjs (ESM) with full features');
+
+      // If all else fails, emit a clear warning for the user; do not throw.
+      console.warn('⚠️  No runner template found; expected one of: lib/templates, templates/, dist/templates/, or bin/qtests-ts-runner within the qtests package.');
+      console.warn('   Please ensure the qtests package includes templates or bin assets.');
     } catch (error: any) {
       console.error('Failed to generate qtests-runner.mjs:', error.message);
     }

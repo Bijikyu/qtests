@@ -19,14 +19,15 @@ The test generator is included with the qtests package:
 npm install qtests
 ```
 
-## CLI Usage (qtests-ts-generate)
+## CLI Usage (qtests-generate)
+Alias: `qtests-ts-generate` (backward compatible)
 
 ### Basic Usage
 
 Generate tests for the current project:
 
 ```bash
-qtests-ts-generate
+qtests-generate
 ```
 
 ### Custom Source Directory
@@ -34,8 +35,8 @@ qtests-ts-generate
 Specify a different source directory:
 
 ```bash
-qtests-ts-generate --src lib
-qtests-ts-generate -s app
+qtests-generate --src lib
+qtests-generate -s app
 ```
 
 ### Custom Test Directory
@@ -43,28 +44,28 @@ qtests-ts-generate -s app
 Specify where integration tests should be placed:
 
 ```bash
-qtests-ts-generate --test-dir spec
-qtests-ts-generate -t tests/integration
+qtests-generate --test-dir spec
+qtests-generate -t tests/integration
 ```
 
 ### Filtering & Modes
 
 ```bash
 # Limit to TypeScript files and skip existing tests
-qtests-ts-generate --include "**/*.ts" --exclude "**/*.test.ts"
+qtests-generate --include "**/*.ts" --exclude "**/*.test.ts"
 
 # Only unit tests, dry-run preview
-qtests-ts-generate --unit --dry-run
+qtests-generate --unit --dry-run
 
 # AST mode (requires `typescript` in your project)
-qtests-ts-generate --mode ast
+qtests-generate --mode ast
 ```
 
 ### Help and Version
 
 ```bash
-qtests-ts-generate --help
-qtests-ts-generate --version
+qtests-generate --help
+qtests-generate --version
 ```
 
 ## Programmatic Usage (TypeScript ESM)
