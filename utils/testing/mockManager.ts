@@ -45,6 +45,15 @@ class MockManager {
   }
 
   /**
+   * Registers a mock object by name in the internal store
+   * Rationale: avoid exposing private `mocks` map directly to callers.
+   */
+  registerMock(name: string, value: any): void {
+    // Store the mock for later retrieval and lifecycle management
+    this.mocks.set(name, value);
+  }
+
+  /**
    * Sets up API client mocks using qtests stubMethod utility
    */
   setupApiClientMocks(customResponses: Record<string, MockResponse> = {}): void {

@@ -1742,12 +1742,29 @@ try {
         path.join(packageRoot, 'templates', 'qtests-runner.mjs.template'),
         path.join(packageRoot, 'lib', 'templates', 'qtests-runner.mjs.template')
       ];
+      const isValid = (content: string) => /runAllViaAPI\s*\(/.test(content) && /runCLI/.test(content) && /API Mode/.test(content);
       const templatePath = candidateTemplates.find(p => { try { return fs.existsSync(p); } catch { return false; } });
       if (templatePath) {
         const content = fs.readFileSync(templatePath, 'utf8');
-        fs.writeFileSync('qtests-runner.mjs', content, 'utf8');
-        console.log('✅ Generated qtests-runner.mjs (ESM) with full features');
-        return;
+        if (isValid(content)) {
+          fs.writeFileSync('qtests-runner.mjs', content, 'utf8');
+          console.log('✅ Generated qtests-runner.mjs (ESM) with full features');
+          return;
+        }
+        // If the first found template is invalid, try other candidates
+        for (const alt of candidateTemplates) {
+          if (alt === templatePath) continue;
+          try {
+            if (!fs.existsSync(alt)) continue;
+            const c = fs.readFileSync(alt, 'utf8');
+            if (isValid(c)) {
+              fs.writeFileSync('qtests-runner.mjs', c, 'utf8');
+              console.log('✅ Generated qtests-runner.mjs (ESM) with validated template');
+              return;
+            }
+          } catch {}
+        }
+        // Fall through to bin fallback if no valid template was found among candidates
       }
 
       // Fallback: read the authoritative runner from our packaged bin directory (inside node_modules/qtests)

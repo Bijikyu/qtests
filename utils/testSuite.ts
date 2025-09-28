@@ -111,7 +111,8 @@ class TestSuiteBuilder {
       try {
         // Note: Dynamic import would be needed for ES modules
         // For now, this is a placeholder for the email functionality
-        mockManager.mocks.set('email', { sendEmail: () => {} });
+        // Use public API to register the mock instead of touching private fields
+        mockManager.registerMock('email', { sendEmail: () => {} });
       } catch (error) {
         // Email mocks not available, skip
       }

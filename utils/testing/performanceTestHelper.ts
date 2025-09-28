@@ -244,7 +244,8 @@ class PerformanceTestHelper {
       },
       
       compare(): any {
-        const results = Object.entries(this.results);
+        // Explicitly type entries to satisfy TS inference of Object.entries
+        const results = Object.entries(this.results) as Array<[string, TimingMeasurement]>;
         const sorted = results.sort((a, b) => a[1].duration - b[1].duration);
         const fastest = sorted[0];
         

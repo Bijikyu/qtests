@@ -35,6 +35,19 @@ function readJson(p) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } ca
     fail('Runner must not contain child_process spawn or tsx usage');
   }
 
+  // 2b) Templates shipped with the package should contain the same invariants
+  const tplPaths = [
+    path.join(cwd, 'lib', 'templates', 'qtests-runner.mjs.template'),
+    path.join(cwd, 'templates', 'qtests-runner.mjs.template')
+  ].filter(p => fs.existsSync(p));
+  if (tplPaths.length === 0) fail('No runner templates found under lib/templates or templates');
+  for (const p of tplPaths) {
+    const tpl = fs.readFileSync(p, 'utf8');
+    if (!/runAllViaAPI\s*\(/.test(tpl) || !/runCLI/.test(tpl) || !/API Mode/.test(tpl)) {
+      fail(`Template missing required invariants: ${p}`);
+    }
+  }
+
   // 3) Dist hygiene: no __mocks__ and no compiled test files in dist/
   const dist = path.join(cwd, 'dist');
   if (fs.existsSync(dist)) {
@@ -75,4 +88,3 @@ function readJson(p) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } ca
 
   console.log('✅ CI verify: runner and config are compliant.');
 })();
-
