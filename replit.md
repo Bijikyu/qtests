@@ -104,3 +104,10 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - Do not remove PATH resolution or switch back to `shell: true` spawns.
 - Do not reintroduce forced `NODE_OPTIONS` for vm-modules.
 - Keep runner templates and the root runner in sync with policies above so regenerated runners remain functional.
+
+## Background & Passive Solutions (Non-Negotiable)
+- Zero workflow changes: core commands remain exactly the same (e.g., `npm publish`, `npm test`).
+- No special env vars or flags required from the user; all safeguards run automatically in the background.
+- Any safety checks (config hardening, runner verification) must be implemented passively or inside automation that does not change user ergonomics.
+- If a guard is necessary for CI, it must not block local developer workflows; publication must succeed with plain `npm publish`.
+- All tooling must be quiet by default; avoid noisy prompts, interactive flows, or extra steps.

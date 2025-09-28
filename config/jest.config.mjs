@@ -33,6 +33,9 @@ export default {
   "/build/",
   "/__mocks__/"
 ],
+  // Harden ignores to avoid duplicate manual mocks and compiled artifacts
+  modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
+  watchPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
   moduleFileExtensions: ["ts","tsx","js","jsx","json"],
   transform: {
   "^.+\\.(ts|tsx)$": [

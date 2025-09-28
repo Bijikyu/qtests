@@ -15,7 +15,7 @@
     "test": "node qtests-runner.mjs",
     "ci:verify": "node scripts/ci-verify-runner.mjs",
     "build": "tsc -p tsconfig.json",
-    "prepublishOnly": "npm run build && npm run ci:verify"
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "testing",

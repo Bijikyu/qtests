@@ -79,6 +79,13 @@ The module prioritizes developer experience over feature completeness - providin
 - New utility functions must follow the naming convention: action + noun (e.g., `stubMethod`, `mockConsole`)
 - All module exports must be placed at the bottom of files per REPLITAGENT.md compliance
 
+### Background & Passive Solutions (Authoritative)
+- Do not require the user to change their workflow; basic operations stay as-is (e.g., `npm publish`, `npm test`).
+- Never ask the user to set custom environment variables, extra flags, or run alternate commands to achieve standard tasks.
+- Implement safeguards and hardening passively (in background automation or default configs) so the user does not have to think about them.
+- Any CI-only checks must not block local developer flows; local publish must succeed via plain `npm publish`.
+- Keep tooling quiet and non-interactive by default; avoid prompts and extra steps unless explicitly requested.
+
 ### Tribal Knowledge
 - The `executeWithLogs` function in logUtils.js exists specifically for debugging qtests behavior in complex test environments - it should not be removed even if seemingly unused
 - The axios stub returns `{}` rather than a more realistic response structure because many codebases only check for truthy values, not specific properties

@@ -1545,6 +1545,9 @@ export default {
   roots: [PROJECT_ROOT],
   testMatch: ${JSON.stringify(testMatchPatterns, null, 2)},
   testPathIgnorePatterns: ${JSON.stringify(['/node_modules/', '/dist/', '/build/', '/__mocks__/'], null, 2)},
+  // Harden ignores to avoid duplicate manual mocks and compiled artifacts
+  modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
+  watchPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
   moduleFileExtensions: ${JSON.stringify(moduleFileExtensions)},
   transform: ${JSON.stringify(transformConfig, null, 2)},
   extensionsToTreatAsEsm: ${JSON.stringify(extensionsToTreatAsEsm)},

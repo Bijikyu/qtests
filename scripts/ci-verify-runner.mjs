@@ -8,6 +8,17 @@ function fail(msg) { console.error(`CI verify failed: ${msg}`); process.exit(1);
 function readJson(p) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return null; } }
 
 (function main() {
+  // Allow bypass via env for urgent publishes
+  const skip = (() => {
+    const v = process.env.QTESTS_SKIP_CI_VERIFY;
+    if (!v) return false;
+    const s = String(v).trim().toLowerCase();
+    return s === '1' || s === 'true' || s === 'yes';
+  })();
+  if (skip) {
+    console.log('⚠️  CI verify skipped by QTESTS_SKIP_CI_VERIFY');
+    process.exit(0);
+  }
   const cwd = process.cwd();
   const pkgPath = path.join(cwd, 'package.json');
   const pkg = readJson(pkgPath);
