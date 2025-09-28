@@ -13,26 +13,25 @@ const J = (typeof jestFromGlobals !== 'undefined' && jestFromGlobals)
 if (!(globalThis as any).jest && J) {
   (globalThis as any).jest = J as any;
 }
-// Local convenience binding for this module scope
-const jest = (globalThis as any).jest as any;
 
 // Provide CommonJS-like require for ESM tests that call require()
+// Avoid top-level await to satisfy stricter Jest transform pipelines.
 try {
-  const { createRequire } = await import('module');
-  const req = createRequire(import.meta.url);
-  if (!(globalThis as any).require) {
-    (globalThis as any).require = req;
+  if (!(globalThis as any).require && typeof require === 'function') {
+    (globalThis as any).require = require as any;
   }
 } catch {}
 
 beforeAll(() => {
-  if (jest && typeof jest.setTimeout === 'function') {
-    jest.setTimeout(10000);
+  const j = (globalThis as any).jest || J;
+  if (j && typeof j.setTimeout === 'function') {
+    j.setTimeout(10000);
   }
 });
 
 afterEach(() => {
-  if (jest && typeof jest.clearAllMocks === 'function') {
-    jest.clearAllMocks();
+  const j = (globalThis as any).jest || J;
+  if (j && typeof j.clearAllMocks === 'function') {
+    j.clearAllMocks();
   }
 });

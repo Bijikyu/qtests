@@ -1473,11 +1473,11 @@ class TestGenerator {
       : (fs.existsSync(configTsPath) ? configTsPath : null);
     const transformOptions: any = isReactProject
       ? (usePathTsconfig
-          ? { useESM: true, isolatedModules: true, tsconfig: '<rootDir>/config/tsconfig.jest.json' }
-          : { useESM: true, isolatedModules: true, tsconfig: { jsx: 'react-jsx' } })
+          ? { useESM: true, tsconfig: '<rootDir>/config/tsconfig.jest.json' }
+          : { useESM: true, tsconfig: { jsx: 'react-jsx' } })
       : (usePathTsconfig
-          ? { useESM: true, isolatedModules: true, tsconfig: '<rootDir>/config/tsconfig.jest.json' }
-          : { useESM: true, isolatedModules: true });
+          ? { useESM: true, tsconfig: '<rootDir>/config/tsconfig.jest.json' }
+          : { useESM: true });
     // Build transform config for TS and JS. Prefer babel-jest for JS if available, otherwise ts-jest with allowJs.
     const hasBabelJest = fs.existsSync(path.join(process.cwd(), 'node_modules', 'babel-jest'));
     const hasBabelPresetEnv = fs.existsSync(path.join(process.cwd(), 'node_modules', '@babel', 'preset-env'));
@@ -1539,6 +1539,8 @@ export default {
   preset: 'ts-jest/presets/default-esm',
   rootDir: PROJECT_ROOT,
   testEnvironment: '${testEnvironment}',
+  // Ensure CommonJS require() exists in ESM tests
+  setupFiles: [path.join(PROJECT_ROOT, 'config', 'jest-require-polyfill.cjs')],
   setupFilesAfterEnv: [path.join(PROJECT_ROOT, 'config', 'jest-setup.ts')],
   roots: [PROJECT_ROOT],
   testMatch: ${JSON.stringify(testMatchPatterns, null, 2)},
@@ -1613,27 +1615,26 @@ const J = (typeof jestFromGlobals !== 'undefined' && jestFromGlobals)
 if (!(globalThis as any).jest && J) {
   (globalThis as any).jest = J as any;
 }
-// Local convenience binding for this module scope
-const jest = (globalThis as any).jest as any;
 
 // Provide CommonJS-like require for ESM tests that call require()
+// Avoid top-level await to satisfy stricter Jest transform pipelines.
 try {
-  const { createRequire } = await import('module');
-  const req = createRequire(import.meta.url);
-  if (!(globalThis as any).require) {
-    (globalThis as any).require = req;
+  if (!(globalThis as any).require && typeof require === 'function') {
+    (globalThis as any).require = require as any;
   }
 } catch {}
 
 beforeAll(() => {
-  if (jest && typeof jest.setTimeout === 'function') {
-    jest.setTimeout(10000);
+  const j = (globalThis as any).jest || J;
+  if (j && typeof j.setTimeout === 'function') {
+    j.setTimeout(10000);
   }
 });
 
 afterEach(() => {
-  if (jest && typeof jest.clearAllMocks === 'function') {
-    jest.clearAllMocks();
+  const j = (globalThis as any).jest || J;
+  if (j && typeof j.clearAllMocks === 'function') {
+    j.clearAllMocks();
   }
 });${domPolyfills}
 `.trim();
@@ -1669,6 +1670,36 @@ afterEach(() => {
       }
     } catch {}
     writeOrUpdate(path.join('config', 'jest-setup.ts'), setup, 'jest-setup.ts - Jest setup for TypeScript ESM');
+
+    // Write jest-require-polyfill.cjs under config/
+    const requirePolyfill = `
+// Ensure a global require exists for ESM tests that use CommonJS require().
+// Executed by Jest via setupFiles BEFORE test files are evaluated.
+try {
+  if (typeof global.require === 'undefined') {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { createRequire } = require('module');
+    let req;
+    try {
+      req = createRequire(process.cwd() + '/package.json');
+    } catch {
+      req = createRequire(__filename);
+    }
+    Object.defineProperty(global, 'require', {
+      value: req,
+      writable: false,
+      configurable: true,
+      enumerable: false,
+    });
+  }
+} catch {}
+`.trim();
+    try {
+      if (!fs.existsSync('config')) {
+        fs.mkdirSync('config', { recursive: true });
+      }
+    } catch {}
+    writeOrUpdate(path.join('config', 'jest-require-polyfill.cjs'), requirePolyfill, 'Ensure a global require exists for ESM tests');
 
     // If React-mode is active, advise on jsdom dependency if missing.
     if (isReactProject) {
@@ -1754,8 +1785,8 @@ afterEach(() => {
   }
 
   /**
-   * Update package.json test script to use qtests-ts-runner.ts
-   */
+  * Update package.json scripts to use the unified API-only runner
+  */
   updatePackageJsonTestScript(): void {
     try {
       const packagePath = path.join(process.cwd(), 'package.json');
@@ -1769,15 +1800,50 @@ afterEach(() => {
       if (!packageJson.scripts) {
         packageJson.scripts = {};
       }
-      
-      // Prefer invoking Jest directly with project config for sandbox resilience
-      packageJson.scripts.test = 'jest --config config/jest.config.mjs --passWithNoTests';
+
+      // Ensure pretest runs runner scaffolding + dist cleanup before tests
+      const existingPre = typeof packageJson.scripts.pretest === 'string' ? packageJson.scripts.pretest : '';
+      const ensureCmd = 'node scripts/ensure-runner.mjs';
+      const cleanCmd = 'node scripts/clean-dist.mjs';
+      const needEnsure = !existingPre.includes('scripts/ensure-runner.mjs');
+      const needClean = !existingPre.includes('scripts/clean-dist.mjs');
+      let newPre = existingPre.trim();
+      const prepend: string[] = [];
+      if (needClean) prepend.push(cleanCmd);
+      if (needEnsure) prepend.push(ensureCmd);
+      if (prepend.length) {
+        newPre = (prepend.join(' && ')) + (newPre ? (' && ' + newPre) : '');
+        packageJson.scripts.pretest = newPre;
+      }
+
+      // Use the unified API-only runner as the standard test command
+      packageJson.scripts.test = 'node qtests-runner.mjs';
       
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2), 'utf8');
-      console.log('✅ Updated package.json test script to use Jest with project config');
+      console.log('✅ Updated package.json scripts: pretest + unified qtests runner');
     } catch (error: any) {
       console.log('⚠️  Could not update package.json:', error.message);
     }
+  }
+
+  /**
+   * Ensure local runner helper scripts exist in the client repo
+   */
+  private ensureRunnerScripts(): void {
+    try {
+      const scriptsDir = path.join(process.cwd(), 'scripts');
+      try { if (!fs.existsSync(scriptsDir)) fs.mkdirSync(scriptsDir, { recursive: true }); } catch {}
+
+      // clean-dist.mjs
+      const cleanPath = path.join(scriptsDir, 'clean-dist.mjs');
+      const cleanContent = `// scripts/clean-dist.mjs\n// Remove compiled test files and __mocks__ from dist/ to prevent duplicate mock warnings.\nimport fs from 'fs';\nimport path from 'path';\nfunction rmDirSafe(p){try{fs.rmSync(p,{recursive:true,force:true})}catch{}}\nfunction cleanDist(root){const dist=path.join(root,'dist');try{if(!fs.existsSync(dist))return;}catch{return;}const stack=[dist];while(stack.length){const dir=stack.pop();let entries=[];try{entries=fs.readdirSync(dir,{withFileTypes:true})}catch{continue}for(const ent of entries){const full=path.join(dir,ent.name);if(ent.isDirectory()){if(ent.name==='__mocks__'){rmDirSafe(full);continue}stack.push(full);continue}if(!ent.isFile())continue;if(/\\.(test|spec)\\.[cm]?jsx?$/.test(ent.name)||/GeneratedTest/.test(ent.name)){try{fs.rmSync(full,{force:true})}catch{}}}}}\ncleanDist(process.cwd());\n`;
+      try { fs.writeFileSync(cleanPath, cleanContent, 'utf8'); } catch {}
+
+      // ensure-runner.mjs
+      const ensurePath = path.join(scriptsDir, 'ensure-runner.mjs');
+      const ensureContent = `// Ensures qtests-runner.mjs exists at project root by copying the shipped template.\nimport fs from 'fs';\nimport path from 'path';\nimport { fileURLToPath } from 'url';\nconst __filename = fileURLToPath(import.meta.url);\nconst __dirname = path.dirname(__filename);\nconst cwd = process.cwd();\nfunction firstExisting(paths){for(const p of paths){try{if(fs.existsSync(p))return p}catch{}}return null}\ntry{const target=path.join(cwd,'qtests-runner.mjs');if(!fs.existsSync(target)){const candidates=[path.join(cwd,'templates','qtests-runner.mjs.template'),path.join(cwd,'lib','templates','qtests-runner.mjs.template'),path.join(cwd,'node_modules','qtests','templates','qtests-runner.mjs.template'),path.join(cwd,'node_modules','qtests','lib','templates','qtests-runner.mjs.template')];const template=firstExisting(candidates);if(!template){process.stderr.write('ensure-runner: no runner template found; skipped\\n');process.exit(0)}const content=fs.readFileSync(template,'utf8');fs.writeFileSync(target,content,'utf8');process.stdout.write('ensure-runner: created qtests-runner.mjs from template\\n')}}catch(err){process.stderr.write('ensure-runner error: '+(err&& (err.stack||err.message) || String(err))+'\\n');process.exit(0)}\n`;
+      try { fs.writeFileSync(ensurePath, ensureContent, 'utf8'); } catch {}
+    } catch {}
   }
 
   /**
@@ -1800,13 +1866,12 @@ afterEach(() => {
     if (!dryRun) {
       this.scaffoldJestSetup();
       this.generateQtestsRunner();
+      this.ensureRunnerScripts();
+      // Always update package.json so everyone runs tests the same way
+      this.updatePackageJsonTestScript();
       // Optional migration for legacy generated test files when flag is set via CLI
       if ((this.config as any).migrateGeneratedTests) {
         this.migrateLegacyGeneratedTests();
-      }
-      // Only update package.json if requested via CLI flag
-      if ((this.config as any).updatePackageScript) {
-        this.updatePackageJsonTestScript();
       }
     } else {
       console.log('ℹ️ Dry run: Skipping Jest config and runner generation');

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// qtests-generate: Node-native CLI (no tsx) that invokes the compiled TestGenerator
+// qtests-generate: Node-native CLI (no external runtime) that invokes the compiled TestGenerator
 // Implementation mirrors the TypeScript CLI but imports from compiled JS in dist/
 
 import { readFileSync } from 'fs';
@@ -209,4 +209,3 @@ main().catch(err => {
   console.error('❌ Unexpected error:', err && (err.stack || err.message) || String(err));
   process.exit(1);
 });
-

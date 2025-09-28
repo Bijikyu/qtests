@@ -10,6 +10,8 @@ export default {
   preset: 'ts-jest/presets/default-esm',
   rootDir: PROJECT_ROOT,
   testEnvironment: 'node',
+  // Ensure CommonJS require() exists in ESM tests
+  setupFiles: [path.join(PROJECT_ROOT, 'config', 'jest-require-polyfill.cjs')],
   setupFilesAfterEnv: [path.join(PROJECT_ROOT, 'config', 'jest-setup.ts')],
   roots: [PROJECT_ROOT],
   testMatch: [
@@ -37,7 +39,6 @@ export default {
     "ts-jest",
     {
       "useESM": true,
-      "isolatedModules": true,
       "tsconfig": "<rootDir>/config/tsconfig.jest.json"
     }
   ],

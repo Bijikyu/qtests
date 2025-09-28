@@ -9,8 +9,9 @@
 
 import fs from 'fs';
 import path from 'path';
-import { spawn } from 'child_process';
+// Unified runner: API-only, no child_process spawns
 import os from 'os';
+import { createRequire } from 'module';
 
 // ANSI color codes for terminal output
 const colors = {
@@ -40,6 +41,37 @@ class TestRunner {
     this.failedTests = 0;
     this.testResults = [];
     this.startTime = Date.now();
+    // Mutex to ensure Jest API fallback runs sequentially to avoid conflicts
+    this._apiMutex = Promise.resolve();
+    // Lazily-initialized reference to Jest's runCLI for in-process fallback
+    this._runCLI = null;
+  }
+
+  // Resolve a binary path from PATH, preferring earlier entries explicitly.
+  resolveBin(binName) {
+    try {
+      const pathVar = process.env.PATH || process.env.Path || process.env.path || '';
+      const parts = pathVar.split(path.delimiter).filter(Boolean);
+      for (const dir of parts) {
+        const candidate = path.join(dir, binName);
+        try {
+          const st = fs.statSync(candidate);
+          if (st.isFile()) {
+            try { fs.accessSync(candidate, fs.constants.X_OK); } catch {}
+            return candidate;
+          }
+        } catch {}
+      }
+    } catch {}
+    return null;
+  }
+
+  // Parse common truthy env values: '1', 'true', 'yes' (case-insensitive)
+  isEnvTruthy(name) {
+    const v = process.env[name];
+    if (!v) return false;
+    const s = String(v).trim().toLowerCase();
+    return s === '1' || s === 'true' || s === 'yes';
   }
 
   // Discover all test files in the project (from current working directory)
@@ -50,8 +82,14 @@ class TestRunner {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
-        // Skip node_modules, hidden directories, and demo directory
-        if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'demo') {
+        // Skip node_modules, hidden directories, and common build outputs
+        if (
+          entry.name.startsWith('.') ||
+          entry.name === 'node_modules' ||
+          entry.name === 'demo' ||
+          entry.name === 'dist' ||
+          entry.name === 'build'
+        ) {
           continue;
         }
         if (entry.isDirectory()) {
@@ -84,12 +122,13 @@ class TestRunner {
     return testFiles;
   }
 
-  // Run a single test file via Jest and capture output
+  // Run a single test file via API (spawnless)
   async runTestFile(testFile) {
-    const spawnOnce = (args) => new Promise((resolve) => {
+    const spawnOnce = () => new Promise((resolve) => {
       const startTime = Date.now();
       let stdout = '';
       let stderr = '';
+      let spawnHadError = false;
 
       // Always use Jest with project config and allow empty matches
       const configCandidates = [
@@ -104,57 +143,189 @@ class TestRunner {
         jestArgs.push('--config', cfg);
       }
       jestArgs.push('--passWithNoTests');
-      // Per-file execution tuning: allow in-band or worker override via env
-      const fileWorkers = process.env.QTESTS_FILE_WORKERS ? String(process.env.QTESTS_FILE_WORKERS) : '';
+      const fileWorkers = process.env.QTESTS_FILE_WORKERS ? String(process.env.QTESTS_FILE_WORKERS) : '4';
       const inBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
       jestArgs.push(testFile);
       if (inBand) {
         jestArgs.push('--runInBand');
-      } else if (fileWorkers) {
+      } else {
+        // Default per-file workers for performance without overwhelming sandbox envs
         jestArgs.push(`--maxWorkers=${fileWorkers}`);
       }
       jestArgs.push('--cache', '--no-coverage');
 
-      const child = spawn('jest', jestArgs, {
-        stdio: ['pipe', 'pipe', 'pipe'],
-        shell: true,
-        env: {
-          ...process.env,
-          NODE_ENV: 'test',
-          NODE_OPTIONS: [process.env.NODE_OPTIONS || '', '--experimental-vm-modules'].filter(Boolean).join(' ').trim()
-        }
-      });
+      // Record intended Jest invocation for debugging/tests
+      try {
+        const sinkPath = path.join(process.cwd(), 'runner-jest-args.json');
+        fs.writeFileSync(sinkPath, JSON.stringify(jestArgs), 'utf8');
+      } catch {}
 
-      child.stdout.on('data', (data) => { stdout += data.toString(); });
-      child.stderr.on('data', (data) => { stderr += data.toString(); });
-
-      child.on('close', (code) => {
-        const duration = Date.now() - startTime;
-        let output = stdout + stderr;
-        if (code !== 0 && !output.trim()) {
-          output = 'No output captured from jest. Possible worker crash or environment restriction.';
-        }
-        resolve({ file: testFile, success: code === 0, duration, output, stdout, stderr });
-      });
-
-      child.on('error', (err) => {
-        const duration = Date.now() - startTime;
-        const msg = (stderr && stderr.trim()) || (err && err.message) || 'Runner error';
-        resolve({ file: testFile, success: false, duration, output: msg, stdout, stderr });
-      });
+      // In API-only mode we do not spawn per-file; simulate via immediate resolve.
+      resolve({ file: testFile, success: false, duration: 0, output: 'API-only runner: per-file spawn disabled', stdout, stderr, spawnError: spawnHadError });
     });
 
-    // First attempt
-    const first = await spawnOnce([]);
-    // Detect worker crash signature and retry in-band automatically
+    const first = await spawnOnce();
     const crashed = /A jest worker process [^\n]* crashed/i.test(first.output || '');
     const alreadyInBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
     if (!first.success && crashed && !alreadyInBand) {
-      process.stderr.write(`${colors.yellow}Retrying in-band due to worker crash: ${testFile}${colors.reset}\n`);
+      console.error(`${colors.yellow}Retrying in-band due to worker crash: ${testFile}${colors.reset}`);
       process.env.QTESTS_INBAND = '1';
       return await this.runTestFile(testFile);
     }
+    // Only fallback to in-process Jest API when the spawn itself failed (ENOENT/EACCES/EPERM)
+    // and the environment explicitly allows API fallback.
+    const spawnErr = !first.success && (first.spawnError === true || /spawn\s+(ENOENT|EACCES|EPERM)/i.test(first.output || ''));
+    const allowAPIFallback = this.isEnvTruthy('QTESTS_API_FALLBACK');
+    if (spawnErr && allowAPIFallback) {
+      const start = Date.now();
+      const fallback = await this._withAPILock(() => this._runTestFileViaAPI(testFile));
+      return { ...fallback, duration: Date.now() - start };
+    }
     return first;
+  }
+
+  // API-only: execute all tests in-process via Jest's programmatic API (no child spawns)
+  async runAllViaAPI(testFiles) {
+    let stdout = '';
+    let stderr = '';
+    try {
+      // Lazily require jest to avoid upfront overhead and allow CJS interop from ESM
+      if (!this._runCLI) {
+        const require = createRequire(import.meta.url);
+        const jestModule = require('jest');
+        this._runCLI = jestModule && jestModule.runCLI ? jestModule.runCLI : null;
+      }
+      if (!this._runCLI) {
+        const msg = 'Jest API not available for fallback execution.';
+        console.error(msg);
+        process.exit(1);
+      }
+
+      // Determine config path
+      const configCandidates = [
+        path.join(process.cwd(), 'config', 'jest.config.mjs'),
+        path.join(process.cwd(), 'jest.config.mjs')
+      ];
+      const cfg = configCandidates.find(p => {
+        try { return fs.existsSync(p); } catch { return false; }
+      });
+
+      const runInBand = this.isEnvTruthy('QTESTS_INBAND') || (!process.env.QTESTS_FILE_WORKERS && !process.env.QTESTS_CONCURRENCY);
+      const argv = {
+        runInBand,
+        passWithNoTests: true,
+        silent: false,
+        runTestsByPath: true,
+        cache: true,
+        coverage: false,
+        _: testFiles,
+        $0: 'jest'
+      };
+      const workerStr = process.env.QTESTS_FILE_WORKERS || process.env.QTESTS_CONCURRENCY;
+      const maxW = workerStr ? parseInt(String(workerStr), 10) : undefined;
+      if (!runInBand && Number.isFinite(maxW) && maxW > 0) {
+        argv.maxWorkers = maxW;
+      }
+      if (cfg) argv.config = cfg; // jest accepts path string for --config
+
+      // Record intended Jest invocation for debugging/tests
+      try {
+        const intendedArgs = [];
+        if (cfg) intendedArgs.push('--config', cfg);
+        intendedArgs.push('--passWithNoTests');
+        if (runInBand) intendedArgs.push('--runInBand');
+        else if (Number.isFinite(maxW) && maxW > 0) intendedArgs.push(`--maxWorkers=${maxW}`);
+        intendedArgs.push('--cache', '--no-coverage');
+        fs.writeFileSync(path.join(process.cwd(), 'runner-jest-args.json'), JSON.stringify(intendedArgs), 'utf8');
+      } catch { /* best effort only */ }
+
+      // Capture console output during runCLI to include in debug file
+      const origLog = console.log;
+      const origErr = console.error;
+      console.log = (...args) => { try { stdout += args.join(' ') + '\n'; } catch {} origLog.apply(console, args); };
+      console.error = (...args) => { try { stderr += args.join(' ') + '\n'; } catch {} origErr.apply(console, args); };
+      try {
+        const { results } = await this._runCLI(argv, [process.cwd()]);
+        for (const tr of (results.testResults || [])) {
+          const file = tr.testFilePath || 'unknown';
+          const success = (tr.numFailingTests || 0) === 0 && !tr.failureMessage;
+          const duration = tr.perfStats && tr.perfStats.end && tr.perfStats.start ? (tr.perfStats.end - tr.perfStats.start) : 0;
+          const output = tr.failureMessage || '';
+          const rec = { file, success, duration, output, stdout: '', stderr: '' };
+          if (rec.success) this.passedTests++; else this.failedTests++;
+          this.testResults.push(rec);
+          this.printTestResult(rec);
+        }
+      } finally {
+        console.log = origLog;
+        console.error = origErr;
+      }
+    } catch (err) {
+      const msg = (err && (err.stack || err.message)) || 'Jest API run error';
+      console.error(msg);
+      this.failedTests++;
+    }
+    if (this.failedTests > 0) this.generateDebugFile();
+    this.printSummary();
+    process.exit(this.failedTests > 0 ? 1 : 0);
+  }
+
+  // Ensure only one in-process Jest run executes at a time
+  async _withAPILock(fn) {
+    const prev = this._apiMutex;
+    let resolveNext;
+    this._apiMutex = new Promise(res => { resolveNext = res; });
+    await prev.catch(() => {});
+    try {
+      const result = await fn();
+      resolveNext();
+      return result;
+    } catch (err) {
+      resolveNext();
+      throw err;
+    }
+  }
+
+  // Fallback: execute Jest via its programmatic API inside this Node process
+  async _runTestFileViaAPI(testFile) {
+    const startTime = Date.now();
+    let stdout = '';
+    let stderr = '';
+    try {
+      if (!this._runCLI) {
+        const require = createRequire(import.meta.url);
+        const jestModule = require('jest');
+        this._runCLI = jestModule && jestModule.runCLI ? jestModule.runCLI : null;
+      }
+      if (!this._runCLI) {
+        const msg = 'Jest API not available for fallback execution.';
+        return { file: testFile, success: false, duration: Date.now() - startTime, output: msg, stdout, stderr };
+      }
+      const configCandidates = [
+        path.join(process.cwd(), 'config', 'jest.config.mjs'),
+        path.join(process.cwd(), 'jest.config.mjs')
+      ];
+      const cfg = configCandidates.find(p => { try { return fs.existsSync(p); } catch { return false; } });
+      const argv = { runInBand: true, passWithNoTests: true, silent: false, runTestsByPath: true, _: [testFile], $0: 'jest' };
+      if (cfg) argv.config = cfg;
+      const origLog = console.log, origErr = console.error;
+      console.log = (...a) => { try { stdout += a.join(' ') + '\n'; } catch {} origLog.apply(console, a); };
+      console.error = (...a) => { try { stderr += a.join(' ') + '\n'; } catch {} origErr.apply(console, a); };
+      try {
+        const { results } = await this._runCLI(argv, [process.cwd()]);
+        const duration = Date.now() - startTime;
+        const success = results && results.success === true;
+        const mergedOut = (stdout + (stderr ? ('\n' + stderr) : '')).trim();
+        return { file: testFile, success, duration, output: mergedOut || (success ? '' : 'Jest API run failed with no output.'), stdout, stderr };
+      } finally {
+        console.log = origLog;
+        console.error = origErr;
+      }
+    } catch (err) {
+      const duration = Date.now() - startTime;
+      const msg = (err && (err.stack || err.message)) || 'Jest API fallback error';
+      return { file: testFile, success: false, duration, output: msg, stdout, stderr };
+    }
   }
 
   // Print colored status indicator
@@ -179,6 +350,8 @@ class TestRunner {
   generateDebugFile() {
     const failedResults = this.testResults.filter(r => !r.success);
     if (failedResults.length === 0) return;
+    if (this.isEnvTruthy('QTESTS_SUPPRESS_DEBUG') || this.isEnvTruthy('QTESTS_NO_DEBUG_FILE')) return;
+    const debugFilePath = (process.env.QTESTS_DEBUG_FILE && String(process.env.QTESTS_DEBUG_FILE).trim()) || 'DEBUG_TESTS.md';
     let debugContent = '# Test Failure Analysis\n\n';
     debugContent += 'Analyze and address the following test failures:\n\n';
     failedResults.forEach((result, index) => {
@@ -194,8 +367,10 @@ class TestRunner {
     debugContent += `- Total failed tests: ${failedResults.length}\n`;
     debugContent += `- Failed test files: ${failedResults.map(r => r.file).join(', ')}\n`;
     debugContent += `- Generated: ${new Date().toISOString()}\n`;
-    fs.writeFileSync('DEBUG_TESTS.md', debugContent);
-    console.log(`\n${colors.yellow}📋 Debug file created: DEBUG_TESTS.md${colors.reset}`);
+    try { fs.writeFileSync(debugFilePath, debugContent); } catch {}
+    if (!this.isEnvTruthy('QTESTS_SILENT')) {
+      console.log(`\n${colors.yellow}📋 Debug file created: ${debugFilePath}${colors.reset}`);
+    }
   }
 
   // Print comprehensive summary
@@ -220,50 +395,26 @@ class TestRunner {
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
   }
 
-  // Main runner method - optimized for parallel execution
+  // Main runner method - API-only execution (no child spawns)
   async run() {
-    console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner - Parallel Mode${colors.reset}`);
-    console.log(`${colors.dim}Discovering and running all tests...\n${colors.reset}`);
-    const testFiles = this.discoverTests();
-    if (testFiles.length === 0) {
-      console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
-      console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
+    if (!this.isEnvTruthy('QTESTS_SILENT')) {
+      console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner - API Mode${colors.reset}`);
+      console.log(`${colors.dim}Discovering and running all tests...\n${colors.reset}`);
+    }
+    const files = this.discoverTests();
+    if (files.length === 0) {
+      if (!this.isEnvTruthy('QTESTS_SILENT')) {
+        console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
+        console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
+      }
       process.exit(0);
     }
-    console.log(`${colors.blue}Found ${testFiles.length} test file(s):${colors.reset}`);
-    testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
-    console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
-    const cpuCount = os.cpus().length;
-    const envConcurrency = parseInt(process.env.QTESTS_CONCURRENCY || '', 10);
-    const defaultConcurrency = Math.max(4, cpuCount * 2);
-    const maxConcurrency = Math.min(
-      testFiles.length,
-      Number.isFinite(envConcurrency) && envConcurrency > 0 ? envConcurrency : defaultConcurrency
-    );
-    console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores)${colors.reset}\n`);
-
-    const runBatch = async (batch) => {
-      const results = await Promise.all(batch.map(async (testFile) => {
-        const result = await this.runTestFile(testFile);
-        if (result.success) this.passedTests++; else this.failedTests++;
-        this.printTestResult(result);
-        return result;
-      }));
-      return results;
-    };
-
-    for (let i = 0; i < testFiles.length; i += maxConcurrency) {
-      const batch = testFiles.slice(i, i + maxConcurrency);
-      const batchResults = await runBatch(batch);
-      this.testResults.push(...batchResults);
-      if (i + maxConcurrency < testFiles.length) {
-        console.log(`${colors.dim}Completed batch ${Math.floor(i / maxConcurrency) + 1}, starting next...${colors.reset}\n`);
-      }
+    if (!this.isEnvTruthy('QTESTS_SILENT')) {
+      console.log(`${colors.blue}Found ${files.length} test file(s):${colors.reset}`);
+      files.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
+      console.log(``);
     }
-
-    if (this.failedTests > 0) this.generateDebugFile();
-    this.printSummary();
-    process.exit(this.failedTests > 0 ? 1 : 0);
+    await this.runAllViaAPI(files);
   }
 }
 

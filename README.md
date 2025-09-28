@@ -98,6 +98,30 @@ process.env.TEST_VAR = 'modified';
 testEnv.restoreEnv(saved); // TEST_VAR removed, original state restored
 ```
 
+## 🧪 Unified Test Runner (API‑Only)
+
+- One command for everyone: `npm test`.
+- One runner: `qtests-runner.mjs` runs Jest in‑process via `runCLI` (no child processes, no `tsx`).
+- Honors: `QTESTS_INBAND=1` (serial) and `QTESTS_FILE_WORKERS=<n>` (max workers).
+- Always uses project config and `passWithNoTests`, with `cache=true` and `coverage=false`.
+- Debugging: creates `DEBUG_TESTS.md` on failures; override with `QTESTS_DEBUG_FILE=path` or suppress with `QTESTS_SUPPRESS_DEBUG=1`.
+
+Generator behavior (on `npx qtests-generate`):
+- Scaffolds `config/jest.config.mjs` (ignores `dist/`, `build/`) and `config/jest-require-polyfill.cjs` (ensures `require(...)` is available in ESM tests).
+- Scaffolds `qtests-runner.mjs` (API‑only runner).
+- Ensures helper scripts exist: `scripts/clean-dist.mjs` and `scripts/ensure-runner.mjs`.
+- Updates `package.json` scripts to:
+  - `pretest`: `node scripts/clean-dist.mjs && node scripts/ensure-runner.mjs`
+  - `test`: `node qtests-runner.mjs`
+
+Migration (from spawn‑based runners):
+- Run `npx qtests-generate` once to update the runner and scripts.
+- Ensure package.json contains the `pretest` and `test` commands above.
+- Remove any custom `tsx`/spawn‑based test commands.
+
+CI verification:
+- `npm run ci:verify` validates runner policy, script wiring, dist hygiene, and Jest config.
+
 ## 🤖 Automatic Test Generation
 
 ### CLI Usage (TypeScript ESM)

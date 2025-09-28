@@ -10,7 +10,8 @@ describe('generator runner fallback', () => {
   const mjsPath = path.join(cwd, 'qtests-runner.mjs');
 
   beforeEach(() => { try { fs.rmSync(mjsPath); } catch {} });
-  afterAll(() => { try { fs.rmSync(mjsPath); } catch {} });
+  // Do not delete the runner after tests, to avoid breaking subsequent
+  // runner-behavior tests that rely on qtests-runner.mjs existing.
 
   it('creates qtests-runner.mjs with header', async () => {
     const gen = new TestGenerator({});
@@ -20,4 +21,3 @@ describe('generator runner fallback', () => {
     expect(content).toContain('GENERATED RUNNER: qtests-runner.mjs');
   });
 });
-

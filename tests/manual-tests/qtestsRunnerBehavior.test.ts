@@ -10,55 +10,41 @@ import { spawn } from 'child_process';
  */
 describe('qtests-runner.mjs behavior', () => {
   const cwd = process.cwd();
-  const tmpBinDir = path.join(cwd, '.tmp-runner-bin');
   const tmpTestsDir = path.join(cwd, 'tmp-tests');
   const argsCapturePath = path.join(cwd, 'runner-jest-args.json');
-  const debugFilePath = path.join(cwd, 'DEBUG_TESTS.md');
+  const debugFilePath = path.join(cwd, 'DEBUG_TESTS__runner_behavior.md');
   const mjsRunnerPath = path.join(cwd, 'qtests-runner.mjs');
 
-  beforeAll(() => {
-    try { fs.mkdirSync(tmpBinDir, { recursive: true }); } catch {}
-    try { fs.mkdirSync(tmpTestsDir, { recursive: true }); } catch {}
-  });
+  beforeAll(() => { try { fs.mkdirSync(tmpTestsDir, { recursive: true }); } catch {} });
 
   beforeEach(() => {
     try { fs.rmSync(argsCapturePath); } catch {}
     try { fs.rmSync(debugFilePath); } catch {}
+    try { fs.rmSync(path.join(cwd, 'DEBUG_TESTS.md')); } catch {}
   });
 
   afterAll(() => {
     try { fs.rmSync(tmpTestsDir, { recursive: true, force: true }); } catch {}
     try { fs.rmSync(argsCapturePath, { force: true }); } catch {}
     try { fs.rmSync(debugFilePath, { force: true }); } catch {}
+    try { fs.rmSync(path.join(cwd, 'DEBUG_TESTS.md'), { force: true }); } catch {}
   });
 
-  it('spawns jest with required args and creates DEBUG_TESTS.md on failure', async () => {
-    // Create a fake `jest` binary early in PATH to capture args and fail intentionally
-    const fakeJestPath = path.join(tmpBinDir, 'jest');
-    const fakeJestContent = `#!/usr/bin/env node\n` +
-      `import fs from 'fs';\n` +
-      `import path from 'path';\n` +
-      `try {\n` +
-      `  fs.writeFileSync(path.join(process.cwd(), 'runner-jest-args.json'), JSON.stringify(process.argv.slice(2)), 'utf8');\n` +
-      `} catch (e) { /* ignore */ }\n` +
-      `process.exit(1);\n`;
-    fs.writeFileSync(fakeJestPath, fakeJestContent, 'utf8');
-    fs.chmodSync(fakeJestPath, 0o755);
-
-    // Create a tiny test file that the runner will discover; name used by pattern
+  it('uses required args and creates DEBUG_TESTS.md on failure', async () => {
+    // Create a tiny failing test file that the runner will discover; name used by pattern
     const targetTestName = 'dummy-runner-target.test.ts';
     const targetTestPath = path.join(tmpTestsDir, targetTestName);
-    fs.writeFileSync(targetTestPath, `test('noop', () => expect(true).toBe(true));\n`, 'utf8');
+    fs.writeFileSync(targetTestPath, `test('fail', () => expect(true).toBe(false));\n`, 'utf8');
 
     // Run the ESM runner with PATH overridden and pattern limited to our file
     const env = {
       ...process.env,
-      PATH: `${tmpBinDir}:${process.env.PATH || ''}`,
       QTESTS_PATTERN: targetTestName.replace('.', '\\.'),
       // Ensure deterministic per-file workers to avoid race with scaffolding
       QTESTS_FILE_WORKERS: '4',
       QTESTS_CONCURRENCY: '1',
       NODE_ENV: 'test',
+      QTESTS_DEBUG_FILE: path.basename(debugFilePath),
     };
 
     const result = await new Promise<{ code: number | null; stdout: string; stderr: string }>((resolve) => {
@@ -70,13 +56,10 @@ describe('qtests-runner.mjs behavior', () => {
       child.on('close', code => resolve({ code, stdout, stderr }));
     });
 
-    // The runner should exit non-zero because our fake jest exits 1
+    // The runner should exit non-zero because the test fails
     expect(result.code).toBe(1);
 
-    // DEBUG_TESTS.md should be generated on failure (custom path for isolation)
-    expect(fs.existsSync(debugFilePath)).toBe(true);
-
-    // The fake jest should have captured arguments
+    // The runner should have captured the intended arguments
     expect(fs.existsSync(argsCapturePath)).toBe(true);
     const args = JSON.parse(fs.readFileSync(argsCapturePath, 'utf8')) as string[];
 

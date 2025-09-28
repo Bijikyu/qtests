@@ -80,3 +80,27 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - `arqitect`: AI-powered planning and architecture analysis.
 - `quantumagent`: Specialized reasoning and analysis subagent.
 - `fileflows`: Data flow visualization and documentation.
+
+## Test Runner Policies (Stable)
+
+- Execution: API-only via Jest `runCLI` (no child processes). Never use `tsx` to launch tests.
+- Required options: Always use `config/jest.config.mjs` and `passWithNoTests`; set `cache=true` and `coverage=false` for speed.
+- Test discovery: Skip `dist/`, `build/`, and `__mocks__/`; under `generated-tests/` include only `*GeneratedTest*` files.
+- Manual-tests first: Run `tests/manual-tests/**` serially before parallel batches to avoid interference when tests scaffold/delete the runner.
+- Fallback execution: Not applicable (API-only). No child process spawns are used.
+- Environment: Do not force `NODE_OPTIONS=--experimental-vm-modules`. Respect `QTESTS_INBAND`, `QTESTS_FILE_WORKERS`, `QTESTS_CONCURRENCY`, `QTESTS_PATTERN`.
+- Debug report: Generate `DEBUG_TESTS.md` on failures unless `QTESTS_SUPPRESS_DEBUG`/`QTESTS_NO_DEBUG_FILE` is set; allow custom path via `QTESTS_DEBUG_FILE`.
+
+## Client Integration
+
+- Jest require polyfill: Add `config/jest-require-polyfill.cjs` to `setupFiles` so `require(...)` is available in ESM tests. Keep `qtests/setup` first in `setupFilesAfterEnv` and maintain the `createRequire(import.meta.url)` polyfill in `config/jest-setup.ts`.
+- Ignore built artifacts: Ensure `config/jest.config.mjs` includes `modulePathIgnorePatterns` and `watchPathIgnorePatterns` for `<rootDir>/dist/` and `<rootDir>/build/`.
+- Optional pretest clean: In CI or monorepos, add a `pretest` script to remove `dist/**/__mocks__` and compiled `*.test.*` files to eliminate duplicate mock warnings; otherwise rely on the ignore patterns above.
+- Environment toggles supported: `QTESTS_INBAND`, `QTESTS_FILE_WORKERS`, `QTESTS_CONCURRENCY`, `QTESTS_PATTERN`, `QTESTS_API_FALLBACK`, `QTESTS_SUPPRESS_DEBUG`, `QTESTS_NO_DEBUG_FILE`, `QTESTS_DEBUG_FILE`.
+
+## Never Regress
+
+- Do not add `tsx` invocations to runners.
+- Do not remove PATH resolution or switch back to `shell: true` spawns.
+- Do not reintroduce forced `NODE_OPTIONS` for vm-modules.
+- Keep runner templates and the root runner in sync with policies above so regenerated runners remain functional.

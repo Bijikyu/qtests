@@ -101,6 +101,30 @@ The module prioritizes developer experience over feature completeness - providin
 - Respect `QTESTS_SILENT=1|true` to suppress non-essential setup logs in CI.
 
 
+## Runner Stability & Client Integration (Authoritative)
+
+- Execution: API-only via Jest `runCLI` (no child processes). Do not shell-spawn and do not invoke `tsx`.
+- Required options: Always use project config (`config/jest.config.mjs`) and `passWithNoTests=true`; also set `cache=true` and `coverage=false`.
+- Discovery: Skip `dist/` and `build/` during test discovery; ignore `__mocks__` folders and non-GeneratedTest files under `generated-tests/`.
+- Manual-tests order: Run `tests/manual-tests/**` serially before parallel batches to avoid cross‑test interference with runner scaffolding.
+- Environment: Do not force `NODE_OPTIONS=--experimental-vm-modules`. Respect `QTESTS_INBAND`, `QTESTS_FILE_WORKERS`, `QTESTS_CONCURRENCY`, `QTESTS_PATTERN`.
+- Debug artifacts: Create `DEBUG_TESTS.md` when any file fails (unless `QTESTS_SUPPRESS_DEBUG` or `QTESTS_NO_DEBUG_FILE` is true). Allow overriding path via `QTESTS_DEBUG_FILE`.
+- Jest config hardening: Add `modulePathIgnorePatterns` and `watchPathIgnorePatterns` for `<rootDir>/dist/` and `<rootDir>/build/` to avoid duplicate manual mocks.
+- ESM require: Provide a pre‑setup CommonJS `require` via `config/jest-require-polyfill.cjs` (added to `setupFiles`) and keep `createRequire(import.meta.url)` polyfill in `config/jest-setup.ts`. Always import `qtests/setup` first in `setupFilesAfterEnv`.
+- Dist hygiene: Prefer ignoring `dist/` in Jest config; optional belt‑and‑suspenders script can delete `dist/**/__mocks__` and compiled `*.test.*` before running tests.
+
+### Generator & Templates (non‑negotiable)
+- The generator may only scaffold `qtests-runner.mjs` and MUST mirror the policies above: API‑only `runCLI`, required options, discovery ignores, no `NODE_OPTIONS` forcing.
+- `scripts/ensure-runner.mjs` must copy the on‑package template; templates must remain in sync with `bin/qtests-ts-runner` behavior.
+- Tests that regenerate the runner must not leave the repo without a runner (no cleanup that deletes `qtests-runner.mjs` post‑test).
+
+### Client Projects
+- Clients should adopt the provided `config/jest.config.mjs` and `config/jest-require-polyfill.cjs` to guarantee `require(...)` availability in ESM tests and to ignore `dist/`/`build/`.
+- If clients use package scripts, recommend a `pretest` step to remove `dist/**/__mocks__` and compiled `*.test.*` or rely on the ignore patterns above.
+- Environment toggles supported by runner: `QTESTS_INBAND`, `QTESTS_FILE_WORKERS`, `QTESTS_CONCURRENCY`, `QTESTS_PATTERN`, `QTESTS_API_FALLBACK`, `QTESTS_SUPPRESS_DEBUG`, `QTESTS_NO_DEBUG_FILE`, `QTESTS_DEBUG_FILE`.
+- Never suggest running tests via `tsx`; always via `jest --config config/jest.config.mjs --passWithNoTests`.
+
+
 <!--┌── 🚫 PROTECTED: DO NOT EDIT (READ ONLY) BELOW THIS LINE-->
 ## ADDITIONAL SPECIFIC GUIDANCE
 Beyond the general rules here, please also read the rules and guidance 
