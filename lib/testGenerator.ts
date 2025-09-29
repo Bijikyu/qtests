@@ -1796,9 +1796,7 @@ try {
         return;
       }
 
-      // If all else fails, emit a clear warning for the user; do not throw.
-      console.warn('⚠️  No runner template found; expected one of: lib/templates, templates/, dist/templates/, or bin/qtests-ts-runner within the qtests package.');
-      console.warn('   Please ensure the qtests package includes templates or bin assets.');
+      // If all else fails, remain silent (passive). Do not throw or warn.
     } catch (error: any) {
       console.error('Failed to generate qtests-runner.mjs:', error.message);
     }
@@ -1861,7 +1859,7 @@ try {
 
       // ensure-runner.mjs
       const ensurePath = path.join(scriptsDir, 'ensure-runner.mjs');
-      const ensureContent = `// Ensures qtests-runner.mjs exists at project root by copying the shipped template.\nimport fs from 'fs';\nimport path from 'path';\nimport { fileURLToPath } from 'url';\nconst __filename = fileURLToPath(import.meta.url);\nconst __dirname = path.dirname(__filename);\nconst cwd = process.cwd();\nfunction firstExisting(paths){for(const p of paths){try{if(fs.existsSync(p))return p}catch{}}return null}\ntry{const target=path.join(cwd,'qtests-runner.mjs');if(!fs.existsSync(target)){const candidates=[path.join(cwd,'templates','qtests-runner.mjs.template'),path.join(cwd,'lib','templates','qtests-runner.mjs.template'),path.join(cwd,'node_modules','qtests','templates','qtests-runner.mjs.template'),path.join(cwd,'node_modules','qtests','lib','templates','qtests-runner.mjs.template')];const template=firstExisting(candidates);if(!template){process.stderr.write('ensure-runner: no runner template found; skipped\\n');process.exit(0)}const content=fs.readFileSync(template,'utf8');fs.writeFileSync(target,content,'utf8');process.stdout.write('ensure-runner: created qtests-runner.mjs from template\\n')}}catch(err){process.stderr.write('ensure-runner error: '+(err&& (err.stack||err.message) || String(err))+'\\n');process.exit(0)}\n`;
+      const ensureContent = `// Ensures qtests-runner.mjs exists at project root by copying a valid shipped template.\nimport fs from 'fs';\nimport path from 'path';\nimport { fileURLToPath } from 'url';\nconst __filename = fileURLToPath(import.meta.url);\nconst __dirname = path.dirname(__filename);\nconst cwd = process.cwd();\nfunction isValid(content){try{return /runAllViaAPI\\s*\\(/.test(content) && /runCLI/.test(content) && /API Mode/.test(content);}catch{return false;}}\ntry{const target=path.join(cwd,'qtests-runner.mjs');if(!fs.existsSync(target)){const candidates=[path.join(cwd,'lib','templates','qtests-runner.mjs.template'),path.join(cwd,'templates','qtests-runner.mjs.template'),path.join(cwd,'node_modules','qtests','lib','templates','qtests-runner.mjs.template'),path.join(cwd,'node_modules','qtests','templates','qtests-runner.mjs.template')];let content=null;for(const p of candidates){try{if(fs.existsSync(p)){const c=fs.readFileSync(p,'utf8');if(isValid(c)){content=c;break;}}}catch{}}if(!content){/* silent no-op */}else{fs.writeFileSync(target,content,'utf8');}}}catch{/* silent */}\n`;
       try { fs.writeFileSync(ensurePath, ensureContent, 'utf8'); } catch {}
     } catch {}
   }
