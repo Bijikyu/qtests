@@ -3,8 +3,13 @@
 // qtests-generate: Node-native CLI (no external runtime) that invokes the compiled TestGenerator
 // Implementation mirrors the TypeScript CLI but imports from compiled JS in dist/
 
-import { readFileSync } from 'fs';
+// NOTE: This CLI is also responsible for ALWAYS creating/overwriting
+// the client project's qtests-runner.mjs at the project root, so that
+// client apps consistently get a stable runner without any extra flags.
+
+import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Parse command line arguments
 function parseArgs(argv) {
@@ -139,15 +144,103 @@ EXAMPLES:
 function showVersion() {
   try {
     const packageJsonPath = path.join(process.cwd(), 'node_modules', 'qtests', 'package.json');
-    const pkg = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
+    const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
     console.log(`qtests v${pkg.version}`);
   } catch {
     try {
-      const pkg = JSON.parse(readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
+      const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
       console.log(`qtests v${pkg.version || 'unknown'}`);
     } catch {
       console.log('qtests');
     }
+  }
+}
+
+// Utility: parse env truthy values ('1'|'true'|'yes')
+function isEnvTruthy(name) {
+  const v = process.env[name];
+  if (!v) return false;
+  const s = String(v).trim().toLowerCase();
+  return s === '1' || s === 'true' || s === 'yes';
+}
+
+// Utility: safe exists
+function exists(p) {
+  try { return fs.existsSync(p); } catch { return false; }
+}
+
+// Utility: read file
+function read(p) {
+  try { return fs.readFileSync(p, 'utf8'); } catch { return null; }
+}
+
+// Decide client project root: prefer npm's INIT_CWD if present and sensible
+function resolveClientRoot() {
+  const icwd = process.env.INIT_CWD && String(process.env.INIT_CWD).trim();
+  if (icwd && exists(icwd) && !icwd.includes(`${path.sep}node_modules${path.sep}`)) return icwd;
+  return process.cwd();
+}
+
+// Resolve this module's root (node_modules/qtests or repo root during dev)
+function resolveModuleRoot() {
+  // __dirname of this file is .../qtests/bin
+  const thisFile = fileURLToPath(import.meta.url);
+  const binDir = path.dirname(thisFile);
+  return path.resolve(binDir, '..');
+}
+
+// Validate runner template content to avoid writing wrong files
+function isValidRunnerTemplate(content) {
+  try {
+    if (!content) return false;
+    // Key invariants per Runner Policies
+    return /API Mode/.test(content) && /runAllViaAPI\s*\(/.test(content) && /runCLI/.test(content);
+  } catch {
+    return false;
+  }
+}
+
+// Obtain runner template content from shipped template or transform fallback
+function getRunnerTemplateContent() {
+  const moduleRoot = resolveModuleRoot();
+  const candidates = [
+    path.join(moduleRoot, 'templates', 'qtests-runner.mjs.template'),
+    path.join(moduleRoot, 'lib', 'templates', 'qtests-runner.mjs.template')
+  ];
+  for (const p of candidates) {
+    const c = read(p);
+    if (c && isValidRunnerTemplate(c)) return c;
+  }
+  // Fallback: attempt to transform the sacrosanct bin into a standalone runner template
+  const binPath = path.join(moduleRoot, 'bin', 'qtests-ts-runner');
+  const raw = read(binPath);
+  if (raw) {
+    const transformed = raw
+      .replace(/^#!\/usr\/bin\/env node/m, '#!/usr/bin/env node')
+      .replace(/\/\/ IMPORTANT: This CLI is sacrosanct and not generated\. Do not overwrite\./,
+        '// GENERATED RUNNER: qtests-runner.mjs - auto-created by qtests TestGenerator\n// Safe to delete; will be recreated as needed.\n// Mirrors bin/qtests-ts-runner behavior (batching, DEBUG_TESTS.md, stable exits).');
+    if (isValidRunnerTemplate(transformed)) return transformed;
+  }
+  return null;
+}
+
+// ALWAYS write/overwrite qtests-runner.mjs at client root
+function writeRunnerAtClientRoot() {
+  const quiet = isEnvTruthy('QTESTS_SILENT');
+  const targetRoot = resolveClientRoot();
+  const target = path.join(targetRoot, 'qtests-runner.mjs');
+  const templateContent = getRunnerTemplateContent();
+  if (!templateContent) {
+    // Do not fail the generator if template can't be found; just warn once.
+    if (!quiet) console.error('qtests: no runner template found; skipped runner write');
+    return;
+  }
+  try {
+    fs.writeFileSync(target, templateContent, 'utf8');
+    if (!quiet) process.stdout.write('qtests: wrote qtests-runner.mjs at project root (overwritten)\n');
+  } catch (err) {
+    // Non-fatal: keep generator usable even if FS writes fail
+    if (!quiet) console.error('qtests: failed to write qtests-runner.mjs:', (err && (err.message || err.stack)) || String(err));
   }
 }
 
@@ -169,6 +262,9 @@ async function main() {
     if (options.exclude && options.exclude.length) console.log(`  Exclude patterns: ${options.exclude.join(', ')}`);
     console.log(`  Module system: TypeScript ES Modules (only)`);
     console.log(`  Jest config path: config/jest.config.mjs (auto)\n`);
+
+    // Always scaffold/overwrite the runner at the client root, independent of dry-run
+    writeRunnerAtClientRoot();
 
     // Import compiled TestGenerator from dist, which is shipped in the published package
     const { TestGenerator } = await import('../dist/lib/testGenerator.js');

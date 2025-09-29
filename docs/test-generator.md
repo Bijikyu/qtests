@@ -20,6 +20,8 @@ npm install qtests
 ```
 
 ## CLI Usage (qtests-generate)
+
+Note: qtests-generate now always scaffolds qtests-runner.mjs at the project root and overwrites any existing file. This ensures client apps consistently run tests via the unified runner without extra flags or steps.
 Alias: `qtests-ts-generate` (backward compatible)
 
 ### Basic Usage
