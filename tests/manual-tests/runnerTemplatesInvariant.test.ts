@@ -9,12 +9,11 @@ describe('runner templates invariants', () => {
     path.join(cwd, 'templates', 'qtests-runner.mjs.template')
   ];
 
-  it('templates include runAllViaAPI, runCLI, and API Mode banner', () => {
+  it('templates include runCLI and API Mode banner', () => {
     const found: string[] = [];
     for (const p of candidates) {
       if (!fs.existsSync(p)) continue;
       const content = fs.readFileSync(p, 'utf8');
-      expect(content).toMatch(/runAllViaAPI\s*\(/);
       expect(content).toMatch(/runCLI/);
       expect(content).toMatch(/API Mode/);
       found.push(p);
@@ -22,4 +21,3 @@ describe('runner templates invariants', () => {
     expect(found.length).toBeGreaterThan(0);
   });
 });
-

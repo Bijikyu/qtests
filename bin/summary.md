@@ -18,7 +18,8 @@ The `bin/` directory contains executable CLI tools for the qtests framework.
 
 **Recent Updates**:
 - New command name `qtests-generate` added (keeps `qtests-ts-generate` as a backward-compatible alias).
-- Imports `../lib/testGenerator.ts` directly under the tsx runtime to ensure the CLI works outside Jest without relying on extension mapping.
+- Imports compiled generator from `../dist/lib/testGenerator.js` for predictable runtime without tsx.
+- ALWAYS writes/overwrites `qtests-runner.mjs` at the client root (INIT_CWD) using a validated API‑only template (runCLI + API Mode).
 
 **Command Examples**:
 ```bash
@@ -40,7 +41,7 @@ qtests-generate --update-pkg-script       # Opt-in to update npm test script
 ## Known Side Effects  
 - Creates Jest configuration file (jest.config.mjs) on non-dry runs
 - Creates Jest setup file (jest-setup.ts) on non-dry runs; imports `qtests/setup` first and adds DOM/browser stubs
-- Creates qtests-runner.mjs and configures Jest invocation with `--config config/jest.config.mjs` and `--passWithNoTests`
+- Creates/overwrites qtests-runner.mjs (API‑only via runCLI) and configures Jest invocation with `--config config/jest.config.mjs` and `--passWithNoTests`
 - Scaffolds local HTTP test utils: `generated-tests/utils/httpTest.ts` (re-exports) and `generated-tests/utils/httpTest.shim.js` (implementation with `.send()`)
 - Adds `moduleNameMapper` for `mongoose` pointing to qtests' manual mock to avoid real DB access in unit tests
 - Generates test files in filesystem (unless --dry-run specified)

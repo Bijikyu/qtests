@@ -7,6 +7,8 @@ qtests is a comprehensive Node.js testing framework providing zero-dependency ut
 **ARCHITECTURAL REVELATION**: Achieved 69% speed improvement by making qtests work like Jest internally. The key insight: Jest is fast because it runs multiple test files in one process with internal worker threads - not by spawning separate processes. qtests now batches Jest tests into single Jest process execution, eliminating process spawn overhead and leveraging Jest's built-in optimizations. Result: 35.1s execution time with 75/75 tests passing.
 
 **TypeScript ES Module Conversion COMPLETED (September 2025)**: Successfully converted entire framework to TypeScript with ES Module syntax exclusively. Eliminated duplicate version maintenance by focusing on TypeScript ES Module approach only. Bin commands are `qtests-generate` (alias: `qtests-ts-generate`) and `qtests-ts-runner`. The generator creates TypeScript test files (.test.ts) and scaffolds an ESM runner `qtests-runner.mjs` that invokes Jest with `--config config/jest.config.mjs --passWithNoTests` (no `tsx` usage).
+ 
+**Runner Policy (Authoritative)**: `qtests-runner.mjs` is the only project runner that is generated and used. Do not create, use, or maintain alternate or duplicate runners (e.g., `qtests-runner.js`) or context-specific variants. Client projects and CI must invoke `node qtests-runner.mjs` only.
 
 ## User Preferences
 - **TypeScript ES Module Only**: Project has been converted to TypeScript with ES Module syntax exclusively
@@ -97,6 +99,11 @@ qtests employs a **module resolution hooking** architecture that patches Node.js
 - Ignore built artifacts: Ensure `config/jest.config.mjs` includes `modulePathIgnorePatterns` and `watchPathIgnorePatterns` for `<rootDir>/dist/` and `<rootDir>/build/`.
 - Optional pretest clean: In CI or monorepos, add a `pretest` script to remove `dist/**/__mocks__` and compiled `*.test.*` files to eliminate duplicate mock warnings; otherwise rely on the ignore patterns above.
 - Environment toggles supported: `QTESTS_INBAND`, `QTESTS_FILE_WORKERS`, `QTESTS_CONCURRENCY`, `QTESTS_PATTERN`, `QTESTS_API_FALLBACK`, `QTESTS_SUPPRESS_DEBUG`, `QTESTS_NO_DEBUG_FILE`, `QTESTS_DEBUG_FILE`.
+
+- Runner scaffolding is passive and automatic:
+  - Postinstall creates `qtests-runner.mjs` at the client root (INIT_CWD) when missing.
+  - The generator CLI (`qtests-generate`) ALWAYS (re)writes `qtests-runner.mjs` at client root with the validated API‑only template (runCLI + API Mode).
+  - `scripts/ensure-runner.mjs` silently replaces stale runners (e.g., spawn/parallel‑mode) with the validated template.
 
 ## Never Regress
 

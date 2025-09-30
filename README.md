@@ -15,6 +15,8 @@ A comprehensive Node.js testing framework with zero dependencies. Provides intel
 npm install qtests --save-dev
 ```
 
+qtests passively scaffolds its runner at your project root after install (via npm postinstall). No extra steps required.
+
 **Configure your project for ES modules** by adding to `package.json`:
 ```json
 {
@@ -53,6 +55,35 @@ const restore = stubMethod(myObject, 'methodName', mockImplementation);
 - **🆕 ES Module Support** - Full compatibility with modern ES Module syntax
 - **🔷 TypeScript Support** - Complete type definitions and intellisense
 - **⚡ Zero Dependencies** - No production dependencies to bloat your project
+
+## 🧩 Mock API (Runtime‑Safe)
+
+qtests exposes a small, extensible mocking API that works at runtime without rewriting paths or adding heavy frameworks.
+
+Defaults registered by setup:
+- `axios` → qtests stub (truthy, no network)
+- `winston` → qtests stub (no‑op logger with format/transports)
+- `mongoose` → project `__mocks__/mongoose.js` if present, or a minimal safe object
+
+Usage:
+```ts
+import qtests from 'qtests';
+
+// Register a custom module mock
+qtests.mock.module('external-service', () => ({
+  default: {
+    call: async () => ({ ok: true })
+  }
+}));
+
+// Now `require('external-service')` or `import ... from 'external-service'` returns the mock (CJS via require hook; ESM early via optional loader)
+```
+
+Notes:
+- Activation is runtime‑safe: a single require hook returns registered mocks; previously loaded CJS modules are best‑effort evicted from `require.cache`.
+- ESM projects can optionally use the loader for earliest interception:
+  - `node --loader=qtests/loader.mjs your-app.mjs`
+- setup still runs first in Jest via `config/jest-setup.ts` so defaults are active before imports.
 
 ## 📖 Core Usage
 
@@ -101,18 +132,23 @@ testEnv.restoreEnv(saved); // TEST_VAR removed, original state restored
 ## 🧪 Unified Test Runner (API‑Only)
 
 - One command for everyone: `npm test`.
-- One runner: `qtests-runner.mjs` runs Jest in‑process via `runCLI` (no child processes, no `tsx`).
+- One runner: `qtests-runner.mjs` runs Jest via the programmatic API `runCLI` (no child processes, no `tsx`).
 - Honors: `QTESTS_INBAND=1` (serial) and `QTESTS_FILE_WORKERS=<n>` (max workers).
 - Always uses project config and `passWithNoTests`, with `cache=true` and `coverage=false`.
 - Debugging: creates `DEBUG_TESTS.md` on failures; override with `QTESTS_DEBUG_FILE=path` or suppress with `QTESTS_SUPPRESS_DEBUG=1`.
 
-Generator behavior (on `npx qtests-generate`):
+Runner availability and generator behavior:
+- Postinstall scaffolding automatically creates `qtests-runner.mjs` at the project root (INIT_CWD) when missing.
+- `npx qtests-generate` ALWAYS (re)writes `qtests-runner.mjs` at the client root to keep the runner current.
 - Scaffolds `config/jest.config.mjs` (ignores `dist/`, `build/`) and `config/jest-require-polyfill.cjs` (ensures `require(...)` is available in ESM tests).
 - Scaffolds `qtests-runner.mjs` (API‑only runner).
 - Ensures helper scripts exist: `scripts/clean-dist.mjs` and `scripts/ensure-runner.mjs`.
 - Updates `package.json` scripts to:
   - `pretest`: `node scripts/clean-dist.mjs && node scripts/ensure-runner.mjs`
   - `test`: `node qtests-runner.mjs`
+
+Stale runner protection:
+- `scripts/ensure-runner.mjs` silently replaces stale runners (e.g., spawn/parallel-mode or missing API‑only invariants) with the validated template.
 
 Migration (from spawn‑based runners):
 - Run `npx qtests-generate` once to update the runner and scripts.

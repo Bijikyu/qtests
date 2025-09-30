@@ -11,7 +11,7 @@ function read(p){ try{ return fs.readFileSync(p,'utf8'); }catch{ return null; } 
 function exists(p){ try{ return fs.existsSync(p); }catch{ return false; } }
 
 function isValidTemplate(content){
-  try{ return /runAllViaAPI\s*\(/.test(content) && /runCLI/.test(content) && /API Mode/.test(content); }catch{ return false; }
+  try{ return /runCLI/.test(content) && /API Mode/.test(content); }catch{ return false; }
 }
 
 (function main(){
@@ -26,6 +26,30 @@ function isValidTemplate(content){
   if (clientRoot.includes(`${path.sep}node_modules${path.sep}`)) return;
 
   const target = path.join(clientRoot, 'qtests-runner.mjs');
+  // Passive correction: update client package.json test script if it incorrectly points to qtests-runner.js
+  try {
+    const pkgPath = path.join(clientRoot, 'package.json');
+    if (exists(pkgPath)) {
+      const pkg = JSON.parse(read(pkgPath) || '{}');
+      if (pkg && pkg.scripts && typeof pkg.scripts.test === 'string') {
+        if (/qtests-runner\.js\b/.test(pkg.scripts.test) || !/qtests-runner\.mjs\b/.test(pkg.scripts.test)) {
+          pkg.scripts.test = 'node qtests-runner.mjs';
+          // Ensure pretest includes ensure-runner and clean-dist for stability
+          const pre = String(pkg.scripts.pretest || '');
+          const ensureCmd = 'node scripts/ensure-runner.mjs';
+          const cleanCmd = 'node scripts/clean-dist.mjs';
+          const parts = [];
+          if (!pre.includes('scripts/clean-dist.mjs')) parts.push(cleanCmd);
+          if (!pre.includes('scripts/ensure-runner.mjs')) parts.push(ensureCmd);
+          pkg.scripts.pretest = parts.length ? (parts.join(' && ') + (pre ? ' && ' + pre : '')) : pre;
+          try { fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8'); if (!quiet) console.log('qtests: normalized test script to use qtests-runner.mjs'); } catch {}
+        }
+      }
+      // Remove stray legacy runner if present
+      const legacy = path.join(clientRoot, 'qtests-runner.js');
+      try { if (exists(legacy)) fs.rmSync(legacy, { force: true }); } catch {}
+    }
+  } catch {}
   if (exists(target)) return; // runner already present, be passive
 
   // Locate a valid template from this installed package
@@ -64,4 +88,3 @@ function isValidTemplate(content){
     // Silent failure by design; do not block installs.
   }
 })();
-

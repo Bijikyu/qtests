@@ -10,6 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { spawnSync } from 'child_process';
 
 // Parse command line arguments
 function parseArgs(argv) {
@@ -25,7 +26,10 @@ function parseArgs(argv) {
     react: false,
     skipReactComponents: true,
     updatePackageScript: false,
-    withRouter: false
+    withRouter: false,
+    yes: false,
+    noInteractive: false,
+    autoInstall: false
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -74,6 +78,17 @@ function parseArgs(argv) {
         break;
       case '--with-router':
         options.withRouter = true;
+        break;
+      case '--yes':
+      case '-y':
+        options.yes = true;
+        options.noInteractive = true;
+        break;
+      case '--no-interactive':
+        options.noInteractive = true;
+        break;
+      case '--auto-install':
+        options.autoInstall = true;
         break;
       case '--migrate-generated-tests':
         options.migrateGeneratedTests = true;
@@ -194,10 +209,81 @@ function isValidRunnerTemplate(content) {
   try {
     if (!content) return false;
     // Key invariants per Runner Policies
-    return /API Mode/.test(content) && /runAllViaAPI\s*\(/.test(content) && /runCLI/.test(content);
+    return /API Mode/.test(content) && /runCLI/.test(content);
   } catch {
     return false;
   }
+}
+
+// Compute required dev dependencies based on project type
+function computeRequiredDevDeps() {
+  const required = new Map();
+  // Core Jest + TS + Babel chain used by our Jest config
+  required.set('jest', '^29');
+  required.set('ts-jest', '^29');
+  required.set('typescript', '^5');
+  required.set('babel-jest', '^30');
+  required.set('@babel/core', '^7');
+  required.set('@babel/preset-env', '^7');
+
+  // React detection: add jsdom env if React present
+  try {
+    const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
+    const all = { ...(pkg.dependencies||{}), ...(pkg.devDependencies||{}), ...(pkg.peerDependencies||{}) };
+    const isReact = Boolean(all.react || all['@types/react'] || all['react-dom'] || all['@types/react-dom']);
+    if (isReact) required.set('jest-environment-jsdom', '^29');
+  } catch {}
+  return required;
+}
+
+// Ensure devDependencies exist in package.json and optionally install
+function ensureDevDeps({ autoInstall=false } = {}) {
+  const pkgPath = path.join(process.cwd(), 'package.json');
+  if (!exists(pkgPath)) {
+    console.log('⚠️  No package.json found; skipping devDependencies setup');
+    return { installed: false, toInstall: [] };
+  }
+  let pkg;
+  try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); } catch {
+    console.log('⚠️  Could not read package.json; skipping devDependencies setup');
+    return { installed: false, toInstall: [] };
+  }
+  pkg.devDependencies = pkg.devDependencies || {};
+  const need = [];
+  for (const [name, ver] of computeRequiredDevDeps()) {
+    if (!pkg.devDependencies[name] && !(pkg.dependencies && pkg.dependencies[name])) {
+      pkg.devDependencies[name] = ver;
+      need.push(name);
+    }
+  }
+  if (need.length) {
+    try {
+      fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8');
+      console.log(`✅ Updated package.json devDependencies: ${need.join(', ')}`);
+    } catch {
+      console.log('⚠️  Failed to write updated package.json devDependencies');
+    }
+  } else {
+    console.log('ℹ️ Dev dependencies already satisfied');
+  }
+
+  if (autoInstall && need.length) {
+    console.log('📦 Installing missing devDependencies...');
+    const r = spawnSync('npm', ['install', '-D', ...need], { stdio: 'inherit' });
+    if (r.status === 0) {
+      console.log('✅ DevDependencies installed');
+      return { installed: true, toInstall: [] };
+    } else {
+      console.log('⚠️  Automatic install failed or was blocked. You can install manually:');
+      console.log(`    npm install -D ${need.join(' ')}`);
+      return { installed: false, toInstall: need };
+    }
+  }
+  if (!autoInstall && need.length) {
+    console.log('💡 Next step: install missing devDependencies:');
+    console.log(`    npm install -D ${need.join(' ')}`);
+  }
+  return { installed: false, toInstall: need };
 }
 
 // Obtain runner template content from shipped template or transform fallback
@@ -238,6 +324,8 @@ function writeRunnerAtClientRoot() {
   try {
     fs.writeFileSync(target, templateContent, 'utf8');
     if (!quiet) process.stdout.write('qtests: wrote qtests-runner.mjs at project root (overwritten)\n');
+    // Remove legacy runner if present to prevent accidental usage
+    try { const legacy = path.join(targetRoot, 'qtests-runner.js'); if (fs.existsSync(legacy)) fs.rmSync(legacy, { force: true }); } catch {}
   } catch (err) {
     // Non-fatal: keep generator usable even if FS writes fail
     if (!quiet) console.error('qtests: failed to write qtests-runner.mjs:', (err && (err.message || err.stack)) || String(err));
@@ -258,6 +346,7 @@ async function main() {
     console.log(`  Force React mode: ${options.react ? 'yes' : 'no'}`);
     console.log(`  Generate component tests: ${options.skipReactComponents === false ? 'yes' : 'no'}`);
     console.log(`  Update package.json script: ${options.updatePackageScript ? 'yes' : 'no'}`);
+    // Non-interactive by default; auto-install attempted unless in CI
     if (options.include && options.include.length) console.log(`  Include patterns: ${options.include.join(', ')}`);
     if (options.exclude && options.exclude.length) console.log(`  Exclude patterns: ${options.exclude.join(', ')}`);
     console.log(`  Module system: TypeScript ES Modules (only)`);
@@ -285,15 +374,20 @@ async function main() {
     console.log(`  API tests: ${apiTests}`);
     console.log(`  Total files: ${results.length}`);
 
-    if (results.length > 0) {
-      console.log('\n💡 Next steps:');
-      console.log('  1. Review generated TypeScript test files');
-      console.log('  2. Add specific test implementations');
-      console.log('  3. Run tests with: npm test');
-      if (options.mode === 'ast') console.log('  4. AST analysis may have generated more detailed test stubs');
-    } else {
-      console.log('\n✅ All source files already have corresponding tests');
-    }
+    // Ensure devDependencies and optionally install
+    const autoInstallDefault = !isEnvTruthy('CI');
+    const { toInstall } = ensureDevDeps({ autoInstall: options.autoInstall || options.yes || options.noInteractive || autoInstallDefault });
+
+    // Actionable next steps
+    console.log('\n💡 Next steps:');
+    if (results.length > 0) console.log('  • Review generated test files and flesh out assertions');
+    console.log('  • Run tests: npm test');
+    if (toInstall && toInstall.length) console.log(`  • Install missing devDeps: npm install -D ${toInstall.join(' ')}`);
+    console.log('  • Jest config created at config/jest.config.mjs (customize as needed)');
+    console.log('  • Scripts updated: pretest (ensure-runner, clean-dist), test (qtests-runner)');
+    // Defensive cleanup
+    try { const legacy = path.join(process.cwd(), 'qtests-runner.js'); if (fs.existsSync(legacy)) fs.rmSync(legacy, { force: true }); } catch {}
+    if (options.mode === 'ast') console.log('  • AST mode enabled: more detailed route and export detection applied');
   } catch (error) {
     console.error('❌ Error generating tests:', error && (error.stack || error.message) || String(error));
     process.exit(1);

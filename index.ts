@@ -16,6 +16,7 @@
 import { stubMethod, mockConsole } from './lib/coreUtils.js';
 import { testEnv, offlineMode, testHelpers } from './lib/envUtils.js';
 import { setup } from './lib/setup.js';
+import { mockAPI } from './lib/mockSystem.js';
 import stubs from './lib/stubs.js';
 import { TestGenerator } from './lib/testGenerator.js';
 import { runTestSuite, runTestSuites, createAssertions } from './utils/runTestSuite.js';
@@ -33,6 +34,9 @@ export interface QtestsAPI {
   createAssertions: typeof createAssertions;
   setup: typeof setup;
   stubs: typeof stubs;
+  mock: {
+    module: (name: string, factory: () => any) => void;
+  };
 }
 
 // Named exports for ES module compatibility
@@ -47,7 +51,8 @@ export {
   runTestSuites, // run multiple test suites with overall summary
   createAssertions, // basic assertion helpers for test writing
   setup, // call this to activate stubs when desired
-  stubs // stub library organized under namespace
+  stubs, // stub library organized under namespace
+  mockAPI as mock
 };
 
 // Default export for backward compatibility
@@ -62,7 +67,8 @@ const qtests: QtestsAPI = {
   runTestSuites,
   createAssertions,
   setup,
-  stubs
+  stubs,
+  mock: mockAPI
 };
 
 export default qtests;

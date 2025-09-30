@@ -63,6 +63,17 @@ qtests-generate --unit --dry-run
 qtests-generate --mode ast
 ```
 
+### Default Setup & Auto‑install
+
+By default, running `qtests-generate` will:
+- Ensure `config/jest.config.mjs`, `config/jest-setup.ts`, and `config/jest-require-polyfill.cjs` exist
+- Write/overwrite `qtests-runner.mjs` at the project root
+- Update `package.json` scripts:
+  - `pretest`: include `scripts/clean-dist.mjs` and `scripts/ensure-runner.mjs`
+  - `test`: run `node qtests-runner.mjs`
+- Add missing devDependencies to `package.json` (Jest + TS + Babel; `jest-environment-jsdom` when React detected)
+- Attempt to install missing devDependencies automatically (skips auto-install on CI if `CI` env is set), and always prints the exact command when installation is blocked
+
 ### Help and Version
 
 ```bash

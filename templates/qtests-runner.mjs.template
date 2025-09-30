@@ -9,8 +9,6 @@
 
 import fs from 'fs';
 import path from 'path';
-// Unified runner: API-only, no child_process spawns
-import os from 'os';
 import { createRequire } from 'module';
 
 // ANSI color codes for terminal output
@@ -41,9 +39,7 @@ class TestRunner {
     this.failedTests = 0;
     this.testResults = [];
     this.startTime = Date.now();
-    // Mutex to ensure Jest API fallback runs sequentially to avoid conflicts
-    this._apiMutex = Promise.resolve();
-    // Lazily-initialized reference to Jest's runCLI for in-process fallback
+    // Lazily-initialized reference to Jest's runCLI (API-only execution)
     this._runCLI = null;
   }
 
@@ -122,70 +118,8 @@ class TestRunner {
     return testFiles;
   }
 
-  // Run a single test file via API (spawnless)
-  async runTestFile(testFile) {
-    const spawnOnce = () => new Promise((resolve) => {
-      const startTime = Date.now();
-      let stdout = '';
-      let stderr = '';
-      let spawnHadError = false;
-
-      // Always use Jest with project config and allow empty matches
-      const configCandidates = [
-        path.join(process.cwd(), 'config', 'jest.config.mjs'),
-        path.join(process.cwd(), 'jest.config.mjs')
-      ];
-      const cfg = configCandidates.find(p => {
-        try { return fs.existsSync(p); } catch { return false; }
-      });
-      const jestArgs = [];
-      if (cfg) {
-        jestArgs.push('--config', cfg);
-      }
-      jestArgs.push('--passWithNoTests');
-      const fileWorkers = process.env.QTESTS_FILE_WORKERS ? String(process.env.QTESTS_FILE_WORKERS) : '4';
-      const inBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
-      jestArgs.push(testFile);
-      if (inBand) {
-        jestArgs.push('--runInBand');
-      } else {
-        // Default per-file workers for performance without overwhelming sandbox envs
-        jestArgs.push(`--maxWorkers=${fileWorkers}`);
-      }
-      jestArgs.push('--cache', '--no-coverage');
-
-      // Record intended Jest invocation for debugging/tests
-      try {
-        const sinkPath = path.join(process.cwd(), 'runner-jest-args.json');
-        fs.writeFileSync(sinkPath, JSON.stringify(jestArgs), 'utf8');
-      } catch {}
-
-      // In API-only mode we do not spawn per-file; simulate via immediate resolve.
-      resolve({ file: testFile, success: false, duration: 0, output: 'API-only runner: per-file spawn disabled', stdout, stderr, spawnError: spawnHadError });
-    });
-
-    const first = await spawnOnce();
-    const crashed = /A jest worker process [^\n]* crashed/i.test(first.output || '');
-    const alreadyInBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
-    if (!first.success && crashed && !alreadyInBand) {
-      console.error(`${colors.yellow}Retrying in-band due to worker crash: ${testFile}${colors.reset}`);
-      process.env.QTESTS_INBAND = '1';
-      return await this.runTestFile(testFile);
-    }
-    // Only fallback to in-process Jest API when the spawn itself failed (ENOENT/EACCES/EPERM)
-    // and the environment explicitly allows API fallback.
-    const spawnErr = !first.success && (first.spawnError === true || /spawn\s+(ENOENT|EACCES|EPERM)/i.test(first.output || ''));
-    const allowAPIFallback = this.isEnvTruthy('QTESTS_API_FALLBACK');
-    if (spawnErr && allowAPIFallback) {
-      const start = Date.now();
-      const fallback = await this._withAPILock(() => this._runTestFileViaAPI(testFile));
-      return { ...fallback, duration: Date.now() - start };
-    }
-    return first;
-  }
-
-  // API-only: execute all tests in-process via Jest's programmatic API (no child spawns)
-  async runAllViaAPI(testFiles) {
+  // API-only: execute all tests via Jest's programmatic API in one run
+  async runAll(testFiles) {
     let stdout = '';
     let stderr = '';
     try {
@@ -239,26 +173,16 @@ class TestRunner {
         fs.writeFileSync(path.join(process.cwd(), 'runner-jest-args.json'), JSON.stringify(intendedArgs), 'utf8');
       } catch { /* best effort only */ }
 
-      // Capture console output during runCLI to include in debug file
-      const origLog = console.log;
-      const origErr = console.error;
-      console.log = (...args) => { try { stdout += args.join(' ') + '\n'; } catch {} origLog.apply(console, args); };
-      console.error = (...args) => { try { stderr += args.join(' ') + '\n'; } catch {} origErr.apply(console, args); };
-      try {
-        const { results } = await this._runCLI(argv, [process.cwd()]);
-        for (const tr of (results.testResults || [])) {
-          const file = tr.testFilePath || 'unknown';
-          const success = (tr.numFailingTests || 0) === 0 && !tr.failureMessage;
-          const duration = tr.perfStats && tr.perfStats.end && tr.perfStats.start ? (tr.perfStats.end - tr.perfStats.start) : 0;
-          const output = tr.failureMessage || '';
-          const rec = { file, success, duration, output, stdout: '', stderr: '' };
-          if (rec.success) this.passedTests++; else this.failedTests++;
-          this.testResults.push(rec);
-          this.printTestResult(rec);
-        }
-      } finally {
-        console.log = origLog;
-        console.error = origErr;
+      const { results } = await this._runCLI(argv, [process.cwd()]);
+      for (const tr of (results.testResults || [])) {
+        const file = tr.testFilePath || 'unknown';
+        const success = (tr.numFailingTests || 0) === 0 && !tr.failureMessage;
+        const duration = tr.perfStats && tr.perfStats.end && tr.perfStats.start ? (tr.perfStats.end - tr.perfStats.start) : 0;
+        const output = tr.failureMessage || '';
+        const rec = { file, success, duration, output, stdout: '', stderr: '' };
+        if (rec.success) this.passedTests++; else this.failedTests++;
+        this.testResults.push(rec);
+        this.printTestResult(rec);
       }
     } catch (err) {
       const msg = (err && (err.stack || err.message)) || 'Jest API run error';
@@ -268,64 +192,6 @@ class TestRunner {
     if (this.failedTests > 0) this.generateDebugFile();
     this.printSummary();
     process.exit(this.failedTests > 0 ? 1 : 0);
-  }
-
-  // Ensure only one in-process Jest run executes at a time
-  async _withAPILock(fn) {
-    const prev = this._apiMutex;
-    let resolveNext;
-    this._apiMutex = new Promise(res => { resolveNext = res; });
-    await prev.catch(() => {});
-    try {
-      const result = await fn();
-      resolveNext();
-      return result;
-    } catch (err) {
-      resolveNext();
-      throw err;
-    }
-  }
-
-  // Fallback: execute Jest via its programmatic API inside this Node process
-  async _runTestFileViaAPI(testFile) {
-    const startTime = Date.now();
-    let stdout = '';
-    let stderr = '';
-    try {
-      if (!this._runCLI) {
-        const require = createRequire(import.meta.url);
-        const jestModule = require('jest');
-        this._runCLI = jestModule && jestModule.runCLI ? jestModule.runCLI : null;
-      }
-      if (!this._runCLI) {
-        const msg = 'Jest API not available for fallback execution.';
-        return { file: testFile, success: false, duration: Date.now() - startTime, output: msg, stdout, stderr };
-      }
-      const configCandidates = [
-        path.join(process.cwd(), 'config', 'jest.config.mjs'),
-        path.join(process.cwd(), 'jest.config.mjs')
-      ];
-      const cfg = configCandidates.find(p => { try { return fs.existsSync(p); } catch { return false; } });
-      const argv = { runInBand: true, passWithNoTests: true, silent: false, runTestsByPath: true, _: [testFile], $0: 'jest' };
-      if (cfg) argv.config = cfg;
-      const origLog = console.log, origErr = console.error;
-      console.log = (...a) => { try { stdout += a.join(' ') + '\n'; } catch {} origLog.apply(console, a); };
-      console.error = (...a) => { try { stderr += a.join(' ') + '\n'; } catch {} origErr.apply(console, a); };
-      try {
-        const { results } = await this._runCLI(argv, [process.cwd()]);
-        const duration = Date.now() - startTime;
-        const success = results && results.success === true;
-        const mergedOut = (stdout + (stderr ? ('\n' + stderr) : '')).trim();
-        return { file: testFile, success, duration, output: mergedOut || (success ? '' : 'Jest API run failed with no output.'), stdout, stderr };
-      } finally {
-        console.log = origLog;
-        console.error = origErr;
-      }
-    } catch (err) {
-      const duration = Date.now() - startTime;
-      const msg = (err && (err.stack || err.message)) || 'Jest API fallback error';
-      return { file: testFile, success: false, duration, output: msg, stdout, stderr };
-    }
   }
 
   // Print colored status indicator
@@ -395,7 +261,7 @@ class TestRunner {
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
   }
 
-  // Main runner method - API-only execution (no child spawns)
+  // Main runner method - API-only execution via jest.runCLI
   async run() {
     if (!this.isEnvTruthy('QTESTS_SILENT')) {
       console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner - API Mode${colors.reset}`);
@@ -414,7 +280,7 @@ class TestRunner {
       files.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
       console.log(``);
     }
-    await this.runAllViaAPI(files);
+    await this.runAll(files);
   }
 }
 

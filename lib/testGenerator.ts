@@ -692,6 +692,299 @@ class TestGenerator {
   }
 
   /**
+   * Parse Express routes via AST to support express.Router() and custom router variables.
+   * Covers:
+   * - const app = express(); app.get('/x', ...)
+   * - const api = express.Router(); api.post('/y', ...)
+   * - app.use('/prefix', api) with prefixing
+   * - Nested mounts via router.use('/nested', child)
+   */
+  private async extractExpressRoutesAST(file: string, content: string): Promise<Array<{ method: string; path: string }>> {
+    const out: Array<{ method: string; path: string }> = [];
+    try {
+      const ts: any = await import('typescript').catch(() => null);
+      if (!ts) return out;
+      const sf = ts.createSourceFile(file, content, ts.ScriptTarget.Latest, true);
+
+      // Helpers and state
+      const expressVars = new Set<string>();
+      const appVars = new Set<string>();
+      const routerVars = new Set<string>();
+      // Track identifiers that act as Router() factories, e.g., named imports or destructured requires
+      const routerFactoryIds = new Set<string>();
+      const methodCalls: Array<{ owner: string; method: string; route: string }> = [];
+      const mounts: Array<{ parent: string; child: string; prefix: string }> = [];
+
+      function textOf(node: any): string | null {
+        if (!node) return null;
+        if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) return node.text || '';
+        return null;
+      }
+
+      function isIdentifierNamed(node: any, nameSet: Set<string>): boolean {
+        return ts.isIdentifier(node) && nameSet.has(node.text);
+      }
+
+      function trackExpressDecl(node: any) {
+        // import express from 'express' OR import * as express from 'express'
+        if (ts.isImportDeclaration(node)) {
+          const module = node.moduleSpecifier && (node.moduleSpecifier.text || '');
+          if (module === 'express') {
+            const clause = node.importClause;
+            if (!clause) return;
+            if (clause.name && ts.isIdentifier(clause.name)) expressVars.add(clause.name.text);
+            const ns = clause.namedBindings;
+            if (ns) {
+              // import * as express from 'express'
+              if (ts.isNamespaceImport(ns) && ts.isIdentifier(ns.name)) {
+                expressVars.add(ns.name.text);
+              }
+              // import { Router, Router as R } from 'express'
+              if (ts.isNamedImports(ns)) {
+                for (const el of ns.elements) {
+                  const localName = el.name?.text;
+                  const importedName = (el.propertyName?.text) || el.name?.text;
+                  if (importedName === 'Router' && localName) {
+                    routerFactoryIds.add(localName);
+                  }
+                }
+              }
+            }
+          }
+          return;
+        }
+        // const express = require('express')
+        if (ts.isVariableStatement(node)) {
+          for (const decl of node.declarationList.declarations) {
+            if (decl.initializer && ts.isCallExpression(decl.initializer)) {
+              const callee = decl.initializer.expression;
+              if (ts.isIdentifier(callee) && callee.text === 'require' && decl.initializer.arguments?.[0]) {
+                const mod = textOf(decl.initializer.arguments[0]);
+                if (mod === 'express' && ts.isIdentifier(decl.name)) {
+                  expressVars.add(decl.name.text);
+                }
+              }
+            }
+            // const { Router, Router: R } = require('express')
+            if (decl.initializer && ts.isCallExpression(decl.initializer)) {
+              const callee = decl.initializer.expression;
+              const isRequire = ts.isIdentifier(callee) && callee.text === 'require' && decl.initializer.arguments?.[0] && textOf(decl.initializer.arguments[0]) === 'express';
+              if (isRequire && ts.isObjectBindingPattern(decl.name)) {
+                for (const el of decl.name.elements) {
+                  const propName = el.propertyName && ts.isIdentifier(el.propertyName) ? el.propertyName.text : (el.name && ts.isIdentifier(el.name) ? el.name.text : undefined);
+                  const localName = ts.isIdentifier(el.name) ? el.name.text : undefined;
+                  if (propName === 'Router' && localName) {
+                    routerFactoryIds.add(localName);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+
+      function trackAppAndRouterDecl(node: any) {
+        // const app = express(); const api = express.Router();
+        if (!ts.isVariableStatement(node)) return;
+        for (const decl of node.declarationList.declarations) {
+          const init = decl.initializer;
+          if (!init || !ts.isIdentifier(decl.name)) continue;
+
+          // Helper to classify initializer as app or router creation
+          const classifyInit = (nodeExpr: any): 'app' | 'router' | null => {
+            // express() or alias()
+            if (ts.isCallExpression(nodeExpr)) {
+              const calleeExpr = nodeExpr.expression;
+              if (ts.isIdentifier(calleeExpr) && expressVars.has(calleeExpr.text)) return 'app';
+              // require('express')()
+              if (ts.isCallExpression(calleeExpr)) {
+                const inner = calleeExpr.expression;
+                if (ts.isIdentifier(inner) && inner.text === 'require' && calleeExpr.arguments?.[0] && textOf(calleeExpr.arguments[0]) === 'express') {
+                  return 'app';
+                }
+              }
+              // express.Router()
+              if (ts.isPropertyAccessExpression(calleeExpr)) {
+                const obj = calleeExpr.expression;
+                const prop = calleeExpr.name?.text;
+                if (prop === 'Router' && ts.isIdentifier(obj) && expressVars.has(obj.text)) return 'router';
+                // (require('express')).Router()
+                if (prop === 'Router' && ts.isCallExpression(obj)) {
+                  const inner = obj.expression;
+                  if (ts.isIdentifier(inner) && inner.text === 'require' && obj.arguments?.[0] && textOf(obj.arguments[0]) === 'express') {
+                    return 'router';
+                  }
+                }
+              }
+              // Router() when imported/destructured as identifier
+              if (ts.isIdentifier(calleeExpr) && routerFactoryIds.has(calleeExpr.text)) return 'router';
+            }
+            // new express.Router() or new Router()
+            if (ts.isNewExpression(nodeExpr)) {
+              const ne = nodeExpr;
+              const ce = ne.expression;
+              if (ts.isPropertyAccessExpression(ce)) {
+                const obj = ce.expression;
+                const prop = ce.name?.text;
+                if (prop === 'Router' && ts.isIdentifier(obj) && expressVars.has(obj.text)) return 'router';
+              }
+              if (ts.isIdentifier(ce) && routerFactoryIds.has(ce.text)) return 'router';
+            }
+            return null;
+          };
+
+          const kind = classifyInit(init);
+          if (kind === 'app') appVars.add(decl.name.text);
+          if (kind === 'router') routerVars.add(decl.name.text);
+        }
+      }
+
+      function collectCalls(node: any) {
+        if (!ts.isCallExpression(node)) return;
+        const callee = node.expression;
+        if (!ts.isPropertyAccessExpression(callee)) return;
+        const ownerExpr = callee.expression;
+        const prop = callee.name?.text || '';
+        const METHODS = new Set(['get', 'post', 'put', 'delete', 'patch']);
+
+        // Helper: find base router/app identifier and a chained route('/x') argument, if any
+        const findBaseAndRouteArg = (expr: any): { baseId: string | null; route: string | null } => {
+          // Direct owner: Identifier
+          if (ts.isIdentifier(expr)) {
+            return { baseId: (appVars.has(expr.text) || routerVars.has(expr.text)) ? expr.text : null, route: null };
+          }
+          // Chained form: CallExpression from .route('/x') (possibly followed by .get/.post etc.)
+          if (ts.isCallExpression(expr) && ts.isPropertyAccessExpression(expr.expression)) {
+            const innerProp = expr.expression;
+            const innerOwner = innerProp.expression;
+            const innerName = innerProp.name?.text || '';
+            if (innerName === 'route') {
+              const r = expr.arguments?.[0] ? textOf(expr.arguments[0]) : null;
+              if (r && ts.isIdentifier(innerOwner) && (routerVars.has(innerOwner.text) || appVars.has(innerOwner.text))) {
+                return { baseId: innerOwner.text, route: r };
+              }
+            }
+          }
+          // Nested chaining: e.g., router.route('/x').get().post()
+          if (ts.isCallExpression(expr) && ts.isPropertyAccessExpression(expr.expression) && ts.isCallExpression(expr.expression.expression)) {
+            return findBaseAndRouteArg(expr.expression.expression);
+          }
+          return { baseId: null, route: null };
+        };
+
+        // app.get('/x') or router.route('/x').get()
+        if (METHODS.has(prop) && node.arguments?.length !== undefined) {
+          const routeArg = textOf(node.arguments[0]) || null;
+          const { baseId, route } = findBaseAndRouteArg(ownerExpr);
+          const finalRoute = route || routeArg;
+          if (baseId && finalRoute) {
+            methodCalls.push({ owner: baseId, method: prop.toUpperCase(), route: finalRoute });
+          }
+        }
+        // app.use('/prefix', api) or app.use(api)
+        if (prop === 'use' && node.arguments?.length) {
+          let prefix = '';
+          let startIdx = 0;
+          const first = node.arguments[0];
+          const firstStr = textOf(first);
+          if (firstStr != null) {
+            prefix = firstStr;
+            startIdx = 1;
+          }
+          for (let i = startIdx; i < node.arguments.length; i++) {
+            const arg = node.arguments[i];
+            // Only track identifiers as mount targets to avoid chasing arbitrary expressions
+            if (ts.isIdentifier(arg) && (routerVars.has(arg.text) || appVars.has(arg.text))) {
+              const base = findBaseAndRouteArg(ownerExpr).baseId;
+              if (base) {
+                mounts.push({ parent: base, child: arg.text, prefix });
+              } else if (ts.isIdentifier(ownerExpr)) {
+                mounts.push({ parent: ownerExpr.text, child: arg.text, prefix });
+              }
+            }
+          }
+        }
+      }
+
+      // Traverse AST
+      const visit = (node: any) => {
+        trackExpressDecl(node);
+        trackAppAndRouterDecl(node);
+        collectCalls(node);
+        ts.forEachChild(node, visit);
+      };
+      visit(sf);
+
+      // Build mount prefix map via DFS from app vars
+      const graph = new Map<string, Array<{ child: string; prefix: string }>>();
+      for (const m of mounts) {
+        const arr = graph.get(m.parent) || [];
+        arr.push({ child: m.child, prefix: m.prefix || '' });
+        graph.set(m.parent, arr);
+      }
+
+      function joinPath(a: string, b: string): string {
+        const left = (a || '').trim();
+        const right = (b || '').trim();
+        const l = left.endsWith('/') ? left.slice(0, -1) : left;
+        const r = right.startsWith('/') ? right : '/' + right;
+        const joined = (l + r) || '/';
+        return joined.replace(/\/+/g, '/');
+      }
+
+      // Compute all prefixes reachable for each var starting at app vars
+      const prefixes = new Map<string, Set<string>>();
+      function addPrefix(v: string, p: string) {
+        const set = prefixes.get(v) || new Set<string>();
+        set.add(p);
+        prefixes.set(v, set);
+      }
+      const stack: Array<{ v: string; p: string }> = [];
+      for (const app of appVars) {
+        addPrefix(app, '');
+        stack.push({ v: app, p: '' });
+      }
+      while (stack.length) {
+        const { v, p } = stack.pop()!;
+        const children = graph.get(v) || [];
+        for (const { child, prefix } of children) {
+          const np = joinPath(p, prefix || '');
+          const before = prefixes.get(child);
+          if (!before || !before.has(np)) {
+            addPrefix(child, np);
+            stack.push({ v: child, p: np });
+          }
+        }
+      }
+
+      // Emit routes: for app methods -> use prefixes[app] (empty), for router methods -> combine with all prefixes
+      const unique = new Set<string>();
+      for (const call of methodCalls) {
+        const owners = prefixes.get(call.owner);
+        if (!owners || owners.size === 0) {
+          // If owner has no computed prefixes (unmounted router or root app), treat as root
+          const baseSet = (appVars.has(call.owner) || routerVars.has(call.owner)) ? new Set(['']) : new Set<string>();
+          if (baseSet.size === 0) continue;
+          for (const p of baseSet) {
+            const full = joinPath(p, call.route);
+            const key = `${call.method} ${full}`;
+            if (!unique.has(key)) { unique.add(key); out.push({ method: call.method, path: full }); }
+          }
+          continue;
+        }
+        for (const p of owners) {
+          const full = joinPath(p, call.route);
+          const key = `${call.method} ${full}`;
+          if (!unique.has(key)) { unique.add(key); out.push({ method: call.method, path: full }); }
+        }
+      }
+      return out;
+    } catch {
+      return out;
+    }
+  }
+
+  /**
    * Optional TypeScript AST analysis for better type inference
    * 🚩AI: TYPE_INFERENCE_OPTION — dynamic import('typescript') with heuristics fallback
    */
@@ -1310,26 +1603,38 @@ class TestGenerator {
       }
     }
 
-    // Generate API tests for detected routes - TypeScript only
-    const apis = [...content.matchAll(PATTERNS.api)];
-    if (apis.length > 0 && (!this.config.unit)) {
-      for (const [, , method, route] of apis) {
+    // Generate API tests for detected routes. To preserve compatibility with
+    // legacy callers that do not await analyze(), we synchronously process
+    // regex-detected routes first, then augment with AST results.
+    const regexApis = [...content.matchAll(PATTERNS.api)].map((m: any) => ({ method: (m[2] || '').toUpperCase(), path: m[3] || '/' }));
+    const createdRoutes = new Set<string>();
+    if (regexApis.length > 0 && (!this.config.unit)) {
+      for (const { method, path: route } of regexApis) {
+        const key = `${method} ${route}`;
         const testPath = this.getRelativeTestPath(file, 'api', content)
           .replace(/\.GeneratedTest\.test\.(ts|tsx)$/, `.GeneratedTest__${method.toLowerCase()}.test.$1`);
-        const created = this.writeIfMissing(
-          testPath, 
-          this.createApiTest(method, route),
-          dryRun
-        );
-        // If an API test was created, ensure local httpTest utilities exist (idempotent)
-        if (created && !dryRun) {
-          this.ensureLocalHttpTestUtils();
-        }
+        const created = this.writeIfMissing(testPath, this.createApiTest(method, route), dryRun);
+        if (created && !dryRun) this.ensureLocalHttpTestUtils();
         if (created) {
-          this.scanned.push({ 
-            type: 'api', 
-            file: path.relative('.', testPath) 
-          });
+          createdRoutes.add(key);
+          this.scanned.push({ type: 'api', file: path.relative('.', testPath) });
+        }
+      }
+    }
+
+    // AST-enhanced discovery (awaited when analyze is awaited). Adds routes not detected by regex.
+    let astApis: Array<{ method: string; path: string }> = [];
+    try { astApis = await this.extractExpressRoutesAST(file, content); } catch {}
+    if (astApis.length > 0 && (!this.config.unit)) {
+      for (const { method, path: route } of astApis) {
+        const key = `${method} ${route}`;
+        if (createdRoutes.has(key)) continue; // skip duplicates from regex detection
+        const testPath = this.getRelativeTestPath(file, 'api', content)
+          .replace(/\.GeneratedTest\.test\.(ts|tsx)$/, `.GeneratedTest__${method.toLowerCase()}.test.$1`);
+        const created = this.writeIfMissing(testPath, this.createApiTest(method, route), dryRun);
+        if (created && !dryRun) this.ensureLocalHttpTestUtils();
+        if (created) {
+          this.scanned.push({ type: 'api', file: path.relative('.', testPath) });
         }
       }
     }
@@ -1745,12 +2050,14 @@ try {
         path.join(packageRoot, 'templates', 'qtests-runner.mjs.template'),
         path.join(packageRoot, 'lib', 'templates', 'qtests-runner.mjs.template')
       ];
-      const isValid = (content: string) => /runAllViaAPI\s*\(/.test(content) && /runCLI/.test(content) && /API Mode/.test(content);
+      const isValid = (content: string) => /runCLI/.test(content) && /API Mode/.test(content);
       const templatePath = candidateTemplates.find(p => { try { return fs.existsSync(p); } catch { return false; } });
       if (templatePath) {
         const content = fs.readFileSync(templatePath, 'utf8');
         if (isValid(content)) {
           fs.writeFileSync('qtests-runner.mjs', content, 'utf8');
+          // Remove any legacy runner to avoid confusion
+          try { const legacy = path.join(process.cwd(), 'qtests-runner.js'); if (fs.existsSync(legacy)) fs.rmSync(legacy, { force: true }); } catch {}
           console.log('✅ Generated qtests-runner.mjs (ESM) with full features');
           return;
         }
@@ -1762,6 +2069,7 @@ try {
             const c = fs.readFileSync(alt, 'utf8');
             if (isValid(c)) {
               fs.writeFileSync('qtests-runner.mjs', c, 'utf8');
+              try { const legacy = path.join(process.cwd(), 'qtests-runner.js'); if (fs.existsSync(legacy)) fs.rmSync(legacy, { force: true }); } catch {}
               console.log('✅ Generated qtests-runner.mjs (ESM) with validated template');
               return;
             }
@@ -1792,6 +2100,7 @@ try {
           ? generatedRunnerContent
           : header + generatedRunnerContent;
         fs.writeFileSync('qtests-runner.mjs', finalContent, 'utf8');
+        try { const legacy = path.join(process.cwd(), 'qtests-runner.js'); if (fs.existsSync(legacy)) fs.rmSync(legacy, { force: true }); } catch {}
         console.log('✅ Generated qtests-runner.mjs (ESM) with full features');
         return;
       }
@@ -1836,7 +2145,12 @@ try {
 
       // Use the unified API-only runner as the standard test command
       packageJson.scripts.test = 'node qtests-runner.mjs';
-      
+      // Clean up any legacy runner file to avoid confusion
+      try {
+        const legacy = path.join(process.cwd(), 'qtests-runner.js');
+        if (fs.existsSync(legacy)) fs.rmSync(legacy, { force: true });
+      } catch {}
+
       fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 2), 'utf8');
       console.log('✅ Updated package.json scripts: pretest + unified qtests runner');
     } catch (error: any) {
@@ -1859,7 +2173,7 @@ try {
 
       // ensure-runner.mjs
       const ensurePath = path.join(scriptsDir, 'ensure-runner.mjs');
-      const ensureContent = `// Ensures qtests-runner.mjs exists at project root by copying a valid shipped template.\nimport fs from 'fs';\nimport path from 'path';\nimport { fileURLToPath } from 'url';\nconst __filename = fileURLToPath(import.meta.url);\nconst __dirname = path.dirname(__filename);\nconst cwd = process.cwd();\nfunction isValid(content){try{return /runAllViaAPI\\s*\\(/.test(content) && /runCLI/.test(content) && /API Mode/.test(content);}catch{return false;}}\ntry{const target=path.join(cwd,'qtests-runner.mjs');if(!fs.existsSync(target)){const candidates=[path.join(cwd,'lib','templates','qtests-runner.mjs.template'),path.join(cwd,'templates','qtests-runner.mjs.template'),path.join(cwd,'node_modules','qtests','lib','templates','qtests-runner.mjs.template'),path.join(cwd,'node_modules','qtests','templates','qtests-runner.mjs.template')];let content=null;for(const p of candidates){try{if(fs.existsSync(p)){const c=fs.readFileSync(p,'utf8');if(isValid(c)){content=c;break;}}}catch{}}if(!content){/* silent no-op */}else{fs.writeFileSync(target,content,'utf8');}}}catch{/* silent */}\n`;
+      const ensureContent = `// Ensures qtests-runner.mjs exists at project root by copying a valid shipped template.\nimport fs from 'fs';\nimport path from 'path';\nimport { fileURLToPath } from 'url';\nconst __filename = fileURLToPath(import.meta.url);\nconst __dirname = path.dirname(__filename);\nconst cwd = process.cwd();\nfunction isValid(content){try{return /runCLI/.test(content) && /API Mode/.test(content);}catch{return false;}}\ntry{const target=path.join(cwd,'qtests-runner.mjs');if(!fs.existsSync(target)){const candidates=[path.join(cwd,'lib','templates','qtests-runner.mjs.template'),path.join(cwd,'templates','qtests-runner.mjs.template'),path.join(cwd,'node_modules','qtests','lib','templates','qtests-runner.mjs.template'),path.join(cwd,'node_modules','qtests','templates','qtests-runner.mjs.template')];let content=null;for(const p of candidates){try{if(fs.existsSync(p)){const c=fs.readFileSync(p,'utf8');if(isValid(c)){content=c;break;}}}catch{}}if(!content){/* silent no-op */}else{fs.writeFileSync(target,content,'utf8');}}}catch{/* silent */}\n`;
       try { fs.writeFileSync(ensurePath, ensureContent, 'utf8'); } catch {}
     } catch {}
   }

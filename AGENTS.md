@@ -106,6 +106,7 @@ The module prioritizes developer experience over feature completeness - providin
   - Jest is called with the required `--config` and `--passWithNoTests`
   - No use of `tsx` in the CLI implementation
 - Respect `QTESTS_SILENT=1|true` to suppress non-essential setup logs in CI.
+ - Single runner policy: `qtests-runner.mjs` is the only generated/consumed project runner. Do not create, reference, or maintain duplicate runners (e.g. `qtests-runner.js`) or context-specific variants.
 
 
 ## Runner Stability & Client Integration (Authoritative)

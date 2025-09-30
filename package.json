@@ -1,6 +1,6 @@
 {
   "name": "qtests",
-  "version": "1.3.6",
+  "version": "2.0.0",
   "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
   "type": "module",
   "main": "index.ts",

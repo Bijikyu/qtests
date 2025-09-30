@@ -39,8 +39,8 @@ function readJson(p) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } ca
   const runnerPath = path.join(cwd, 'qtests-runner.mjs');
   if (!fs.existsSync(runnerPath)) fail('qtests-runner.mjs missing at project root');
   const runner = fs.readFileSync(runnerPath, 'utf8');
-  if (!/runAllViaAPI\s*\(/.test(runner) || !/runCLI/.test(runner) || !/API Mode/.test(runner)) {
-    fail('Runner must be API-only: contain runAllViaAPI(), runCLI usage, and API Mode banner');
+  if (!/runCLI/.test(runner) || !/API Mode/.test(runner)) {
+    fail('Runner must be API-only: contain runCLI usage and API Mode banner');
   }
   if (/\bspawn\s*\(/.test(runner) || /#!\/usr\/bin\/env\s+tsx/.test(runner) || /\btsx\s+/.test(runner)) {
     fail('Runner must not contain child_process spawn or tsx usage');
@@ -54,8 +54,8 @@ function readJson(p) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } ca
   if (tplPaths.length === 0) fail('No runner templates found under lib/templates or templates');
   for (const p of tplPaths) {
     const tpl = fs.readFileSync(p, 'utf8');
-    if (!/runAllViaAPI\s*\(/.test(tpl) || !/runCLI/.test(tpl) || !/API Mode/.test(tpl)) {
-      fail(`Template missing required invariants: ${p}`);
+    if (!/runCLI/.test(tpl) || !/API Mode/.test(tpl)) {
+      fail(`Template missing required invariants (runCLI, API Mode): ${p}`);
     }
   }
 

@@ -26,6 +26,14 @@ The `lib/` directory contains the core qtests framework functionality, including
 - **File Extension Strategy (Sept 2025)**: Prefer `.ts` output; only emit `.tsx` when generated tests include JSX.
 - **Local API Utils (Sept 2025)**: Scaffolds `generated-tests/utils/httpTest.ts` (re-exports) and `generated-tests/utils/httpTest.shim.js` (implementation). The shim is minimal, dependency‑free, supports `.send()`, and exposes `req.body`.
 - **Performance Optimized (Sept 2025)**: Jest-like batch execution architecture achieving 69% speed improvement
+ - **Express Router AST (Sept 2025)**: Robust AST-based Express route detection now supports:
+   - `express.Router()` with custom variable names
+   - Named imports and destructured require (e.g., `import { Router as R } from 'express'`; `const { Router } = require('express')`)
+   - `require('express')()` app creation
+   - Chained `router.route('/p').get().post().patch()` patterns
+   - Nested prefixes via `app.use('/prefix', router)` and `router.use('/nested', child)`
+   - Fallback generation for unmounted routers (routes emitted at root)
+   - Back-compat: regex-detected routes are generated synchronously so callers that don’t `await analyze()` still get API tests
 
 **Request/Response Flows**: 
 - Input: Source files from project scan
@@ -43,7 +51,9 @@ The `lib/` directory contains the core qtests framework functionality, including
 - Test generation modifies filesystem by creating new `.GeneratedTest.test.ts` files (non-dry runs)
 - AST mode attempts dynamic import of TypeScript compiler (graceful fallback)
 - Generated tests include fake timers and seeded randomness when source uses Date/Math.random
-- Non-dry runs also write `jest.config.mjs`, `jest-setup.ts` (with DOM/clipboard/URL shims for React), generate `qtests-runner.mjs`. Updating `package.json` test script is opt-in via CLI flag.
+- Non-dry runs also write `jest.config.mjs`, `jest-setup.ts` (with DOM/clipboard/URL shims for React), and generate `qtests-runner.mjs`. Updating `package.json` test script is opt-in via CLI flag.
+- The generator CLI ALWAYS (re)writes `qtests-runner.mjs` at the client root (INIT_CWD) using a validated API‑only template.
+- Postinstall scaffolding passively creates `qtests-runner.mjs` at client root when missing.
 - Safe overwrite: if existing `jest.config.mjs`/`jest-setup.ts` contain the qtests header, they will be overwritten to correct prior generator mistakes.
 - Smarter React detection: generator now skips `node_modules`, build artifacts, and docs when scanning. This prevents false positives that forced `jsdom` and broke Node-only projects.
 - **Bug Fixes (Sept 2025)**: generateKey helper now correctly returns test keys instead of empty strings
