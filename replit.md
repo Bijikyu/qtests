@@ -1,120 +1,77 @@
-# qtests - Node.js Testing Framework
+<!--AI Can write above this line-->
+<!--┌── �� PROTECTED: DO NOT EDIT (READ ONLY) BELOW THIS LINE-->
+Reference Patch
+For comprehensive agent development rules and guidelines, please refer to the documentation located at node_modules/commoncontext/00-AGENTS.md. This file contains detailed instructions for agent behavior, CLI tool usage, coding standards, and workflow procedures that should be followed throughout the development process.
 
-## Overview
-qtests is a comprehensive Node.js testing framework providing zero-dependency utilities for fast, isolated unit testing. It addresses testing friction points through automatic module stubbing, method replacement, and environment management, requiring no changes to application code. Its business vision is to simplify testing in Node.js projects, reducing setup overhead and promoting faster, more reliable development cycles.
+Additional project-specific guidance can be found in:
+node_modules/npmcontext/01-STACK_RULES.md - NPM & JavaScript development rules and policies
+node_modules/npmcontext/02-NPM_architecture.md - Architecture patterns and Single Responsibility Principle guidelines
+FILE_FLOWS.md- File & Data Workflow information. Read this before deciding the scope of file changes and where you need to work.
+IMPLEMENT_META.md- Information for metadata support for npm modules so that client apps can better use this module.
+node_modules/commoncontext/ReplitCodexUse.md - details Replit Codex Use Protocol (RCUP), the main development workflow for non-trivial tasks.
 
-## Recent Breakthrough (August 2025)
-**ARCHITECTURAL REVELATION**: Achieved 69% speed improvement by making qtests work like Jest internally. The key insight: Jest is fast because it runs multiple test files in one process with internal worker threads - not by spawning separate processes. qtests now batches Jest tests into single Jest process execution, eliminating process spawn overhead and leveraging Jest's built-in optimizations. Result: 35.1s execution time with 75/75 tests passing.
+Here is a high level guide for RCUP:
+=================
+Replit Agent Development Workflow (RCUP)
+RCUP = Replit Codex Use Protocol
+This workflow uses 6 parallel codex workflows (Codex Task 1-6) for cost-effective, high-quality implementation.
 
-**TypeScript ES Module Conversion COMPLETED (September 2025)**: Successfully converted entire framework to TypeScript with ES Module syntax exclusively. Eliminated duplicate version maintenance by focusing on TypeScript ES Module approach only. Bin commands are `qtests-generate` (alias: `qtests-ts-generate`) and `qtests-ts-runner`. The generator creates TypeScript test files (.test.ts) and scaffolds an ESM runner `qtests-runner.mjs` that invokes Jest with `--config config/jest.config.mjs --passWithNoTests` (no `tsx` usage).
- 
-**Runner Policy (Authoritative)**: `qtests-runner.mjs` is the only project runner that is generated and used. Do not create, use, or maintain alternate or duplicate runners (e.g., `qtests-runner.js`) or context-specific variants. Client projects and CI must invoke `node qtests-runner.mjs` only.
+IMPORTANT: Always communicate your workflow decisions to the user for transparency.
 
-## User Preferences
-- **TypeScript ES Module Only**: Project has been converted to TypeScript with ES Module syntax exclusively
-- **No Version Duplication**: User strongly dislikes having multiple versions of the same functionality (CommonJS + ES Module)
-- Preferred communication style: Simple, everyday language
-- Keep functionality simple - avoid unnecessary flags or options
-- Don't add complexity unless explicitly requested
-- Performance Priority: High - Test execution speed is critical for developer productivity  
-- Performance Optimizations Applied: **LIGHTNING SPEED BREAKTHROUGH** - Achieved 97.7% speed improvement (115s → 2.6s) through elimination of file I/O bottlenecks, ultra-fast Jest detection (Node.js default), higher concurrency (12 workers for lightweight tests), and filename-based test classification. Performance now exceeds original target by 93% (January 2025)
-- Current Status (August 2025): **BREAKTHROUGH PERFORMANCE** - Implemented Jest-like batch execution architecture. All 75/75 tests now pass in 35.1s (69% faster than 112.5s, 69.5% faster than 115s baseline). Made qtests work like Jest by using single-process batch execution instead of spawning separate processes per test file. Core functionality fully restored with massive speed gains.
-- Truth and functionality over lies - prefer errors over mock data or fallbacks
-- Functions declared via function declaration
-- Single line per functional operation for debugging
-- Smallest practical number of lines with DRY principles
-- Strings in JavaScript written with backticks (`) for future extensibility
-- camelCase naming conventions
-- Inline comments preferred over above-the-line comments
+1. Tell user: "This is a non-trivial task requiring the full workflow"
+2. Launch single codex workflow to create CURRENTPLAN.md
+3. Create task list based on plan
+4. Check FILE_FLOWS.md: Review file organization to determine parallelization strategy
+         - Can parallelize by logical divisions (features, components)
+         - Can parallelize by file index (even/odd, quarters, etc.) for tasks like bug checks, commenting, refactoring
+         - Decide optimal division based on task type and file structure
+5. Tell user: "I'll run [N] codex workflow(s) [division strategy] because [reason]"
+6. Implementation via codex with explicit file assignments:
+         - CRITICAL: Create prompt.txt, and write prompt to prompt.txt before launching each workflow
+         - Launch workflows sequentially (brief delay between each):
+         - Write full prompt to prompt.txt (this is rewritten over with the prompt for each workflow, it is just the staging area, the codex workflows pull the prompt from here)
+         - Start workflow (e.g., "Codex Task 1")
+         - Wait 100ms
+         - Repeat for next workflow
+         - Workflows execute in parallel once started
+         - 1 codex workflow for sequential/single cohesive tasks
+         - 2-6 parallel codex workflows for independent tasks (divided by feature, component, file index, or other logical grouping)
+         - Each prompt MUST include: 
+                        - (a) CURRENTPLAN.md section this workflow implements, 
+                        - (b) Explicit list of files to modify, 
+                        - (c) Files to avoid (handled by other workflows)
+                        - This prevents merge conflicts by ensuring distinct code areas
+7. Architect evaluation: Use architect(responsibility="evaluate_task") to verify CURRENTPLAN.md was fully implemented
+         - If architect finds plan NOT implemented: RESTART workflow from step 2 (create new plan for shortcomings → parallel codex execution)
+         - If architect finds plan IS implemented: proceed to testing
+8. Testing loop (codex runs tests since Replit Agent cannot):
+         - Launch single codex: "Run `npm test` and report all results. Do not begin fixing test failures. Do nothing else." 
+         - Tests pass → Continue to step 9 (Mark tasks complete)
+         - Tests fail → DEBUG_TESTS.md auto-generated by qtests module (not codex)
+                 - Read DEBUG_TESTS.md to analyze failures
+                 - RESTART from step 3 (Create task list based on plan) with DEBUG_TESTS.md instead of CURRENTPLAN.md as work to be addressed (parallel codex fixes test failures)
+         - After codex fixes, run npm test again, repeat until test are passing
+9. Mark tasks complete (only after tests all pass)
 
-## System Architecture
+For trivial tasks (comments, single-line fixes):
+Announce classification: Tell user this is a trivial task you'll implement directly
+Implement directly
 
-### Core Architecture Pattern
-qtests employs a **module resolution hooking** architecture that patches Node.js's global `Module._resolveFilename` to intercept `require()` calls and redirect them to stub implementations during testing. This design minimizes changes to existing codebases, eliminating the need for dependency injection.
+Transparency Requirements:
+Always state whether task is "trivial" or "non-trivial" and explain why
+Always state how many codex workflows you'll run (0, 1, or 2-6) and the reasoning
+This gives the user visibility into your decision-making process
+Rationale: Codex uses GPT-5 model (more intelligent and cheaper than Replit Agent's default). Use codex for heavy lifting, Replit Agent for orchestration.
 
-### Technology Stack
-- **Runtime**: Node.js 20+ with module resolution patching.
-- **Testing**: Jest-compatible with fallback for vanilla Node.js.
-- **Module System**: CommonJS with dynamic `require` interception, with enhanced ES module compatibility.
-- **HTTP Client**: axios (preferred over node-fetch)
-- **Error Handling**: qerrors module for consistent error logging
-- **Architecture**: Single Responsibility Principle (SRP) - one function per file
+Available Workflows: Codex Task 1, Codex Task 2, Codex Task 3, Codex Task 4, Codex Task 5, Codex Task 6
+=====================
 
-### Key Components
-- **Module Resolution System**: Globally modifies Node.js module resolution to automatically substitute stubs.
-- **Method Stubbing**: Temporarily replaces object methods with test implementations.
-- **Console Mocking**: Captures console output during tests.
-- **Environment Management**: Provides isolated environment variable management.
-- **Enhanced Offline Mode**: An environment-aware adapter system for testing application behavior across online/offline scenarios.
-- **HTTP Integration Testing**: A lightweight, zero-dependency alternative to supertest for integration testing HTTP endpoints.
-- **In-Memory Database Models**: Mongoose-compatible in-memory models for testing data-dependent applications without database setup.
-- **Enhanced Test Helper Utilities**: Centralized utilities for shared testing logic.
-- **Email Mock System**: Lightweight email mocking for testing notification systems.
-- **Comprehensive Test Suite Utilities**: Centralizes setup, teardown, mocking, and assertion patterns.
-- **Automatic Test Generator**: Automatically generates lightweight, parallel-safe unit and API tests by scanning JavaScript/TypeScript source code. **OPTIMIZED** - Creates simplified test templates that eliminate hanging patterns (January 2025).
-- **Lightning-Fast Test Runner**: Advanced test execution engine with Jest-like batch architecture. **PERFORMANCE BREAKTHROUGH** - 69% speed improvement (112.5s → 35.1s) through Jest-style batch execution that eliminates process spawn overhead. Uses single Jest process for multiple test files instead of spawning separate processes per file, leveraging Jest's built-in parallelization and worker thread optimizations (August 2025).
+While replit.md is the source of truth for replit agent, it often becomes out of date, 
+with these being the maintained rules files. Check these for up to date information and 
+copy their guidance to replit.md.
+<!--└── END PROTECTED RANGE ��-->
+<!--AI Can write from here on below-->
 
-### System Design Choices
-- **Single Responsibility Principle (SRP)**: Each file encapsulates one concrete responsibility (one function per file).
-- **Constants and Environment Variables**: Centralized in `/config/localVars.js` as the single source of truth.
-- **Error Handling**: Use `qerrors` for consistent logging within `try/catch` blocks.
-- **Protected Code Blocks**: Specific code ranges are read-only and must not be modified.
-- **Test Locations**: Integration tests in `/tests`, unit tests alongside the files they test.
-- **No External API Calls in Tests**: All external services must be mocked.
-- **Frontend Requirements**: Client-side and server-side validation, WCAG 2.1 AA accessibility, UX best practices, AJAX interactions.
-- **Jest-like Batch Execution Architecture**: The core performance breakthrough - qtests runs Jest tests in batches using single Jest processes instead of spawning separate processes per test file. This leverages Jest's internal worker thread optimization and eliminates process spawn overhead, achieving 69% speed improvement while maintaining 100% test success rate.
-- **Jest Configuration**: The system automatically adapts to Jest versions, handles `moduleNameMapper`, provides robust setup files, ensures correct `ts-jest` and `babel-jest` transformations, and selects appropriate CLI parameters (`--testPathPattern` vs `--testPathPatterns`). Test generation prevents problematic patterns leading to hanging tests.
+Perform the aforementioned information copying verbatim, not as summary.
 
-## External Dependencies
-
-### Production Dependencies
-- `@types/node`: TypeScript definitions for Node.js APIs.
-- `axios`: Real HTTP client (referenced for stub implementation).
-
-### Development Dependencies
-- `jest`: Testing framework (optional, fallbacks provided).
-- `winston`: Logging library (referenced for stub implementation).
-- `ts-jest`: For TypeScript Jest integration.
-
-### Optional Dependencies
-- `qerrors`: Error reporting module.
-- `agentsqripts`: Code analysis and quality tools.
-- `arqitect`: AI-powered planning and architecture analysis.
-- `quantumagent`: Specialized reasoning and analysis subagent.
-- `fileflows`: Data flow visualization and documentation.
-
-## Test Runner Policies (Stable)
-
-- Execution: API-only via Jest `runCLI` (no child processes). Never use `tsx` to launch tests.
-- Required options: Always use `config/jest.config.mjs` and `passWithNoTests`; set `cache=true` and `coverage=false` for speed.
-- Test discovery: Skip `dist/`, `build/`, and `__mocks__/`; under `generated-tests/` include only `*GeneratedTest*` files.
-- Manual-tests first: Run `tests/manual-tests/**` serially before parallel batches to avoid interference when tests scaffold/delete the runner.
-- Fallback execution: Not applicable (API-only). No child process spawns are used.
-- Environment: Do not force `NODE_OPTIONS=--experimental-vm-modules`. Respect `QTESTS_INBAND`, `QTESTS_FILE_WORKERS`, `QTESTS_CONCURRENCY`, `QTESTS_PATTERN`.
-- Debug report: Generate `DEBUG_TESTS.md` on failures unless `QTESTS_SUPPRESS_DEBUG`/`QTESTS_NO_DEBUG_FILE` is set; allow custom path via `QTESTS_DEBUG_FILE`.
-
-## Client Integration
-
-- Jest require polyfill: Add `config/jest-require-polyfill.cjs` to `setupFiles` so `require(...)` is available in ESM tests. Keep `qtests/setup` first in `setupFilesAfterEnv` and maintain the `createRequire(import.meta.url)` polyfill in `config/jest-setup.ts`.
-- Ignore built artifacts: Ensure `config/jest.config.mjs` includes `modulePathIgnorePatterns` and `watchPathIgnorePatterns` for `<rootDir>/dist/` and `<rootDir>/build/`.
-- Optional pretest clean: In CI or monorepos, add a `pretest` script to remove `dist/**/__mocks__` and compiled `*.test.*` files to eliminate duplicate mock warnings; otherwise rely on the ignore patterns above.
-- Environment toggles supported: `QTESTS_INBAND`, `QTESTS_FILE_WORKERS`, `QTESTS_CONCURRENCY`, `QTESTS_PATTERN`, `QTESTS_API_FALLBACK`, `QTESTS_SUPPRESS_DEBUG`, `QTESTS_NO_DEBUG_FILE`, `QTESTS_DEBUG_FILE`.
-
-- Runner scaffolding is passive and automatic:
-  - Postinstall creates `qtests-runner.mjs` at the client root (INIT_CWD) when missing.
-  - The generator CLI (`qtests-generate`) ALWAYS (re)writes `qtests-runner.mjs` at client root with the validated API‑only template (runCLI + API Mode).
-  - `scripts/ensure-runner.mjs` silently replaces stale runners (e.g., spawn/parallel‑mode) with the validated template.
-
-## Never Regress
-
-- Do not add `tsx` invocations to runners.
-- Do not remove PATH resolution or switch back to `shell: true` spawns.
-- Do not reintroduce forced `NODE_OPTIONS` for vm-modules.
-- Keep runner templates and the root runner in sync with policies above so regenerated runners remain functional.
-
-## Background & Passive Solutions (Non-Negotiable)
-- Zero workflow changes: core commands remain exactly the same (e.g., `npm publish`, `npm test`).
-- No special env vars or flags required from the user; all safeguards run automatically in the background.
-- Any safety checks (config hardening, runner verification) must be implemented passively or inside automation that does not change user ergonomics.
-- If a guard is necessary for CI, it must not block local developer workflows; publication must succeed with plain `npm publish`.
-- All tooling must be quiet by default; avoid noisy prompts, interactive flows, or extra steps.
+You have authority to implement this according to best practices. You may make a plan and follow through it's steps if that helps keep you on task, but do not ask me for guidance, clarifying questions, or check in with me. I only expect to first hear from you when you are done with this task completely.
