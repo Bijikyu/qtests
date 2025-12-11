@@ -38,6 +38,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.0",
     "axios": "^1.9.0",
+    "dotenv": "^17.2.3",
     "qerrors": "^1.2.7",
     "qgenutils": "^1.0.3"
   },
@@ -55,7 +56,7 @@
     "loqatevars": "^1.0.6",
     "madge": "^8.0.0",
     "npmcontext": "^1.0.4",
-    "opencode-ai": "^1.0.134",
+    "opencode-ai": "^1.0.149",
     "qtests": "^2.0.0",
     "quantumagent": "^1.0.5",
     "repomix": "^1.2.0",
