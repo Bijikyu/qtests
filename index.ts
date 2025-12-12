@@ -54,6 +54,67 @@ import {
   type ValidationResult
 } from './lib/streamingValidator.js';
 
+// Error wrapper utilities
+import {
+  createAsyncErrorWrapper,
+  createSyncErrorWrapper,
+  createRouteErrorWrapper,
+  createDatabaseErrorWrapper,
+  createApiErrorWrapper,
+  createFileErrorWrapper,
+  createBatchErrorWrapper,
+  createTimeoutErrorWrapper,
+  transformMongoError,
+  type AsyncErrorWrapperOptions,
+  type RouteErrorWrapperOptions,
+  type DatabaseErrorWrapperOptions,
+  type ApiErrorWrapperOptions,
+  type BatchErrorWrapperOptions,
+  type TimeoutErrorWrapperOptions,
+  type TransformedError,
+  type BatchResult,
+  type BatchProcessingResult
+} from './lib/errorWrapper.js';
+
+// Memory monitoring utilities
+import {
+  MemoryMonitor,
+  memoryMonitor,
+  detectMemoryLeaks,
+  startMemoryMonitoring,
+  checkpointMemory,
+  endMemoryMonitoring,
+  cleanupWithMemoryTracking,
+  type MemorySnapshot,
+  type MemoryDelta
+} from './lib/memoryMonitor.js';
+
+// Memory cleanup utilities
+import {
+  forceGC,
+  clearGlobalRefs,
+  clearModuleCache,
+  aggressiveCleanup
+} from './lib/memoryCleanup.js';
+
+// Test isolation utilities
+import {
+  backupEnvironment,
+  restoreEnvironment,
+  registerMockRestore,
+  restoreAllMocks,
+  trackServer,
+  closeAllServers,
+  trackDbConnection,
+  closeAllDbConnections,
+  setupTestIsolation,
+  teardownTestIsolation,
+  setupJestIsolation
+} from './lib/testIsolation.js';
+
+// Wait for condition utility
+import { waitForCondition, type WaitForConditionOptions } from './lib/waitForCondition.js';
+
 // Create httpTest namespace for backward compatibility
 const httpTest = {
   createMockApp,
@@ -96,7 +157,39 @@ const qtests = {
   streamingValidationMiddleware,
   defaultValidator,
   strictValidator,
-  relaxedValidator
+  relaxedValidator,
+  createAsyncErrorWrapper,
+  createSyncErrorWrapper,
+  createRouteErrorWrapper,
+  createDatabaseErrorWrapper,
+  createApiErrorWrapper,
+  createFileErrorWrapper,
+  createBatchErrorWrapper,
+  createTimeoutErrorWrapper,
+  transformMongoError,
+  MemoryMonitor,
+  memoryMonitor,
+  detectMemoryLeaks,
+  startMemoryMonitoring,
+  checkpointMemory,
+  endMemoryMonitoring,
+  cleanupWithMemoryTracking,
+  forceGC,
+  clearGlobalRefs,
+  clearModuleCache,
+  aggressiveCleanup,
+  backupEnvironment,
+  restoreEnvironment,
+  registerMockRestore,
+  restoreAllMocks,
+  trackServer,
+  closeAllServers,
+  trackDbConnection,
+  closeAllDbConnections,
+  setupTestIsolation,
+  teardownTestIsolation,
+  setupJestIsolation,
+  waitForCondition
 };
 
 // Export all core functionality for easy access
@@ -138,6 +231,48 @@ export {
   strictValidator,
   relaxedValidator,
   
+  // Error wrappers
+  createAsyncErrorWrapper,
+  createSyncErrorWrapper,
+  createRouteErrorWrapper,
+  createDatabaseErrorWrapper,
+  createApiErrorWrapper,
+  createFileErrorWrapper,
+  createBatchErrorWrapper,
+  createTimeoutErrorWrapper,
+  transformMongoError,
+  
+  // Memory monitoring
+  MemoryMonitor,
+  memoryMonitor,
+  detectMemoryLeaks,
+  startMemoryMonitoring,
+  checkpointMemory,
+  endMemoryMonitoring,
+  cleanupWithMemoryTracking,
+  
+  // Memory cleanup
+  forceGC,
+  clearGlobalRefs,
+  clearModuleCache,
+  aggressiveCleanup,
+  
+  // Test isolation
+  backupEnvironment,
+  restoreEnvironment,
+  registerMockRestore,
+  restoreAllMocks,
+  trackServer,
+  closeAllServers,
+  trackDbConnection,
+  closeAllDbConnections,
+  setupTestIsolation,
+  teardownTestIsolation,
+  setupJestIsolation,
+  
+  // Wait for condition
+  waitForCondition,
+  
   // Namespace
   qtests
 };
@@ -151,7 +286,19 @@ export type {
   RateLimitResult,
   RateLimitStats,
   ValidationConfig,
-  ValidationResult
+  ValidationResult,
+  AsyncErrorWrapperOptions,
+  RouteErrorWrapperOptions,
+  DatabaseErrorWrapperOptions,
+  ApiErrorWrapperOptions,
+  BatchErrorWrapperOptions,
+  TimeoutErrorWrapperOptions,
+  TransformedError,
+  BatchResult,
+  BatchProcessingResult,
+  MemorySnapshot,
+  MemoryDelta,
+  WaitForConditionOptions
 };
 
 // Default export for backward compatibility

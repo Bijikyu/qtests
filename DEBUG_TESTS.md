@@ -36,7 +36,7 @@ Analyze and address the following test failures:
 
 ```
 
-### Duration: 714ms
+### Duration: 526ms
 
 ---
 
@@ -74,7 +74,7 @@ Analyze and address the following test failures:
 
 ```
 
-### Duration: 97ms
+### Duration: 77ms
 
 ---
 
@@ -82,4 +82,4 @@ Analyze and address the following test failures:
 
 - Total failed tests: 2
 - Failed test files: /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js, /home/runner/workspace/tests/integration/demo__server__app__get.test.js
-- Generated: 2025-12-12T06:55:16.039Z
+- Generated: 2025-12-12T07:00:04.664Z

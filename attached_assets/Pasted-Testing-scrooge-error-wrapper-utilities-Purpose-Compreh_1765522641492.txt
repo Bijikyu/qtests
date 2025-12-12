@@ -1,0 +1,765 @@
+Testing
+@scrooge/error-wrapper-utilities
+Purpose: Comprehensive error handling wrapper utilities for standardizing try-catch patterns across applications. Explanation:
+This module provides a suite of error wrapper functions that standardize error handling patterns across different contexts (async, sync, routes, database, API calls, file operations, batch processing, and timeouts). It solves the problem of inconsistent error handling throughout codebases by providing configurable wrappers that handle logging, error transformation, fallback values, and retries. This would be reused across any Node.js/Express application that needs consistent error handling patterns, particularly in microservices architectures where standardized error responses are crucial.
+
+The module accepts functions and options objects as inputs, and returns wrapped functions that handle errors according to the specified configuration. It handles edge cases like MongoDB error transformations, file system errors, batch processing failures, and timeout scenarios.
+
+/**
+ * Error Wrapper Utility
+ * Standardizes try-catch error handling patterns across the codebase
+ * 
+ * @author Scrooge Payment System
+ */
+/**
+ * Creates a standardized error wrapper for async functions
+ * @param {Function} asyncFunction - The async function to wrap
+ * @param {Object} options - Error handling options
+ * @returns {Function} Wrapped function with standardized error handling
+ */
+const createAsyncErrorWrapper = (asyncFunction, options = {}) => {
+  const {
+    logErrors = true,
+    logContext = '',
+    rethrow = true,
+    defaultErrorMessage = 'An error occurred',
+    errorTransform = null,
+    fallbackValue = null
+  } = options;
+  return async (...args) => {
+    try {
+      return await asyncFunction(...args);
+    } catch (error) {
+      // Log error if requested
+      if (logErrors) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        const context = logContext ? ` in ${logContext}` : '';
+        console.log(`Error encountered${context}: ${errorMessage}`);
+      }
+      // Transform error if transform function provided
+      let finalError = error;
+      if (errorTransform && typeof errorTransform === 'function') {
+        finalError = errorTransform(error);
+      }
+      // Rethrow or return fallback
+      if (rethrow) {
+        throw finalError;
+      }
+      return fallbackValue;
+    }
+  };
+};
+/**
+ * Creates a standardized error wrapper for sync functions
+ * @param {Function} syncFunction - The sync function to wrap
+ * @param {Object} options - Error handling options
+ * @returns {Function} Wrapped function with standardized error handling
+ */
+const createSyncErrorWrapper = (syncFunction, options = {}) => {
+  const {
+    logErrors = true,
+    logContext = '',
+    rethrow = true,
+    defaultErrorMessage = 'An error occurred',
+    errorTransform = null,
+    fallbackValue = null
+  } = options;
+  return (...args) => {
+    try {
+      return syncFunction(...args);
+    } catch (error) {
+      // Log error if requested
+      if (logErrors) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        const context = logContext ? ` in ${logContext}` : '';
+        console.log(`Error encountered${context}: ${errorMessage}`);
+      }
+      // Transform error if transform function provided
+      let finalError = error;
+      if (errorTransform && typeof errorTransform === 'function') {
+        finalError = errorTransform(error);
+      }
+      // Rethrow or return fallback
+      if (rethrow) {
+        throw finalError;
+      }
+      return fallbackValue;
+    }
+  };
+};
+/**
+ * Creates error wrapper for Express route handlers
+ * @param {Function} routeHandler - Express route handler function
+ * @param {Object} options - Error handling options
+ * @returns {Function} Wrapped route handler with standardized error handling
+ */
+const createRouteErrorWrapper = (routeHandler, options = {}) => {
+  const {
+    logErrors = true,
+    logContext = '',
+    sendErrorResponse = true,
+    defaultStatusCode = 500,
+    defaultErrorMessage = 'Internal server error'
+  } = options;
+  return async (req, res, next) => {
+    try {
+      await routeHandler(req, res, next);
+    } catch (error) {
+      // Log error if requested
+      if (logErrors) {
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        const context = logContext ? ` in ${logContext}` : '';
+        console.log(`Route error encountered${context}: ${errorMessage}`);
+      }
+      // Send error response if requested
+      if (sendErrorResponse) {
+        const statusCode = error.statusCode || defaultStatusCode;
+        const message = error.message || defaultErrorMessage;
+        
+        return res.status(statusCode).json({
+          success: false,
+          error: statusCode,
+          message,
+          timestamp: new Date().toISOString(),
+          requestId: req.headers['x-request-id'] || req.locals?.requestId
+        });
+      }
+      // Pass to next error handler
+      next(error);
+    }
+  };
+};
+/**
+ * Creates error wrapper for database operations
+ * @param {Function} dbOperation - Database operation function
+ * @param {Object} options - Error handling options
+ * @returns {Function} Wrapped database operation with standardized error handling
+ */
+const createDatabaseErrorWrapper = (dbOperation, options = {}) => {
+  const {
+    logErrors = true,
+    logContext = 'database operation',
+    rethrow = true,
+    fallbackValue = null,
+    transformMongoErrors = true
+  } = options;
+  return createAsyncErrorWrapper(dbOperation, {
+    logErrors,
+    logContext,
+    rethrow,
+    fallbackValue,
+    errorTransform: transformMongoErrors ? transformMongoError : null
+  });
+};
+/**
+ * Transforms MongoDB errors to more user-friendly formats
+ * @param {Error} error - Original error
+ * @returns {Error} Transformed error
+ */
+const transformMongoError = (error) => {
+  const transformedError = new Error(error.message);
+  
+  // Handle common MongoDB error codes
+  if (error.code === 11000) {
+    // Duplicate key error
+    transformedError.message = 'Duplicate entry found';
+    transformedError.statusCode = 409;
+    transformedError.errorType = 'DUPLICATE_KEY';
+  } else if (error.name === 'ValidationError') {
+    // Mongoose validation error
+    transformedError.message = 'Validation failed';
+    transformedError.statusCode = 400;
+    transformedError.errorType = 'VALIDATION_ERROR';
+    transformedError.validationErrors = Object.values(error.errors).map(err => err.message);
+  } else if (error.name === 'CastError') {
+    // Invalid ID format
+    transformedError.message = 'Invalid ID format';
+    transformedError.statusCode = 400;
+    transformedError.errorType = 'INVALID_ID';
+  } else if (error.name === 'DocumentNotFoundError') {
+    // Document not found
+    transformedError.message = 'Document not found';
+    transformedError.statusCode = 404;
+    transformedError.errorType = 'NOT_FOUND';
+  }
+  
+  return transformedError;
+};
+/**
+ * Creates error wrapper for API calls
+ * @param {Function} apiCall - API call function
+ * @param {Object} options - Error handling options
+ * @returns {Function} Wrapped API call with standardized error handling
+ */
+const createApiErrorWrapper = (apiCall, options = {}) => {
+  const {
+    logErrors = true,
+    logContext = 'API call',
+    rethrow = true,
+    fallbackValue = null,
+    retryCount = 0,
+    retryDelay = 1000
+  } = options;
+  return createAsyncErrorWrapper(async (...args) => {
+    let lastError;
+    
+    for (let attempt = 0; attempt <= retryCount; attempt++) {
+      try {
+        return await apiCall(...args);
+      } catch (error) {
+        lastError = error;
+        
+        // Don't retry on certain error types
+        if (error.statusCode === 400 || error.statusCode === 401 || error.statusCode === 403) {
+          throw error;
+        }
+        
+        // If this is the last attempt, throw the error
+        if (attempt === retryCount) {
+          throw error;
+        }
+        
+        // Wait before retry
+        if (retryDelay > 0) {
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+        }
+      }
+    }
+    
+    throw lastError;
+  }, {
+    logErrors,
+    logContext,
+    rethrow,
+    fallbackValue
+  });
+};
+/**
+ * Creates error wrapper for file operations
+ * @param {Function} fileOperation - File operation function
+ * @param {Object} options - Error handling options
+ * @returns {Function} Wrapped file operation with standardized error handling
+ */
+const createFileErrorWrapper = (fileOperation, options = {}) => {
+  const {
+    logErrors = true,
+    logContext = 'file operation',
+    rethrow = true,
+    fallbackValue = null
+  } = options;
+  return createAsyncErrorWrapper(fileOperation, {
+    logErrors,
+    logContext,
+    rethrow,
+    fallbackValue,
+    errorTransform: (error) => {
+      const transformedError = new Error(error.message);
+      
+      // Handle common file system errors
+      if (error.code === 'ENOENT') {
+        transformedError.message = 'File not found';
+        transformedError.statusCode = 404;
+        transformedError.errorType = 'FILE_NOT_FOUND';
+      } else if (error.code === 'EACCES') {
+        transformedError.message = 'Permission denied';
+        transformedError.statusCode = 403;
+        transformedError.errorType = 'PERMISSION_DENIED';
+      } else if (error.code === 'EEXIST') {
+        transformedError.message = 'File already exists';
+        transformedError.statusCode = 409;
+        transformedError.errorType = 'FILE_EXISTS';
+      }
+      
+      return transformedError;
+    }
+  });
+};
+/**
+ * Creates a batch error wrapper for processing multiple items
+ * @param {Function} processor - Function to process individual items
+ * @param {Object} options - Error handling options
+ * @returns {Function} Wrapped processor with batch error handling
+ */
+const createBatchErrorWrapper = (processor, options = {}) => {
+  const {
+    logErrors = true,
+    logContext = 'batch processing',
+    stopOnFirstError = false,
+    collectErrors = true
+  } = options;
+  return async (items) => {
+    const results = [];
+    const errors = [];
+    
+    for (let i = 0; i < items.length; i++) {
+      try {
+        const result = await processor(items[i]);
+        results.push({ success: true, data: result, index: i });
+      } catch (error) {
+        const errorInfo = {
+          success: false,
+          error: error.message || String(error),
+          index: i,
+          item: items[i]
+        };
+        
+        results.push(errorInfo);
+        
+        if (collectErrors) {
+          errors.push(errorInfo);
+        }
+        
+        if (logErrors) {
+          console.log(`Batch processing error at index ${i}: ${errorInfo.error}`);
+        }
+        
+        if (stopOnFirstError) {
+          break;
+        }
+      }
+    }
+    
+    return {
+      results,
+      errors,
+      successCount: results.filter(r => r.success).length,
+      errorCount: errors.length,
+      totalCount: items.length
+    };
+  };
+};
+/**
+ * Creates a timeout error wrapper
+ * @param {Function} asyncFunction - Function to wrap with timeout
+ * @param {number} timeoutMs - Timeout in milliseconds
+ * @param {Object} options - Error handling options
+ * @returns {Function} Wrapped function with timeout
+ */
+const createTimeoutErrorWrapper = (asyncFunction, timeoutMs, options = {}) => {
+  const {
+    logErrors = true,
+    logContext = 'timeout operation',
+    timeoutErrorMessage = 'Operation timed out'
+  } = options;
+  return createAsyncErrorWrapper(async (...args) => {
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error(timeoutErrorMessage)), timeoutMs);
+    });
+    const resultPromise = asyncFunction(...args);
+    
+    return await Promise.race([resultPromise, timeoutPromise]);
+  }, {
+    logErrors,
+    logContext
+  });
+};
+module.exports = {
+  createAsyncErrorWrapper,
+  createSyncErrorWrapper,
+  createRouteErrorWrapper,
+  createDatabaseErrorWrapper,
+  createApiErrorWrapper,
+  createFileErrorWrapper,
+  createBatchErrorWrapper,
+  createTimeoutErrorWrapper,
+  transformMongoError
+};
+
+@scrooge/memory-monitor
+Purpose: Memory monitoring and leak detection utilities for Node.js applications and test suites. Explanation:
+This module provides comprehensive memory monitoring capabilities specifically designed for testing environments. It solves the problem of detecting memory leaks during test execution by tracking memory snapshots over time, analyzing growth patterns, and providing detailed reporting. This would be reused across any Node.js project that needs to monitor memory usage during testing, particularly in CI/CD pipelines where memory leaks can cause flaky tests and build failures.
+
+The module accepts optional snapshot labels as input and returns memory snapshot data objects. It handles edge cases like insufficient data for leak detection, varying memory growth thresholds, and provides configurable limits for snapshot retention.
+
+// Enhanced memory monitoring and leak detection for tests
+import { performance } from 'perf_hooks';
+interface MemorySnapshot {
+  timestamp: number;
+  heapUsed: number;
+  heapTotal: number;
+  external: number;
+  rss: number;
+  arrayBuffers?: number;
+}
+class MemoryMonitor {
+  private snapshots: MemorySnapshot[] = [];
+  private maxSnapshots = 10;
+  takeSnapshot(label?: string): MemorySnapshot {
+    const usage = process.memoryUsage();
+    const snapshot: MemorySnapshot = {
+      timestamp: performance.now(),
+      heapUsed: Math.round(usage.heapUsed / 1024 / 1024),
+      heapTotal: Math.round(usage.heapTotal / 1024 / 1024),
+      external: Math.round(usage.external / 1024 / 1024),
+      rss: Math.round(usage.rss / 1024 / 1024),
+      arrayBuffers: usage.arrayBuffers ? Math.round(usage.arrayBuffers / 1024 / 1024) : undefined
+    };
+    this.snapshots.push(snapshot);
+    
+    // Keep only recent snapshots
+    if (this.snapshots.length > this.maxSnapshots) {
+      this.snapshots.shift();
+    }
+    if (label) {
+      console.log(`Memory [${label}]: ${snapshot.heapUsed}MB heap, ${snapshot.rss}MB RSS`);
+    }
+    return snapshot;
+  }
+  detectLeaks(): boolean {
+    if (this.snapshots.length < 3) return false;
+    const recent = this.snapshots.slice(-3);
+    const heapGrowth = recent[2].heapUsed - recent[0].heapUsed;
+    const rssGrowth = recent[2].rss - recent[0].rss;
+    // Detect significant memory growth
+    const heapLeakThreshold = 50; // 50MB
+    const rssLeakThreshold = 100; // 100MB
+    if (heapGrowth > heapLeakThreshold || rssGrowth > rssLeakThreshold) {
+      console.warn(`⚠️  Potential memory leak detected:`);
+      console.warn(`   Heap growth: +${heapGrowth}MB`);
+      console.warn(`   RSS growth: +${rssGrowth}MB`);
+      return true;
+    }
+    return false;
+  }
+  getDelta(): { heap: number; rss: number } {
+    if (this.snapshots.length < 2) {
+      return { heap: 0, rss: 0 };
+    }
+    const latest = this.snapshots[this.snapshots.length - 1];
+    const first = this.snapshots[0];
+    return {
+      heap: latest.heapUsed - first.heapUsed,
+      rss: latest.rss - first.rss
+    };
+  }
+  reset(): void {
+    this.snapshots = [];
+  }
+  printSummary(): void {
+    if (this.snapshots.length === 0) return;
+    const latest = this.snapshots[this.snapshots.length - 1];
+    const first = this.snapshots[0];
+    const delta = this.getDelta();
+    console.log('\n📊 Memory Summary:');
+    console.log(`   Start: ${first.heapUsed}MB heap, ${first.rss}MB RSS`);
+    console.log(`   End: ${latest.heapUsed}MB heap, ${latest.rss}MB RSS`);
+    console.log(`   Delta: ${delta.heap > 0 ? '+' : ''}${delta.heap}MB heap, ${delta.rss > 0 ? '+' : ''}${delta.rss}MB RSS`);
+    
+    if (this.detectLeaks()) {
+      console.log('   🔍 Memory leaks detected!');
+    } else {
+      console.log('   ✅ No significant memory leaks detected');
+    }
+  }
+}
+// Global memory monitor instance
+export const memoryMonitor = new MemoryMonitor();
+// Memory leak detection utilities
+export const detectMemoryLeaks = (): boolean => {
+  return memoryMonitor.detectLeaks();
+};
+export const startMemoryMonitoring = (): void => {
+  memoryMonitor.reset();
+  memoryMonitor.takeSnapshot('start');
+};
+export const checkpointMemory = (label: string): void => {
+  memoryMonitor.takeSnapshot(label);
+};
+export const endMemoryMonitoring = (): void => {
+  memoryMonitor.takeSnapshot('end');
+  memoryMonitor.printSummary();
+};
+// Cleanup utility with memory tracking
+export const cleanupWithMemoryTracking = async (): Promise<void> => {
+  checkpointMemory('pre-cleanup');
+  
+  // Force garbage collection
+  if (global.gc) {
+    for (let i = 0; i < 3; i++) {
+      global.gc();
+      await new Promise(resolve => setTimeout(resolve, 10));
+    }
+  }
+  
+  checkpointMemory('post-cleanup');
+};
+
+@scrooge/test-isolation
+Purpose: Comprehensive test isolation utilities to prevent cross-test contamination and reduce test brittleness. Explanation:
+This module provides utilities for managing test isolation by tracking and cleaning up resources like environment variables, mocks, server instances, and database connections between tests. It solves the common problem of tests affecting each other through shared state, leading to flaky test suites. This would be reused across any Node.js testing environment, particularly in integration testing where servers, databases, and external connections need proper lifecycle management.
+
+The module accepts functions for setup/teardown, server instances, database connections, and mock restore functions as inputs. It handles edge cases like failed cleanups, missing close methods, and provides comprehensive error logging without failing the entire test suite.
+
+/**
+ * Test Isolation Helper
+ * 
+ * Provides utilities for better test isolation to prevent
+ * cross-test contamination and reduce brittleness.
+ */
+import { aggressiveCleanup } from './memoryCleanup.ts';
+// Test isolation state - use function to ensure fresh state per test run
+const getIsolationState = () => {
+  if (!global.__ISOLATION_STATE__) {
+    global.__ISOLATION_STATE__ = {
+      originalEnv: {} as Record<string, string | undefined>,
+      mockRestoreStack: [] as (() => void)[],
+      serverInstances: [] as any[],
+      dbConnections: [] as any[]
+    };
+  }
+  return global.__ISOLATION_STATE__;
+};
+// Backup and restore environment variables
+export const backupEnvironment = () => {
+  const state = getIsolationState();
+  state.originalEnv = { ...process.env };
+};
+export const restoreEnvironment = () => {
+  const state = getIsolationState();
+  if (Object.keys(state.originalEnv).length > 0) {
+    // Clear current env
+    Object.keys(process.env).forEach(key => {
+      if (!state.originalEnv.hasOwnProperty(key)) {
+        delete process.env[key];
+      }
+    });
+    
+    // Restore original env
+    Object.assign(process.env, state.originalEnv);
+  }
+};
+// Mock management for isolation
+export const registerMockRestore = (restoreFn) => {
+  const state = getIsolationState();
+  state.mockRestoreStack.push(restoreFn);
+};
+export const restoreAllMocks = () => {
+  const state = getIsolationState();
+  while (state.mockRestoreStack.length > 0) {
+    const restoreFn = state.mockRestoreStack.pop();
+    try {
+      if (typeof restoreFn === 'function') {
+        restoreFn();
+      }
+    } catch (error) {
+      console.warn('Mock restore warning:', error.message);
+    }
+  }
+};
+// Server instance tracking
+export const trackServer = (server) => {
+  const state = getIsolationState();
+  state.serverInstances.push(server);
+};
+export const closeAllServers = async () => {
+  const state = getIsolationState();
+  const closePromises = state.serverInstances.map(async (server) => {
+    try {
+      if (server && typeof server.close === 'function') {
+        await new Promise<void>((resolve, reject) => {
+          server.close((err: any) => {
+            if (err) reject(err);
+            else resolve();
+          });
+        });
+      }
+    } catch (error) {
+      console.warn('Server close warning:', error.message);
+    }
+  });
+  
+  await Promise.allSettled(closePromises);
+  state.serverInstances = [];
+};
+// Database connection tracking
+export const trackDbConnection = (connection) => {
+  const state = getIsolationState();
+  state.dbConnections.push(connection);
+};
+export const closeAllDbConnections = async () => {
+  const state = getIsolationState();
+  const closePromises = state.dbConnections.map(async (conn) => {
+    try {
+      if (conn && typeof conn.close === 'function') {
+        await conn.close();
+      }
+    } catch (error) {
+      console.warn('DB connection close warning:', error.message);
+    }
+  });
+  
+  await Promise.allSettled(closePromises);
+  state.dbConnections = [];
+};
+// Comprehensive test isolation setup
+export const setupTestIsolation = () => {
+  const state = getIsolationState();
+  backupEnvironment();
+  state.mockRestoreStack = [];
+  state.serverInstances = [];
+  state.dbConnections = [];
+};
+// Comprehensive test isolation teardown
+export const teardownTestIsolation = async () => {
+  try {
+    // Restore all mocks
+    restoreAllMocks();
+    
+    // Close all servers
+    await closeAllServers();
+    
+    // Close all database connections
+    await closeAllDbConnections();
+    
+    // Restore environment
+    restoreEnvironment();
+    
+    // Run aggressive memory cleanup
+    aggressiveCleanup();
+  } catch (error) {
+    console.warn('Test isolation teardown warning:', error.message);
+  }
+};
+// Jest hooks for automatic isolation - call this in test files if needed
+export const setupJestIsolation = () => {
+  beforeEach(() => {
+    setupTestIsolation();
+  });
+  
+  afterEach(async () => {
+    await teardownTestIsolation();
+  });
+};
+export default {
+  setupTestIsolation,
+  teardownTestIsolation,
+  backupEnvironment,
+  restoreEnvironment,
+  registerMockRestore,
+  restoreAllMocks,
+  trackServer,
+  closeAllServers,
+  trackDbConnection,
+  closeAllDbConnections,
+  setupJestIsolation
+};
+
+@scrooge/memory-cleanup
+Purpose: Aggressive memory cleanup utilities for Node.js test environments to prevent memory leaks. Explanation:
+This module provides utilities for aggressive memory cleanup between test runs to prevent memory leaks that can make test suites brittle and unreliable. It solves the problem of memory accumulation during testing by forcing garbage collection, clearing global references, and cleaning module caches. This would be reused across any Node.js testing environment where memory management is critical, particularly in long-running test suites or CI/CD pipelines.
+
+The module accepts no inputs for the main cleanup function and returns the number of modules cleared. It handles edge cases like missing garbage collection, nonexistent global references, and provides comprehensive cleanup with error resilience.
+
+/**
+ * Memory Cleanup Helper for Tests
+ * 
+ * Provides utilities for aggressive memory cleanup between tests
+ * to prevent memory leaks and reduce test brittleness.
+ */
+import { createRequire } from 'module';
+// Force garbage collection if available
+export const forceGC = () => {
+  if (global.gc) {
+    // Run GC multiple times with small delays
+    for (let i = 0; i < 3; i++) {
+      global.gc();
+    }
+  }
+};
+// Clear global references that might hold memory
+export const clearGlobalRefs = () => {
+  const refsToClear = [
+    'testServer',
+    'mongoConnection', 
+    '__MONGO_DB__',
+    '__MONGOD__',
+    'app',
+    'server',
+    'io',
+    'redisClient'
+  ];
+  
+  refsToClear.forEach(ref => {
+    if (global[ref]) {
+      try {
+        // Close connections if they have close method
+        if (typeof global[ref].close === 'function') {
+          global[ref].close();
+        }
+        if (typeof global[ref].disconnect === 'function') {
+          global[ref].disconnect();
+        }
+      } catch {}
+      global[ref] = null;
+    }
+  });
+};
+// Clear module cache for test modules
+export const clearModuleCache = () => {
+  const require = createRequire(import.meta.url);
+  const moduleKeys = Object.keys(require.cache);
+  let cleared = 0;
+  
+  moduleKeys.forEach(key => {
+    if (key.includes('.test.') || 
+        key.includes('.spec.') || 
+        key.includes('GeneratedTest') ||
+        key.includes('/tests/') ||
+        key.includes('testHelpers')) {
+      delete require.cache[key];
+      cleared++;
+    }
+  });
+  
+  return cleared;
+};
+// Comprehensive cleanup function
+export const aggressiveCleanup = () => {
+  try {
+    // Clear global references first
+    clearGlobalRefs();
+    
+    // Clear module cache
+    const clearedModules = clearModuleCache();
+    
+    // Force garbage collection
+    forceGC();
+    
+    console.log(`Memory cleanup: cleared ${clearedModules} modules`);
+  } catch (error) {
+    console.warn('Memory cleanup warning:', error.message);
+  }
+};
+// Export for use in test files
+export default aggressiveCleanup;
+
+@scrooge/wait-for-condition
+Purpose: Utility for waiting for asynchronous conditions with configurable timeouts, replacing brittle setTimeout patterns. Explanation:
+This module provides a robust alternative to setTimeout-based waiting in tests by continuously checking a predicate condition until it becomes true or times out. It solves the problem of brittle test timing where fixed delays can be too short (causing failures) or too long (slowing down tests). This would be reused across any asynchronous testing environment where you need to wait for conditions like DOM updates, database writes, or API responses.
+
+The module accepts a predicate function and optional configuration object as inputs, and returns a Promise that resolves when the condition is met or rejects on timeout. It handles edge cases like predicate errors, configurable intervals, and provides clear error messages for timeouts.
+
+/**
+ * Polls a condition until it returns truthy or times out.
+ * Useful to replace brittle setTimeout sleeps.
+ */
+export async function waitForCondition(
+  predicate: () => boolean | Promise<boolean>,
+  opts: { timeoutMs?: number; intervalMs?: number } = {}
+): Promise<void> {
+  const timeoutMs = opts.timeoutMs ?? 2000;
+  const intervalMs = opts.intervalMs ?? 25;
+  const start = Date.now();
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    // evaluate predicate and catch errors as false
+    let ok = false;
+    try { ok = await predicate(); } catch (_) { ok = false; }
+    if (ok) return; // success
+    if (Date.now() - start > timeoutMs) {
+      throw new Error(`waitForCondition: timeout after ${timeoutMs}ms`);
+    }
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+}
+export default waitForCondition;
