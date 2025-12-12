@@ -1,7 +1,5 @@
-// Replace with Sinon.js for superior mocking capabilities
 import sinon from 'sinon';
 
-// Modern implementation using Sinon.js
 const createStubMethod = (obj: any, methodName: string, stubFn: Function): (() => void) => {
   if (typeof obj !== 'object' || obj === null) {
     throw new Error(`createStubMethod expected object but received ${obj}`);

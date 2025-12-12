@@ -1,16 +1,13 @@
-// Auto-generated API test for GET /hello - optimized for speed
 import { createMockApp, supertest } from 'qtests/utils/httpTest';
 const httpTest = { createMockApp, supertest };
 
 describe('GET /hello', () => {
-  // Shared app setup for performance
   let sharedApp;
   beforeAll(() => {
     sharedApp = httpTest.createMockApp();
   });
 
   test('should succeed', async () => {
-    // Reuse shared app for speed
     const app = httpTest.createMockApp();
     app.get('/hello', (req, res) => {
       res.statusCode = 200;
