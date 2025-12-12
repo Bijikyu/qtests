@@ -143,7 +143,7 @@ Deliverables
   - Replit-aware imports: ESM by default; relative paths resolved; include `import 'qtests/setup'` when stubs needed.
 
 - CLI & Flags
-  - Preserve: `--src`, `--test-dir`, `--include`, `--exclude`, `--unit`, `--dry-run`, `--mode`, `--force`.
+   - Preserve: `--src`, `--test-dir`, `--include`, `--exclude`, `--integration`, `--dry-run`, `--mode`, `--force`.
   - Add: `--env=node|jsdom|browser`, `--component`, `--playwright`, `--mern`, `--template=<name>` to choose template class.
   - Default selection logic: pick template by file type and config (e.g., `.tsx` → React template; presence of server entry → MERN template for route handlers).
 

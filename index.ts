@@ -1,34 +1,33 @@
 /**
  * qtests - Main Entry Point
  * 
- * This module serves as the unified export point for all qtests functionality.
- * The architecture is designed to provide a clean, intuitive API where users
- * can access all testing utilities through a single import.
- * 
- * Design rationale:
- * - Single entry point reduces cognitive load for users
- * - Organized by functionality (core, environment, setup, stubs) for clarity
- * - Each category is kept in separate lib files for maintainability
- * - Maintains backward compatibility with existing API
+ * This module serves as a unified export point for all qtests functionality.
+ * Focuses on core testing utilities: method stubbing, console mocking, environment management,
+ * module stubbing, HTTP testing utilities, and test execution scaffolding.
  */
 
-// Import organized utility categories from lib directory
-import { stubMethod, mockConsole } from './lib/coreUtils.js';
-import { testEnv, offlineMode, testHelpers } from './lib/envUtils.js';
+// Core utilities for isolated testing
+import { stubMethod, mockConsole, testEnv, offlineMode, testHelpers } from './lib/coreUtils.js';
 import { setup } from './lib/setup.js';
 import { mockAPI } from './lib/mockSystem.js';
-import stubs from './lib/stubs.js';
-import { TestGenerator } from './lib/testGenerator.js';
+
+// HTTP testing utilities  
+import { httpTest } from './utils/httpTest';
+
+// Test execution utilities
 import { runTestSuite, runTestSuites, createAssertions } from './utils/runTestSuite.js';
 
-// Type definitions for the main module exports
+// Module stubs
+import stubs from './lib/stubs.js';
+
+// Type definitions for main module exports
 export interface QtestsAPI {
+  // Core testing utilities
   stubMethod: typeof stubMethod;
   mockConsole: typeof mockConsole;
   testEnv: typeof testEnv;
   offlineMode: typeof offlineMode;
   testHelpers: typeof testHelpers;
-  TestGenerator: typeof TestGenerator;
   runTestSuite: typeof runTestSuite;
   runTestSuites: typeof runTestSuites;
   createAssertions: typeof createAssertions;
@@ -36,39 +35,42 @@ export interface QtestsAPI {
   stubs: typeof stubs;
   mock: {
     module: (name: string, factory: () => any) => void;
+    mockAPI: {
+      module: (name: string, factory: () => any) => void;
+      stubFn: (obj: any, methodName: string, stubFn: Function) => () => void;
+      restore: () => void;
+    };
   };
-}
 
-// Named exports for ES module compatibility
+// Export all core functionality for easy access
 export {
-  stubMethod, // method replacement utility for isolating dependencies
-  mockConsole, // console output capture for testing logging behavior
-  testEnv, // environment and mock management for complex test scenarios
-  offlineMode, // offline/online mode utility with automatic switching
-  testHelpers, // advanced testing utilities for module reloading and mocking
-  TestGenerator, // automatic test generation from source code analysis
-  runTestSuite, // lightweight test runner for simple test scenarios
-  runTestSuites, // run multiple test suites with overall summary
-  createAssertions, // basic assertion helpers for test writing
-  setup, // call this to activate stubs when desired
-  stubs, // stub library organized under namespace
-  mockAPI as mock
-};
-
-// Default export for backward compatibility
-const qtests: QtestsAPI = {
   stubMethod,
   mockConsole,
   testEnv,
   offlineMode,
   testHelpers,
-  TestGenerator,
   runTestSuite,
   runTestSuites,
   createAssertions,
   setup,
   stubs,
-  mock: mockAPI
+  mock: mock,
+  qtests
 };
 
-export default qtests;
+// Default export for backward compatibility
+export default {
+  stubMethod,
+  mockConsole,
+  testEnv,
+  offlineMode,
+  testHelpers,
+  runTestSuite,
+  runTestSuites,
+  createAssertions,
+  setup,
+  stubs,
+  mock,
+  httpTest,
+  qtests
+};

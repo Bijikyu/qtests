@@ -56,8 +56,8 @@ qtests-generate -t tests/integration
 # Limit to TypeScript files and skip existing tests
 qtests-generate --include "**/*.ts" --exclude "**/*.test.ts"
 
-# Only unit tests, dry-run preview
-qtests-generate --unit --dry-run
+# Only integration tests, dry-run preview
+qtests-generate --integration --dry-run
 
 # AST mode (requires `typescript` in your project)
 qtests-generate --mode ast

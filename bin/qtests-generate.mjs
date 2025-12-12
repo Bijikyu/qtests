@@ -1,32 +1,23 @@
 #!/usr/bin/env node
 
-// qtests-generate: Node-native CLI (no external runtime) that invokes the compiled TestGenerator
-// Implementation mirrors the TypeScript CLI but imports from compiled JS in dist/
-
-// NOTE: This CLI is also responsible for ALWAYS creating/overwriting
-// the client project's qtests-runner.mjs at the project root, so that
-// client apps consistently get a stable runner without any extra flags.
+/**
+ * qtests Runner Scaffolder (Node ESM)
+ * 
+ * Creates qtests runner and Jest configuration files for projects.
+ * Focuses on scaffolding infrastructure, not test generation.
+ */
 
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { spawnSync } from 'child_process';
 
 // Parse command line arguments
 function parseArgs(argv) {
   const args = argv.slice(2);
   const options = {
-    mode: 'heuristic',
-    unit: false,
-    integration: false,
     dryRun: false,
     force: false,
-    include: [],
-    exclude: [],
-    react: false,
-    skipReactComponents: true,
     updatePackageScript: false,
-    withRouter: false,
     yes: false,
     noInteractive: false,
     autoInstall: false
@@ -35,49 +26,14 @@ function parseArgs(argv) {
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     switch (arg) {
-      case '--src':
-      case '-s':
-        options.SRC_DIR = args[++i];
-        break;
-      case '--test-dir':
-      case '-t':
-        options.TEST_DIR = args[++i];
-        break;
-      case '--mode': {
-        const mode = args[++i];
-        if (!['heuristic', 'ast'].includes(mode)) {
-          console.error(`Invalid mode: ${mode}. Use 'heuristic' or 'ast'`);
-          process.exit(1);
-        }
-        options.mode = mode;
-        break;
-      }
-      case '--unit':
-        options.unit = true;
-        break;
-      case '--integration':
-        options.integration = true;
-        break;
       case '--dry-run':
         options.dryRun = true;
         break;
       case '--force':
         options.force = true;
         break;
-      case '--react':
-        options.react = true;
-        break;
-      case '--react-components':
-        options.skipReactComponents = false;
-        break;
-      case '--no-react-components':
-        options.skipReactComponents = true;
-        break;
       case '--update-pkg-script':
         options.updatePackageScript = true;
-        break;
-      case '--with-router':
-        options.withRouter = true;
         break;
       case '--yes':
       case '-y':
@@ -89,15 +45,6 @@ function parseArgs(argv) {
         break;
       case '--auto-install':
         options.autoInstall = true;
-        break;
-      case '--migrate-generated-tests':
-        options.migrateGeneratedTests = true;
-        break;
-      case '--include':
-        options.include.push(args[++i]);
-        break;
-      case '--exclude':
-        options.exclude.push(args[++i]);
         break;
       case '--help':
       case '-h':
@@ -121,39 +68,24 @@ function parseArgs(argv) {
 
 function showHelp() {
   console.log(`
-qtests Test Generator (Node ESM)
+qtests Runner Scaffolder (Node ESM)
 
 USAGE:
   qtests-generate [OPTIONS]
-  (alias: qtests-ts-generate)
 
 OPTIONS:
-  -s, --src <dir>       Source directory to scan (default: .)
-  -t, --test-dir <dir>  Generated test directory (default: tests/generated-tests)
-      --mode <mode>     Analysis mode: 'heuristic' or 'ast' (default: heuristic)
-      --unit            Generate only unit tests
-      --integration     Generate only integration tests
-      --include <glob>  Include files matching glob (repeatable)
-      --exclude <glob>  Exclude files matching glob (repeatable)
-      --dry-run         Show planned files without writing
-      --force           Allow overwriting generated test files
-      --react           Force React template mode (use jsdom, React templates)
-      --react-components    Opt-in: generate React component tests (hooks are always supported)
-      --no-react-components Skip generating tests for React components (default)
-      --with-router     Wrap React tests with MemoryRouter when React Router is detected
+      --dry-run         Show planned scaffolding without writing
+      --force           Allow overwriting generated files
       --update-pkg-script  Update package.json test script to use Jest with project config
 
   -h, --help           Show this help message
   -v, --version        Show version information
 
 EXAMPLES:
-  qtests-generate                           # Scan current directory with defaults
-  qtests-generate --src lib                 # Scan 'lib' directory instead
-  qtests-generate --unit --dry-run          # Preview unit tests only
-  qtests-generate --mode ast --force        # Use TypeScript AST analysis, overwrite existing
-  qtests-generate --include "**/*.ts"       # Only process TypeScript files
-  qtests-generate --exclude "**/demo/**"    # Skip demo directories
-`);
+  qtests-generate                           # Scaffold qtests runner and config files
+  qtests-generate --dry-run                # Preview what would be created
+  qtests-generate --force                  # Overwrite existing runner and config files
+  `);
 }
 
 function showVersion() {
@@ -171,225 +103,384 @@ function showVersion() {
   }
 }
 
-// Utility: parse env truthy values ('1'|'true'|'yes')
-function isEnvTruthy(name) {
-  const v = process.env[name];
-  if (!v) return false;
-  const s = String(v).trim().toLowerCase();
-  return s === '1' || s === 'true' || s === 'yes';
-}
-
 // Utility: safe exists
 function exists(p) {
   try { return fs.existsSync(p); } catch { return false; }
 }
 
-// Utility: read file
-function read(p) {
-  try { return fs.readFileSync(p, 'utf8'); } catch { return null; }
-}
-
-// Decide client project root: prefer npm's INIT_CWD if present and sensible
+// Resolve client project root: prefer npm's INIT_CWD if present and sensible
 function resolveClientRoot() {
   const icwd = process.env.INIT_CWD && String(process.env.INIT_CWD).trim();
   if (icwd && exists(icwd) && !icwd.includes(`${path.sep}node_modules${path.sep}`)) return icwd;
   return process.cwd();
 }
 
-// Resolve this module's root (node_modules/qtests or repo root during dev)
-function resolveModuleRoot() {
-  // __dirname of this file is .../qtests/bin
-  const thisFile = fileURLToPath(import.meta.url);
-  const binDir = path.dirname(thisFile);
-  return path.resolve(binDir, '..');
+
+
+/**
+ * qtests Runner Scaffolder class
+ */
+class RunnerScaffolder {
+  config;
+
+  constructor(options) {
+    this.config = { ...options };
+  }
+
+  /**
+   * Get Jest configuration content
+   */
+  getJestConfig() {
+    return `// jest.config.mjs - qtests Integration Test Configuration
+// Generated by qtests runner scaffolder
+
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, '..');
+
+export default {
+  preset: 'ts-jest/presets/default-esm',
+  rootDir: PROJECT_ROOT,
+  testEnvironment: 'node',
+  setupFiles: [path.join(PROJECT_ROOT, 'config', 'jest-require-polyfill.cjs')],
+  setupFilesAfterEnv: [path.join(PROJECT_ROOT, 'config', 'jest-setup.ts')],
+  testMatch: [
+    '**/integration/**/*.test.ts',
+    '**/integration/**/*.test.js',
+    '**/integration/**/*.test.jsx',
+    '**/integration/**/*.test.tsx'
+  ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '/dist/',
+    '/build/',
+    '/__mocks__/',
+    '/manual-tests/',
+    '/generated-tests/'
+  ],
+  modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
+  watchPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  transform: {
+    '^\\\\.+\\\\.(ts|tsx)$': ['ts-jest', { useESM: true }],
+    '^\\\\.+\\\\.(js|jsx)$': ['babel-jest', {
+      presets: [['@babel/preset-env', { targets: { node: 'current' } }]]
+    }]
+  },
+  transformIgnorePatterns: ['node_modules/(?!(qtests)/)'],
+  moduleNameMapper: {
+    '^qtests/(.*)$': '<rootDir>/node_modules/qtests/$1',
+    '^(\\\\.{1,2}/.*)\\\\.js$': '$1',
+    'mongoose$': '<rootDir>/__mocks__/mongoose.js',
+    '^.+\\\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/fileMock.js',
+    '^.+\\\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$': '<rootDir>/__mocks__/fileMock.js'
+  }
+};
+`;
+  }
+
+  /**
+   * Get Jest setup content
+   */
+  getJestSetup() {
+    return `// jest-setup.ts - qtests Integration Test Setup
+// Generated by qtests runner scaffolder
+
+import 'qtests/setup';
+import { jest as jestFromGlobals } from '@jest/globals';
+
+// Set test environment early
+process.env.NODE_ENV = 'test';
+
+// Resolve jest reference safely and expose globally for tests using jest.*
+const J = (typeof jestFromGlobals !== 'undefined' && jestFromGlobals)
+  ? jestFromGlobals
+  : (globalThis as any).jest;
+if (!(globalThis as any).jest && J) {
+  (globalThis as any).jest = J as any;
 }
 
-// Validate runner template content to avoid writing wrong files
-function isValidRunnerTemplate(content) {
-  try {
-    if (!content) return false;
-    // Key invariants per Runner Policies
-    return /API Mode/.test(content) && /runCLI/.test(content);
-  } catch {
-    return false;
+// Provide CommonJS-like require for ESM tests that call require()
+try {
+  if (!(globalThis as any).require && typeof require === 'function') {
+    (globalThis as any).require = require as any;
   }
-}
+} catch {}
 
-// Compute required dev dependencies based on project type
-function computeRequiredDevDeps() {
-  const required = new Map();
-  // Core Jest + TS + Babel chain used by our Jest config
-  required.set('jest', '^29');
-  required.set('ts-jest', '^29');
-  required.set('typescript', '^5');
-  required.set('babel-jest', '^30');
-  required.set('@babel/core', '^7');
-  required.set('@babel/preset-env', '^7');
+beforeAll(() => {
+  const j = (globalThis as any).jest || J;
+  if (j && typeof j.setTimeout === 'function') {
+    j.setTimeout(10000);
+  }
+});
 
-  // React detection: add jsdom env if React present
-  try {
-    const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-    const all = { ...(pkg.dependencies||{}), ...(pkg.devDependencies||{}), ...(pkg.peerDependencies||{}) };
-    const isReact = Boolean(all.react || all['@types/react'] || all['react-dom'] || all['@types/react-dom']);
-    if (isReact) required.set('jest-environment-jsdom', '^29');
-  } catch {}
-  return required;
-}
+afterEach(() => {
+  const j = (globalThis as any).jest || J;
+  if (j && typeof j.clearAllMocks === 'function') {
+    j.clearAllMocks();
+  }
+});
+`;
+  }
 
-// Ensure devDependencies exist in package.json and optionally install
-function ensureDevDeps({ autoInstall=false } = {}) {
-  const pkgPath = path.join(process.cwd(), 'package.json');
-  if (!exists(pkgPath)) {
-    console.log('⚠️  No package.json found; skipping devDependencies setup');
-    return { installed: false, toInstall: [] };
-  }
-  let pkg;
-  try { pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')); } catch {
-    console.log('⚠️  Could not read package.json; skipping devDependencies setup');
-    return { installed: false, toInstall: [] };
-  }
-  pkg.devDependencies = pkg.devDependencies || {};
-  const need = [];
-  for (const [name, ver] of computeRequiredDevDeps()) {
-    if (!pkg.devDependencies[name] && !(pkg.dependencies && pkg.dependencies[name])) {
-      pkg.devDependencies[name] = ver;
-      need.push(name);
-    }
-  }
-  if (need.length) {
+  /**
+   * Get require polyfill content
+   */
+  getRequirePolyfill() {
+    return `// jest-require-polyfill.cjs - CommonJS require polyfill for ESM tests
+// Generated by qtests runner scaffolder
+
+try {
+  if (typeof global.require === 'undefined') {
+    const { createRequire } = require('module');
+    let req;
     try {
-      fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8');
-      console.log(`✅ Updated package.json devDependencies: ${need.join(', ')}`);
+      req = createRequire(process.cwd() + '/package.json');
     } catch {
-      console.log('⚠️  Failed to write updated package.json devDependencies');
+      req = createRequire(__filename);
     }
-  } else {
-    console.log('ℹ️ Dev dependencies already satisfied');
+    Object.defineProperty(global, 'require', {
+      value: req,
+      writable: false,
+      configurable: true,
+      enumerable: false
+    });
+  }
+} catch {}
+`;
   }
 
-  if (autoInstall && need.length) {
-    console.log('📦 Installing missing devDependencies...');
-    const r = spawnSync('npm', ['install', '-D', ...need], { stdio: 'inherit' });
-    if (r.status === 0) {
-      console.log('✅ DevDependencies installed');
-      return { installed: true, toInstall: [] };
+  /**
+   * Scaffold qtests runner and Jest configuration for a project
+   */
+  async scaffoldRunner() {
+    const projectRoot = resolveClientRoot();
+    
+    // Write runner
+    this.writeRunner(projectRoot);
+    
+    // Write Jest configuration
+    this.writeJestConfig(projectRoot);
+    
+    // Write Jest setup
+    this.writeJestSetup(projectRoot);
+    
+    // Write require polyfill
+    this.writeRequirePolyfill(projectRoot);
+    
+    console.log('✅ qtests runner and configuration files scaffolded successfully');
+  }
+
+  /**
+   * Write runner file to project root
+   */
+  writeRunner(projectRoot) {
+    const runnerPath = path.join(projectRoot, 'qtests-runner.mjs');
+    const content = this.getRunnerTemplate();
+    
+    if (!this.config.dryRun) {
+      fs.writeFileSync(runnerPath, content, 'utf8');
+      fs.chmodSync(runnerPath, '755');
+      console.log('✅ Created qtests-runner.mjs');
     } else {
-      console.log('⚠️  Automatic install failed or was blocked. You can install manually:');
-      console.log(`    npm install -D ${need.join(' ')}`);
-      return { installed: false, toInstall: need };
+      console.log('🔍 Would create qtests-runner.mjs');
     }
   }
-  if (!autoInstall && need.length) {
-    console.log('💡 Next step: install missing devDependencies:');
-    console.log(`    npm install -D ${need.join(' ')}`);
-  }
-  return { installed: false, toInstall: need };
-}
 
-// Obtain runner template content from shipped template or transform fallback
-function getRunnerTemplateContent() {
-  const moduleRoot = resolveModuleRoot();
-  const candidates = [
-    path.join(moduleRoot, 'templates', 'qtests-runner.mjs.template'),
-    path.join(moduleRoot, 'lib', 'templates', 'qtests-runner.mjs.template')
-  ];
-  for (const p of candidates) {
-    const c = read(p);
-    if (c && isValidRunnerTemplate(c)) return c;
-  }
-  // Fallback: attempt to transform the sacrosanct bin into a standalone runner template
-  const binPath = path.join(moduleRoot, 'bin', 'qtests-ts-runner');
-  const raw = read(binPath);
-  if (raw) {
-    const transformed = raw
-      .replace(/^#!\/usr\/bin\/env node/m, '#!/usr/bin/env node')
-      .replace(/\/\/ IMPORTANT: This CLI is sacrosanct and not generated\. Do not overwrite\./,
-        '// GENERATED RUNNER: qtests-runner.mjs - auto-created by qtests TestGenerator\n// Safe to delete; will be recreated as needed.\n// Mirrors bin/qtests-ts-runner behavior (batching, DEBUG_TESTS.md, stable exits).');
-    if (isValidRunnerTemplate(transformed)) return transformed;
-  }
-  return null;
-}
+  /**
+   * Get runner template content
+   */
+  getRunnerTemplate() {
+    return `#!/usr/bin/env node
 
-// ALWAYS write/overwrite qtests-runner.mjs at client root
-function writeRunnerAtClientRoot() {
-  const quiet = isEnvTruthy('QTESTS_SILENT');
-  const targetRoot = resolveClientRoot();
-  const target = path.join(targetRoot, 'qtests-runner.mjs');
-  const templateContent = getRunnerTemplateContent();
-  if (!templateContent) {
-    // Do not fail the generator if template can't be found; just warn once.
-    if (!quiet) console.error('qtests: no runner template found; skipped runner write');
-    return;
-  }
+/**
+ * qtests Test Runner - API Mode Only
+ * Generated by qtests runner scaffolder
+ * 
+ * This runner provides test execution with qtests framework integration.
+ * Uses Jest programmatic API for stable, reliable test execution.
+ */
+
+import { runCLI } from 'jest';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PROJECT_ROOT = path.resolve(__dirname, '..');
+
+async function main() {
   try {
-    fs.writeFileSync(target, templateContent, 'utf8');
-    if (!quiet) process.stdout.write('qtests: wrote qtests-runner.mjs at project root (overwritten)\n');
-    // Remove legacy runner if present to prevent accidental usage
-    try { const legacy = path.join(targetRoot, 'qtests-runner.js'); if (fs.existsSync(legacy)) fs.rmSync(legacy, { force: true }); } catch {}
-  } catch (err) {
-    // Non-fatal: keep generator usable even if FS writes fail
-    if (!quiet) console.error('qtests: failed to write qtests-runner.mjs:', (err && (err.message || err.stack)) || String(err));
+    const config = {
+      rootDir: PROJECT_ROOT,
+      testMatch: [
+        '**/integration/**/*.test.ts',
+        '**/integration/**/*.test.js',
+        '**/integration/**/*.test.jsx',
+        '**/integration/**/*.test.tsx'
+      ],
+      testPathIgnorePatterns: [
+        '/node_modules/',
+        '/dist/',
+        '/build/',
+        '/__mocks__/',
+        '/manual-tests/',
+        '/generated-tests/'
+      ],
+      modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
+      watchPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
+      verbose: false,
+      cache: true,
+      coverage: false,
+      passWithNoTests: true
+    };
+
+    const results = await runCLI(config, [PROJECT_ROOT]);
+
+    if (results.numFailedTests > 0) {
+      process.exit(1);
+    }
+    
+    process.exit(0);
+  } catch (error) {
+    console.error('❌ Test runner failed:', error);
+    process.exit(1);
+  }
+}
+
+main();
+`;
+  }
+
+  /**
+   * Write Jest configuration
+   */
+  writeJestConfig(projectRoot) {
+    const configDir = path.join(projectRoot, 'config');
+    const configPath = path.join(configDir, 'jest.config.mjs');
+    
+    if (!this.config.dryRun) {
+      if (!fs.existsSync(configDir)) {
+        fs.mkdirSync(configDir, { recursive: true });
+      }
+      
+      if (!fs.existsSync(configPath) || this.config.force) {
+        fs.writeFileSync(configPath, this.getJestConfig(), 'utf8');
+        console.log('✅ Created config/jest.config.mjs');
+      } else {
+        console.log('ℹ️ config/jest.config.mjs already exists');
+      }
+    } else {
+      console.log('🔍 Would create config/jest.config.mjs');
+    }
+  }
+
+  /**
+   * Write Jest setup
+   */
+  writeJestSetup(projectRoot) {
+    const configDir = path.join(projectRoot, 'config');
+    const setupPath = path.join(configDir, 'jest-setup.ts');
+    
+    if (!this.config.dryRun) {
+      if (!fs.existsSync(configDir)) {
+        fs.mkdirSync(configDir, { recursive: true });
+      }
+      
+      if (!fs.existsSync(setupPath) || this.config.force) {
+        fs.writeFileSync(setupPath, this.getJestSetup(), 'utf8');
+        console.log('✅ Created config/jest-setup.ts');
+      } else {
+        console.log('ℹ️ config/jest-setup.ts already exists');
+      }
+    } else {
+      console.log('🔍 Would create config/jest-setup.ts');
+    }
+  }
+
+  /**
+   * Write require polyfill
+   */
+  writeRequirePolyfill(projectRoot) {
+    const configDir = path.join(projectRoot, 'config');
+    const polyfillPath = path.join(configDir, 'jest-require-polyfill.cjs');
+    
+    if (!this.config.dryRun) {
+      if (!fs.existsSync(configDir)) {
+        fs.mkdirSync(configDir, { recursive: true });
+      }
+      
+      if (!fs.existsSync(polyfillPath) || this.config.force) {
+        fs.writeFileSync(polyfillPath, this.getRequirePolyfill(), 'utf8');
+        console.log('✅ Created config/jest-require-polyfill.cjs');
+      } else {
+        console.log('ℹ️ config/jest-require-polyfill.cjs already exists');
+      }
+    } else {
+      console.log('🔍 Would create config/jest-require-polyfill.cjs');
+    }
+  }
+
+  /**
+   * Update package.json test script
+   */
+  updatePackageScript(projectRoot) {
+    if (!this.config.updatePackageScript) return;
+    
+    const pkgPath = path.join(projectRoot, 'package.json');
+    if (!exists(pkgPath)) return;
+    
+    try {
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+      pkg.scripts = pkg.scripts || {};
+      
+      const testScript = 'node qtests-runner.mjs';
+      if (pkg.scripts.test === testScript) {
+        console.log('ℹ️ package.json test script already set correctly');
+        return;
+      }
+      
+      pkg.scripts.test = testScript;
+      
+      fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8');
+      console.log('✅ Updated package.json test script');
+    } catch (error) {
+      console.log('⚠️  Failed to update package.json:', error.message);
+    }
   }
 }
 
 async function main() {
   try {
-    console.log('🔧 qtests Test Generator (Node ESM)\n');
+    console.log('🔧 qtests Runner Scaffolder (Node ESM)\n');
     const options = parseArgs(process.argv);
     console.log('Configuration:');
-    console.log(`  Source directory: ${options.SRC_DIR || '.'}`);
-    console.log(`  Test directory: ${options.TEST_DIR || 'tests/generated-tests'}`);
-    console.log(`  Analysis mode: ${options.mode}`);
-    console.log(`  Scope: ${options.unit ? 'unit only' : options.integration ? 'integration only' : 'both'}`);
     console.log(`  Dry run: ${options.dryRun ? 'yes' : 'no'}`);
     console.log(`  Force overwrite: ${options.force ? 'yes' : 'no'}`);
-    console.log(`  Force React mode: ${options.react ? 'yes' : 'no'}`);
-    console.log(`  Generate component tests: ${options.skipReactComponents === false ? 'yes' : 'no'}`);
     console.log(`  Update package.json script: ${options.updatePackageScript ? 'yes' : 'no'}`);
-    // Non-interactive by default; auto-install attempted unless in CI
-    if (options.include && options.include.length) console.log(`  Include patterns: ${options.include.join(', ')}`);
-    if (options.exclude && options.exclude.length) console.log(`  Exclude patterns: ${options.exclude.join(', ')}`);
-    console.log(`  Module system: TypeScript ES Modules (only)`);
-    console.log(`  Jest config path: config/jest.config.mjs (auto)\n`);
 
-    // Always scaffold/overwrite the runner at the client root, independent of dry-run
-    writeRunnerAtClientRoot();
-
-    // Import compiled TestGenerator from dist, which is shipped in the published package
-    const { TestGenerator } = await import('../dist/lib/testGenerator.js');
-    const generator = new TestGenerator(options);
+    // Import RunnerScaffolder for creating qtests runner and config files
+    const { RunnerScaffolder } = await import('../lib/runnerScaffolder.js');
+    const scaffolder = new RunnerScaffolder(options);
 
     if (options.dryRun) {
-      console.log('🔍 Dry run - showing planned test files...\n');
-      await generator.generateTestFiles(true);
+      console.log('🔍 Dry run - showing planned scaffolding...\n');
+      await scaffolder.scaffoldRunner();
     } else {
-      await generator.generateTestFiles();
+      await scaffolder.scaffoldRunner();
+      scaffolder.updatePackageScript(resolveClientRoot());
     }
 
-    const results = generator.getResults();
-    console.log('\n📊 Generation Summary:');
-    const unitTests = results.filter(r => r.type === 'unit').length;
-    const apiTests = results.filter(r => r.type === 'api').length;
-    console.log(`  Unit tests: ${unitTests}`);
-    console.log(`  API tests: ${apiTests}`);
-    console.log(`  Total files: ${results.length}`);
-
-    // Ensure devDependencies and optionally install
-    const autoInstallDefault = !isEnvTruthy('CI');
-    const { toInstall } = ensureDevDeps({ autoInstall: options.autoInstall || options.yes || options.noInteractive || autoInstallDefault });
-
-    // Actionable next steps
     console.log('\n💡 Next steps:');
-    if (results.length > 0) console.log('  • Review generated test files and flesh out assertions');
     console.log('  • Run tests: npm test');
-    if (toInstall && toInstall.length) console.log(`  • Install missing devDeps: npm install -D ${toInstall.join(' ')}`);
     console.log('  • Jest config created at config/jest.config.mjs (customize as needed)');
-    console.log('  • Scripts updated: pretest (ensure-runner, clean-dist), test (qtests-runner)');
-    // Defensive cleanup
-    try { const legacy = path.join(process.cwd(), 'qtests-runner.js'); if (fs.existsSync(legacy)) fs.rmSync(legacy, { force: true }); } catch {}
-    if (options.mode === 'ast') console.log('  • AST mode enabled: more detailed route and export detection applied');
+    console.log('  • Runner created at qtests-runner.mjs (API-only execution)');
   } catch (error) {
-    console.error('❌ Error generating tests:', error && (error.stack || error.message) || String(error));
+    console.error('❌ Error scaffolding runner:', error && (error.stack || error.message) || String(error));
     process.exit(1);
   }
 }

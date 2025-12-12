@@ -3,7 +3,7 @@
 /**
  * qtests Test Generator CLI - TypeScript ES Module Compatible
  * 
- * Command-line interface for generating unit tests and API tests
+ * Command-line interface for generating integration tests
  * by scanning source code and analyzing exports, imports, and routes.
  */
 
@@ -24,7 +24,7 @@ function parseArgs(argv) {
   const args = argv.slice(2);
   const options = {
     mode: 'heuristic', // Default mode
-    unit: false,       // Generate unit tests only
+
     integration: false, // Generate integration tests only  
     dryRun: false,     // Show planned files without writing
     force: false,      // Allow overwriting generated files
@@ -128,7 +128,6 @@ OPTIONS:
   -s, --src <dir>       Source directory to scan (default: .)
   -t, --test-dir <dir>  Generated test directory (default: tests/generated-tests)
       --mode <mode>     Analysis mode: 'heuristic' or 'ast' (default: heuristic)
-      --unit           Generate only unit tests
       --integration    Generate only integration tests
       --include <glob> Include files matching glob pattern (can be used multiple times)
       --exclude <glob> Exclude files matching glob pattern (can be used multiple times)
@@ -146,14 +145,14 @@ OPTIONS:
 EXAMPLES:
   qtests-generate                           # Scan current directory with defaults
   qtests-generate --src lib                 # Scan 'lib' directory instead
-  qtests-generate --unit --dry-run          # Preview unit tests only
+  qtests-generate --integration --dry-run    # Preview integration tests only
   qtests-generate --mode ast --force        # Use TypeScript AST analysis, overwrite existing
   qtests-generate --include "**/*.ts"       # Only process TypeScript files
   qtests-generate --exclude "**/demo/**"    # Skip demo directories
 
 
 DESCRIPTION:
-  Automatically generates TypeScript unit tests and API tests by scanning 
+  Automatically generates TypeScript integration tests by scanning 
   JavaScript/TypeScript source files. Detects exported functions, classes, 
   and Express routes to create appropriate test files with proper mocking setup.
 

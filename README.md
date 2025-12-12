@@ -1,6 +1,6 @@
 # qtests
 
-A comprehensive Node.js testing framework with zero dependencies. Provides intelligent test generation, method stubbing, console mocking, and drop-in replacements for popular modules. **Now with ES Module and TypeScript support!**
+A comprehensive Node.js testing framework with zero dependencies. Provides intelligent integration test generation, method stubbing, console mocking, and drop-in replacements for popular modules. **Now with ES Module and TypeScript support!**
 
 🎉 **Latest Updates (September 2025)**:
 - ✅ ESM + TypeScript Jest harness: runner always loads `config/jest.config.mjs` and passes `--passWithNoTests` for stable CI
@@ -43,7 +43,7 @@ const restore = stubMethod(myObject, 'methodName', mockImplementation);
 
 ## ✨ Key Features
 
-- **🤖 Intelligent Test Generation** - Automatically discovers and generates missing tests
+- **🤖 Intelligent Integration Test Generation** - Automatically discovers and generates missing integration tests
 - **🎭 Method Stubbing** - Temporarily replace object methods with automatic restoration
 - **📺 Console Mocking** - Jest-compatible console spies with fallback for vanilla Node.js
 - **🌍 Environment Management** - Safe backup and restore of environment variables
@@ -172,8 +172,8 @@ npx qtests-generate --src lib
 # Custom source and test directories
 npx qtests-generate --src app --test-dir tests/integration
 
-# Only unit tests, preview without writing
-npx qtests-generate --unit --dry-run
+# Only integration tests, preview without writing
+npx qtests-generate --integration --dry-run
 
 # Restrict to TypeScript files and skip existing tests
 npx qtests-generate --include "**/*.ts" --exclude "**/*.test.ts"
@@ -421,6 +421,10 @@ import { stubs } from 'qtests';
 await stubs.axios.get('https://example.com');
 ```
 
+## 🎯 Testing Philosophy
+
+**Integration-First Approach**: qtests focuses on integration and E2E testing rather than unit testing. This provides better confidence in system interactions and reduces maintenance overhead.
+
 ## 🎯 Best Practices
 
 ## 🧰 CLI Reference
@@ -432,7 +436,6 @@ await stubs.axios.get('https://example.com');
   - `-s, --src <dir>`: Source directory root to scan. Default: `.`
   - `-t, --test-dir <dir>`: Directory for integration/API tests. Default: `tests/generated-tests`
   - `--mode <heuristic|ast>`: Analysis mode. `ast` attempts TypeScript-based analysis if `typescript` is installed; falls back otherwise. Default: `heuristic`
-  - `--unit`: Generate only unit tests
   - `--integration`: Generate only integration/API tests
   - `--include <glob>`: Include only matching files (repeatable)
   - `--exclude <glob>`: Exclude matching files (repeatable)
@@ -448,7 +451,7 @@ await stubs.axios.get('https://example.com');
 Examples:
 - `qtests-generate` — scan current directory with defaults
 - `qtests-generate --src lib` — scan `lib` only
-- `qtests-generate --unit --dry-run` — preview unit tests only
+- `qtests-generate --integration --dry-run` — preview integration tests only
 - `qtests-generate --include "**/*.ts" --exclude "**/*.test.ts"` — filter files
 - `qtests-generate --mode ast --force` — AST mode and overwrite generated tests
 

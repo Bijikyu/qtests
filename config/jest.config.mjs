@@ -15,23 +15,18 @@ export default {
   setupFilesAfterEnv: [path.join(PROJECT_ROOT, 'config', 'jest-setup.ts')],
   roots: [PROJECT_ROOT],
   testMatch: [
-  "**/*.test.ts",
-  "**/*.test.tsx",
-  "**/*.spec.ts",
-  "**/*.spec.tsx",
-  "**/*.GenerateTest.test.ts",
-  "**/*.GenerateTest.test.tsx",
-  "**/*.GeneratedTest.test.ts",
-  "**/*.GeneratedTest.test.tsx",
-  "**/manual-tests/**/*.test.ts",
-  "**/generated-tests/**/*GeneratedTest*.test.ts",
-  "**/generated-tests/**/*GeneratedTest*.test.tsx"
+  "**/integration/**/*.test.ts",
+  "**/integration/**/*.test.tsx",
+  "**/integration/**/*.test.js",
+  "**/integration/**/*.test.jsx"
 ],
   testPathIgnorePatterns: [
   "/node_modules/",
   "/dist/",
   "/build/",
-  "/__mocks__/"
+  "/__mocks__/",
+  "/manual-tests/",
+  "/generated-tests/"
 ],
   // Harden ignores to avoid duplicate manual mocks and compiled artifacts
   modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],

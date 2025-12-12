@@ -6,10 +6,10 @@ The `lib/` directory contains the core qtests framework functionality, including
 ## Files and Their Roles
 
 ### testGenerator.ts
-**Role**: Main test generator implementation for creating automated unit and integration tests  
+**Role**: Main test generator implementation for creating automated integration tests  
 **Key Features**:
 - Analyzes TypeScript/JavaScript source files for exports and API routes
-- Generates `.GeneratedTest.test.ts` unit tests colocated with source files (backward-compatible with old `.GenerateTest.*`)
+- Generates `.GeneratedTest.test.ts` integration tests for API endpoints and Express routes
 - Creates integration tests in `generated-tests/` directory
 - Supports both heuristic and optional TypeScript AST analysis modes
 - Honors CLI/config filters: `SRC_DIR`, `include` globs, and `exclude` globs

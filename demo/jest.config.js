@@ -4,5 +4,5 @@ module.exports = {
   testEnvironment: 'node',
   setupFilesAfterEnv: ['./tests/setup.ts'],
   moduleFileExtensions: ['ts', 'js', 'json'],
-  roots: ['<rootDir>/src', '<rootDir>/tests'],
+  roots: ['<rootDir>/tests'],
 };

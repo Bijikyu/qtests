@@ -9,7 +9,7 @@ The `bin/` directory contains executable CLI tools for the qtests framework.
 **Role**: Command-line interface for generating automated TypeScript tests  
 **Key Features**:
 - Supports multiple analysis modes: `heuristic` (default) and `ast` (TypeScript AST)
-- Scope control: `--unit` (unit tests only) or `--integration` (integration tests only)  
+- Scope: Integration tests only  
 - Safety features: `--dry-run` (preview without writing), `--force` (overwrite generated files)
 - File filtering: `--include` and `--exclude` glob patterns
 - Configurable source and test directories
@@ -25,7 +25,7 @@ The `bin/` directory contains executable CLI tools for the qtests framework.
 ```bash
 qtests-generate                           # Scan current directory with defaults
 qtests-generate --src lib                 # Scan 'lib' directory instead  
-qtests-generate --unit --dry-run          # Preview unit tests only
+qtests-generate --integration --dry-run    # Preview integration tests only
 qtests-generate --mode ast --force        # Use TypeScript AST analysis, overwrite existing
 qtests-generate --include "**/*.ts"       # Only process TypeScript files
 qtests-generate --exclude "**/demo/**"    # Skip demo directories
@@ -36,14 +36,14 @@ qtests-generate --update-pkg-script       # Opt-in to update npm test script
 **Request/Response Flows**:
 - Input: CLI arguments and project source files
 - Processing: Creates TestGenerator instance with parsed options
-- Output: Generated `.GenerateTest.test.ts` files with qtests/setup integration
+- Output: Generated `.GenerateTest.test.ts` files with qtests/setup integration tests
 
 ## Known Side Effects  
 - Creates Jest configuration file (jest.config.mjs) on non-dry runs
 - Creates Jest setup file (jest-setup.ts) on non-dry runs; imports `qtests/setup` first and adds DOM/browser stubs
 - Creates/overwrites qtests-runner.mjs (API‑only via runCLI) and configures Jest invocation with `--config config/jest.config.mjs` and `--passWithNoTests`
 - Scaffolds local HTTP test utils: `generated-tests/utils/httpTest.ts` (re-exports) and `generated-tests/utils/httpTest.shim.js` (implementation with `.send()`)
-- Adds `moduleNameMapper` for `mongoose` pointing to qtests' manual mock to avoid real DB access in unit tests
+- Adds `moduleNameMapper` for `mongoose` pointing to qtests' manual mock to avoid real DB access in integration tests
 - Generates test files in filesystem (unless --dry-run specified)
 - Enhanced file filtering automatically skips demo/, examples/, config/, bin/, manual-tests/, and fixtures/ directories
 - Package.json test script update is now opt-in via `--update-pkg-script`
