@@ -1,6 +1,6 @@
 // jest-setup.ts - Jest setup for TypeScript ESM with React support
 // Keep qtests setup FIRST to ensure global stubbing is active
-import 'qtests/setup';
+import '../setup.js';
 import { jest as jestFromGlobals } from '@jest/globals';
 
 // Set test environment early

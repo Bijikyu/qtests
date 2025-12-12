@@ -1,5 +1,6 @@
 // Auto-generated API test for GET /hello - optimized for speed
-import { httpTest } from 'qtests/lib/envUtils';
+import { createMockApp, supertest } from 'qtests/utils/httpTest';
+const httpTest = { createMockApp, supertest };
 
 describe('GET /hello', () => {
   // Shared app setup for performance

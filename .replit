@@ -14,6 +14,27 @@ deploymentTarget = "autoscale"
 ignorePorts = false
 
 [workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Test Runner"
+
+[[workflows.workflow]]
+name = "Test Runner"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node qtests-runner.mjs"
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 
 [[ports]]

@@ -29,8 +29,12 @@ export default {
   "/generated-tests/"
 ],
   // Harden ignores to avoid duplicate manual mocks and compiled artifacts
-  modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
-  watchPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
+  modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/', '<rootDir>/.cache/'],
+  watchPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/', '<rootDir>/.cache/'],
+  haste: {
+    retainAllFiles: false,
+    throwOnModuleCollision: false
+  },
   moduleFileExtensions: ["ts","tsx","js","jsx","json"],
   transform: {
   "^.+\\.(ts|tsx)$": [
@@ -69,7 +73,10 @@ export default {
   "^external-service-client$": "<rootDir>/utils/jest-proxies/external-service-client.cjs",
   "^feature-x$": "<rootDir>/utils/jest-proxies/feature-x.cjs",
   "^(\\.{1,2}/.*)\\.js$": "$1",
-  "^qtests/(.*)$": "<rootDir>/node_modules/qtests/$1",
+  "^qtests/lib/(.*)$": "<rootDir>/lib/$1.ts",
+  "^qtests/utils/(.*)$": "<rootDir>/utils/$1.ts",
+  "^qtests/setup$": "<rootDir>/setup.ts",
+  "^qtests$": "<rootDir>/index.ts",
   "^mongoose$": "<rootDir>/__mocks__/mongoose.js",
   "^.+\\\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",
   "^.+\\\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/__mocks__/fileMock.js"
