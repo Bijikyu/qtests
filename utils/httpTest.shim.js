@@ -65,7 +65,7 @@ export function supertest(app) {
         }
         return this;
       },
-      expect(status) { state.expected = status; return this.end(); },
+      expect(status) { state.expected = status; return this; },
       end() {
         return new Promise((resolve) => {
           const headers = {};

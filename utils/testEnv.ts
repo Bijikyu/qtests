@@ -19,7 +19,7 @@
  */
 
 // Import logging utilities including wrapper for consistent logs
-import { logStart, logReturn, executeWithLogs, setLogging } from '../lib/logUtils.js';
+import { executeWithLogs, setLogging } from '../lib/logUtils.js';
 if (process.env.NODE_ENV !== 'test') setLogging(false); // mute logs outside tests
 
 interface DefaultEnv {

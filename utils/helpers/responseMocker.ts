@@ -48,21 +48,21 @@ function createJsonRes(data: any = {}, statusCode: number = 200): MockResponse {
       
       json: (jsonData: any) => {
         responseData = jsonData;
-        mockResponse._data = JSON.stringify(jsonData);
+        mockResponse._data = jsonData; // Store raw data, stringify only when needed for output
         headers['Content-Type'] = 'application/json';
         return mockResponse;
       },
       
       send: (sendData: any) => {
         responseData = sendData;
-        mockResponse._data = typeof sendData === 'string' ? sendData : JSON.stringify(sendData);
+        mockResponse._data = sendData; // Store raw data
         return mockResponse;
       },
       
       end: (endData?: any) => {
         if (endData !== undefined) {
           responseData = endData;
-          mockResponse._data = typeof endData === 'string' ? endData : JSON.stringify(endData);
+          mockResponse._data = endData; // Store raw data
         }
         sent = true;
         mockResponse._sent = true;
@@ -75,7 +75,7 @@ function createJsonRes(data: any = {}, statusCode: number = 200): MockResponse {
       
       statusCode: currentStatus,
       headers: headers,
-      _data: JSON.stringify(responseData),
+      _data: responseData,
       _sent: sent
     };
     
@@ -115,21 +115,21 @@ function createRes(statusCode: number = 200): MockResponse {
       
       json: (data: any) => {
         responseData = data;
-        mockResponse._data = JSON.stringify(data);
+        mockResponse._data = data; // Store raw data, stringify only when needed
         headers['Content-Type'] = 'application/json';
         return mockResponse;
       },
       
       send: (data: any) => {
         responseData = data;
-        mockResponse._data = typeof data === 'string' ? data : JSON.stringify(data);
+        mockResponse._data = data; // Store raw data
         return mockResponse;
       },
       
       end: (data?: any) => {
         if (data !== undefined) {
           responseData = data;
-          mockResponse._data = typeof data === 'string' ? data : JSON.stringify(data);
+          mockResponse._data = data; // Store raw data
         }
         sent = true;
         mockResponse._sent = true;

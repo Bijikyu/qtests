@@ -145,7 +145,7 @@ function createMockAxios(options: MockAxiosConfig = {}): MockAxios {
        * @param config - Request configuration (logged but not used)
        * @returns Promise resolving to mock response
        */
-      async get(url: string, config: any = {}): Promise<MockAxiosResponse> {
+      async get(url: string, _config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.get is running with ${url}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
@@ -167,7 +167,7 @@ function createMockAxios(options: MockAxiosConfig = {}): MockAxios {
        * @param config - Request configuration (logged but not used)
        * @returns Promise resolving to mock response
        */
-      async post(url: string, data: any = {}, config: any = {}): Promise<MockAxiosResponse> {
+      async post(url: string, _data: any = {}, _config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.post is running with ${url}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
@@ -188,7 +188,7 @@ function createMockAxios(options: MockAxiosConfig = {}): MockAxios {
        * @param config - Request configuration (logged but not used)
        * @returns Promise resolving to mock response
        */
-      async put(url: string, data: any = {}, config: any = {}): Promise<MockAxiosResponse> {
+      async put(url: string, _data: any = {}, _config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.put is running with ${url}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
@@ -208,7 +208,7 @@ function createMockAxios(options: MockAxiosConfig = {}): MockAxios {
        * @param config - Request configuration (logged but not used)
        * @returns Promise resolving to mock response
        */
-      async delete(url: string, config: any = {}): Promise<MockAxiosResponse> {
+      async delete(url: string, _config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.delete is running with ${url}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');

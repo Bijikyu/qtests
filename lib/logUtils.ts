@@ -30,8 +30,8 @@ function setLogging(enabled: boolean): void {
 /**
  * Safely converts values to strings for logging
  *
- * Attempts JSON serialization first, then falls back to util.inspect.
- * Returns '[unserializable]' if both methods fail.
+ * Uses Node.js built-in util.inspect which handles all types including
+ * circular references, functions, and complex objects safely.
  *
  * @param value - Value to serialize for log output
  * @returns Serialized representation
@@ -39,38 +39,24 @@ function setLogging(enabled: boolean): void {
 function safeSerialize(value: any): string {
   if (value === undefined) return 'undefined'; // handle undefined explicitly for clarity
   try {
-    // Attempt JSON serialization as primary strategy for most values
-    // JSON.stringify chosen first because it produces clean, readable output
-    // Handles primitive types, arrays, and plain objects efficiently
-    // Fails gracefully on circular references, functions, symbols
-    const serialized = JSON.stringify(value);
-    if (serialized !== undefined) return serialized; // check for unsupported types
-    const inspected = util.inspect(value, { depth: null }); // fallback for functions or symbols
-    return inspected;
+    // Use util.inspect directly - it handles all types that JSON.stringify can't
+    // including circular references, functions, symbols, and complex objects
+    return util.inspect(value, { 
+      depth: null,
+      showHidden: false,
+      colors: false,
+      customInspect: true,
+      showProxy: false,
+      maxArrayLength: 100,
+      maxStringLength: 100,
+      breakLength: 80,
+      compact: true,
+      sorted: false,
+      getters: false 
+    });
   } catch (error) {
-    // Handle JSON serialization failures with util.inspect fallback
-    // Common failures: circular references, BigInt
-    try {
-      // Use util.inspect for complex objects that JSON.stringify cannot handle
-      const inspected = util.inspect(value, { 
-        depth: null,
-        showHidden: false,
-        colors: false,
-        customInspect: true,
-        showProxy: true,
-        maxArrayLength: 100,
-        maxStringLength: 100,
-        breakLength: 80,
-        compact: true,
-        sorted: false,
-        getters: false 
-      });
-      return inspected;
-    } catch (inspectError) {
-      // Final fallback when both JSON and util.inspect fail
-      // This should be extremely rare but provides safety
-      return '[unserializable]';
-    }
+    // Final fallback when util.inspect fails - extremely rare
+    return '[unserializable]';
   }
 }
 
