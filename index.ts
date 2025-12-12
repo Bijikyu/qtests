@@ -115,6 +115,19 @@ import {
 // Wait for condition utility
 import { waitForCondition, type WaitForConditionOptions } from './lib/waitForCondition.js';
 
+// Test polyfills for browser APIs
+import {
+  setupClipboard,
+  setupIntersectionObserver,
+  setupMatchMedia,
+  setupResizeObserver,
+  setupAllPolyfills,
+  MockIntersectionObserver,
+  MockResizeObserver,
+  type ClipboardSpies,
+  type MockMediaQueryList
+} from './lib/testPolyfills.js';
+
 // Create httpTest namespace for backward compatibility
 const httpTest = {
   createMockApp,
@@ -189,7 +202,14 @@ const qtests = {
   setupTestIsolation,
   teardownTestIsolation,
   setupJestIsolation,
-  waitForCondition
+  waitForCondition,
+  setupClipboard,
+  setupIntersectionObserver,
+  setupMatchMedia,
+  setupResizeObserver,
+  setupAllPolyfills,
+  MockIntersectionObserver,
+  MockResizeObserver
 };
 
 // Export all core functionality for easy access
@@ -273,6 +293,15 @@ export {
   // Wait for condition
   waitForCondition,
   
+  // Test polyfills
+  setupClipboard,
+  setupIntersectionObserver,
+  setupMatchMedia,
+  setupResizeObserver,
+  setupAllPolyfills,
+  MockIntersectionObserver,
+  MockResizeObserver,
+  
   // Namespace
   qtests
 };
@@ -298,7 +327,9 @@ export type {
   BatchProcessingResult,
   MemorySnapshot,
   MemoryDelta,
-  WaitForConditionOptions
+  WaitForConditionOptions,
+  ClipboardSpies,
+  MockMediaQueryList
 };
 
 // Default export for backward compatibility
