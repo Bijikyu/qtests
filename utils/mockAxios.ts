@@ -29,6 +29,9 @@
 import { setLogging } from '../lib/logUtils.js';
 if (process.env.NODE_ENV !== 'test') setLogging(false);
 
+// Import axios stub for consistent mock behavior
+import axiosStub from '../stubs/axios.js';
+
 // Type definitions for axios-compatible mock
 interface MockAxiosConfig {
   defaultResponse?: any;

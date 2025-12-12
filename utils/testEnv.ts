@@ -22,6 +22,9 @@
 import { executeWithLogs, setLogging } from '../lib/logUtils.js';
 if (process.env.NODE_ENV !== 'test') setLogging(false); // mute logs outside tests
 
+// Import dotenv for environment variable management
+import dotenv from 'dotenv';
+
 interface DefaultEnv {
   GOOGLE_API_KEY: string;
   GOOGLE_CX: string;
@@ -73,6 +76,11 @@ function setTestEnv(): boolean {
   console.log(`setTestEnv is running with default values`); // logging function start per requirements
   
   try {
+    // Load environment variables from .env file if it exists using dotenv
+    // dotenv provides standardized environment variable management from .env files
+    // This replaces manual environment variable loading with established npm module
+    dotenv.config();
+    
     // Apply default test environment variables using Object.assign for atomic operation
     // Object.assign chosen over individual assignments for performance and atomicity
     // All environment variables are set together to prevent partial states
