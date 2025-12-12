@@ -41,6 +41,25 @@ export interface QtestsAPI {
       restore: () => void;
     };
   };
+  httpTest: typeof httpTest;
+}
+
+// Export all core functionality for easy access
+export {
+  stubMethod,
+  mockConsole,
+  testEnv,
+  offlineMode,
+  testHelpers,
+  runTestSuite,
+  runTestSuites,
+  createAssertions,
+  setup,
+  stubs,
+  mock,
+  httpTest,
+  qtests
+};
 
 // Export all core functionality for easy access
 export {
