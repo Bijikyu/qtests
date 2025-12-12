@@ -13,7 +13,8 @@ const createStubMethod = (obj: any, methodName: string, stubFn: Function): (() =
     throw new Error('createStubMethod stubFn must be a Function');
   }
   
-  return sinon.stub(obj, methodName, stubFn);
+  const stub = sinon.stub(obj, methodName).callsFake(stubFn as (...args: unknown[]) => unknown);
+  return () => stub.restore();
 };
 
 export default createStubMethod;

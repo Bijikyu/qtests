@@ -20,40 +20,39 @@
  * 4. They can be used independently without importing the full qtests suite
  */
 
-// Import the core stubMethod utility from utils directory
-// Placed in utils/ rather than lib/ because it's a pure utility function
-// with zero dependencies on qtests-specific architecture or other modules
-// This separation enables independent use and prevents circular dependencies
-import stubMethod from '../utils/stubMethod.js';
+// Import the enhanced stubMethod utility using Sinon.js
+// Now uses industry-standard Sinon.js for superior mocking capabilities
+// Provides spies, mocks, fake timers, and rich assertions
+// Maintains backward compatibility while adding powerful new features
+import { stubMethod, spyOnMethod, createMock, createFakeTimers } from '../utils/stubMethod.js';
 
-// Import mockConsole from its dedicated utility module using destructuring
-// Destructuring extracts only mockConsole from module exports for clean imports
-// This pattern allows the mockConsole module to export additional utilities in future
-// while maintaining backward compatibility and explicit import declarations
+// Import mockConsole from its dedicated utility module
+// Maintaining the original import approach for stability
 import { mockConsole } from '../utils/mockConsole.js';
 
 /**
  * Export core testing utilities
  * 
  * These are the most commonly used utilities in the qtests framework.
- * They are exported at the top level because:
- * 1. stubMethod and mockConsole are used in 80% of testing scenarios
- * 2. They have simple, predictable APIs that don't require namespacing
- * 3. They form the foundation that other utilities build upon
- * 4. Frequent usage justifies top-level access for developer convenience
+ * Enhanced with industry-standard Sinon.js capabilities while maintaining compatibility.
+ * 
+ * Enhanced Features:
+ * - Superior mocking with spies, mocks, and fake timers
+ * - Rich assertion capabilities through sinon-chai
+ * - Better error handling and debugging support
+ * - Industry-standard implementation recognized by developers
  * 
  * Export strategy:
- * - Direct object export rather than individual exports for consistency
- * - Descriptive property names that clearly indicate purpose
- * - Comments explain the primary use case for each utility
+ * - Comprehensive export for backward compatibility
+ * - New advanced utilities available for migration to full Sinon API
+ * - Consistent naming with enhanced functionality
  */
 // Export core testing utilities using ES module syntax
-// Named exports pattern chosen for ES module compatibility:
-// 1. Provides clear namespace organization for related utilities
-// 2. Enables easier destructuring imports in consuming code
-// 3. Maintains consistent export pattern across all qtests modules
-// 4. Allows for future expansion without breaking existing imports
+// Enhanced exports provide both backward compatibility and advanced capabilities
 export {
-  stubMethod,   // Method replacement utility for isolating dependencies during testing
-  mockConsole   // Console output capture utility for testing logging behavior without pollution
+  stubMethod,           // Method replacement utility (Sinon-powered)
+  spyOnMethod,          // Spy on methods without replacing (NEW)
+  createMock,            // Complete object mocking (NEW)
+  createFakeTimers,      // Time-based testing utilities (NEW)
+  mockConsole            // Console output capture utility
 };

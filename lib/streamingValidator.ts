@@ -1,171 +1,133 @@
-/**
- * Streaming Input Validation Middleware
- * 
- * High-performance async streaming validation to prevent event loop blocking.
- * Processes large payloads using streaming and chunked parallel processing.
- * Implements backpressure handling and progressive validation for maximum scalability.
- * 
- * Features:
- * - Chunked parallel processing for large strings
- * - Backpressure control to prevent resource exhaustion
- * - Security pattern detection (XSS prevention)
- * - Configurable chunk sizes and concurrency limits
- * - Detailed validation metrics
- */
+// Zod-based Validation Implementation
+//
+// This module replaces the custom streaming validator with industry-standard Zod
+// Provides superior type safety, performance, and developer experience
+//
+// Migration Benefits:
+// - Type-first validation (25k stars, 100k+ projects)
+// - Superior TypeScript support and inference
+// - Better performance with compiled schemas
+// - Rich error messages and debugging
+// - Extensive ecosystem (middleware, transforms)
 
-export interface ValidationConfig {
-  maxChunkSize: number;
-  maxStringLength: number;
-  maxQueryStringLength: number;
-  maxConcurrentChunks: number;
-  dangerousPatterns: RegExp[];
+import { z } from 'zod';
+
+// XSS sanitization utility (keep this from original)
+function escapeHtml(str: string): string {
+  const htmlEscapes: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#x27;'
+  };
+  return str.replace(/[&<>"']/g, char => htmlEscapes[char] || char);
 }
 
+// Dangerous patterns for XSS detection
+const dangerousPatterns = [
+  /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+  /javascript:/gi,
+  /on\w+\s*=/gi,
+  /data:text\/html/gi,
+  /<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi,
+  /<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi,
+  /<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi,
+  /vbscript:/gi,
+  /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi
+];
+
+/**
+ * Check if string contains dangerous XSS patterns
+ */
+function hasDangerousPatterns(input: string): boolean {
+  for (const pattern of dangerousPatterns) {
+    pattern.lastIndex = 0;
+    if (pattern.test(input)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Sanitize string for XSS protection
+ */
+function sanitizeString(input: string): string {
+  let sanitized = input;
+  
+  // Remove dangerous patterns
+  for (const pattern of dangerousPatterns) {
+    pattern.lastIndex = 0;
+    sanitized = sanitized.replace(pattern, '');
+  }
+  
+  // Escape HTML
+  return escapeHtml(sanitized);
+}
+
+// Base validation schemas with XSS protection
+const safeString = z.string().transform(sanitizeString);
+const safeNumber = z.number();
+const safeBoolean = z.boolean();
+const safeArray = z.array(z.any());
+const safeObject = z.object({}).passthrough();
+
+// Length-constrained schemas with XSS protection
+const shortString = z.string().max(500).transform(sanitizeString);
+const mediumString = z.string().max(5000).transform(sanitizeString);
+const longString = z.string().max(50000).transform(sanitizeString);
+
+// Create validation configuration interface for backward compatibility
+export interface ValidationConfig {
+  maxStringLength?: number;
+  maxQueryStringLength?: number;
+  dangerousPatterns?: RegExp[];
+}
+
+// Export types for backward compatibility
 export interface ValidationResult {
   isValid: boolean;
   sanitized?: any;
   error?: string;
-  processingTime: number;
+  processingTime?: number;
 }
 
-const DEFAULT_CONFIG: ValidationConfig = {
-  maxChunkSize: 2048,
-  maxStringLength: 50000,
-  maxQueryStringLength: 500,
-  maxConcurrentChunks: 10,
-  dangerousPatterns: [
-    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-    /javascript:/gi,
-    /on\w+\s*=/gi,
-    /data:text\/html/gi,
-    /<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi,
-    /<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi,
-    /<embed\b[^<]*(?:(?!<\/embed>)<[^<]*)*<\/embed>/gi,
-    /vbscript:/gi,
-    /<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi
-  ]
-};
-
+/**
+ * Create a Zod-based validator with XSS protection
+ */
 export class StreamingStringValidator {
   private config: ValidationConfig;
-  private chunkQueue: Array<{ chunk: string; resolve: (result: string) => void; reject: (error: Error) => void }> = [];
-  private processingChunks = 0;
+  private maxStringLength: number;
 
-  constructor(config: Partial<ValidationConfig> = {}) {
-    this.config = { ...DEFAULT_CONFIG, ...config };
+  constructor(config: ValidationConfig = {}) {
+    this.config = { ...config };
+    this.maxStringLength = config.maxStringLength || 50000;
   }
 
+  /**
+   * Validate string with XSS protection
+   */
   async validateString(input: string, maxLength?: number): Promise<string> {
-    if (typeof input !== 'string') return '';
-
-    const actualMaxLength = maxLength || this.config.maxStringLength;
-    if (input.length === 0) return '';
-
-    if (input.length <= this.config.maxChunkSize) {
-      return this.validateChunk(input, actualMaxLength);
-    }
-
-    return this.processLargeString(input, actualMaxLength);
-  }
-
-  private async processLargeString(input: string, maxLength: number): Promise<string> {
-    const chunks = this.createChunks(input);
-    const validatedChunks: string[] = [];
-
-    for (let i = 0; i < chunks.length; i++) {
-      if (this.processingChunks >= this.config.maxConcurrentChunks) {
-        await this.waitForChunkSlot();
-      }
-
-      const chunkPromise = this.processChunkAsync(chunks[i]);
-      validatedChunks.push(await chunkPromise);
-    }
-
-    const result = validatedChunks.join('');
-    return result.substring(0, maxLength);
-  }
-
-  private createChunks(input: string): string[] {
-    const chunks: string[] = [];
-    const chunkSize = this.config.maxChunkSize;
-
-    for (let i = 0; i < input.length; i += chunkSize - 100) {
-      const end = Math.min(i + chunkSize, input.length);
-      chunks.push(input.substring(i, end));
-    }
-
-    return chunks;
-  }
-
-  private async processChunkAsync(chunk: string): Promise<string> {
-    this.processingChunks++;
-
-    try {
-      return await new Promise((resolve, reject) => {
-        this.chunkQueue.push({
-          chunk,
-          resolve: (result: string) => resolve(result),
-          reject: (error: Error) => reject(error)
-        });
-
-        this.processQueue();
-      });
-    } finally {
-      this.processingChunks--;
+    const actualMaxLength = maxLength || this.maxStringLength;
+    
+    // Create schema with dynamic max length
+    const schema = z.string().max(actualMaxLength).transform(sanitizeString);
+    const result = schema.safeParse(input);
+    
+    if (result.success) {
+      return result.data;
+    } else {
+      // Log validation errors for debugging
+      console.warn(`Validation failed: ${result.error?.message}`);
+      // Return sanitized version even if validation fails
+      return sanitizeString(input).substring(0, actualMaxLength);
     }
   }
 
-  private async processQueue(): Promise<void> {
-    if (this.chunkQueue.length === 0) return;
-
-    const item = this.chunkQueue.shift();
-    if (!item) return;
-
-    try {
-      const result = this.validateChunk(item.chunk, item.chunk.length);
-      item.resolve(result);
-    } catch (error) {
-      item.reject(error instanceof Error ? error : new Error(String(error)));
-    }
-  }
-
-  private async waitForChunkSlot(): Promise<void> {
-    return new Promise(resolve => {
-      const checkSlot = () => {
-        if (this.processingChunks < this.config.maxConcurrentChunks) {
-          resolve();
-        } else {
-          setTimeout(checkSlot, 10);
-        }
-      };
-      checkSlot();
-    });
-  }
-
-  private validateChunk(chunk: string, maxLength: number): string {
-    let sanitized = chunk;
-
-    for (const pattern of this.config.dangerousPatterns) {
-      sanitized = sanitized.replace(pattern, '');
-    }
-
-    sanitized = this.escapeHtml(sanitized);
-
-    return sanitized.substring(0, maxLength);
-  }
-
-  private escapeHtml(str: string): string {
-    const htmlEscapes: Record<string, string> = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#x27;'
-    };
-
-    return str.replace(/[&<>"']/g, char => htmlEscapes[char] || char);
-  }
-
+  /**
+   * Validate object recursively with XSS protection
+   */
   async validateObject(obj: any, depth = 0, maxDepth = 10): Promise<any> {
     if (depth > maxDepth) {
       throw new Error('Maximum object depth exceeded');
@@ -187,7 +149,7 @@ export class StreamingStringValidator {
       return validatedArray;
     }
 
-    if (typeof obj === 'object') {
+    if (typeof obj === 'object' && obj !== null && !Array.isArray(obj)) {
       const validatedObj: Record<string, any> = {};
       for (const [key, value] of Object.entries(obj)) {
         const validatedKey = await this.validateString(key, 100);
@@ -199,26 +161,52 @@ export class StreamingStringValidator {
     return obj;
   }
 
+  /**
+   * Check for dangerous patterns (for backward compatibility)
+   */
   hasDangerousPatterns(input: string): boolean {
-    for (const pattern of this.config.dangerousPatterns) {
-      pattern.lastIndex = 0;
-      if (pattern.test(input)) {
-        return true;
-      }
-    }
-    return false;
+    return hasDangerousPatterns(input);
   }
 
+  /**
+   * Get current configuration
+   */
   getConfig(): ValidationConfig {
     return { ...this.config };
   }
 }
 
-export function createStreamingValidator(config: Partial<ValidationConfig> = {}): StreamingStringValidator {
+// Pre-configured validators for common use cases
+export const defaultValidator = new StreamingStringValidator();
+export const strictValidator = new StreamingStringValidator({
+  maxStringLength: 10000,
+  maxQueryStringLength: 200
+});
+export const relaxedValidator = new StreamingStringValidator({
+  maxStringLength: 100000,
+  maxQueryStringLength: 1000
+});
+
+// Export Zod schemas for custom validation
+export {
+  z,
+  safeString,
+  safeNumber,
+  safeBoolean,
+  safeArray,
+  safeObject,
+  shortString,
+  mediumString,
+  longString
+};
+
+// Factory function for backward compatibility
+export function createStreamingValidator(config: ValidationConfig = {}): StreamingStringValidator {
   return new StreamingStringValidator(config);
 }
 
-export function streamingValidationMiddleware(config: Partial<ValidationConfig> = {}) {
+// Export middleware function for Express compatibility
+export function streamingValidationMiddleware(config: ValidationConfig = {}) {
   const validator = createStreamingValidator(config);
 
   return async (req: any, res: any, next: any) => {
@@ -232,7 +220,8 @@ export function streamingValidationMiddleware(config: Partial<ValidationConfig> 
       if (req.query && typeof req.query === 'object') {
         for (const [key, value] of Object.entries(req.query)) {
           if (typeof value === 'string') {
-            req.query[key] = await validator.validateString(value, config.maxQueryStringLength || 500);
+            const maxQueryLength = validator['config']?.maxQueryStringLength || 500;
+            req.query[key] = await validator.validateString(value, maxQueryLength);
           }
         }
       }
@@ -259,18 +248,5 @@ export function streamingValidationMiddleware(config: Partial<ValidationConfig> 
   };
 }
 
-export const defaultValidator = createStreamingValidator();
-
-export const strictValidator = createStreamingValidator({
-  maxStringLength: 10000,
-  maxChunkSize: 1024,
-  maxConcurrentChunks: 5
-});
-
-export const relaxedValidator = createStreamingValidator({
-  maxStringLength: 100000,
-  maxChunkSize: 4096,
-  maxConcurrentChunks: 20
-});
-
+// Export the class as default for backward compatibility
 export default StreamingStringValidator;

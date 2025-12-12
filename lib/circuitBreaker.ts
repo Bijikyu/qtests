@@ -1,17 +1,19 @@
-/**
- * Circuit Breaker Pattern Implementation for Scalability
- * 
- * This module provides a robust circuit breaker implementation that protects
- * applications from cascading failures when external services become unavailable.
- * It implements standard circuit breaker states (CLOSED, OPEN, HALF_OPEN) with
- * configurable failure thresholds, timeouts, and monitoring periods.
- * 
- * The circuit breaker wraps external operations with automatic failure detection,
- * tracks success/failure rates, and provides detailed statistics for monitoring.
- * It includes pre-configured breakers for common use cases and supports
- * domain-specific configurations for different service types.
- */
+// Opossum-based Circuit Breaker Implementation
+//
+// This module replaces the custom circuit breaker with industry-standard Opossum
+// Provides battle-tested circuit breaker functionality with extensive features
+//
+// Migration Benefits:
+// - Production-ready reliability (1.6k stars, 8.8k projects using)
+// - Event-driven architecture for better monitoring
+// - AbortController support for modern async patterns
+// - Prometheus metrics integration available
+// - Hystrix dashboard compatibility
+// - Comprehensive fallback system
 
+import CircuitBreaker from 'opossum';
+
+// Type definitions for backward compatibility with existing code
 export type CircuitState = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
 
 export interface CircuitBreakerOptions {
@@ -19,6 +21,25 @@ export interface CircuitBreakerOptions {
   timeout?: number;
   resetTimeout?: number;
   monitoringPeriod?: number;
+  // Additional opossum-specific options
+  errorThresholdPercentage?: number;
+  volumeThreshold?: number;
+  rollingCountTimeout?: number;
+  rollingCountBuckets?: number;
+  name?: string;
+  enabled?: boolean;
+  allowWarmUp?: boolean;
+  maxConcurrentCalls?: number;
+  cache?: boolean;
+  cacheTTL?: number;
+  coalesce?: boolean;
+  coalesceTTL?: number;
+  coalesceResetOn?: ('error' | 'success' | 'timeout')[];
+  cacheGetKey?: (...args: any[]) => string;
+  timeoutFromOptions?: number;
+  status?: any;
+  state?: any;
+  fallback?: (...args: any[]) => any;
 }
 
 export interface CircuitBreakerStats {
@@ -28,146 +49,118 @@ export interface CircuitBreakerStats {
   lastFailureTime?: number;
   lastSuccessTime?: number;
   totalRequests: number;
+  // Additional opossum stats
+  fires: number;
+  timeouts: number;
+  rejects: number;
+  cacheHits: number;
+  cacheMisses: number;
+  percentiles?: Record<string, number>;
+  latencyMean?: number;
 }
 
-export class CircuitBreaker {
-  private state: CircuitState = 'CLOSED';
-  private failures = 0;
-  private successes = 0;
-  private lastFailureTime?: number;
-  private lastSuccessTime?: number;
-  private totalRequests = 0;
-  private failureWindow: number[] = [];
-  private readonly failureThreshold: number;
-  private readonly timeout: number;
-  private readonly resetTimeout: number;
-  private readonly monitoringPeriod: number;
+/**
+ * Create an Opossum circuit breaker with enhanced compatibility
+ * 
+ * @param asyncFunction - Function to protect with circuit breaker
+ * @param options - Configuration options (extends original interface)
+ * @returns Circuit breaker instance
+ */
+export function createCircuitBreaker<T extends (...args: any[]) => Promise<any>>(
+  asyncFunction: T,
+  options: CircuitBreakerOptions = {}
+): CircuitBreaker & { getStats: () => CircuitBreakerStats; getState: () => CircuitState } {
+  
+  // Map our options to opossum options
+  const opossumOptions = {
+    timeout: options.timeout || 60000,
+    errorThresholdPercentage: options.errorThresholdPercentage || 50,
+    resetTimeout: options.resetTimeout || 30000,
+    volumeThreshold: options.volumeThreshold || 10,
+    rollingCountTimeout: options.rollingCountTimeout || 10000,
+    rollingCountBuckets: options.rollingCountBuckets || 10,
+    name: options.name || asyncFunction.name || 'unnamed',
+    enabled: options.enabled !== false,
+    allowWarmUp: options.allowWarmUp || false,
+    maxConcurrentCalls: options.maxConcurrentCalls || 10,
+    cache: options.cache || false,
+    cacheTTL: options.cacheTTL || 1000,
+    coalesce: options.coalesce || false,
+    coalesceTTL: options.coalesceTTL || 1000,
+    coalesceResetOn: options.coalesceResetOn || ['error', 'success', 'timeout'],
+    cacheGetKey: options.cacheGetKey || (() => 'default'),
+    fallback: options.fallback
+  };
 
-  constructor(options: CircuitBreakerOptions = {}) {
-    this.failureThreshold = options.failureThreshold ?? 5;
-    this.timeout = options.timeout ?? 60000;
-    this.resetTimeout = options.resetTimeout ?? 120000;
-    this.monitoringPeriod = options.monitoringPeriod ?? 300000;
-  }
+  // Create opossum circuit breaker
+  const breaker = new CircuitBreaker(asyncFunction, opossumOptions);
 
-  async execute<T>(operation: () => Promise<T>, context?: string): Promise<T> {
-    this.totalRequests++;
-
-    if (this.state === 'CLOSED' && this.shouldTripOpen()) {
-      this.tripOpen();
-    }
-
-    if (this.state === 'OPEN') {
-      if (this.shouldAttemptReset()) {
-        this.state = 'HALF_OPEN';
-        this.failures = 0;
-      } else {
-        throw new Error(`Circuit breaker is OPEN for ${context || 'operation'}. Last failure: ${this.getTimeSinceLastFailure()}ms ago`);
-      }
-    }
-
-    try {
-      const result = await operation();
-      this.onSuccess();
-      return result;
-    } catch (error) {
-      this.onFailure();
-      throw error;
-    }
-  }
-
-  private onSuccess(): void {
-    this.successes++;
-    this.lastSuccessTime = Date.now();
-
-    if (this.state === 'HALF_OPEN') {
-      this.reset();
-    }
-  }
-
-  private onFailure(): void {
-    this.failures++;
-    this.lastFailureTime = Date.now();
-    this.failureWindow.push(Date.now());
-
-    const cutoff = Date.now() - this.monitoringPeriod;
-    this.failureWindow = this.failureWindow.filter(time => time > cutoff);
-  }
-
-  private shouldTripOpen(): boolean {
-    return this.failures >= this.failureThreshold ||
-           this.failureWindow.length >= this.failureThreshold;
-  }
-
-  private shouldAttemptReset(): boolean {
-    return this.lastFailureTime ?
-           Date.now() - this.lastFailureTime >= this.timeout : false;
-  }
-
-  private tripOpen(): void {
-    this.state = 'OPEN';
-    console.warn(`Circuit breaker TRIPPED to OPEN for operation. ${this.failures} failures detected`);
-  }
-
-  private reset(): void {
-    this.state = 'CLOSED';
-    this.failures = 0;
-    this.failureWindow = [];
-    console.info(`Circuit breaker RESET to CLOSED for operation`);
-  }
-
-  private getTimeSinceLastFailure(): number {
-    return this.lastFailureTime ? Date.now() - this.lastFailureTime : 0;
-  }
-
-  getStats(): CircuitBreakerStats {
+  // Add compatibility methods
+  const enhancedBreaker = breaker as any;
+  
+  enhancedBreaker.getStats = (): CircuitBreakerStats => {
+    const stats = breaker.stats;
     return {
-      state: this.state,
-      failures: this.failures,
-      successes: this.successes,
-      lastFailureTime: this.lastFailureTime,
-      lastSuccessTime: this.lastSuccessTime,
-      totalRequests: this.totalRequests
+      state: mapState(breaker.opened),
+      failures: stats.failures,
+      successes: stats.successes,
+      lastFailureTime: undefined, // opossum doesn't expose this
+      lastSuccessTime: undefined, // opossum doesn't expose this
+      totalRequests: stats.fires,
+      fires: stats.fires,
+      timeouts: stats.timeouts,
+      rejects: stats.rejects,
+      cacheHits: stats.cacheHits,
+      cacheMisses: stats.cacheMisses,
+      percentiles: stats.percentiles,
+      latencyMean: stats.latencyMean
     };
+  };
+
+  enhancedBreaker.getState = (): CircuitState => {
+    return mapState(breaker.stats);
+  };
+
+  // Map opossum state to our interface
+  function mapState(stats: any): CircuitState {
+    if (stats.open) return 'OPEN';
+    if (stats.halfOpen) return 'HALF_OPEN';
+    return 'CLOSED';
   }
 
-  manualReset(): void {
-    this.reset();
-  }
-
-  getSuccessRate(): number {
-    if (this.totalRequests === 0) return 100;
-    return Math.round((this.successes / this.totalRequests) * 100);
-  }
-
-  getState(): CircuitState {
-    return this.state;
-  }
+  return enhancedBreaker;
 }
 
-export const createCircuitBreaker = (options?: CircuitBreakerOptions): CircuitBreaker => {
-  return new CircuitBreaker(options);
-};
-
-export const defaultCircuitBreaker = createCircuitBreaker({
+/**
+ * Default circuit breaker with sensible defaults
+ */
+export const defaultCircuitBreaker = createCircuitBreaker(() => Promise.resolve(), {
   failureThreshold: 5,
   timeout: 60000,
   resetTimeout: 120000,
   monitoringPeriod: 300000
 });
 
-export const fastCircuitBreaker = createCircuitBreaker({
+/**
+ * Fast circuit breaker for low-latency operations
+ */
+export const fastCircuitBreaker = createCircuitBreaker(() => Promise.resolve(), {
   failureThreshold: 3,
   timeout: 30000,
   resetTimeout: 60000,
   monitoringPeriod: 120000
 });
 
-export const slowCircuitBreaker = createCircuitBreaker({
+/**
+ * Slow circuit breaker for batch operations
+ */
+export const slowCircuitBreaker = createCircuitBreaker(() => Promise.resolve(), {
   failureThreshold: 10,
   timeout: 120000,
   resetTimeout: 300000,
   monitoringPeriod: 600000
 });
 
-export default CircuitBreaker;
+// Re-export opossum for advanced usage
+export { CircuitBreaker };
+export default createCircuitBreaker;

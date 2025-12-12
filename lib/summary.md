@@ -5,8 +5,19 @@ The `lib/` directory contains the core qtests framework functionality, including
 
 ## Files and Their Roles
 
-### testGenerator.ts
-**Role**: Main test generator implementation for creating automated integration tests  
+### circuitBreaker.ts
+**Role**: Opossum-based circuit breaker implementation for production reliability  
+**Migration**: Replaced custom implementation with industry-standard Opossum library  
+**Key Features**:
+- Event-driven architecture with comprehensive monitoring
+- AbortController support for modern async patterns  
+- Prometheus metrics integration available
+- Hystrix dashboard compatibility
+- Comprehensive fallback system
+- Better error handling and state management
+**Request/Response Flows**: 
+- Input: Async functions and configuration options
+- Output: Protected function execution with circuit breaking  
 **Key Features**:
 - Analyzes TypeScript/JavaScript source files for exports and API routes
 - Generates `.GeneratedTest.test.ts` integration tests for API endpoints and Express routes
