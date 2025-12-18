@@ -12,6 +12,7 @@
 
 import fs from 'fs';
 import path from 'path';
+import { safeExists, safeWriteFile, ensureDir } from './fileSystemUtils.js';
 
 // Configuration for runner scaffolding
 interface RunnerConfig {
@@ -362,12 +363,10 @@ export { createMockApp, supertest } from './httpTest.shim.js';
     const configPath = path.join(configDir, 'jest.config.mjs');
     
     if (!this.config.dryRun) {
-      if (!fs.existsSync(configDir)) {
-        fs.mkdirSync(configDir, { recursive: true });
-      }
+      ensureDir(configDir);
       
-      if (!fs.existsSync(configPath) || this.config.force) {
-        fs.writeFileSync(configPath, this.getJestConfig(), 'utf8');
+      if (!safeExists(configPath) || this.config.force) {
+        safeWriteFile(configPath, this.getJestConfig());
         console.log('✅ Created config/jest.config.mjs');
       } else {
         console.log('ℹ️ config/jest.config.mjs already exists');
@@ -385,12 +384,10 @@ export { createMockApp, supertest } from './httpTest.shim.js';
     const setupPath = path.join(configDir, 'jest-setup.ts');
     
     if (!this.config.dryRun) {
-      if (!fs.existsSync(configDir)) {
-        fs.mkdirSync(configDir, { recursive: true });
-      }
+      ensureDir(configDir);
       
-      if (!fs.existsSync(setupPath) || this.config.force) {
-        fs.writeFileSync(setupPath, this.getJestSetup(), 'utf8');
+      if (!safeExists(setupPath) || this.config.force) {
+        safeWriteFile(setupPath, this.getJestSetup());
         console.log('✅ Created config/jest-setup.ts');
       } else {
         console.log('ℹ️ config/jest-setup.ts already exists');
@@ -408,12 +405,10 @@ export { createMockApp, supertest } from './httpTest.shim.js';
     const polyfillPath = path.join(configDir, 'jest-require-polyfill.cjs');
     
     if (!this.config.dryRun) {
-      if (!fs.existsSync(configDir)) {
-        fs.mkdirSync(configDir, { recursive: true });
-      }
+      ensureDir(configDir);
       
-      if (!fs.existsSync(polyfillPath) || this.config.force) {
-        fs.writeFileSync(polyfillPath, this.getRequirePolyfill(), 'utf8');
+      if (!safeExists(polyfillPath) || this.config.force) {
+        safeWriteFile(polyfillPath, this.getRequirePolyfill());
         console.log('✅ Created config/jest-require-polyfill.cjs');
       } else {
         console.log('ℹ️ config/jest-require-polyfill.cjs already exists');
@@ -430,23 +425,21 @@ export { createMockApp, supertest } from './httpTest.shim.js';
     const utilsDir = path.join(projectRoot, 'utils', 'httpTest');
     
     if (!this.config.dryRun) {
-      if (!fs.existsSync(utilsDir)) {
-        fs.mkdirSync(utilsDir, { recursive: true });
-      }
+      ensureDir(utilsDir);
       
       const { ts, js } = this.getHttpTestUtils();
       const tsPath = path.join(utilsDir, 'httpTest.ts');
       const jsPath = path.join(utilsDir, 'httpTest.shim.js');
       
-      if (!fs.existsSync(tsPath) || this.config.force) {
-        fs.writeFileSync(tsPath, ts, 'utf8');
+      if (!safeExists(tsPath) || this.config.force) {
+        safeWriteFile(tsPath, ts);
         console.log('✅ Created utils/httpTest/httpTest.ts');
       } else {
         console.log('ℹ️ utils/httpTest/httpTest.ts already exists');
       }
       
-      if (!fs.existsSync(jsPath) || this.config.force) {
-        fs.writeFileSync(jsPath, js, 'utf8');
+      if (!safeExists(jsPath) || this.config.force) {
+        safeWriteFile(jsPath, js);
         console.log('✅ Created utils/httpTest/httpTest.shim.js');
       } else {
         console.log('ℹ️ utils/httpTest/httpTest.shim.js already exists');

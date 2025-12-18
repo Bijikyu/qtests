@@ -1,4 +1,5 @@
 import { executeWithLogs, setLogging } from '../lib/logUtils.js';
+import { withErrorLogging } from '../lib/errorHandling.js';
 process.env.NODE_ENV !== 'test' && setLogging(false);
 import dotenv from 'dotenv';
 
@@ -33,34 +34,28 @@ const defaultEnv: DefaultEnv = {
 function setTestEnv(): boolean {
   console.log(`setTestEnv is running with default values`);
   
-  try {
+  return withErrorLogging(() => {
     dotenv.config();
     Object.assign(process.env, defaultEnv);
     console.log(`setTestEnv is returning true`);
     return true;
-  } catch (error: any) {
-    console.log(`setTestEnv error: ${error.message}`);
-    throw error;
-  }
+  }, 'setTestEnv');
 }
 
 function saveEnv(): Record<string, string | undefined> {
   console.log(`saveEnv is running with none`);
   
-  try {
+  return withErrorLogging(() => {
     const savedEnv = { ...process.env };
-    console.log(`saveEnv is returning ${savedEnv}`);
+    console.log(`saveEnv is returning ${JSON.stringify(Object.keys(savedEnv).length)} env vars`);
     return savedEnv;
-  } catch (error: any) {
-    console.log(`saveEnv error: ${error.message}`);
-    throw error;
-  }
+  }, 'saveEnv');
 }
 
 function restoreEnv(savedEnv: Record<string, string | undefined>): boolean {
   console.log(`restoreEnv is running with ${savedEnv}`);
 
-  try {
+  return withErrorLogging(() => {
     if (!savedEnv || typeof savedEnv !== 'object') {
       console.log(`restoreEnv: invalid saved environment`);
       return false;
@@ -79,16 +74,13 @@ function restoreEnv(savedEnv: Record<string, string | undefined>): boolean {
 
     console.log(`restoreEnv is returning true`);
     return true;
-  } catch (error: any) {
-    console.log(`restoreEnv error: ${error.message}`);
-    throw error;
-  }
+  }, 'restoreEnv');
 }
 
 function attachMockSpies<T extends MockSpy>(mock: T): T {
   console.log(`attachMockSpies is running with ${mock}`);
   
-  try {
+  return withErrorLogging(() => {
     if (typeof jest !== `undefined`) {
       mock.mockClear = jest.fn();
       mock.mockReset = jest.fn();
@@ -98,10 +90,7 @@ function attachMockSpies<T extends MockSpy>(mock: T): T {
     }
     console.log(`attachMockSpies is returning ${mock}`);
     return mock;
-  } catch (error: any) {
-    console.log(`attachMockSpies error: ${error.message}`);
-    throw error;
-  }
+  }, 'attachMockSpies');
 }
 
 function makeLoggedMock<T extends MockSpy>(name: string, creator: () => T): T {
