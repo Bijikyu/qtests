@@ -74,7 +74,7 @@ import {
   type TransformedError,
   type BatchResult,
   type BatchProcessingResult
-} from './lib/errorWrapper.js';
+} from './lib/errorHandling.js';
 
 // Memory monitoring utilities
 import {

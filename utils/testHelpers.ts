@@ -1,6 +1,6 @@
 import { reload, moduleReloadLock } from './helpers/moduleReloader.js';
 import { stubQerrors } from './helpers/qerrorsStub.js';
-import { withMockConsole } from './helpers/consoleMocker.js';
+import { withMockConsole } from './mockConsole.js';
 import { createJsonRes, createRes } from './helpers/responseMocker.js';
 import { backupEnvVars, restoreEnvVars, withSavedEnv } from './helpers/envManager.js';
 import { generateKey } from './helpers/keyGenerator.js';

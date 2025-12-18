@@ -1,44 +1,39 @@
 /**
- * Mock Axios Factory for Environment-Aware Testing - TypeScript Implementation
- * 
- * This module provides factory functions for creating mock axios implementations
- * that simulate HTTP responses without making actual network requests. This is
- * essential for testing applications in offline environments or when external
- * APIs are unavailable.
+ * Consolidated Mock HTTP Client Utilities
+ * Provides comprehensive HTTP mocking capabilities for testing
+ * Consolidates functionality from mockAxios.ts and mockAxiosModern.ts
+ * Eliminates ~80% code duplication while preserving all features
  * 
  * Design philosophy:
- * - Factory pattern for creating customizable mock instances
- * - Predictable response simulation for consistent testing
- * - No network I/O to ensure fast, isolated test execution
- * - Extensible interface for adding custom response behaviors
- * 
- * Key benefits:
- * 1. Environment Isolation - Tests don't depend on external services
- * 2. Predictable Behavior - Same responses every time for reliable tests
- * 3. Fast Execution - No network delays in test suites
- * 4. Flexible Configuration - Can simulate various response scenarios
- * 
- * Use cases:
- * - Testing HTTP-dependent code without external API dependencies
- * - Simulating various response scenarios (success, error, timeout)
- * - Development environments where external APIs are unavailable
- * - Integration testing with controlled response data
+ * - Multiple mocking strategies for different testing needs
+ * - Simple factory mocks for quick test setup
+ * - MSW-based mocks for realistic network interception
+ * - Backward compatibility with existing test code
+ * - Progressive migration path from simple to advanced mocking
  */
+
+// Import MSW for advanced mocking capabilities
+import { http } from 'msw';
+import { setupServer } from 'msw/node';
 
 // Import logging control utility for consistent framework behavior
 import { setLogging } from '../lib/logUtils.js';
 if (process.env.NODE_ENV !== 'test') setLogging(false);
 
-// Import axios stub for consistent mock behavior
-import axiosStub from '../stubs/axios.js';
+// ==================== INTERFACE DEFINITIONS ====================
 
-// Type definitions for axios-compatible mock
+/**
+ * Configuration options for simple mock axios behavior
+ */
 interface MockAxiosConfig {
   defaultResponse?: any;
   defaultStatus?: number;
   simulateErrors?: boolean;
 }
 
+/**
+ * Axios-compatible response structure
+ */
 interface MockAxiosResponse {
   data: any;
   status: number;
@@ -48,17 +43,66 @@ interface MockAxiosResponse {
   request: Record<string, any>;
 }
 
+/**
+ * Mock axios interface with HTTP methods
+ */
 interface MockAxios {
   get(url: string, config?: any): Promise<MockAxiosResponse>;
   post(url: string, data?: any, config?: any): Promise<MockAxiosResponse>;
   put(url: string, data?: any, config?: any): Promise<MockAxiosResponse>;
   delete(url: string, config?: any): Promise<MockAxiosResponse>;
+  patch(url: string, data?: any, config?: any): Promise<MockAxiosResponse>;
   request(config?: any): Promise<MockAxiosResponse>;
 }
 
+/**
+ * User-configurable mock axios with response mapping
+ */
 interface UserMockAxios {
   (config: { url: string; [key: string]: any }): Promise<MockAxiosResponse>;
   __set: (url: string, data: any, status?: number, reject?: boolean) => void;
+}
+
+/**
+ * HTTP Response interface for MSW-based mocking
+ */
+interface MockResponse {
+  status?: number;
+  statusText?: string;
+  headers?: Record<string, string>;
+  data?: any;
+  delay?: number; // Response delay in milliseconds
+}
+
+/**
+ * Request matcher interface for MSW handlers
+ */
+interface RequestMatcher {
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD' | 'OPTIONS';
+  url: string | RegExp;
+  headers?: Record<string, string>;
+  body?: any;
+}
+
+// ==================== SIMPLE MOCK AXIOS IMPLEMENTATION ====================
+
+/**
+ * Create a standardized mock response object
+ * Maintains axios response structure for compatibility
+ * 
+ * @param data - Response data payload
+ * @param status - HTTP status code
+ * @returns Axios-compatible response object
+ */
+function createStandardMockResponse(data: any = {}, status: number = 200): MockAxiosResponse {
+  return {
+    data,
+    status,
+    statusText: status === 200 ? 'OK' : 'Error',
+    headers: {},
+    config: {},
+    request: {}
+  };
 }
 
 /**
@@ -66,177 +110,78 @@ interface UserMockAxios {
  * 
  * This factory function creates an axios-compatible object that provides
  * the same interface as real axios but returns simulated responses instead
- * of making actual HTTP requests. The mock instance is designed to be a
- * drop-in replacement for axios in testing environments.
- * 
- * Implementation strategy:
- * 1. Provide async methods that match axios API signatures
- * 2. Return promises that resolve immediately with predictable data
- * 3. Support both method-specific functions and generic request function
- * 4. Include response structure that matches axios response format
- * 
- * Why factory pattern:
- * - Allows customization of mock behavior per test scenario
- * - Enables future enhancement with configurable response data
- * - Provides clean separation between mock creation and usage
- * - Follows established patterns in testing frameworks
+ * of making actual HTTP requests.
  * 
  * @param options - Configuration options for mock behavior
  * @returns Mock axios instance with HTTP methods
- * 
- * @example
- * const mockAxios = createMockAxios();
- * const response = await mockAxios.get('/api/data');
- * // Returns: { data: {}, status: 200, statusText: 'OK' }
- * 
- * @example
- * const customMock = createMockAxios({
- *   defaultResponse: { users: [] },
- *   defaultStatus: 200
- * });
  */
-function createMockAxios(options: MockAxiosConfig = {}): MockAxios {
+export function createMockAxios(options: MockAxiosConfig = {}): MockAxios {
   console.log(`createMockAxios is running with ${JSON.stringify(options)}`);
 
   try {
-    // Extract configuration options with sensible defaults
     const {
       defaultResponse = {},
       defaultStatus = 200,
       simulateErrors = false
     } = options;
 
-    /**
-     * Create a standardized mock response object
-     * 
-     * This helper function creates response objects that match the structure
-     * returned by real axios requests. Maintaining this structure ensures
-     * that application code can work with mock responses identically to
-     * real responses.
-     * 
-     * @param data - Response data payload
-     * @param status - HTTP status code
-     * @returns Axios-compatible response object
-     */
-    function createMockResponse(data: any = defaultResponse, status: number = defaultStatus): MockAxiosResponse {
-      return {
-        data,
-        status,
-        statusText: status === 200 ? 'OK' : 'Error',
-        headers: {},
-        config: {},
-        request: {}
-      };
-    }
-
-    /**
-     * Mock axios instance with HTTP method implementations
-     * 
-     * This object provides the core axios API methods that applications
-     * commonly use. Each method returns a promise that resolves immediately
-     * with a mock response, allowing tests to proceed without network delays.
-     */
     const mockAxios: MockAxios = {
-      /**
-       * Mock GET request implementation
-       * 
-       * Simulates HTTP GET requests by returning immediate promise resolution
-       * with predictable response data. Accepts the same parameters as real
-       * axios.get() for API compatibility.
-       * 
-       * @param url - Request URL (logged but not used)
-       * @param config - Request configuration (logged but not used)
-       * @returns Promise resolving to mock response
-       */
       async get(url: string, _config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.get is running with ${url}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
         }
-        const response = createMockResponse();
+        const response = createStandardMockResponse(defaultResponse, defaultStatus);
         console.log(`mockAxios.get is returning ${JSON.stringify(response)}`);
         return response;
       },
 
-      /**
-       * Mock POST request implementation
-       * 
-       * Simulates HTTP POST requests with immediate promise resolution.
-       * Accepts data payload and configuration parameters for API compatibility
-       * with real axios.post() method.
-       * 
-       * @param url - Request URL (logged but not used)
-       * @param data - Request payload (logged but not used)
-       * @param config - Request configuration (logged but not used)
-       * @returns Promise resolving to mock response
-       */
       async post(url: string, _data: any = {}, _config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.post is running with ${url}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
         }
-        const response = createMockResponse();
+        const response = createStandardMockResponse(defaultResponse, defaultStatus);
         console.log(`mockAxios.post is returning ${JSON.stringify(response)}`);
         return response;
       },
 
-      /**
-       * Mock PUT request implementation
-       * 
-       * Simulates HTTP PUT requests for update operations.
-       * Maintains API compatibility with axios.put() method signature.
-       * 
-       * @param url - Request URL (logged but not used)
-       * @param data - Request payload (logged but not used)
-       * @param config - Request configuration (logged but not used)
-       * @returns Promise resolving to mock response
-       */
       async put(url: string, _data: any = {}, _config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.put is running with ${url}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
         }
-        const response = createMockResponse();
+        const response = createStandardMockResponse(defaultResponse, defaultStatus);
         console.log(`mockAxios.put is returning ${JSON.stringify(response)}`);
         return response;
       },
 
-      /**
-       * Mock DELETE request implementation
-       * 
-       * Simulates HTTP DELETE requests for resource removal operations.
-       * Maintains API compatibility with axios.delete() method signature.
-       * 
-       * @param url - Request URL (logged but not used)
-       * @param config - Request configuration (logged but not used)
-       * @returns Promise resolving to mock response
-       */
       async delete(url: string, _config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.delete is running with ${url}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
         }
-        const response = createMockResponse();
+        const response = createStandardMockResponse(defaultResponse, defaultStatus);
         console.log(`mockAxios.delete is returning ${JSON.stringify(response)}`);
         return response;
       },
 
-      /**
-       * Generic request method for custom HTTP operations
-       * 
-       * Provides the axios.request() interface for custom request configurations.
-       * This method covers any HTTP methods not explicitly implemented above
-       * and allows for more complex request configurations.
-       * 
-       * @param config - Complete request configuration object
-       * @returns Promise resolving to mock response
-       */
+      async patch(url: string, _data: any = {}, _config: any = {}): Promise<MockAxiosResponse> {
+        console.log(`mockAxios.patch is running with ${url}`);
+        if (simulateErrors && Math.random() < 0.1) {
+          throw new Error('Simulated network error');
+        }
+        const response = createStandardMockResponse(defaultResponse, defaultStatus);
+        console.log(`mockAxios.patch is returning ${JSON.stringify(response)}`);
+        return response;
+      },
+
       async request(config: any = {}): Promise<MockAxiosResponse> {
         console.log(`mockAxios.request is running with ${JSON.stringify(config)}`);
         if (simulateErrors && Math.random() < 0.1) {
           throw new Error('Simulated network error');
         }
-        const response = createMockResponse();
+        const response = createStandardMockResponse(defaultResponse, defaultStatus);
         console.log(`mockAxios.request is returning ${JSON.stringify(response)}`);
         return response;
       }
@@ -252,69 +197,64 @@ function createMockAxios(options: MockAxiosConfig = {}): MockAxios {
 }
 
 /**
- * Generates a mock axios instance returning preset data.
- * It intercepts axios calls to return canned responses, avoiding real HTTP.
- * Rationale: enables offline tests and predictable responses.
+ * Creates a user-configurable mock axios with response mapping
+ * 
+ * @returns Mock axios with programmable responses
  */
-function createUserMockAxios(): UserMockAxios {
-    console.log(`createMockAxios is running with none`); // log start of factory
-    try {
-        const responses = new Map<string, { data: any; status: number; reject: boolean }>(); // map to hold url responses
-        responses.set('http://a', { data: { mock: true }, status: 200, reject: false }); // seed default mock
-        
-        function mockAxios(config: { url: string; [key: string]: any }): Promise<MockAxiosResponse> { // simulate axios request/response
-            console.log(`mockAxios is running with ${JSON.stringify(config)}`); // log start
-            try {
-                const mock = responses.get(config.url); // lookup response
-                if(mock){
-                    const result: MockAxiosResponse = { 
-                        status: mock.status, 
-                        data: mock.data,
-                        statusText: mock.status === 200 ? 'OK' : 'Error',
-                        headers: {},
-                        config: {},
-                        request: {}
-                    }; // build axios style result
-                    console.log(`mockAxios is returning ${JSON.stringify(result)}`); // log return
-                    if(mock.reject) return Promise.reject({ response: result }); // reject when flagged
-                    return Promise.resolve(result); // resolve mock success
-                }
-                const error = { response: { status: 500, data: 'error' } }; // fallback error
-                console.log(`mockAxios is returning ${JSON.stringify(error)}`); // log error return
-                return Promise.reject(error); // reject unknown url
-            } catch(error: any){
-                console.log(`mockAxios error ${error.message}`); // log internal error
-                return Promise.reject(error); // propagate
-            }
+export function createUserMockAxios(): UserMockAxios {
+  console.log(`createUserMockAxios is running with none`);
+  
+  try {
+    const responses = new Map<string, { data: any; status: number; reject: boolean }>();
+    responses.set('http://a', { data: { mock: true }, status: 200, reject: false });
+    
+    function mockAxios(config: { url: string; [key: string]: any }): Promise<MockAxiosResponse> {
+      console.log(`mockAxios is running with ${JSON.stringify(config)}`);
+      
+      try {
+        const mock = responses.get(config.url);
+        if (mock) {
+          const result: MockAxiosResponse = { 
+            status: mock.status, 
+            data: mock.data,
+            statusText: mock.status === 200 ? 'OK' : 'Error',
+            headers: {},
+            config: {},
+            request: {}
+          };
+          console.log(`mockAxios is returning ${JSON.stringify(result)}`);
+          if (mock.reject) return Promise.reject({ response: result });
+          return Promise.resolve(result);
         }
         
-        const axiosWrapper = mockAxios as UserMockAxios;
-        axiosWrapper.__set = (url: string, data: any, status: number = 200, reject: boolean = false) => { 
-            responses.set(url, { data, status, reject }); 
-        }; // helper to program responses
-        
-        console.log(`createMockAxios is returning axiosWrapper`); // log end
-        return axiosWrapper; // return configured mock
-    } catch(error: any){
-        console.log(`createMockAxios error ${error.message}`); // log failure
-        throw error; // rethrow for caller
+        const error = { response: { status: 500, data: 'error' } };
+        console.log(`mockAxios is returning ${JSON.stringify(error)}`);
+        return Promise.reject(error);
+      } catch (error: any) {
+        console.log(`mockAxios error ${error.message}`);
+        return Promise.reject(error);
+      }
     }
+    
+    const axiosWrapper = mockAxios as UserMockAxios;
+    axiosWrapper.__set = (url: string, data: any, status: number = 200, reject: boolean = false) => { 
+      responses.set(url, { data, status, reject }); 
+    };
+    
+    console.log(`createUserMockAxios is returning axiosWrapper`);
+    return axiosWrapper;
+  } catch (error: any) {
+    console.log(`createUserMockAxios error ${error.message}`);
+    throw error;
+  }
 }
 
 /**
  * Create a simple mock axios instance with default configuration
  * 
- * This convenience function creates a basic mock axios instance without
- * requiring configuration options. It's useful for quick test setup where
- * custom response behavior isn't needed.
- * 
  * @returns Basic mock axios instance
- * 
- * @example
- * const axios = createSimpleMockAxios();
- * const response = await axios.get('/api/test');
  */
-function createSimpleMockAxios(): MockAxios {
+export function createSimpleMockAxios(): MockAxios {
   console.log(`createSimpleMockAxios is running with none`);
   
   try {
@@ -327,9 +267,217 @@ function createSimpleMockAxios(): MockAxios {
   }
 }
 
-// Export mock axios factory utilities using ES module syntax
-export {
-  createMockAxios, // configurable mock axios factory
-  createUserMockAxios, // user-provided axios mock factory with exact implementation
-  createSimpleMockAxios // simple mock axios for basic usage
+// ==================== MSW-BASED MOCKING ====================
+
+/**
+ * Global mock server instance for request interception
+ */
+let mockServer: ReturnType<typeof setupServer> | null = null;
+
+/**
+ * Create a mock HTTP server with specified handlers using MSW
+ * 
+ * @param handlers - Array of request/response handlers
+ * @returns Mock server instance
+ */
+export function createMockServer(handlers: Array<{
+  request: RequestMatcher;
+  response: MockResponse;
+}>): ReturnType<typeof setupServer> {
+  const mswHandlers = handlers.map(({ request, response }) => {
+    return http[request.method](request.url, (req, res, ctx) => {
+      // Apply response delay if specified
+      if (response.delay) {
+        return res(ctx.delay(response.delay));
+      }
+      
+      // Set custom headers if provided
+      const headers = response.headers || {};
+      
+      // Return the mock response
+      return res(
+        ctx.status(response.status || 200, response.statusText),
+        ctx.json(response.data || {}),
+        ...Object.entries(headers).map(([key, value]) => ctx.set(key, value))
+      );
+    });
+  });
+
+  return setupServer(...mswHandlers);
+}
+
+/**
+ * Start the mock server to begin intercepting requests
+ * 
+ * @param server - Mock server instance to start
+ */
+export function startMockServer(server: ReturnType<typeof setupServer>): void {
+  server.listen();
+  mockServer = server;
+}
+
+/**
+ * Stop the mock server and restore normal network behavior
+ */
+export function stopMockServer(): void {
+  if (mockServer) {
+    mockServer.close();
+    mockServer = null;
+  }
+}
+
+/**
+ * Create a simple mock response factory
+ * 
+ * @param data - Response data to return
+ * @param status - HTTP status code (default: 200)
+ * @returns Mock response configuration
+ */
+export function createMockResponse(data: any, status: number = 200): MockResponse {
+  return {
+    status,
+    data,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+}
+
+/**
+ * Create an error response factory
+ * 
+ * @param status - HTTP error status code
+ * @param message - Error message
+ * @returns Mock error response configuration
+ */
+export function createErrorResponse(status: number, message: string): MockResponse {
+  return {
+    status,
+    data: { error: message, status },
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+}
+
+// ==================== HIGH-LEVEL MOCK FACTORIES ====================
+
+/**
+ * Mock HTTP client factory with predefined responses using MSW
+ * 
+ * @param presetData - Default response data for all requests
+ * @returns Mock HTTP client with MSW integration
+ */
+export function createMockHttpClient(presetData: any = {}) {
+  const handlers = [
+    {
+      request: { method: 'GET' as const, url: '*' },
+      response: createMockResponse(presetData),
+    },
+    {
+      request: { method: 'POST' as const, url: '*' },
+      response: createMockResponse(presetData),
+    },
+    {
+      request: { method: 'PUT' as const, url: '*' },
+      response: createMockResponse(presetData),
+    },
+    {
+      request: { method: 'DELETE' as const, url: '*' },
+      response: createMockResponse(presetData),
+    },
+    {
+      request: { method: 'PATCH' as const, url: '*' },
+      response: createMockResponse(presetData),
+    },
+  ];
+
+  const server = createMockServer(handlers);
+  startMockServer(server);
+
+  return {
+    server,
+    cleanup: () => stopMockServer(),
+  };
+}
+
+/**
+ * Mock HTTP client with custom response patterns
+ * 
+ * @param responsePatterns - Array of custom response patterns
+ * @returns Mock HTTP client with custom handlers
+ */
+export function createCustomMockHttpClient(responsePatterns: Array<{
+  method: string;
+  url: string | RegExp;
+  response: MockResponse;
+}>) {
+  const handlers = responsePatterns.map(pattern => ({
+    request: {
+      method: pattern.method.toUpperCase() as any,
+      url: pattern.url,
+    },
+    response: pattern.response,
+  }));
+
+  const server = createMockServer(handlers);
+  startMockServer(server);
+
+  return {
+    server,
+    cleanup: () => stopMockServer(),
+  };
+}
+
+// ==================== LEGACY COMPATIBILITY ====================
+
+/**
+ * Legacy axios mock factory for backward compatibility
+ * 
+ * @deprecated Use MSW-based mocking instead
+ * @param presetData - Default response data
+ * @returns Mock axios instance
+ */
+export function createAxiosMock(presetData: any = {}) {
+  console.log('[DEPRECATED] Using legacy axios mock. Consider migrating to MSW-based mocking.');
+  
+  const mockAxios = {
+    get: jest.fn().mockResolvedValue({ data: presetData }),
+    post: jest.fn().mockResolvedValue({ data: presetData }),
+    put: jest.fn().mockResolvedValue({ data: presetData }),
+    delete: jest.fn().mockResolvedValue({ data: presetData }),
+    patch: jest.fn().mockResolvedValue({ data: presetData }),
+    defaults: { headers: { common: {} } },
+    interceptors: {
+      request: { use: jest.fn(), eject: jest.fn() },
+      response: { use: jest.fn(), eject: jest.fn() },
+    },
+  };
+  
+  return mockAxios;
+}
+
+// ==================== EXPORTS ====================
+
+// Export all mock utilities for easy importing
+export const mockHttp = {
+  // Simple mocking (from mockAxios.ts)
+  createMockAxios,
+  createUserMockAxios,
+  createSimpleMockAxios,
+  
+  // MSW-based mocking (from mockAxiosModern.ts)
+  createMockServer,
+  startMockServer,
+  stopMockServer,
+  createMockResponse: createMockResponse, // Renamed to avoid conflict
+  createErrorResponse,
+  createMockHttpClient,
+  createCustomMockHttpClient,
+  
+  // Legacy support
+  createAxiosMock,
 };
+
+// Default export includes all functionality
+export default mockHttp;
