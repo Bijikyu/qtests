@@ -19,7 +19,7 @@
  */
 
 // Import util for safe inspection fallback
-import util from 'util';
+import * as util from 'util';
 
 let LOG_ENABLED = true; // global log flag default true
 

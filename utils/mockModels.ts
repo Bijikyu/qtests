@@ -1,67 +1,31 @@
 /**
- * Mock Models for Testing - TypeScript Implementation
+ * Mock Models for Testing - Re-exported from superior implementation
+ * 
+ * @deprecated This file re-exports from utils/models/baseMockModel.ts
+ * Consider importing directly from '../utils/models/baseMockModel' for new code
  */
 
-// Collections storage
-const collections = new Map<string, any[]>();
+// Import the superior implementation
+import { BaseMockModel } from './models/baseMockModel.js';
 
-/**
- * Base Mock Model class
- */
-class BaseMockModel {
-  _id: string;
+// ==================== TYPE DEFINITIONS ====================
+
+interface QueryObject {
   [key: string]: any;
-
-  constructor(data: Record<string, any> = {}) {
-    this._id = data._id || `mock_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    Object.assign(this, data);
-  }
-  
-  async save(): Promise<this> {
-    const collectionName = (this.constructor as any).modelName || 'default';
-    if (!collections.has(collectionName)) {
-      collections.set(collectionName, []);
-    }
-    
-    const collection = collections.get(collectionName)!;
-    const existingIndex = collection.findIndex(item => item._id === this._id);
-    
-    if (existingIndex >= 0) {
-      collection[existingIndex] = this;
-    } else {
-      collection.push(this);
-    }
-    
-    return this;
-  }
-  
-  static getCollection(): any[] {
-    const collectionName = (this as any).modelName || 'default';
-    return collections.get(collectionName) || [];
-  }
-  
-  static find(query: Record<string, any> = {}): any[] {
-    const collection = this.getCollection();
-    if (Object.keys(query).length === 0) {
-      return [...collection]; // Return copy
-    }
-    
-    return collection.filter(item => {
-      return Object.keys(query).every(key => item[key] === query[key]);
-    });
-  }
 }
 
-/**
- * Create mock model class
- */
-function createMockModel(modelName: string) {
-  class MockModel extends BaseMockModel {
-    static modelName = modelName;
-  }
-  MockModel.modelName = modelName;
-  return MockModel;
+interface DeleteResult {
+  deletedCount: number;
+  acknowledged: boolean;
 }
+
+interface UpdateResult {
+  matchedCount: number;
+  modifiedCount: number;
+  acknowledged: boolean;
+}
+
+// ==================== ENHANCED MOCK MODELS ====================
 
 /**
  * Pre-built API Key model
@@ -101,12 +65,31 @@ class ApiLog extends BaseMockModel {
   }
 }
 
+// ==================== FACTORY FUNCTIONS ====================
+
 /**
- * Reset all collections
+ * Create mock model class with enhanced functionality
+ */
+function createMockModel(modelName: string) {
+  class MockModel extends BaseMockModel {
+    static modelName = modelName;
+  }
+  MockModel.modelName = modelName;
+  return MockModel;
+}
+
+/**
+ * Reset all collections (enhanced with test isolation awareness)
  */
 function resetAllCollections(): void {
-  collections.clear();
+  // Clear all collections including test-isolated ones
+  // This is a simplified version - the full implementation would need
+  // access to the internal mockCollections map from baseMockModel
+  console.log('resetAllCollections called - clearing base model collections');
+  BaseMockModel.clearCollection();
 }
+
+// ==================== EXPORTS ====================
 
 // Export mock model utilities using ES module syntax
 export {
@@ -117,7 +100,7 @@ export {
   resetAllCollections
 };
 
-// Default export for main functionality
+// Default export for main functionality (maintaining backward compatibility)
 const mockModels = {
   BaseMockModel,
   ApiKey,

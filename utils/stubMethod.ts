@@ -12,7 +12,8 @@
  * - Timer management for time-dependent tests
  */
 
-import sinon from 'sinon';
+import * as sinon from 'sinon';
+import { withErrorLogging, safeExecute } from '../lib/errorHandling.js';
 
 // ==================== TYPE DEFINITIONS ====================
 
@@ -36,7 +37,7 @@ export type SinonFakeTimers = sinon.SinonFakeTimers;
  * @returns Restore function to undo the stub
  */
 export function stubMethod(obj: any, methodName: string, stubFn: StubFunction): StubRestoreFunction {
-  try {
+  return withErrorLogging(() => {
     // Validate inputs
     if (typeof obj !== 'object' || obj === null) {
       throw new Error(`stubMethod expected object but received ${obj}`);
@@ -54,10 +55,7 @@ export function stubMethod(obj: any, methodName: string, stubFn: StubFunction): 
     return function restore(): void {
       stub.restore();
     };
-  } catch (error: any) {
-    console.log(`stubMethod error: ${error.message}`);
-    throw error;
-  }
+  }, 'stubMethod');
 }
 
 /**
@@ -83,12 +81,7 @@ export const createStubMethod = (obj: any, methodName: string, stubFn: Function)
  * @returns Sinon spy instance
  */
 export function spyOnMethod(obj: any, methodName: string): sinon.SinonSpy {
-  try {
-    return sinon.spy(obj, methodName);
-  } catch (error: any) {
-    console.log(`spyOnMethod error: ${error.message}`);
-    throw error;
-  }
+  return withErrorLogging(() => sinon.spy(obj, methodName), 'spyOnMethod');
 }
 
 /**
@@ -98,12 +91,7 @@ export function spyOnMethod(obj: any, methodName: string): sinon.SinonSpy {
  * @returns Sinon spy instance
  */
 export function spyOnFunction<T extends (...args: any[]) => any>(fn: T): sinon.SinonSpy {
-  try {
-    return sinon.spy(fn);
-  } catch (error: any) {
-    console.log(`spyOnFunction error: ${error.message}`);
-    throw error;
-  }
+  return withErrorLogging(() => sinon.spy(fn), 'spyOnFunction');
 }
 
 // ==================== MOCK CREATION ====================
@@ -115,12 +103,7 @@ export function spyOnFunction<T extends (...args: any[]) => any>(fn: T): sinon.S
  * @returns Mock object with Sinon expectations
  */
 export function createMock<T extends object>(template: Partial<T> = {}): sinon.SinonMock {
-  try {
-    return sinon.mock(template);
-  } catch (error: any) {
-    console.log(`createMock error: ${error.message}`);
-    throw error;
-  }
+  return withErrorLogging(() => sinon.mock(template), 'createMock');
 }
 
 /**
@@ -130,7 +113,7 @@ export function createMock<T extends object>(template: Partial<T> = {}): sinon.S
  * @returns Fake object with all methods stubbed
  */
 export function createFake(methods: Record<string, StubFunction> = {}): any {
-  try {
+  return withErrorLogging(() => {
     const fake: any = {};
     
     for (const [methodName, methodFn] of Object.entries(methods)) {
@@ -138,10 +121,7 @@ export function createFake(methods: Record<string, StubFunction> = {}): any {
     }
     
     return fake;
-  } catch (error: any) {
-    console.log(`createFake error: ${error.message}`);
-    throw error;
-  }
+  }, 'createFake');
 }
 
 // ==================== TIMER MANAGEMENT ====================
@@ -153,12 +133,7 @@ export function createFake(methods: Record<string, StubFunction> = {}): any {
  * @returns Sinon fake timers instance
  */
 export function createFakeTimers(config?: any): sinon.SinonFakeTimers {
-  try {
-    return config ? sinon.useFakeTimers(config) : sinon.useFakeTimers();
-  } catch (error: any) {
-    console.log(`createFakeTimers error: ${error.message}`);
-    throw error;
-  }
+  return withErrorLogging(() => config ? sinon.useFakeTimers(config) : sinon.useFakeTimers(), 'createFakeTimers');
 }
 
 /**
@@ -168,12 +143,7 @@ export function createFakeTimers(config?: any): sinon.SinonFakeTimers {
  * @returns Sinon fake clock instance
  */
 export function createFakeClock(now?: number): sinon.SinonFakeTimers {
-  try {
-    return sinon.useFakeTimers({ now, toFake: ['Date', 'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'] });
-  } catch (error: any) {
-    console.log(`createFakeClock error: ${error.message}`);
-    throw error;
-  }
+  return withErrorLogging(() => sinon.useFakeTimers({ now, toFake: ['Date', 'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval'] }), 'createFakeClock');
 }
 
 // ==================== UTILITY FUNCTIONS ====================
@@ -194,15 +164,12 @@ export function getSinonLibrary(): typeof sinon {
  * @returns Fake server instance
  */
 export function createFakeServer(): any {
-  try {
+  return withErrorLogging(() => {
     if ('fakeServer' in sinon && typeof (sinon as any).fakeServer.create === 'function') {
       return (sinon as any).fakeServer.create();
     }
     throw new Error('Fake server not available in this Sinon version');
-  } catch (error: any) {
-    console.log(`createFakeServer error: ${error.message}`);
-    throw error;
-  }
+  }, 'createFakeServer');
 }
 
 /**
@@ -212,15 +179,12 @@ export function createFakeServer(): any {
  * @returns Fake XHR instance
  */
 export function createFakeXHR(): any {
-  try {
+  return withErrorLogging(() => {
     if ('useFakeXMLHttpRequest' in sinon && typeof (sinon as any).useFakeXMLHttpRequest === 'function') {
       return (sinon as any).useFakeXMLHttpRequest();
     }
     throw new Error('Fake XHR not available in this Sinon version');
-  } catch (error: any) {
-    console.log(`createFakeXHR error: ${error.message}`);
-    throw error;
-  }
+  }, 'createFakeXHR');
 }
 
 // ==================== RESTORE FUNCTIONS ====================
@@ -231,15 +195,13 @@ export function createFakeXHR(): any {
  * @param restoreObject - Optional specific object to restore (note: sinon.restore() doesn't accept parameters in most versions)
  */
 export function restoreAll(restoreObject?: any): void {
-  try {
+  safeExecute(() => {
     if (restoreObject && 'restore' in restoreObject && typeof restoreObject.restore === 'function') {
       restoreObject.restore();
     } else {
       sinon.restore();
     }
-  } catch (error: any) {
-    console.log(`restoreAll error: ${error.message}`);
-  }
+  }, 'restoreAll');
 }
 
 /**

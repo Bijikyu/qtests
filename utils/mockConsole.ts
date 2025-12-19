@@ -12,6 +12,9 @@
  * - TypeScript-safe with proper type preservation
  */
 
+import { withErrorLogging, safeExecute } from '../lib/errorHandling';
+import { logStart, logReturn } from '../lib/logUtils';
+
 // ==================== TYPE DEFINITIONS ====================
 
 /**
@@ -81,9 +84,9 @@ export function mockConsole(
   method: ConsoleMethod, 
   options: ConsoleMockOptions = {}
 ): JestSpy | FallbackMock {
-  console.log(`mockConsole is running with ${method}`);
+  logStart('mockConsole', method);
 
-  try {
+  return withErrorLogging(() => {
     const {
       captureCalls = true,
       silent = true,
@@ -103,11 +106,7 @@ export function mockConsole(
     // Fall back to custom implementation
     console.log(`mockConsole is using fallback implementation`);
     return createFallbackMock(method, captureCalls, silent, implementation);
-
-  } catch (error: any) {
-    console.log(`mockConsole error: ${error.message}`);
-    throw error;
-  }
+  }, 'mockConsole');
 }
 
 /**
@@ -123,7 +122,7 @@ function tryCreateJestSpy(
   silent: boolean,
   implementation?: (...args: any[]) => any
 ): JestSpy | null {
-  try {
+  return safeExecute(() => {
     const globalAny = globalThis as any;
     const jest = globalAny.jest;
     
@@ -143,10 +142,7 @@ function tryCreateJestSpy(
 
     console.log(`mockConsole is returning Jest spy for ${method}`);
     return jestSpy as JestSpy;
-
-  } catch (error) {
-    return null;
-  }
+  }, 'tryCreateJestSpy');
 }
 
 /**
@@ -215,9 +211,9 @@ export function withMockConsole<T>(
   fn: (spy: MockSpy) => T,
   options: ConsoleMockOptions = {}
 ): T {
-  console.log(`withMockConsole is running with ${method}`);
+  logStart('withMockConsole', method);
   
-  try {
+  return withErrorLogging(() => {
     const {
       captureCalls = true,
       silent = true,
@@ -284,11 +280,7 @@ export function withMockConsole<T>(
     
     console.log(`withMockConsole is returning result`);
     return result;
-    
-  } catch (err: any) {
-    console.log(`withMockConsole error ${err.message}`);
-    throw err;
-  }
+  }, 'withMockConsole');
 }
 
 /**
@@ -370,9 +362,11 @@ export function isMocked(method: ConsoleMethod): boolean {
  * @param mock - Mock spy to restore
  */
 export function restoreMock(mock: JestSpy | FallbackMock): void {
-  if (mock && 'mockRestore' in mock && typeof mock.mockRestore === 'function') {
-    mock.mockRestore();
-  }
+  safeExecute(() => {
+    if (mock && 'mockRestore' in mock && typeof mock.mockRestore === 'function') {
+      mock.mockRestore();
+    }
+  }, 'restoreMock');
 }
 
 /**

@@ -1,7 +1,7 @@
-import { executeWithLogs, setLogging } from '../lib/logUtils.js';
+import { executeWithLogs, logStart, logReturn, setLogging } from '../lib/logUtils.js';
 import { withErrorLogging } from '../lib/errorHandling.js';
 process.env.NODE_ENV !== 'test' && setLogging(false);
-import dotenv from 'dotenv';
+import * as dotenv from 'dotenv';
 
 interface DefaultEnv {
   GOOGLE_API_KEY: string;
@@ -32,28 +32,28 @@ const defaultEnv: DefaultEnv = {
 };
 
 function setTestEnv(): boolean {
-  console.log(`setTestEnv is running with default values`);
+  logStart('setTestEnv', 'default values');
   
   return withErrorLogging(() => {
     dotenv.config();
     Object.assign(process.env, defaultEnv);
-    console.log(`setTestEnv is returning true`);
+    logReturn('setTestEnv', true);
     return true;
   }, 'setTestEnv');
 }
 
 function saveEnv(): Record<string, string | undefined> {
-  console.log(`saveEnv is running with none`);
+  logStart('saveEnv');
   
   return withErrorLogging(() => {
     const savedEnv = { ...process.env };
-    console.log(`saveEnv is returning ${JSON.stringify(Object.keys(savedEnv).length)} env vars`);
+    logReturn('saveEnv', `${Object.keys(savedEnv).length} env vars`);
     return savedEnv;
   }, 'saveEnv');
 }
 
 function restoreEnv(savedEnv: Record<string, string | undefined>): boolean {
-  console.log(`restoreEnv is running with ${savedEnv}`);
+  logStart('restoreEnv', savedEnv);
 
   return withErrorLogging(() => {
     if (!savedEnv || typeof savedEnv !== 'object') {
@@ -64,15 +64,15 @@ function restoreEnv(savedEnv: Record<string, string | undefined>): boolean {
     const currentKeys = new Set(Object.keys(process.env));
     const backupKeys = new Set(Object.keys(savedEnv));
 
-    for (const key of currentKeys) {
+    currentKeys.forEach(key => {
       if (!backupKeys.has(key)) delete process.env[key];
-    }
+    });
 
     for (const [key, value] of Object.entries(savedEnv)) {
       if (value !== undefined) process.env[key] = value; else delete process.env[key];
     }
 
-    console.log(`restoreEnv is returning true`);
+    logReturn('restoreEnv', true);
     return true;
   }, 'restoreEnv');
 }
