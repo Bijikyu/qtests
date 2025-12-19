@@ -54,8 +54,48 @@ The `lib/` directory contains the core qtests framework functionality, including
 **Role**: Unit tests for the test generator functionality
 **Features**: Tests the generator's ability to create proper test files with correct naming and qtests integration
 
+### centralizedLogging.ts
+**Role**: Unified logging utilities that eliminate import duplication across the codebase
+**Features**: 
+- Multiple logging strategies (console, winston, silent, memory)
+- Performance timing utilities with decorator support
+- Centralized import patterns for 11+ files
+- Backward compatibility with existing logStart/logReturn functions
+
+### jestConfigFactory.ts
+**Role**: Jest configuration factory that eliminates duplication across multiple config files
+**Features**:
+- Project type presets (typescript-esm, typescript-cjs, javascript-cjs, react-typescript, demo)
+- Standardized configuration patterns
+- Coverage configuration utilities
+- Backward compatibility with existing Jest setups
+
+### testSetupFactory.ts
+**Role**: Test setup utilities that standardize Jest environment configuration
+**Features**:
+- Multiple setup types (minimal, typescript-esm, react, demo)
+- Environment variable management
+- Mock cleanup configuration
+- React polyfills when needed
+
+### unifiedHttpMock.ts
+**Role**: Consolidated HTTP mocking that eliminates ~900 lines of duplicate code
+**Features**:
+- Multiple mocking strategies (legacy-axios, msw-modern, simple-axios, user-configurable)
+- MSW server management
+- Response and error factories
+- Backward compatibility with existing mock implementations
+
+### routeTestUtils.ts
+**Role**: Parameterized route test generation that eliminates near-identical test files
+**Features**:
+- Standardized HTTP route testing patterns
+- Convenience functions for GET, POST, PUT, DELETE
+- Batch test generation for multiple routes
+- Resource-based test generation for REST APIs
+
 ### logUtils.ts (if exists)
-**Role**: Logging utilities and console capture functionality
+**Role**: Legacy logging utilities (now superseded by centralizedLogging.ts)
 **Features**: Provides controlled logging for test environments
 
 ## Known Side Effects
