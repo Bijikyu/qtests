@@ -14,7 +14,7 @@
 
 import * as sinon from 'sinon';
 import qerrors from 'qerrors';
-import { withErrorLogging, safeExecute } from '../lib/errorHandling.js';
+import { withErrorLogging, safeExecute } from '../lib/errorHandling/index.js';
 
 // ==================== TYPE DEFINITIONS ====================
 

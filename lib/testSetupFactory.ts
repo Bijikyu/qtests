@@ -5,6 +5,7 @@
  */
 
 import { jest as jestFromGlobals } from '@jest/globals';
+import localVars from '../config/localVars.js';
 
 // ==================== SETUP INTERFACES ====================
 
@@ -57,6 +58,7 @@ const setupState: TestSetupContext = {
  */
 function setTestEnvironment(): void {
   if (!setupState.testEnvironmentSet) {
+    // Set test environment using localVars pattern
     process.env.NODE_ENV = 'test';
     setupState.testEnvironmentSet = true;
   }

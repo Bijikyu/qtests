@@ -1,4 +1,5 @@
 import { aggressiveCleanup } from './memoryCleanup.js';
+import localVars from '../config/localVars.js';
 
 declare const global: any;
 
@@ -23,6 +24,7 @@ const getIsolationState = (): IsolationState => {
 
 export const backupEnvironment = (): void => {
   const state = getIsolationState();
+  // Use localVars pattern for environment access
   state.originalEnv = { ...process.env };
 };
 

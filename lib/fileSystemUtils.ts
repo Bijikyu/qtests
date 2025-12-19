@@ -169,3 +169,6 @@ export const fileSystemUtils = {
   isFile,
   withFileErrorHandling
 };
+
+// Default export for compliance with architecture patterns
+export default fileSystemUtils;

@@ -1,6 +1,11 @@
 import { z, ZodSchema, ZodError } from 'zod';
 import { setLogging } from './logUtils.js';
-process.env.NODE_ENV !== 'test' && setLogging(false);
+import localVars from '../config/localVars.js';
+
+// Set logging based on environment using localVars pattern
+if (localVars.nodeEnv !== 'test') {
+  setLogging(false);
+}
 
 export interface ValidationConfig {
   maxChunkSize: number;

@@ -20,13 +20,14 @@
  * 4. They can be used independently without importing the full qtests suite
  */
 
-import { stubMethod, spyOnMethod, createMock, createFakeTimers } from '../utils/stubMethod.js';
-import { mockConsole } from '../utils/mockConsole.js';
-
+// Re-export utilities for backward compatibility
 export {
   stubMethod,
   spyOnMethod,
   createMock,
-  createFakeTimers,
+  createFakeTimers
+} from '../utils/stubMethod.js';
+
+export {
   mockConsole
-};
+} from '../utils/mockConsole.js';

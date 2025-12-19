@@ -12,7 +12,12 @@ import { setupServer } from 'msw/node';
 
 // Import logging control utility for consistent framework behavior
 import { setLogging } from './logUtils.js';
-if (process.env.NODE_ENV !== 'test') setLogging(false);
+import localVars from '../config/localVars.js';
+
+// Set logging based on environment using localVars pattern
+if (localVars.nodeEnv !== 'test') {
+  setLogging(false);
+}
 
 // ==================== TYPE DEFINITIONS ====================
 
