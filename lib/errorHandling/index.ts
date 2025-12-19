@@ -77,17 +77,17 @@ export interface StructuredError extends Error {
 
 export const createAsyncErrorWrapper = <T extends (...args: any[]) => Promise<any>>(
   fn: T,
-  options: AsyncErrorWrapperOptions = {}
+  _options: AsyncErrorWrapperOptions = {}
 ): T => fn;
 
 export const createSyncErrorWrapper = <T extends (...args: any[]) => any>(
   fn: T,
-  options: RouteErrorWrapperOptions = {}
+  _options: RouteErrorWrapperOptions = {}
 ): T => fn;
 
 export const createRouteErrorWrapper = (
-  options: RouteErrorWrapperOptions = {}
-) => (req: any, res: any, next: any) => next();
+  _options: RouteErrorWrapperOptions = {}
+) => (_req: any, _res: any, next: any) => next();
 
 export const transformMongoError = (error: any): TransformedError => {
   const transformed = new Error(`Transformed: ${error}`) as TransformedError;
@@ -98,22 +98,22 @@ export const transformMongoError = (error: any): TransformedError => {
 
 export const createDatabaseErrorWrapper = <T extends (...args: any[]) => Promise<any>>(
   fn: T,
-  options: DatabaseErrorWrapperOptions = {}
+  _options: DatabaseErrorWrapperOptions = {}
 ): T => fn;
 
 export const createApiErrorWrapper = <T extends (...args: any[]) => Promise<any>>(
   fn: T,
-  options: ApiErrorWrapperOptions = {}
+  _options: ApiErrorWrapperOptions = {}
 ): T => fn;
 
 export const createFileErrorWrapper = <T extends (...args: any[]) => Promise<any>>(
   fn: T,
-  options: ApiErrorWrapperOptions = {}
+  _options: ApiErrorWrapperOptions = {}
 ): T => fn;
 
 export const createBatchErrorWrapper = <T, R>(
   processor: (items: T[]) => Promise<R[]>,
-  options: BatchErrorWrapperOptions = {}
+  _options: BatchErrorWrapperOptions = {}
 ): ((items: T[]) => Promise<BatchProcessingResult<R>>) => 
   async (items: T[]) => ({
     results: await processor(items),
@@ -123,7 +123,7 @@ export const createBatchErrorWrapper = <T, R>(
 
 export const createTimeoutErrorWrapper = <T extends (...args: any[]) => Promise<any>>(
   fn: T,
-  options: TimeoutErrorWrapperOptions = {}
+  _options: TimeoutErrorWrapperOptions = {}
 ): T => fn;
 
 export const createStructuredError = (

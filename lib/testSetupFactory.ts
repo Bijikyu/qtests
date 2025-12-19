@@ -5,7 +5,6 @@
  */
 
 import { jest as jestFromGlobals } from '@jest/globals';
-import localVars from '../config/localVars.js';
 
 // ==================== SETUP INTERFACES ====================
 
@@ -112,7 +111,7 @@ function configureJestTimeout(timeout: number = 10000): void {
 /**
  * Configure mock cleanup after each test
  */
-function configureMockCleanup(): void {
+function configureMockCleanup(_shouldConfigure: boolean = true): void {
   if (!setupState.mockCleanupConfigured) {
     const j = (globalThis as any).jest || jestFromGlobals;
     if (j && typeof j.clearAllMocks === 'function') {
@@ -195,6 +194,7 @@ export function createJestSetup(options: TestSetupOptions = {}): void {
 
     // Configure afterEach hook for mock cleanup
     if (shouldConfigureCleanup) {
+      configureMockCleanup(shouldConfigureCleanup);
       afterEach(() => {
         const j = (globalThis as any).jest || jestFromGlobals;
         if (j && typeof j.clearAllMocks === 'function') {

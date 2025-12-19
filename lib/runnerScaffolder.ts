@@ -12,7 +12,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import localVars from '../config/localVars.js';
 import fileSystemUtils from './fileSystemUtils.js';
 
 // Configuration for runner scaffolding
@@ -364,10 +363,10 @@ export { createMockApp, supertest } from './httpTest.shim.js';
     const configPath = path.join(configDir, 'jest.config.mjs');
     
     if (!this.config.dryRun) {
-      fileSystemUtils.fileSystemUtils.ensureDir(configDir);
+      fileSystemUtils.ensureDir(configDir);
       
-      if (!fileSystemUtils.fileSystemUtils.safeExists(configPath) || this.config.force) {
-        fileSystemUtils.fileSystemUtils.safeWriteFile(configPath, this.getJestConfig());
+      if (!fileSystemUtils.safeExists(configPath) || this.config.force) {
+        fileSystemUtils.safeWriteFile(configPath, this.getJestConfig());
         console.log('✅ Created config/jest.config.mjs');
       } else {
         console.log('ℹ️ config/jest.config.mjs already exists');
@@ -387,8 +386,8 @@ export { createMockApp, supertest } from './httpTest.shim.js';
     if (!this.config.dryRun) {
       fileSystemUtils.ensureDir(configDir);
       
-      if (!fileSystemUtils.fileSystemUtils.safeExists(setupPath) || this.config.force) {
-        fileSystemUtils.fileSystemUtils.safeWriteFile(setupPath, this.getJestSetup());
+      if (!fileSystemUtils.safeExists(setupPath) || this.config.force) {
+        fileSystemUtils.safeWriteFile(setupPath, this.getJestSetup());
         console.log('✅ Created config/jest-setup.ts');
       } else {
         console.log('ℹ️ config/jest-setup.ts already exists');

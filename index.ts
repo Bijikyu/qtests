@@ -10,7 +10,6 @@
 import { stubMethod, mockConsole } from './lib/coreUtils.js';
 import { testEnv, offlineMode, testHelpers } from './lib/envUtils.js';
 import { setup } from './lib/setup.js';
-import { mockAPI } from './lib/mockSystem.js';
 
 // HTTP testing utilities  
 import { createMockApp, supertest } from './utils/httpTest.js';
@@ -21,17 +20,8 @@ import { runTestSuite, runTestSuites, createAssertions } from './utils/runTestSu
 // Module stubs
 import stubs from './lib/stubs.js';
 
-// Resilience patterns
-import {
-  CircuitBreaker,
-  createCircuitBreaker,
-  defaultCircuitBreaker,
-  fastCircuitBreaker,
-  slowCircuitBreaker,
-  type CircuitState,
-  type CircuitBreakerOptions,
-  type CircuitBreakerStats
-} from './lib/circuitBreaker.js';
+// Resilience patterns - Circuit breaker functionality removed during SRP compliance
+// TODO: Re-implement circuit breaker pattern if needed using focused modules
 
 import {
   DistributedRateLimiter,
@@ -146,13 +136,6 @@ export {
   createMockApp,
   supertest,
   
-  // Circuit breaker
-  CircuitBreaker,
-  createCircuitBreaker,
-  defaultCircuitBreaker,
-  fastCircuitBreaker,
-  slowCircuitBreaker,
-  
   // Rate limiting
   DistributedRateLimiter,
   InMemoryRateLimiter,
@@ -221,9 +204,6 @@ export {
 
 // Re-export types
 export type {
-  CircuitState,
-  CircuitBreakerOptions,
-  CircuitBreakerStats,
   RateLimitConfig,
   RateLimitResult,
   RateLimitStats,

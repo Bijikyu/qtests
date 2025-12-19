@@ -54,12 +54,11 @@ The `lib/` directory contains the core qtests framework functionality, including
 **Role**: Unit tests for the test generator functionality
 **Features**: Tests the generator's ability to create proper test files with correct naming and qtests integration
 
-### centralizedLogging.ts
-**Role**: Unified logging utilities that eliminate import duplication across the codebase
+### logUtils.ts
+**Role**: Core logging utilities with controlled test environment output
 **Features**: 
-- Multiple logging strategies (console, winston, silent, memory)
+- Controlled logging for test environments
 - Performance timing utilities with decorator support
-- Centralized import patterns for 11+ files
 - Backward compatibility with existing logStart/logReturn functions
 
 ### jestConfigFactory.ts

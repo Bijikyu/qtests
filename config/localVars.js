@@ -1,13 +1,70 @@
 /**
  * Local Variables and Environment Configuration
  * 
- * This file serves as the single source of truth for all environment variables
+ * This file serves as single source of truth for all environment variables
  * and hardcoded constants used throughout the qtests module.
  * 
  * IMPORTANT: Do not modify, delete, or move existing values.
  * New values should be added under appropriate existing categories
  * or new categories with clear comment headers.
+ * 
+ * @typedef {Object} LocalVars
+ * @property {string} nodeEnv - Node environment (development/test/production)
+ * @property {string} testMode - Test mode flag
+ * @property {string} debugMode - Debug mode flag
+ * @property {string} qtestsSilent - Qtests silent mode
+ * @property {string} qtestsInband - Qtests inband execution
+ * @property {string} qtestsFileWorkers - Qtests file workers flag
+ * @property {string} qtestsConcurrency - Qtests concurrency level
+ * @property {string} qtestsPattern - Qtests test pattern
+ * @property {string} qtestsApiFallback - Qtests API fallback flag
+ * @property {string} qtestsSuppressDebug - Qtests debug suppression
+ * @property {string} qtestsNoDebugFile - Qtests no debug file flag
+ * @property {string} qtestsDebugFile - Qtests debug file path
+ * @property {number} defaultTestTimeout - Default test timeout in ms
+ * @property {number} defaultRetryAttempts - Default retry attempts
+ * @property {number} defaultRetryDelay - Default retry delay in ms
+ * @property {number} maxConcurrentTests - Maximum concurrent tests
+ * @property {number} testMemoryThreshold - Memory threshold for tests
+ * @property {number} jestTestTimeout - Jest test timeout
+ * @property {string} jestVerbose - Jest verbose flag
+ * @property {string} jestCoverage - Jest coverage flag
+ * @property {string} jestCache - Jest cache flag
+ * @property {string} jestPassWithNoTests - Jest pass with no tests flag
+ * @property {string} libDirectory - Library directory path
+ * @property {string} utilsDirectory - Utils directory path
+ * @property {string} configDirectory - Config directory path
+ * @property {string} testsDirectory - Tests directory path
+ * @property {string} stubsDirectory - Stubs directory path
+ * @property {string} distDirectory - Distribution directory path
+ * @property {string} buildDirectory - Build directory path
+ * @property {number} maxInputLength - Maximum input length
+ * @property {number} maxFilePathLength - Maximum file path length
+ * @property {string[]} allowedFileExtensions - Allowed file extensions
+ * @property {RegExp[]} blockedPatterns - Blocked patterns
+ * @property {string} logLevel - Log level setting
+ * @property {string} logToFile - Log to file flag
+ * @property {string} logFilePath - Log file path
+ * @property {number} maxLogFileSize - Maximum log file size
+ * @property {number} logRetentionDays - Log retention days
+ * @property {number} memoryCleanupThreshold - Memory cleanup threshold
+ * @property {number} memoryCheckInterval - Memory check interval
+ * @property {number} maxExecutionTime - Maximum execution time
+ * @property {number} throttleDelay - Throttle delay
+ * @property {number} defaultHttpTimeout - Default HTTP timeout
+ * @property {number} maxRedirects - Maximum redirects
+ * @property {number} maxHeaderSize - Maximum header size
+ * @property {string[]} allowedOrigins - Allowed origins
+ * @property {boolean} enableExperimentalFeatures - Experimental features flag
+ * @property {boolean} enableDebugMode - Debug mode enable flag
+ * @property {boolean} enableVerboseLogging - Verbose logging flag
+ * @property {boolean} enablePerformanceMonitoring - Performance monitoring flag
+ * @property {string} redisUrl - Redis connection URL
+ * @property {number} redisTtl - Redis TTL
+ * @property {number} redisMaxRetries - Redis max retries
  */
+
+/** @type {LocalVars} */
 
 // ==================== NODE ENVIRONMENT VARIABLES ====================
 export const nodeEnv = process.env.NODE_ENV || 'development';

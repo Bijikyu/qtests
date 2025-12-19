@@ -1,6 +1,11 @@
 import { executeWithLogs, logStart, logReturn, setLogging } from '../lib/logUtils.js';
-import { withErrorLogging } from '../lib/errorHandling.js';
-process.env.NODE_ENV !== 'test' && setLogging(false);
+import { withErrorLogging } from '../lib/errorHandling/index.js';
+import localVars from '../config/localVars.js';
+
+// Set logging based on environment using localVars pattern
+if ((localVars as any).nodeEnv !== 'test') {
+  setLogging(false);
+}
 import * as dotenv from 'dotenv';
 
 interface DefaultEnv {

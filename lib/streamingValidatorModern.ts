@@ -3,7 +3,7 @@ import { setLogging } from './logUtils.js';
 import localVars from '../config/localVars.js';
 
 // Set logging based on environment using localVars pattern
-if (localVars.nodeEnv !== 'test') {
+if ((localVars as any).nodeEnv !== 'test') {
   setLogging(false);
 }
 

@@ -15,7 +15,7 @@ import { setLogging } from './logUtils.js';
 import localVars from '../config/localVars.js';
 
 // Set logging based on environment using localVars pattern
-if (localVars.nodeEnv !== 'test') {
+if ((localVars as any).nodeEnv !== 'test') {
   setLogging(false);
 }
 
@@ -291,13 +291,11 @@ class ModernMSWMock implements MockHttpClient {
   }
 
   private createMSWResponse(): any {
-    const { json, delay } = require('msw');
-    
     if (this.responseDelay > 0) {
-      return (req: any, res: any, ctx: any) => ctx.delay(this.responseDelay);
+      return (_req: any, _res: any, ctx: any) => ctx.delay(this.responseDelay);
     }
     
-    return (req: any, res: any, ctx: any) => ctx.json(this.defaultResponse);
+    return (_req: any, _res: any, ctx: any) => ctx.json(this.defaultResponse);
   }
 
   async get(_url: string, _config?: any): Promise<MockResponse> {
