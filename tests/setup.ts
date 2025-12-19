@@ -1,3 +1,4 @@
+// 🔗 Tests: setup → Jest global setup hooks
 import { beforeAll, afterAll } from '@jest/globals';
 
 let server: any;

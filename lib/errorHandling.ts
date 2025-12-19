@@ -5,6 +5,8 @@
  * Eliminates ~90% code duplication while preserving all features
  */
 
+import qerrors from 'qerrors';
+
 // ==================== INTERFACE DEFINITIONS ====================
 
 export interface AsyncErrorWrapperOptions {
@@ -95,7 +97,7 @@ export function withErrorLogging<T>(fn: () => T, context: string): T {
   try {
     return fn();
   } catch (error: any) {
-    console.log(`${context} error: ${error.message}`);
+    qerrors(error, context, {context});
     throw error;
   }
 }
@@ -111,7 +113,9 @@ export function safeExecute<T>(fn: () => T, context?: string): T | null {
     return fn();
   } catch (error: any) {
     if (context) {
-      console.log(`${context} error: ${error.message}`);
+      qerrors(error, context, {context});
+    } else {
+      qerrors(error, 'safeExecute', {});
     }
     return null;
   }

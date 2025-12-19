@@ -128,89 +128,7 @@ import {
   type MockMediaQueryList
 } from './lib/testPolyfills.js';
 
-// Create httpTest namespace for backward compatibility
-const httpTest = {
-  createMockApp,
-  supertest
-};
 
-// Create mock object for backward compatibility
-const mock = {
-  module: (name: string, factory: () => any) => mockAPI.module(name, factory),
-  mockAPI
-};
-
-// Create qtests namespace object
-const qtests = {
-  stubMethod,
-  mockConsole,
-  testEnv,
-  offlineMode,
-  testHelpers,
-  runTestSuite,
-  runTestSuites,
-  createAssertions,
-  setup,
-  stubs,
-  mock,
-  httpTest,
-  createMockApp,
-  supertest,
-  CircuitBreaker,
-  createCircuitBreaker,
-  defaultCircuitBreaker,
-  fastCircuitBreaker,
-  slowCircuitBreaker,
-  DistributedRateLimiter,
-  InMemoryRateLimiter,
-  createDistributedRateLimiter,
-  distributedRateLimit,
-  StreamingStringValidator,
-  createStreamingValidator,
-  streamingValidationMiddleware,
-  defaultValidator,
-  strictValidator,
-  relaxedValidator,
-  createAsyncErrorWrapper,
-  createSyncErrorWrapper,
-  createRouteErrorWrapper,
-  createDatabaseErrorWrapper,
-  createApiErrorWrapper,
-  createFileErrorWrapper,
-  createBatchErrorWrapper,
-  createTimeoutErrorWrapper,
-  transformMongoError,
-  MemoryMonitor,
-  memoryMonitor,
-  detectMemoryLeaks,
-  startMemoryMonitoring,
-  checkpointMemory,
-  endMemoryMonitoring,
-  cleanupWithMemoryTracking,
-  forceGC,
-  clearGlobalRefs,
-  clearModuleCache,
-  aggressiveCleanup,
-  backupEnvironment,
-  restoreEnvironment,
-  registerMockRestore,
-  restoreAllMocks,
-  trackServer,
-  closeAllServers,
-  trackDbConnection,
-  closeAllDbConnections,
-  setupTestIsolation,
-  teardownTestIsolation,
-  setupJestIsolation,
-  waitForCondition,
-  setupClipboard,
-  setupIntersectionObserver,
-  setupMatchMedia,
-  setupResizeObserver,
-  setupAllPolyfills,
-  MockIntersectionObserver,
-  MockResizeObserver
-};
 
 // Export all core functionality for easy access
 export {
@@ -225,8 +143,6 @@ export {
   createAssertions,
   setup,
   stubs,
-  mock,
-  httpTest,
   createMockApp,
   supertest,
   
@@ -301,9 +217,6 @@ export {
   setupAllPolyfills,
   MockIntersectionObserver,
   MockResizeObserver,
-  
-  // Namespace
-  qtests
 };
 
 // Re-export types
@@ -332,5 +245,4 @@ export type {
   MockMediaQueryList
 };
 
-// Default export for backward compatibility
-export default qtests;
+

@@ -30,14 +30,14 @@
 // This gives us access to the private _resolveFilename method that controls
 // how Node.js resolves module names to file paths
 import { mockRegistry, installMocking, registerDefaultMocks } from './lib/mockSystem.js';
+import * as localVars from './config/localVars.js';
 
 // Install clean, registry-based mocking for module ids
 registerDefaultMocks();
 installMocking();
 
 // Honor CI silence toggle to reduce noise
-const QTESTS_SILENT = String(process.env.QTESTS_SILENT || '').toLowerCase();
-const shouldLog = !(QTESTS_SILENT === '1' || QTESTS_SILENT === 'true');
+const shouldLog = !((localVars.qtestsSilent || 'false') === '1' || (localVars.qtestsSilent || 'false') === 'true');
 if (shouldLog) {
   console.log('qtests: Global module resolution patching activated');
   console.log(`qtests: Stub registry contains: ${mockRegistry.list().join(', ')}`);

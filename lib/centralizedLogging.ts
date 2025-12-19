@@ -423,8 +423,8 @@ export function createProductionLogger(config: LoggerConfig = {}): UnifiedLogger
  * Global logger instance for convenience
  */
 const globalLogger = createLogger({
-  strategy: process.env.NODE_ENV === 'test' ? 'silent' : 'console',
-  level: process.env.NODE_ENV === 'development' ? LogLevel.DEBUG : LogLevel.INFO
+  strategy: 'console', // Default to console, specific modules can override as needed
+  level: LogLevel.INFO
 });
 
 // Add performance timing to global logger

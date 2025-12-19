@@ -2,84 +2,58 @@
 
 Analyze and address the following test failures:
 
-## Failed Test 1: /home/runner/workspace/tests/integration/demo__server__app__get.test.js
+## Failed Test 1: /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js
 
 ### Output:
 ```
-  ● GET /health › should succeed
+  ● Test suite failed to run
 
-    TypeError: httpTest.supertest(...).get(...).expect(...).end is not a function
+    TypeError: Cannot read properties of undefined (reading 'qtestsSilent')
 
-      22 |       .get('/health')
-      23 |       .expect(200)
-    > 24 |       .end();
-         |        ^
-      25 |     
-      26 |     expect(res.body.success).toBe(true);
-      27 |   });
+      38 |
+      39 | // Honor CI silence toggle to reduce noise
+    > 40 | const shouldLog = !(localVars.qtestsSilent === '1' || localVars.qtestsSilent === 'true');
+         |                               ^
+      41 | if (shouldLog) {
+      42 |   console.log('qtests: Global module resolution patching activated');
+      43 |   console.log(`qtests: Stub registry contains: ${mockRegistry.list().join(', ')}`);
 
-      at Object.end (tests/integration/demo__server__app__get.test.js:24:8)
-
-  ● GET /health › should handle error responses
-
-    TypeError: httpTest.supertest(...).get(...).expect(...).end is not a function
-
-      38 |       .get('/health')
-      39 |       .expect(400)
-    > 40 |       .end();
-         |        ^
-      41 |     
-      42 |     expect(res.body.error).toBe('Bad request');
-      43 |   });
-
-      at Object.end (tests/integration/demo__server__app__get.test.js:40:8)
+      at Object.<anonymous> (setup.ts:40:31)
+      at Object.<anonymous> (config/jest-setup.ts:3:1)
 
 ```
 
-### Duration: 1029ms
+### Duration: 0ms
 
 ---
 
-## Failed Test 2: /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js
+## Failed Test 2: /home/runner/workspace/tests/integration/demo__server__app__get.test.js
 
 ### Output:
 ```
-  ● GET /hello › should succeed
+  ● Test suite failed to run
 
-    TypeError: httpTest.supertest(...).get(...).expect(...).end is not a function
+    TypeError: Cannot read properties of undefined (reading 'qtestsSilent')
 
-      22 |       .get('/hello')
-      23 |       .expect(200)
-    > 24 |       .end();
-         |        ^
-      25 |     
-      26 |     expect(res.body.success).toBe(true);
-      27 |   });
+      38 |
+      39 | // Honor CI silence toggle to reduce noise
+    > 40 | const shouldLog = !(localVars.qtestsSilent === '1' || localVars.qtestsSilent === 'true');
+         |                               ^
+      41 | if (shouldLog) {
+      42 |   console.log('qtests: Global module resolution patching activated');
+      43 |   console.log(`qtests: Stub registry contains: ${mockRegistry.list().join(', ')}`);
 
-      at Object.end (tests/integration/demo__server__routes__hello__get.test.js:24:8)
-
-  ● GET /hello › should handle error responses
-
-    TypeError: httpTest.supertest(...).get(...).expect(...).end is not a function
-
-      38 |       .get('/hello')
-      39 |       .expect(400)
-    > 40 |       .end();
-         |        ^
-      41 |     
-      42 |     expect(res.body.error).toBe('Bad request');
-      43 |   });
-
-      at Object.end (tests/integration/demo__server__routes__hello__get.test.js:40:8)
+      at Object.<anonymous> (setup.ts:40:31)
+      at Object.<anonymous> (config/jest-setup.ts:3:1)
 
 ```
 
-### Duration: 96ms
+### Duration: 0ms
 
 ---
 
 ## Summary
 
 - Total failed tests: 2
-- Failed test files: /home/runner/workspace/tests/integration/demo__server__app__get.test.js, /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js
-- Generated: 2025-12-12T20:45:04.939Z
+- Failed test files: /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js, /home/runner/workspace/tests/integration/demo__server__app__get.test.js
+- Generated: 2025-12-19T18:33:01.965Z
