@@ -69,7 +69,6 @@ import {
 // Memory monitoring utilities
 import {
   MemoryMonitor,
-  memoryMonitor,
   detectMemoryLeaks,
   startMemoryMonitoring,
   checkpointMemory,
@@ -77,7 +76,7 @@ import {
   cleanupWithMemoryTracking,
   type MemorySnapshot,
   type MemoryDelta
-} from './lib/memoryMonitor.js';
+} from './lib/memory/index.js';
 
 // Memory cleanup utilities
 import {

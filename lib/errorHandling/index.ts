@@ -1,11 +1,16 @@
 /**
- * Error Handling Module Index
+ * Error Handling Module Index - Refactored for SRP
  * 
- * Consolidates all error handling utilities and re-exports them
- * Maintains backward compatibility while organizing functions by SRP
+ * This file now serves as a compatibility layer that re-exports
+ * the modular error handling functionality while maintaining backward compatibility.
+ * 
+ * The actual implementation has been split into:
+ * - errorHandling/errorTypes.ts - Type definitions
+ * - errorHandling/placeholderWrappers.ts - Placeholder implementations
+ * - Existing files: errorLogging.js, fallbackHandlers.js, errorWrappers.js
  */
 
-// Re-export all error handling utilities
+// Re-export all error handling utilities from existing files
 export {
   withErrorLogging,
   safeExecute,
@@ -23,135 +28,55 @@ export {
   wrapWithSafeExecute
 } from './errorWrappers.js';
 
-// Define missing types inline since original module was removed
-export type AsyncErrorWrapperOptions = {
-  timeout?: number;
-  context?: string;
-};
+// Re-export types and wrapper implementations from new modular files
+export * from './errorTypes.js';
+export * from './basicWrappers.js';
+export * from './advancedWrappers.js';
 
-export type RouteErrorWrapperOptions = {
-  context?: string;
-};
-
-export type DatabaseErrorWrapperOptions = {
-  context?: string;
-};
-
-export type ApiErrorWrapperOptions = {
-  context?: string;
-};
-
-export type BatchErrorWrapperOptions = {
-  context?: string;
-};
-
-export type TimeoutErrorWrapperOptions = {
-  timeout?: number;
-  context?: string;
-};
-
-export interface TransformedError extends Error {
-  originalError?: Error;
-  transformedAt?: Date;
-}
-
-export interface BatchResult<T> {
-  successes: T[];
-  failures: Array<{error: Error, item: any}>;
-}
-
-export interface BatchProcessingResult<T> {
-  results: T[];
-  errors: Error[];
-  processedCount: number;
-}
-
-export interface StructuredError extends Error {
-  code?: string;
-  context?: Record<string, any>;
-  timestamp?: Date;
-}
-
-// Simple placeholder implementations for missing functions
-// TODO: Complete SRP refactoring by implementing these properly
-
-export const createAsyncErrorWrapper = <T extends (...args: any[]) => Promise<any>>(
-  fn: T,
-  _options: AsyncErrorWrapperOptions = {}
-): T => fn;
-
-export const createSyncErrorWrapper = <T extends (...args: any[]) => any>(
-  fn: T,
-  _options: RouteErrorWrapperOptions = {}
-): T => fn;
-
-export const createRouteErrorWrapper = (
-  _options: RouteErrorWrapperOptions = {}
-) => (_req: any, _res: any, next: any) => next();
-
-export const transformMongoError = (error: any): TransformedError => {
-  const transformed = new Error(`Transformed: ${error}`) as TransformedError;
-  transformed.originalError = error instanceof Error ? error : new Error(String(error));
-  transformed.transformedAt = new Date();
-  return transformed;
-};
-
-export const createDatabaseErrorWrapper = <T extends (...args: any[]) => Promise<any>>(
-  fn: T,
-  _options: DatabaseErrorWrapperOptions = {}
-): T => fn;
-
-export const createApiErrorWrapper = <T extends (...args: any[]) => Promise<any>>(
-  fn: T,
-  _options: ApiErrorWrapperOptions = {}
-): T => fn;
-
-export const createFileErrorWrapper = <T extends (...args: any[]) => Promise<any>>(
-  fn: T,
-  _options: ApiErrorWrapperOptions = {}
-): T => fn;
-
-export const createBatchErrorWrapper = <T, R>(
-  processor: (items: T[]) => Promise<R[]>,
-  _options: BatchErrorWrapperOptions = {}
-): ((items: T[]) => Promise<BatchProcessingResult<R>>) => 
-  async (items: T[]) => ({
-    results: await processor(items),
-    errors: [],
-    processedCount: items.length
-  });
-
-export const createTimeoutErrorWrapper = <T extends (...args: any[]) => Promise<any>>(
-  fn: T,
-  _options: TimeoutErrorWrapperOptions = {}
-): T => fn;
-
-export const createStructuredError = (
-  message: string,
-  code?: string,
-  context?: Record<string, any>
-): StructuredError => {
-  const error = new Error(message) as StructuredError;
-  error.code = code;
-  error.context = context;
-  error.timestamp = new Date();
-  return error;
-};
-
-export const logError = (error: Error | StructuredError, context?: string): void => {
-  console.error(`[${context || 'ERROR'}] ${error.message}`);
-};
-
+// Export consolidated error handling object
 export const errorHandling = {
-  createAsyncErrorWrapper,
-  createSyncErrorWrapper,
-  createRouteErrorWrapper,
-  transformMongoError,
-  createDatabaseErrorWrapper,
-  createApiErrorWrapper,
-  createFileErrorWrapper,
-  createBatchErrorWrapper,
-  createTimeoutErrorWrapper,
-  createStructuredError,
-  logError
+  createAsyncErrorWrapper: (() => {
+    const { createAsyncErrorWrapper } = require('./placeholderWrappers.js');
+    return createAsyncErrorWrapper;
+  })(),
+  createSyncErrorWrapper: (() => {
+    const { createSyncErrorWrapper } = require('./placeholderWrappers.js');
+    return createSyncErrorWrapper;
+  })(),
+  createRouteErrorWrapper: (() => {
+    const { createRouteErrorWrapper } = require('./placeholderWrappers.js');
+    return createRouteErrorWrapper;
+  })(),
+  transformMongoError: (() => {
+    const { transformMongoError } = require('./placeholderWrappers.js');
+    return transformMongoError;
+  })(),
+  createDatabaseErrorWrapper: (() => {
+    const { createDatabaseErrorWrapper } = require('./placeholderWrappers.js');
+    return createDatabaseErrorWrapper;
+  })(),
+  createApiErrorWrapper: (() => {
+    const { createApiErrorWrapper } = require('./placeholderWrappers.js');
+    return createApiErrorWrapper;
+  })(),
+  createFileErrorWrapper: (() => {
+    const { createFileErrorWrapper } = require('./placeholderWrappers.js');
+    return createFileErrorWrapper;
+  })(),
+  createBatchErrorWrapper: (() => {
+    const { createBatchErrorWrapper } = require('./placeholderWrappers.js');
+    return createBatchErrorWrapper;
+  })(),
+  createTimeoutErrorWrapper: (() => {
+    const { createTimeoutErrorWrapper } = require('./placeholderWrappers.js');
+    return createTimeoutErrorWrapper;
+  })(),
+  createStructuredError: (() => {
+    const { createStructuredError } = require('./placeholderWrappers.js');
+    return createStructuredError;
+  })(),
+  logError: (() => {
+    const { logError } = require('./placeholderWrappers.js');
+    return logError;
+  })(),
 };

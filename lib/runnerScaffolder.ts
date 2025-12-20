@@ -12,7 +12,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import fileSystemUtils from './fileSystemUtils.js';
+import { safeExists, ensureDir, safeWriteFile, safeDelete } from './fileSystem/index.js';
 
 // Configuration for runner scaffolding
 interface RunnerConfig {
@@ -363,10 +363,10 @@ export { createMockApp, supertest } from './httpTest.shim.js';
     const configPath = path.join(configDir, 'jest.config.mjs');
     
     if (!this.config.dryRun) {
-      fileSystemUtils.ensureDir(configDir);
+      ensureDir(configDir);
       
-      if (!fileSystemUtils.safeExists(configPath) || this.config.force) {
-        fileSystemUtils.safeWriteFile(configPath, this.getJestConfig());
+      if (!safeExists(configPath) || this.config.force) {
+        safeWriteFile(configPath, this.getJestConfig());
         console.log('✅ Created config/jest.config.mjs');
       } else {
         console.log('ℹ️ config/jest.config.mjs already exists');
@@ -384,10 +384,10 @@ export { createMockApp, supertest } from './httpTest.shim.js';
     const setupPath = path.join(configDir, 'jest-setup.ts');
     
     if (!this.config.dryRun) {
-      fileSystemUtils.ensureDir(configDir);
+      ensureDir(configDir);
       
-      if (!fileSystemUtils.safeExists(setupPath) || this.config.force) {
-        fileSystemUtils.safeWriteFile(setupPath, this.getJestSetup());
+      if (!safeExists(setupPath) || this.config.force) {
+        safeWriteFile(setupPath, this.getJestSetup());
         console.log('✅ Created config/jest-setup.ts');
       } else {
         console.log('ℹ️ config/jest-setup.ts already exists');
@@ -405,10 +405,10 @@ export { createMockApp, supertest } from './httpTest.shim.js';
     const polyfillPath = path.join(configDir, 'jest-require-polyfill.cjs');
     
     if (!this.config.dryRun) {
-      fileSystemUtils.ensureDir(configDir);
+      ensureDir(configDir);
       
-      if (!fileSystemUtils.safeExists(polyfillPath) || this.config.force) {
-        fileSystemUtils.safeWriteFile(polyfillPath, this.getRequirePolyfill());
+      if (!safeExists(polyfillPath) || this.config.force) {
+        safeWriteFile(polyfillPath, this.getRequirePolyfill());
         console.log('✅ Created config/jest-require-polyfill.cjs');
       } else {
         console.log('ℹ️ config/jest-require-polyfill.cjs already exists');
@@ -425,21 +425,21 @@ export { createMockApp, supertest } from './httpTest.shim.js';
     const utilsDir = path.join(projectRoot, 'utils', 'httpTest');
     
     if (!this.config.dryRun) {
-      fileSystemUtils.ensureDir(utilsDir);
+      ensureDir(utilsDir);
       
       const { ts, js } = this.getHttpTestUtils();
       const tsPath = path.join(utilsDir, 'httpTest.ts');
       const jsPath = path.join(utilsDir, 'httpTest.shim.js');
       
-      if (!fileSystemUtils.safeExists(tsPath) || this.config.force) {
-        fileSystemUtils.safeWriteFile(tsPath, ts);
+      if (!safeExists(tsPath) || this.config.force) {
+        safeWriteFile(tsPath, ts);
         console.log('✅ Created utils/httpTest/httpTest.ts');
       } else {
         console.log('ℹ️ utils/httpTest/httpTest.ts already exists');
       }
       
-      if (!fileSystemUtils.safeExists(jsPath) || this.config.force) {
-        fileSystemUtils.safeWriteFile(jsPath, js);
+      if (!safeExists(jsPath) || this.config.force) {
+        safeWriteFile(jsPath, js);
         console.log('✅ Created utils/httpTest/httpTest.shim.js');
       } else {
         console.log('ℹ️ utils/httpTest/httpTest.shim.js already exists');

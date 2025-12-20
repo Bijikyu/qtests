@@ -1,11 +1,9 @@
 /**
- * File System Utilities
- * Provides safe file system operations with error handling
- * Consolidates common patterns used across 20+ files in the codebase
+ * File System Reading Utilities
+ * Handles safe file and directory reading operations
  */
 
 import * as fs from 'fs';
-import * as path from 'path';
 
 /**
  * Safely checks if a file or directory exists
@@ -47,68 +45,6 @@ export function safeReadFileBuffer(filePath: string): Buffer | null {
 }
 
 /**
- * Safely writes a file with directory creation
- * @param filePath - Path to write
- * @param content - Content to write
- * @param encoding - File encoding (default: utf8)
- * @returns true if successful, false otherwise
- */
-export function safeWriteFile(filePath: string, content: string | Buffer, encoding: BufferEncoding = 'utf8'): boolean {
-  try {
-    // Ensure directory exists
-    const dir = path.dirname(filePath);
-    if (!safeExists(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    
-    fs.writeFileSync(filePath, content, encoding);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Ensures a directory exists, creating it if necessary
- * @param dirPath - Directory path to ensure
- * @returns true if directory exists or was created, false otherwise
- */
-export function ensureDir(dirPath: string): boolean {
-  try {
-    if (!safeExists(dirPath)) {
-      fs.mkdirSync(dirPath, { recursive: true });
-    }
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/**
- * Safely deletes a file or directory
- * @param targetPath - Path to delete
- * @param recursive - Whether to delete directories recursively (default: false)
- * @returns true if successful, false otherwise
- */
-export function safeDelete(targetPath: string, recursive: boolean = false): boolean {
-  try {
-    if (!safeExists(targetPath)) {
-      return true; // Already doesn't exist
-    }
-    
-    const stats = fs.statSync(targetPath);
-    if (stats.isDirectory()) {
-      fs.rmSync(targetPath, { recursive, force: true });
-    } else {
-      fs.unlinkSync(targetPath);
-    }
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-/**
  * Safely gets file stats
  * @param filePath - Path to check
  * @returns fs.Stats object or null if failed
@@ -142,6 +78,74 @@ export function isFile(filePath: string): boolean {
 }
 
 /**
+ * Ensures a directory exists, creating it if necessary
+ * @param dirPath - Directory path to ensure
+ * @returns true if directory exists or was created, false otherwise
+ */
+export function ensureDir(dirPath: string): boolean {
+  try {
+    if (!safeExists(dirPath)) {
+      const fs = require('fs');
+      fs.mkdirSync(dirPath, { recursive: true });
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Safely writes a file with directory creation
+ * @param filePath - Path to write
+ * @param content - Content to write
+ * @param encoding - File encoding (default: utf8)
+ * @returns true if successful, false otherwise
+ */
+export function safeWriteFile(filePath: string, content: string | Buffer, encoding: BufferEncoding = 'utf8'): boolean {
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    
+    // Ensure directory exists
+    const dir = path.dirname(filePath);
+    if (!safeExists(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    
+    fs.writeFileSync(filePath, content, encoding);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Safely deletes a file or directory
+ * @param targetPath - Path to delete
+ * @param recursive - Whether to delete directories recursively (default: false)
+ * @returns true if successful, false otherwise
+ */
+export function safeDelete(targetPath: string, recursive: boolean = false): boolean {
+  try {
+    const fs = require('fs');
+    
+    if (!fs.existsSync(targetPath)) {
+      return true; // Already doesn't exist
+    }
+    
+    const stats = fs.statSync(targetPath);
+    if (stats.isDirectory()) {
+      fs.rmSync(targetPath, { recursive, force: true });
+    } else {
+      fs.unlinkSync(targetPath);
+    }
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Executes a file operation with error handling
  * @param operation - File operation function
  * @param context - Context description for error logging
@@ -155,20 +159,3 @@ export function withFileErrorHandling<T>(operation: () => T, context: string): T
     return null;
   }
 }
-
-// Export all utilities for easy importing
-export const fileSystemUtils = {
-  safeExists,
-  safeReadFile,
-  safeReadFileBuffer,
-  safeWriteFile,
-  ensureDir,
-  safeDelete,
-  safeStats,
-  isDirectory,
-  isFile,
-  withFileErrorHandling
-};
-
-// Default export for compliance with architecture patterns
-export default fileSystemUtils;

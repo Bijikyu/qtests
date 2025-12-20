@@ -1,90 +1,39 @@
-declare const globalThis: any;
+/**
+ * Legacy Test Polyfills - Refactored for SRP
+ * 
+ * This file now serves as a compatibility layer that re-exports
+ * the modular polyfill functionality while maintaining backward compatibility.
+ * 
+ * The actual implementation has been split into:
+ * - polyfills/clipboardPolyfill.ts - Clipboard API polyfill
+ * - polyfills/intersectionObserverPolyfill.ts - Intersection Observer polyfill
+ * - polyfills/mediaQueryPolyfill.ts - Media Query polyfill
+ * - polyfills/resizeObserverPolyfill.ts - Resize Observer polyfill
+ * - polyfills/polyfillOrchestrator.ts - Coordinates all polyfill setup
+ */
 
-export interface ClipboardSpies {
-  clipboardWriteTextSpy: (...args: any[]) => Promise<void>;
-}
+// Import modular polyfill components
+import {
+  setupClipboard,
+  ClipboardSpies,
+  MockIntersectionObserver,
+  setupIntersectionObserver,
+  MockMediaQueryList,
+  setupMatchMedia,
+  MockResizeObserver,
+  setupResizeObserver,
+  setupAllPolyfills
+} from './polyfills/index.js';
 
-export function setupClipboard(globalScope: any = globalThis): ClipboardSpies {
-  const mockFactory = globalScope.jest?.fn ?? globalScope.vi?.fn ?? (() => async () => undefined);
-  const clipboardWriteTextSpy = mockFactory(async () => undefined);
-
-  if (!globalScope.navigator) {
-    globalScope.navigator = {};
-  }
-  globalScope.navigator.clipboard = { writeText: clipboardWriteTextSpy };
-
-  return { clipboardWriteTextSpy };
-}
-
-export class MockIntersectionObserver {
-  root: Element | null = null;
-  rootMargin: string = '';
-  thresholds: ReadonlyArray<number> = [];
-
-  constructor(_callback: IntersectionObserverCallback, _options?: IntersectionObserverInit) {}
-
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-  takeRecords(): IntersectionObserverEntry[] {
-    return [];
-  }
-}
-
-export function setupIntersectionObserver(globalScope: any = globalThis): typeof MockIntersectionObserver {
-  globalScope.IntersectionObserver = MockIntersectionObserver;
-  return globalScope.IntersectionObserver;
-}
-
-export interface MockMediaQueryList {
-  matches: boolean;
-  media: string;
-  onchange: ((this: MediaQueryList, ev: MediaQueryListEvent) => any) | null;
-  addListener: () => void;
-  removeListener: () => void;
-  addEventListener: () => void;
-  removeEventListener: () => void;
-  dispatchEvent: () => boolean;
-}
-
-export function setupMatchMedia(globalScope: any = globalThis): void {
-  if (typeof globalScope.window !== 'undefined' && !globalScope.window.matchMedia) {
-    globalScope.window.matchMedia = (query: string): MockMediaQueryList => ({
-      matches: false,
-      media: query,
-      onchange: null,
-      addListener: () => undefined,
-      removeListener: () => undefined,
-      addEventListener: () => undefined,
-      removeEventListener: () => undefined,
-      dispatchEvent: () => false,
-    });
-  }
-}
-
-export class MockResizeObserver {
-  callback: ResizeObserverCallback;
-
-  constructor(callback: ResizeObserverCallback) {
-    this.callback = callback;
-  }
-
-  observe(): void {}
-  unobserve(): void {}
-  disconnect(): void {}
-}
-
-export function setupResizeObserver(globalScope: any = globalThis): typeof MockResizeObserver {
-  if (typeof globalScope.ResizeObserver !== 'function') {
-    globalScope.ResizeObserver = MockResizeObserver;
-  }
-  return globalScope.ResizeObserver;
-}
-
-export function setupAllPolyfills(globalScope: any = globalThis): ClipboardSpies {
-  const clipboardSpies = setupClipboard(globalScope);
-  setupIntersectionObserver(globalScope);
-  setupMatchMedia(globalScope);
-  setupResizeObserver(globalScope);
-  return clipboardSpies;
-}
+// Re-export all functionality for backward compatibility
+export {
+  setupClipboard,
+  ClipboardSpies,
+  MockIntersectionObserver,
+  setupIntersectionObserver,
+  MockMediaQueryList,
+  setupMatchMedia,
+  MockResizeObserver,
+  setupResizeObserver,
+  setupAllPolyfills,
+};
