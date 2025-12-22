@@ -504,13 +504,13 @@
         </header>
 
         <nav class="nav-tabs">
-            <button class="nav-tab active" onclick="showTab('overview')">📊 Overview</button>
-            <button class="nav-tab" onclick="showTab('test-generation')">🚀 Test Generation</button>
-            <button class="nav-tab" onclick="showTab('test-runner')">⚡ Test Runner</button>
-            <button class="nav-tab" onclick="showTab('mocking')">🎭 Mocking & Stubbing</button>
-            <button class="nav-tab" onclick="showTab('utilities')">🛠️ Utilities</button>
-            <button class="nav-tab" onclick="showTab('configuration')">⚙️ Configuration</button>
-            <button class="nav-tab" onclick="showTab('playground')">🎮 Playground</button>
+            <button class="nav-tab active" onclick="showTab('overview', this)">📊 Overview</button>
+            <button class="nav-tab" onclick="showTab('test-generation', this)">🚀 Test Generation</button>
+            <button class="nav-tab" onclick="showTab('test-runner', this)">⚡ Test Runner</button>
+            <button class="nav-tab" onclick="showTab('mocking', this)">🎭 Mocking & Stubbing</button>
+            <button class="nav-tab" onclick="showTab('utilities', this)">🛠️ Utilities</button>
+            <button class="nav-tab" onclick="showTab('configuration', this)">⚙️ Configuration</button>
+            <button class="nav-tab" onclick="showTab('playground', this)">🎮 Playground</button>
         </nav>
 
         <!-- Overview Tab -->
@@ -1202,7 +1202,7 @@ describe('Sample Test', () => {
 
     <script>
         // Tab navigation
-        function showTab(tabName) {
+        function showTab(tabName, targetElement) {
             // Hide all tabs
             const tabs = document.querySelectorAll('.tab-content');
             tabs.forEach(tab => tab.classList.remove('active'));
@@ -1212,36 +1212,62 @@ describe('Sample Test', () => {
             navTabs.forEach(tab => tab.classList.remove('active'));
             
             // Show selected tab
-            document.getElementById(tabName).classList.add('active');
+            const selectedTab = document.getElementById(tabName);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
             
             // Add active class to clicked nav tab
-            event.target.classList.add('active');
+            const target = targetElement || event?.target;
+            if (target && target.classList) {
+                target.classList.add('active');
+            }
         }
 
         // Workflow animation
         let workflowStep = 0;
+        let workflowInterval = null;
         function runWorkflow() {
             const steps = ['step-1', 'step-2', 'step-3', 'step-4'];
             const progressBar = document.getElementById('workflow-progress');
             
-            const interval = setInterval(() => {
+            // Clear any existing interval
+            if (workflowInterval) {
+                clearInterval(workflowInterval);
+            }
+            
+            workflowInterval = setInterval(() => {
                 if (workflowStep > 0) {
-                    document.getElementById(steps[workflowStep - 1]).classList.remove('active');
-                    document.getElementById(steps[workflowStep - 1]).classList.add('completed');
+                    const prevStep = document.getElementById(steps[workflowStep - 1]);
+                    if (prevStep) {
+                        prevStep.classList.remove('active');
+                        prevStep.classList.add('completed');
+                    }
                 }
                 
                 if (workflowStep < steps.length) {
-                    document.getElementById(steps[workflowStep]).classList.add('active');
-                    progressBar.style.width = `${(workflowStep + 1) * 25}%`;
+                    const currentStep = document.getElementById(steps[workflowStep]);
+                    if (currentStep) {
+                        currentStep.classList.add('active');
+                    }
+                    if (progressBar) {
+                        progressBar.style.width = `${(workflowStep + 1) * 25}%`;
+                    }
                     workflowStep++;
                 } else {
-                    clearInterval(interval);
+                    clearInterval(workflowInterval);
+                    workflowInterval = null;
                     setTimeout(() => {
                         // Reset workflow
                         steps.forEach(step => {
-                            document.getElementById(step).classList.remove('active', 'completed');
+                            const stepElement = document.getElementById(step);
+                            if (stepElement) {
+                                stepElement.classList.remove('active', 'completed');
+                            }
                         });
-                        progressBar.style.width = '0%';
+                        if (progressBar) {
+                            progressBar.style.width = '0%';
+                        }
                         workflowStep = 0;
                     }, 2000);
                 }
@@ -1250,20 +1276,35 @@ describe('Sample Test', () => {
 
         // Test Generation
         function generateTests() {
-            const sourceDir = document.getElementById('source-dir').value;
-            const testDir = document.getElementById('test-dir').value;
-            const mode = document.getElementById('generation-mode').value;
+            const sourceDirElement = document.getElementById('source-dir');
+            const testDirElement = document.getElementById('test-dir');
+            const modeElement = document.getElementById('generation-mode');
             const preview = document.getElementById('generation-preview');
             
+            // Validate elements exist
+            if (!sourceDirElement || !testDirElement || !modeElement || !preview) {
+                console.error('Required elements not found');
+                return;
+            }
+            
+            const sourceDir = sourceDirElement.value || 'src';
+            const testDir = testDirElement.value || 'tests';
+            const mode = modeElement.value || 'ast';
+            
+            // Sanitize inputs to prevent XSS
+            const sanitizedSourceDir = sourceDir.replace(/[<>&"']/g, '');
+            const sanitizedTestDir = testDir.replace(/[<>&"']/g '');
+            const sanitizedMode = mode.replace(/[<>&"']/g '');
+            
             preview.innerHTML = `
-                <div style="color: #4fc3f7;">$ qtests-generate --mode ${mode} --src-dir ${sourceDir} --test-dir ${testDir}</div>
-                <div>🔍 Analyzing source files in ${sourceDir}/...</div>
+                <div style="color: #4fc3f7;">$ qtests-generate --mode ${sanitizedMode} --src-dir ${sanitizedSourceDir} --test-dir ${sanitizedTestDir}</div>
+                <div>🔍 Analyzing source files in ${sanitizedSourceDir}/...</div>
                 <div>📝 Found ${Math.floor(Math.random() * 20) + 5} TypeScript files</div>
                 <div>⚛️  Detected ${Math.floor(Math.random() * 5) + 1} React components</div>
                 <div>🌐  Detected ${Math.floor(Math.random() * 8) + 2} Express routes</div>
                 <div>🧪  Generating ${Math.floor(Math.random() * 15) + 5} test files...</div>
                 <div style="color: #10b981;">✅ Test generation completed successfully!</div>
-                <div>📁 Tests saved to ${testDir}/</div>
+                <div>📁 Tests saved to ${sanitizedTestDir}/</div>
             `;
         }
 
@@ -1273,6 +1314,7 @@ describe('Sample Test', () => {
 
         // Test Runner
         let testRunning = false;
+        let testRunnerInterval = null;
         function runTests() {
             if (testRunning) return;
             testRunning = true;
@@ -1280,6 +1322,17 @@ describe('Sample Test', () => {
             const output = document.getElementById('test-output');
             const progress = document.getElementById('test-progress');
             const status = document.getElementById('test-status');
+            const passedElement = document.getElementById('tests-passed');
+            const failedElement = document.getElementById('tests-failed');
+            const skippedElement = document.getElementById('tests-skipped');
+            const durationElement = document.getElementById('test-duration');
+            
+            // Validate elements exist
+            if (!output || !progress || !status || !passedElement || !failedElement || !skippedElement || !durationElement) {
+                console.error('Required test runner elements not found');
+                testRunning = false;
+                return;
+            }
             
             output.innerHTML = `
                 <div style="color: #4fc3f7;">$ qtests-runner --config config/jest.config.mjs --pattern **/*.test.ts</div>
@@ -1293,11 +1346,18 @@ describe('Sample Test', () => {
             status.className = 'status warning';
             
             let progressValue = 0;
-            const interval = setInterval(() => {
+            
+            // Clear any existing interval
+            if (testRunnerInterval) {
+                clearInterval(testRunnerInterval);
+            }
+            
+            testRunnerInterval = setInterval(() => {
                 progressValue += Math.random() * 15;
                 if (progressValue >= 100) {
                     progressValue = 100;
-                    clearInterval(interval);
+                    clearInterval(testRunnerInterval);
+                    testRunnerInterval = null;
                     
                     // Show results
                     const passed = Math.floor(Math.random() * 10) + 5;
@@ -1305,10 +1365,10 @@ describe('Sample Test', () => {
                     const skipped = Math.floor(Math.random() * 2);
                     const duration = Math.floor(Math.random() * 500) + 200;
                     
-                    document.getElementById('tests-passed').textContent = passed;
-                    document.getElementById('tests-failed').textContent = failed;
-                    document.getElementById('tests-skipped').textContent = skipped;
-                    document.getElementById('test-duration').textContent = duration + 'ms';
+                    passedElement.textContent = passed;
+                    failedElement.textContent = failed;
+                    skippedElement.textContent = skipped;
+                    durationElement.textContent = duration + 'ms';
                     
                     output.innerHTML += `
                         <div style="color: #10b981;">✅ Tests completed!</div>
@@ -1321,7 +1381,9 @@ describe('Sample Test', () => {
                     status.className = failed > 0 ? 'status error' : 'status success';
                     testRunning = false;
                 }
-                progress.style.width = progressValue + '%';
+                if (progress) {
+                    progress.style.width = progressValue + '%';
+                }
             }, 200);
         }
 
@@ -1390,16 +1452,34 @@ describe('Sample Test', () => {
             alert(`Generated ${type} error wrapper`);
         }
 
+        let memoryMonitoringInterval = null;
         function startMemoryMonitoring() {
-            const interval = setInterval(() => {
+            const usageElement = document.getElementById('memory-usage');
+            const heapElement = document.getElementById('heap-size');
+            
+            // Clear any existing interval
+            if (memoryMonitoringInterval) {
+                clearInterval(memoryMonitoringInterval);
+            }
+            
+            // Validate elements exist
+            if (!usageElement || !heapElement) {
+                console.error('Memory monitoring elements not found');
+                return;
+            }
+            
+            memoryMonitoringInterval = setInterval(() => {
                 const usage = Math.floor(Math.random() * 50) + 20;
                 const heap = Math.floor(Math.random() * 30) + 15;
                 
-                document.getElementById('memory-usage').textContent = usage + 'MB';
-                document.getElementById('heap-size').textContent = heap + 'MB';
+                usageElement.textContent = usage + 'MB';
+                heapElement.textContent = heap + 'MB';
             }, 1000);
             
-            setTimeout(() => clearInterval(interval), 10000);
+            setTimeout(() => {
+                clearInterval(memoryMonitoringInterval);
+                memoryMonitoringInterval = null;
+            }, 10000);
         }
 
         function detectMemoryLeaks() {
@@ -1529,6 +1609,13 @@ describe('UserService Example', () => {
         }
 
         function loadTemplate(templateName) {
+            const playgroundCodeElement = document.getElementById('playground-code');
+            
+            if (!playgroundCodeElement) {
+                console.error('Playground code element not found');
+                return;
+            }
+            
             const templates = {
                 'basic-stubbing': `// Basic Method Stubbing
 import { stubMethod } from 'qtests/setup';
@@ -1538,7 +1625,7 @@ const calculator = {
   multiply: (a, b) => a * b
 };
 
-// Stub the add method
+// Stub add method
 stubMethod(calculator, 'add', jest.fn().mockReturnValue(100));
 
 console.log(calculator.add(5, 10)); // Returns 100, not 15`,
@@ -1647,8 +1734,9 @@ test('renders user name', async () => {
             
             const code = templates[templateName];
             if (code) {
-                document.getElementById('playground-code').value = code;
+                playgroundCodeElement.value = code;
             }
+        }
         }
 
         function exploreFeature() {
@@ -1678,6 +1766,13 @@ test('renders user name', async () => {
         document.addEventListener('DOMContentLoaded', function() {
             // Add any initialization code here
             console.log('QTests Demo loaded successfully');
+            
+            // Cleanup intervals on page unload to prevent memory leaks
+            window.addEventListener('beforeunload', function() {
+                if (workflowInterval) clearInterval(workflowInterval);
+                if (testRunnerInterval) clearInterval(testRunnerInterval);
+                if (memoryMonitoringInterval) clearInterval(memoryMonitoringInterval);
+            });
         });
     </script>
 </body>
