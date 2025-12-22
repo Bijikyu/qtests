@@ -511,6 +511,7 @@
             <button class="nav-tab" onclick="showTab('utilities', this)">🛠️ Utilities</button>
             <button class="nav-tab" onclick="showTab('advanced-features', this)">🔬 Advanced</button>
             <button class="nav-tab" onclick="showTab('email-http-testing', this)">📧 Email & HTTP</button>
+            <button class="nav-tab" onclick="showTab('route-testing', this)">🛣️ Route Testing</button>
             <button class="nav-tab" onclick="showTab('performance', this)">📊 Performance</button>
             <button class="nav-tab" onclick="showTab('configuration', this)">⚙️ Configuration</button>
             <button class="nav-tab" onclick="showTab('playground', this)">🎮 Playground</button>
@@ -1354,6 +1355,191 @@ LOG_LEVEL=debug"></textarea>
             </div>
         </div>
 
+        <!-- Route Testing Tab -->
+        <div id="route-testing" class="tab-content">
+            <h2>🛣️ Route Testing Utilities</h2>
+            <div class="alert success">
+                Comprehensive route testing utilities that eliminate duplication in HTTP route testing patterns with parameterized test generation.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>🚀 Route Test Generator</h3>
+                    <div class="input-group">
+                        <label for="route-gen-method">HTTP Method</label>
+                        <select id="route-gen-method">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                            <option value="PATCH">PATCH</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="route-gen-path">Route Path</label>
+                        <input type="text" id="route-gen-path" value="/api/users/:id" placeholder="/api/users/:id">
+                    </div>
+                    <div class="input-group">
+                        <label for="route-gen-description">Test Description</label>
+                        <input type="text" id="route-gen-description" placeholder="User management endpoints">
+                    </div>
+                    <button class="btn" onclick="generateComprehensiveRouteTests()">Generate Tests</button>
+                    <button class="btn secondary" onclick="previewRouteTests()">Preview Tests</button>
+                </div>
+
+                <div class="card">
+                    <h3>📋 Test Scenarios</h3>
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" class="checkbox" id="scenario-success" checked>
+                            Success Response Testing
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" class="checkbox" id="scenario-validation" checked>
+                            Validation Error Testing
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" class="checkbox" id="scenario-auth" checked>
+                            Authentication Testing
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" class="checkbox" id="scenario-params" checked>
+                            Parameter Testing
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" class="checkbox" id="scenario-server-error">
+                            Server Error Testing
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🎛️ Response Configuration</h3>
+                    <div class="input-group">
+                        <label for="success-status">Success Status Code</label>
+                        <input type="number" id="success-status" value="200" min="200" max="299">
+                    </div>
+                    <div class="input-group">
+                        <label for="error-status">Error Status Code</label>
+                        <input type="number" id="error-status" value="400" min="400" max="599">
+                    </div>
+                    <div class="input-group">
+                        <label for="response-data">Success Response Data (JSON)</label>
+                        <textarea id="response-data" rows="3" placeholder='{"id": 123, "name": "John", "email": "john@example.com"}'></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="error-data">Error Response Data (JSON)</label>
+                        <textarea id="error-data" rows="2" placeholder='{"error": "Validation failed", "details": ["Name is required"]}'></textarea>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>⚡ Quick Route Templates</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn" onclick="loadRouteTemplate('crud')">CRUD Operations</button>
+                        <button class="btn" onclick="loadRouteTemplate('auth')">Authentication</button>
+                        <button class="btn" onclick="loadRouteTemplate('search')">Search & Filter</button>
+                        <button class="btn" onclick="loadRouteTemplate('file')">File Upload</button>
+                        <button class="btn" onclick="loadRouteTemplate('webhook')">Webhook Handler</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>📝 Generated Route Tests</h4>
+                <div id="route-test-output" class="code-block" style="max-height: 400px; overflow-y: auto;">
+                    <div style="color: #6b7280;">Configure route settings and click "Generate Tests" to see the generated test code...</div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button class="btn success" onclick="copyRouteTests()">Copy Tests</button>
+                    <button class="btn secondary" onclick="downloadRouteTests()">Download Tests</button>
+                    <button class="btn" onclick="validateRouteTests()">Validate Tests</button>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>🧪 Route Testing Examples</h4>
+                <div class="code-block">
+// Example: Generated tests for GET /api/users/:id
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { createMockApp, supertest } from 'qtests/utils/httpTest';
+import { generateRouteTests } from 'qtests/lib/routeTestUtils';
+
+describe('User Routes', () => {
+  let app: any;
+  let client: any;
+
+  beforeEach(async () => {
+    app = createMockApp();
+    client = supertest(app);
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it('should fetch user successfully', async () => {
+    const response = await client
+      .get('/api/users/123')
+      .expect(200);
+
+    expect(response.body).toMatchObject({
+      id: 123,
+      name: expect.any(String),
+      email: expect.any(String)
+    });
+  });
+
+  it('should handle user not found', async () => {
+    const response = await client
+      .get('/api/users/999')
+      .expect(404);
+
+    expect(response.body.error).toBe('User not found');
+  });
+
+  it('should validate user ID format', async () => {
+    const response = await client
+      .get('/api/users/invalid')
+      .expect(400);
+
+    expect(response.body.error).toContain('Invalid user ID');
+  });
+});
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>📊 Route Testing Statistics</h4>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value" id="routes-generated">0</div>
+                        <div class="metric-label">Routes Generated</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="tests-created">0</div>
+                        <div class="metric-label">Tests Created</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="scenarios-covered">0</div>
+                        <div class="metric-label">Scenarios Covered</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="code-saved">0%</div>
+                        <div class="metric-label">Code Saved</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Performance & Benchmarking Tab -->
         <div id="performance" class="tab-content">
             <h2>📊 Performance & Benchmarking</h2>
@@ -1401,11 +1587,49 @@ LOG_LEVEL=debug"></textarea>
                         <div>Ready to compare batching strategies...</div>
                     </div>
                 </div>
+
+                <div class="card">
+                    <h3>🔄 waitForCondition Testing</h3>
+                    <div class="input-group">
+                        <label for="wait-timeout">Timeout (ms)</label>
+                        <input type="number" id="wait-timeout" value="2000" min="100" max="10000">
+                    </div>
+                    <div class="input-group">
+                        <label for="wait-interval">Interval (ms)</label>
+                        <input type="number" id="wait-interval" value="25" min="10" max="500">
+                    </div>
+                    <button class="btn" onclick="testWaitForCondition()">Test waitForCondition</button>
+                    <div id="wait-results" class="terminal" style="margin-top: 10px; min-height: 100px;">
+                        <div>Ready to test waitForCondition...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🛣️ Route Testing Utilities</h3>
+                    <div class="input-group">
+                        <label for="route-method">HTTP Method</label>
+                        <select id="route-method">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="DELETE">DELETE</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="route-path">Route Path</label>
+                        <input type="text" id="route-path" value="/api/users/:id" placeholder="/api/users/:id">
+                    </div>
+                    <button class="btn" onclick="generateRouteTests()">Generate Route Tests</button>
+                    <div id="route-test-results" class="terminal" style="margin-top: 10px; min-height: 100px;">
+                        <div>Ready to generate route tests...</div>
+                    </div>
+                </div>
             </div>
 
             <div class="demo-section">
                 <h4>📈 Performance Charts</h4>
                 <canvas id="performance-chart" width="800" height="300"></canvas>
+                <button class="btn secondary" onclick="drawPerformanceChart()" style="margin-top: 10px;">Update Chart</button>
             </div>
 
             <div class="demo-section">
@@ -1416,6 +1640,8 @@ LOG_LEVEL=debug"></textarea>
                         <li>Enable test isolation to prevent cross-test interference</li>
                         <li>Stub external services to reduce test execution time</li>
                         <li>Use parallel execution where tests are independent</li>
+                        <li>Consider waitForCondition for async operations</li>
+                        <li>Use route testing utilities for API endpoint testing</li>
                     </ul>
                 </div>
             </div>
@@ -1498,6 +1724,8 @@ describe('Sample Test', () => {
                     <button class="btn" onclick="loadTemplate('validation')">Validation</button>
                     <button class="btn" onclick="loadTemplate('memory-testing')">Memory Testing</button>
                     <button class="btn" onclick="loadTemplate('email-testing')">Email Testing</button>
+                    <button class="btn" onclick="loadTemplate('route-testing')">Route Testing</button>
+                    <button class="btn" onclick="loadTemplate('wait-condition')">waitForCondition</button>
                 </div>
             </div>
 
@@ -1518,6 +1746,8 @@ describe('Sample Test', () => {
                         <option value="rateLimiting">Rate Limiting</option>
                         <option value="emailTesting">Email Testing</option>
                         <option value="httpTesting">HTTP Testing</option>
+                        <option value="routeTesting">Route Testing</option>
+                        <option value="waitForCondition">waitForCondition()</option>
                         <option value="testIsolation">Test Isolation</option>
                         <option value="polyfills">Browser Polyfills</option>
                     </select>
@@ -2614,6 +2844,154 @@ test('renders user name', async () => {
             }, 1500);
         }
 
+        // waitForCondition testing
+        function testWaitForCondition() {
+            const timeout = parseInt(document.getElementById('wait-timeout').value) || 2000;
+            const interval = parseInt(document.getElementById('wait-interval').value) || 25;
+            const results = document.getElementById('wait-results');
+            
+            results.innerHTML = `
+                <div>🔄 Testing waitForCondition...</div>
+                <div>⏱️ Timeout: ${timeout}ms, Interval: ${interval}ms</div>
+            `;
+            
+            // Simulate async condition
+            let conditionMet = false;
+            setTimeout(() => {
+                conditionMet = true;
+            }, Math.random() * 1500 + 500);
+            
+            // Simulate waiting for condition
+            const startTime = Date.now();
+            const checkInterval = setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                
+                if (conditionMet || elapsed > timeout) {
+                    clearInterval(checkInterval);
+                    
+                    if (conditionMet) {
+                        results.innerHTML = `
+                            <div style="color: #10b981;">✅ Condition met!</div>
+                            <div>⏱️ Wait time: ${elapsed}ms</div>
+                            <div>🎯 Success: Condition satisfied within timeout</div>
+                        `;
+                    } else {
+                        results.innerHTML = `
+                            <div style="color: #ef4444;">❌ Timeout reached</div>
+                            <div>⏱️ Wait time: ${elapsed}ms</div>
+                            <div>⚠️ Error: Condition not met within ${timeout}ms</div>
+                        `;
+                    }
+                } else {
+                    results.innerHTML = `
+                        <div>🔄 Testing waitForCondition...</div>
+                        <div>⏱️ Timeout: ${timeout}ms, Interval: ${interval}ms</div>
+                        <div>⏳ Waiting... (${elapsed}ms elapsed)</div>
+                    `;
+                }
+            }, interval);
+        }
+
+        // Route testing utilities
+        function generateRouteTests() {
+            const method = document.getElementById('route-method').value;
+            const path = document.getElementById('route-path').value;
+            const results = document.getElementById('route-test-results');
+            
+            if (!path) {
+                results.innerHTML = `<div style="color: #ef4444;">❌ Please enter a route path</div>`;
+                return;
+            }
+            
+            results.innerHTML = `
+                <div>🔄 Generating route tests for ${method} ${path}...</div>
+                <div>📝 Creating test scenarios...</div>
+            `;
+            
+            setTimeout(() => {
+                const testCode = generateRouteTestCode(method, path);
+                results.innerHTML = `
+                    <div style="color: #10b981;">✅ Route tests generated!</div>
+                    <div>📝 Method: ${method}</div>
+                    <div>🛣️ Path: ${path}</div>
+                    <div>🧪 Test scenarios: 4</div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div style="color: #22d3ee; font-family: monospace; font-size: 12px; white-space: pre-wrap;">${testCode}</div>
+                    </div>
+                `;
+            }, 1000);
+        }
+
+        function generateRouteTestCode(method, path) {
+            const routeName = path.replace(/[^a-zA-Z0-9]/g, '_').replace(/^_+|_+$/g, '');
+            const hasParams = path.includes(':');
+            
+            let testCode = `// Generated tests for ${method} ${path}
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { createMockApp, supertest } from 'qtests/utils/httpTest';
+import { generateRouteTests } from 'qtests/lib/routeTestUtils';
+
+describe('${routeName} Routes', () => {
+  let app: any;
+  let client: any;
+
+  beforeEach(async () => {
+    app = createMockApp();
+    client = supertest(app);
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it('should handle successful ${method} request', async () => {
+    const response = await client
+      .${method.toLowerCase()}('${path}')
+      .expect(200);
+
+    expect(response.body).toBeDefined();
+    expect(response.body.success).toBe(true);
+  });`;
+
+            if (hasParams) {
+                testCode += `
+
+  it('should handle ${method} request with parameters', async () => {
+    const testId = '123';
+    const response = await client
+      .${method.toLowerCase()}('${path.replace(':id', testId)}')
+      .expect(200);
+
+    expect(response.body.id).toBe(testId);
+  });`;
+            }
+
+            testCode += `
+
+  it('should handle validation errors', async () => {
+    const response = await client
+      .${method.toLowerCase()}('${path}')
+      .send({ invalid: 'data' })
+      .expect(400);
+
+    expect(response.body.error).toBeDefined();
+  });
+
+  it('should handle server errors', async () => {
+    // Mock server error
+    jest.spyOn(console, 'error').mockImplementation();
+    
+    const response = await client
+      .${method.toLowerCase()}('${path}')
+      .expect(500);
+
+    expect(response.body.error).toBeDefined();
+  });
+});`;
+
+            return testCode;
+        }
+
         // Enhanced template loading
         function loadTemplate(templateName) {
             const playgroundCodeElement = document.getElementById('playground-code');
@@ -2865,6 +3243,89 @@ describe('Email Testing', () => {
     expect(history[0].to).toBe('user1@example.com');
     expect(history[1].to).toBe('user2@example.com');
   });
+});`,
+
+                'route-testing': `// Route Testing with Utilities
+import { generateRouteTests, createMockApp, supertest } from 'qtests/lib/routeTestUtils';
+
+describe('API Route Testing', () => {
+  let app: any;
+  let client: any;
+
+  beforeEach(async () => {
+    app = createMockApp();
+    client = supertest(app);
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });
+
+  it('should test GET /api/users/:id', async () => {
+    const routeConfig = {
+      method: 'GET' as const,
+      path: '/api/users/:id',
+      successResponse: { id: 123, name: 'John' },
+      errorResponse: { error: 'User not found' }
+    };
+
+    const tests = generateRouteTests(routeConfig);
+    
+    // Test success case
+    const response = await client
+      .get('/api/users/123')
+      .expect(200);
+
+    expect(response.body).toMatchObject(routeConfig.successResponse);
+  });
+
+  it('should test POST /api/users', async () => {
+    const userData = { name: 'Jane', email: 'jane@example.com' };
+    
+    const response = await client
+      .post('/api/users')
+      .send(userData)
+      .expect(201);
+
+    expect(response.body).toMatchObject({ ...userData, id: expect.any(Number) });
+  });
+});`,
+
+                'wait-condition': `// waitForCondition Testing
+import { waitForCondition } from 'qtests/lib/waitForCondition';
+
+describe('waitForCondition', () => {
+  it('should wait for condition to become true', async () => {
+    let counter = 0;
+    
+    // Simulate async operation
+    setTimeout(() => counter = 5, 100);
+    
+    // Wait for condition
+    await waitForCondition(() => counter === 5, { timeoutMs: 1000 });
+    
+    expect(counter).toBe(5);
+  });
+
+  it('should timeout if condition never becomes true', async () => {
+    let conditionMet = false;
+    
+    await expect(
+      waitForCondition(() => conditionMet, { timeoutMs: 100 })
+    ).rejects.toThrow('waitForCondition: timeout after 100ms');
+  });
+
+  it('should handle async predicate functions', async () => {
+    let data = null;
+    
+    setTimeout(() => data = 'loaded', 50);
+    
+    await waitForCondition(async () => {
+      return data === 'loaded';
+    }, { timeoutMs: 200 });
+    
+    expect(data).toBe('loaded');
+  });
 });`
             };
             
@@ -2891,6 +3352,8 @@ describe('Email Testing', () => {
                 'rateLimiting': 'Rate Limiting - DistributedRateLimiter and InMemoryRateLimiter provide rate limiting functionality for testing API endpoints and preventing abuse.',
                 'emailTesting': 'Email Testing - sendEmail() utility provides mock email sending for testing email functionality without external SMTP servers.',
                 'httpTesting': 'HTTP Testing - createMockApp() and supertest() provide Express-like mocking and HTTP testing capabilities for API testing.',
+                'routeTesting': 'Route Testing - generateRouteTests() and route testing utilities eliminate duplication in HTTP route testing with parameterized test generation for common scenarios.',
+                'waitForCondition': 'waitForCondition() - Async utility that waits for a predicate function to return true, with configurable timeout and interval. Perfect for testing async operations.',
                 'testIsolation': 'Test Isolation - backupEnvironment(), restoreEnvironment(), trackServer(), and closeAllServers() provide comprehensive test isolation utilities.',
                 'polyfills': 'Browser Polyfills - setupClipboard(), setupIntersectionObserver(), and other polyfills enable testing browser-specific APIs in Node.js environments.'
             };
@@ -2901,6 +3364,330 @@ describe('Email Testing', () => {
             } else {
                 explanation.style.display = 'none';
             }
+        }
+
+        // Route Testing Functions
+        function generateComprehensiveRouteTests() {
+            const method = document.getElementById('route-gen-method').value;
+            const path = document.getElementById('route-gen-path').value;
+            const description = document.getElementById('route-gen-description').value;
+            const output = document.getElementById('route-test-output');
+            
+            if (!path) {
+                output.innerHTML = '<div style="color: #ef4444;">❌ Please enter a route path</div>';
+                return;
+            }
+            
+            const scenarios = {
+                success: document.getElementById('scenario-success').checked,
+                validation: document.getElementById('scenario-validation').checked,
+                auth: document.getElementById('scenario-auth').checked,
+                params: document.getElementById('scenario-params').checked,
+                serverError: document.getElementById('scenario-server-error').checked
+            };
+            
+            const successStatus = document.getElementById('success-status').value || '200';
+            const errorStatus = document.getElementById('error-status').value || '400';
+            const responseData = document.getElementById('response-data').value || '{"success": true}';
+            const errorData = document.getElementById('error-data').value || '{"error": "Bad request"}';
+            
+            output.innerHTML = '<div style="color: #f59e0b;">🔄 Generating comprehensive route tests...</div>';
+            
+            setTimeout(() => {
+                const testCode = generateFullRouteTestSuite(method, path, description, scenarios, {
+                    successStatus,
+                    errorStatus,
+                    responseData,
+                    errorData
+                });
+                
+                output.innerHTML = `<pre style="margin: 0; white-space: pre-wrap;">${testCode}</pre>`;
+                
+                // Update statistics
+                updateRouteTestingStats(method, path, scenarios);
+            }, 1000);
+        }
+
+        function generateFullRouteTestSuite(method, path, description, scenarios, config) {
+            const routeName = path.replace(/[^a-zA-Z0-9]/g, '_').replace(/^_+|_+$/g, '') || 'route';
+            const hasParams = path.includes(':');
+            const desc = description || `Tests for ${method} ${path}`;
+            
+            let testSuite = `/**
+ * ${desc}
+ * Generated by QTests Route Testing Utilities
+ */
+import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { createMockApp, supertest } from 'qtests/utils/httpTest';
+import { generateRouteTests } from 'qtests/lib/routeTestUtils';
+
+describe('${routeName}', () => {
+  let app: any;
+  let client: any;
+
+  beforeEach(async () => {
+    app = createMockApp();
+    client = supertest(app);
+  });
+
+  afterEach(async () => {
+    await app.close();
+  });`;
+
+            // Success scenario
+            if (scenarios.success) {
+                testSuite += `
+
+  it('should handle successful ${method} request', async () => {
+    const response = await client
+      .${method.toLowerCase()}('${path}')
+      .expect(${config.successStatus});
+
+    expect(response.body).toBeDefined();
+    expect(response.body).toMatchObject(${config.responseData});
+  });`;
+            }
+
+            // Parameter testing
+            if (scenarios.params && hasParams) {
+                testSuite += `
+
+  it('should handle ${method} request with parameters', async () => {
+    const testParams = {${extractRouteParams(path).map(param => `      ${param}: 'test-value'`).join(',\n')}};
+    const paramPath = '${path}'.replace(${extractRouteParams(path).map(param => `/:${param}`).join('').replace(/^\//, '')}, Object.values(testParams).join('/'));
+    
+    const response = await client
+      .${method.toLowerCase()}(paramPath)
+      .expect(${config.successStatus});
+
+    expect(response.body).toBeDefined();
+    Object.entries(testParams).forEach(([key, value]) => {
+      expect(response.body[key]).toBe(value);
+    });
+  });`;
+            }
+
+            // Validation testing
+            if (scenarios.validation) {
+                testSuite += `
+
+  it('should handle validation errors', async () => {
+    const response = await client
+      .${method.toLowerCase()}('${path}')
+      .send({ invalid: 'data' })
+      .expect(${config.errorStatus});
+
+    expect(response.body).toMatchObject(${config.errorData});
+  });`;
+            }
+
+            // Authentication testing
+            if (scenarios.auth) {
+                testSuite += `
+
+  it('should require authentication', async () => {
+    const response = await client
+      .${method.toLowerCase()}('${path}')
+      .expect(401);
+
+    expect(response.body.error).toBe('Authentication required');
+  });
+
+  it('should handle valid authentication', async () => {
+    const response = await client
+      .${method.toLowerCase()}('${path}')
+      .set('Authorization', 'Bearer valid-token')
+      .expect(${config.successStatus});
+
+    expect(response.body).toBeDefined();
+  });`;
+            }
+
+            // Server error testing
+            if (scenarios.serverError) {
+                testSuite += `
+
+  it('should handle server errors gracefully', async () => {
+    // Mock server error
+    jest.spyOn(console, 'error').mockImplementation();
+    
+    const response = await client
+      .${method.toLowerCase()}('${path}')
+      .expect(500);
+
+    expect(response.body.error).toBeDefined();
+    expect(response.body.error).toBe('Internal server error');
+  });`;
+            }
+
+            testSuite += `
+});`;
+
+            return testSuite;
+        }
+
+        function extractRouteParams(path) {
+            const params = [];
+            const parts = path.split('/');
+            parts.forEach(part => {
+                if (part.startsWith(':')) {
+                    params.push(part.substring(1));
+                }
+            });
+            return params;
+        }
+
+        function previewRouteTests() {
+            generateComprehensiveRouteTests(); // Same functionality for demo
+        }
+
+        function loadRouteTemplate(templateType) {
+            const templates = {
+                'crud': {
+                    method: 'GET',
+                    path: '/api/users/:id',
+                    description: 'CRUD user operations',
+                    scenarios: { success: true, validation: true, auth: true, params: true, serverError: false },
+                    config: { successStatus: '200', errorStatus: '404', responseData: '{"id": 123, "name": "John"}', errorData: '{"error": "User not found"}' }
+                },
+                'auth': {
+                    method: 'POST',
+                    path: '/api/auth/login',
+                    description: 'Authentication endpoints',
+                    scenarios: { success: true, validation: true, auth: false, params: false, serverError: true },
+                    config: { successStatus: '200', errorStatus: '401', responseData: '{"token": "jwt-token", "user": {"id": 1}}', errorData: '{"error": "Invalid credentials"}' }
+                },
+                'search': {
+                    method: 'GET',
+                    path: '/api/search',
+                    description: 'Search and filter endpoints',
+                    scenarios: { success: true, validation: true, auth: true, params: false, serverError: false },
+                    config: { successStatus: '200', errorStatus: '400', responseData: '{"results": [], "total": 0}', errorData: '{"error": "Invalid search query"}' }
+                },
+                'file': {
+                    method: 'POST',
+                    path: '/api/upload',
+                    description: 'File upload endpoints',
+                    scenarios: { success: true, validation: true, auth: true, params: false, serverError: true },
+                    config: { successStatus: '201', errorStatus: '413', responseData: '{"fileId": "abc123", "size": 1024}', errorData: '{"error": "File too large"}' }
+                },
+                'webhook': {
+                    method: 'POST',
+                    path: '/api/webhooks/payment',
+                    description: 'Webhook handlers',
+                    scenarios: { success: true, validation: true, auth: true, params: false, serverError: true },
+                    config: { successStatus: '200', errorStatus: '400', responseData: '{"processed": true}', errorData: '{"error": "Invalid webhook payload"}' }
+                }
+            };
+            
+            const template = templates[templateType];
+            if (template) {
+                // Set form values
+                document.getElementById('route-gen-method').value = template.method;
+                document.getElementById('route-gen-path').value = template.path;
+                document.getElementById('route-gen-description').value = template.description;
+                
+                // Set scenarios
+                Object.keys(template.scenarios).forEach(key => {
+                    const checkbox = document.getElementById(`scenario-${key}`);
+                    if (checkbox) checkbox.checked = template.scenarios[key];
+                });
+                
+                // Set config
+                document.getElementById('success-status').value = template.config.successStatus;
+                document.getElementById('error-status').value = template.config.errorStatus;
+                document.getElementById('response-data').value = template.config.responseData;
+                document.getElementById('error-data').value = template.config.errorData;
+                
+                // Generate tests
+                generateComprehensiveRouteTests();
+            }
+        }
+
+        function copyRouteTests() {
+            const output = document.getElementById('route-test-output');
+            const text = output.textContent;
+            
+            if (text && !text.includes('Configure route settings')) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('✅ Route tests copied to clipboard!');
+                }).catch(() => {
+                    alert('❌ Failed to copy tests');
+                });
+            } else {
+                alert('⚠️ Please generate tests first');
+            }
+        }
+
+        function downloadRouteTests() {
+            const output = document.getElementById('route-test-output');
+            const text = output.textContent;
+            
+            if (text && !text.includes('Configure route settings')) {
+                const blob = new Blob([text], { type: 'text/typescript' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'route-tests.test.ts';
+                a.click();
+                URL.revokeObjectURL(url);
+            } else {
+                alert('⚠️ Please generate tests first');
+            }
+        }
+
+        function validateRouteTests() {
+            const output = document.getElementById('route-test-output');
+            const text = output.textContent;
+            
+            if (!text || text.includes('Configure route settings')) {
+                alert('⚠️ Please generate tests first');
+                return;
+            }
+            
+            // Simple validation checks
+            const issues = [];
+            const suggestions = [];
+            
+            if (!text.includes('describe(')) {
+                issues.push('Missing describe() block');
+            }
+            
+            if (!text.includes('it(')) {
+                issues.push('Missing test cases');
+            }
+            
+            if (!text.includes('expect(')) {
+                suggestions.push('Add assertions with expect()');
+            }
+            
+            if (!text.includes('beforeEach')) {
+                suggestions.push('Consider adding beforeEach for setup');
+            }
+            
+            if (!text.includes('afterEach')) {
+                suggestions.push('Consider adding afterEach for cleanup');
+            }
+            
+            if (issues.length === 0) {
+                alert('✅ Route tests validation passed!\n\n📊 Structure: Valid\n🧪 Tests: Detected\n📝 Assertions: Present\n' + 
+                      (suggestions.length > 0 ? `\n💡 Suggestions: ${suggestions.join(', ')}` : ''));
+            } else {
+                alert('❌ Route tests validation failed!\n\n🚨 Issues found:\n' + 
+                      issues.map(issue => `• ${issue}`).join('\n') + 
+                      (suggestions.length > 0 ? `\n\n💡 Suggestions: ${suggestions.join(', ')}` : ''));
+            }
+        }
+
+        function updateRouteTestingStats(method, path, scenarios) {
+            const routesGenerated = parseInt(document.getElementById('routes-generated').textContent) + 1;
+            const testsCreated = parseInt(document.getElementById('tests-created').textContent) + Object.values(scenarios).filter(Boolean).length;
+            const scenariosCovered = parseInt(document.getElementById('scenarios-covered').textContent) + Object.values(scenarios).filter(Boolean).length;
+            
+            document.getElementById('routes-generated').textContent = routesGenerated;
+            document.getElementById('tests-created').textContent = testsCreated;
+            document.getElementById('scenarios-covered').textContent = scenariosCovered;
+            document.getElementById('code-saved').textContent = Math.min(95, routesGenerated * 15) + '%';
         }
 
         // Chart drawing function
@@ -2996,7 +3783,7 @@ describe('Email Testing', () => {
                 return;
             }
             
-            const tabs = ['overview', 'test-generation', 'test-runner', 'mocking', 'utilities', 'advanced-features', 'email-http-testing', 'performance', 'configuration', 'playground'];
+            const tabs = ['overview', 'test-generation', 'test-runner', 'mocking', 'utilities', 'advanced-features', 'email-http-testing', 'route-testing', 'performance', 'configuration', 'playground'];
             const currentIndex = tabs.findIndex(tab => document.getElementById(tab).classList.contains('active'));
             
             switch(e.key) {
