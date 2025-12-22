@@ -509,6 +509,9 @@
             <button class="nav-tab" onclick="showTab('test-runner', this)">⚡ Test Runner</button>
             <button class="nav-tab" onclick="showTab('mocking', this)">🎭 Mocking & Stubbing</button>
             <button class="nav-tab" onclick="showTab('utilities', this)">🛠️ Utilities</button>
+            <button class="nav-tab" onclick="showTab('advanced-features', this)">🔬 Advanced</button>
+            <button class="nav-tab" onclick="showTab('email-http-testing', this)">📧 Email & HTTP</button>
+            <button class="nav-tab" onclick="showTab('performance', this)">📊 Performance</button>
             <button class="nav-tab" onclick="showTab('configuration', this)">⚙️ Configuration</button>
             <button class="nav-tab" onclick="showTab('playground', this)">🎮 Playground</button>
         </nav>
@@ -812,6 +815,7 @@ describe('UserService', () => {
             <div class="demo-section">
                 <h4>Performance Metrics</h4>
                 <canvas id="performance-chart" width="400" height="200"></canvas>
+                <button class="btn secondary" onclick="drawPerformanceChart()" style="margin-top: 10px;">Update Chart</button>
             </div>
         </div>
 
@@ -1111,6 +1115,312 @@ LOG_LEVEL=debug"></textarea>
             </div>
         </div>
 
+        <!-- Advanced Features Tab -->
+        <div id="advanced-features" class="tab-content">
+            <h2>🔬 Advanced Testing Features</h2>
+            <div class="alert info">
+                Advanced utilities for rate limiting, validation, memory monitoring, error handling, and test isolation in complex testing scenarios.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>⚡ Rate Limiting</h3>
+                    <div class="input-group">
+                        <label for="rate-window">Window (ms)</label>
+                        <input type="number" id="rate-window" value="60000" placeholder="60000">
+                    </div>
+                    <div class="input-group">
+                        <label for="rate-max">Max Requests</label>
+                        <input type="number" id="rate-max" value="100" placeholder="100">
+                    </div>
+                    <div class="input-group">
+                        <label for="rate-key">Rate Limit Key</label>
+                        <input type="text" id="rate-key" value="user-123" placeholder="user-123">
+                    </div>
+                    <button class="btn" onclick="testRateLimiting()">Test Rate Limiting</button>
+                    <div id="rate-results" class="status info" style="margin-top: 10px;">Ready to test</div>
+                </div>
+
+                <div class="card">
+                    <h3>🛡️ Streaming Validation</h3>
+                    <div class="input-group">
+                        <label for="validation-input-stream">Input Stream</label>
+                        <textarea id="validation-input-stream" rows="3" placeholder="Enter text to validate..."></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="validation-schema">Validation Schema</label>
+                        <select id="validation-schema">
+                            <option value="safeString">Safe String</option>
+                            <option value="email">Email</option>
+                            <option value="htmlSanitized">HTML Sanitized</option>
+                            <option value="xssProtected">XSS Protected</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="runStreamingValidation()">Validate Stream</button>
+                    <div id="validation-results" class="status info" style="margin-top: 10px;">Ready to validate</div>
+                </div>
+
+                <div class="card">
+                    <h3>🧠 Memory Monitoring</h3>
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-value" id="memory-heap-used">0MB</div>
+                            <div class="metric-label">Heap Used</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value" id="memory-heap-total">0MB</div>
+                            <div class="metric-label">Heap Total</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value" id="memory-external">0MB</div>
+                            <div class="metric-label">External</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn" onclick="startMemoryMonitoring()">Start Monitoring</button>
+                        <button class="btn warning" onclick="detectMemoryLeaks()">Detect Leaks</button>
+                        <button class="btn error" onclick="performMemoryCleanup()">Cleanup</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🔄 Error Wrapping</h3>
+                    <div class="input-group">
+                        <label for="error-operation">Operation Type</label>
+                        <select id="error-operation">
+                            <option value="async">Async Operation</option>
+                            <option value="sync">Sync Operation</option>
+                            <option value="route">Route Handler</option>
+                            <option value="database">Database Query</option>
+                            <option value="api">API Call</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="error-scenario">Error Scenario</label>
+                        <select id="error-scenario">
+                            <option value="network">Network Error</option>
+                            <option value="validation">Validation Error</option>
+                            <option value="timeout">Timeout Error</option>
+                            <option value="database">Database Error</option>
+                            <option value="success">Success Case</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="testErrorWrapping()">Test Error Wrapper</button>
+                    <div id="error-results" class="status info" style="margin-top: 10px;">Ready to test</div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>Test Isolation Dashboard</h4>
+                <div class="grid">
+                    <div class="card">
+                        <h3>📊 Environment State</h3>
+                        <div id="env-state-display" class="terminal" style="min-height: 120px;">
+                            <div>Environment Variables: 0</div>
+                            <div>Test Mode: Inactive</div>
+                            <div>Isolation Level: None</div>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn" onclick="backupEnvironment()">Backup</button>
+                            <button class="btn secondary" onclick="restoreEnvironment()">Restore</button>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>🔌 Connection Tracking</h3>
+                        <div class="metrics">
+                            <div class="metric">
+                                <div class="metric-value" id="tracked-servers">0</div>
+                                <div class="metric-label">Servers</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" id="tracked-databases">0</div>
+                                <div class="metric-label">Databases</div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-value" id="tracked-mocks">0</div>
+                                <div class="metric-label">Mocks</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <button class="btn success" onclick="setupTestIsolation()">Setup Isolation</button>
+                            <button class="btn error" onclick="cleanupTestIsolation()">Cleanup All</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>Browser Polyfills</h4>
+                <div class="input-group">
+                    <label>
+                        <input type="checkbox" class="checkbox" id="polyfill-clipboard">
+                        Clipboard API
+                    </label>
+                </div>
+                <div class="input-group">
+                    <label>
+                        <input type="checkbox" class="checkbox" id="polyfill-intersection">
+                        Intersection Observer
+                    </label>
+                </div>
+                <div class="input-group">
+                    <label>
+                        <input type="checkbox" class="checkbox" id="polyfill-resize">
+                        Resize Observer
+                    </label>
+                </div>
+                <div class="input-group">
+                    <label>
+                        <input type="checkbox" class="checkbox" id="polyfill-matchmedia">
+                        Match Media
+                    </label>
+                </div>
+                <button class="btn" onclick="setupPolyfills()">Setup Selected Polyfills</button>
+                <button class="btn secondary" onclick="testPolyfills()">Test Polyfills</button>
+            </div>
+        </div>
+
+        <!-- Email & HTTP Testing Tab -->
+        <div id="email-http-testing" class="tab-content">
+            <h2>📧 Email & 🌐 HTTP Testing</h2>
+            <div class="alert success">
+                Comprehensive email mocking and HTTP testing utilities for integration testing without external dependencies.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>📧 Email Testing</h3>
+                    <div class="input-group">
+                        <label for="email-to">To</label>
+                        <input type="email" id="email-to" placeholder="user@example.com">
+                    </div>
+                    <div class="input-group">
+                        <label for="email-subject">Subject</label>
+                        <input type="text" id="email-subject" placeholder="Test Email">
+                    </div>
+                    <div class="input-group">
+                        <label for="email-body">Message</label>
+                        <textarea id="email-body" rows="3" placeholder="Hello, this is a test email!"></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="sendTestEmail()">Send Email</button>
+                        <button class="btn secondary" onclick="viewEmailHistory()">View History</button>
+                        <button class="btn warning" onclick="clearEmailHistory()">Clear History</button>
+                    </div>
+                    <div id="email-results" class="status info" style="margin-top: 10px;">Ready to send emails</div>
+                </div>
+
+                <div class="card">
+                    <h3>🌐 HTTP Testing</h3>
+                    <div class="input-group">
+                        <label for="http-method">Method</label>
+                        <select id="http-method">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                            <option value="PUT">PUT</option>
+                            <option value="PATCH">PATCH</option>
+                            <option value="DELETE">DELETE</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="http-path">Path</label>
+                        <input type="text" id="http-path" value="/api/users" placeholder="/api/users">
+                    </div>
+                    <div class="input-group">
+                        <label for="http-body">Request Body (JSON)</label>
+                        <textarea id="http-body" rows="3" placeholder='{"name": "John", "email": "john@example.com"}'></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="createMockRoute()">Create Route</button>
+                        <button class="btn success" onclick="testHttpEndpoint()">Test Endpoint</button>
+                    </div>
+                    <div id="http-results" class="status info" style="margin-top: 10px;">Ready to test HTTP</div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>📧 Email History</h4>
+                <div id="email-history-display" class="terminal" style="min-height: 200px; max-height: 300px;">
+                    <div style="color: #6b7280;">No emails sent yet...</div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>🌐 Mock HTTP Server</h4>
+                <div id="http-server-display" class="terminal" style="min-height: 200px; max-height: 300px;">
+                    <div style="color: #6b7280;">No routes configured yet...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance & Benchmarking Tab -->
+        <div id="performance" class="tab-content">
+            <h2>📊 Performance & Benchmarking</h2>
+            <div class="alert warning">
+                Monitor test performance, benchmark different approaches, and optimize your test suite for maximum efficiency.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>⚡ Test Performance Metrics</h3>
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-value" id="perf-tests-per-second">0</div>
+                            <div class="metric-label">Tests/Second</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value" id="perf-avg-duration">0ms</div>
+                            <div class="metric-label">Avg Duration</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value" id="perf-memory-usage">0MB</div>
+                            <div class="metric-label">Memory Usage</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value" id="perf-cpu-usage">0%</div>
+                            <div class="metric-label">CPU Usage</div>
+                        </div>
+                    </div>
+                    <button class="btn" onclick="startPerformanceMonitoring()">Start Monitoring</button>
+                    <button class="btn secondary" onclick="runPerformanceBenchmark()">Run Benchmark</button>
+                </div>
+
+                <div class="card">
+                    <h3>🏃 Batch Processing Analysis</h3>
+                    <div class="input-group">
+                        <label for="batch-size">Batch Size</label>
+                        <input type="number" id="batch-size" value="4" min="1" max="16">
+                    </div>
+                    <div class="input-group">
+                        <label for="test-count">Test Count</label>
+                        <input type="number" id="test-count" value="100" min="10" max="1000">
+                    </div>
+                    <button class="btn" onclick="compareBatchingStrategies()">Compare Strategies</button>
+                    <div id="batch-results" class="terminal" style="margin-top: 10px; min-height: 120px;">
+                        <div>Ready to compare batching strategies...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>📈 Performance Charts</h4>
+                <canvas id="performance-chart" width="800" height="300"></canvas>
+            </div>
+
+            <div class="demo-section">
+                <h4>🎯 Optimization Recommendations</h4>
+                <div id="optimization-tips" class="alert info">
+                    <ul style="margin: 0; padding-left: 20px;">
+                        <li>Use batch processing for large test suites</li>
+                        <li>Enable test isolation to prevent cross-test interference</li>
+                        <li>Stub external services to reduce test execution time</li>
+                        <li>Use parallel execution where tests are independent</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
         <!-- Playground Tab -->
         <div id="playground" class="tab-content">
             <h2>🎮 Interactive Playground</h2>
@@ -1174,6 +1484,10 @@ describe('Sample Test', () => {
                     <button class="btn" onclick="loadTemplate('error-wrapping')">Error Wrapping</button>
                     <button class="btn" onclick="loadTemplate('async-testing')">Async Testing</button>
                     <button class="btn" onclick="loadTemplate('react-testing')">React Testing</button>
+                    <button class="btn" onclick="loadTemplate('rate-limiting')">Rate Limiting</button>
+                    <button class="btn" onclick="loadTemplate('validation')">Validation</button>
+                    <button class="btn" onclick="loadTemplate('memory-testing')">Memory Testing</button>
+                    <button class="btn" onclick="loadTemplate('email-testing')">Email Testing</button>
                 </div>
             </div>
 
@@ -1191,6 +1505,11 @@ describe('Sample Test', () => {
                         <option value="errorWrappers">Error Wrappers</option>
                         <option value="memoryMonitor">Memory Monitoring</option>
                         <option value="validation">Validation</option>
+                        <option value="rateLimiting">Rate Limiting</option>
+                        <option value="emailTesting">Email Testing</option>
+                        <option value="httpTesting">HTTP Testing</option>
+                        <option value="testIsolation">Test Isolation</option>
+                        <option value="polyfills">Browser Polyfills</option>
                     </select>
                 </div>
                 <div id="feature-explanation" class="alert info" style="display: none;">
@@ -1762,16 +2081,632 @@ test('renders user name', async () => {
             }
         }
 
+        // Advanced Features Functions
+        function testRateLimiting() {
+            const window = parseInt(document.getElementById('rate-window').value) || 60000;
+            const max = parseInt(document.getElementById('rate-max').value) || 100;
+            const key = document.getElementById('rate-key').value || 'test-key';
+            const results = document.getElementById('rate-results');
+            
+            results.innerHTML = `<div class="status warning">Testing rate limiting...</div>`;
+            
+            setTimeout(() => {
+                const allowed = Math.random() > 0.3; // Simulate rate limit check
+                const remaining = Math.floor(Math.random() * max);
+                
+                results.innerHTML = allowed 
+                    ? `<div class="status success">Request allowed - ${remaining} remaining</div>`
+                    : `<div class="status error">Rate limit exceeded - Retry after 30s</div>`;
+            }, 500);
+        }
+
+        function runStreamingValidation() {
+            const input = document.getElementById('validation-input-stream').value;
+            const schema = document.getElementById('validation-schema').value;
+            const results = document.getElementById('validation-results');
+            
+            if (!input) {
+                results.innerHTML = `<div class="status error">Please enter text to validate</div>`;
+                return;
+            }
+            
+            results.innerHTML = `<div class="status warning">Validating stream...</div>`;
+            
+            setTimeout(() => {
+                const isValid = Math.random() > 0.2; // Simulate validation
+                const sanitized = input.replace(/<script[^>]*>.*?<\/script>/gi, '[SCRIPT_REMOVED]');
+                
+                results.innerHTML = isValid
+                    ? `<div class="status success">✅ Valid ${schema}</div>`
+                    : `<div class="status error">❌ Invalid ${schema} - Sanitized: ${sanitized.substring(0, 50)}...</div>`;
+            }, 300);
+        }
+
+        function performMemoryCleanup() {
+            const results = document.getElementById('memory-results') || document.createElement('div');
+            results.id = 'memory-results';
+            results.className = 'status success';
+            results.textContent = '🧹 Memory cleanup completed - 25MB freed';
+            
+            const memoryCard = document.querySelector('#advanced-features .card:nth-child(3)');
+            if (memoryCard && !document.getElementById('memory-results')) {
+                memoryCard.appendChild(results);
+            }
+        }
+
+        function testErrorWrapping() {
+            const operation = document.getElementById('error-operation').value;
+            const scenario = document.getElementById('error-scenario').value;
+            const results = document.getElementById('error-results');
+            
+            results.innerHTML = `<div class="status warning">Testing ${operation} error wrapper...</div>`;
+            
+            setTimeout(() => {
+                if (scenario === 'success') {
+                    results.innerHTML = `<div class="status success">✅ Operation completed successfully</div>`;
+                } else {
+                    results.innerHTML = `<div class="status info">🛡️ Error wrapped: ${scenario} - Fallback applied</div>`;
+                }
+            }, 400);
+        }
+
+        function backupEnvironment() {
+            const display = document.getElementById('env-state-display');
+            const envCount = Object.keys(process.env || {}).length;
+            
+            display.innerHTML = `
+                <div>✅ Environment backed up</div>
+                <div>Environment Variables: ${envCount}</div>
+                <div>Test Mode: Active</div>
+                <div>Isolation Level: Full</div>
+                <div>Backup ID: backup-${Date.now()}</div>
+            `;
+        }
+
+        function restoreEnvironment() {
+            const display = document.getElementById('env-state-display');
+            
+            display.innerHTML = `
+                <div>✅ Environment restored</div>
+                <div>Environment Variables: ${Math.floor(Math.random() * 20) + 5}</div>
+                <div>Test Mode: Inactive</div>
+                <div>Isolation Level: None</div>
+                <div>Restore Time: ${new Date().toLocaleTimeString()}</div>
+            `;
+        }
+
+        function setupPolyfills() {
+            const polyfills = [];
+            if (document.getElementById('polyfill-clipboard').checked) polyfills.push('Clipboard');
+            if (document.getElementById('polyfill-intersection').checked) polyfills.push('Intersection Observer');
+            if (document.getElementById('polyfill-resize').checked) polyfills.push('Resize Observer');
+            if (document.getElementById('polyfill-matchmedia').checked) polyfills.push('Match Media');
+            
+            if (polyfills.length > 0) {
+                alert(`✅ Setup complete for: ${polyfills.join(', ')}`);
+            } else {
+                alert('⚠️ Please select at least one polyfill');
+            }
+        }
+
+        function testPolyfills() {
+            alert('🧪 Polyfill testing complete - All working correctly');
+        }
+
+        // Email & HTTP Testing Functions
+        function sendTestEmail() {
+            const to = document.getElementById('email-to').value;
+            const subject = document.getElementById('email-subject').value;
+            const body = document.getElementById('email-body').value;
+            const results = document.getElementById('email-results');
+            
+            if (!to) {
+                results.innerHTML = `<div class="status error">Please enter recipient email</div>`;
+                return;
+            }
+            
+            results.innerHTML = `<div class="status warning">Sending email...</div>`;
+            
+            setTimeout(() => {
+                const messageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                results.innerHTML = `<div class="status success">✅ Email sent - ID: ${messageId}</div>`;
+                updateEmailHistory(to, subject, body, messageId);
+            }, 800);
+        }
+
+        function updateEmailHistory(to, subject, body, messageId) {
+            const history = document.getElementById('email-history-display');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            if (history.innerHTML.includes('No emails sent yet')) {
+                history.innerHTML = '';
+            }
+            
+            history.innerHTML = `
+                <div style="color: #10b981;">✅ Email Sent</div>
+                <div>📧 To: ${to}</div>
+                <div>📋 Subject: ${subject}</div>
+                <div>📝 Body: ${body.substring(0, 50)}${body.length > 50 ? '...' : ''}</div>
+                <div>🆔 ID: ${messageId}</div>
+                <div>⏰ Time: ${timestamp}</div>
+                <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;"></div>
+            ` + history.innerHTML;
+        }
+
+        function viewEmailHistory() {
+            const history = document.getElementById('email-history-display');
+            if (history.innerHTML.includes('No emails sent yet')) {
+                history.innerHTML = '<div style="color: #f59e0b;">📭 No emails in history yet</div>';
+            }
+        }
+
+        function clearEmailHistory() {
+            const history = document.getElementById('email-history-display');
+            history.innerHTML = '<div style="color: #6b7280;">🗑️ Email history cleared</div>';
+            document.getElementById('email-results').innerHTML = '<div class="status info">History cleared</div>';
+        }
+
+        function createMockRoute() {
+            const method = document.getElementById('http-method').value;
+            const path = document.getElementById('http-path').value;
+            const server = document.getElementById('http-server-display');
+            
+            if (server.innerHTML.includes('No routes configured yet')) {
+                server.innerHTML = '';
+            }
+            
+            server.innerHTML = `
+                <div style="color: #10b981;">✅ Route Created</div>
+                <div>🌐 ${method} ${path}</div>
+                <div>📝 Handler: Mock response</div>
+                <div>⏰ Time: ${new Date().toLocaleTimeString()}</div>
+                <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;"></div>
+            ` + server.innerHTML;
+            
+            document.getElementById('http-results').innerHTML = `<div class="status success">✅ Route created: ${method} ${path}</div>`;
+        }
+
+        function testHttpEndpoint() {
+            const method = document.getElementById('http-method').value;
+            const path = document.getElementById('http-path').value;
+            const body = document.getElementById('http-body').value;
+            const results = document.getElementById('http-results');
+            
+            results.innerHTML = `<div class="status warning">Testing ${method} ${path}...</div>`;
+            
+            setTimeout(() => {
+                const statusCodes = { GET: 200, POST: 201, PUT: 200, PATCH: 200, DELETE: 204 };
+                const status = statusCodes[method] || 200;
+                
+                results.innerHTML = `
+                    <div class="status success">✅ Request completed</div>
+                    <div>📊 Status: ${status}</div>
+                    <div>⏱️ Duration: ${Math.floor(Math.random() * 100) + 10}ms</div>
+                `;
+            }, 600);
+        }
+
+        // Performance Functions
+        let performanceInterval = null;
+        function startPerformanceMonitoring() {
+            const testsPerSec = document.getElementById('perf-tests-per-second');
+            const avgDuration = document.getElementById('perf-avg-duration');
+            const memoryUsage = document.getElementById('perf-memory-usage');
+            const cpuUsage = document.getElementById('perf-cpu-usage');
+            
+            if (performanceInterval) {
+                clearInterval(performanceInterval);
+            }
+            
+            performanceInterval = setInterval(() => {
+                testsPerSec.textContent = Math.floor(Math.random() * 50) + 10;
+                avgDuration.textContent = Math.floor(Math.random() * 100) + 20 + 'ms';
+                memoryUsage.textContent = Math.floor(Math.random() * 100) + 50 + 'MB';
+                cpuUsage.textContent = Math.floor(Math.random() * 60) + 10 + '%';
+            }, 1000);
+            
+            setTimeout(() => {
+                clearInterval(performanceInterval);
+                performanceInterval = null;
+            }, 10000);
+        }
+
+        function runPerformanceBenchmark() {
+            const batchResults = document.getElementById('batch-results');
+            batchResults.innerHTML = `
+                <div>🏃 Running performance benchmark...</div>
+                <div>📊 Testing different batch sizes...</div>
+                <div>⚡ Measuring execution times...</div>
+            `;
+            
+            setTimeout(() => {
+                batchResults.innerHTML = `
+                    <div style="color: #10b981;">✅ Benchmark Complete</div>
+                    <div>📈 Best Performance: Batch size 8</div>
+                    <div>⚡ Speed Improvement: 69% vs sequential</div>
+                    <div>🧠 Memory Efficiency: +45%</div>
+                    <div>⏱️ Avg Test Time: 12ms (vs 38ms sequential)</div>
+                `;
+            }, 2000);
+        }
+
+        function compareBatchingStrategies() {
+            const batchSize = parseInt(document.getElementById('batch-size').value) || 4;
+            const testCount = parseInt(document.getElementById('test-count').value) || 100;
+            const results = document.getElementById('batch-results');
+            
+            results.innerHTML = `
+                <div>🔄 Comparing strategies for ${testCount} tests...</div>
+                <div>📦 Batch size: ${batchSize}</div>
+            `;
+            
+            setTimeout(() => {
+                results.innerHTML = `
+                    <div style="color: #10b981;">📊 Strategy Comparison Results</div>
+                    <div>🏆 Winner: Parallel Batching</div>
+                    <div>⚡ Sequential: ${testCount * 25}ms</div>
+                    <div>🔄 Parallel Batching: ${Math.floor(testCount * 25 / 4)}ms</div>
+                    <div>📈 Performance Gain: 75% faster</div>
+                    <div>🧠 Memory Usage: +15%</div>
+                `;
+            }, 1500);
+        }
+
+        // Enhanced template loading
+        function loadTemplate(templateName) {
+            const playgroundCodeElement = document.getElementById('playground-code');
+            
+            if (!playgroundCodeElement) {
+                console.error('Playground code element not found');
+                return;
+            }
+            
+            const templates = {
+                'basic-stubbing': `// Basic Method Stubbing
+import { stubMethod } from 'qtests/setup';
+
+const calculator = {
+  add: (a, b) => a + b,
+  multiply: (a, b) => a * b
+};
+
+// Stub add method
+stubMethod(calculator, 'add', jest.fn().mockReturnValue(100));
+
+console.log(calculator.add(5, 10)); // Returns 100, not 15`,
+                
+                'console-mocking': `// Console Mocking
+import { mockConsole } from 'qtests/setup';
+
+// Mock console methods
+const consoleSpy = mockConsole();
+
+console.log('Test message');
+console.error('Error message');
+console.warn('Warning message');
+
+// Check what was logged
+expect(consoleSpy.log).toHaveBeenCalledWith('Test message');
+expect(consoleSpy.error).toHaveBeenCalledWith('Error message');`,
+                
+                'env-management': `// Environment Management
+import { testEnv } from 'qtests/setup';
+
+// Set test environment
+testEnv.setTestEnv({
+  NODE_ENV: 'test',
+  API_URL: 'http://localhost:3000',
+  DEBUG: 'true'
+});
+
+// Save current environment
+testEnv.saveEnv();
+
+// Modify environment for test
+process.env.NODE_ENV = 'production';
+
+// Restore after test
+testEnv.restoreEnv();`,
+                
+                'error-wrapping': `// Error Wrapping
+import { createAsyncErrorWrapper } from 'qtests/utils/errorHandling';
+
+const riskyOperation = async (data) => {
+  if (!data) throw new Error('No data provided');
+  return { success: true, data };
+};
+
+// Wrap with error handling
+const safeOperation = createAsyncErrorWrapper(riskyOperation, {
+  errorMessage: 'Operation failed',
+  fallbackValue: { success: false, error: 'Wrapped error' }
+});
+
+await safeOperation(null); // Returns fallback instead of throwing`,
+                
+                'async-testing': `// Async Testing
+import { waitForCondition } from 'qtests/utils';
+
+describe('Async Operations', () => {
+  it('should wait for condition', async () => {
+    let counter = 0;
+    
+    // Simulate async operation
+    setTimeout(() => counter = 5, 100);
+    
+    // Wait for condition to be true
+    await waitForCondition(() => counter === 5, { timeout: 1000 });
+    
+    expect(counter).toBe(5);
+  });
+});`,
+                
+                'react-testing': `// React Component Testing
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { stubMethod } from 'qtests/setup';
+
+// Mock API service
+const apiService = {
+  fetchUser: jest.fn()
+};
+
+stubMethod(apiService, 'fetchUser', jest.fn().mockResolvedValue({
+  id: 1,
+  name: 'John Doe'
+}));
+
+// Test component
+const UserComponent = () => {
+  const [user, setUser] = React.useState(null);
+  
+  React.useEffect(() => {
+    apiService.fetchUser().then(setUser);
+  }, []);
+  
+  return user ? <div>{user.name}</div> : <div>Loading...</div>;
+};
+
+test('renders user name', async () => {
+  render(<UserComponent />);
+  
+  expect(screen.getByText('Loading...')).toBeInTheDocument();
+  
+  const userName = await screen.findByText('John Doe');
+  expect(userName).toBeInTheDocument();
+});`,
+
+                'rate-limiting': `// Rate Limiting Test
+import { createDistributedRateLimiter } from 'qtests/utils/rateLimiter';
+
+describe('Rate Limiting', () => {
+  let limiter;
+  
+  beforeEach(() => {
+    limiter = createDistributedRateLimiter({
+      windowMs: 60000,
+      maxRequests: 10
+    });
+  });
+  
+  it('should allow requests within limit', async () => {
+    const req = { ip: '127.0.0.1', path: '/api/test' };
+    
+    for (let i = 0; i < 5; i++) {
+      const result = await limiter.isAllowed(req);
+      expect(result.allowed).toBe(true);
+    }
+  });
+  
+  it('should block requests exceeding limit', async () => {
+    const req = { ip: '127.0.0.1', path: '/api/test' };
+    
+    // Exhaust limit
+    for (let i = 0; i < 10; i++) {
+      await limiter.isAllowed(req);
+    }
+    
+    // Next request should be blocked
+    const result = await limiter.isAllowed(req);
+    expect(result.allowed).toBe(false);
+  });
+});`,
+
+                'validation': `// Streaming Validation Test
+import { createStreamingValidator } from 'qtests/utils/streamingValidator';
+
+describe('Streaming Validation', () => {
+  let validator;
+  
+  beforeEach(() => {
+    validator = createStreamingValidator({
+      maxLength: 100,
+      allowHtml: false,
+      sanitizeXss: true
+    });
+  });
+  
+  it('should validate safe strings', async () => {
+    const result = await validator.validate('Hello, world!');
+    expect(result.isValid).toBe(true);
+    expect(result.sanitized).toBe('Hello, world!');
+  });
+  
+  it('should sanitize dangerous content', async () => {
+    const dangerous = '<script>alert("xss")</script>Hello';
+    const result = await validator.validate(dangerous);
+    
+    expect(result.isValid).toBe(false);
+    expect(result.sanitized).not.toContain('<script>');
+  });
+});`,
+
+                'memory-testing': `// Memory Monitoring Test
+import { memoryMonitor, detectMemoryLeaks } from 'qtests/utils/memory';
+
+describe('Memory Monitoring', () => {
+  it('should track memory usage', async () => {
+    const snapshot = await memoryMonitor.getSnapshot();
+    
+    expect(snapshot.heapUsed).toBeGreaterThan(0);
+    expect(snapshot.heapTotal).toBeGreaterThan(snapshot.heapUsed);
+  });
+  
+  it('should detect memory leaks', async () => {
+    // Simulate potential memory leak
+    const leaks = [];
+    
+    for (let i = 0; i < 1000; i++) {
+      leaks.push(new Array(1000).fill('leak'));
+    }
+    
+    const leakReport = await detectMemoryLeaks();
+    expect(leakReport.leaksDetected).toBe(true);
+  });
+});`,
+
+                'email-testing': `// Email Testing
+import { sendEmail, getEmailHistory, clearEmailHistory } from 'qtests/utils/sendEmail';
+
+describe('Email Testing', () => {
+  beforeEach(() => {
+    clearEmailHistory();
+  });
+  
+  it('should send email successfully', async () => {
+    const emailData = {
+      to: 'test@example.com',
+      subject: 'Test Email',
+      text: 'This is a test email'
+    };
+    
+    const result = await sendEmail(emailData);
+    
+    expect(result.success).toBe(true);
+    expect(result.messageId).toBeDefined();
+    expect(result.to).toBe('test@example.com');
+  });
+  
+  it('should track email history', async () => {
+    await sendEmail({
+      to: 'user1@example.com',
+      subject: 'Email 1'
+    });
+    
+    await sendEmail({
+      to: 'user2@example.com',
+      subject: 'Email 2'
+    });
+    
+    const history = getEmailHistory();
+    expect(history).toHaveLength(2);
+    expect(history[0].to).toBe('user1@example.com');
+    expect(history[1].to).toBe('user2@example.com');
+  });
+});`
+            };
+            
+            const code = templates[templateName];
+            if (code) {
+                playgroundCodeElement.value = code;
+            }
+        }
+
+        // Enhanced feature explanations
+        function exploreFeature() {
+            const select = document.getElementById('feature-select');
+            const explanation = document.getElementById('feature-explanation');
+            
+            const explanations = {
+                'stubMethod': 'stubMethod(object, methodName, implementation) - Replaces a method on an object with a stub implementation. Useful for isolating dependencies in tests.',
+                'spyOnMethod': 'spyOnMethod(object, methodName) - Creates a spy for a method that tracks calls without replacing the implementation. Helps verify method interactions.',
+                'mockConsole': 'mockConsole() - Replaces console methods with Jest spies that track calls. Keeps test output clean while allowing console behavior verification.',
+                'testEnv': 'testEnv utilities - Manage environment variables in tests with setTestEnv(), saveEnv(), and restoreEnv(). Ensures test isolation and predictable environment state.',
+                'offlineMode': 'offlineMode.setOfflineMode(true) - Enables offline mode that stubs all external services (HTTP requests, database connections, etc.). Perfect for unit testing.',
+                'errorWrappers': 'Error Wrappers - createAsyncErrorWrapper() and createSyncErrorWrapper() wrap functions with error handling, providing fallback values and consistent error reporting.',
+                'memoryMonitor': 'Memory Monitoring - memoryMonitor() and detectMemoryLeaks() track memory usage during tests, helping identify memory leaks and performance issues.',
+                'validation': 'Validation Utilities - StreamingStringValidator, HTML sanitization, and XSS protection utilities help test input validation and security measures.',
+                'rateLimiting': 'Rate Limiting - DistributedRateLimiter and InMemoryRateLimiter provide rate limiting functionality for testing API endpoints and preventing abuse.',
+                'emailTesting': 'Email Testing - sendEmail() utility provides mock email sending for testing email functionality without external SMTP servers.',
+                'httpTesting': 'HTTP Testing - createMockApp() and supertest() provide Express-like mocking and HTTP testing capabilities for API testing.',
+                'testIsolation': 'Test Isolation - backupEnvironment(), restoreEnvironment(), trackServer(), and closeAllServers() provide comprehensive test isolation utilities.',
+                'polyfills': 'Browser Polyfills - setupClipboard(), setupIntersectionObserver(), and other polyfills enable testing browser-specific APIs in Node.js environments.'
+            };
+            
+            if (select.value && explanations[select.value]) {
+                explanation.textContent = explanations[select.value];
+                explanation.style.display = 'block';
+            } else {
+                explanation.style.display = 'none';
+            }
+        }
+
+        // Chart drawing function
+        function drawPerformanceChart() {
+            const canvas = document.getElementById('performance-chart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Sample data
+            const data = [
+                { label: 'Sequential', value: 100, color: '#ef4444' },
+                { label: 'Batch Size 2', value: 65, color: '#f59e0b' },
+                { label: 'Batch Size 4', value: 40, color: '#22d3ee' },
+                { label: 'Batch Size 8', value: 31, color: '#10b981' }
+            ];
+            
+            // Draw bars
+            const barWidth = width / (data.length * 2);
+            const maxValue = Math.max(...data.map(d => d.value));
+            
+            data.forEach((item, index) => {
+                const barHeight = (item.value / maxValue) * (height - 40);
+                const x = (index * 2 + 0.5) * barWidth;
+                const y = height - barHeight - 20;
+                
+                // Draw bar
+                ctx.fillStyle = item.color;
+                ctx.fillRect(x, y, barWidth, barHeight);
+                
+                // Draw label
+                ctx.fillStyle = '#374151';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(item.label, x + barWidth / 2, height - 5);
+                
+                // Draw value
+                ctx.fillText(item.value + 'ms', x + barWidth / 2, y - 5);
+            });
+            
+            // Draw title
+            ctx.fillStyle = '#1f2937';
+            ctx.font = 'bold 14px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Test Execution Time by Strategy', width / 2, 15);
+        }
+
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
             // Add any initialization code here
             console.log('QTests Demo loaded successfully');
+            
+            // Draw initial performance chart
+            setTimeout(() => {
+                drawPerformanceChart();
+            }, 1000);
             
             // Cleanup intervals on page unload to prevent memory leaks
             window.addEventListener('beforeunload', function() {
                 if (workflowInterval) clearInterval(workflowInterval);
                 if (testRunnerInterval) clearInterval(testRunnerInterval);
                 if (memoryMonitoringInterval) clearInterval(memoryMonitoringInterval);
+                if (performanceInterval) clearInterval(performanceInterval);
             });
         });
     </script>
