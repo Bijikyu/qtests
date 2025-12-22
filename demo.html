@@ -1476,6 +1476,16 @@ describe('Sample Test', () => {
             </div>
 
             <div class="demo-section">
+                <h4>🚀 Quick Actions</h4>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn" onclick="simulateRealWorldTest()">Run Real-World Test</button>
+                    <button class="btn secondary" onclick="generateTestReport()">Generate Report</button>
+                    <button class="btn warning" onclick="exportTestConfig()">Export Config</button>
+                    <button class="btn success" onclick="validateTestCode()">Validate Code</button>
+                </div>
+            </div>
+
+            <div class="demo-section">
                 <h4>Example Templates</h4>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="btn" onclick="loadTemplate('basic-stubbing')">Basic Stubbing</button>
@@ -1518,6 +1528,58 @@ describe('Sample Test', () => {
             </div>
         </div>
     </div>
+
+    <!-- Footer with additional information -->
+    <footer style="background: white; border-radius: 12px; padding: 30px; margin-top: 30px; box-shadow: var(--shadow-lg);">
+        <div class="grid">
+            <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                <h3 style="color: var(--primary); margin-bottom: 15px;">📚 Documentation</h3>
+                <ul class="feature-list" style="padding: 0;">
+                    <li><a href="#overview" style="color: var(--primary); text-decoration: none;" onclick="showTab('overview', this)">Getting Started</a></li>
+                    <li><a href="#test-generation" style="color: var(--primary); text-decoration: none;" onclick="showTab('test-generation', this)">Test Generation</a></li>
+                    <li><a href="#mocking" style="color: var(--primary); text-decoration: none;" onclick="showTab('mocking', this)">Mocking Guide</a></li>
+                    <li><a href="#advanced-features" style="color: var(--primary); text-decoration: none;" onclick="showTab('advanced-features', this)">Advanced Features</a></li>
+                </ul>
+            </div>
+            
+            <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                <h3 style="color: var(--primary); margin-bottom: 15px;">🚀 Quick Links</h3>
+                <ul class="feature-list" style="padding: 0;">
+                    <li><a href="https://www.npmjs.com/package/qtests" target="_blank" style="color: var(--primary); text-decoration: none;">NPM Package</a></li>
+                    <li><a href="https://github.com/qtests/qtests" target="_blank" style="color: var(--primary); text-decoration: none;">GitHub Repository</a></li>
+                    <li><a href="#playground" style="color: var(--primary); text-decoration: none;" onclick="showTab('playground', this)">Interactive Playground</a></li>
+                    <li><a href="#configuration" style="color: var(--primary); text-decoration: none;" onclick="showTab('configuration', this)">Configuration</a></li>
+                </ul>
+            </div>
+            
+            <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                <h3 style="color: var(--primary); margin-bottom: 15px;">🛠️ CLI Commands</h3>
+                <div class="code-block" style="font-size: 12px; margin: 0;">
+                    <div># Install</div>
+                    <div>npm install qtests --save-dev</div>
+                    <div style="margin-top: 10px;"># Generate tests</div>
+                    <div>npx qtests-generate</div>
+                    <div style="margin-top: 10px;"># Run tests</div>
+                    <div>npm test</div>
+                </div>
+            </div>
+            
+            <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                <h3 style="color: var(--primary); margin-bottom: 15px;">📊 System Status</h3>
+                <div class="system-status" style="font-size: 12px; color: #6b7280;">
+                    Framework: QTests v2.0.0 | Environment: Browser | Response: 15ms
+                </div>
+                <div style="margin-top: 10px;">
+                    <span class="status success">All Systems Operational</span>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); color: #6b7280; font-size: 14px;">
+            <p>© 2025 QTests Framework - Comprehensive testing utilities for Node.js applications</p>
+            <p style="margin-top: 5px;">Built with ❤️ for developers who care about testing quality</p>
+        </div>
+    </footer>
 
     <script>
         // Tab navigation
@@ -1884,7 +1946,7 @@ describe('Sample Test', () => {
             document.getElementById('playground-duration').textContent = '0ms';
         }
 
-        function loadExample() {
+function loadExample() {
             const exampleCode = `import { describe, it, expect, beforeEach } from '@jest/globals';
 import { stubMethod, mockConsole, testEnv } from 'qtests/setup';
 
@@ -1902,7 +1964,7 @@ describe('UserService Example', () => {
     // Create service with stubbed dependencies
     userService = {
       fetchUser: (id) => ({ id, name: 'John' }),
-      saveUser: (user) => Promise.resolve({ ...user, id: 1 }))
+      saveUser: (user) => Promise.resolve({ ...user, id: 1 })
     };
     
     // Stub methods
@@ -1925,6 +1987,57 @@ describe('UserService Example', () => {
 });`;
             
             document.getElementById('playground-code').value = exampleCode;
+        }
+
+        function validateTestCode() {
+            const code = document.getElementById('playground-code').value;
+            const results = document.getElementById('playground-results');
+            
+            if (!code.trim()) {
+                results.innerHTML = '<div style="color: #ef4444;">❌ No code to validate</div>';
+                return;
+            }
+            
+            // Simple validation checks
+            const issues = [];
+            const suggestions = [];
+            
+            if (!code.includes('describe(')) {
+                issues.push('Missing describe() block');
+            }
+            
+            if (!code.includes('it(') && !code.includes('test(')) {
+                issues.push('Missing test case (it() or test())');
+            }
+            
+            if (!code.includes('expect(')) {
+                suggestions.push('Add assertions with expect()');
+            }
+            
+            if (code.includes('stubMethod') && !code.includes('jest.fn()')) {
+                suggestions.push('Consider using jest.fn() for stub implementations');
+            }
+            
+            if (code.includes('async') && !code.includes('await')) {
+                issues.push('Async function missing await keyword');
+            }
+            
+            if (issues.length === 0) {
+                results.innerHTML = `
+                    <div style="color: #10b981;">✅ Code validation passed</div>
+                    <div>📊 Structure: Valid</div>
+                    <div>🧪 Tests: Detected</div>
+                    <div>📝 Assertions: Present</div>
+                    ${suggestions.length > 0 ? `<div style="color: #f59e0b; margin-top: 10px;">💡 Suggestions: ${suggestions.join(', ')}</div>` : ''}
+                `;
+            } else {
+                results.innerHTML = `
+                    <div style="color: #ef4444;">❌ Code validation failed</div>
+                    <div>🚨 Issues found:</div>
+                    ${issues.map(issue => `<div style="color: #ef4444; margin-left: 20px;">• ${issue}</div>`).join('')}
+                    ${suggestions.length > 0 ? `<div style="color: #f59e0b; margin-top: 10px;">💡 Suggestions: ${suggestions.join(', ')}</div>` : ''}
+                `;
+            }
         }
 
         function loadTemplate(templateName) {
@@ -2311,6 +2424,155 @@ test('renders user name', async () => {
             }, 10000);
         }
 
+        // Additional utility functions for enhanced demo
+        function generateTestReport() {
+            const reportData = {
+                timestamp: new Date().toISOString(),
+                framework: 'QTests v2.0.0',
+                tests: {
+                    total: Math.floor(Math.random() * 100) + 50,
+                    passed: Math.floor(Math.random() * 80) + 40,
+                    failed: Math.floor(Math.random() * 10) + 1,
+                    skipped: Math.floor(Math.random() * 5)
+                },
+                performance: {
+                    avgDuration: Math.floor(Math.random() * 50) + 10,
+                    memoryUsage: Math.floor(Math.random() * 100) + 50,
+                    coverage: Math.floor(Math.random() * 30) + 70
+                },
+                features: {
+                    stubbing: true,
+                    mocking: true,
+                    validation: true,
+                    rateLimiting: true,
+                    memoryMonitoring: true,
+                    emailTesting: true,
+                    httpTesting: true
+                }
+            };
+            
+            const reportHtml = `
+                <div style="background: #1f2937; color: #f3f4f6; padding: 20px; border-radius: 8px; font-family: monospace;">
+                    <div style="color: #10b981; font-weight: bold;">📊 QTests Test Report</div>
+                    <div>Generated: ${reportData.timestamp}</div>
+                    <div>Framework: ${reportData.framework}</div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div style="color: #22d3ee;">Test Results:</div>
+                        <div>  Total: ${reportData.tests.total}</div>
+                        <div>  Passed: ${reportData.tests.passed}</div>
+                        <div>  Failed: ${reportData.tests.failed}</div>
+                        <div>  Skipped: ${reportData.tests.skipped}</div>
+                    </div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div style="color: #22d3ee;">Performance:</div>
+                        <div>  Avg Duration: ${reportData.performance.avgDuration}ms</div>
+                        <div>  Memory Usage: ${reportData.performance.memoryUsage}MB</div>
+                        <div>  Coverage: ${reportData.performance.coverage}%</div>
+                    </div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div style="color: #22d3ee;">Active Features:</div>
+                        <div>  ${Object.entries(reportData.features).filter(([k,v]) => v).map(([k]) => k).join(', ')}</div>
+                    </div>
+                </div>
+            `;
+            
+            const reportWindow = window.open('', '_blank', 'width=600,height=500');
+            reportWindow.document.write(`
+                <html>
+                    <head><title>QTests Test Report</title></head>
+                    <body style="background: #111; margin: 20px;">
+                        ${reportHtml}
+                        <div style="margin-top: 20px;">
+                            <button onclick="window.print()" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">Print Report</button>
+                            <button onclick="window.close()" style="background: #ef4444; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-left: 10px;">Close</button>
+                        </div>
+                    </body>
+                </html>
+            `);
+        }
+
+        function exportTestConfig() {
+            const config = {
+                name: 'QTests Configuration',
+                version: '2.0.0',
+                jest: {
+                    testEnvironment: 'node',
+                    preset: 'ts-jest/presets/default-esm',
+                    setupFilesAfterEnv: ['<rootDir>/config/jest-setup.ts'],
+                    moduleNameMapper: {
+                        'axios': 'qtests/stubs/axios',
+                        'winston': 'qtests/stubs/winston',
+                        'mongoose': 'qtests/stubs/mongoose'
+                    }
+                },
+                qtests: {
+                    offlineMode: false,
+                    memoryMonitoring: true,
+                    testIsolation: true,
+                    emailTesting: true,
+                    httpTesting: true
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(config, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'qtests-config.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function simulateRealWorldTest() {
+            const output = document.getElementById('test-output');
+            if (!output) return;
+            
+            output.innerHTML = `
+                <div style="color: #4fc3f7;">$ qtests-runner --config config/jest.config.mjs --testPathPattern=integration</div>
+                <div>🔍 Discovering integration tests...</div>
+                <div>📦 Found 8 integration test files</div>
+                <div>⚡ Starting integration test suite...</div>
+                <div style="color: #f59e0b;">🔄 Setting up test environment...</div>
+                <div>🌐 Initializing mock servers...</div>
+                <div>📧 Setting up email testing...</div>
+                <div>🧠 Starting memory monitoring...</div>
+                <div style="color: #10b981;">✅ Environment setup complete</div>
+                <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                    <div>🧪 Running integration tests...</div>
+                    <div>  ✓ UserService Integration Tests</div>
+                    <div>    ✓ should create user via API</div>
+                    <div>    ✓ should handle validation errors</div>
+                    <div>    ✓ should send welcome email</div>
+                    <div>  ✓ PaymentService Integration Tests</div>
+                    <div>    ✓ should process payment successfully</div>
+                    <div>    ✓ should handle declined payments</div>
+                    <div>    ✓ should retry failed payments</div>
+                    <div>  ✓ NotificationService Integration Tests</div>
+                    <div>    ✓ should send push notifications</div>
+                    <div>    ✓ should handle rate limiting</div>
+                </div>
+                <div style="color: #10b981; border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                    ✅ Integration tests completed successfully!
+                </div>
+                <div>📊 Results: 24 passed, 0 failed, 0 skipped</div>
+                <div>⏱️  Duration: 1.2s</div>
+                <div>🧠 Memory: +15MB (within limits)</div>
+                <div>📧 Emails sent: 3 (mock)</div>
+                <div>🌐 API calls: 12 (stubbed)</div>
+            `;
+            
+            // Update metrics
+            setTimeout(() => {
+                const passedElement = document.getElementById('tests-passed');
+                const failedElement = document.getElementById('tests-failed');
+                const durationElement = document.getElementById('test-duration');
+                
+                if (passedElement) passedElement.textContent = '24';
+                if (failedElement) failedElement.textContent = '0';
+                if (durationElement) durationElement.textContent = '1200ms';
+            }, 2000);
+        }
+
         function runPerformanceBenchmark() {
             const batchResults = document.getElementById('batch-results');
             batchResults.innerHTML = `
@@ -2691,15 +2953,158 @@ describe('Email Testing', () => {
             ctx.fillText('Test Execution Time by Strategy', width / 2, 15);
         }
 
+        // System status dashboard
+        function updateSystemStatus() {
+            const statusData = {
+                framework: 'QTests v2.0.0',
+                nodeVersion: typeof process !== 'undefined' ? process.version : 'Browser',
+                environment: typeof window !== 'undefined' ? 'Browser' : 'Node.js',
+                features: {
+                    stubbing: true,
+                    mocking: true,
+                    validation: true,
+                    rateLimiting: true,
+                    memoryMonitoring: true,
+                    emailTesting: true,
+                    httpTesting: true,
+                    testIsolation: true
+                },
+                performance: {
+                    responseTime: Math.floor(Math.random() * 50) + 10,
+                    memoryUsage: Math.floor(Math.random() * 100) + 50,
+                    uptime: Date.now() - (window.performance?.timeOrigin || Date.now())
+                }
+            };
+            
+            // Update status displays if they exist
+            const statusElements = document.querySelectorAll('.system-status');
+            statusElements.forEach(element => {
+                element.innerHTML = `
+                    <div style="font-size: 12px; color: #6b7280;">
+                        Framework: ${statusData.framework} | 
+                        Environment: ${statusData.environment} | 
+                        Response: ${statusData.performance.responseTime}ms
+                    </div>
+                `;
+            });
+        }
+
+        // Keyboard shortcuts for navigation
+        document.addEventListener('keydown', function(e) {
+            // Only trigger shortcuts when not typing in input fields
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+                return;
+            }
+            
+            const tabs = ['overview', 'test-generation', 'test-runner', 'mocking', 'utilities', 'advanced-features', 'email-http-testing', 'performance', 'configuration', 'playground'];
+            const currentIndex = tabs.findIndex(tab => document.getElementById(tab).classList.contains('active'));
+            
+            switch(e.key) {
+                case 'ArrowLeft':
+                    if (currentIndex > 0) {
+                        const prevTab = tabs[currentIndex - 1];
+                        const prevButton = document.querySelector(`.nav-tab[onclick*="${prevTab}"]`);
+                        if (prevButton) {
+                            showTab(prevTab, prevButton);
+                        }
+                    }
+                    e.preventDefault();
+                    break;
+                    
+                case 'ArrowRight':
+                    if (currentIndex < tabs.length - 1) {
+                        const nextTab = tabs[currentIndex + 1];
+                        const nextButton = document.querySelector(`.nav-tab[onclick*="${nextTab}"]`);
+                        if (nextButton) {
+                            showTab(nextTab, nextButton);
+                        }
+                    }
+                    e.preventDefault();
+                    break;
+                    
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    const tabIndex = parseInt(e.key) - 1;
+                    if (tabIndex < tabs.length) {
+                        const targetTab = tabs[tabIndex];
+                        const targetButton = document.querySelector(`.nav-tab[onclick*="${targetTab}"]`);
+                        if (targetButton) {
+                            showTab(targetTab, targetButton);
+                        }
+                    }
+                    e.preventDefault();
+                    break;
+                    
+                case 'r':
+                case 'R':
+                    if (e.ctrlKey || e.metaKey) {
+                        e.preventDefault();
+                        // Refresh current tab data
+                        if (currentIndex === 2) { // Test runner tab
+                            runTests();
+                        } else if (currentIndex === 9) { // Playground tab
+                            runPlaygroundCode();
+                        }
+                    }
+                    break;
+                    
+                case '?':
+                    // Show help modal
+                    showKeyboardShortcuts();
+                    e.preventDefault();
+                    break;
+            }
+        });
+
+        function showKeyboardShortcuts() {
+            const shortcuts = `
+                <div style="background: #1f2937; color: #f3f4f6; padding: 20px; border-radius: 8px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; min-width: 400px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+                    <h3 style="color: #10b981; margin-bottom: 15px;">⌨️ Keyboard Shortcuts</h3>
+                    <div style="line-height: 1.8;">
+                        <div><strong>←/→</strong> - Navigate tabs</div>
+                        <div><strong>1-9</strong> - Jump to specific tab</div>
+                        <div><strong>Ctrl/Cmd + R</strong> - Refresh current tab</div>
+                        <div><strong>?</strong> - Show this help</div>
+                        <div><strong>Esc</strong> - Close this dialog</div>
+                    </div>
+                    <button onclick="this.parentElement.remove()" style="background: #10b981; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 15px;">Close</button>
+                </div>
+                <div onclick="this.remove()" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+            `;
+            
+            const modal = document.createElement('div');
+            modal.innerHTML = shortcuts;
+            document.body.appendChild(modal);
+        }
+
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
-            // Add any initialization code here
             console.log('QTests Demo loaded successfully');
             
             // Draw initial performance chart
             setTimeout(() => {
                 drawPerformanceChart();
             }, 1000);
+            
+            // Start system status monitoring
+            setInterval(updateSystemStatus, 5000);
+            updateSystemStatus();
+            
+            // Add keyboard shortcuts hint to header
+            const header = document.querySelector('header');
+            if (header) {
+                const shortcutsHint = document.createElement('div');
+                shortcutsHint.style.cssText = 'font-size: 12px; color: #6b7280; margin-top: 10px;';
+                shortcutsHint.innerHTML = '💡 Press <strong>?</strong> for keyboard shortcuts';
+                header.appendChild(shortcutsHint);
+            }
             
             // Cleanup intervals on page unload to prevent memory leaks
             window.addEventListener('beforeunload', function() {
