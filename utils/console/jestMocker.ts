@@ -5,8 +5,8 @@
  * for testing environments where Jest is available.
  */
 
-import { withErrorLogging, safeExecute } from '../../lib/errorHandling';
-import { logStart } from '../../lib/logUtils';
+import { withErrorLogging, safeExecute } from '../../lib/errorHandling/index.js';
+import { logStart } from '../../lib/logUtils.js';
 
 /**
  * Console method names that can be mocked

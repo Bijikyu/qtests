@@ -12,8 +12,8 @@
  * - TypeScript-safe with proper type preservation
  */
 
-import { withErrorLogging } from '../lib/errorHandling';
-import { logStart } from '../lib/logUtils';
+import { withErrorLogging } from '../lib/errorHandling/index.js';
+import { logStart } from '../lib/logUtils.js';
 
 // Re-export from focused modules for backward compatibility
 export {

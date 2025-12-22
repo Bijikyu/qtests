@@ -79,11 +79,11 @@ import {
 
 // Memory cleanup utilities
 import {
-  
-  // Memory cleanup
   aggressiveCleanup,
-  
-  // Test isolation
+} from './lib/memory/index.js';
+
+// Test isolation utilities
+import {
   backupEnvironment,
   restoreEnvironment,
   registerMockRestore,
@@ -93,9 +93,15 @@ import {
   trackDbConnection,
   closeAllDbConnections,
   setupTestIsolation,
+} from './lib/testIsolation/index.js';
+
+// Wait for condition utility
+import {
   waitForCondition,
-  
-  // Test polyfills
+  type WaitForConditionOptions,
+} from './lib/waitForCondition.js';
+
+// Test polyfills
 import {
   setupClipboard,
   setupIntersectionObserver,
@@ -127,4 +133,79 @@ export type {
   WaitForConditionOptions
 };
 
-
+// Main exports
+export {
+  // Core utilities
+  stubMethod,
+  mockConsole,
+  testEnv,
+  offlineMode,
+  testHelpers,
+  setup,
+  
+  // HTTP testing
+  createMockApp,
+  supertest,
+  
+  // Test execution
+  runTestSuite,
+  runTestSuites,
+  createAssertions,
+  
+  // Module stubs
+  stubs,
+  
+  // Rate limiting
+  DistributedRateLimiter,
+  InMemoryRateLimiter,
+  createDistributedRateLimiter,
+  distributedRateLimit,
+  
+  // Validation
+  StreamingStringValidator,
+  createStreamingValidator,
+  streamingValidationMiddleware,
+  defaultValidator,
+  strictValidator,
+  relaxedValidator,
+  
+  // Error handling
+  createAsyncErrorWrapper,
+  createSyncErrorWrapper,
+  createRouteErrorWrapper,
+  createDatabaseErrorWrapper,
+  createApiErrorWrapper,
+  createFileErrorWrapper,
+  createBatchErrorWrapper,
+  createTimeoutErrorWrapper,
+  transformMongoError,
+  
+  // Memory management
+  memoryMonitor,
+  detectMemoryLeaks,
+  startMemoryMonitoring,
+  checkpointMemory,
+  endMemoryMonitoring,
+  aggressiveCleanup,
+  
+  // Test isolation
+  backupEnvironment,
+  restoreEnvironment,
+  registerMockRestore,
+  restoreAllMocks,
+  trackServer,
+  closeAllServers,
+  trackDbConnection,
+  closeAllDbConnections,
+  setupTestIsolation,
+  waitForCondition,
+  
+  // Polyfills
+  setupClipboard,
+  setupIntersectionObserver,
+  setupMatchMedia,
+  setupResizeObserver,
+  setupAllPolyfills,
+  MockIntersectionObserver,
+  MockResizeObserver,
+};

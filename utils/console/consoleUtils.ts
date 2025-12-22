@@ -5,8 +5,8 @@
  * including advanced mocking patterns and helper functions.
  */
 
-import { withErrorLogging } from '../../lib/errorHandling';
-import { logStart } from '../../lib/logUtils';
+import { withErrorLogging } from '../../lib/errorHandling/index.js';
+import { logStart } from '../../lib/logUtils.js';
 import { ConsoleMethod, ConsoleMockOptions, JestSpy } from './jestMocker.js';
 import { FallbackMock } from './fallbackMocker.js';
 
