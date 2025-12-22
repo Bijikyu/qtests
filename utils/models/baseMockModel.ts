@@ -5,6 +5,8 @@
  * It handles core model functionality like save, remove, and collection management.
  */
 
+import { JEST_WORKER_ID, QTESTS_PARALLEL_MODE } from '../../config/localVars.js';
+
 // Type definitions
 interface QueryObject {
   [key: string]: any;
@@ -31,10 +33,10 @@ const mockCollections = new Map<string, any[]>();
 function getTestIsolatedKey(modelName: string): string {
   // Only apply isolation in very specific parallel execution scenarios
   // Check for Jest worker ID (indicates Jest is running with multiple workers)
-  const isJestParallel = process.env.JEST_WORKER_ID && process.env.JEST_WORKER_ID !== '1';
+  const isJestParallel = JEST_WORKER_ID && JEST_WORKER_ID !== '1';
   
   // Check if explicitly set to parallel mode
-  const isExplicitParallel = process.env.QTESTS_PARALLEL_MODE === 'true';
+  const isExplicitParallel = QTESTS_PARALLEL_MODE === 'true';
   
   if (!isJestParallel && !isExplicitParallel) {
     // Normal testing - use simple model name for shared collections

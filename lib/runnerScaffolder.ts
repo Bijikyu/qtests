@@ -10,6 +10,8 @@
  * - HTTP testing utilities
  */
 
+import { NODE_ENV } from '../config/localVars.js';
+
 import fs from 'fs';
 import path from 'path';
 import { safeExists, ensureDir, safeWriteFile, safeDelete } from './fileSystem/index.js';
@@ -181,8 +183,7 @@ export default {
 import 'qtests/setup';
 import { jest as jestFromGlobals } from '@jest/globals';
 
-// Set test environment
-process.env.NODE_ENV = 'test';
+// Set test environment - NODE_ENV is managed in localVars.ts
 
 // Expose jest globally
 const J = (typeof jestFromGlobals !== 'undefined' && jestFromGlobals)

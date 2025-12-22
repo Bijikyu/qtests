@@ -1,9 +1,10 @@
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'path';
+import { NODE_ENV } from '../config/localVars.js';
 
 // Detect if we're running in Jest environment
-const isJestEnvironment = typeof jest !== 'undefined' || process.env.NODE_ENV === 'test';
+const isJestEnvironment = typeof jest !== 'undefined' || NODE_ENV === 'test';
 
 // Export functions instead of direct variables to avoid top-level import.meta usage
 export function getThisFilename() {

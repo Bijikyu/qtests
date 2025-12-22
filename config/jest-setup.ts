@@ -2,9 +2,9 @@
 // Keep qtests setup FIRST to ensure global stubbing is active
 import '../setup';
 import { jest as jestFromGlobals } from '@jest/globals';
+import { NODE_ENV } from './localVars.js';
 
-// Set test environment early
-process.env.NODE_ENV = 'test';
+// Set test environment early - NODE_ENV is managed in localVars.ts
 
 // Resolve jest reference safely and expose globally for tests using jest.*
 const globalJest = (globalThis as any).jest;

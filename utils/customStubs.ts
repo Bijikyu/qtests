@@ -26,10 +26,11 @@
  */
 
 import Module from 'module';
+import { QTESTS_SILENT } from '../config/localVars.js';
 
 // Respect CI silence toggle to reduce noise
-const QTESTS_SILENT = String(process.env.QTESTS_SILENT || '').toLowerCase();
-const shouldLog = !(QTESTS_SILENT === '1' || QTESTS_SILENT === 'true');
+const qtestsSilent = String(QTESTS_SILENT || '').toLowerCase();
+const shouldLog = !(qtestsSilent === '1' || qtestsSilent === 'true');
 
 // Internal in‑memory registry of ad‑hoc stubs
 // Key: module id (e.g., 'uuid') -> value: either exports object or factory function returning exports

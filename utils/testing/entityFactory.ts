@@ -7,6 +7,7 @@
 
 import { logStart, logReturn } from '../../lib/logUtils.js';
 import { User, ApiKey, LogEntry } from './dataTypes.js';
+import { JEST_WORKER_ID, QTESTS_PARALLEL_MODE } from '../../config/localVars.js';
 
 /**
  * Test Data Factory for Creating Realistic Test Entities
@@ -27,8 +28,8 @@ class EntityFactory {
    */
   static nextId(): string | number {
     // Only use complex IDs in very specific parallel execution scenarios
-    const isJestParallel = process.env.JEST_WORKER_ID && process.env.JEST_WORKER_ID !== '1';
-    const isExplicitParallel = process.env.QTESTS_PARALLEL_MODE === 'true';
+    const isJestParallel = JEST_WORKER_ID && JEST_WORKER_ID !== '1';
+    const isExplicitParallel = QTESTS_PARALLEL_MODE === 'true';
     
     if (!isJestParallel && !isExplicitParallel) {
       // Normal testing - use simple counter for expected format

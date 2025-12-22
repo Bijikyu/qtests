@@ -24,7 +24,8 @@ import {
 
 // Import logging control utility for consistent framework behavior
 import { setLogging } from '../lib/logUtils.js';
-if (process.env.NODE_ENV !== 'test') setLogging(false);
+import { NODE_ENV } from '../config/localVars.js';
+if (NODE_ENV !== 'test') setLogging(false);
 
 // ==================== TYPE RE-EXPORTS ====================
 

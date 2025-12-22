@@ -2,6 +2,8 @@
  * Offline Mode Utility - TypeScript Implementation
  */
 
+import { CODEX, OFFLINE_MODE, NODE_ENV } from '../config/localVars.js';
+
 // Type definitions
 interface EnvironmentState {
   codexFlag: boolean;
@@ -91,9 +93,9 @@ async function getQerrors(): Promise<any> {
  * Get environment state
  */
 function getEnvironmentState(): EnvironmentState {
-  const codexFlag = process.env.CODEX?.toLowerCase() === 'true';
-  const offlineFlagExplicit = process.env.OFFLINE_MODE?.toLowerCase() === 'true';
-  const testEnvironment = process.env.NODE_ENV === 'test';
+  const codexFlag = CODEX?.toLowerCase() === 'true';
+  const offlineFlagExplicit = OFFLINE_MODE?.toLowerCase() === 'true';
+  const testEnvironment = NODE_ENV === 'test';
   
   return {
     codexFlag,

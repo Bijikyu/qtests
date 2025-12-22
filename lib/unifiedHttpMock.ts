@@ -14,10 +14,10 @@
 
 // Import logging control utility for consistent framework behavior
 import { setLogging } from './logUtils.js';
-import localVars from '../config/localVars.js';
+import { NODE_ENV } from '../config/localVars.js';
 
 // Set logging based on environment using localVars pattern
-if ((localVars as any).nodeEnv !== 'test') {
+if (NODE_ENV !== 'test') {
   setLogging(false);
 }
 

@@ -14,7 +14,7 @@
  * - Automatic cleanup of expired counters
  */
 
-import localVars from '../config/localVars.js';
+import { redisUrl, redisCloudUrl } from '../config/localVars.js';
 
 export interface RateLimitConfig {
   windowMs: number;
@@ -49,7 +49,7 @@ export class DistributedRateLimiter {
 
   private async initializeRedis(): Promise<void> {
     try {
-      const redisUrl = localVars.redisUrl || localVars.redisCloudUrl;
+      const redisUrlToUse = redisUrl || redisCloudUrl;
       if (!redisUrl) {
         console.log('Redis not configured for rate limiting, using fallback');
         return;

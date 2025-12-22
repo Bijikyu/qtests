@@ -12,7 +12,7 @@
  */
 
 import { setLogging } from './logUtils.js';
-import localVars from '../config/localVars.js';
+import { NODE_ENV } from '../config/localVars.js';
 
 // Import modular validation components
 import {
@@ -30,7 +30,7 @@ import {
 } from './validation/index.js';
 
 // Set logging based on environment using localVars pattern
-if ((localVars as any).nodeEnv !== 'test') {
+if (NODE_ENV !== 'test') {
   setLogging(false);
 }
 

@@ -3,6 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { INIT_CWD, NODE_ENV } from '../config/localVars.js';
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -81,7 +82,7 @@ function exists(p) {
 }
 
 function resolveClientRoot() {
-  const icwd = process.env.INIT_CWD && String(process.env.INIT_CWD).trim();
+  const icwd = INIT_CWD && String(INIT_CWD).trim();
   if (icwd && exists(icwd) && !icwd.includes(`${path.sep}node_modules${path.sep}`)) return icwd;
   return process.cwd();
 }
@@ -143,10 +144,10 @@ export default {
     'mongoose$': '<rootDir>/__mocks__/mongoose.js',
     '^.+\\\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/fileMock.js',
     '^.+\\\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$': '<rootDir>/__mocks__/fileMock.js'
+} catch {};
+  `;
+
   }
-};
-`;
-}
 
 getJestSetup() {
   return `// jest-setup.ts - qtests Integration Test Setup
@@ -155,7 +156,7 @@ getJestSetup() {
 import 'qtests/setup';
 import { jest as jestFromGlobals } from '@jest/globals';
 
-process.env.NODE_ENV = 'test';
+// NODE_ENV is set in localVars.ts for consistency
 
 const J = (typeof jestFromGlobals !== 'undefined' && jestFromGlobals)
   ? jestFromGlobals
@@ -205,20 +206,9 @@ try {
       configurable: true,
       enumerable: false
     });
-  }
 } catch {};
-`;
+  `;
 }
-    Object.defineProperty(global, 'require', {
-      value: req,
-      writable: false,
-      configurable: true,
-      enumerable: false
-    });
-  }
-} catch {}
-`;
-  }
 
 async scaffoldRunner() {
   const projectRoot = resolveClientRoot();
