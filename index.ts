@@ -68,111 +68,19 @@ import {
 
 // Memory monitoring utilities
 import {
-  MemoryMonitor,
+  memoryMonitor,
   detectMemoryLeaks,
   startMemoryMonitoring,
   checkpointMemory,
   endMemoryMonitoring,
-  cleanupWithMemoryTracking,
   type MemorySnapshot,
   type MemoryDelta
 } from './lib/memory/index.js';
 
 // Memory cleanup utilities
 import {
-  forceGC,
-  clearGlobalRefs,
-  clearModuleCache,
-  aggressiveCleanup
-} from './lib/memoryCleanup.js';
-
-// Test isolation utilities
-import {
-  backupEnvironment,
-  restoreEnvironment,
-  registerMockRestore,
-  restoreAllMocks,
-  trackServer,
-  closeAllServers,
-  trackDbConnection,
-  closeAllDbConnections,
-  setupTestIsolation,
-  teardownTestIsolation,
-  setupJestIsolation
-} from './lib/testIsolation.js';
-
-// Wait for condition utility
-import { waitForCondition, type WaitForConditionOptions } from './lib/waitForCondition.js';
-
-// Test polyfills for browser APIs
-import {
-  setupClipboard,
-  setupIntersectionObserver,
-  setupMatchMedia,
-  setupResizeObserver,
-  setupAllPolyfills,
-  MockIntersectionObserver,
-  MockResizeObserver,
-  type ClipboardSpies,
-  type MockMediaQueryList
-} from './lib/testPolyfills.js';
-
-
-
-// Export all core functionality for easy access
-export {
-  // Core testing utilities
-  stubMethod,
-  mockConsole,
-  testEnv,
-  offlineMode,
-  testHelpers,
-  runTestSuite,
-  runTestSuites,
-  createAssertions,
-  setup,
-  stubs,
-  createMockApp,
-  supertest,
-  
-  // Rate limiting
-  DistributedRateLimiter,
-  InMemoryRateLimiter,
-  createDistributedRateLimiter,
-  distributedRateLimit,
-  
-  // Streaming validation
-  StreamingStringValidator,
-  createStreamingValidator,
-  streamingValidationMiddleware,
-  defaultValidator,
-  strictValidator,
-  relaxedValidator,
-  
-  // Error wrappers
-  createAsyncErrorWrapper,
-  createSyncErrorWrapper,
-  createRouteErrorWrapper,
-  createDatabaseErrorWrapper,
-  createApiErrorWrapper,
-  createFileErrorWrapper,
-  createBatchErrorWrapper,
-  createTimeoutErrorWrapper,
-  transformMongoError,
-  
-  // Memory monitoring
-  MemoryMonitor,
-  memoryMonitor,
-  detectMemoryLeaks,
-  startMemoryMonitoring,
-  checkpointMemory,
-  endMemoryMonitoring,
-  cleanupWithMemoryTracking,
   
   // Memory cleanup
-  forceGC,
-  clearGlobalRefs,
-  clearModuleCache,
   aggressiveCleanup,
   
   // Test isolation
@@ -185,13 +93,10 @@ export {
   trackDbConnection,
   closeAllDbConnections,
   setupTestIsolation,
-  teardownTestIsolation,
-  setupJestIsolation,
-  
-  // Wait for condition
   waitForCondition,
   
   // Test polyfills
+import {
   setupClipboard,
   setupIntersectionObserver,
   setupMatchMedia,
@@ -199,7 +104,7 @@ export {
   setupAllPolyfills,
   MockIntersectionObserver,
   MockResizeObserver,
-};
+} from './lib/polyfills/index.js';
 
 // Re-export types
 export type {
@@ -219,9 +124,7 @@ export type {
   BatchProcessingResult,
   MemorySnapshot,
   MemoryDelta,
-  WaitForConditionOptions,
-  ClipboardSpies,
-  MockMediaQueryList
+  WaitForConditionOptions
 };
 
 
