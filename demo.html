@@ -515,6 +515,8 @@
             <button class="nav-tab" onclick="showTab('performance', this)">📊 Performance</button>
             <button class="nav-tab" onclick="showTab('configuration', this)">⚙️ Configuration</button>
             <button class="nav-tab" onclick="showTab('playground', this)">🎮 Playground</button>
+            <button class="nav-tab" onclick="showTab('integration-flows', this)">🔄 Integration Flows</button>
+            <button class="nav-tab" onclick="showTab('real-world-scenarios', this)">🌍 Real-World</button>
         </nav>
 
         <!-- Overview Tab -->
@@ -1644,6 +1646,357 @@ describe('User Routes', () => {
                         <li>Use route testing utilities for API endpoint testing</li>
                     </ul>
                 </div>
+            </div>
+        </div>
+
+        <!-- Integration Flows Tab -->
+        <div id="integration-flows" class="tab-content">
+            <h2>🔄 Complete Integration Workflows</h2>
+            <div class="alert success">
+                End-to-end testing workflows demonstrating real-world integration patterns with QTests framework.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>🛒 E-commerce Application Flow</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step completed">
+                            <div class="workflow-step-number">1</div>
+                            <div>User Registration</div>
+                        </div>
+                        <div class="workflow-step completed">
+                            <div class="workflow-step-number">2</div>
+                            <div>Product Browse</div>
+                        </div>
+                        <div class="workflow-step active">
+                            <div class="workflow-step-number">3</div>
+                            <div>Cart Management</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">4</div>
+                            <div>Checkout Process</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">5</div>
+                            <div>Payment Processing</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">6</div>
+                            <div>Order Confirmation</div>
+                        </div>
+                    </div>
+                    <button class="btn success" onclick="runEcommerceFlow()">Run Complete Flow</button>
+                    <button class="btn secondary" onclick="runEcommerceStep('cart')">Test Cart Step</button>
+                </div>
+
+                <div class="card">
+                    <h3>📱 Social Media Application Flow</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step completed">
+                            <div class="workflow-step-number">1</div>
+                            <div>User Authentication</div>
+                        </div>
+                        <div class="workflow-step active">
+                            <div class="workflow-step-number">2</div>
+                            <div>Feed Loading</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">3</div>
+                            <div>Post Creation</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">4</div>
+                            <div>Like/Comment</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">5</div>
+                            <div>Notification System</div>
+                        </div>
+                    </div>
+                    <button class="btn success" onclick="runSocialFlow()">Run Complete Flow</button>
+                    <button class="btn secondary" onclick="runSocialStep('feed')">Test Feed Step</button>
+                </div>
+
+                <div class="card">
+                    <h3>🏥 Healthcare Application Flow</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step completed">
+                            <div class="workflow-step-number">1</div>
+                            <div>Patient Registration</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">2</div>
+                            <div>Appointment Booking</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">3</div>
+                            <div>Medical Records</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">4</div>
+                            <div>Prescription Management</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">5</div>
+                            <div>Billing System</div>
+                        </div>
+                    </div>
+                    <button class="btn success" onclick="runHealthcareFlow()">Run Complete Flow</button>
+                    <button class="btn secondary" onclick="runHealthcareStep('appointment')">Test Appointment Step</button>
+                </div>
+
+                <div class="card">
+                    <h3>📊 Analytics Dashboard Flow</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step completed">
+                            <div class="workflow-step-number">1</div>
+                            <div>Data Collection</div>
+                        </div>
+                        <div class="workflow-step active">
+                            <div class="workflow-step-number">2</div>
+                            <div>Data Processing</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">3</div>
+                            <div>Report Generation</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">4</div>
+                            <div>Dashboard Display</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">5</div>
+                            <div>Export Functionality</div>
+                        </div>
+                    </div>
+                    <button class="btn success" onclick="runAnalyticsFlow()">Run Complete Flow</button>
+                    <button class="btn secondary" onclick="runAnalyticsStep('processing')">Test Processing Step</button>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>🔄 Live Integration Test Output</h4>
+                <div id="integration-output" class="terminal" style="min-height: 300px; max-height: 500px;">
+                    <div style="color: #4fc3f7;">$ qtests-runner --integration --flow=ecommerce</div>
+                    <div>🔄 Setting up integration test environment...</div>
+                    <div>🌐 Initializing mock services...</div>
+                    <div>📧 Configuring email testing...</div>
+                    <div>💳 Setting up payment processor mocks...</div>
+                    <div>🗄️  Initializing database connections...</div>
+                    <div style="color: #10b981;">✅ Integration environment ready</div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div>🧪 Starting integration tests...</div>
+                        <div style="color: #f59e0b;">⏳ Running workflow tests...</div>
+                    </div>
+                </div>
+                <div class="metrics" style="margin-top: 15px;">
+                    <div class="metric">
+                        <div class="metric-value" id="integration-tests-run">0</div>
+                        <div class="metric-label">Tests Run</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="integration-passed">0</div>
+                        <div class="metric-label">Passed</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="integration-failed">0</div>
+                        <div class="metric-label">Failed</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="integration-duration">0ms</div>
+                        <div class="metric-label">Duration</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>🎛️ Flow Configuration</h4>
+                <div class="grid">
+                    <div class="card">
+                        <h3>Test Environment</h3>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="integration-mock-services" checked>
+                                Mock External Services
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="integration-real-db">
+                                Use Real Database
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="integration-email-testing" checked>
+                                Enable Email Testing
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="integration-memory-monitoring" checked>
+                                Memory Monitoring
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Flow Options</h3>
+                        <div class="input-group">
+                            <label for="flow-concurrency">Concurrency Level</label>
+                            <select id="flow-concurrency">
+                                <option value="1">Sequential</option>
+                                <option value="2" selected>2 Parallel</option>
+                                <option value="4">4 Parallel</option>
+                                <option value="8">8 Parallel</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="flow-timeout">Test Timeout (ms)</label>
+                            <input type="number" id="flow-timeout" value="30000" min="5000" max="300000">
+                        </div>
+                        <div class="input-group">
+                            <label for="flow-retries">Max Retries</label>
+                            <input type="number" id="flow-retries" value="3" min="0" max="10">
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="flow-continue-on-failure">
+                                Continue on Failure
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Real-World Scenarios Tab -->
+        <div id="real-world-scenarios" class="tab-content">
+            <h2>🌍 Real-World Testing Scenarios</h2>
+            <div class="alert info">
+                Comprehensive testing scenarios based on real-world applications and common development challenges.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>🏢 Enterprise Application Testing</h3>
+                    <div class="input-group">
+                        <label for="enterprise-scenario">Select Scenario</label>
+                        <select id="enterprise-scenario" onchange="loadEnterpriseScenario()">
+                            <option value="">Choose a scenario...</option>
+                            <option value="user-management">User Management System</option>
+                            <option value="inventory">Inventory Management</option>
+                            <option value="payroll">Payroll Processing</option>
+                            <option value="reporting">Business Intelligence</option>
+                            <option value="compliance">Compliance & Auditing</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="runEnterpriseScenario()">Run Scenario</button>
+                    <button class="btn secondary" onclick="generateEnterpriseTests()">Generate Tests</button>
+                </div>
+
+                <div class="card">
+                    <h3>📱 Mobile Application Testing</h3>
+                    <div class="input-group">
+                        <label for="mobile-platform">Platform</label>
+                        <select id="mobile-platform">
+                            <option value="react-native">React Native</option>
+                            <option value="flutter">Flutter</option>
+                            <option value="ionic">Ionic</option>
+                            <option value="cordova">Cordova</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="mobile-scenario">App Type</label>
+                        <select id="mobile-scenario">
+                            <option value="social">Social Media</option>
+                            <option value="ecommerce">E-commerce</option>
+                            <option value="productivity">Productivity</option>
+                            <option value="gaming">Gaming</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="runMobileScenario()">Run Mobile Tests</button>
+                </div>
+
+                <div class="card">
+                    <h3>🌐 Microservices Architecture</h3>
+                    <div class="input-group">
+                        <label for="microservices-count">Number of Services</label>
+                        <input type="number" id="microservices-count" value="5" min="2" max="20">
+                    </div>
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" class="checkbox" id="microservices-api-gateway" checked>
+                            API Gateway Testing
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" class="checkbox" id="microservices-service-mesh">
+                            Service Mesh Testing
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label>
+                            <input type="checkbox" class="checkbox" id="microservices-circuit-breaker" checked>
+                            Circuit Breaker Testing
+                        </label>
+                    </div>
+                    <button class="btn" onclick="runMicroservicesScenario()">Run Microservices Tests</button>
+                </div>
+
+                <div class="card">
+                    <h3>🤖 AI/ML Application Testing</h3>
+                    <div class="input-group">
+                        <label for="ml-model-type">Model Type</label>
+                        <select id="ml-model-type">
+                            <option value="classification">Classification</option>
+                            <option value="regression">Regression</option>
+                            <option value="nlp">Natural Language Processing</option>
+                            <option value="computer-vision">Computer Vision</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="ml-test-data">Test Dataset Size</label>
+                        <input type="number" id="ml-test-data" value="1000" min="100" max="10000">
+                    </div>
+                    <div class="input-group">
+                        <label for="ml-accuracy-threshold">Accuracy Threshold (%)</label>
+                        <input type="number" id="ml-accuracy-threshold" value="85" min="50" max="99">
+                    </div>
+                    <button class="btn" onclick="runMLScenario()">Run ML Tests</button>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>🎯 Scenario Execution Results</h4>
+                <div id="scenario-output" class="terminal" style="min-height: 250px; max-height: 400px;">
+                    <div style="color: #6b7280;">Select a scenario and click "Run" to see execution results...</div>
+                </div>
+                <div class="metrics" style="margin-top: 15px;">
+                    <div class="metric">
+                        <div class="metric-value" id="scenario-score">0%</div>
+                        <div class="metric-label">Test Score</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="scenario-coverage">0%</div>
+                        <div class="metric-label">Coverage</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="scenario-performance">0ms</div>
+                        <div class="metric-label">Performance</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="scenario-reliability">0%</div>
+                        <div class="metric-label">Reliability</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>📊 Scenario Comparison</h4>
+                <canvas id="scenario-chart" width="800" height="300"></canvas>
+                <button class="btn secondary" onclick="drawScenarioChart()" style="margin-top: 10px;">Update Comparison</button>
             </div>
         </div>
 
