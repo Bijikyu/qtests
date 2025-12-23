@@ -16,7 +16,10 @@ import { beforeAll, afterAll } from '@jest/globals';
 let server: any;
 
 beforeAll(async () => {
-  const app = require('../src/app').default || require('../src/app');
+  const app = require('../server/app.js');
+  if (!app) {
+    throw new Error('Failed to load Express app from ../server/app.js');
+  }
   server = app.listen(4000, () => {
     // Use structured logging for test server startup
     if (process.env.NODE_ENV === 'test') {
@@ -28,7 +31,12 @@ beforeAll(async () => {
 
 afterAll(async () => {
   if (server) {
-    server.close();
+    await new Promise<void>((resolve, reject) => {
+      server.close((err) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
     if (process.env.NODE_ENV === 'test') {
       console.log('Test server stopped');
     }

@@ -6,9 +6,9 @@ const router = express.Router();
 // Simple in-memory history storage
 let calculationHistory = [];
 
-// GET /api/health - Health check endpoint
-router.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+// GET /api/calculator/health - Calculator-specific health check endpoint
+router.get('/calculator/health', (req, res) => {
+  res.json({ status: 'ok', service: 'calculator', timestamp: new Date().toISOString() });
 });
 
 // GET /api/history - Get calculation history

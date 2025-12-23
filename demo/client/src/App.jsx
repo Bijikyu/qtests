@@ -15,7 +15,7 @@ export default function App() {
 
   const fetchHealth = async () => {
     try {
-      const response = await fetch('/health');
+      const response = await fetch('/api/health');
       const data = await response.json();
       setHealth(data);
     } catch (error) {
@@ -25,9 +25,9 @@ export default function App() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch('/users');
+      const response = await fetch('/api/users');
       const data = await response.json();
-      setUsers(data);
+      setUsers(data.users || data);
     } catch (error) {
       console.error('Failed to fetch users:', error);
     }
@@ -35,7 +35,7 @@ export default function App() {
 
   const createUser = async (userData) => {
     try {
-      const response = await fetch('/users', {
+      const response = await fetch('/api/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export default function App() {
 
   const fetchCalculations = async () => {
     try {
-      const response = await fetch('/calculate', {
+      const response = await fetch('/api/calculate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

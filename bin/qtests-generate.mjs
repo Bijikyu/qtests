@@ -3,7 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { INIT_CWD, NODE_ENV } from '../config/localVars.js';
+
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -82,7 +82,7 @@ function exists(p) {
 }
 
 function resolveClientRoot() {
-  const icwd = INIT_CWD && String(INIT_CWD).trim();
+  const icwd = process.env.INIT_CWD && String(process.env.INIT_CWD).trim();
   if (icwd && exists(icwd) && !icwd.includes(`${path.sep}node_modules${path.sep}`)) return icwd;
   return process.cwd();
 }
