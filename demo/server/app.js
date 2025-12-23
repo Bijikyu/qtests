@@ -22,7 +22,19 @@ app.use((req, _res, next) => {
 
 // Mount routes.
 const helloRouter = require('./routes/hello');
+const calculatorRouter = require('./routes/calculator');
+const statusRouter = require('./routes/status');
+const rootRouter = require('./routes/root');
+const usersRouter = require('./routes/users');
+
+// API routes
 app.use('/api', helloRouter);
+app.use('/api', calculatorRouter);
+app.use('/api', statusRouter);
+app.use('/api', usersRouter);
+
+// Root level routes
+app.use('/', rootRouter);
 
 // Health endpoint for quick sanity.
 app.get('/health', (_req, res) => {
