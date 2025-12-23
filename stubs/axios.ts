@@ -32,7 +32,19 @@ const mockResponse: MockResponse = {
   statusText: 'OK',
   data: {},
   headers: {},
-  config: {}
+  config: {
+    url: '',
+    method: 'get',
+    headers: {},
+    transformRequest: [],
+    transformResponse: [],
+    timeout: 0,
+    xsrfCookieName: 'XSRF-TOKEN',
+    xsrfHeaderName: 'X-XSRF-TOKEN',
+    maxContentLength: -1,
+    maxBodyLength: -1,
+    validateStatus: function () { return true; }
+  }
 };
 
 const axiosStub: AxiosStub = {

@@ -41,6 +41,11 @@ app.get('/health', (_req, res) => {
   return res.status(200).json({ ok: true });
 });
 
+// API health endpoint to match frontend expectations
+app.get('/api/health', (_req, res) => {
+  return res.status(200).json({ ok: true, status: 'healthy', timestamp: new Date().toISOString() });
+});
+
 // Always export at bottom per repo conventions.
 module.exports = app;
 

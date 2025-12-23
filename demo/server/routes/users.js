@@ -16,7 +16,7 @@ router.get('/users/:id', (req, res) => {
   const { id } = req.params;
   
   // Validate ID format
-  if (!/^\d+$/.test(id)) {
+  if (!/^[1-9]\d*$/.test(id)) {
     return res.status(400).json({ error: 'Invalid user ID format' });
   }
   
@@ -34,9 +34,18 @@ router.get('/users/:id', (req, res) => {
 router.post('/users', (req, res) => {
   const { name, email } = req.body;
   
-  // Basic validation
-  if (!name || !email) {
-    return res.status(400).json({ error: 'Name and email are required' });
+// Basic validation
+  if (!name || typeof name !== 'string' || name.trim().length === 0) {
+    return res.status(400).json({ error: 'Name is required and must be non-empty string' });
+  }
+  if (!email || typeof email !== 'string' || email.trim().length === 0) {
+    return res.status(400).json({ error: 'Email is required and must be non-empty string' });
+  }
+  
+  // Basic email format validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({ error: 'Invalid email format' });
   }
   
   // Check for duplicate email
@@ -65,7 +74,7 @@ router.put('/users/:id', (req, res) => {
   const { id } = req.params;
   const { name, email } = req.body;
   
-  if (!/^\d+$/.test(id)) {
+  if (!/^[1-9]\d*$/.test(id)) {
     return res.status(400).json({ error: 'Invalid user ID format' });
   }
   
@@ -92,7 +101,7 @@ router.put('/users/:id', (req, res) => {
 router.delete('/users/:id', (req, res) => {
   const { id } = req.params;
   
-  if (!/^\d+$/.test(id)) {
+  if (!/^[1-9]\d*$/.test(id)) {
     return res.status(400).json({ error: 'Invalid user ID format' });
   }
   

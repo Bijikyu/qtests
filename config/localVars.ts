@@ -12,13 +12,13 @@
 // Import JavaScript modules with proper ESM compatibility
 import { createRequire } from 'module';
 
-const require = createRequire(import.meta.url);
-const envConfig = require('./envConfig.js');
-const qtestsConfig = require('./qtestsConfig.js');
-const testConfig = require('./testConfig.js');
-const fileSystemConfig = require('./fileSystemConfig.js');
-const mockConfig = require('./mockConfig.js');
-const systemConfig = require('./systemConfig.js');
+const nodeRequire = createRequire(import.meta.url);
+const envConfig = nodeRequire('./envConfig.js');
+const qtestsConfig = nodeRequire('./qtestsConfig.js');
+const testConfig = nodeRequire('./testConfig.js');
+const fileSystemConfig = nodeRequire('./fileSystemConfig.js');
+const mockConfig = nodeRequire('./mockConfig.js');
+const systemConfig = nodeRequire('./systemConfig.js');
 
 // Re-export from focused configuration modules for backward compatibility
 
