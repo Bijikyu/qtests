@@ -517,6 +517,8 @@
             <button class="nav-tab" onclick="showTab('playground', this)">🎮 Playground</button>
             <button class="nav-tab" onclick="showTab('integration-flows', this)">🔄 Integration Flows</button>
             <button class="nav-tab" onclick="showTab('real-world-scenarios', this)">🌍 Real-World</button>
+            <button class="nav-tab" onclick="showTab('test-templates', this)">📋 Test Templates</button>
+            <button class="nav-tab" onclick="showTab('debugging-tools', this)">🐛 Debugging Tools</button>
         </nav>
 
         <!-- Overview Tab -->
@@ -1690,6 +1692,38 @@ describe('User Routes', () => {
                 </div>
 
                 <div class="card">
+                    <h3>🔧 CI/CD Pipeline Testing</h3>
+                    <div class="workflow-steps">
+                        <div class="workflow-step completed">
+                            <div class="workflow-step-number">1</div>
+                            <div>Code Checkout</div>
+                        </div>
+                        <div class="workflow-step active">
+                            <div class="workflow-step-number">2</div>
+                            <div>Dependency Install</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">3</div>
+                            <div>Test Generation</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">4</div>
+                            <div>Test Execution</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">5</div>
+                            <div>Build Process</div>
+                        </div>
+                        <div class="workflow-step">
+                            <div class="workflow-step-number">6</div>
+                            <div>Deployment</div>
+                        </div>
+                    </div>
+                    <button class="btn success" onclick="runCICDFlow()">Run CI/CD Pipeline</button>
+                    <button class="btn secondary" onclick="runCICDStep('test')">Test Step Only</button>
+                </div>
+
+                <div class="card">
                     <h3>📱 Social Media Application Flow</h3>
                     <div class="workflow-steps">
                         <div class="workflow-step completed">
@@ -1865,6 +1899,317 @@ describe('User Routes', () => {
                                 Continue on Failure
                             </label>
                         </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Test Templates Tab -->
+        <div id="test-templates" class="tab-content">
+            <h2>📋 Comprehensive Test Templates</h2>
+            <div class="alert info">
+                Pre-built test templates for common patterns and scenarios. Generate production-ready tests with best practices built-in.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>🏗️ Architecture Templates</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn" onclick="loadTemplate('mvc-pattern')">MVC Pattern</button>
+                        <button class="btn" onclick="loadTemplate('repository-pattern')">Repository Pattern</button>
+                        <button class="btn" onclick="loadTemplate('service-layer')">Service Layer</button>
+                        <button class="btn" onclick="loadTemplate('cqrs')">CQRS Pattern</button>
+                        <button class="btn" onclick="loadTemplate('event-sourcing')">Event Sourcing</button>
+                        <button class="btn" onclick="loadTemplate('microservices')">Microservices</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🔧 Utility Templates</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn" onclick="loadTemplate('data-validation')">Data Validation</button>
+                        <button class="btn" onclick="loadTemplate('file-processing')">File Processing</button>
+                        <button class="btn" onclick="loadTemplate('caching')">Caching Layer</button>
+                        <button class="btn" onclick="loadTemplate('logging')">Logging System</button>
+                        <button class="btn" onclick="loadTemplate('config-management')">Configuration Management</button>
+                        <button class="btn" onclick="loadTemplate('error-handling')">Error Handling</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🌐 API Templates</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn" onclick="loadTemplate('rest-api')">REST API</button>
+                        <button class="btn" onclick="loadTemplate('graphql')">GraphQL API</button>
+                        <button class="btn" onclick="loadTemplate('websocket')">WebSocket API</button>
+                        <button class="btn" onclick="loadTemplate('webhooks')">Webhook Handler</button>
+                        <button class="btn" onclick="loadTemplate('authentication')">Authentication</button>
+                        <button class="btn" onclick="loadTemplate('authorization')">Authorization</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📊 Database Templates</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <button class="btn" onclick="loadTemplate('crud-operations')">CRUD Operations</button>
+                        <button class="btn" onclick="loadTemplate('migrations')">Database Migrations</button>
+                        <button class="btn" onclick="loadTemplate('transactions')">Transaction Management</button>
+                        <button class="btn" onclick="loadTemplate('query-builder')">Query Builder</button>
+                        <button class="btn" onclick="loadTemplate('orm-testing')">ORM Testing</button>
+                        <button class="btn" onclick="loadTemplate('connection-pooling')">Connection Pooling</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>📝 Template Preview</h4>
+                <div id="template-preview" class="code-block" style="max-height: 400px; overflow-y: auto;">
+                    <div style="color: #6b7280;">Select a template to preview the generated test code...</div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button class="btn success" onclick="copyTemplate()">Copy Template</button>
+                    <button class="btn secondary" onclick="downloadTemplate()">Download Template</button>
+                    <button class="btn" onclick="customizeTemplate()">Customize</button>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>⚙️ Template Configuration</h4>
+                <div class="grid">
+                    <div class="card">
+                        <h3>Code Style</h3>
+                        <div class="input-group">
+                            <label for="template-framework">Testing Framework</label>
+                            <select id="template-framework">
+                                <option value="jest">Jest</option>
+                                <option value="mocha">Mocha</option>
+                                <option value="vitest">Vitest</option>
+                                <option value="jasmine">Jasmine</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="template-language">Language</label>
+                            <select id="template-language">
+                                <option value="typescript">TypeScript</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="es6">ES6+</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="template-comments" checked>
+                                Include Comments
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="template-types" checked>
+                                Include Type Definitions
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Test Coverage</h3>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="template-happy-path" checked>
+                                Happy Path Tests
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="template-error-cases" checked>
+                                Error Cases
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="template-edge-cases">
+                                Edge Cases
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="template-integration">
+                                Integration Tests
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="template-performance">
+                                Performance Tests
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Debugging Tools Tab -->
+        <div id="debugging-tools" class="tab-content">
+            <h2>🐛 Advanced Debugging Tools</h2>
+            <div class="alert warning">
+                Comprehensive debugging utilities for test analysis, performance profiling, and issue resolution in complex testing scenarios.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>🔍 Test Analysis</h3>
+                    <div class="input-group">
+                        <label for="debug-test-file">Test File</label>
+                        <input type="text" id="debug-test-file" placeholder="path/to/test.test.ts">
+                    </div>
+                    <div class="input-group">
+                        <label for="debug-test-pattern">Test Pattern</label>
+                        <input type="text" id="debug-test-pattern" placeholder="**/*.test.ts">
+                    </div>
+                    <button class="btn" onclick="analyzeTestFile()">Analyze Test File</button>
+                    <button class="btn secondary" onclick="findFlakyTests()">Find Flaky Tests</button>
+                    <button class="btn warning" onclick="analyzeTestCoverage()">Coverage Analysis</button>
+                    <div id="test-analysis-results" class="terminal" style="margin-top: 10px; min-height: 150px;">
+                        <div>Ready to analyze tests...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>⚡ Performance Profiler</h3>
+                    <div class="input-group">
+                        <label for="profile-target">Profile Target</label>
+                        <select id="profile-target">
+                            <option value="test-suite">Test Suite</option>
+                            <option value="individual-test">Individual Test</option>
+                            <option value="setup-teardown">Setup/Teardown</option>
+                            <option value="mock-generation">Mock Generation</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="profile-duration">Duration (seconds)</label>
+                        <input type="number" id="profile-duration" value="30" min="5" max="300">
+                    </div>
+                    <button class="btn" onclick="startProfiling()">Start Profiling</button>
+                    <button class="btn error" onclick="stopProfiling()">Stop Profiling</button>
+                    <div id="profiling-results" class="terminal" style="margin-top: 10px; min-height: 150px;">
+                        <div>Profiler ready...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🧠 Memory Debugger</h3>
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-value" id="debug-heap-used">0MB</div>
+                            <div class="metric-label">Heap Used</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value" id="debug-heap-total">0MB</div>
+                            <div class="metric-label">Heap Total</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-value" id="debug-objects">0</div>
+                            <div class="metric-label">Objects</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-top: 15px;">
+                        <button class="btn" onclick="takeMemorySnapshot()">Take Snapshot</button>
+                        <button class="btn secondary" onclick="compareSnapshots()">Compare Snapshots</button>
+                        <button class="btn warning" onclick="findMemoryLeaks()">Find Leaks</button>
+                    </div>
+                    <div id="memory-debug-results" class="terminal" style="margin-top: 10px; min-height: 120px;">
+                        <div>Memory debugger ready...</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📊 Test Metrics Dashboard</h3>
+                    <div class="input-group">
+                        <label for="metrics-timeframe">Timeframe</label>
+                        <select id="metrics-timeframe">
+                            <option value="last-hour">Last Hour</option>
+                            <option value="last-24h">Last 24 Hours</option>
+                            <option value="last-week">Last Week</option>
+                            <option value="last-month">Last Month</option>
+                        </select>
+                    </div>
+                    <button class="btn" onclick="refreshMetrics()">Refresh Metrics</button>
+                    <button class="btn secondary" onclick="exportMetrics()">Export Metrics</button>
+                    <div id="metrics-dashboard" class="terminal" style="margin-top: 10px; min-height: 200px;">
+                        <div>📊 Loading test metrics...</div>
+                        <div>⏱️  Gathering data from test runs...</div>
+                        <div>📈 Calculating performance trends...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>🔧 Debugging Actions</h4>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn" onclick="runTestWithDebug()">Run Test with Debug</button>
+                    <button class="btn secondary" onclick="enableVerboseLogging()">Enable Verbose Logging</button>
+                    <button class="btn warning" onclick="traceTestExecution()">Trace Test Execution</button>
+                    <button class="btn error" onclick="generateDebugReport()">Generate Debug Report</button>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>🐛 Issue Detection</h4>
+                <div class="grid">
+                    <div class="card">
+                        <h3>Common Issues</h3>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="detect-timeouts">
+                                Test Timeouts
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="detect-race-conditions">
+                                Race Conditions
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="detect-resource-leaks">
+                                Resource Leaks
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="detect-mock-failures">
+                                Mock Failures
+                            </label>
+                        </div>
+                        <button class="btn" onclick="runIssueDetection()">Run Issue Detection</button>
+                    </div>
+
+                    <div class="card">
+                        <h3>Performance Issues</h3>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="detect-slow-tests">
+                                Slow Tests (>5s)
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="detect-memory-spikes">
+                                Memory Spikes
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="detect-io-bottlenecks">
+                                I/O Bottlenecks
+                            </label>
+                        </div>
+                        <div class="input-group">
+                            <label>
+                                <input type="checkbox" class="checkbox" id="detect-cpu-intensive">
+                                CPU Intensive Tests
+                            </label>
+                        </div>
+                        <button class="btn" onclick="runPerformanceDiagnostics()">Run Performance Diagnostics</button>
                     </div>
                 </div>
             </div>
@@ -3007,6 +3352,1495 @@ test('renders user name', async () => {
             }, 10000);
         }
 
+        // Integration Flow Functions
+        function runEcommerceFlow() {
+            const output = document.getElementById('integration-output');
+            const testsRunElement = document.getElementById('integration-tests-run');
+            const passedElement = document.getElementById('integration-passed');
+            const failedElement = document.getElementById('integration-failed');
+            const durationElement = document.getElementById('integration-duration');
+            
+            output.innerHTML = `
+                <div style="color: #4fc3f7;">$ qtests-runner --integration --flow=ecommerce</div>
+                <div>🔄 Setting up e-commerce integration test environment...</div>
+                <div>🛒 Initializing product catalog...</div>
+                <div>👤 Setting up user management...</div>
+                <div>🛗 Configuring shopping cart...</div>
+                <div>💳 Setting up payment processor mocks...</div>
+                <div>📧 Configuring email notifications...</div>
+                <div>🗄️  Initializing database connections...</div>
+                <div style="color: #10b981;">✅ E-commerce environment ready</div>
+                <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                    <div>🧪 Starting e-commerce integration tests...</div>
+                    <div style="color: #f59e0b;">⏳ Running workflow tests...</div>
+                </div>
+            `;
+            
+            // Simulate test execution
+            setTimeout(() => {
+                output.innerHTML += `
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div>✅ User Registration Flow</div>
+                        <div>  ✓ should register new user</div>
+                        <div>  ✓ should send welcome email</div>
+                        <div>  ✓ should create user profile</div>
+                        <div>✅ Product Browse Flow</div>
+                        <div>  ✓ should load product catalog</div>
+                        <div>  ✓ should filter products by category</div>
+                        <div>  ✓ should handle search queries</div>
+                        <div>✅ Cart Management Flow</div>
+                        <div>  ✓ should add items to cart</div>
+                        <div>  ✓ should update cart quantities</div>
+                        <div>  ✓ should remove items from cart</div>
+                        <div>✅ Checkout Process Flow</div>
+                        <div>  ✓ should validate shipping information</div>
+                        <div>  ✓ should calculate taxes correctly</div>
+                        <div>  ✓ should apply discount codes</div>
+                        <div>✅ Payment Processing Flow</div>
+                        <div>  ✓ should process valid payments</div>
+                        <div>  ✓ should handle declined payments</div>
+                        <div>  ✓ should retry failed payments</div>
+                        <div>✅ Order Confirmation Flow</div>
+                        <div>  ✓ should generate order confirmation</div>
+                        <div>  ✓ should send confirmation email</div>
+                        <div>  ✓ should update inventory</div>
+                    </div>
+                `;
+                
+                // Update metrics
+                const testsRun = 18;
+                const passed = 17;
+                const failed = 1;
+                const duration = 2500;
+                
+                if (testsRunElement) testsRunElement.textContent = testsRun;
+                if (passedElement) passedElement.textContent = passed;
+                if (failedElement) failedElement.textContent = failed;
+                if (durationElement) durationElement.textContent = duration + 'ms';
+                
+                setTimeout(() => {
+                    output.innerHTML += `
+                        <div style="color: #10b981; border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                            ✅ E-commerce integration tests completed!
+                        </div>
+                        <div>📊 Results: ${passed} passed, ${failed} failed, 0 skipped</div>
+                        <div>⏱️  Duration: ${duration}ms</div>
+                        <div>🧠 Memory: +32MB (within limits)</div>
+                        <div>📧 Emails sent: 5 (mock)</div>
+                        <div>💳 Payments processed: 3 (mock)</div>
+                        <div>🛒 Cart operations: 8 (successful)</div>
+                    `;
+                }, 1000);
+            }, 2000);
+        }
+
+        function runEcommerceStep(step) {
+            const output = document.getElementById('integration-output');
+            output.innerHTML = `
+                <div style="color: #4fc3f7;">$ qtests-runner --integration --flow=ecommerce --step=${step}</div>
+                <div>🔄 Running ${step} step only...</div>
+                <div style="color: #f59e0b;">⏳ Executing ${step} tests...</div>
+            `;
+            
+            setTimeout(() => {
+                output.innerHTML += `
+                    <div style="color: #10b981;">✅ ${step} step completed!</div>
+                    <div>📊 3 tests passed, 0 failed</div>
+                    <div>⏱️  Duration: ${Math.floor(Math.random() * 200) + 100}ms</div>
+                `;
+            }, 1500);
+        }
+
+        function runCICDFlow() {
+            const output = document.getElementById('integration-output');
+            const testsRunElement = document.getElementById('integration-tests-run');
+            const passedElement = document.getElementById('integration-passed');
+            const failedElement = document.getElementById('integration-failed');
+            const durationElement = document.getElementById('integration-duration');
+            
+            output.innerHTML = `
+                <div style="color: #4fc3f7;">$ qtests-runner --ci-cd --pipeline</div>
+                <div>🔄 Setting up CI/CD pipeline testing environment...</div>
+                <div>📥 Cloning repository...</div>
+                <div>📦 Installing dependencies...</div>
+                <div>🧪 Generating missing tests...</div>
+                <div>⚡ Running test suite...</div>
+                <div>🔨 Building application...</div>
+                <div>🚀 Deploying to staging...</div>
+                <div style="color: #10b981;">✅ CI/CD pipeline ready</div>
+                <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                    <div>🧪 Starting pipeline tests...</div>
+                    <div style="color: #f59e0b;">⏳ Running pipeline workflow...</div>
+                </div>
+            `;
+            
+            setTimeout(() => {
+                output.innerHTML += `
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div>✅ Code Quality Checks</div>
+                        <div>  ✓ ESLint validation passed</div>
+                        <div>  ✓ TypeScript compilation successful</div>
+                        <div>  ✓ Security scan completed</div>
+                        <div>✅ Test Generation</div>
+                        <div>  ✓ Generated 5 missing test files</div>
+                        <div>  ✓ Updated test configurations</div>
+                        <div>✅ Test Execution</div>
+                        <div>  ✓ Unit tests: 45 passed</div>
+                        <div>  ✓ Integration tests: 12 passed</div>
+                        <div>  ✓ E2E tests: 8 passed</div>
+                        <div>✅ Build Process</div>
+                        <div>  ✓ Webpack build successful</div>
+                        <div>  ✓ Assets optimized</div>
+                        <div>  ✓ Bundle size within limits</div>
+                        <div>✅ Deployment</div>
+                        <div>  ✓ Docker image built</div>
+                        <div>  ✓ Deployed to staging environment</div>
+                        <div>  ✓ Health checks passed</div>
+                    </div>
+                `;
+                
+                // Update metrics
+                const testsRun = 65;
+                const passed = 65;
+                const failed = 0;
+                const duration = 8500;
+                
+                if (testsRunElement) testsRunElement.textContent = testsRun;
+                if (passedElement) passedElement.textContent = passed;
+                if (failedElement) failedElement.textContent = failed;
+                if (durationElement) durationElement.textContent = duration + 'ms';
+                
+                setTimeout(() => {
+                    output.innerHTML += `
+                        <div style="color: #10b981; border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                            ✅ CI/CD pipeline completed successfully!
+                        </div>
+                        <div>📊 Results: ${passed} passed, ${failed} failed, 0 skipped</div>
+                        <div>⏱️  Duration: ${duration}ms</div>
+                        <div>🔧 Build time: 2.3s</div>
+                        <div>📦 Dependencies: 245 installed</div>
+                        <div>🧪 Tests generated: 5 files</div>
+                        <div>🚀 Deployment: Staging environment updated</div>
+                        <div>✅ Status: Ready for production</div>
+                    `;
+                }, 1500);
+            }, 3000);
+        }
+
+        function runCICDStep(step) {
+            const output = document.getElementById('integration-output');
+            output.innerHTML = `
+                <div style="color: #4fc3f7;">$ qtests-runner --ci-cd --step=${step}</div>
+                <div>🔄 Running ${step} step only...</div>
+                <div style="color: #f59e0b;">⏳ Executing ${step}...</div>
+            `;
+            
+            setTimeout(() => {
+                output.innerHTML += `
+                    <div style="color: #10b981;">✅ ${step} step completed!</div>
+                    <div>📊 Status: Successful</div>
+                    <div>⏱️  Duration: ${Math.floor(Math.random() * 1000) + 500}ms</div>
+                `;
+            }, 2000);
+        }
+
+        function runSocialFlow() {
+            const output = document.getElementById('integration-output');
+            output.innerHTML = `
+                <div style="color: #4fc3f7;">$ qtests-runner --integration --flow=social</div>
+                <div>🔄 Setting up social media integration test environment...</div>
+                <div style="color: #f59e0b;">⏳ Running social media workflow...</div>
+            `;
+            
+            setTimeout(() => {
+                output.innerHTML += `
+                    <div style="color: #10b981;">✅ Social media flow completed!</div>
+                    <div>📊 Results: 12 passed, 0 failed</div>
+                    <div>⏱️  Duration: 1800ms</div>
+                `;
+            }, 2000);
+        }
+
+        function runSocialStep(step) {
+            runEcommerceStep(step); // Reuse same logic for demo
+        }
+
+        function runHealthcareFlow() {
+            const output = document.getElementById('integration-output');
+            output.innerHTML = `
+                <div style="color: #4fc3f7;">$ qtests-runner --integration --flow=healthcare</div>
+                <div>🔄 Setting up healthcare integration test environment...</div>
+                <div style="color: #f59e0b;">⏳ Running healthcare workflow...</div>
+            `;
+            
+            setTimeout(() => {
+                output.innerHTML += `
+                    <div style="color: #10b981;">✅ Healthcare flow completed!</div>
+                    <div>📊 Results: 15 passed, 1 failed</div>
+                    <div>⏱️  Duration: 2200ms</div>
+                `;
+            }, 2500);
+        }
+
+        function runHealthcareStep(step) {
+            runEcommerceStep(step); // Reuse same logic for demo
+        }
+
+        function runAnalyticsFlow() {
+            const output = document.getElementById('integration-output');
+            output.innerHTML = `
+                <div style="color: #4fc3f7;">$ qtests-runner --integration --flow=analytics</div>
+                <div>🔄 Setting up analytics integration test environment...</div>
+                <div style="color: #f59e0b;">⏳ Running analytics workflow...</div>
+            `;
+            
+            setTimeout(() => {
+                output.innerHTML += `
+                    <div style="color: #10b981;">✅ Analytics flow completed!</div>
+                    <div>📊 Results: 8 passed, 0 failed</div>
+                    <div>⏱️  Duration: 1500ms</div>
+                `;
+            }, 1800);
+        }
+
+        function runAnalyticsStep(step) {
+            runEcommerceStep(step); // Reuse same logic for demo
+        }
+
+        // Real-World Scenarios Functions
+        function runEnterpriseScenario() {
+            const scenario = document.getElementById('enterprise-scenario').value;
+            const output = document.getElementById('scenario-output');
+            const scoreElement = document.getElementById('scenario-score');
+            const coverageElement = document.getElementById('scenario-coverage');
+            const performanceElement = document.getElementById('scenario-performance');
+            const reliabilityElement = document.getElementById('scenario-reliability');
+            
+            if (!scenario) {
+                output.innerHTML = '<div style="color: #ef4444;">❌ Please select a scenario</div>';
+                return;
+            }
+            
+            output.innerHTML = `
+                <div style="color: #4fc3f7;">$ qtests-runner --enterprise --scenario=${scenario}</div>
+                <div>🏢 Running enterprise scenario: ${scenario}</div>
+                <div>🔄 Setting up enterprise environment...</div>
+                <div style="color: #f59e0b;">⏳ Executing enterprise tests...</div>
+            `;
+            
+            setTimeout(() => {
+                const score = Math.floor(Math.random() * 20) + 80;
+                const coverage = Math.floor(Math.random() * 15) + 85;
+                const performance = Math.floor(Math.random() * 500) + 800;
+                const reliability = Math.floor(Math.random() * 10) + 90;
+                
+                output.innerHTML = `
+                    <div style="color: #10b981;">✅ Enterprise scenario completed!</div>
+                    <div>📊 Scenario: ${scenario}</div>
+                    <div>🧪 Tests: ${Math.floor(Math.random() * 30) + 20} passed</div>
+                    <div>⏱️  Duration: ${performance}ms</div>
+                    <div>🛡️  Security: All checks passed</div>
+                    <div>📈 Performance: Within SLA</div>
+                `;
+                
+                if (scoreElement) scoreElement.textContent = score + '%';
+                if (coverageElement) coverageElement.textContent = coverage + '%';
+                if (performanceElement) performanceElement.textContent = performance + 'ms';
+                if (reliabilityElement) reliabilityElement.textContent = reliability + '%';
+            }, 2000);
+        }
+
+        function generateEnterpriseTests() {
+            const scenario = document.getElementById('enterprise-scenario').value;
+            if (!scenario) {
+                alert('Please select a scenario first');
+                return;
+            }
+            alert(`✅ Generated enterprise tests for: ${scenario}\n📁 Tests saved to: tests/enterprise/${scenario}/`);
+        }
+
+        function runMobileScenario() {
+            const platform = document.getElementById('mobile-platform').value;
+            const appType = document.getElementById('mobile-scenario').value;
+            const output = document.getElementById('scenario-output');
+            
+            output.innerHTML = `
+                <div style="color: #4fc3f7;">$ qtests-runner --mobile --platform=${platform} --type=${appType}</div>
+                <div>📱 Running mobile scenario: ${platform} ${appType}</div>
+                <div>🔄 Setting up mobile testing environment...</div>
+                <div style="color: #f59e0b;">⏳ Executing mobile tests...</div>
+            `;
+            
+            setTimeout(() => {
+                output.innerHTML = `
+                    <div style="color: #10b981;">✅ Mobile scenario completed!</div>
+                    <div>📱 Platform: ${platform}</div>
+                    <div>📲 App Type: ${appType}</div>
+                    <div>🧪 Tests: ${Math.floor(Math.random() * 25) + 15} passed</div>
+                    <div>📱 Device tests: 5 passed</div>
+                    <div>⏱️  Duration: ${Math.floor(Math.random() * 800) + 1200}ms</div>
+                `;
+            }, 2500);
+        }
+
+        function runMicroservicesScenario() {
+            const serviceCount = document.getElementById('microservices-count').value;
+            const output = document.getElementById('scenario-output');
+            
+            output.innerHTML = `
+                <div style="color: #4fc3f7;">$ qtests-runner --microservices --services=${serviceCount}</div>
+                <div>🔗 Running microservices scenario: ${serviceCount} services</div>
+                <div>🔄 Setting up microservices environment...</div>
+                <div style="color: #f59e0b;">⏳ Executing microservices tests...</div>
+            `;
+            
+            setTimeout(() => {
+                output.innerHTML = `
+                    <div style="color: #10b981;">✅ Microservices scenario completed!</div>
+                    <div>🔗 Services: ${serviceCount}</div>
+                    <div>🌐 API Gateway: Configured</div>
+                    <div>🔗 Service Mesh: Active</div>
+                    <div>⚡ Circuit Breaker: Tested</div>
+                    <div>🧪 Tests: ${Math.floor(Math.random() * 40) + 30} passed</div>
+                    <div>⏱️  Duration: ${Math.floor(Math.random() * 1000) + 2000}ms</div>
+                `;
+            }, 3000);
+        }
+
+        function runMLScenario() {
+            const modelType = document.getElementById('ml-model-type').value;
+            const testData = document.getElementById('ml-test-data').value;
+            const accuracy = document.getElementById('ml-accuracy-threshold').value;
+            const output = document.getElementById('scenario-output');
+            
+            output.innerHTML = `
+                <div style="color: #4fc3f7;">$ qtests-runner --ml --model=${modelType} --data=${testData}</div>
+                <div>🤖 Running ML scenario: ${modelType} model</div>
+                <div>🔄 Setting up ML testing environment...</div>
+                <div style="color: #f59e0b;">⏳ Executing ML tests...</div>
+            `;
+            
+            setTimeout(() => {
+                const actualAccuracy = Math.floor(Math.random() * 10) + parseInt(accuracy);
+                const passed = actualAccuracy >= parseInt(accuracy);
+                
+                output.innerHTML = `
+                    <div style="color: ${passed ? '#10b981' : '#ef4444'};">${passed ? '✅' : '❌'} ML scenario ${passed ? 'completed' : 'failed'}!</div>
+                    <div>🤖 Model Type: ${modelType}</div>
+                    <div>📊 Test Dataset: ${testData} samples</div>
+                    <div>🎯 Accuracy: ${actualAccuracy}% (threshold: ${accuracy}%)</div>
+                    <div>🧪 Tests: ${Math.floor(Math.random() * 15) + 10} ${passed ? 'passed' : 'failed'}</div>
+                    <div>⏱️  Duration: ${Math.floor(Math.random() * 2000) + 3000}ms</div>
+                    <div>📈 Model Performance: ${passed ? 'Within threshold' : 'Below threshold'}</div>
+                `;
+            }, 3500);
+        }
+
+        function loadEnterpriseScenario() {
+            const scenario = document.getElementById('enterprise-scenario').value;
+            // Could load specific configuration based on scenario
+            console.log('Loading enterprise scenario:', scenario);
+        }
+
+        function drawScenarioChart() {
+            const canvas = document.getElementById('scenario-chart');
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Sample data for different scenarios
+            const data = [
+                { label: 'User Management', score: 92, coverage: 88, performance: 85 },
+                { label: 'Inventory', score: 88, coverage: 91, performance: 89 },
+                { label: 'Payroll', score: 95, coverage: 93, performance: 91 },
+                { label: 'Reporting', score: 85, coverage: 87, performance: 82 },
+                { label: 'Compliance', score: 90, coverage: 95, performance: 88 }
+            ];
+            
+            // Draw bars
+            const barWidth = width / (data.length * 4);
+            const maxValue = 100;
+            
+            data.forEach((item, index) => {
+                const x = index * (barWidth * 4) + barWidth;
+                
+                // Score bar
+                const scoreHeight = (item.score / maxValue) * (height - 40);
+                ctx.fillStyle = '#10b981';
+                ctx.fillRect(x, height - scoreHeight - 20, barWidth, scoreHeight);
+                
+                // Coverage bar
+                const coverageHeight = (item.coverage / maxValue) * (height - 40);
+                ctx.fillStyle = '#22d3ee';
+                ctx.fillRect(x + barWidth, height - coverageHeight - 20, barWidth, coverageHeight);
+                
+                // Performance bar
+                const performanceHeight = (item.performance / maxValue) * (height - 40);
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillRect(x + barWidth * 2, height - performanceHeight - 20, barWidth, performanceHeight);
+                
+                // Draw label
+                ctx.fillStyle = '#374151';
+                ctx.font = '10px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.save();
+                ctx.translate(x + barWidth * 1.5, height - 5);
+                ctx.rotate(-Math.PI / 6);
+                ctx.fillText(item.label, 0, 0);
+                ctx.restore();
+            });
+            
+            // Draw legend
+            ctx.fillStyle = '#10b981';
+            ctx.fillRect(10, 10, 15, 15);
+            ctx.fillStyle = '#374151';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('Score', 30, 22);
+            
+            ctx.fillStyle = '#22d3ee';
+            ctx.fillRect(80, 10, 15, 15);
+            ctx.fillText('Coverage', 100, 22);
+            
+            ctx.fillStyle = '#f59e0b';
+            ctx.fillRect(170, 10, 15, 15);
+            ctx.fillText('Performance', 190, 22);
+        }
+
+        // Test Templates Functions
+        function loadTemplate(templateType) {
+            const preview = document.getElementById('template-preview');
+            const framework = document.getElementById('template-framework')?.value || 'jest';
+            const language = document.getElementById('template-language')?.value || 'typescript';
+            const includeComments = document.getElementById('template-comments')?.checked !== false;
+            const includeTypes = document.getElementById('template-types')?.checked !== false;
+            
+            const templates = {
+                'mvc-pattern': generateMVCTemplate(framework, language, includeComments, includeTypes),
+                'repository-pattern': generateRepositoryTemplate(framework, language, includeComments, includeTypes),
+                'service-layer': generateServiceLayerTemplate(framework, language, includeComments, includeTypes),
+                'cqrs': generateCQRSTemplate(framework, language, includeComments, includeTypes),
+                'rest-api': generateRestAPITemplate(framework, language, includeComments, includeTypes)
+            };
+            
+            const template = templates[templateType];
+            if (template) {
+                preview.innerHTML = `<pre style="margin: 0; white-space: pre-wrap;">${template}</pre>`;
+            } else {
+                preview.innerHTML = '<div style="color: #ef4444;">❌ Template not found</div>';
+            }
+        }
+
+        function generateMVCTemplate(framework, language, includeComments, includeTypes) {
+            const comment = includeComments ? '/**\n * MVC Pattern Test Template\n * Tests for Model-View-Controller architecture\n */\n' : '';
+            const types = includeTypes ? ': any' : '';
+            
+            return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { stubMethod, mockConsole } from 'qtests/setup';
+
+describe('MVC Pattern Tests', () => {
+  let controller${types};
+  let model${types};
+  let view${types};
+  let consoleSpy${types};
+
+  beforeEach(() => {
+    // Setup console mocking
+    consoleSpy = mockConsole();
+    
+    // Initialize MVC components
+    model = {
+      getData: jest.fn().mockReturnValue({ id: 1, name: 'Test' }),
+      setData: jest.fn(),
+      validate: jest.fn().mockReturnValue(true)
+    };
+    
+    view = {
+      render: jest.fn(),
+      update: jest.fn(),
+      showError: jest.fn()
+    };
+    
+    controller = {
+      model,
+      view,
+      handleRequest: jest.fn(),
+      processData: jest.fn()
+    };
+    
+    // Stub methods
+    stubMethod(controller, 'handleRequest', jest.fn());
+  });
+
+  afterEach(() => {
+    if (consoleSpy && consoleSpy.mockRestore) {
+      consoleSpy.mockRestore();
+    }
+  });
+
+  it('should handle MVC data flow correctly', async () => {
+    const inputData = { name: 'Test Item' };
+    
+    // Controller processes data
+    if (controller.processData) {
+      controller.processData(inputData);
+    }
+    
+    // Model validates and stores data
+    expect(model.validate).toHaveBeenCalledWith(inputData);
+    expect(model.setData).toHaveBeenCalled();
+    
+    // View updates with model data
+    expect(view.render).toHaveBeenCalled();
+  });
+
+  it('should handle validation errors in MVC', async () => {
+    if (model.validate) {
+      model.validate.mockReturnValue(false);
+    }
+    const invalidData = { name: '' };
+    
+    if (controller.processData) {
+      controller.processData(invalidData);
+    }
+    
+    expect(view.showError).toHaveBeenCalledWith('Validation failed');
+    expect(model.setData).not.toHaveBeenCalled();
+  });
+
+  it('should maintain MVC separation of concerns', () => {
+    // Controller should not directly manipulate view
+    expect(controller.view).toBe(view);
+    expect(controller.model).toBe(model);
+    
+    // Model should not know about view
+    expect(model.render).toBeUndefined();
+    expect(model.update).toBeUndefined();
+  });
+});`;
+        }
+
+        function generateRepositoryTemplate(framework, language, includeComments, includeTypes) {
+            const comment = includeComments ? '/**\n * Repository Pattern Test Template\n * Tests for data access layer abstraction\n */\n' : '';
+            const types = includeTypes ? ': any' : '';
+            
+            return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { stubMethod } from 'qtests/setup';
+
+describe('Repository Pattern Tests', () => {
+  let repository${types};
+  let dataSource${types};
+  let cache${types};
+
+  beforeEach(() => {
+    // Mock data source
+    dataSource = {
+      find: jest.fn(),
+      save: jest.fn(),
+      delete: jest.fn(),
+      update: jest.fn()
+    };
+    
+    // Mock cache
+    cache = {
+      get: jest.fn(),
+      set: jest.fn(),
+      delete: jest.fn(),
+      clear: jest.fn()
+    };
+    
+    // Repository with data source and cache
+    repository = {
+      dataSource,
+      cache,
+      findById: async (id) => {
+        if (!cache || !dataSource) return null;
+        const cached = await cache.get(id);
+        if (cached) return cached;
+        const result = await dataSource.find(id);
+        await cache.set(id, result);
+        return result;
+      },
+      save: async (entity) => {
+        if (!dataSource || !cache) return null;
+        const result = await dataSource.save(entity);
+        await cache.set(result.id, result);
+        return result;
+      },
+      delete: async (id) => {
+        if (!dataSource || !cache) return;
+        await dataSource.delete(id);
+        await cache.delete(id);
+      }
+    };
+    
+    if (repository) {
+      stubMethod(repository, 'findById', jest.fn());
+    }
+  });
+
+  it('should retrieve entity from cache when available', async () => {
+    const entityId = '123';
+    const cachedEntity = { id: entityId, name: 'Cached Entity' };
+    
+    if (cache && cache.get) {
+      cache.get.mockResolvedValue(cachedEntity);
+    }
+    
+    if (repository && repository.findById) {
+      const result = await repository.findById(entityId);
+      
+      if (cache && cache.get) {
+        expect(cache.get).toHaveBeenCalledWith(entityId);
+      }
+      if (dataSource && dataSource.find) {
+        expect(dataSource.find).not.toHaveBeenCalled();
+      }
+      expect(result).toBe(cachedEntity);
+    }
+  });
+
+  it('should fetch from data source when not in cache', async () => {
+    const entityId = '456';
+    const dbEntity = { id: entityId, name: 'DB Entity' };
+    
+    if (cache && cache.get) {
+      cache.get.mockResolvedValue(null);
+    }
+    if (dataSource && dataSource.find) {
+      dataSource.find.mockResolvedValue(dbEntity);
+    }
+    if (cache && cache.set) {
+      cache.set.mockResolvedValue(true);
+    }
+    
+    if (repository && repository.findById) {
+      const result = await repository.findById(entityId);
+      
+      if (cache && cache.get) {
+        expect(cache.get).toHaveBeenCalledWith(entityId);
+      }
+      if (dataSource && dataSource.find) {
+        expect(dataSource.find).toHaveBeenCalledWith(entityId);
+      }
+      if (cache && cache.set) {
+        expect(cache.set).toHaveBeenCalledWith(entityId, dbEntity);
+      }
+      expect(result).toBe(dbEntity);
+    }
+  });
+
+  it('should save entity and update cache', async () => {
+    const newEntity = { name: 'New Entity' };
+    const savedEntity = { id: '789', ...newEntity };
+    
+    if (dataSource && dataSource.save) {
+      dataSource.save.mockResolvedValue(savedEntity);
+    }
+    if (cache && cache.set) {
+      cache.set.mockResolvedValue(true);
+    }
+    
+    if (repository && repository.save) {
+      const result = await repository.save(newEntity);
+      
+      if (dataSource && dataSource.save) {
+        expect(dataSource.save).toHaveBeenCalledWith(newEntity);
+      }
+      if (cache && cache.set) {
+        expect(cache.set).toHaveBeenCalledWith(savedEntity.id, savedEntity);
+      }
+      expect(result).toBe(savedEntity);
+    }
+  });
+});`;
+        }
+
+function generateServiceLayerTemplate(framework, language, includeComments, includeTypes) {
+            const comment = includeComments ? '/**\n * Service Layer Test Template\n * Tests for business logic and service orchestration\n */\n' : '';
+            
+            return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { stubMethod, createAsyncErrorWrapper } from 'qtests/setup';
+
+describe('Service Layer Tests', () => {
+  let userService${types};
+  let userRepository${types};
+  let emailService${types};
+  let validator${types};
+
+  beforeEach(() => {
+    // Mock dependencies
+    userRepository = {
+      findById: jest.fn(),
+      save: jest.fn(),
+      delete: jest.fn(),
+      findByEmail: jest.fn()
+    };
+    
+    emailService = {
+      sendWelcomeEmail: jest.fn(),
+      sendPasswordReset: jest.fn()
+    };
+    
+    validator = {
+      validateUser: jest.fn().mockReturnValue({ isValid: true })
+    };
+    
+    // Service with dependencies
+    userService = {
+      userRepository,
+      emailService,
+      validator,
+      createUser: async (userData) => {
+        if (!validator || !userRepository || !emailService) {
+          throw new Error('Dependencies not initialized');
+        }
+        const validation = validator.validateUser(userData);
+        if (!validation.isValid) {
+          throw new Error('Invalid user data');
+        }
+        
+        const existingUser = await userRepository.findByEmail(userData.email);
+        if (existingUser) {
+          throw new Error('User already exists');
+        }
+        
+        const user = await userRepository.save(userData);
+        await emailService.sendWelcomeEmail(user.email);
+        return user;
+      },
+      getUserById: async (id) => {
+        if (!userRepository) return null;
+        return await userRepository.findById(id);
+      }
+    };
+    
+    if (userService) {
+      stubMethod(userService, 'createUser', jest.fn());
+    }
+  });
+
+  it('should create user successfully', async () => {
+    const userData = { name: 'John Doe', email: 'john@example.com' };
+    const savedUser = { id: '123', ...userData };
+    
+    if (validator && validator.validateUser) {
+      validator.validateUser.mockReturnValue({ isValid: true });
+    }
+    if (userRepository && userRepository.findByEmail) {
+      userRepository.findByEmail.mockResolvedValue(null);
+    }
+    if (userRepository && userRepository.save) {
+      userRepository.save.mockResolvedValue(savedUser);
+    }
+    if (emailService && emailService.sendWelcomeEmail) {
+      emailService.sendWelcomeEmail.mockResolvedValue(true);
+    }
+    
+    if (userService && userService.createUser) {
+      const result = await userService.createUser(userData);
+      
+      if (validator && validator.validateUser) {
+        expect(validator.validateUser).toHaveBeenCalledWith(userData);
+      }
+      if (userRepository && userRepository.findByEmail) {
+        expect(userRepository.findByEmail).toHaveBeenCalledWith(userData.email);
+      }
+      if (userRepository && userRepository.save) {
+        expect(userRepository.save).toHaveBeenCalledWith(userData);
+      }
+      if (emailService && emailService.sendWelcomeEmail) {
+        expect(emailService.sendWelcomeEmail).toHaveBeenCalledWith(userData.email);
+      }
+      expect(result).toBe(savedUser);
+    }
+  });
+
+  it('should reject invalid user data', async () => {
+    const invalidData = { name: '', email: 'invalid' };
+    
+    if (validator && validator.validateUser) {
+      validator.validateUser.mockReturnValue({ isValid: false, errors: ['Name is required'] });
+    }
+    
+    if (userService && userService.createUser) {
+      await expect(userService.createUser(invalidData)).rejects.toThrow('Invalid user data');
+    }
+    
+    if (userRepository && userRepository.save) {
+      expect(userRepository.save).not.toHaveBeenCalled();
+    }
+    if (emailService && emailService.sendWelcomeEmail) {
+      expect(emailService.sendWelcomeEmail).not.toHaveBeenCalled();
+    }
+  });
+
+  it('should handle duplicate user email', async () => {
+    const userData = { name: 'Jane Doe', email: 'jane@example.com' };
+    const existingUser = { id: '456', ...userData };
+    
+    if (validator && validator.validateUser) {
+      validator.validateUser.mockReturnValue({ isValid: true });
+    }
+    if (userRepository && userRepository.findByEmail) {
+      userRepository.findByEmail.mockResolvedValue(existingUser);
+    }
+    
+    if (userService && userService.createUser) {
+      await expect(userService.createUser(userData)).rejects.toThrow('User already exists');
+    }
+    
+    if (userRepository && userRepository.save) {
+      expect(userRepository.save).not.toHaveBeenCalled();
+    }
+  });
+});`;
+        }
+
+        function generateCQRSTemplate(framework, language, includeComments, includeTypes) {
+            const comment = includeComments ? '/**\n * CQRS Pattern Test Template\n * Tests for Command Query Responsibility Segregation\n */\n' : '';
+            
+            return `${comment}import { describe, it, expect, beforeEach } from '@jest/globals';
+import { stubMethod } from 'qtests/setup';
+
+describe('CQRS Pattern Tests', () => {
+  let commandHandler${types};
+  let queryHandler${types};
+  let eventStore${types};
+  let readModel${types};
+
+  beforeEach(() => {
+    // Event store for command side
+    eventStore = {
+      saveEvent: jest.fn(),
+      getEvents: jest.fn(),
+      subscribe: jest.fn()
+    };
+    
+    // Read model for query side
+    readModel = {
+      getUser: jest.fn(),
+      updateUser: jest.fn(),
+      searchUsers: jest.fn()
+    };
+    
+    // Command handler
+    commandHandler = {
+      eventStore,
+      handleCreateUser: async (command) => {
+        if (!eventStore) throw new Error('Event store not initialized');
+        const event = { type: 'UserCreated', data: command, timestamp: Date.now() };
+        await eventStore.saveEvent(event);
+        return { success: true, userId: command.id };
+      },
+      handleUpdateUser: async (command) => {
+        if (!eventStore) throw new Error('Event store not initialized');
+        const event = { type: 'UserUpdated', data: command, timestamp: Date.now() };
+        await eventStore.saveEvent(event);
+        return { success: true };
+      }
+    };
+    
+    // Query handler
+    queryHandler = {
+      readModel,
+      handleGetUser: async (query) => {
+        if (!readModel) return null;
+        return await readModel.getUser(query.userId);
+      },
+      handleSearchUsers: async (query) => {
+        if (!readModel) return [];
+        return await readModel.searchUsers(query.criteria);
+      }
+    };
+    
+    if (commandHandler) {
+      stubMethod(commandHandler, 'handleCreateUser', jest.fn());
+    }
+    if (queryHandler) {
+      stubMethod(queryHandler, 'handleGetUser', jest.fn());
+    }
+  });
+
+  it('should handle create user command', async () => {
+    const command = { id: '123', name: 'John Doe', email: 'john@example.com' };
+    
+    if (eventStore && eventStore.saveEvent) {
+      eventStore.saveEvent.mockResolvedValue(true);
+    }
+    
+    if (commandHandler && commandHandler.handleCreateUser) {
+      const result = await commandHandler.handleCreateUser(command);
+      
+      if (eventStore && eventStore.saveEvent) {
+        expect(eventStore.saveEvent).toHaveBeenCalledWith({
+          type: 'UserCreated',
+          data: command,
+          timestamp: expect.any(Number)
+});
+        }
+
+        function generateCRUDTemplate(framework, language, includeComments, includeTypes) {
+            const comment = includeComments ? '/**\n * CRUD Operations Test Template\n * Tests for Create, Read, Update, Delete operations\n */\n' : '';
+            const types = includeTypes ? ': any' : '';
+            
+            return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { stubMethod } from 'qtests/setup';
+
+describe('CRUD Operations Tests', () => {
+  let crudService${types};
+  let database${types};
+
+  beforeEach(() => {
+    // Mock database
+    database = {
+      create: jest.fn(),
+      read: jest.fn(),
+      update: jest.fn(),
+      delete: jest.fn(),
+      exists: jest.fn()
+    };
+    
+    // CRUD service
+    crudService = {
+      database,
+      create: async (data) => {
+        if (!database) throw new Error('Database not initialized');
+        const id = Math.random().toString(36).substr(2, 9);
+        const record = { id, ...data, createdAt: new Date(), updatedAt: new Date() };
+        await database.create(record);
+        return record;
+      },
+      read: async (id) => {
+        if (!database) return null;
+        return await database.read(id);
+      },
+      update: async (id, data) => {
+        if (!database) return null;
+        const existing = await database.read(id);
+        if (!existing) return null;
+        const updated = { ...existing, ...data, updatedAt: new Date() };
+        await database.update(id, updated);
+        return updated;
+      },
+      delete: async (id) => {
+        if (!database) return false;
+        const exists = await database.exists(id);
+        if (!exists) return false;
+        await database.delete(id);
+        return true;
+      }
+    };
+    
+    if (crudService) {
+      stubMethod(crudService, 'create', jest.fn());
+    }
+  });
+
+  it('should create a new record', async () => {
+    const inputData = { name: 'Test Record', value: 42 };
+    
+    if (database && database.create) {
+      database.create.mockResolvedValue(true);
+    }
+    
+    if (crudService && crudService.create) {
+      const result = await crudService.create(inputData);
+      
+      if (database && database.create) {
+        expect(database.create).toHaveBeenCalled();
+      }
+      expect(result).toHaveProperty('id');
+      expect(result.name).toBe(inputData.name);
+      expect(result.value).toBe(inputData.value);
+      expect(result).toHaveProperty('createdAt');
+      expect(result).toHaveProperty('updatedAt');
+    }
+  });
+
+  it('should read an existing record', async () => {
+    const recordId = '123';
+    const mockRecord = { id: recordId, name: 'Test Record', value: 42 };
+    
+    if (database && database.read) {
+      database.read.mockResolvedValue(mockRecord);
+    }
+    
+    if (crudService && crudService.read) {
+      const result = await crudService.read(recordId);
+      
+      if (database && database.read) {
+        expect(database.read).toHaveBeenCalledWith(recordId);
+      }
+      expect(result).toEqual(mockRecord);
+    }
+  });
+
+  it('should update an existing record', async () => {
+    const recordId = '456';
+    const updateData = { name: 'Updated Record' };
+    const existingRecord = { id: recordId, name: 'Original Record', value: 42 };
+    const updatedRecord = { ...existingRecord, ...updateData, updatedAt: new Date() };
+    
+    if (database && database.read) {
+      database.read.mockResolvedValue(existingRecord);
+    }
+    if (database && database.update) {
+      database.update.mockResolvedValue(true);
+    }
+    
+    if (crudService && crudService.update) {
+      const result = await crudService.update(recordId, updateData);
+      
+      if (database && database.read) {
+        expect(database.read).toHaveBeenCalledWith(recordId);
+      }
+      if (database && database.update) {
+        expect(database.update).toHaveBeenCalledWith(recordId, expect.objectContaining(updateData));
+      }
+      expect(result.name).toBe(updateData.name);
+      expect(result).toHaveProperty('updatedAt');
+    }
+  });
+
+  it('should return null when updating non-existent record', async () => {
+    const recordId = '999';
+    const updateData = { name: 'Updated Record' };
+    
+    if (database && database.read) {
+      database.read.mockResolvedValue(null);
+    }
+    
+    if (crudService && crudService.update) {
+      const result = await crudService.update(recordId, updateData);
+      
+      if (database && database.read) {
+        expect(database.read).toHaveBeenCalledWith(recordId);
+      }
+      if (database && database.update) {
+        expect(database.update).not.toHaveBeenCalled();
+      }
+      expect(result).toBeNull();
+    }
+  });
+
+  it('should delete an existing record', async () => {
+    const recordId = '789';
+    
+    if (database && database.exists) {
+      database.exists.mockResolvedValue(true);
+    }
+    if (database && database.delete) {
+      database.delete.mockResolvedValue(true);
+    }
+    
+    if (crudService && crudService.delete) {
+      const result = await crudService.delete(recordId);
+      
+      if (database && database.exists) {
+        expect(database.exists).toHaveBeenCalledWith(recordId);
+      }
+      if (database && database.delete) {
+        expect(database.delete).toHaveBeenCalledWith(recordId);
+      }
+      expect(result).toBe(true);
+    }
+  });
+
+  it('should return false when deleting non-existent record', async () => {
+    const recordId = '000';
+    
+    if (database && database.exists) {
+      database.exists.mockResolvedValue(false);
+    }
+    
+    if (crudService && crudService.delete) {
+      const result = await crudService.delete(recordId);
+      
+      if (database && database.exists) {
+        expect(database.exists).toHaveBeenCalledWith(recordId);
+      }
+      if (database && database.delete) {
+        expect(database.delete).not.toHaveBeenCalled();
+      }
+      expect(result).toBe(false);
+    }
+  });
+});`;
+        }
+
+        function copyTemplate() {
+            const preview = document.getElementById('template-preview');
+            const text = preview.textContent;
+            
+            if (text && !text.includes('Select a template')) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('✅ Template copied to clipboard!');
+                }).catch(() => {
+                    alert('❌ Failed to copy template');
+                });
+            } else {
+                alert('⚠️ Please select a template first');
+            }
+        }
+
+        function downloadTemplate() {
+            const preview = document.getElementById('template-preview');
+            const text = preview.textContent;
+            
+            if (text && !text.includes('Select a template')) {
+                const blob = new Blob([text], { type: 'text/typescript' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'test-template.test.ts';
+                a.click();
+                URL.revokeObjectURL(url);
+            } else {
+                alert('⚠️ Please select a template first');
+            }
+        }
+
+        function customizeTemplate() {
+            alert('🛠️ Template customization feature coming soon!\n\nYou\'ll be able to:\n- Modify test patterns\n- Add custom assertions\n- Configure setup/teardown\n- Adjust mocking strategies');
+        }
+
+        // Debugging Tools Functions
+        function analyzeTestFile() {
+            const testFileElement = document.getElementById('debug-test-file');
+            const resultsElement = document.getElementById('test-analysis-results');
+            
+            if (!testFileElement || !resultsElement) {
+                console.error('Required elements not found');
+                return;
+            }
+            
+            const testFile = testFileElement.value;
+            
+            if (!testFile) {
+                resultsElement.innerHTML = '<div style="color: #ef4444;">❌ Please enter a test file path</div>';
+                return;
+            }
+            
+            resultsElement.innerHTML = `
+                <div style="color: #4fc3f7;">🔍 Analyzing test file: ${testFile}</div>
+                <div>📊 Parsing test structure...</div>
+                <div>🧪 Identifying test cases...</div>
+                <div>🔍 Checking for anti-patterns...</div>
+            `;
+            
+            setTimeout(() => {
+                resultsElement.innerHTML = `
+                    <div style="color: #10b981;">✅ Analysis complete</div>
+                    <div>📁 File: ${testFile}</div>
+                    <div>📊 Test suites: 3</div>
+                    <div>🧪 Test cases: 12</div>
+                    <div>⚡ Assertions: 28</div>
+                    <div>🎯 Coverage: 87%</div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div style="color: #22d3ee;">📈 Metrics:</div>
+                        <div>  Avg test duration: 45ms</div>
+                        <div>  Complexity: Low</div>
+                        <div>  Maintainability: Good</div>
+                    </div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div style="color: #f59e0b;">⚠️  Recommendations:</div>
+                        <div>  • Add more edge case tests</div>
+                        <div>  • Consider parameterized tests</div>
+                        <div>  • Add setup/teardown for isolation</div>
+                    </div>
+                `;
+            }, 2000);
+        }
+
+        function findFlakyTests() {
+            const resultsElement = document.getElementById('test-analysis-results');
+            if (!resultsElement) {
+                console.error('Test analysis results element not found');
+                return;
+            }
+            
+            resultsElement.innerHTML = `
+                <div style="color: #4fc3f7;">🔍 Searching for flaky tests...</div>
+                <div>📊 Analyzing test run history...</div>
+                <div>🔄 Checking consistency...</div>
+            `;
+            
+            setTimeout(() => {
+                resultsElement.innerHTML = `
+                    <div style="color: #10b981;">✅ Flaky test analysis complete</div>
+                    <div>📊 Total tests analyzed: 156</div>
+                    <div>🎯 Consistent tests: 148</div>
+                    <div style="color: #ef4444;">⚠️  Flaky tests found: 8</div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div style="color: #ef4444;">🚨 Flaky Tests:</div>
+                        <div>  • UserService.createUser (67% pass rate)</div>
+                        <div>  • PaymentProcessor.process (72% pass rate)</div>
+                        <div>  • EmailService.send (89% pass rate)</div>
+                        <div>  • CacheService.get (95% pass rate)</div>
+                    </div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div style="color: #f59e0b;">💡 Suggestions:</div>
+                        <div>  • Add explicit waits for async operations</div>
+                        <div>  • Improve test isolation</div>
+                        <div>  • Mock external dependencies</div>
+                    </div>
+                `;
+            }, 2500);
+        }
+
+        function analyzeTestCoverage() {
+            const results = document.getElementById('test-analysis-results');
+            results.innerHTML = `
+                <div style="color: #4fc3f7;">📊 Analyzing test coverage...</div>
+                <div>🔍 Scanning source files...</div>
+                <div>📈 Calculating coverage metrics...</div>
+            `;
+            
+            setTimeout(() => {
+                results.innerHTML = `
+                    <div style="color: #10b981;">✅ Coverage analysis complete</div>
+                    <div>📊 Overall coverage: 78.4%</div>
+                    <div>📝 Lines: 82.1%</div>
+                    <div>🔀 Functions: 91.3%</div>
+                    <div>🌳 Branches: 65.2%</div>
+                    <div>📋 Statements: 79.8%</div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div style="color: #ef4444;">🚨 Low Coverage Files:</div>
+                        <div>  • utils/helpers.ts (23%)</div>
+                        <div>  • services/legacy.ts (45%)</div>
+                        <div>  • config/production.ts (67%)</div>
+                    </div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div style="color: #10b981;">✅ Well Covered Files:</div>
+                        <div>  • services/user.ts (95%)</div>
+                        <div>  • controllers/api.ts (92%)</div>
+                        <div>  • models/database.ts (89%)</div>
+                    </div>
+                `;
+            }, 3000);
+        }
+
+        let profilingInterval = null;
+        function startProfiling() {
+            const targetElement = document.getElementById('profile-target');
+            const durationElement = document.getElementById('profile-duration');
+            const resultsElement = document.getElementById('profiling-results');
+            
+            if (!targetElement || !durationElement || !resultsElement) {
+                console.error('Required profiling elements not found');
+                return;
+            }
+            
+            const target = targetElement.value;
+            const duration = parseInt(durationElement.value) || 30;
+            
+            resultsElement.innerHTML = `
+                <div style="color: #4fc3f7;">⚡ Starting profiler for: ${target}</div>
+                <div>⏱️  Duration: ${duration}s</div>
+                <div>📊 Collecting performance data...</div>
+            `;
+            
+            let seconds = 0;
+            profilingInterval = setInterval(() => {
+                seconds++;
+                const cpu = Math.floor(Math.random() * 40) + 30;
+                const memory = Math.floor(Math.random() * 100) + 50;
+                const calls = Math.floor(Math.random() * 1000) + 500;
+                
+                resultsElement.innerHTML = `
+                    <div style="color: #4fc3f7;">⚡ Profiling: ${target} (${seconds}/${duration}s)</div>
+                    <div>🖥️  CPU Usage: ${cpu}%</div>
+                    <div>🧠 Memory: ${memory}MB</div>
+                    <div>📞 Function Calls: ${calls}</div>
+                    <div>⏱️  Time: ${seconds}s</div>
+                `;
+                
+                if (seconds >= duration) {
+                    stopProfiling();
+                }
+            }, 1000);
+        }
+
+        function stopProfiling() {
+            if (profilingInterval) {
+                clearInterval(profilingInterval);
+                profilingInterval = null;
+            }
+            
+            const resultsElement = document.getElementById('profiling-results');
+            if (resultsElement) {
+                resultsElement.innerHTML = `
+                    <div style="color: #10b981;">✅ Profiling completed</div>
+                    <div>📊 Profile saved to: ./profiling-results.json</div>
+                    <div>⚡ Performance report generated</div>
+                    <div>🔍 Top bottlenecks identified</div>
+                `;
+            }
+        }
+
+        function takeMemorySnapshot() {
+            const resultsElement = document.getElementById('memory-debug-results');
+            const heapUsedElement = document.getElementById('debug-heap-used');
+            const heapTotalElement = document.getElementById('debug-heap-total');
+            const objectsElement = document.getElementById('debug-objects');
+            
+            if (!resultsElement || !heapUsedElement || !heapTotalElement || !objectsElement) {
+                console.error('Required memory debug elements not found');
+                return;
+            }
+            
+            const heapUsed = Math.floor(Math.random() * 100) + 50;
+            const heapTotal = Math.floor(Math.random() * 50) + 100;
+            const objects = Math.floor(Math.random() * 10000) + 5000;
+            
+            // Update metrics
+            heapUsedElement.textContent = heapUsed + 'MB';
+            heapTotalElement.textContent = heapTotal + 'MB';
+            objectsElement.textContent = objects;
+            
+            resultsElement.innerHTML = `
+                <div style="color: #10b981;">📸 Memory snapshot taken</div>
+                <div>🆔 Snapshot ID: snap-${Date.now()}</div>
+                <div>🧠 Heap Used: ${heapUsed}MB</div>
+                <div>📦 Heap Total: ${heapTotal}MB</div>
+                <div>🔢 Objects: ${objects}</div>
+                <div>💾 Saved to: ./memory-snapshots/</div>
+            `;
+        }
+
+        function compareSnapshots() {
+            const results = document.getElementById('memory-debug-results');
+            results.innerHTML = `
+                <div style="color: #4fc3f7;">📊 Comparing memory snapshots...</div>
+                <div>🔍 Analyzing differences...</div>
+            `;
+            
+            setTimeout(() => {
+                const delta = Math.floor(Math.random() * 20) - 10;
+                results.innerHTML = `
+                    <div style="color: #10b981;">✅ Snapshot comparison complete</div>
+                    <div>📊 Memory delta: ${delta > 0 ? '+' : ''}${delta}MB</div>
+                    <div>🔢 Objects delta: ${Math.floor(Math.random() * 1000) - 500}</div>
+                    <div style="color: ${delta > 10 ? '#ef4444' : '#10b981'};">
+                        ${delta > 10 ? '⚠️  Potential memory leak detected' : '✅ Memory usage stable'}
+                    </div>
+                `;
+            }, 1500);
+        }
+
+        function findMemoryLeaks() {
+            const results = document.getElementById('memory-debug-results');
+            results.innerHTML = `
+                <div style="color: #4fc3f7;">🔍 Scanning for memory leaks...</div>
+                <div>🧠 Analyzing heap allocations...</div>
+                <div>📊 Checking for retained objects...</div>
+            `;
+            
+            setTimeout(() => {
+                const leaksFound = Math.random() > 0.7;
+                results.innerHTML = `
+                    <div style="color: ${leaksFound ? '#ef4444' : '#10b981'};">
+                        ${leaksFound ? '⚠️  Memory leaks detected' : '✅ No memory leaks found'}
+                    </div>
+                    <div>🔍 Leaks found: ${leaksFound ? Math.floor(Math.random() * 5) + 1 : 0}</div>
+                    <div>🧠 Memory impact: ${leaksFound ? Math.floor(Math.random() * 50) + 10 : 0}MB</div>
+                    <div>📊 Retained objects: ${leaksFound ? Math.floor(Math.random() * 2000) + 500 : 0}</div>
+                `;
+            }, 2000);
+        }
+
+        function refreshMetrics() {
+            const dashboard = document.getElementById('metrics-dashboard');
+            const timeframe = document.getElementById('metrics-timeframe').value;
+            
+            dashboard.innerHTML = `
+                <div style="color: #4fc3f7;">📊 Refreshing metrics for: ${timeframe}</div>
+                <div>📈 Gathering test data...</div>
+                <div>🔍 Analyzing trends...</div>
+            `;
+            
+            setTimeout(() => {
+                dashboard.innerHTML = `
+                    <div style="color: #10b981;">✅ Metrics updated</div>
+                    <div>📊 Timeframe: ${timeframe}</div>
+                    <div>🧪 Total tests run: ${Math.floor(Math.random() * 1000) + 500}</div>
+                    <div>✅ Pass rate: ${Math.floor(Math.random() * 10) + 90}%</div>
+                    <div>⚡ Avg duration: ${Math.floor(Math.random() * 100) + 50}ms</div>
+                    <div>📈 Trend: ${Math.random() > 0.5 ? '📈 Improving' : '📉 Declining'}</div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;">
+                        <div style="color: #22d3ee;">📊 Performance Metrics:</div>
+                        <div>  Fastest test: ${Math.floor(Math.random() * 20) + 5}ms</div>
+                        <div>  Slowest test: ${Math.floor(Math.random() * 500) + 200}ms</div>
+                        <div>  Memory usage: ${Math.floor(Math.random() * 100) + 50}MB</div>
+                    </div>
+                `;
+            }, 1500);
+        }
+
+        function exportMetrics() {
+            alert('📊 Metrics exported to: ./test-metrics.csv\n\nIncludes:\n- Test execution times\n- Pass/fail rates\n- Memory usage\n- Performance trends');
+        }
+
+        function runTestWithDebug() {
+            alert('🐛 Running test with debug mode...\n\nDebug features enabled:\n- Verbose logging\n- Stack traces\n- Memory profiling\n- Performance tracking');
+        }
+
+        function enableVerboseLogging() {
+            alert('📝 Verbose logging enabled!\n\nAll test executions will now show:\n- Detailed step-by-step progress\n- Internal state changes\n- Mock interactions\n- Assertion details');
+        }
+
+        function traceTestExecution() {
+            alert('🔍 Test execution tracing started!\n\nTracing:\n- Function call stacks\n- Variable state changes\n- Async operation flows\n- Error propagation paths');
+        }
+
+        function generateDebugReport() {
+            alert('📋 Debug report generated!\n\nReport includes:\n- Test execution analysis\n- Performance bottlenecks\n- Memory usage patterns\n- Error frequency analysis\n- Recommendations for improvement');
+        }
+
+        function runIssueDetection() {
+            const detectTimeoutsElement = document.getElementById('detect-timeouts');
+            const detectRaceConditionsElement = document.getElementById('detect-race-conditions');
+            const detectResourceLeaksElement = document.getElementById('detect-resource-leaks');
+            const detectMockFailuresElement = document.getElementById('detect-mock-failures');
+            
+            if (!detectTimeoutsElement || !detectRaceConditionsElement || !detectResourceLeaksElement || !detectMockFailuresElement) {
+                console.error('Required issue detection elements not found');
+                return;
+            }
+            
+            const detectTimeouts = detectTimeoutsElement.checked;
+            const detectRaceConditions = detectRaceConditionsElement.checked;
+            const detectResourceLeaks = detectResourceLeaksElement.checked;
+            const detectMockFailures = detectMockFailuresElement.checked;
+            
+            alert(`🔍 Running issue detection...\n\nChecking for:\n- Timeouts: ${detectTimeouts ? '✅' : '❌'}\n- Race conditions: ${detectRaceConditions ? '✅' : '❌'}\n- Resource leaks: ${detectResourceLeaks ? '✅' : '❌'}\n- Mock failures: ${detectMockFailures ? '✅' : '❌'}\n\nResults will be displayed in the debug console.`);
+        }
+
+        function runPerformanceDiagnostics() {
+            const detectSlowTestsElement = document.getElementById('detect-slow-tests');
+            const detectMemorySpikesElement = document.getElementById('detect-memory-spikes');
+            const detectIOBottlenecksElement = document.getElementById('detect-io-bottlenecks');
+            const detectCPUIntensiveElement = document.getElementById('detect-cpu-intensive');
+            
+            if (!detectSlowTestsElement || !detectMemorySpikesElement || !detectIOBottlenecksElement || !detectCPUIntensiveElement) {
+                console.error('Required performance diagnostic elements not found');
+                return;
+            }
+            
+            const detectSlowTests = detectSlowTestsElement.checked;
+            const detectMemorySpikes = detectMemorySpikesElement.checked;
+            const detectIOBottlenecks = detectIOBottlenecksElement.checked;
+            const detectCPUIntensive = detectCPUIntensiveElement.checked;
+            
+            alert(`⚡ Running performance diagnostics...\n\nAnalyzing:\n- Slow tests: ${detectSlowTests ? '✅' : '❌'}\n- Memory spikes: ${detectMemorySpikes ? '✅' : '❌'}\n- I/O bottlenecks: ${detectIOBottlenecks ? '✅' : '❌'}\n- CPU intensive: ${detectCPUIntensive ? '✅' : '❌'}\n\nPerformance report will be generated.`);
+        }
+
         // Additional utility functions for enhanced demo
         function generateTestReport() {
             const reportData = {
@@ -4136,7 +5970,7 @@ describe('${routeName}', () => {
                 return;
             }
             
-            const tabs = ['overview', 'test-generation', 'test-runner', 'mocking', 'utilities', 'advanced-features', 'email-http-testing', 'route-testing', 'performance', 'configuration', 'playground'];
+            const tabs = ['overview', 'test-generation', 'test-runner', 'mocking', 'utilities', 'advanced-features', 'email-http-testing', 'route-testing', 'performance', 'configuration', 'playground', 'test-templates', 'debugging-tools', 'integration-flows', 'real-world-scenarios'];
             const currentIndex = tabs.findIndex(tab => document.getElementById(tab).classList.contains('active'));
             
             switch(e.key) {
