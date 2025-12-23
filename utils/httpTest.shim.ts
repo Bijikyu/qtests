@@ -151,7 +151,7 @@ export function supertest(app: MockApp): SupertestClient {
           const req: MockRequest = { method, url, headers: { ...state.headers } };
           if (state.body !== undefined) {
             const ct = state.headers['content-type'] || '';
-            req.body = ct.includes('application/json') ? (() => { 
+            req.body = (ct && ct.includes('application/json')) ? (() => { 
               try { 
                 return JSON.parse(state.body); 
               } catch { 
@@ -160,7 +160,7 @@ export function supertest(app: MockApp): SupertestClient {
             })() : state.body;
           }
           try {
-            const qs = (url && url.includes('?')) ? url.split('?')[1] : '';
+            const qs = (url && url.includes && url.includes('?')) ? url.split('?')[1] : '';
             req.query = Object.fromEntries(new URLSearchParams(qs));
           } catch {
             // Ignore query string parse errors
