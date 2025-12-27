@@ -30,7 +30,7 @@ Analyze and address the following test failures:
 
     Details:
 
-    /home/runner/workspace/config/localVars.ts:17
+    /home/runner/workspace/config/localVars.ts:21
     const nodeRequire = (0, module_1.createRequire)(import.meta.url);
                                                            ^^^^
 
@@ -54,7 +54,7 @@ Analyze and address the following test failures:
 
 ---
 
-## Failed Test 2: /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js
+## Failed Test 2: /home/runner/workspace/tests/integration/demo__server__app__get.test.js
 
 ### Output:
 ```
@@ -82,7 +82,7 @@ Analyze and address the following test failures:
 
     Details:
 
-    /home/runner/workspace/config/localVars.ts:17
+    /home/runner/workspace/config/localVars.ts:21
     const nodeRequire = (0, module_1.createRequire)(import.meta.url);
                                                            ^^^^
 
@@ -106,7 +106,7 @@ Analyze and address the following test failures:
 
 ---
 
-## Failed Test 3: /home/runner/workspace/tests/integration/demo__server__app__get.test.js
+## Failed Test 3: /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js
 
 ### Output:
 ```
@@ -134,7 +134,7 @@ Analyze and address the following test failures:
 
     Details:
 
-    /home/runner/workspace/config/localVars.ts:17
+    /home/runner/workspace/config/localVars.ts:21
     const nodeRequire = (0, module_1.createRequire)(import.meta.url);
                                                            ^^^^
 
@@ -161,5 +161,5 @@ Analyze and address the following test failures:
 ## Summary
 
 - Total failed tests: 3
-- Failed test files: /home/runner/workspace/tests/integration/resolveStubPaths.test.ts, /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js, /home/runner/workspace/tests/integration/demo__server__app__get.test.js
-- Generated: 2025-12-23T10:50:26.440Z
+- Failed test files: /home/runner/workspace/tests/integration/resolveStubPaths.test.ts, /home/runner/workspace/tests/integration/demo__server__app__get.test.js, /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js
+- Generated: 2025-12-27T09:09:25.528Z

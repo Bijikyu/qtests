@@ -4,6 +4,7 @@
  */
 
 import * as fs from 'fs';
+import qerrors from 'qerrors';
 
 /**
  * Safely checks if a file or directory exists
@@ -26,7 +27,11 @@ export function safeExists(filePath: string): boolean {
 export function safeStats(filePath: string): fs.Stats | null {
   try {
     return fs.statSync(filePath);
-  } catch {
+  } catch (error) {
+    qerrors(error, 'fileExistence.safeStats: getting file stats failed', { 
+      filePath,
+      operation: 'statSync'
+    });
     return null;
   }
 }

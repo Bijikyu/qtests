@@ -6,6 +6,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { safeExists } from './readingUtils.js';
+import qerrors from 'qerrors';
 
 /**
  * Safely writes a file with directory creation
@@ -24,7 +25,14 @@ export function safeWriteFile(filePath: string, content: string | Buffer, encodi
     
     fs.writeFileSync(filePath, content, encoding);
     return true;
-  } catch {
+  } catch (error) {
+    qerrors(error, 'writingUtils.safeWriteFile: file write failed', { 
+      filePath, 
+      encoding, 
+      contentType: typeof content,
+      contentLength: typeof content === 'string' ? content.length : content.byteLength,
+      operation: 'writeFileSync'
+    });
     return false;
   }
 }
@@ -40,7 +48,11 @@ export function ensureDir(dirPath: string): boolean {
       fs.mkdirSync(dirPath, { recursive: true });
     }
     return true;
-  } catch {
+  } catch (error) {
+    qerrors(error, 'writingUtils.ensureDir: directory creation failed', { 
+      dirPath,
+      operation: 'mkdirSync'
+    });
     return false;
   }
 }

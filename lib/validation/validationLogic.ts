@@ -1,6 +1,7 @@
 import { z, ZodError } from 'zod';
 import { ValidationConfig, ValidationResult, ZodSchema } from './validationTypes.js';
 import { validateStreamingString } from './streamingValidationLogic.js';
+import qerrors from 'qerrors';
 
 export async function validateWithZod<T>(
   data: unknown,
@@ -36,6 +37,15 @@ export async function validateWithZod<T>(
       };
     }
     
+    qerrors(error, 'validationLogic.validateWithZod: validation failed', {
+      dataType: typeof data,
+      hasSchema: !!schema,
+      configKeys: Object.keys(config),
+      processingTime: Date.now() - startTime,
+      errorMessage: error instanceof Error ? error.message : 'Unknown validation error',
+      errorType: error instanceof Error ? error.constructor.name : 'unknown'
+    });
+    
     return {
       isValid: false,
       error: error instanceof Error ? error.message : 'Unknown validation error',
@@ -50,6 +60,23 @@ export function createValidationMiddleware(
   config: ValidationConfig
 ) {
   return async (data: unknown): Promise<ValidationResult> => {
-    return await validateWithZod(data, schema, config);
+    try {
+      return await validateWithZod(data, schema, config);
+    } catch (error: any) {
+      qerrors(error, 'validationLogic.createValidationMiddleware: middleware validation failed', {
+        dataType: typeof data,
+        hasSchema: !!schema,
+        configKeys: Object.keys(config),
+        errorMessage: error.message,
+        errorType: error.constructor.name
+      });
+      
+      return {
+        isValid: false,
+        error: error.message,
+        processingTime: 0,
+        schema,
+      };
+    }
   };
 }

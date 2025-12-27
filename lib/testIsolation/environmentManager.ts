@@ -3,6 +3,7 @@
  */
 
 declare const global: any;
+import qerrors from 'qerrors';
 
 interface IsolationState {
   originalEnv: Record<string, string | undefined>;
@@ -30,13 +31,22 @@ export const backupEnvironment = (): void => {
 
 export const restoreEnvironment = (): void => {
   const state = getIsolationState();
-  if (Object.keys(state.originalEnv).length > 0) {
-    Object.keys(process.env).forEach(key => {
-      if (!state.originalEnv.hasOwnProperty(key)) {
-        delete process.env[key];
-      }
-    });
+  try {
+    if (Object.keys(state.originalEnv).length > 0) {
+      Object.keys(process.env).forEach(key => {
+        if (!state.originalEnv.hasOwnProperty(key)) {
+          delete process.env[key];
+        }
+      });
 
-    Object.assign(process.env, state.originalEnv);
+      Object.assign(process.env, state.originalEnv);
+    }
+  } catch (error: any) {
+    qerrors(error, 'environmentManager.restoreEnvironment: environment restore failed', {
+      originalEnvKeys: Object.keys(state.originalEnv),
+      currentEnvKeys: Object.keys(process.env),
+      errorMessage: error.message,
+      errorType: error.constructor.name
+    });
   }
 };

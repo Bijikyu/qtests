@@ -3,6 +3,8 @@
  * Provides error handling wrappers for file operations
  */
 
+import qerrors from 'qerrors';
+
 /**
  * Executes a file operation with error handling
  * @param operation - File operation function
@@ -13,7 +15,11 @@ export function withFileErrorHandling<T>(operation: () => T, context: string): T
   try {
     return operation();
   } catch (error: any) {
-    console.log(`File operation failed [${context}]: ${error.message}`);
+    qerrors(error, `fileErrorHandling.withFileErrorHandling: ${context}`, {
+      context,
+      errorMessage: error.message,
+      errorType: error.constructor?.name || 'unknown'
+    });
     return null;
   }
 }

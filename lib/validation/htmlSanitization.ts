@@ -73,8 +73,4 @@ export function sanitizeString(input: string): string {
   }
 }
 
-export { escapeHtml, sanitizeString, hasDangerousPatterns };
-export default dangerousPatterns;
-}
-
 export { dangerousPatterns };

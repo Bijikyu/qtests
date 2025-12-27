@@ -13,6 +13,7 @@ import { TestGenerator } from '../lib/testGenerator.ts';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import qerrors from 'qerrors';
 
 // Get __dirname equivalent for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -172,6 +173,10 @@ function showVersion() {
     const packageJson = JSON.parse(readFileSync(packageJsonPath, 'utf8'));
     console.log(`qtests v${packageJson.version}`);
   } catch (error) {
+    qerrors(error, 'showVersion: reading qtests package.json', { 
+      packageJsonPath,
+      __dirname
+    });
     console.log(`qtests v1.2.0`);
   }
 }
@@ -190,8 +195,8 @@ async function main() {
     console.log(`  Scope: ${options.unit ? 'unit only' : options.integration ? 'integration only' : 'both'}`);
     console.log(`  Dry run: ${options.dryRun ? 'yes' : 'no'}`);
   console.log(`  Force overwrite: ${options.force ? 'yes' : 'no'}`);
-  // Overwrites are considered improvements for generator-owned files
-  console.log(`  Force React mode: ${options.react ? 'yes' : 'no'}`);
+    // Overwrites are considered improvements for generator-owned files
+    console.log(`  Force React mode: ${options.react ? 'yes' : 'no'}`);
     console.log(`  Generate component tests: ${options.skipReactComponents === false ? 'yes' : 'no'}`);
   console.log(`  Update package.json script: ${options.updatePackageScript ? 'yes' : 'no'}`);
     if (options.include.length > 0) {
@@ -239,6 +244,10 @@ async function main() {
     }
     
   } catch (error) {
+    qerrors(error, 'main: test generation failed', { 
+      options: parseArgs(process.argv),
+      cwd: process.cwd()
+    });
     console.error('❌ Error generating tests:', error.message);
     process.exit(1);
   }
@@ -246,6 +255,10 @@ async function main() {
 
 // Run CLI if this script is executed directly
 main().catch(error => {
+  qerrors(error, 'main: unexpected error in top-level catch', { 
+    cwd: process.cwd(),
+    argv: process.argv
+  });
   console.error('❌ Unexpected error:', error.message);
   process.exit(1);
 });

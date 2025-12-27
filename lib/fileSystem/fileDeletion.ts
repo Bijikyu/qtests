@@ -4,6 +4,7 @@
  */
 
 import * as fs from 'fs';
+import qerrors from 'qerrors';
 
 /**
  * Safely deletes a file or directory
@@ -24,7 +25,12 @@ export function safeDelete(targetPath: string, recursive: boolean = false): bool
       fs.unlinkSync(targetPath);
     }
     return true;
-  } catch {
+  } catch (error) {
+    qerrors(error, 'fileDeletion.safeDelete: deletion failed', { 
+      targetPath, 
+      recursive,
+      operation: recursive ? 'rmSync' : 'unlinkSync'
+    });
     return false;
   }
 }

@@ -69,19 +69,30 @@ function showVersion() {
     const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
     console.log(`qtests v${pkg.version}`);
   } catch (error) {
-    qerrors(error, 'showVersion: reading qtests package.json');
+    qerrors(error, 'showVersion: reading qtests package.json', { 
+      packageJsonPath,
+      cwd: process.cwd() 
+    });
     try {
       const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
       console.log(`qtests v${pkg.version ?? 'unknown'}`);
     } catch (fallbackError) {
-      qerrors(fallbackError, 'showVersion: reading project package.json');
+      qerrors(fallbackError, 'showVersion: reading project package.json', { 
+        projectPackagePath: path.join(process.cwd(), 'package.json'),
+        cwd: process.cwd() 
+      });
       console.log('qtests');
     }
   }
 }
 
 function exists(p) {
-  try { return fs.existsSync(p); } catch { return false; }
+  try { 
+    return fs.existsSync(p); 
+  } catch (error) {
+    qerrors(error, 'exists: checking file existence', { filePath: p });
+    return false; 
+  }
 }
 
 function resolveClientRoot() {
@@ -147,7 +158,7 @@ export default {
     'mongoose$': '<rootDir>/__mocks__/mongoose.js',
     '^.+\\\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/fileMock.js',
     '^.+\\\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$': '<rootDir>/__mocks__/fileMock.js'
-} catch {};
+  }
   `;
 
   }
@@ -172,7 +183,11 @@ try {
   if (!(globalThis as any).require && typeof require === 'function') {
     (globalThis as any).require = require as any;
   }
-} catch {}
+} catch (error) {
+      qerrors(error, 'getRequirePolyfill: global require setup failed', {
+        operation: 'globalRequireSetup'
+      });
+    }
 
 beforeAll(() => {
   const j = (globalThis as any).jest || J;
@@ -209,7 +224,11 @@ try {
       configurable: true,
       enumerable: false
     });
-} catch {};
+    } catch (error) {
+      qerrors(error, 'getJestConfig: template generation failed', { 
+        operation: 'templateLiteral'
+      });
+    }
   `;
 }
 
@@ -292,6 +311,9 @@ async function main() {
     
     process.exit(0);
   } catch (error) {
+    qerrors(error, 'generatedRunner.main: test execution failed', {
+      errorType: error?.constructor?.name || 'unknown'
+    });
     console.error('❌ Test runner failed:', error);
     process.exit(1);
   }

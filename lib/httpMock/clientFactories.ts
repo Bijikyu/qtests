@@ -7,6 +7,7 @@ import { MockHttpClient, MockHttpClientConfig, UserMockAxios } from './mockTypes
 import { LegacyAxiosMock } from './legacyAxiosImplementation.js';
 import { UserConfigurableAxiosMock } from './userConfigurableAxiosMock.js';
 import { ModernMSWMock } from './modernMSWMock.js';
+import qerrors from 'qerrors';
 
 /**
  * Main HTTP client mock factory
@@ -33,7 +34,11 @@ export function createMockHttpClient(config: MockHttpClientConfig = {}): MockHtt
         return new LegacyAxiosMock(config);
     }
   } catch (error: any) {
-    console.log(`createMockHttpClient error: ${error.message}`);
+    qerrors(error, 'clientFactories.createMockHttpClient: factory creation failed', {
+      strategy,
+      hasConfig: Object.keys(config).length > 0,
+      configKeys: Object.keys(config)
+    });
     throw error;
   }
 }
@@ -53,7 +58,10 @@ export function createUserConfigurableMock(presetData: Record<string, any> = {})
     
     return new UserConfigurableAxiosMock(config);
   } catch (error: any) {
-    console.log(`createUserConfigurableMock error: ${error.message}`);
+    qerrors(error, 'clientFactories.createUserConfigurableMock: user-configurable mock creation failed', {
+      presetDataKeys: Object.keys(presetData),
+      presetDataSize: JSON.stringify(presetData).length
+    });
     throw error;
   }
 }
@@ -73,7 +81,10 @@ export function createSimpleMockClient(defaultData: any = {}): MockHttpClient {
     
     return createMockHttpClient(config);
   } catch (error: any) {
-    console.log(`createSimpleMockClient error: ${error.message}`);
+    qerrors(error, 'clientFactories.createSimpleMockClient: simple mock client creation failed', {
+      hasDefaultData: defaultData !== null && defaultData !== undefined,
+      defaultDataType: typeof defaultData
+    });
     throw error;
   }
 }
