@@ -33,6 +33,11 @@ export function rmDirSafe(dirPath, options = { recursive: true, force: true }) {
   try {
     fs.rmSync(dirPath, options);
   } catch (error) {
+    qerrors(error, 'sharedUtils.rmDirSafe: directory removal failed', {
+      dirPath,
+      options,
+      operation: 'rmSync'
+    });
     // Silent failure for expected scenarios
     console.debug(`Failed to remove directory ${dirPath}: ${error.message}`);
   }
@@ -47,6 +52,11 @@ export function rmFileSafe(filePath, options = { force: true }) {
   try {
     fs.rmSync(filePath, options);
   } catch (error) {
+    qerrors(error, 'sharedUtils.rmFileSafe: file removal failed', {
+      filePath,
+      options,
+      operation: 'rmSync'
+    });
     // Silent failure for expected scenarios
     console.debug(`Failed to remove file ${filePath}: ${error.message}`);
   }
@@ -75,6 +85,11 @@ export function readFileSafe(filePath, encoding = 'utf8') {
   try {
     return fs.readFileSync(filePath, encoding);
   } catch (error) {
+    qerrors(error, 'sharedUtils.readFileSafe: file read failed', {
+      filePath,
+      encoding,
+      operation: 'readFileSync'
+    });
     console.debug(`Failed to read file ${filePath}: ${error.message}`);
     return null;
   }
@@ -371,6 +386,12 @@ export function listFiles(dirPath, pattern, recursive = false) {
     try {
       entries = fs.readdirSync(currentDir, { withFileTypes: true });
     } catch (error) {
+      qerrors(error, 'sharedUtils.listFiles: directory read failed', {
+        currentDir,
+        pattern: pattern.toString(),
+        recursive,
+        operation: 'readdirSync'
+      });
       console.debug(`Failed to read directory ${currentDir}: ${error.message}`);
       continue;
     }

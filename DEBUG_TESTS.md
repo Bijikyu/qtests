@@ -2,51 +2,46 @@
 
 Analyze and address the following test failures:
 
-## Failed Test 1: /home/runner/workspace/tests/integration/resolveStubPaths.test.ts
+## Failed Test 1: /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js
 
 ### Output:
 ```
   ● Test suite failed to run
 
-    Jest encountered an unexpected token
+    Configuration error:
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+    Could not locate module ../utils/values.js mapped as:
+    /home/runner/workspace/utils/$1.ts.
 
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+    Please check your configuration for these entries:
+    {
+      "moduleNameMapper": {
+        "/^\.\.\/utils\/(.*)\.js$/": "/home/runner/workspace/utils/$1.ts"
+      },
+      "resolver": undefined
+    }
 
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/config/localVars.ts:21
-    const nodeRequire = (0, module_1.createRequire)(import.meta.url);
-                                                           ^^^^
-
-    SyntaxError: Cannot use 'import.meta' outside a module
-
-      31 | // how Node.js resolves module names to file paths
-      32 | import { mockRegistry, installMocking, registerDefaultMocks } from './lib/mockSystem.js';
-    > 33 | import * as localVars from './config/localVars.js';
+       6 |
+       7 | import { createMockApp, supertest } from '../utils/httpTest.js';
+    >  8 | import qerrors from 'qerrors';
          | ^
-      34 |
-      35 | // Install clean, registry-based mocking for module ids
-      36 | registerDefaultMocks();
+       9 |
+      10 | // ==================== TEST INTERFACES ====================
+      11 |
 
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1505:14)
-      at Object.<anonymous> (setup.ts:33:1)
-      at Object.<anonymous> (config/jest-setup.ts:3:1)
+      at createNoMappedModuleFoundError (node_modules/jest-resolve/build/resolver.js:759:17)
+      at Object.require (node_modules/openai/src/internal/qs/utils.ts:3:1)
+      at Object.require (node_modules/openai/src/internal/qs/stringify.ts:1:1)
+      at Object.require (node_modules/openai/src/internal/qs/index.ts:10:1)
+      at Object.require (node_modules/openai/src/client.ts:14:1)
+      at Object.require (node_modules/openai/src/index.ts:5:27)
+      at Object.<anonymous> (node_modules/@langchain/openai/dist/index.cjs:18:16)
+      at Object.<anonymous> (node_modules/@langchain/openai/index.cjs:1:120)
+      at Object.require (node_modules/qerrors/lib/aiModelManager.js:16:24)
+      at Object.require (node_modules/qerrors/lib/qerrors.js:24:31)
+      at Object.require (node_modules/qerrors/index.js:18:17)
+      at Object.<anonymous> (lib/routeTestUtils.ts:8:1)
+      at Object.require (tests/integration/demo__server__routes__hello__get.test.js:2:1)
 
 ```
 
@@ -60,97 +55,40 @@ Analyze and address the following test failures:
 ```
   ● Test suite failed to run
 
-    Jest encountered an unexpected token
+    Configuration error:
 
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+    Could not locate module ../utils/values.js mapped as:
+    /home/runner/workspace/utils/$1.ts.
 
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+    Please check your configuration for these entries:
+    {
+      "moduleNameMapper": {
+        "/^\.\.\/utils\/(.*)\.js$/": "/home/runner/workspace/utils/$1.ts"
+      },
+      "resolver": undefined
+    }
 
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/config/localVars.ts:21
-    const nodeRequire = (0, module_1.createRequire)(import.meta.url);
-                                                           ^^^^
-
-    SyntaxError: Cannot use 'import.meta' outside a module
-
-      31 | // how Node.js resolves module names to file paths
-      32 | import { mockRegistry, installMocking, registerDefaultMocks } from './lib/mockSystem.js';
-    > 33 | import * as localVars from './config/localVars.js';
+       6 |
+       7 | import { createMockApp, supertest } from '../utils/httpTest.js';
+    >  8 | import qerrors from 'qerrors';
          | ^
-      34 |
-      35 | // Install clean, registry-based mocking for module ids
-      36 | registerDefaultMocks();
+       9 |
+      10 | // ==================== TEST INTERFACES ====================
+      11 |
 
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1505:14)
-      at Object.<anonymous> (setup.ts:33:1)
-      at Object.<anonymous> (config/jest-setup.ts:3:1)
-
-```
-
-### Duration: 0ms
-
----
-
-## Failed Test 3: /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js
-
-### Output:
-```
-  ● Test suite failed to run
-
-    Jest encountered an unexpected token
-
-    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
-
-    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
-
-    By default "node_modules" folder is ignored by transformers.
-
-    Here's what you can do:
-     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
-     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
-     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
-     • If you need a custom transformation specify a "transform" option in your config.
-     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
-
-    You'll find more details and examples of these config options in the docs:
-    https://jestjs.io/docs/configuration
-    For information about custom transformations, see:
-    https://jestjs.io/docs/code-transformation
-
-    Details:
-
-    /home/runner/workspace/config/localVars.ts:21
-    const nodeRequire = (0, module_1.createRequire)(import.meta.url);
-                                                           ^^^^
-
-    SyntaxError: Cannot use 'import.meta' outside a module
-
-      31 | // how Node.js resolves module names to file paths
-      32 | import { mockRegistry, installMocking, registerDefaultMocks } from './lib/mockSystem.js';
-    > 33 | import * as localVars from './config/localVars.js';
-         | ^
-      34 |
-      35 | // Install clean, registry-based mocking for module ids
-      36 | registerDefaultMocks();
-
-      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1505:14)
-      at Object.<anonymous> (setup.ts:33:1)
-      at Object.<anonymous> (config/jest-setup.ts:3:1)
+      at createNoMappedModuleFoundError (node_modules/jest-resolve/build/resolver.js:759:17)
+      at Object.require (node_modules/openai/src/internal/qs/utils.ts:3:1)
+      at Object.require (node_modules/openai/src/internal/qs/stringify.ts:1:1)
+      at Object.require (node_modules/openai/src/internal/qs/index.ts:10:1)
+      at Object.require (node_modules/openai/src/client.ts:14:1)
+      at Object.require (node_modules/openai/src/index.ts:5:27)
+      at Object.<anonymous> (node_modules/@langchain/openai/dist/index.cjs:18:16)
+      at Object.<anonymous> (node_modules/@langchain/openai/index.cjs:1:120)
+      at Object.require (node_modules/qerrors/lib/aiModelManager.js:16:24)
+      at Object.require (node_modules/qerrors/lib/qerrors.js:24:31)
+      at Object.require (node_modules/qerrors/index.js:18:17)
+      at Object.<anonymous> (lib/routeTestUtils.ts:8:1)
+      at Object.require (tests/integration/demo__server__app__get.test.js:2:1)
 
 ```
 
@@ -160,6 +98,6 @@ Analyze and address the following test failures:
 
 ## Summary
 
-- Total failed tests: 3
-- Failed test files: /home/runner/workspace/tests/integration/resolveStubPaths.test.ts, /home/runner/workspace/tests/integration/demo__server__app__get.test.js, /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js
-- Generated: 2025-12-27T09:09:25.528Z
+- Total failed tests: 2
+- Failed test files: /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js, /home/runner/workspace/tests/integration/demo__server__app__get.test.js
+- Generated: 2025-12-27T11:00:44.086Z

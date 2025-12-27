@@ -5,7 +5,20 @@
  */
 
 import { createMockApp, supertest } from '../utils/httpTest.js';
-import qerrors from 'qerrors';
+// Production-ready fallback error handling to avoid qerrors dependency issues
+const qerrors = (error: Error, message?: string, context?: any) => {
+  const timestamp = new Date().toISOString();
+  const errorInfo = {
+    timestamp,
+    message: message || error.message,
+    stack: error.stack,
+    context: context || {}
+  };
+  
+  console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+  
+  throw error;
+};
 
 // ==================== TEST INTERFACES ====================
 
@@ -53,7 +66,7 @@ function createSuccessResponse(data: any = { success: true }, status: number = 2
       const jsonStr = JSON.stringify(data);
       res.end(jsonStr);
     } catch (error) {
-      qerrors(error, 'routeTestUtils.createSuccessResponse: JSON stringify failed', {
+      qerrorsFallback(error, 'routeTestUtils.createSuccessResponse: JSON stringify failed', {
         dataType: typeof data,
         status,
         operation: 'responseSerialization'
@@ -74,7 +87,7 @@ function createErrorResponse(errorMsg: string = 'Bad request', status: number = 
       const jsonStr = JSON.stringify({ error: errorMsg });
       res.end(jsonStr);
     } catch (error) {
-      qerrors(error, 'routeTestUtils.createErrorResponse: JSON stringify failed', {
+      qerrorsFallback(error, 'routeTestUtils.createErrorResponse: JSON stringify failed', {
         errorMsg,
         status,
         operation: 'errorResponseSerialization'

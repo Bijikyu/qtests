@@ -39,7 +39,22 @@ export async function waitForCondition(
       throw timeoutError;
     }
 
-    await new Promise((r) => setTimeout(r, intervalMs));
+    try {
+      await new Promise<void>((resolve, reject) => {
+        const timeoutId = setTimeout(() => resolve(), intervalMs);
+        // Handle potential timer errors (unlikely but defensive)
+        if (timeoutId.unref) {
+          timeoutId.unref();
+        }
+      });
+    } catch (error) {
+      qerrors(error, 'waitForCondition: setTimeout Promise failed', {
+        intervalMs,
+        elapsedMs: Date.now() - start,
+        operation: 'createDelayPromise'
+      });
+      // Continue without delay if timer fails
+    }
   }
 }
 

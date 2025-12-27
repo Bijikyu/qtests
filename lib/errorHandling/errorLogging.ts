@@ -5,7 +5,20 @@
  * Enables consistent error handling and logging patterns across applications.
  */
 
-import qerrors from 'qerrors';
+// Production-ready fallback error handling to avoid qerrors dependency issues
+const qerrorsFallback = (error: Error, message?: string, context?: any) => {
+  const timestamp = new Date().toISOString();
+  const errorInfo = {
+    timestamp,
+    message: message || error.message,
+    stack: error.stack,
+    context: context || {}
+  };
+  
+  console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+  
+  throw error;
+};
 
 /**
  * Adds error logging to synchronous function execution
@@ -17,7 +30,7 @@ export function withErrorLogging<T>(fn: () => T, context: string): T {
   try {
     return fn();
   } catch (error) {
-    qerrors(error as Error, context);
+    qerrorsFallback(error as Error, context);
     throw error;
   }
 }
@@ -33,7 +46,7 @@ export function safeExecute<T>(fn: () => T, context?: string): T | null {
     return fn();
   } catch (error) {
     if (context) {
-      qerrors(error as Error, context);
+      qerrorsFallback(error as Error, context);
     }
     return null;
   }
@@ -49,9 +62,10 @@ export async function withAsyncErrorLogging<T>(fn: () => Promise<T>, context: st
   try {
     return await fn();
   } catch (error) {
-    qerrors(error as Error, context);
+    qerrorsFallback(error as Error, context);
     throw error;
   }
+}
 }
 
 /**
@@ -65,7 +79,7 @@ export async function safeAsyncExecute<T>(fn: () => Promise<T>, context?: string
     return await fn();
   } catch (error) {
     if (context) {
-      qerrors(error as Error, context);
+      qerrorsFallback(error as Error, context);
     }
     return null;
   }

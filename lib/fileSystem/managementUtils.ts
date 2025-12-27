@@ -4,6 +4,7 @@
  */
 
 import * as fs from 'fs';
+import qerrors from 'qerrors';
 
 /**
  * Safely deletes a file or directory
@@ -24,7 +25,12 @@ export function safeDelete(targetPath: string, recursive: boolean = false): bool
       fs.unlinkSync(targetPath);
     }
     return true;
-  } catch {
+  } catch (error) {
+    qerrors(error, 'managementUtils.safeDelete: deletion failed', { 
+      targetPath, 
+      recursive,
+      operation: recursive ? 'rmSync' : 'unlinkSync'
+    });
     return false;
   }
 }
@@ -39,7 +45,11 @@ export function withFileErrorHandling<T>(operation: () => T, context: string): T
   try {
     return operation();
   } catch (error: any) {
-    console.log(`File operation failed [${context}]: ${error.message}`);
+    qerrors(error, `managementUtils.withFileErrorHandling: ${context} failed`, {
+      context,
+      errorType: error.constructor?.name,
+      errorMessage: error.message
+    });
     return null;
   }
 }

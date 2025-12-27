@@ -4,6 +4,7 @@
  */
 
 import { createStreamingValidator, ValidationConfig } from './streamingValidator.js';
+import qerrors from 'qerrors';
 
 export function streamingValidationMiddleware(config: ValidationConfig = {}) {
   const validator = createStreamingValidator(config);
@@ -37,7 +38,16 @@ export function streamingValidationMiddleware(config: ValidationConfig = {}) {
       res.set('X-Validation-Time', `${processingTime}ms`);
       next();
     } catch (error) {
-      console.error('Validation error:', error);
+      qerrors(error, 'validationMiddleware: request validation failed', req, res, next, {
+        startTime,
+        processingTime: Date.now() - startTime,
+        hasBody: !!req.body,
+        hasQuery: !!req.query,
+        hasParams: !!req.params,
+        bodyType: typeof req.body,
+        queryKeys: req.query ? Object.keys(req.query) : [],
+        paramKeys: req.params ? Object.keys(req.params) : []
+      });
       res.status(400).json({
         error: 'Validation failed',
         message: error instanceof Error ? error.message : 'Invalid input'

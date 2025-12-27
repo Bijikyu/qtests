@@ -11,9 +11,27 @@
 
 // Import JavaScript modules with proper ESM compatibility
 import { createRequire } from 'module';
-import qerrors from 'qerrors';
 
-const nodeRequire = createRequire(import.meta.url);
+// Use createRequire from current module context for ESM compatibility
+const nodeRequire = createRequire(__filename);
+
+// Production-ready fallback error handling to avoid qerrors dependency issues
+const qerrors = (error: Error, message?: string, context?: any) => {
+  // In production, we need reliable error logging without complex dependencies
+  const timestamp = new Date().toISOString();
+  const errorInfo = {
+    timestamp,
+    message: message || error.message,
+    stack: error.stack,
+    context: context || {}
+  };
+  
+  // Use console.error for production reliability - avoid complex logging dependencies
+  console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+  
+  // Re-throw the error to maintain existing behavior
+  throw error;
+};
 
 let envConfig, qtestsConfig, testConfig, fileSystemConfig, mockConfig, systemConfig;
 

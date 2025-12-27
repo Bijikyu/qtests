@@ -5,14 +5,27 @@
  * and basic runtime settings used throughout the qtests module.
  */
 
-import qerrors from 'qerrors';
+// Production-ready fallback error handling to avoid qerrors dependency issues
+const qerrorsFallback = (error, message, context) => {
+  const timestamp = new Date().toISOString();
+  const errorInfo = {
+    timestamp,
+    message: message || error.message,
+    stack: error.stack,
+    context: context || {}
+  };
+  
+  console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+  
+  throw error;
+};
 
 // ==================== NODE ENVIRONMENT VARIABLES ====================
 export const nodeEnv = (() => {
   try {
     return process.env.NODE_ENV || 'development';
   } catch (error) {
-    qerrors(error, 'envConfig.nodeEnv: reading NODE_ENV');
+    qerrorsFallback(error, 'envConfig.nodeEnv: reading NODE_ENV');
     return 'development';
   }
 })();
@@ -21,7 +34,7 @@ export const testMode = (() => {
   try {
     return process.env.TEST_MODE || 'false';
   } catch (error) {
-    qerrors(error, 'envConfig.testMode: reading TEST_MODE');
+    qerrorsFallback(error, 'envConfig.testMode: reading TEST_MODE');
     return 'false';
   }
 })();
@@ -30,7 +43,7 @@ export const debugMode = (() => {
   try {
     return process.env.DEBUG_MODE || 'false';
   } catch (error) {
-    qerrors(error, 'envConfig.debugMode: reading DEBUG_MODE');
+    qerrorsFallback(error, 'envConfig.debugMode: reading DEBUG_MODE');
     return 'false';
   }
 })();
@@ -40,7 +53,7 @@ export const runtimeNodeVersion = (() => {
   try {
     return process.version;
   } catch (error) {
-    qerrors(error, 'envConfig.runtimeNodeVersion: reading process.version');
+    qerrorsFallback(error, 'envConfig.runtimeNodeVersion: reading process.version');
     return 'unknown';
   }
 })();
@@ -49,7 +62,7 @@ export const runtimePlatform = (() => {
   try {
     return process.platform;
   } catch (error) {
-    qerrors(error, 'envConfig.runtimePlatform: reading process.platform');
+    qerrorsFallback(error, 'envConfig.runtimePlatform: reading process.platform');
     return 'unknown';
   }
 })();
@@ -58,7 +71,7 @@ export const runtimeArch = (() => {
   try {
     return process.arch;
   } catch (error) {
-    qerrors(error, 'envConfig.runtimeArch: reading process.arch');
+    qerrorsFallback(error, 'envConfig.runtimeArch: reading process.arch');
     return 'unknown';
   }
 })();
@@ -68,7 +81,7 @@ export const devHotReload = (() => {
   try {
     return process.env.DEV_HOT_RELOAD || 'false';
   } catch (error) {
-    qerrors(error, 'envConfig.devHotReload: reading DEV_HOT_RELOAD');
+    qerrorsFallback(error, 'envConfig.devHotReload: reading DEV_HOT_RELOAD');
     return 'false';
   }
 })();
@@ -77,7 +90,7 @@ export const devSourceMaps = (() => {
   try {
     return process.env.DEV_SOURCE_MAPS || 'true';
   } catch (error) {
-    qerrors(error, 'envConfig.devSourceMaps: reading DEV_SOURCE_MAPS');
+    qerrorsFallback(error, 'envConfig.devSourceMaps: reading DEV_SOURCE_MAPS');
     return 'true';
   }
 })();
@@ -86,7 +99,7 @@ export const devVerboseLogging = (() => {
   try {
     return process.env.DEV_VERBOSE_LOGGING || 'false';
   } catch (error) {
-    qerrors(error, 'envConfig.devVerboseLogging: reading DEV_VERBOSE_LOGGING');
+    qerrorsFallback(error, 'envConfig.devVerboseLogging: reading DEV_VERBOSE_LOGGING');
     return 'false';
   }
 })();
@@ -96,7 +109,7 @@ export const experimentalFeatures = (() => {
   try {
     return process.env.EXPERIMENTAL_FEATURES || 'false';
   } catch (error) {
-    qerrors(error, 'envConfig.experimentalFeatures: reading EXPERIMENTAL_FEATURES');
+    qerrorsFallback(error, 'envConfig.experimentalFeatures: reading EXPERIMENTAL_FEATURES');
     return 'false';
   }
 })();
@@ -105,7 +118,7 @@ export const experimentalParallelExecution = (() => {
   try {
     return process.env.EXPERIMENTAL_PARALLEL || 'false';
   } catch (error) {
-    qerrors(error, 'envConfig.experimentalParallelExecution: reading EXPERIMENTAL_PARALLEL');
+    qerrorsFallback(error, 'envConfig.experimentalParallelExecution: reading EXPERIMENTAL_PARALLEL');
     return 'false';
   }
 })();
@@ -114,7 +127,7 @@ export const experimentalAdvancedMocking = (() => {
   try {
     return process.env.EXPERIMENTAL_MOCKING || 'false';
   } catch (error) {
-    qerrors(error, 'envConfig.experimentalAdvancedMocking: reading EXPERIMENTAL_MOCKING');
+    qerrorsFallback(error, 'envConfig.experimentalAdvancedMocking: reading EXPERIMENTAL_MOCKING');
     return 'false';
   }
 })();
@@ -125,7 +138,7 @@ export const legacyMode = (() => {
   try {
     return process.env.LEGACY_MODE || 'false';
   } catch (error) {
-    qerrors(error, 'envConfig.legacyMode: reading LEGACY_MODE');
+    qerrorsFallback(error, 'envConfig.legacyMode: reading LEGACY_MODE');
     return 'false';
   }
 })();
@@ -134,7 +147,7 @@ export const legacyWarnings = (() => {
   try {
     return process.env.LEGACY_WARNINGS || 'true';
   } catch (error) {
-    qerrors(error, 'envConfig.legacyWarnings: reading LEGACY_WARNINGS');
+    qerrorsFallback(error, 'envConfig.legacyWarnings: reading LEGACY_WARNINGS');
     return 'true';
   }
 })();

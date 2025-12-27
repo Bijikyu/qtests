@@ -50,6 +50,7 @@ function isValidTemplate(content){
   const target = path.join(clientRoot, 'qtests-runner.mjs');
   // Passive correction: update client package.json test script if it incorrectly points to qtests-runner.js
 try {
+    const pkgPath = path.join(clientRoot, 'package.json');
     const pkg = JSON.parse(read(pkgPath) || '{}');
     if (pkg && pkg.scripts && typeof pkg.scripts.test === 'string') {
       if (/qtests-runner\.js\b/.test(pkg.scripts.test) || !/qtests-runner\.mjs\b/.test(pkg.scripts.test)) {

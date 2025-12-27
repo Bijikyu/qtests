@@ -61,8 +61,11 @@ export default {
   ]
 },
   extensionsToTreatAsEsm: [".ts",".tsx"],
-  transformIgnorePatterns: ['node_modules/(?!(?:qtests|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul)/)'],
+  transformIgnorePatterns: ['node_modules/(?!(?:qtests|qerrors|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul|@langchain|openai)/)'],
   moduleNameMapper: {
+  // Removed problematic qgenutils mappings to fix Jest module resolution
+  // Individual files should handle their own imports properly
+  // Then handle qtests-specific mappings
   "^\\.\\./index\\.js$": "<rootDir>/index.ts",
   "^\\.\\./setup\\.js$": "<rootDir>/setup.ts",
   "^\\.\\./lib/(.*)\\.js$": "<rootDir>/lib/$1.ts",

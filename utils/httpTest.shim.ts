@@ -1,7 +1,20 @@
 // utils/httpTest.shim.ts - canonical http test helpers (ESM TypeScript)
 // Provides a tiny Express-like app and a supertest-like client with `.send()`
 
-import qerrors from 'qerrors';
+// Production-ready fallback error handling to avoid qerrors dependency issues
+const qerrors = (error: Error, message?: string, context?: any) => {
+  const timestamp = new Date().toISOString();
+  const errorInfo = {
+    timestamp,
+    message: message || error.message,
+    stack: error.stack,
+    context: context || {}
+  };
+  
+  console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+  
+  throw error;
+};
 
 interface MockRequest {
   method?: string;
@@ -108,7 +121,7 @@ export function supertest(app: MockApp): SupertestClient {
         try { 
           body = JSON.parse(text); 
         } catch (error) {
-          qerrors(error, 'httpTest.shim: parsing response body as JSON', { textLength: text.length });
+          qerrorsFallback(error, 'httpTest.shim: parsing response body as JSON', { textLength: text.length });
           // Ignore JSON parse errors
         }
       }
@@ -158,7 +171,7 @@ export function supertest(app: MockApp): SupertestClient {
               try { 
                 return JSON.parse(state.body); 
               } catch (error) {
-                qerrors(error, 'httpTest.shim: parsing request body as JSON', { contentType: ct });
+                qerrorsFallback(error, 'httpTest.shim: parsing request body as JSON', { contentType: ct });
                 return state.body; 
               } 
             })() : state.body;

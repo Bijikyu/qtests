@@ -63,7 +63,11 @@ async function setup(): Promise<void> {
     qerrors(error, 'setup.ts: module resolution setup failed', { 
       setupModule: '../setup.js',
       errorMessage: error.message,
-      errorType: error.constructor.name
+      errorType: error.constructor.name,
+      nodeVersion: process.version,
+      platform: process.platform,
+      cwd: process.cwd(),
+      timestamp: new Date().toISOString()
     });
     console.log(`setup error: ${error.message}`); // error logging per requirements
     throw error;
