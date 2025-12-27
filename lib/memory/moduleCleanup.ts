@@ -4,6 +4,7 @@
  */
 
 import { createRequire } from 'module';
+import qerrors from 'qerrors';
 
 export const clearModuleCache = (): number => {
   try {
@@ -23,7 +24,11 @@ export const clearModuleCache = (): number => {
     });
 
     return cleared;
-  } catch {
+  } catch (error) {
+    qerrors(error, 'moduleCleanup.clearModuleCache: module cache clearing failed', {
+      errorType: error.constructor.name,
+      errorMessage: error.message
+    });
     return 0;
   }
 };

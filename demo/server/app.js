@@ -2,6 +2,7 @@
 // Rationale: keep app creation separate from network binding to allow supertest usage.
 const express = require('express');
 const winston = require('winston');
+const qerrors = require('qerrors');
 
 // Configure a minimal logger; qtests will stub winston to a no-op in tests.
 // Inline comments explain decisions to align with repo guidelines.
@@ -12,7 +13,18 @@ const logger = winston.createLogger({
 
 // Create the express app instance.
 const app = express();
-app.use(express.json());
+
+// JSON parsing middleware with error handling
+app.use(express.json({
+  verify: (req, res, buf) => {
+    try {
+      JSON.parse(buf.toString());
+    } catch (error) {
+      qerrors(error, 'express.json: parsing request body', { url: req.url, method: req.method });
+      throw error;
+    }
+  }
+}));
 
 // Simple request logging for visibility; won't pollute test output with qtests stubs.
 app.use((req, _res, next) => {
@@ -44,6 +56,12 @@ app.get('/health', (_req, res) => {
 // API health endpoint to match frontend expectations
 app.get('/api/health', (_req, res) => {
   return res.status(200).json({ ok: true, status: 'healthy', timestamp: new Date().toISOString() });
+});
+
+// Global error handling middleware
+app.use((error, req, res, next) => {
+  qerrors(error, 'express.global: unhandled error', { url: req.url, method: req.method });
+  res.status(500).json({ error: 'Internal server error' });
 });
 
 // Always export at bottom per repo conventions.

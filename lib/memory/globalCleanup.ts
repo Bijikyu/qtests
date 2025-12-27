@@ -4,6 +4,7 @@
  */
 
 declare const global: any;
+import qerrors from 'qerrors';
 
 export const clearGlobalRefs = (): void => {
   const refsToClear = [
@@ -26,7 +27,13 @@ export const clearGlobalRefs = (): void => {
         if (typeof global[ref].disconnect === 'function') {
           global[ref].disconnect();
         }
-      } catch {}
+      } catch (error) {
+        qerrors(error, 'globalCleanup.clearGlobalRefs: cleanup operation failed', {
+          refName: ref,
+          hasClose: typeof global[ref]?.close === 'function',
+          hasDisconnect: typeof global[ref]?.disconnect === 'function'
+        });
+      }
       global[ref] = null;
     }
   });

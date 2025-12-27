@@ -4,6 +4,7 @@
  */
 
 import * as fs from 'fs';
+import qerrors from 'qerrors';
 
 /**
  * Safely reads a file as UTF-8 text
@@ -13,7 +14,8 @@ import * as fs from 'fs';
 export function safeReadFile(filePath: string): string | null {
   try {
     return fs.readFileSync(filePath, 'utf8');
-  } catch {
+  } catch (error) {
+    qerrors(error, 'fileReading.safeReadFile: reading file as UTF-8', { filePath });
     return null;
   }
 }
@@ -26,7 +28,8 @@ export function safeReadFile(filePath: string): string | null {
 export function safeReadFileBuffer(filePath: string): Buffer | null {
   try {
     return fs.readFileSync(filePath);
-  } catch {
+  } catch (error) {
+    qerrors(error, 'fileReading.safeReadFileBuffer: reading file as buffer', { filePath });
     return null;
   }
 }

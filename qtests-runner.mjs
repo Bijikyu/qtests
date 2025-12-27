@@ -10,6 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
+import qerrors from 'qerrors';
 
 // ANSI color codes for terminal output
 const colors = {
@@ -53,8 +54,15 @@ class TestRunner {
         try {
           const st = fs.statSync(candidate);
           if (st.isFile()) {
-            try { fs.accessSync(candidate, fs.constants.X_OK); } catch {}
-            return candidate;
+            try { 
+              fs.accessSync(candidate, fs.constants.X_OK); 
+              return candidate;
+            } catch (error) {
+              qerrors(error, 'qtests-runner.findProjectRoot: file access check failed', {
+                candidate,
+                operation: 'accessSync'
+              });
+            }
           }
         } catch {}
       }
@@ -171,7 +179,10 @@ class TestRunner {
         else if (Number.isFinite(maxW) && maxW > 0) intendedArgs.push(`--maxWorkers=${maxW}`);
         intendedArgs.push('--cache', '--no-coverage');
         fs.writeFileSync(path.join(process.cwd(), 'runner-jest-args.json'), JSON.stringify(intendedArgs), 'utf8');
-      } catch { /* best effort only */ }
+      } catch (error) {
+        qerrors(error, 'qtests-runner: writing runner-jest-args.json', { intendedArgs });
+        /* best effort only */
+      }
 
       const { results } = await this._runCLI(argv, [process.cwd()]);
       for (const tr of (results.testResults || [])) {
@@ -287,6 +298,10 @@ class TestRunner {
 // Run the test suite
 const runner = new TestRunner();
 runner.run().catch(error => {
+  qerrors(error, 'qtests-runner: test runner failed', {
+    errorType: error.constructor?.name || 'unknown',
+    errorMessage: error?.message || String(error)
+  });
   console.error(`${colors.red}Test runner error:${colors.reset}`, error);
   process.exit(1);
 });

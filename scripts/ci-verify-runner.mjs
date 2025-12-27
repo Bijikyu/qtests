@@ -1,11 +1,26 @@
 // scripts/ci-verify-runner.mjs
-// CI check to ensure the repository uses the unified API-only runner and clean dist artifacts.
+// CI check to ensure that repository uses unified API-only runner and clean dist artifacts.
 import fs from 'fs';
 import path from 'path';
+import qerrors from 'qerrors';
 
-function fail(msg) { console.error(`CI verify failed: ${msg}`); process.exit(1); }
+function fail(msg) { 
+  qerrors(new Error(msg), 'ci-verify-runner: CI verification failed', { msg });
+  console.error(`CI verify failed: ${msg}`); 
+  process.exit(1); 
+}
 
-function readJson(p) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return null; } }
+function readJson(p) { 
+  try { 
+    return JSON.parse(fs.readFileSync(p, 'utf8')); 
+  } catch (error) {
+    qerrors(error, 'ci-verify-runner: JSON parse failed', { 
+      filePath: p,
+      operation: 'readFileSync'
+    });
+    return null; 
+  } 
+}
 
 (function main() {
   // Allow bypass via env for urgent publishes
@@ -67,7 +82,15 @@ function readJson(p) { try { return JSON.parse(fs.readFileSync(p, 'utf8')); } ca
     while (stack.length) {
       const dir = stack.pop();
       let ents = [];
-      try { ents = fs.readdirSync(dir, { withFileTypes: true }); } catch { continue; }
+      try { 
+        ents = fs.readdirSync(dir, { withFileTypes: true }); 
+      } catch (error) {
+        qerrors(error, 'ci-verify-runner: directory read failed', {
+          dir,
+          operation: 'readdirSync'
+        });
+        continue;
+      }
       for (const ent of ents) {
         const full = path.join(dir, ent.name);
         if (ent.isDirectory()) {

@@ -2,6 +2,7 @@
 // Rationale: centralizing network calls simplifies stubbing and keeps routes thin.
 const axios = require('axios');
 const winston = require('winston');
+const qerrors = require('qerrors');
 
 /**
  * fetchHello
@@ -12,10 +13,19 @@ const winston = require('winston');
 async function fetchHello() {
   try {
     // Use a stable public endpoint; qtests stubs will short-circuit in tests.
-    const result = await axios.get('https://example.com/');
+    // Add timeout and retry configuration for robustness
+    const result = await axios.get('https://example.com/', {
+      timeout: 10000, // 10 second timeout
+      maxRedirects: 5
+    });
     try { winston.info('external call complete'); } catch (_) { /* no-op under stubs */ }
     return result;
   } catch (err) {
+    qerrors(err, 'externalService.fetchHello: network call failed', { 
+      url: 'https://example.com/',
+      timeout: 10000,
+      errorType: err.code || 'unknown'
+    });
     // Re-throw with a clean message for upstream handlers.
     const message = err && err.message ? err.message : 'external_call_failed';
     const error = new Error(message);

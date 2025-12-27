@@ -29,6 +29,8 @@
  * - Follows principle of least surprise
  */
 
+import qerrors from 'qerrors';
+
 /**
  * Initialize qtests framework with automatic stub resolution
  * 
@@ -58,6 +60,11 @@ async function setup(): Promise<void> {
     await import('../setup.js'); // load setup implementation with ES modules
     console.log(`setup has run resulting in module resolution modification`); // logging completion per requirements
   } catch (error: any) {
+    qerrors(error, 'setup.ts: module resolution setup failed', { 
+      setupModule: '../setup.js',
+      errorMessage: error.message,
+      errorType: error.constructor.name
+    });
     console.log(`setup error: ${error.message}`); // error logging per requirements
     throw error;
   }

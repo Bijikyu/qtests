@@ -15,6 +15,7 @@ import { NODE_ENV } from '../config/localVars.js';
 import fs from 'fs';
 import path from 'path';
 import { safeExists, ensureDir, safeWriteFile, safeDelete } from './fileSystem/index.js';
+import qerrors from 'qerrors';
 
 // Configuration for runner scaffolding
 interface RunnerConfig {
@@ -222,7 +223,11 @@ try {
     let req;
     try {
       req = createRequire(process.cwd() + '/package.json');
-    } catch {
+    } catch (error) {
+      qerrors(error, 'runnerScaffolder.setupRequire: createRequire failed', {
+        attemptedPath: process.cwd() + '/package.json',
+        fallbackPath: __filename
+      });
       req = createRequire(__filename);
     }
     Object.defineProperty(global, 'require', {
@@ -284,7 +289,14 @@ export function supertest(app) {
       const { statusCode, headers, text } = resState;
       let body = undefined;
       if (typeof text === 'string') {
-        try { body = JSON.parse(text); } catch {}
+        try { 
+          body = JSON.parse(text); 
+        } catch (error) {
+          qerrors(error, 'runnerScaffolder.mockSupertest: JSON parse failed', {
+            textLength: text.length,
+            operation: 'responseBodyParsing'
+          });
+        }
       }
       const out = { status: statusCode, headers, text, body };
       if (typeof state.expected === 'number' && statusCode !== state.expected) {
@@ -312,7 +324,17 @@ export function supertest(app) {
         const mockRes = {
           statusCode: state.expected || 200,
           headers: state.headers,
-          text: typeof state.body === 'string' ? state.body : JSON.stringify(state.body || {})
+          text: typeof state.body === 'string' ? state.body : (() => {
+          try {
+            return JSON.stringify(state.body || {});
+          } catch (error) {
+            qerrors(error, 'runnerScaffolder.mockSupertest: JSON stringify failed', {
+              bodyType: typeof state.body,
+              operation: 'requestBodySerialization'
+            });
+            return '{}';
+          }
+        })()
         };
         
         setTimeout(() => {
@@ -348,9 +370,18 @@ export { createMockApp, supertest } from './httpTest.shim.js';
     const content = this.getRunnerTemplate();
     
     if (!this.config.dryRun) {
-      fs.writeFileSync(runnerPath, content, 'utf8');
-      fs.chmodSync(runnerPath, '755');
-      console.log('✅ Created qtests-runner.mjs');
+      try {
+        fs.writeFileSync(runnerPath, content, 'utf8');
+        fs.chmodSync(runnerPath, '755');
+        console.log('✅ Created qtests-runner.mjs');
+      } catch (error) {
+        qerrors(error, 'runnerScaffolder.writeRunner: file write failed', {
+          runnerPath,
+          contentLength: content.length,
+          operation: 'writeAndChmod'
+        });
+        throw error;
+      }
     } else {
       console.log('🔍 Would create qtests-runner.mjs');
     }

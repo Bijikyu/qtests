@@ -3,6 +3,7 @@
  */
 
 import { executeWithLogs } from '../lib/logUtils.js';
+import qerrors from 'qerrors';
 
 // Email data interface
 interface EmailData {
@@ -30,27 +31,41 @@ let emailHistory: Array<EmailData & EmailResult> = [];
  */
 function sendEmail(emailData: EmailData): Promise<EmailResult> {
   return executeWithLogs('sendEmail', async () => {
-    // Validate basic email structure
-    if (!emailData || !emailData.to) {
-      throw new Error('Email requires "to" field');
+    try {
+      // Validate basic email structure
+      if (!emailData || !emailData.to) {
+        const error = new Error('Email requires "to" field');
+        qerrors(error, 'sendEmail: missing required field', { emailData });
+        throw error;
+      }
+      
+      // Validate email format
+      if (typeof emailData.to !== 'string' || !emailData.to.includes('@')) {
+        const error = new Error('Invalid email format in "to" field');
+        qerrors(error, 'sendEmail: invalid email format', { to: emailData.to });
+        throw error;
+      }
+      
+      // Create mock result
+      const result: EmailResult = {
+        success: true,
+        messageId: `mock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        to: emailData.to,
+        subject: emailData.subject || '',
+        timestamp: new Date().toISOString()
+      };
+      
+      // Store in history
+      emailHistory.push({
+        ...emailData,
+        ...result
+      });
+      
+      return result;
+    } catch (error) {
+      qerrors(error, 'sendEmail: unexpected error', { emailData });
+      throw error;
     }
-    
-    // Create mock result
-    const result: EmailResult = {
-      success: true,
-      messageId: `mock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      to: emailData.to,
-      subject: emailData.subject || '',
-      timestamp: new Date().toISOString()
-    };
-    
-    // Store in history
-    emailHistory.push({
-      ...emailData,
-      ...result
-    });
-    
-    return result;
   }, emailData);
 }
 
@@ -77,10 +92,28 @@ function clearEmailHistory(): number {
  */
 function validateEmail(emailData: EmailData): boolean {
   return executeWithLogs('validateEmail', () => {
-    if (!emailData) return false;
-    if (!emailData.to) return false;
-    if (typeof emailData.to !== 'string') return false;
-    return emailData.to.includes('@');
+    try {
+      if (!emailData) {
+        qerrors(new Error('Email data is null or undefined'), 'validateEmail: null email data');
+        return false;
+      }
+      if (!emailData.to) {
+        qerrors(new Error('Email missing "to" field'), 'validateEmail: missing to field', { emailData });
+        return false;
+      }
+      if (typeof emailData.to !== 'string') {
+        qerrors(new Error('Email "to" field is not a string'), 'validateEmail: invalid to type', { toType: typeof emailData.to });
+        return false;
+      }
+      if (!emailData.to.includes('@')) {
+        qerrors(new Error('Email "to" field missing @ symbol'), 'validateEmail: invalid email format', { to: emailData.to });
+        return false;
+      }
+      return true;
+    } catch (error) {
+      qerrors(error, 'validateEmail: unexpected error', { emailData });
+      return false;
+    }
   }, emailData);
 }
 

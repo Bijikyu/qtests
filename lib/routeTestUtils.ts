@@ -5,6 +5,7 @@
  */
 
 import { createMockApp, supertest } from '../utils/httpTest.js';
+import qerrors from 'qerrors';
 
 // ==================== TEST INTERFACES ====================
 
@@ -48,18 +49,38 @@ function createSuccessResponse(data: any = { success: true }, status: number = 2
   return (req: any, res: any) => {
     res.statusCode = status;
     res.setHeader('content-type', 'application/json');
-    res.end(JSON.stringify(data));
+    try {
+      const jsonStr = JSON.stringify(data);
+      res.end(jsonStr);
+    } catch (error) {
+      qerrors(error, 'routeTestUtils.createSuccessResponse: JSON stringify failed', {
+        dataType: typeof data,
+        status,
+        operation: 'responseSerialization'
+      });
+      res.end('{"success":true}'); // fallback response
+    }
   };
 }
 
 /**
  * Create a standardized error response
  */
-function createErrorResponse(error: string = 'Bad request', status: number = 400): (req: any, res: any) => void {
+function createErrorResponse(errorMsg: string = 'Bad request', status: number = 400): (req: any, res: any) => void {
   return (req: any, res: any) => {
     res.statusCode = status;
     res.setHeader('content-type', 'application/json');
-    res.end(JSON.stringify({ error }));
+    try {
+      const jsonStr = JSON.stringify({ error: errorMsg });
+      res.end(jsonStr);
+    } catch (error) {
+      qerrors(error, 'routeTestUtils.createErrorResponse: JSON stringify failed', {
+        errorMsg,
+        status,
+        operation: 'errorResponseSerialization'
+      });
+      res.end('{"error":"Bad request"}'); // fallback response
+    }
   };
 }
 

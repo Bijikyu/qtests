@@ -15,6 +15,7 @@
  */
 
 import { redisUrl, redisCloudUrl } from '../config/localVars.js';
+import qerrors from 'qerrors';
 
 export interface RateLimitConfig {
   windowMs: number;
@@ -70,6 +71,11 @@ export class DistributedRateLimiter {
 
       await this.redis.connect();
     } catch (error) {
+      qerrors(error, 'rateLimiter.initialize: Redis connection failed', {
+        redisUrl: redisUrl || redisCloudUrl,
+        errorType: error.constructor.name,
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
       console.warn('Redis rate limiter initialization failed:',
         error instanceof Error ? error.message : String(error));
       this.isRedisAvailable = false;
@@ -104,15 +110,32 @@ export class DistributedRateLimiter {
       const currentCount = results[1];
 
       if (currentCount >= this.config.maxRequests) {
-        const oldestResult = await this.redis.zRange(key, 0, 0);
-        const oldestTimestamp = parseFloat(oldestResult[0]?.split('-')[0] || '0');
+        try {
+          const oldestResult = await this.redis.zRange(key, 0, 0);
+          const oldestTimestamp = parseFloat(oldestResult[0]?.split('-')[0] || '0');
 
-        return {
-          allowed: false,
-          remaining: 0,
-          resetTime: now + this.config.windowMs,
-          retryAfter: Math.max(0, Math.ceil((oldestTimestamp + this.config.windowMs - now) / 1000))
-        };
+          return {
+            allowed: false,
+            remaining: 0,
+            resetTime: now + this.config.windowMs,
+            retryAfter: Math.max(0, Math.ceil((oldestTimestamp + this.config.windowMs - now) / 1000))
+          };
+        } catch (oldestReadError) {
+          qerrors(oldestReadError, 'rateLimiter.checkRedisLimit: reading oldest timestamp failed', {
+            key,
+            redisUrl: redisUrl || redisCloudUrl,
+            errorType: oldestReadError.constructor?.name || 'unknown',
+            operation: 'zRange'
+          });
+          console.warn('Redis zRange failed, using fallback:', oldestReadError);
+          // Fallback to default behavior
+          return {
+            allowed: false,
+            remaining: 0,
+            resetTime: now + this.config.windowMs,
+            retryAfter: Math.ceil(this.config.windowMs / 1000)
+          };
+        }
       }
 
       return {
@@ -121,6 +144,13 @@ export class DistributedRateLimiter {
         resetTime: now + this.config.windowMs
       };
     } catch (error) {
+      qerrors(error, 'rateLimiter.checkRedisLimit: Redis pipeline execution failed', {
+        key,
+        redisUrl: redisUrl || redisCloudUrl,
+        errorType: error.constructor?.name || 'unknown',
+        errorMessage: error instanceof Error ? error.message : String(error),
+        operation: 'pipeline.exec'
+      });
       console.warn('Redis rate limit check failed, using fallback:', error);
       this.isRedisAvailable = false;
       return this.checkFallbackLimit(key, Date.now());

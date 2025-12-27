@@ -3,6 +3,8 @@
  * Provides HTML escaping and dangerous pattern detection
  */
 
+import qerrors from 'qerrors';
+
 const dangerousPatterns = [
   /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
   /javascript:/gi,
@@ -16,14 +18,28 @@ const dangerousPatterns = [
 ];
 
 export function escapeHtml(str: string): string {
-  const htmlEscapes: Record<string, string> = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#x27;'
-  };
-  return str.replace(/[&<>"']/g, char => htmlEscapes[char] || char);
+  try {
+    if (typeof str !== 'string') {
+      qerrors(new Error('Input must be a string'), 'htmlSanitization.escapeHtml: invalid input type', {
+        inputType: typeof str
+      });
+      return '';
+    }
+    
+    const htmlEscapes: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#x27;'
+    };
+    return str.replace(/[&<>"']/g, char => htmlEscapes[char] || char);
+  } catch (error) {
+    qerrors(error, 'htmlSanitization.escapeHtml: unexpected error', {
+      inputLength: str?.length || 0
+    });
+    return '';
+  }
 }
 
 export function hasDangerousPatterns(input: string): boolean {
@@ -35,12 +51,30 @@ export function hasDangerousPatterns(input: string): boolean {
 }
 
 export function sanitizeString(input: string): string {
-  let sanitized = input;
-  for (const pattern of dangerousPatterns) {
-    pattern.lastIndex = 0;
-    sanitized = sanitized.replace(pattern, '');
+  try {
+    if (typeof input !== 'string') {
+      qerrors(new Error('Input must be a string'), 'htmlSanitization.sanitizeString: invalid input type', {
+        inputType: typeof input
+      });
+      return '';
+    }
+    
+    let sanitized = input;
+    for (const pattern of dangerousPatterns) {
+      pattern.lastIndex = 0;
+      sanitized = sanitized.replace(pattern, '');
+    }
+    return escapeHtml(sanitized);
+} catch (error) {
+    qerrors(error, 'htmlSanitization.sanitizeString: sanitization failed', {
+      inputLength: input?.length || 0
+    });
+    return '';
   }
-  return escapeHtml(sanitized);
+}
+
+export { escapeHtml, sanitizeString, hasDangerousPatterns };
+export default dangerousPatterns;
 }
 
 export { dangerousPatterns };

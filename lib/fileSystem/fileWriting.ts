@@ -4,6 +4,7 @@
  */
 
 import { safeExists } from './fileExistence.js';
+import qerrors from 'qerrors';
 
 /**
  * Ensures a directory exists, creating it if necessary
@@ -17,7 +18,8 @@ export function ensureDir(dirPath: string): boolean {
       fs.mkdirSync(dirPath, { recursive: true });
     }
     return true;
-  } catch {
+  } catch (error) {
+    qerrors(error, 'fileWriting.ensureDir: creating directory', { dirPath });
     return false;
   }
 }
@@ -42,7 +44,8 @@ export function safeWriteFile(filePath: string, content: string | Buffer, encodi
     
     fs.writeFileSync(filePath, content, encoding);
     return true;
-  } catch {
+  } catch (error) {
+    qerrors(error, 'fileWriting.safeWriteFile: writing file', { filePath, encoding, contentType: typeof content });
     return false;
   }
 }

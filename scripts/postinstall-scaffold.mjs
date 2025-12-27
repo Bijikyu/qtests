@@ -1,14 +1,36 @@
 // scripts/postinstall-scaffold.mjs
 // Purpose: Passively scaffold qtests-runner.mjs into the CLIENT project root after install.
 // Behavior: Uses npm's INIT_CWD to locate the original cwd (client root). Quietly no-ops if unavailable.
-// Safety: Only writes when the runner is missing. Validates template invariants before writing.
+// Safety: Only writes when the runner is missing. Validates template variants before writing.
 import fs from 'fs';
 import path from 'path';
+import qerrors from 'qerrors';
 
 function isTruthy(v){ if(!v) return false; const s=String(v).trim().toLowerCase(); return s==='1'||s==='true'||s==='yes'; }
 
-function read(p){ try{ return fs.readFileSync(p,'utf8'); }catch{ return null; } }
-function exists(p){ try{ return fs.existsSync(p); }catch{ return false; } }
+function read(p){ 
+  try{ 
+    return fs.readFileSync(p,'utf8'); 
+  }catch(error){
+    qerrors(error, 'postinstall-scaffold: file read failed', {
+      filePath: p,
+      operation: 'readFileSync'
+    });
+    return null; 
+  } 
+}
+
+function exists(p){ 
+  try{ 
+    return fs.existsSync(p); 
+  }catch(error){
+    qerrors(error, 'postinstall-scaffold: file existence check failed', {
+      filePath: p,
+      operation: 'existsSync'
+    });
+    return false; 
+  } 
+}
 
 function isValidTemplate(content){
   try{ return /runCLI/.test(content) && /API Mode/.test(content); }catch{ return false; }
@@ -27,29 +49,47 @@ function isValidTemplate(content){
 
   const target = path.join(clientRoot, 'qtests-runner.mjs');
   // Passive correction: update client package.json test script if it incorrectly points to qtests-runner.js
-  try {
-    const pkgPath = path.join(clientRoot, 'package.json');
-    if (exists(pkgPath)) {
-      const pkg = JSON.parse(read(pkgPath) || '{}');
-      if (pkg && pkg.scripts && typeof pkg.scripts.test === 'string') {
-        if (/qtests-runner\.js\b/.test(pkg.scripts.test) || !/qtests-runner\.mjs\b/.test(pkg.scripts.test)) {
-          pkg.scripts.test = 'node qtests-runner.mjs';
-          // Ensure pretest includes ensure-runner and clean-dist for stability
-          const pre = String(pkg.scripts.pretest || '');
-          const ensureCmd = 'node scripts/ensure-runner.mjs';
-          const cleanCmd = 'node scripts/clean-dist.mjs';
-          const parts = [];
-          if (!pre.includes('scripts/clean-dist.mjs')) parts.push(cleanCmd);
-          if (!pre.includes('scripts/ensure-runner.mjs')) parts.push(ensureCmd);
-          pkg.scripts.pretest = parts.length ? (parts.join(' && ') + (pre ? ' && ' + pre : '')) : pre;
-          try { fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8'); if (!quiet) console.log('qtests: normalized test script to use qtests-runner.mjs'); } catch {}
+try {
+    const pkg = JSON.parse(read(pkgPath) || '{}');
+    if (pkg && pkg.scripts && typeof pkg.scripts.test === 'string') {
+      if (/qtests-runner\.js\b/.test(pkg.scripts.test) || !/qtests-runner\.mjs\b/.test(pkg.scripts.test)) {
+        pkg.scripts.test = 'node qtests-runner.mjs';
+        // Ensure pretest includes ensure-runner and clean-dist for stability
+        const pre = String(pkg.scripts.pretest || '');
+        const ensureCmd = 'node scripts/ensure-runner.mjs';
+        const cleanCmd = 'node scripts/clean-dist.mjs';
+        const parts = [];
+        if (!pre.includes('scripts/clean-dist.mjs')) parts.push(cleanCmd);
+        if (!pre.includes('scripts/ensure-runner.mjs')) parts.push(ensureCmd);
+        pkg.scripts.pretest = parts.length ? (parts.join(' && ') + (pre ? ' && ' + pre : '')) : pre;
+        try { 
+          fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8'); 
+          if (!quiet) console.log('qtests: normalized test script to use qtests-runner.mjs'); 
+        } catch (writeError) {
+          qerrors(writeError, 'postinstall-scaffold: package.json write failed', {
+            pkgPath,
+            operation: 'writeFileSync'
+          });
         }
       }
-      // Remove stray legacy runner if present
-      const legacy = path.join(clientRoot, 'qtests-runner.js');
-      try { if (exists(legacy)) fs.rmSync(legacy, { force: true }); } catch {}
     }
-  } catch {}
+    // Remove stray legacy runner if present
+    const legacy = path.join(clientRoot, 'qtests-runner.js');
+    try { 
+      if (exists(legacy)) fs.rmSync(legacy, { force: true }); 
+    } catch (removeError) {
+      qerrors(removeError, 'postinstall-scaffold: legacy runner removal failed', {
+        legacyPath: legacy,
+        operation: 'rmSync'
+      });
+    }
+  } catch (error) {
+    qerrors(error, 'postinstall-scaffold: package processing failed', {
+      clientRoot,
+      pkgPath,
+      errorType: error.constructor?.name || 'unknown'
+    });
+  }
   if (exists(target)) return; // runner already present, be passive
 
   // Locate a valid template from this installed package
@@ -84,7 +124,12 @@ function isValidTemplate(content){
       // Keep output minimal, one line only, no prompts.
       process.stdout.write('qtests: scaffolded qtests-runner.mjs at project root\n');
     }
-  } catch {
+  } catch (writeError) {
+    qerrors(writeError, 'postinstall-scaffold: runner write failed', {
+      target,
+      chosenLength: chosen?.length || 0,
+      operation: 'writeFileSync'
+    });
     // Silent failure by design; do not block installs.
   }
 })();

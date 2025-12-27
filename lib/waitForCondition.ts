@@ -1,3 +1,5 @@
+import qerrors from 'qerrors';
+
 export interface WaitForConditionOptions {
   timeoutMs?: number;
   intervalMs?: number;
@@ -15,14 +17,26 @@ export async function waitForCondition(
     let ok = false;
     try {
       ok = await predicate();
-    } catch (_) {
+    } catch (error) {
+      qerrors(error, 'waitForCondition: predicate execution failed', { 
+        timeoutMs, 
+        intervalMs, 
+        elapsedMs: Date.now() - start 
+      });
       ok = false;
     }
 
     if (ok) return;
 
-    if (Date.now() - start > timeoutMs) {
-      throw new Error(`waitForCondition: timeout after ${timeoutMs}ms`);
+    const elapsed = Date.now() - start;
+    if (elapsed > timeoutMs) {
+      const timeoutError = new Error(`waitForCondition: timeout after ${timeoutMs}ms`);
+      qerrors(timeoutError, 'waitForCondition: timeout exceeded', { 
+        timeoutMs, 
+        intervalMs, 
+        elapsedMs: elapsed 
+      });
+      throw timeoutError;
     }
 
     await new Promise((r) => setTimeout(r, intervalMs));

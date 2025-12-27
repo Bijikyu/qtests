@@ -3,6 +3,7 @@
  */
 
 import { CODEX, OFFLINE_MODE, NODE_ENV } from '../config/localVars.js';
+import qerrors from 'qerrors';
 
 // Type definitions
 interface EnvironmentState {
@@ -51,16 +52,36 @@ async function getAxios(): Promise<any> {
   if (!cachedAxios) {
     if (isOfflineFlag) {
       // Use stub axios
-      const stubAxios = await import('../stubs/axios.js');
-      cachedAxios = stubAxios.default || stubAxios;
+      try {
+        const stubAxios = await import('../stubs/axios.js');
+        cachedAxios = stubAxios.default || stubAxios;
+      } catch (error) {
+        qerrors(error, 'offlineMode.getEnvironment: stub axios import failed', {
+          modulePath: '../stubs/axios.js',
+          environment: 'offline'
+        });
+        throw error;
+      }
     } else {
       // Try real axios, fallback to stub
       try {
         const axios = await import('axios');
         cachedAxios = axios.default || axios;
-      } catch (e) {
-        const stubAxios = await import('../stubs/axios.js');
-        cachedAxios = stubAxios.default || stubAxios;
+      } catch (error) {
+        qerrors(error, 'offlineMode.getEnvironment: real axios import failed', {
+          modulePath: 'axios',
+          errorType: error.constructor?.name || 'unknown'
+        });
+        try {
+          const stubAxios = await import('../stubs/axios.js');
+          cachedAxios = stubAxios.default || stubAxios;
+        } catch (fallbackError) {
+          qerrors(fallbackError, 'offlineMode.getEnvironment: fallback axios import failed', {
+            modulePath: '../stubs/axios.js',
+            originalError: error.message
+          });
+          throw fallbackError;
+        }
       }
     }
   }

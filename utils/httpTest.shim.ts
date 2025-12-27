@@ -1,6 +1,8 @@
 // utils/httpTest.shim.ts - canonical http test helpers (ESM TypeScript)
 // Provides a tiny Express-like app and a supertest-like client with `.send()`
 
+import qerrors from 'qerrors';
+
 interface MockRequest {
   method?: string;
   url?: string;
@@ -105,7 +107,8 @@ export function supertest(app: MockApp): SupertestClient {
       if (typeof text === 'string') {
         try { 
           body = JSON.parse(text); 
-        } catch {
+        } catch (error) {
+          qerrors(error, 'httpTest.shim: parsing response body as JSON', { textLength: text.length });
           // Ignore JSON parse errors
         }
       }
@@ -154,7 +157,8 @@ export function supertest(app: MockApp): SupertestClient {
             req.body = (ct && ct.includes('application/json')) ? (() => { 
               try { 
                 return JSON.parse(state.body); 
-              } catch { 
+              } catch (error) {
+                qerrors(error, 'httpTest.shim: parsing request body as JSON', { contentType: ct });
                 return state.body; 
               } 
             })() : state.body;

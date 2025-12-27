@@ -6,6 +6,7 @@
  */
 
 import { logStart, logReturn } from '../../lib/logUtils.js';
+import qerrors from 'qerrors';
 
 // Type definitions
 interface DatabaseEntity {
@@ -82,6 +83,11 @@ class AssertionHelper {
       
       logReturn('AssertionHelper.assertDatabaseEntity', 'passed');
     } catch (error: any) {
+      qerrors(error, 'assertionHelper.assertDatabaseEntity: assertion failed', {
+        entityType: 'database',
+        errorMessage: error.message,
+        errorType: error.constructor?.name || 'unknown'
+      });
       logReturn('AssertionHelper.assertDatabaseEntity', `failed: ${error.message}`);
       throw error;
     }
@@ -117,6 +123,12 @@ class AssertionHelper {
       
       logReturn('AssertionHelper.assertApiResponse', 'passed');
     } catch (error: any) {
+      qerrors(error, 'assertionHelper.assertApiResponse: assertion failed', {
+        expectedStatus,
+        hasData,
+        errorMessage: error.message,
+        errorType: error.constructor?.name || 'unknown'
+      });
       logReturn('AssertionHelper.assertApiResponse', `failed: ${error.message}`);
       throw error;
     }
@@ -154,6 +166,12 @@ class AssertionHelper {
       
       logReturn('AssertionHelper.assertEmailSent', 'passed');
     } catch (error: any) {
+      qerrors(error, 'assertionHelper.assertEmailSent: assertion failed', {
+        expectedEmail,
+        options,
+        errorMessage: error.message,
+        errorType: error.constructor?.name || 'unknown'
+      });
       logReturn('AssertionHelper.assertEmailSent', `failed: ${error.message}`);
       throw error;
     }

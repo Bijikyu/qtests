@@ -7,6 +7,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import qerrors from 'qerrors';
 
 /**
  * Get the current directory (ESM compatible)
@@ -91,12 +92,37 @@ export function writeFileSafe(filePath, content, encoding = 'utf8') {
     // Ensure directory exists
     const dir = path.dirname(filePath);
     if (!pathExists(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
+      try {
+        fs.mkdirSync(dir, { recursive: true });
+      } catch (mkdirError) {
+        qerrors(mkdirError, 'sharedUtils.ensureDirectory: directory creation failed', {
+          dir,
+          filePath,
+          operation: 'mkdirSync'
+        });
+        console.debug(`Failed to create directory ${dir}: ${mkdirError.message}`);
+        return false;
+      }
     }
     
-    fs.writeFileSync(filePath, content, encoding);
-    return true;
+    try {
+      fs.writeFileSync(filePath, content, encoding);
+      return true;
+    } catch (writeError) {
+      qerrors(writeError, 'sharedUtils.ensureDirectory: file write failed', {
+        filePath,
+        encoding,
+        contentLength: content.length,
+        operation: 'writeFileSync'
+      });
+      console.debug(`Failed to write file ${filePath}: ${writeError.message}`);
+      return false;
+    }
   } catch (error) {
+    qerrors(error, 'sharedUtils.ensureDirectory: unexpected error', {
+      filePath,
+      encoding
+    });
     console.debug(`Failed to write file ${filePath}: ${error.message}`);
     return false;
   }
@@ -123,6 +149,10 @@ export function cleanDist(root = process.cwd()) {
     try {
       entries = fs.readdirSync(dir, { withFileTypes: true });
     } catch (error) {
+      qerrors(error, 'sharedUtils.cleanDist: directory read failed', {
+        dir,
+        operation: 'readdirSync'
+      });
       console.debug(`Failed to read directory ${dir}: ${error.message}`);
       continue;
     }

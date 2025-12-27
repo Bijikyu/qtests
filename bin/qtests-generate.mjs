@@ -3,6 +3,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import qerrors from 'qerrors';
 
 
 function parseArgs(argv) {
@@ -67,11 +68,13 @@ function showVersion() {
     const packageJsonPath = path.join(process.cwd(), 'node_modules', 'qtests', 'package.json');
     const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
     console.log(`qtests v${pkg.version}`);
-  } catch {
+  } catch (error) {
+    qerrors(error, 'showVersion: reading qtests package.json');
     try {
       const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
       console.log(`qtests v${pkg.version ?? 'unknown'}`);
-    } catch {
+    } catch (fallbackError) {
+      qerrors(fallbackError, 'showVersion: reading project package.json');
       console.log('qtests');
     }
   }
@@ -226,9 +229,19 @@ writeRunner(projectRoot) {
   const content = this.getRunnerTemplate();
   
   if (!this.config.dryRun) {
-    fs.writeFileSync(runnerPath, content, 'utf8');
-    fs.chmodSync(runnerPath, '755');
-    console.log('✅ Created qtests-runner.mjs');
+    try {
+      fs.writeFileSync(runnerPath, content, 'utf8');
+      fs.chmodSync(runnerPath, '755');
+      console.log('✅ Created qtests-runner.mjs');
+    } catch (error) {
+      qerrors(error, 'writeRunner: file creation failed', { 
+        runnerPath, 
+        contentLength: content.length,
+        operation: 'writeAndChmod'
+      });
+      console.error('❌ Failed to create qtests-runner.mjs:', error.message);
+      process.exit(1);
+    }
   } else {
     console.log('🔍 Would create qtests-runner.mjs');
   }
@@ -293,15 +306,26 @@ writeJestConfig(projectRoot) {
   const configPath = path.join(configDir, 'jest.config.mjs');
   
   if (!this.config.dryRun) {
-    if (!fs.existsSync(configDir)) {
-      fs.mkdirSync(configDir, { recursive: true });
-    }
-    
-    if (!fs.existsSync(configPath) || this.config.force) {
-      fs.writeFileSync(configPath, this.getJestConfig(), 'utf8');
-      console.log('✅ Created config/jest.config.mjs');
-    } else {
-      console.log('ℹ️ config/jest.config.mjs already exists');
+    try {
+if (!fs.existsSync(configDir)) {
+        fs.mkdirSync(configDir, { recursive: true });
+      }
+      
+      if (!fs.existsSync(configPath) || this.config.force) {
+        const configContent = this.getJestConfig();
+        fs.writeFileSync(configPath, configContent, 'utf8');
+        console.log('✅ Created config/jest.config.mjs');
+      } else {
+        console.log('ℹ️ config/jest.config.mjs already exists');
+      }
+    } catch (error) {
+      qerrors(error, 'writeJestConfig: config file creation failed', { 
+        configPath, 
+        configDir,
+        operation: 'mkdirAndWrite'
+      });
+      console.error('❌ Failed to create jest.config.mjs:', error.message);
+      process.exit(1);
     }
   } else {
     console.log('🔍 Would create config/jest.config.mjs');
@@ -369,6 +393,7 @@ updatePackageScript(projectRoot) {
     fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8');
     console.log('✅ Updated package.json test script');
   } catch (error) {
+    qerrors(error, 'updatePackageScript: parsing or writing package.json', { projectRoot, pkgPath });
     console.log('⚠️  Failed to update package.json:', error.message);
   }
 }
@@ -399,12 +424,14 @@ async function main() {
     console.log('  • Jest config created at config/jest.config.mjs (customize as needed)');
     console.log('  • Runner created at qtests-runner.mjs (API-only execution)');
   } catch (error) {
+    qerrors(error, 'main: scaffolding runner', { options });
     console.error('❌ Error scaffolding runner:', error && (error.stack || error.message) || String(error));
     process.exit(1);
   }
 }
 
 main().catch(err => {
+  qerrors(err, 'main: unexpected error in top-level catch');
   console.error('❌ Unexpected error:', err && (err.stack || err.message) || String(err));
   process.exit(1);
 });

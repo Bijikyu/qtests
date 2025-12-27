@@ -5,6 +5,7 @@
 
 import { forceGC } from './index.js';
 import { checkpointMemory } from './monitoringOrchestration.js';
+import qerrors from 'qerrors';
 
 export const cleanupWithMemoryTracking = async (): Promise<void> => {
   checkpointMemory('pre-cleanup');
@@ -29,6 +30,10 @@ export const aggressiveCleanup = (): void => {
     forceGC();
     console.log(`Memory cleanup: cleared ${clearedModules} modules`);
   } catch (error: any) {
+    qerrors(error, 'cleanupOperations.aggressiveCleanup: memory cleanup failed', {
+      errorType: error.constructor.name,
+      errorMessage: error.message
+    });
     console.warn('Memory cleanup warning:', error.message);
   }
 };

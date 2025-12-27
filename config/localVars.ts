@@ -11,14 +11,71 @@
 
 // Import JavaScript modules with proper ESM compatibility
 import { createRequire } from 'module';
+import qerrors from 'qerrors';
 
 const nodeRequire = createRequire(import.meta.url);
-const envConfig = nodeRequire('./envConfig.js');
-const qtestsConfig = nodeRequire('./qtestsConfig.js');
-const testConfig = nodeRequire('./testConfig.js');
-const fileSystemConfig = nodeRequire('./fileSystemConfig.js');
-const mockConfig = nodeRequire('./mockConfig.js');
-const systemConfig = nodeRequire('./systemConfig.js');
+
+let envConfig, qtestsConfig, testConfig, fileSystemConfig, mockConfig, systemConfig;
+
+try {
+  envConfig = nodeRequire('./envConfig.js');
+} catch (error: any) {
+  qerrors(error, 'localVars: failed to load envConfig.js', { 
+    modulePath: './envConfig.js',
+    errorType: error.constructor?.name || 'unknown'
+  });
+  throw error;
+}
+
+try {
+  qtestsConfig = nodeRequire('./qtestsConfig.js');
+} catch (error: any) {
+  qerrors(error, 'localVars: failed to load qtestsConfig.js', { 
+    modulePath: './qtestsConfig.js',
+    errorType: error.constructor?.name || 'unknown'
+  });
+  throw error;
+}
+
+try {
+  testConfig = nodeRequire('./testConfig.js');
+} catch (error: any) {
+  qerrors(error, 'localVars: failed to load testConfig.js', { 
+    modulePath: './testConfig.js',
+    errorType: error.constructor?.name || 'unknown'
+  });
+  throw error;
+}
+
+try {
+  fileSystemConfig = nodeRequire('./fileSystemConfig.js');
+} catch (error: any) {
+  qerrors(error, 'localVars: failed to load fileSystemConfig.js', { 
+    modulePath: './fileSystemConfig.js',
+    errorType: error.constructor?.name || 'unknown'
+  });
+  throw error;
+}
+
+try {
+  mockConfig = nodeRequire('./mockConfig.js');
+} catch (error: any) {
+  qerrors(error, 'localVars: failed to load mockConfig.js', { 
+    modulePath: './mockConfig.js',
+    errorType: error.constructor?.name || 'unknown'
+  });
+  throw error;
+}
+
+try {
+  systemConfig = nodeRequire('./systemConfig.js');
+} catch (error: any) {
+  qerrors(error, 'localVars: failed to load systemConfig.js', { 
+    modulePath: './systemConfig.js',
+    errorType: error.constructor?.name || 'unknown'
+  });
+  throw error;
+}
 
 // Re-export from focused configuration modules for backward compatibility
 
