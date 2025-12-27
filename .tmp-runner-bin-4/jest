@@ -1,8 +1,0 @@
-#!/usr/bin/env node
-console.error('FAKE JEST CALLED');
-try {
-  const fs = require('fs');
-  const path = require('path');
-  fs.writeFileSync(path.join(process.cwd(), 'runner-jest-args-4.json'), JSON.stringify(process.argv.slice(2)), 'utf8');
-} catch (e) { console.error('FAKE JEST WRITE ERR', e && e.message); }
-process.exit(1);

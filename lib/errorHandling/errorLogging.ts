@@ -66,7 +66,6 @@ export async function withAsyncErrorLogging<T>(fn: () => Promise<T>, context: st
     throw error;
   }
 }
-}
 
 /**
  * Safely executes asynchronous function, returning null on error

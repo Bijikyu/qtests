@@ -1,5 +1,0 @@
-#!/usr/bin/env node
-import fs from 'fs';
-import path from 'path';
-try { fs.writeFileSync(path.join(process.cwd(), 'runner-jest-args-2.json'), JSON.stringify(process.argv.slice(2)), 'utf8'); } catch { }
-process.exit(1);

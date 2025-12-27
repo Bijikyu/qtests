@@ -66,7 +66,7 @@ function createSuccessResponse(data: any = { success: true }, status: number = 2
       const jsonStr = JSON.stringify(data);
       res.end(jsonStr);
     } catch (error) {
-      qerrorsFallback(error, 'routeTestUtils.createSuccessResponse: JSON stringify failed', {
+      qerrors(error, 'routeTestUtils.createSuccessResponse: JSON stringify failed', {
         dataType: typeof data,
         status,
         operation: 'responseSerialization'
@@ -87,7 +87,7 @@ function createErrorResponse(errorMsg: string = 'Bad request', status: number = 
       const jsonStr = JSON.stringify({ error: errorMsg });
       res.end(jsonStr);
     } catch (error) {
-      qerrorsFallback(error, 'routeTestUtils.createErrorResponse: JSON stringify failed', {
+      qerrors(error, 'routeTestUtils.createErrorResponse: JSON stringify failed', {
         errorMsg,
         status,
         operation: 'errorResponseSerialization'

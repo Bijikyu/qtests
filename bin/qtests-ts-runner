@@ -9,6 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
 import os from 'os';
+import qerrors from '../dist/lib/qerrorsFallback.js';
 
 // ANSI color codes for terminal output
 const colors = {
@@ -66,7 +67,13 @@ class TestRunner {
           testFiles.push(fullPath);
         }
       }
-    } catch {
+    } catch (error) {
+      qerrors(error as Error, 'testRunner.discoverTests: directory read failed', {
+        directory: dir,
+        depth,
+        errorType: error.constructor.name,
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
       // Silently skip directories we can't read
     }
     // Optional pattern filter via env to limit scope for large repos/CI
@@ -75,7 +82,13 @@ class TestRunner {
       try {
         const rx = new RegExp(pattern);
         return testFiles.filter(f => rx.test(f));
-      } catch {
+      } catch (error) {
+        qerrors(error as Error, 'testRunner.discoverTests: pattern compilation failed', {
+          pattern,
+          testFilesCount: testFiles.length,
+          errorType: error.constructor.name,
+          errorMessage: error instanceof Error ? error.message : String(error)
+        });
         return testFiles; // invalid pattern, ignore
       }
     }
@@ -89,57 +102,113 @@ class TestRunner {
       let stdout = '';
       let stderr = '';
 
-      // Always use Jest with project config and allow empty matches
-      const configCandidates = [
-        path.join(process.cwd(), 'config', 'jest.config.mjs'),
-        path.join(process.cwd(), 'jest.config.mjs')
-      ];
-      const cfg = configCandidates.find(p => {
-        try { return fs.existsSync(p); } catch { return false; }
-      });
-      const jestArgs = [];
-      if (cfg) {
-        jestArgs.push('--config', cfg);
-      }
-      jestArgs.push('--passWithNoTests');
-      // Per-file execution tuning: allow in-band or worker override via env
-      const fileWorkers = process.env.QTESTS_FILE_WORKERS ? String(process.env.QTESTS_FILE_WORKERS) : '';
-      const inBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
-      jestArgs.push(testFile);
-      if (inBand) {
-        jestArgs.push('--runInBand');
-      } else if (fileWorkers) {
-        jestArgs.push(`--maxWorkers=${fileWorkers}`);
-      }
-      jestArgs.push('--cache', '--no-coverage');
-
-      const child = spawn('jest', jestArgs, {
-        stdio: ['pipe', 'pipe', 'pipe'],
-        shell: true,
-        env: {
-          ...process.env,
-          NODE_ENV: 'test',
-          NODE_OPTIONS: [process.env.NODE_OPTIONS || '', '--experimental-vm-modules'].filter(Boolean).join(' ').trim()
+      try {
+        // Always use Jest with project config and allow empty matches
+        const configCandidates = [
+          path.join(process.cwd(), 'config', 'jest.config.mjs'),
+          path.join(process.cwd(), 'jest.config.mjs')
+        ];
+        let cfg;
+        try {
+          cfg = configCandidates.find(p => {
+            try { return fs.existsSync(p); } catch { return false; }
+          });
+        } catch (error) {
+          qerrors(error as Error, 'testRunner.runTestFile: config discovery failed', {
+            testFile,
+            configCandidates,
+            errorType: error.constructor.name,
+            errorMessage: error instanceof Error ? error.message : String(error)
+          });
         }
-      });
-
-      child.stdout.on('data', (data) => { stdout += data.toString(); });
-      child.stderr.on('data', (data) => { stderr += data.toString(); });
-
-      child.on('close', (code) => {
-        const duration = Date.now() - startTime;
-        let output = stdout + stderr;
-        if (code !== 0 && !output.trim()) {
-          output = 'No output captured from jest. Possible worker crash or environment restriction.';
+        
+        const jestArgs = [];
+        if (cfg) {
+          jestArgs.push('--config', cfg);
         }
-        resolve({ file: testFile, success: code === 0, duration, output, stdout, stderr });
-      });
+        jestArgs.push('--passWithNoTests');
+        // Per-file execution tuning: allow in-band or worker override via env
+        const fileWorkers = process.env.QTESTS_FILE_WORKERS ? String(process.env.QTESTS_FILE_WORKERS) : '';
+        const inBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
+        jestArgs.push(testFile);
+        if (inBand) {
+          jestArgs.push('--runInBand');
+        } else if (fileWorkers) {
+          jestArgs.push(`--maxWorkers=${fileWorkers}`);
+        }
+        jestArgs.push('--cache', '--no-coverage');
 
-      child.on('error', (err) => {
+        const child = spawn('jest', jestArgs, {
+          stdio: ['pipe', 'pipe', 'pipe'],
+          shell: true,
+          env: {
+            ...process.env,
+            NODE_ENV: 'test',
+            NODE_OPTIONS: [process.env.NODE_OPTIONS || '', '--experimental-vm-modules'].filter(Boolean).join(' ').trim()
+          },
+          timeout: 300000 // 5 minute timeout per test file
+        });
+
+        child.stdout.on('data', (data) => { stdout += data.toString(); });
+        child.stderr.on('data', (data) => { stderr += data.toString(); });
+
+        child.on('close', (code) => {
+          const duration = Date.now() - startTime;
+          let output = stdout + stderr;
+          if (code !== 0 && !output.trim()) {
+            output = 'No output captured from jest. Possible worker crash or environment restriction.';
+          }
+          resolve({ file: testFile, success: code === 0, duration, output, stdout, stderr });
+        });
+
+        child.on('error', (err) => {
+          qerrors(err, 'testRunner.runTestFile: jest process spawn failed', {
+            testFile,
+            jestArgs,
+            errorType: err.constructor.name,
+            errorMessage: err.message
+          });
+          const duration = Date.now() - startTime;
+          const msg = (stderr && stderr.trim()) || (err && err.message) || 'Runner error';
+          resolve({ file: testFile, success: false, duration, output: msg, stdout, stderr });
+        });
+
+        // Handle process timeout
+        if (child.timeout) {
+          child.on('timeout', () => {
+            qerrors(new Error('Test execution timeout'), 'testRunner.runTestFile: jest process timeout', {
+              testFile,
+              timeoutMs: 300000,
+              duration: Date.now() - startTime
+            });
+            child.kill('SIGTERM');
+            const duration = Date.now() - startTime;
+            resolve({ 
+              file: testFile, 
+              success: false, 
+              duration, 
+              output: 'Test execution timed out after 5 minutes', 
+              stdout, 
+              stderr 
+            });
+          });
+        }
+      } catch (error) {
+        qerrors(error as Error, 'testRunner.runTestFile: test execution setup failed', {
+          testFile,
+          errorType: error.constructor.name,
+          errorMessage: error instanceof Error ? error.message : String(error)
+        });
         const duration = Date.now() - startTime;
-        const msg = (stderr && stderr.trim()) || (err && err.message) || 'Runner error';
-        resolve({ file: testFile, success: false, duration, output: msg, stdout, stderr });
-      });
+        resolve({ 
+          file: testFile, 
+          success: false, 
+          duration, 
+          output: `Test setup failed: ${error instanceof Error ? error.message : String(error)}`, 
+          stdout: '', 
+          stderr: '' 
+        });
+      }
     });
 
     // First attempt
@@ -175,25 +244,35 @@ class TestRunner {
 
   // Generate debug file for failed tests
   generateDebugFile() {
-    const failedResults = this.testResults.filter(r => !r.success);
-    if (failedResults.length === 0) return;
-    let debugContent = '# Test Failure Analysis\n\n';
-    debugContent += 'Analyze and address the following test failures:\n\n';
-    failedResults.forEach((result, index) => {
-      debugContent += `## Failed Test ${index + 1}: ${result.file}\n\n`;
-      debugContent += '### Output:\n';
-      debugContent += '```\n';
-      debugContent += result.output;
-      debugContent += '\n```\n\n';
-      debugContent += `### Duration: ${result.duration}ms\n\n`;
-      debugContent += '---\n\n';
-    });
-    debugContent += '## Summary\n\n';
-    debugContent += `- Total failed tests: ${failedResults.length}\n`;
-    debugContent += `- Failed test files: ${failedResults.map(r => r.file).join(', ')}\n`;
-    debugContent += `- Generated: ${new Date().toISOString()}\n`;
-    fs.writeFileSync('DEBUG_TESTS.md', debugContent);
-    console.log(`\n${colors.yellow}📋 Debug file created: DEBUG_TESTS.md${colors.reset}`);
+    try {
+      const failedResults = this.testResults.filter(r => !r.success);
+      if (failedResults.length === 0) return;
+      let debugContent = '# Test Failure Analysis\n\n';
+      debugContent += 'Analyze and address the following test failures:\n\n';
+      failedResults.forEach((result, index) => {
+        debugContent += `## Failed Test ${index + 1}: ${result.file}\n\n`;
+        debugContent += '### Output:\n';
+        debugContent += '```\n';
+        debugContent += result.output;
+        debugContent += '\n```\n\n';
+        debugContent += `### Duration: ${result.duration}ms\n\n`;
+        debugContent += '---\n\n';
+      });
+      debugContent += '## Summary\n\n';
+      debugContent += `- Total failed tests: ${failedResults.length}\n`;
+      debugContent += `- Failed test files: ${failedResults.map(r => r.file).join(', ')}\n`;
+      debugContent += `- Generated: ${new Date().toISOString()}\n`;
+      
+      fs.writeFileSync('DEBUG_TESTS.md', debugContent);
+      console.log(`\n${colors.yellow}📋 Debug file created: DEBUG_TESTS.md${colors.reset}`);
+    } catch (error) {
+      qerrors(error as Error, 'testRunner.generateDebugFile: debug file creation failed', {
+        failedTestsCount: this.testResults.filter(r => !r.success).length,
+        errorType: error.constructor.name,
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
+      console.error(`${colors.red}Failed to create debug file:${colors.reset}`, error);
+    }
   }
 
   // Print comprehensive summary
@@ -268,6 +347,10 @@ class TestRunner {
 // Run the test suite
 const runner = new TestRunner();
 runner.run().catch(error => {
+  qerrors(error, 'testRunner.main: test runner execution failed', {
+    errorType: error.constructor.name,
+    errorMessage: error instanceof Error ? error.message : String(error)
+  });
   console.error(`${colors.red}Test runner error:${colors.reset}`, error);
   process.exit(1);
 });

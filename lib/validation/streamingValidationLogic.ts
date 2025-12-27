@@ -13,7 +13,7 @@ export async function validateStreamingString<T>(
   startTime: number
 ): Promise<ValidationResult> {
   const chunks: string[] = [];
-  const chunkSize = config.maxChunkSize;
+  const chunkSize = Math.max(1, Math.min(config.maxChunkSize, 1000000)); // Cap at 1MB for safety
   
   for (let i = 0; i < data.length; i += chunkSize) {
     chunks.push(data.slice(i, i + chunkSize));

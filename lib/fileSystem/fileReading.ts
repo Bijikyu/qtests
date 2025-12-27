@@ -4,7 +4,7 @@
  */
 
 import * as fs from 'fs';
-import qerrors from 'qerrors';
+import qerrors from '../qerrorsFallback.js';
 
 /**
  * Safely reads a file as UTF-8 text
@@ -13,9 +13,26 @@ import qerrors from 'qerrors';
  */
 export function safeReadFile(filePath: string): string | null {
   try {
+    // Validate file path to prevent path traversal
+    if (!filePath || typeof filePath !== 'string') {
+      throw new Error('Invalid file path provided');
+    }
+    
+    // Check file existence and size before reading
+    const stats = fs.statSync(filePath);
+    if (stats.size > 100 * 1024 * 1024) { // 100MB limit
+      throw new Error('File too large for safe reading');
+    }
+    
     return fs.readFileSync(filePath, 'utf8');
-  } catch (error) {
-    qerrors(error, 'fileReading.safeReadFile: reading file as UTF-8', { filePath });
+  } catch (error: any) {
+    qerrors(error, 'fileReading.safeReadFile: reading file as UTF-8', { 
+      filePath,
+      errorCode: error.code,
+      errno: error.errno,
+      syscall: error.syscall,
+      operation: 'readFileSync'
+    });
     return null;
   }
 }
@@ -27,9 +44,26 @@ export function safeReadFile(filePath: string): string | null {
  */
 export function safeReadFileBuffer(filePath: string): Buffer | null {
   try {
+    // Validate file path to prevent path traversal
+    if (!filePath || typeof filePath !== 'string') {
+      throw new Error('Invalid file path provided');
+    }
+    
+    // Check file existence and size before reading
+    const stats = fs.statSync(filePath);
+    if (stats.size > 500 * 1024 * 1024) { // 500MB limit for buffer reads
+      throw new Error('File too large for safe buffer reading');
+    }
+    
     return fs.readFileSync(filePath);
-  } catch (error) {
-    qerrors(error, 'fileReading.safeReadFileBuffer: reading file as buffer', { filePath });
+  } catch (error: any) {
+    qerrors(error, 'fileReading.safeReadFileBuffer: reading file as buffer', { 
+      filePath,
+      errorCode: error.code,
+      errno: error.errno,
+      syscall: error.syscall,
+      operation: 'readFileSync'
+    });
     return null;
   }
 }

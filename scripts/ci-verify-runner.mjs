@@ -2,7 +2,7 @@
 // CI check to ensure that repository uses unified API-only runner and clean dist artifacts.
 import fs from 'fs';
 import path from 'path';
-import qerrors from 'qerrors';
+import qerrors from '../dist/lib/qerrorsFallback.js';
 
 function fail(msg) { 
   qerrors(new Error(msg), 'ci-verify-runner: CI verification failed', { msg });
@@ -12,11 +12,35 @@ function fail(msg) {
 
 function readJson(p) { 
   try { 
-    return JSON.parse(fs.readFileSync(p, 'utf8')); 
+    // Validate file path
+    if (!p || typeof p !== 'string') {
+      throw new Error('Invalid file path provided');
+    }
+    
+    // Check file existence and size
+    if (!fs.existsSync(p)) {
+      throw new Error(`File does not exist: ${p}`);
+    }
+    
+    const stats = fs.statSync(p);
+    if (stats.size > 10 * 1024 * 1024) { // 10MB limit for JSON files
+      throw new Error('JSON file too large for safe parsing');
+    }
+    
+    const content = fs.readFileSync(p, 'utf8');
+    if (content.length === 0) {
+      throw new Error('JSON file is empty');
+    }
+    
+    return JSON.parse(content); 
   } catch (error) {
     qerrors(error, 'ci-verify-runner: JSON parse failed', { 
       filePath: p,
-      operation: 'readFileSync'
+      operation: 'readFileSync',
+      errorCode: error.code,
+      errno: error.errno,
+      syscall: error.syscall,
+      errorMessage: error.message
     });
     return null; 
   } 
@@ -53,7 +77,25 @@ function readJson(p) {
   // 2) Runner should be API-only and not use tsx or spawn
   const runnerPath = path.join(cwd, 'qtests-runner.mjs');
   if (!fs.existsSync(runnerPath)) fail('qtests-runner.mjs missing at project root');
-  const runner = fs.readFileSync(runnerPath, 'utf8');
+  
+  let runner;
+  try {
+    const stats = fs.statSync(runnerPath);
+    if (stats.size > 1024 * 1024) { // 1MB limit for runner file
+      throw new Error('Runner file too large for safe reading');
+    }
+    runner = fs.readFileSync(runnerPath, 'utf8');
+  } catch (error) {
+    qerrors(error, 'ci-verify-runner: runner file read failed', {
+      runnerPath,
+      operation: 'readFileSync',
+      errorCode: error.code,
+      errno: error.errno,
+      syscall: error.syscall
+    });
+    fail('Failed to read qtests-runner.mjs file');
+  }
+  
   if (!/runCLI/.test(runner) || !/API Mode/.test(runner)) {
     fail('Runner must be API-only: contain runCLI usage and API Mode banner');
   }
@@ -68,7 +110,24 @@ function readJson(p) {
   ].filter(p => fs.existsSync(p));
   if (tplPaths.length === 0) fail('No runner templates found under lib/templates or templates');
   for (const p of tplPaths) {
-    const tpl = fs.readFileSync(p, 'utf8');
+    let tpl;
+    try {
+      const stats = fs.statSync(p);
+      if (stats.size > 1024 * 1024) { // 1MB limit for template files
+        throw new Error('Template file too large for safe reading');
+      }
+      tpl = fs.readFileSync(p, 'utf8');
+    } catch (error) {
+      qerrors(error, 'ci-verify-runner: template file read failed', {
+        templatePath: p,
+        operation: 'readFileSync',
+        errorCode: error.code,
+        errno: error.errno,
+        syscall: error.syscall
+      });
+      fail(`Failed to read template file: ${p}`);
+    }
+    
     if (!/runCLI/.test(tpl) || !/API Mode/.test(tpl)) {
       fail(`Template missing required invariants (runCLI, API Mode): ${p}`);
     }
@@ -112,7 +171,25 @@ function readJson(p) {
   // 4) Jest config includes ignores and require polyfill
   const jestCfgPath = path.join(cwd, 'config', 'jest.config.mjs');
   if (!fs.existsSync(jestCfgPath)) fail('config/jest.config.mjs missing');
-  const jestCfg = fs.readFileSync(jestCfgPath, 'utf8');
+  
+  let jestCfg;
+  try {
+    const stats = fs.statSync(jestCfgPath);
+    if (stats.size > 1024 * 1024) { // 1MB limit for config files
+      throw new Error('Jest config file too large for safe reading');
+    }
+    jestCfg = fs.readFileSync(jestCfgPath, 'utf8');
+  } catch (error) {
+    qerrors(error, 'ci-verify-runner: jest config read failed', {
+      jestCfgPath,
+      operation: 'readFileSync',
+      errorCode: error.code,
+      errno: error.errno,
+      syscall: error.syscall
+    });
+    fail('Failed to read jest.config.mjs file');
+  }
+  
   if (!/modulePathIgnorePatterns\s*:\s*\[.*dist\/.*/s.test(jestCfg) || !/watchPathIgnorePatterns\s*:\s*\[.*dist\/.*/s.test(jestCfg)) {
     fail('jest.config.mjs must ignore dist/ in modulePathIgnorePatterns and watchPathIgnorePatterns');
   }
