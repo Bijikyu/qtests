@@ -70,7 +70,11 @@ async function setup(): Promise<void> {
     const shouldLog = !((qtestsSilent || 'false') === '1' || (qtestsSilent || 'false') === 'true');
     if (shouldLog) {
       console.log('qtests: Global module resolution patching activated');
-      console.log(`qtests: Stub registry contains: ${mockRegistry.list().join(', ')}`);
+      try {
+        console.log(`qtests: Stub registry contains: ${mockRegistry.list().join(', ')}`);
+      } catch (logError) {
+        console.log('qtests: Stub registry listing failed, but setup continuing');
+      }
     }
     
     console.log(`setup has run resulting in module resolution modification`); // logging completion per requirements
