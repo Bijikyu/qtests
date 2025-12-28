@@ -57,11 +57,26 @@ async function setup(): Promise<void> {
   console.log(`setup is running with none`); // logging function start per requirements
   
   try {
-    await import('../setup.js'); // load setup implementation with ES modules
+    // Import mock system directly to avoid circular import
+    // Root setup.js performs side effects on import, but that would create circular dependency
+    const { mockRegistry, installMocking, registerDefaultMocks } = await import('./mockSystem.js');
+    const { qtestsSilent } = await import('../config/localVars.js');
+    
+    // Perform the same setup as root setup.js
+    registerDefaultMocks();
+    installMocking();
+    
+    // Honor CI silence toggle to reduce noise
+    const shouldLog = !((qtestsSilent || 'false') === '1' || (qtestsSilent || 'false') === 'true');
+    if (shouldLog) {
+      console.log('qtests: Global module resolution patching activated');
+      console.log(`qtests: Stub registry contains: ${mockRegistry.list().join(', ')}`);
+    }
+    
     console.log(`setup has run resulting in module resolution modification`); // logging completion per requirements
   } catch (error: any) {
     qerrors(error, 'setup.ts: module resolution setup failed', { 
-      setupModule: '../setup.js',
+      setupModule: 'direct mockSystem import',
       errorMessage: error.message,
       errorType: error.constructor.name,
       nodeVersion: process.version,

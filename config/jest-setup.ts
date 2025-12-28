@@ -1,20 +1,20 @@
 // Simplified jest-setup.ts with proper error handling
-// Import qerrors for basic error handling (using fallback approach)
-const qerrors = require('qerrors');
+// Import qerrors for basic error handling
+import qerrors from 'qerrors';
+import { jest as jestFromGlobals } from '@jest/globals';
 
 // Set test environment early - NODE_ENV is managed in localVars.ts
 import { 
-  NODE_ENV,
-  OFFLINE_MODE,
-  JEST_WORKER_ID,
-  QTESTS_SILENT,
-  QTESTS_FILE_WORKERS,
-  QTESTS_CONCURRENCY,
-  QTESTS_PATTERN,
-  QTESTS_SUPPRESS_DEBUG,
-  QTESTS_NO_DEBUG_FILE,
-  QTESTS_DEBUG_FILE,
-  INIT_CWD
+  nodeEnv,
+  testMode,
+  debugMode,
+  qtestsSilent,
+  qtestsFileWorkers,
+  qtestsConcurrency,
+  qtestsPattern,
+  qtestsSuppressDebug,
+  qtestsNoDebugFile,
+  qtestsDebugFile
 } from './localVars.js';
 
 // Resolve jest reference safely and expose globally for tests
@@ -24,8 +24,8 @@ const J = (typeof jestFromGlobals !== 'undefined' && jestFromGlobals)
   : (globalThis as any).jest;
 
 // Ensure jest is globally available for tests
-if (!globalJest && J) {
-  (globalThis as any).jest = J as any;
+if (!(globalThis as any).jest && J) {
+  (globalThis as any).jest = J;
 }
 
 beforeAll(() => {
