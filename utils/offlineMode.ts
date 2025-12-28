@@ -53,9 +53,6 @@ async function getAxios(): Promise<any> {
     if (isOfflineFlag) {
       // Use stub axios
       try {
-        // Validate and safely import stub axios
-      let axiosModule;
-      try {
         // Validate module path to prevent traversal
         const axiosPath = require.resolve('../stubs/axios.js');
         if (!axiosPath.includes('/stubs/')) {

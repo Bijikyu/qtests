@@ -115,7 +115,6 @@ function executeWithLogs<T>(name: string, fn: (...args: any[]) => T, ...args: an
     // Error message logging helps identify issues in wrapped function execution
     // Re-throwing maintains original error handling contract while adding diagnostics
     if (LOG_ENABLED) console.log(`${name} encountered ${error.message}`);
-    console.log(`executeWithLogs error: ${error.message}`);
     throw error;
   }
 }

@@ -49,25 +49,31 @@ class MockRegistry {
     const entry = this.map.get(name);
     if (!entry) return undefined;
     
+    // Return existing instance if already created
+    if (typeof entry.instance !== 'undefined') {
+      return entry.instance;
+    }
+    
     // Prevent concurrent factory executions
     if (this._lockMap.has(name)) {
       const existingPromise = this._lockMap.get(name);
       return existingPromise ? await existingPromise : undefined;
     }
     
-    if (typeof entry.instance === 'undefined') {
-      const factoryPromise = this._executeFactory(entry, name);
-      this._lockMap.set(name, factoryPromise);
-      try {
-        entry.instance = await factoryPromise;
-      } catch (error) {
-        entry.instance = {};
-        console.warn(`Mock factory failed for ${name}:`, error);
-      } finally {
-        this._lockMap.delete(name);
-      }
+    // Create and cache the instance
+    const factoryPromise = this._executeFactory(entry, name);
+    this._lockMap.set(name, factoryPromise);
+    
+    try {
+      entry.instance = await factoryPromise;
+      return entry.instance;
+    } catch (error) {
+      entry.instance = {};
+      console.warn(`Mock factory failed for ${name}:`, error);
+      return entry.instance;
+    } finally {
+      this._lockMap.delete(name);
     }
-    return entry.instance;
   }
 
   private async _executeFactory(entry: MockEntry, name: string): Promise<any> {
@@ -155,18 +161,22 @@ export function registerDefaultMocks(): void {
   mockRegistry.register('axios', () => {
     let axiosStub;
     try { 
-      // Validate path to prevent traversal
+      // Validate path to prevent traversal - use proper path resolution
       const axiosPath = require.resolve('../stubs/axios.ts');
-      if (!axiosPath.startsWith(process.cwd() + '/stubs/')) {
-        throw new Error('Invalid stub path');
+      const resolvedPath = path.resolve(axiosPath);
+      const expectedDir = path.resolve(process.cwd(), 'stubs');
+      if (!resolvedPath.startsWith(expectedDir + path.sep)) {
+        throw new Error('Invalid stub path - outside expected directory');
       }
       axiosStub = require(axiosPath).default; 
     } catch (tsError) {
       // TypeScript stub failed, try JavaScript
       try { 
         const axiosJsPath = require.resolve('../stubs/axios.js');
-        if (!axiosJsPath.startsWith(process.cwd() + '/stubs/')) {
-          throw new Error('Invalid stub path');
+        const resolvedPath = path.resolve(axiosJsPath);
+        const expectedDir = path.resolve(process.cwd(), 'stubs');
+        if (!resolvedPath.startsWith(expectedDir + path.sep)) {
+          throw new Error('Invalid stub path - outside expected directory');
         }
         axiosStub = require(axiosJsPath).default; 
       } catch (jsError) {
@@ -180,18 +190,22 @@ export function registerDefaultMocks(): void {
   mockRegistry.register('winston', () => {
     let winstonStub;
     try { 
-      // Validate path to prevent traversal
+      // Validate path to prevent traversal - use proper path resolution
       const winstonPath = require.resolve('../stubs/winston.ts');
-      if (!winstonPath.startsWith(process.cwd() + '/stubs/')) {
-        throw new Error('Invalid stub path');
+      const resolvedPath = path.resolve(winstonPath);
+      const expectedDir = path.resolve(process.cwd(), 'stubs');
+      if (!resolvedPath.startsWith(expectedDir + path.sep)) {
+        throw new Error('Invalid stub path - outside expected directory');
       }
       winstonStub = require(winstonPath).default; 
     } catch (tsError) {
       // TypeScript stub failed, try JavaScript
       try { 
         const winstonJsPath = require.resolve('../stubs/winston.js');
-        if (!winstonJsPath.startsWith(process.cwd() + '/stubs/')) {
-          throw new Error('Invalid stub path');
+        const resolvedPath = path.resolve(winstonJsPath);
+        const expectedDir = path.resolve(process.cwd(), 'stubs');
+        if (!resolvedPath.startsWith(expectedDir + path.sep)) {
+          throw new Error('Invalid stub path - outside expected directory');
         }
         winstonStub = require(winstonJsPath).default; 
       } catch (jsError) {
@@ -205,10 +219,12 @@ export function registerDefaultMocks(): void {
   mockRegistry.register('mongoose', () => {
     // Prefer local manual mock if present in client repo via Jest mapping; otherwise a safe object
     try { 
-      // Validate path to prevent traversal
+      // Validate path to prevent traversal - use proper path resolution
       const mongoosePath = require.resolve('../../__mocks__/mongoose.js');
-      if (!mongoosePath.includes('__mocks__')) {
-        throw new Error('Invalid mock path');
+      const resolvedPath = path.resolve(mongoosePath);
+      const expectedDir = path.resolve(process.cwd(), '__mocks__');
+      if (!resolvedPath.startsWith(expectedDir + path.sep)) {
+        throw new Error('Invalid mock path - outside expected directory');
       }
       return require(mongoosePath); 
     } catch (error) {

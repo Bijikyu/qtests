@@ -251,22 +251,17 @@ class TestRunner {
     const alreadyInBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
     if (!first.success && crashed && !alreadyInBand) {
       process.stderr.write(`${colors.yellow}Retrying in-band due to worker crash: ${testFile}${colors.reset}\n`);
-      // Use local variable instead of modifying global environment
-      const originalEnv = process.env.QTESTS_INBAND;
+      // Store original environment value
       const originalInBand = process.env.QTESTS_INBAND;
       process.env.QTESTS_INBAND = '1';
       try {
         return await this.runTestFile(testFile);
       } finally {
         // Restore original environment completely
-        if (originalEnv) {
-          process.env.QTESTS_INBAND = originalEnv;
+        if (originalInBand) {
+          process.env.QTESTS_INBAND = originalInBand;
         } else {
           delete process.env.QTESTS_INBAND;
-        }
-        // Also restore any other environment variables we might have modified
-        if (originalInBand && originalInBand !== originalEnv) {
-          process.env.QTESTS_INBAND = originalInBand;
         }
       }
     }
