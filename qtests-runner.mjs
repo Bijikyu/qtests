@@ -42,6 +42,25 @@ class TestRunner {
     this.startTime = Date.now();
     // Lazily-initialized reference to Jest's runCLI (API-only execution)
     this._runCLI = null;
+    // Track cleanup state
+    this._cleanedUp = false;
+  }
+
+  // Cleanup method to prevent memory leaks
+  async cleanup() {
+    if (this._cleanedUp) return;
+    this._cleanedUp = true;
+    
+    // Clear test results to free memory
+    this.testResults.length = 0;
+    this.testResults = null;
+    this._runCLI = null;
+    this._cleanedUp = null;
+    
+    // Force garbage collection if available
+    if (global.gc) {
+      global.gc();
+    }
   }
 
   // Resolve a binary path from PATH, preferring earlier entries explicitly.
@@ -133,13 +152,25 @@ class TestRunner {
     try {
       // Lazily require jest to avoid upfront overhead and allow CJS interop from ESM
       if (!this._runCLI) {
-        const require = createRequire(import.meta.url);
-        const jestModule = require('jest');
+        let jestModule;
+        try {
+          const require = createRequire(import.meta.url);
+          jestModule = require('jest');
+        } catch (importError) {
+          qerrors(importError, 'qtests-runner.runAll: Failed to load Jest module', {
+            operation: 'require',
+            module: 'jest'
+          });
+          process.exit(1);
+        }
         this._runCLI = jestModule && jestModule.runCLI ? jestModule.runCLI : null;
       }
       if (!this._runCLI) {
         const msg = 'Jest API not available for fallback execution.';
-        console.error(msg);
+        qerrors(new Error(msg), 'qtests-runner.runAll: Jest API unavailable', {
+          jestModuleLoaded: !!jestModule,
+          hasRunCLI: !!(jestModule && jestModule.runCLI)
+        });
         process.exit(1);
       }
 
@@ -200,8 +231,47 @@ class TestRunner {
       console.error(msg);
       this.failedTests++;
     }
-    if (this.failedTests > 0) this.generateDebugFile();
     this.printSummary();
+    
+    // Cleanup before exit with proper async handling
+    await this.cleanup();
+    
+    // Ensure async operations complete before exit
+    let debugFilePromise = null;
+    if (this.failedTests > 0) {
+      debugFilePromise = this.generateDebugFile().catch(err => {
+        console.error('Failed to generate debug file:', err);
+      });
+    }
+    
+    // Track all pending async operations
+    const pendingPromises = [];
+    
+    // Wait for all microtasks to complete
+    await new Promise(resolve => {
+      setImmediate(resolve);
+    });
+    await new Promise(resolve => {
+      setImmediate(resolve);
+    });
+    
+    // Additional safety check - wait for event loop to be empty
+    await new Promise(resolve => {
+      const checkHandles = () => {
+        if (process._getActiveHandles) {
+          const handles = process._getActiveHandles();
+          if (handles.length === 0) {
+            resolve();
+          } else {
+            setTimeout(checkHandles, 50);
+          }
+        } else {
+          resolve();
+        }
+      };
+      setTimeout(checkHandles, 50);
+    });
+    
     process.exit(this.failedTests > 0 ? 1 : 0);
   }
 
@@ -224,7 +294,7 @@ class TestRunner {
   }
 
   // Generate debug file for failed tests
-  generateDebugFile() {
+  async generateDebugFile() {
     const failedResults = this.testResults.filter(r => !r.success);
     if (failedResults.length === 0) return;
     if (this.isEnvTruthy('QTESTS_SUPPRESS_DEBUG') || this.isEnvTruthy('QTESTS_NO_DEBUG_FILE')) return;
@@ -244,7 +314,20 @@ class TestRunner {
     debugContent += `- Total failed tests: ${failedResults.length}\n`;
     debugContent += `- Failed test files: ${failedResults.map(r => r.file).join(', ')}\n`;
     debugContent += `- Generated: ${new Date().toISOString()}\n`;
-    try { fs.writeFileSync(debugFilePath, debugContent); } catch {}
+    
+    try { 
+      // Use async file write to ensure proper completion tracking
+      await fs.promises.writeFile(debugFilePath, debugContent);
+    } catch (error) {
+      qerrors(error, 'qtests-runner.generateDebugFile: failed to write debug file', {
+        debugFilePath,
+        failedResultsCount: failedResults.length,
+        debugContentLength: debugContent.length,
+        errorMessage: error?.message || String(error),
+        errorCode: error?.code || 'UNKNOWN'
+      });
+    }
+    
     if (!this.isEnvTruthy('QTESTS_SILENT')) {
       console.log(`\n${colors.yellow}📋 Debug file created: ${debugFilePath}${colors.reset}`);
     }

@@ -27,19 +27,57 @@ export function stubMethod(data: {obj: any, methodName: string, stubFn: StubFunc
     if (typeof data.obj !== 'object' || data.obj === null) {
       throw new Error(`stubMethod expected object but received ${data.obj}`);
     }
+    if (typeof data.methodName !== 'string' || !data.methodName.trim()) {
+      throw new Error(`stubMethod methodName must be a non-empty string, received ${data.methodName}`);
+    }
     if (!(data.methodName in data.obj)) {
       throw new Error(`stubMethod could not find ${data.methodName} on provided object`);
+    }
+    if (typeof data.obj[data.methodName] !== 'function') {
+      throw new Error(`stubMethod ${data.methodName} exists but is not a function on provided object`);
+    }
+    
+    // Check if property is configurable before attempting to stub
+    const descriptor = Object.getOwnPropertyDescriptor(data.obj, data.methodName);
+    if (!descriptor) {
+      throw new Error(`stubMethod cannot find property descriptor for ${data.methodName}`);
+    }
+    
+    // Validate descriptor has required properties
+    if (typeof descriptor !== 'object' || descriptor === null) {
+      throw new Error(`stubMethod invalid property descriptor for ${data.methodName}`);
+    }
+    
+    // For data properties, check both configurable and writable
+    if (descriptor.value !== undefined) {
+      if (!descriptor.configurable || !descriptor.writable) {
+        throw new Error(`stubMethod cannot stub non-configurable or non-writable property ${data.methodName}`);
+      }
+    } else if (!descriptor.configurable) {
+      // For accessor properties, only check configurable
+      throw new Error(`stubMethod cannot stub non-configurable property ${data.methodName}`);
     }
     if (typeof data.stubFn !== 'function') {
       throw new Error('stubMethod stubFn must be a Function');
     }
 
     // Create and configure stub
-    const stub = sinon.stub(data.obj, data.methodName).callsFake(data.stubFn);
+    let stub;
+    try {
+      stub = sinon.stub(data.obj, data.methodName).callsFake(data.stubFn);
+    } catch (sinonError) {
+      throw new Error(`stubMethod failed to create Sinon stub for ${data.methodName}: ${sinonError.message}`);
+    }
     
-    // Return restore function
+    // Return restore function with error handling
     return (): void => {
-      stub.restore();
+      try {
+        if (stub && typeof stub.restore === 'function') {
+          stub.restore();
+        }
+      } catch (restoreError) {
+        console.warn(`stubMethod: Failed to restore stub for ${data.methodName}:`, restoreError);
+      }
     };
   }, 'stubMethod');
   

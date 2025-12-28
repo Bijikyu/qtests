@@ -31,6 +31,8 @@ class MockRegistry {
   private map = new Map<string, MockEntry>();
   private installed = false;
   private _origLoad: any = null;
+  private _installing = false;
+  private _lockMap = new Map<string, Promise<any>>();
 
   register(name: string, factory: MockFactory): void {
     const key = String(name).trim();
@@ -43,12 +45,58 @@ class MockRegistry {
     return this.map.has(name);
   }
 
-  get(name: string): any {
+  async get(name: string): Promise<any> {
+    const entry = this.map.get(name);
+    if (!entry) return undefined;
+    
+    // Prevent concurrent factory executions
+    if (this._lockMap.has(name)) {
+      const existingPromise = this._lockMap.get(name);
+      return existingPromise ? await existingPromise : undefined;
+    }
+    
+    if (typeof entry.instance === 'undefined') {
+      const factoryPromise = this._executeFactory(entry, name);
+      this._lockMap.set(name, factoryPromise);
+      try {
+        entry.instance = await factoryPromise;
+      } catch (error) {
+        entry.instance = {};
+        console.warn(`Mock factory failed for ${name}:`, error);
+      } finally {
+        this._lockMap.delete(name);
+      }
+    }
+    return entry.instance;
+  }
+
+  private async _executeFactory(entry: MockEntry, name: string): Promise<any> {
+    let result;
+    try {
+      result = entry.factory();
+      // Handle both sync and async factories
+      return result instanceof Promise ? await result : result;
+    } catch (error) {
+      // Lock cleanup will be handled by finally block
+      throw error;
+    }
+  }
+
+  // Synchronous version for backward compatibility
+  getSync(name: string): any {
     const entry = this.map.get(name);
     if (!entry) return undefined;
     if (typeof entry.instance === 'undefined') {
-      try { entry.instance = entry.factory(); }
-      catch { entry.instance = {}; }
+      try { 
+        const result = entry.factory();
+        entry.instance = result instanceof Promise ? {} : result;
+        if (result instanceof Promise) {
+          console.warn(`Async mock factory detected for ${name} - use async get() method`);
+        }
+      } catch (error) { 
+        entry.instance = {}; 
+        console.warn(`Sync mock factory failed for ${name}:`, error);
+      }
     }
     return entry.instance;
   }
@@ -56,19 +104,32 @@ class MockRegistry {
   list(): string[] { return Array.from(this.map.keys()); }
 
   installRequireHook(): void {
-    if (this.installed) return;
-    this.installed = true;
-    const anyModule = Module as any;
-    if (typeof anyModule._load !== 'function') return;
-    this._origLoad = anyModule._load;
-    const self = this;
-    anyModule._load = function(id: string, parent: any, isMain?: boolean) {
-      if (self.has(id)) {
-        return self.get(id);
-      }
-      try { return self._origLoad.call(this, id, parent, isMain); }
-      catch (err) { throw err; }
-    };
+    if (this.installed || this._installing) return;
+    
+    this._installing = true;
+    
+    try {
+      this.installed = true;
+      const anyModule = Module as any;
+      if (typeof anyModule._load !== 'function') return;
+      
+      this._origLoad = anyModule._load;
+      const self = this;
+      
+      anyModule._load = function(id: string, parent: any, isMain?: boolean) {
+        if (self.has(id)) {
+          // Use synchronous version for require hook compatibility
+          return self.getSync(id);
+        }
+        try { 
+          return self._origLoad.call(this, id, parent, isMain); 
+        } catch (err) { 
+          throw err; 
+        }
+      };
+    } finally {
+      this._installing = false;
+    }
   }
 
   private evictRequireCache(moduleName: string): void {
@@ -92,21 +153,68 @@ export const mockRegistry = new MockRegistry();
 export function registerDefaultMocks(): void {
   // axios: return a minimal truthy object compatible with typical checks
   mockRegistry.register('axios', () => {
-    try { return require('../stubs/axios.ts').default; } catch {}
-    try { return require('../stubs/axios.js').default; } catch {}
-    return {};
+    let axiosStub;
+    try { 
+      // Validate path to prevent traversal
+      const axiosPath = require.resolve('../stubs/axios.ts');
+      if (!axiosPath.startsWith(process.cwd() + '/stubs/')) {
+        throw new Error('Invalid stub path');
+      }
+      axiosStub = require(axiosPath).default; 
+    } catch (tsError) {
+      // TypeScript stub failed, try JavaScript
+      try { 
+        const axiosJsPath = require.resolve('../stubs/axios.js');
+        if (!axiosJsPath.startsWith(process.cwd() + '/stubs/')) {
+          throw new Error('Invalid stub path');
+        }
+        axiosStub = require(axiosJsPath).default; 
+      } catch (jsError) {
+        // Both stubs failed, use fallback
+        axiosStub = {};
+      }
+    }
+    return axiosStub || {};
   });
   // winston: provide no-op logger surface with format/transports
   mockRegistry.register('winston', () => {
-    try { return require('../stubs/winston.ts').default; } catch {}
-    try { return require('../stubs/winston.js').default; } catch {}
-    return { createLogger: () => ({ error() {}, warn() {}, info() {}, debug() {}, verbose() {}, silly() {} }), format: {}, transports: {} };
+    let winstonStub;
+    try { 
+      // Validate path to prevent traversal
+      const winstonPath = require.resolve('../stubs/winston.ts');
+      if (!winstonPath.startsWith(process.cwd() + '/stubs/')) {
+        throw new Error('Invalid stub path');
+      }
+      winstonStub = require(winstonPath).default; 
+    } catch (tsError) {
+      // TypeScript stub failed, try JavaScript
+      try { 
+        const winstonJsPath = require.resolve('../stubs/winston.js');
+        if (!winstonJsPath.startsWith(process.cwd() + '/stubs/')) {
+          throw new Error('Invalid stub path');
+        }
+        winstonStub = require(winstonJsPath).default; 
+      } catch (jsError) {
+        // Both stubs failed, use fallback
+        winstonStub = { createLogger: () => ({ error() {}, warn() {}, info() {}, debug() {}, verbose() {}, silly() {} }), format: {}, transports: {} };
+      }
+    }
+    return winstonStub || { createLogger: () => ({ error() {}, warn() {}, info() {}, debug() {}, verbose() {}, silly() {} }), format: {}, transports: {} };
   });
   // mongoose: if projects still import it in unit tests, hand back a tiny proxy
   mockRegistry.register('mongoose', () => {
     // Prefer local manual mock if present in client repo via Jest mapping; otherwise a safe object
-    try { return require('../../__mocks__/mongoose.js'); } catch {}
-    return { model: () => ({}) };
+    try { 
+      // Validate path to prevent traversal
+      const mongoosePath = require.resolve('../../__mocks__/mongoose.js');
+      if (!mongoosePath.includes('__mocks__')) {
+        throw new Error('Invalid mock path');
+      }
+      return require(mongoosePath); 
+    } catch (error) {
+      // Fall back to safe object if manual mock unavailable
+      return { model: () => ({}) };
+    }
   });
 }
 

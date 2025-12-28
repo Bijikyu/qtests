@@ -53,8 +53,16 @@ async function getAxios(): Promise<any> {
     if (isOfflineFlag) {
       // Use stub axios
       try {
-        const stubAxios = await import('../stubs/axios.js');
-        cachedAxios = stubAxios.default || stubAxios;
+        // Validate and safely import stub axios
+      let axiosModule;
+      try {
+        // Validate module path to prevent traversal
+        const axiosPath = require.resolve('../stubs/axios.js');
+        if (!axiosPath.includes('/stubs/')) {
+          throw new Error('Invalid stub module path');
+        }
+        const module = await import(axiosPath);
+        cachedAxios = module.default || module;
       } catch (error) {
         qerrors(error, 'offlineMode.getEnvironment: stub axios import failed', {
           modulePath: '../stubs/axios.js',

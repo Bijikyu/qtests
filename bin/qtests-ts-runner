@@ -42,9 +42,22 @@ class TestRunner {
   }
 
   // Discover all test files in the project (from current working directory)
-  discoverTests(dir = process.cwd(), depth = 0, maxDepth = 10) {
+  discoverTests(dir = process.cwd(), depth = 0, maxDepth = 10, visited = new Set()) {
     const testFiles = [];
     if (depth > maxDepth) return testFiles;
+    
+    // Cycle detection - prevent infinite recursion
+    const realPath = fs.realpathSync(dir);
+    if (visited.has(realPath)) {
+      qerrors(new Error('Directory cycle detected'), 'testRunner.discoverTests: cycle prevention', {
+        directory: dir,
+        realPath,
+        depth,
+        visitedCount: visited.size
+      });
+      return testFiles;
+    }
+    visited.add(realPath);
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {
@@ -54,7 +67,7 @@ class TestRunner {
           continue;
         }
         if (entry.isDirectory()) {
-          testFiles.push(...this.discoverTests(fullPath, depth + 1, maxDepth));
+          testFiles.push(...this.discoverTests(fullPath, depth + 1, maxDepth, visited));
         } else if (entry.isFile()) {
           const isTestFile = TEST_PATTERNS.some(pattern => pattern.test(entry.name));
           if (!isTestFile) continue;
@@ -75,6 +88,15 @@ class TestRunner {
         errorMessage: error instanceof Error ? error.message : String(error)
       });
       // Silently skip directories we can't read
+    } finally {
+      // Clean up visited set for this branch
+      try {
+        const realPath = fs.realpathSync(dir);
+        visited.delete(realPath);
+      } catch (realpathError) {
+        // If realpath fails, still try to clean up with original path
+        visited.delete(dir);
+      }
     }
     // Optional pattern filter via env to limit scope for large repos/CI
     const pattern = process.env.QTESTS_PATTERN;
@@ -138,11 +160,22 @@ class TestRunner {
         }
         jestArgs.push('--cache', '--no-coverage');
 
+        // Validate and sanitize jest arguments
+        const sanitizedEnv = { ...process.env };
+        const allowedEnvVars = ['NODE_ENV', 'NODE_OPTIONS', 'QTESTS_SILENT', 'QTESTS_INBAND', 'QTESTS_CONCURRENCY'];
+        
+        // Only allow known safe environment variables
+        Object.keys(sanitizedEnv).forEach(key => {
+          if (!allowedEnvVars.includes(key)) {
+            delete sanitizedEnv[key];
+          }
+        });
+
         const child = spawn('jest', jestArgs, {
           stdio: ['pipe', 'pipe', 'pipe'],
-          shell: true,
+          shell: false, // CRITICAL: Remove shell to prevent command injection
           env: {
-            ...process.env,
+            ...sanitizedEnv,
             NODE_ENV: 'test',
             NODE_OPTIONS: [process.env.NODE_OPTIONS || '', '--experimental-vm-modules'].filter(Boolean).join(' ').trim()
           },
@@ -218,8 +251,24 @@ class TestRunner {
     const alreadyInBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
     if (!first.success && crashed && !alreadyInBand) {
       process.stderr.write(`${colors.yellow}Retrying in-band due to worker crash: ${testFile}${colors.reset}\n`);
+      // Use local variable instead of modifying global environment
+      const originalEnv = process.env.QTESTS_INBAND;
+      const originalInBand = process.env.QTESTS_INBAND;
       process.env.QTESTS_INBAND = '1';
-      return await this.runTestFile(testFile);
+      try {
+        return await this.runTestFile(testFile);
+      } finally {
+        // Restore original environment completely
+        if (originalEnv) {
+          process.env.QTESTS_INBAND = originalEnv;
+        } else {
+          delete process.env.QTESTS_INBAND;
+        }
+        // Also restore any other environment variables we might have modified
+        if (originalInBand && originalInBand !== originalEnv) {
+          process.env.QTESTS_INBAND = originalInBand;
+        }
+      }
     }
     return first;
   }

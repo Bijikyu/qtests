@@ -324,9 +324,24 @@ export function commandExists(command) {
 export function executeCommand(command, args = [], options = {}) {
   try {
     const { spawnSync } = require('child_process');
-    const result = spawnSync(command, args, {
+    
+    // Validate command against allowlist to prevent command injection
+    const allowedCommands = ['npm', 'node', 'jest', 'git', 'tsc', 'rm', 'mkdir', 'cp', 'mv'];
+    if (!allowedCommands.includes(command)) {
+      throw new Error(`Command not allowed: ${command}`);
+    }
+    
+    // Validate arguments to prevent injection
+    const sanitizedArgs = args.map(arg => {
+      if (typeof arg !== 'string') return arg;
+      // Remove dangerous characters and patterns
+      return arg.replace(/[;&|`$(){}[\]]/g, '');
+    });
+    
+    const result = spawnSync(command, sanitizedArgs, {
       stdio: 'pipe',
       encoding: 'utf8',
+      shell: false, // CRITICAL: Remove shell to prevent command injection
       ...options
     });
     

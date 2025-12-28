@@ -33,7 +33,28 @@ function exists(p){
 }
 
 function isValidTemplate(content){
-  try{ return /runCLI/.test(content) && /API Mode/.test(content); }catch{ return false; }
+  try {
+    // More robust validation to prevent template bypass
+    if (!content || typeof content !== 'string') return false;
+    
+    // Check for required Jest API components
+    const hasRunCLI = /runCLI/.test(content);
+    const hasAPIMode = /API Mode/.test(content);
+    const hasTestRunner = /class TestRunner/.test(content);
+    const hasJestImport = /from\s+['"]jest['"]|require\(['"]jest['"]\)/.test(content);
+    
+    // Ensure template has substantial content (not just minimal strings)
+    const lineCount = content.split('\n').length;
+    const hasSubstantialContent = lineCount > 50;
+    
+    return hasRunCLI && hasAPIMode && hasTestRunner && hasJestImport && hasSubstantialContent;
+  } catch (error) {
+    qerrors(error, 'postinstall-scaffold: template validation failed', {
+      contentType: typeof content,
+      contentLength: content?.length || 0
+    });
+    return false;
+  }
 }
 
 (function main(){
@@ -53,7 +74,7 @@ try {
     const pkgPath = path.join(clientRoot, 'package.json');
     const pkg = JSON.parse(read(pkgPath) || '{}');
     if (pkg && pkg.scripts && typeof pkg.scripts.test === 'string') {
-      if (/qtests-runner\.js\b/.test(pkg.scripts.test) || !/qtests-runner\.mjs\b/.test(pkg.scripts.test)) {
+      if (/node\s+qtests-runner\.js\b/.test(pkg.scripts.test) || !/node\s+qtests-runner\.mjs\b/.test(pkg.scripts.test)) {
         pkg.scripts.test = 'node qtests-runner.mjs';
         // Ensure pretest includes ensure-runner and clean-dist for stability
         const pre = String(pkg.scripts.pretest || '');
@@ -120,7 +141,28 @@ try {
   if (!chosen) return; // be silent if we can't find a valid template
 
   try {
-    fs.writeFileSync(target, chosen, 'utf8');
+    // Atomic file write: write to temp file first, then rename
+    let randomSuffix;
+    try {
+      randomSuffix = require('crypto').randomBytes(4).toString('hex');
+    } catch (cryptoError) {
+      // Fallback to Math.random if crypto unavailable
+      randomSuffix = Math.random().toString(36).substr(2, 9);
+      console.warn('Crypto unavailable, using fallback random suffix:', cryptoError.message);
+    }
+    const tempPath = `${target}.tmp.${process.pid}.${Date.now()}.${randomSuffix}`;
+    fs.writeFileSync(tempPath, chosen, 'utf8');
+    
+    // Verify the temp file was written correctly
+    const verifyContent = fs.readFileSync(tempPath, 'utf8');
+    if (verifyContent !== chosen) {
+      fs.unlinkSync(tempPath);
+      throw new Error('File content verification failed');
+    }
+    
+    // Atomic rename - this is the critical operation that prevents race conditions
+    fs.renameSync(tempPath, target);
+    
     if (!quiet) {
       // Keep output minimal, one line only, no prompts.
       process.stdout.write('qtests: scaffolded qtests-runner.mjs at project root\n');
@@ -129,7 +171,7 @@ try {
     qerrors(writeError, 'postinstall-scaffold: runner write failed', {
       target,
       chosenLength: chosen?.length || 0,
-      operation: 'writeFileSync'
+      operation: 'atomicWriteSync'
     });
     // Silent failure by design; do not block installs.
   }
