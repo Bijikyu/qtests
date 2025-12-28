@@ -52,10 +52,17 @@ class TestRunner {
     this._cleanedUp = true;
     
     // Clear test results to free memory
-    this.testResults.length = 0;
-    this.testResults = null;
-    this._runCLI = null;
-    this._cleanedUp = null;
+    if (this.testResults && Array.isArray(this.testResults)) {
+      this.testResults.length = 0;
+    }
+    
+    // Delete properties to free memory (not just set to null)
+    delete this.testResults;
+    delete this._runCLI;
+    delete this.passedTests;
+    delete this.failedTests;
+    delete this.startTime;
+    delete this._cleanedUp;
     
     // Force garbage collection if available
     if (global.gc) {
@@ -244,10 +251,16 @@ class TestRunner {
       });
     }
     
-    // Track all pending async operations
-    const pendingPromises = [];
+    // Wait for debug file generation if it was started
+    if (debugFilePromise) {
+      try {
+        await debugFilePromise;
+      } catch (err) {
+        // Error already logged above
+      }
+    }
     
-    // Wait for all microtasks to complete
+    // Wait for all microtasks to complete with proper timeout
     await new Promise(resolve => {
       setImmediate(resolve);
     });
@@ -255,23 +268,40 @@ class TestRunner {
       setImmediate(resolve);
     });
     
-    // Additional safety check - wait for event loop to be empty
+    // Additional safety check - wait for event loop to be empty with timeout
     await new Promise(resolve => {
+      let timeoutId = null;
+      const cleanup = () => {
+        if (timeoutId) clearTimeout(timeoutId);
+      };
+      
       const checkHandles = () => {
         if (process._getActiveHandles) {
           const handles = process._getActiveHandles();
           if (handles.length === 0) {
+            cleanup();
             resolve();
           } else {
+            // If we still have handles but no timeout set, create timeout
+            if (!timeoutId) {
+              timeoutId = setTimeout(() => {
+                console.warn('Event loop still has active handles, proceeding with exit');
+                cleanup();
+                resolve();
+              }, 1000);
+            }
+            // Continue checking if timeout hasn't fired yet
             setTimeout(checkHandles, 50);
           }
         } else {
+          cleanup();
           resolve();
         }
       };
       setTimeout(checkHandles, 50);
     });
     
+    // Final exit - ensure this only runs once
     process.exit(this.failedTests > 0 ? 1 : 0);
   }
 

@@ -69,10 +69,13 @@ import {
 
 import {
   createMock as _createMock,
-  createFake as _createFake,
+  createFake as _createFake
+} from './stubbing/basicMockCreation.js';
+
+import {
   createFakeServer as _createFakeServer,
   createFakeXHR as _createFakeXHR
-} from './stubbing/mockCreation.js';
+} from './stubbing/networkMocking.js';
 
 import {
   createFakeTimers as _createFakeTimers,

@@ -182,7 +182,11 @@ export function cleanDist(root = process.cwd()) {
           continue;
         }
         
-        // Process subdirectories
+        // Process subdirectories - prevent infinite loops with depth tracking
+        if (stack.length >= 20) { // Reasonable depth limit
+          console.warn(`Directory traversal depth exceeded for ${fullPath}, skipping...`);
+          continue;
+        }
         stack.push(fullPath);
         continue;
       }

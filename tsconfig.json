@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "noEmitOnError": false
   },
   "include": [
@@ -17,7 +17,8 @@
     "setup.ts",
     "lib/**/*.ts",
     "utils/**/*.ts",
-    "stubs/**/*.ts"
+    "stubs/**/*.ts",
+    "@types/**/*.ts"
   ],
   "exclude": [
     "node_modules",

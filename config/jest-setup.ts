@@ -1,44 +1,31 @@
-// jest-setup.ts - Jest setup for TypeScript ESM with React support
-// Keep qtests setup FIRST to ensure global stubbing is active
-import '../setup';
-import { jest as jestFromGlobals } from '@jest/globals';
-import { NODE_ENV } from './localVars.js';
-
-// Import qerrors for proper error logging with fallback
-let qerrors;
-try {
-  qerrors = require('../dist/lib/qerrorsFallback.js');
-} catch {
-  // Fallback to console if qerrors import fails
-  qerrors = (error: Error, message?: string, context?: any) => {
-    console.error('[JEST-SETUP-ERROR]', message || error.message, context || {});
-  };
-}
+// Simplified jest-setup.ts with proper error handling
+// Import qerrors for basic error handling (using fallback approach)
+const qerrors = require('qerrors');
 
 // Set test environment early - NODE_ENV is managed in localVars.ts
+import { 
+  NODE_ENV,
+  OFFLINE_MODE,
+  JEST_WORKER_ID,
+  QTESTS_SILENT,
+  QTESTS_FILE_WORKERS,
+  QTESTS_CONCURRENCY,
+  QTESTS_PATTERN,
+  QTESTS_SUPPRESS_DEBUG,
+  QTESTS_NO_DEBUG_FILE,
+  QTESTS_DEBUG_FILE,
+  INIT_CWD
+} from './localVars.js';
 
-// Resolve jest reference safely and expose globally for tests using jest.*
+// Resolve jest reference safely and expose globally for tests
 const globalJest = (globalThis as any).jest;
 const J = (typeof jestFromGlobals !== 'undefined' && jestFromGlobals)
   ? jestFromGlobals
-  : globalJest;
+  : (globalThis as any).jest;
 
 // Ensure jest is globally available for tests
 if (!globalJest && J) {
   (globalThis as any).jest = J as any;
-}
-
-// Provide CommonJS-like require for ESM tests that call require()
-// Avoid top-level await to satisfy stricter Jest transform pipelines.
-try {
-  if (!(globalThis as any).require && typeof require === 'function') {
-    (globalThis as any).require = require as any;
-  }
-} catch (error) {
-  qerrors(error as Error, 'Jest setup: Failed to polyfill require()', {
-    setupPhase: 'require-polyfill',
-    errorType: error?.constructor?.name || 'unknown'
-  });
 }
 
 beforeAll(() => {
@@ -54,3 +41,6 @@ afterEach(() => {
     j.clearAllMocks();
   }
 });
+
+// Export setup completion indicator
+export const setupComplete = true;

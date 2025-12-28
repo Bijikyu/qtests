@@ -66,22 +66,22 @@ export default {
   // Removed problematic qgenutils mappings to fix Jest module resolution
   // Individual files should handle their own imports properly
   // Then handle qtests-specific mappings
-  "^\\.\\./index\\.js$": "<rootDir>/index.ts",
-  "^\\.\\./setup\\.js$": "<rootDir>/setup.ts",
-  "^\\.\\./lib/(.*)\\.js$": "<rootDir>/lib/$1.ts",
-  "^\\.\\./lib/(.*)$": "<rootDir>/lib/$1.ts",
-  "^\\.\\./utils/httpTest\\.shim\\.js$": "<rootDir>/utils/httpTest.shim.ts",
-  "^\\.\\./utils/(.*)\\.js$": "<rootDir>/utils/$1.ts",
+  "^\\./index\\.js$": "<rootDir>/index.ts",
+  "^\\./setup\\.js$": "<rootDir>/setup.ts",
+  "^\\./lib/(.*)\\.js$": "<rootDir>/lib/$1.ts",
+  "^\\./lib/(.*)$": "<rootDir>/lib/$1.ts",
+  "^\\./utils/httpTest\\.shim\\.js$": "<rootDir>/utils/httpTest.shim.ts",
+  "^\\./utils/(.*)\\.js$": "<rootDir>/utils/$1.ts",
   "^(.*/httpTest\\.shim)\\.js$": "$1.ts",
   "^external-service-client$": "<rootDir>/utils/jest-proxies/external-service-client.cjs",
   "^feature-x$": "<rootDir>/utils/jest-proxies/feature-x.cjs",
-  "^(\\.{1,2}/.*)\\.js$": "$1",
+  "^\\.{1,2}/(.*)\\.js$": "$1",
   "^qtests/lib/(.*)$": "<rootDir>/lib/$1.ts",
   "^qtests/utils/(.*)$": "<rootDir>/utils/$1.ts",
   "^qtests/setup$": "<rootDir>/setup.ts",
   "^qtests$": "<rootDir>/index.ts",
   "^mongoose$": "<rootDir>/__mocks__/mongoose.js",
-  "^.+\\\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",
-  "^.+\\\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/__mocks__/fileMock.js"
+  "^\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",
+  "^\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/__mocks__/fileMock.js"
 }
 };

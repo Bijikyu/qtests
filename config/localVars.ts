@@ -29,8 +29,8 @@ const qerrors = (error: Error, message?: string, context?: any) => {
   // Use console.error for production reliability - avoid complex logging dependencies
   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
   
-  // Re-throw the error to maintain existing behavior
-  throw error;
+  // Don't re-throw here - let the caller handle the error appropriately
+  // This prevents duplicate error reporting and stack traces
 };
 
 let envConfig, qtestsConfig, testConfig, fileSystemConfig, mockConfig, systemConfig;
@@ -42,7 +42,7 @@ try {
     modulePath: './envConfig.js',
     errorType: error.constructor?.name || 'unknown'
   });
-  throw error;
+  throw error; // Re-throw to maintain error propagation
 }
 
 try {
@@ -52,7 +52,7 @@ try {
     modulePath: './qtestsConfig.js',
     errorType: error.constructor?.name || 'unknown'
   });
-  throw error;
+  throw error; // Re-throw to maintain error propagation
 }
 
 try {
@@ -62,7 +62,7 @@ try {
     modulePath: './testConfig.js',
     errorType: error.constructor?.name || 'unknown'
   });
-  throw error;
+  throw error; // Re-throw to maintain error propagation
 }
 
 try {
@@ -72,7 +72,7 @@ try {
     modulePath: './fileSystemConfig.js',
     errorType: error.constructor?.name || 'unknown'
   });
-  throw error;
+  throw error; // Re-throw to maintain error propagation
 }
 
 try {
@@ -82,7 +82,7 @@ try {
     modulePath: './mockConfig.js',
     errorType: error.constructor?.name || 'unknown'
   });
-  throw error;
+  throw error; // Re-throw to maintain error propagation
 }
 
 try {
@@ -92,7 +92,7 @@ try {
     modulePath: './systemConfig.js',
     errorType: error.constructor?.name || 'unknown'
   });
-  throw error;
+  throw error; // Re-throw to maintain error propagation
 }
 
 // Re-export from focused configuration modules for backward compatibility

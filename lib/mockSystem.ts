@@ -54,10 +54,28 @@ class MockRegistry {
       return entry.instance;
     }
     
-    // Prevent concurrent factory executions
+    // Prevent concurrent factory executions with timeout to prevent deadlocks
     if (this._lockMap.has(name)) {
       const existingPromise = this._lockMap.get(name);
-      return existingPromise ? await existingPromise : undefined;
+      if (existingPromise) {
+        // Add timeout to prevent indefinite waiting with cleanup
+        let timeoutId = null;
+        const timeoutPromise = new Promise((_, reject) => {
+          timeoutId = setTimeout(() => reject(new Error('Mock factory timeout')), 5000);
+        });
+        
+        try {
+          return await Promise.race([existingPromise, timeoutPromise]);
+        } catch (timeoutError) {
+          // If timeout occurs, clean up and remove the lock to retry
+          if (timeoutId) clearTimeout(timeoutId);
+          this._lockMap.delete(name);
+          console.warn(`Mock factory timeout for ${name}, falling back to empty object`);
+          // Return fallback object to prevent infinite loop
+          entry.instance = {};
+          return entry.instance;
+        }
+      }
     }
     
     // Create and cache the instance
@@ -161,23 +179,53 @@ export function registerDefaultMocks(): void {
   mockRegistry.register('axios', () => {
     let axiosStub;
     try { 
-      // Validate path to prevent traversal - use proper path resolution
+      // Validate path to prevent traversal - use absolute path resolution and normalize
       const axiosPath = require.resolve('../stubs/axios.ts');
-      const resolvedPath = path.resolve(axiosPath);
-      const expectedDir = path.resolve(process.cwd(), 'stubs');
-      if (!resolvedPath.startsWith(expectedDir + path.sep)) {
+      const resolvedPath = path.normalize(path.resolve(axiosPath));
+      const expectedDir = path.normalize(path.resolve(process.cwd(), 'stubs'));
+      
+      // More robust path validation - check for directory traversal attempts
+      if (!resolvedPath.startsWith(expectedDir + path.sep) && resolvedPath !== expectedDir) {
         throw new Error('Invalid stub path - outside expected directory');
       }
+      
+      // Additional safety check - double-check no directory traversal after all validations
+      // This is redundant with the directory check above but provides additional safety
+      const relativePath = path.relative(expectedDir, resolvedPath);
+      if (relativePath.startsWith('..') || relativePath.includes(path.sep + '..')) {
+        throw new Error('Invalid stub path - directory traversal detected');
+      }
+      
+      // Prevent infinite recursion - check if we're already loading this specific file
+      if (resolvedPath === __filename) {
+        throw new Error('Recursive stub loading detected');
+      }
+      
       axiosStub = require(axiosPath).default; 
     } catch (tsError) {
       // TypeScript stub failed, try JavaScript
       try { 
         const axiosJsPath = require.resolve('../stubs/axios.js');
-        const resolvedPath = path.resolve(axiosJsPath);
-        const expectedDir = path.resolve(process.cwd(), 'stubs');
-        if (!resolvedPath.startsWith(expectedDir + path.sep)) {
+        const resolvedPath = path.normalize(path.resolve(axiosJsPath));
+        const expectedDir = path.normalize(path.resolve(process.cwd(), 'stubs'));
+        
+        // More robust path validation
+        if (!resolvedPath.startsWith(expectedDir + path.sep) && resolvedPath !== expectedDir) {
           throw new Error('Invalid stub path - outside expected directory');
         }
+        
+        // Additional safety check - double-check no directory traversal after all validations
+        // This is redundant with the directory check above but provides additional safety
+        const relativePath = path.relative(expectedDir, resolvedPath);
+        if (relativePath.startsWith('..') || relativePath.includes(path.sep + '..')) {
+          throw new Error('Invalid stub path - directory traversal detected');
+        }
+        
+        // Prevent infinite recursion
+        if (resolvedPath === __filename) {
+          throw new Error('Recursive stub loading detected');
+        }
+        
         axiosStub = require(axiosJsPath).default; 
       } catch (jsError) {
         // Both stubs failed, use fallback
