@@ -2,7 +2,7 @@
  * Security Utilities and Helpers
  * 
  * Collection of security utility functions and helpers
- * for the qtests security framework.
+ * for qtests security framework.
  */
 
 import crypto from 'crypto';
@@ -42,7 +42,7 @@ export class SecurityUtils {
       }
 
       // Check for path traversal attempts
-      const normalizedPath = filePath.replace(/\\/+/g, '/');
+      const normalizedPath = filePath.replace(/[/\\\\]+/g, '/');
       if (normalizedPath.includes('..') || normalizedPath.includes('\0')) {
         return { valid: false, error: 'Path traversal detected' };
       }
@@ -135,7 +135,16 @@ export class SecurityUtils {
       timestamp: string;
       requestId?: string;
     };
-  };
+  } {
+    return {
+      success: false,
+      error: {
+        code,
+        message,
+        timestamp: new Date().toISOString()
+      }
+    };
+  }
 
   /**
    * Rate limiting helper with exponential backoff
@@ -149,7 +158,7 @@ export class SecurityUtils {
     const attempts = new Map<string, { count: number; lastAttempt: number; blockedUntil?: number }>();
     
     return {
-      checkLimit: (identifier: string) => { allowed: boolean; retryAfter?: number; reason?: string } => {
+      checkLimit: (identifier: string): { allowed: boolean; retryAfter?: number; reason?: string } => {
         const now = Date.now();
         const record = attempts.get(identifier) || { count: 0, lastAttempt: 0 };
         
@@ -305,7 +314,7 @@ export class SecurityUtils {
         return;
       }
 
-      require('fs').unlink(safePath, (error) => {
+      require('fs').unlink(safePath, (error: any) => {
         if (error) {
           resolve({ success: false, error: `Deletion failed: ${String(error)}` });
         } else {
@@ -313,6 +322,28 @@ export class SecurityUtils {
         }
       });
     });
+  }
+
+  /**
+   * Create security audit log
+   */
+  static createSecurityAudit(event: {
+    type: string;
+    severity: string;
+    source: string;
+    details: any;
+    blocked: boolean;
+    remediation: string;
+  }): {
+    id: string;
+    timestamp: string;
+    event: any;
+  } {
+    return {
+      id: crypto.randomBytes(16).toString('hex'),
+      timestamp: new Date().toISOString(),
+      event
+    };
   }
 }
 

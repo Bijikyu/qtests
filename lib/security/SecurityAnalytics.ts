@@ -16,7 +16,7 @@ export class SecurityAnalytics {
     blockedRequests: 0,
     uniqueIPs: new Set(),
     threatScore: 0,
-    riskLevel: 'low'
+    riskLevel: 'low' as 'low' | 'medium' | 'high' | 'critical'
   };
 
   /**
@@ -49,7 +49,7 @@ export class SecurityAnalytics {
   private updateRiskAssessment(): void {
     // Calculate risk based on recent events
     const blockedRate = this.analytics.totalRequests > 0 ? 
-      (this.analytics.blockedRequests / this.analytics.totalRequests) : 0 : 0;
+      (this.analytics.blockedRequests / this.analytics.totalRequests) : 0;
 
     if (blockedRate > 0.1) {
       this.analytics.riskLevel = 'medium';
@@ -59,14 +59,14 @@ export class SecurityAnalytics {
       this.analytics.riskLevel = 'high';
     }
     
-    this.console.logRiskLevel();
+    this.consoleLogRiskLevel();
   }
 
-    /**
+  /**
    * Console current risk level
    */
   private consoleLogRiskLevel(): void {
-    const emoji = {
+    const emoji: Record<string, string> = {
       low: '✅',
       medium: '🟡',
       high: '🔴',
@@ -130,106 +130,74 @@ export class SecurityAnalytics {
   }
 
   /**
-   * Setup cleanup
+   * Log security incident
    */
-  private setupCleanup(): void {
-    setInterval(() => {
-      this.cleanup();
-    }, 3600000); // Every hour
-  }
-
-  /**
-   * Cleanup old data
-   */
-  private cleanup(): void {
-    // In production, implement data retention policies
-    const cutoffTime = Date.now() - (30 * 24 * 60 * 60 * 1000);
-    
-    console.log('🧹 Security Analytics Cleanup completed');
-  }
-
-  /**
-   * Get current metrics
-   */
-  getSecurityMetrics(): any {
-    return this.analytics;
-  }
-
-  /**
-   * Create security incident
-   */
-  createIncident(eventData: any): string {
+  logIncident(incident: {
+    type: string;
+    severity: string;
+    source: string;
+    details: any;
+    blocked: boolean;
+    remediation: string;
+  }): void {
     const incidentId = `inc_${Date.now()}_${randomBytes(4).toString('hex')}`;
     
-    this.incidents.set(incidentId, {
-      id: incidentId,
-      type: eventData.type,
-      severity: eventData.severity,
-      timestamp: new Date(),
-      source: 'security_analytics',
-      status: 'active',
-      ...eventData
-    });
-
     securityMonitor.logEvent({
       type: SecurityEventType.ANOMALOUS_PATTERN,
-      severity: SecuritySeverity.MEDIUM,
+      severity: SecuritySeverity.HIGH,
       source: 'security_analytics',
-      details: { incidentId, incidentType: eventData.type },
-      blocked: false,
-      remediation: 'Security incident created'
+      details: { incidentId, ...incident },
+      blocked: incident.blocked,
+      remediation: incident.remediation
     });
 
-    return incidentId;
-  }
-
-  private incidents = new Map();
-
-  /**
-   * Get active incidents
-   */
-  getActiveIncidents(): any[] {
-    return Array.from(this.incidents.values()).filter(inc => inc.status === 'active');
+    console.log(`🚨 Security Incident Logged: ${incidentId}`);
   }
 
   /**
-   * Get all incidents
+   * Setup cleanup interval
    */
-  getAllIncidents(): any[] {
-    return Array.from(this.incidents.values());
+  private setupCleanup(): void {
+    try {
+      setInterval(() => {
+        try {
+          // Cleanup old data periodically
+          const now = Date.now();
+          const oneHourAgo = now - (60 * 60 * 1000);
+          
+          // Reset counters if needed (simplified)
+          if (this.analytics.totalRequests > 10000) {
+            this.analytics.totalRequests = Math.floor(this.analytics.totalRequests / 2);
+            this.analytics.blockedRequests = Math.floor(this.analytics.blockedRequests / 2);
+          }
+        } catch (error) {
+          console.error('SecurityAnalytics cleanup error:', error);
+        }
+      }, 60 * 60 * 1000); // Run every hour
+    } catch (error) {
+      console.error('SecurityAnalytics setup error:', error);
+    }
   }
 
   /**
-   * Update risk assessment
+   * Get current risk level
    */
-  private updateRiskAssessment(): void {
-    // Calculate risk score from various factors
-    let score = this.analytics.threatScore;
-    
-    if (this.analytics.blockedRequests > 0) {
-      score += (this.analytics.blockedRequests / this.analytics.totalRequests) * 40;
-    }
+  getRiskLevel(): string {
+    return this.analytics.riskLevel;
+  }
 
-    if (this.analytics.uniqueIPs.size > 50) {
-      score += 25;
-    }
-
-    const activeIncidents = this.getActiveIncidents().length;
-    if (activeIncidents > 1) {
-      score += activeIncidents * 20;
-    }
-
-    if (score > 80 || activeIncidents > 2) {
-      this.analytics.riskLevel = 'critical';
-    } else if (score > 50) {
-      this.analytics.riskLevel = 'high';
-    } else if (score > 20) {
-      this.analytics.riskLevel = 'medium';
-    }
-
-    this.consoleLogRiskLevel();
+  /**
+   * Get analytics summary
+   */
+  getAnalyticsSummary(): any {
+    return {
+      ...this.analytics,
+      uniqueIPCount: this.analytics.uniqueIPs.size,
+      blockedRate: this.analytics.totalRequests > 0 ? 
+        (this.analytics.blockedRequests / this.analytics.totalRequests) : 0
+    };
   }
 }
 
-// Global analytics instance
+// Global instance
 export const securityAnalytics = new SecurityAnalytics();

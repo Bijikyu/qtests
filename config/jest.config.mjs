@@ -62,26 +62,33 @@ export default {
 },
   extensionsToTreatAsEsm: [".ts",".tsx"],
   transformIgnorePatterns: ['node_modules/(?!(?:qtests|qerrors|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul|@langchain|openai)/)'],
-  moduleNameMapper: {
-  // Removed problematic qgenutils mappings to fix Jest module resolution
-  // Individual files should handle their own imports properly
-  // Then handle qtests-specific mappings
-  "^\\./index\\.js$": "<rootDir>/index.ts",
-  "^\\./setup\\.js$": "<rootDir>/setup.ts",
-  "^\\./lib/(.*)\\.js$": "<rootDir>/lib/$1.ts",
-  "^\\./lib/(.*)$": "<rootDir>/lib/$1.ts",
-  "^\\./utils/httpTest\\.shim\\.js$": "<rootDir>/utils/httpTest.shim.ts",
-  "^\\./utils/(.*)\\.js$": "<rootDir>/utils/$1.ts",
-  "^(.*/httpTest\\.shim)\\.js$": "$1.ts",
-  "^external-service-client$": "<rootDir>/utils/jest-proxies/external-service-client.cjs",
-  "^feature-x$": "<rootDir>/utils/jest-proxies/feature-x.cjs",
-  "^\\.{1,2}/(.*)\\.js$": "$1",
-  "^qtests/lib/(.*)$": "<rootDir>/lib/$1.ts",
-  "^qtests/utils/(.*)$": "<rootDir>/utils/$1.ts",
-  "^qtests/setup$": "<rootDir>/setup.ts",
-  "^qtests$": "<rootDir>/index.ts",
-  "^mongoose$": "<rootDir>/__mocks__/mongoose.js",
-  "^\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",
-  "^\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/__mocks__/fileMock.js"
-}
+   moduleNameMapper: {
+   // Removed problematic qgenutils mappings to fix Jest module resolution
+   // Individual files should handle their own imports properly
+   // Then handle qtests-specific mappings
+   "^\\./index\\.js$": "<rootDir>/index.ts",
+   "^\\./setup\\.js$": "<rootDir>/setup.ts",
+    "^\\./lib/(.*)\\.js$": "<rootDir>/lib/$1.ts",
+    "^\\./lib/(.*)$": "<rootDir>/lib/$1.ts",
+    // Special handling for source-map-generator to avoid issues
+    "^\\./lib/source-map-generator$": "<rootDir>/__mocks__/fileMock.js",
+   "^\\./utils/httpTest\\.shim\\.js$": "<rootDir>/utils/httpTest.shim.ts",
+   "^\\./utils/(.*)\\.js$": "<rootDir>/utils/$1.ts",
+   "^(.*/httpTest\\.shim)\\.js$": "$1.ts",
+   "^external-service-client$": "<rootDir>/utils/jest-proxies/external-service-client.cjs",
+   "^feature-x$": "<rootDir>/utils/jest-proxies/feature-x.cjs",
+   "^\\.{1,2}/(.*)\\.js$": "$1",
+   "^qtests/lib/(.*)$": "<rootDir>/lib/$1.ts",
+   "^qtests/utils/(.*)$": "<rootDir>/utils/$1.ts",
+   "^qtests/setup$": "<rootDir>/setup.ts",
+   "^qtests$": "<rootDir>/index.ts",
+   "^mongoose$": "<rootDir>/__mocks__/mongoose.js",
+   "^\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",
+   "^\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/__mocks__/fileMock.js",
+   // Fix for security module imports
+   "^\\./lib/security/(.*)$": "<rootDir>/lib/security/$1.ts",
+   "^\\.\\/lib\\/security\\/(.*)$": "<rootDir>/lib/security/$1.ts",
+    // Mock source-map-generator to avoid import issues
+    "^\\.\\/lib\\/source-map-generator$": "<rootDir>/__mocks__/fileMock.js",
+   }
 };

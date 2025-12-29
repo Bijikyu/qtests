@@ -145,23 +145,28 @@ export class LegacyAxiosMock implements MockHttpClient {
     const startTime = Date.now();
     console.log(`LegacyAxiosMock.delete: ${url}`);
     if (this.simulateErrors && randomBytes(1)[0] < 26) { // 26/256 ≈ 10.2% to avoid modulo bias
-      const simulatedError = new Error('Simulated network error');
-      qerrors(simulatedError, 'legacyAxiosMock.delete: simulated network error', {
-        url,
-        processingTime: Date.now() - startTime
-      });
-      throw simulatedError;
-      throw new Error('Simulated network error');
-    }
+        const simulatedError = new Error('Simulated network error');
+        qerrors(simulatedError, 'legacyAxiosMock.delete: simulated network error', {
+          url,
+          processingTime: Date.now() - startTime
+        });
+        throw simulatedError;
+      }
     const response = createAxiosStyleResponse(this.defaultResponse, this.defaultStatus);
     console.log(`LegacyAxiosMock.delete returning: ${JSON.stringify(response)}`);
     return response;
   }
 
   async patch(url: string, _data: any = {}, _config: any = {}): Promise<AxiosResponse> {
+    const startTime = Date.now();
     console.log(`LegacyAxiosMock.patch: ${url}`);
     if (this.simulateErrors && randomBytes(1)[0] < 26) { // 26/256 ≈ 10.2% to avoid modulo bias
-      throw new Error('Simulated network error');
+      const simulatedError = new Error('Simulated network error');
+      qerrors(simulatedError, 'legacyAxiosMock.patch: simulated network error', {
+        url,
+        processingTime: Date.now() - startTime
+      });
+      throw simulatedError;
     }
     const response = createAxiosStyleResponse(this.defaultResponse, this.defaultStatus);
     console.log(`LegacyAxiosMock.patch returning: ${JSON.stringify(response)}`);

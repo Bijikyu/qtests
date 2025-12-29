@@ -49,10 +49,10 @@ export class DistributedRateLimiter {
     this.initializeRedis();
   }
 
-  private async initializeRedis(): Promise<void> {
+    private async initializeRedis(): Promise<void> {
     try {
       const redisUrlToUse = redisUrl || redisCloudUrl;
-      if (!redisUrl) {
+      if (!redisUrlToUse) {
         console.log('Redis not configured for rate limiting, using fallback');
         return;
       }
@@ -127,7 +127,7 @@ export class DistributedRateLimiter {
       if (currentCount >= this.config.maxRequests) {
         try {
           const oldestResult = await this.redis.zRange(key, 0, 0);
-          if (!oldestResult || oldestResult.length === 0) {
+          if (!oldestResult || !Array.isArray(oldestResult) || oldestResult.length === 0) {
             throw new Error('Redis zRange returned invalid result');
           }
           const oldestTimestamp = parseFloat(oldestResult[0]?.split('-')[0] || '0');
@@ -178,7 +178,7 @@ export class DistributedRateLimiter {
   private checkFallbackLimit(key: string, now: number): RateLimitResult {
     const counter = this.fallbackCounters.get(key);
 
-    if (!counter || now > counter.resetTime) {
+    if (!counter || now >= counter.resetTime) {
       this.fallbackCounters.set(key, {
         count: 1,
         resetTime: now + this.config.windowMs

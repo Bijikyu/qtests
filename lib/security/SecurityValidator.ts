@@ -144,7 +144,7 @@ export class SecurityValidator {
         customValidator: (value: string) => {
           try {
             const parsed = JSON.parse(value);
-            if (parsed && typeof parsed === 'object') {
+            if (parsed && typeof parsed === 'object' && parsed !== null) {
               if (parsed.hasOwnProperty('__proto__') || 
                   parsed.hasOwnProperty('constructor') || 
                   parsed.hasOwnProperty('prototype')) {
@@ -202,7 +202,7 @@ export class SecurityValidator {
     // Log security events if flags detected
     if (result.securityFlags.length > 0) {
       securityMonitor.logEvent({
-        type: SecurityEventType.JSON_INJECTION_ATTEMPT,
+        type: SecurityEventType.INJECTION_ATTACK,
         severity: SecuritySeverity.MEDIUM,
         source: 'security_validator',
         details: { 

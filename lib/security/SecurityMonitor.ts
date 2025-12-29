@@ -1,329 +1,279 @@
 /**
- * Security Monitoring Framework
+ * Security Monitor
  * 
- * Provides runtime security monitoring, anomaly detection, and alerting
- * for qtests testing framework. Implements rate limiting, event tracking,
- * and automated incident response capabilities.
+ * Comprehensive security monitoring and incident tracking system
  */
 
-import qerrors from 'qerrors';
+import { randomBytes } from 'crypto';
 
-// Security event types for monitoring
+/**
+ * Security event types
+ */
 export enum SecurityEventType {
-  COMMAND_INJECTION_ATTEMPT = 'command_injection_attempt',
-  PATH_TRAVERSAL_ATTEMPT = 'path_traversal_attempt', 
-  MODULE_HIJACKING_ATTEMPT = 'module_hijacking_attempt',
-  ENVIRONMENT_POLLUTION_ATTEMPT = 'environment_pollution_attempt',
-  JSON_INJECTION_ATTEMPT = 'json_injection_attempt',
+  INJECTION_ATTACK = 'injection_attack',
+  XSS_ATTEMPT = 'xss_attempt',
+  PATH_TRAVERSAL = 'path_traversal',
+  COMMAND_INJECTION = 'command_injection',
   RATE_LIMIT_EXCEEDED = 'rate_limit_exceeded',
+  UNAUTHORIZED_ACCESS = 'unauthorized_access',
   ANOMALOUS_PATTERN = 'anomalous_pattern',
-  UNAUTHORIZED_ACCESS = 'unauthorized_access'
+  SECURITY_VIOLATION = 'security_violation'
 }
 
-// Security event severity levels
+/**
+ * Security severity levels
+ */
 export enum SecuritySeverity {
   LOW = 'low',
-  MEDIUM = 'medium', 
+  MEDIUM = 'medium',
   HIGH = 'high',
   CRITICAL = 'critical'
 }
 
-// Security event interface
+/**
+ * Security event interface
+ */
 export interface SecurityEvent {
-  id: string;
   type: SecurityEventType;
   severity: SecuritySeverity;
-  timestamp: Date;
   source: string;
-  details: Record<string, any>;
+  details: any;
   blocked: boolean;
-  remediation?: string;
-}
-
-// Rate limiting configuration
-interface RateLimitConfig {
-  windowMs: number;
-  maxRequests: number;
-  blockDurationMs: number;
-}
-
-// Anomaly detection thresholds
-interface AnomalyThresholds {
-  maxFailedValidationPerMinute: number;
-  maxModuleLoadAttemptsPerMinute: number;
-  maxCommandExecutionsPerMinute: number;
-  suspiciousPatternScore: number;
+  remediation: string;
+  timestamp?: string;
+  id?: string;
 }
 
 /**
- * Security monitoring and event tracking
+ * Rate limit result interface
+ */
+export interface RateLimitResult {
+  allowed: boolean;
+  retryAfter?: number;
+  reason?: string;
+}
+
+/**
+ * Security Monitor class
  */
 export class SecurityMonitor {
   private events: SecurityEvent[] = [];
-  private rateLimits = new Map<string, { count: number; resetTime: number; blocked: boolean }>();
-  private counters = new Map<string, number>();
-  private lastReset = new Map<string, number>();
-  
-  private readonly rateLimitConfig: RateLimitConfig = {
-    windowMs: 60000, // 1 minute
-    maxRequests: 100,
-    blockDurationMs: 300000 // 5 minutes
-  };
-
-  private readonly anomalyThresholds: AnomalyThresholds = {
-    maxFailedValidationPerMinute: 10,
-    maxModuleLoadAttemptsPerMinute: 50,
-    maxCommandExecutionsPerMinute: 20,
-    suspiciousPatternScore: 0.8
-  };
-
-
+  private rateLimits = new Map<string, { count: number; resetTime: number }>();
+  private maxEvents = 1000;
+  private cleanupInterval?: NodeJS.Timeout;
 
   /**
-   * Check rate limiting for security-sensitive operations
+   * Initialize security monitor
    */
-  checkRateLimit(identifier: string, config?: Partial<RateLimitConfig>): { allowed: boolean; blocked: boolean; reason?: string } {
+  constructor() {
+    console.log('🔒 Security Monitor Initialized');
+    this.setupCleanup();
+  }
+
+  /**
+   * Cleanup resources
+   */
+  dispose(): void {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+    }
+  }
+
+  /**
+   * Log security event
+   */
+  logEvent(event: SecurityEvent): void {
+    const securityEvent: SecurityEvent = {
+      ...event,
+      id: this.generateEventId(),
+      timestamp: new Date().toISOString()
+    };
+
+    this.events.push(securityEvent);
+
+    // Keep only recent events
+    if (this.events.length > this.maxEvents) {
+      this.events = this.events.slice(-this.maxEvents);
+    }
+
+    // Log to console for immediate visibility
+    console.log(`🚨 Security Event [${event.severity.toUpperCase()}]: ${event.type}`, {
+      source: event.source,
+      blocked: event.blocked,
+      details: event.details
+    });
+  }
+
+  /**
+   * Check rate limit
+   */
+  checkRateLimit(identifier: string, options: {
+    windowMs?: number;
+    maxRequests?: number;
+  } = {}): RateLimitResult {
+    const windowMs = options.windowMs || 60000; // 1 minute default
+    const maxRequests = options.maxRequests || 100; // 100 requests per minute default
+
     const now = Date.now();
-    const cfg = { ...this.rateLimitConfig, ...config };
-    const key = `rate_${identifier}`;
-    
-    const current = this.rateLimits.get(key) || { count: 0, resetTime: now + cfg.windowMs, blocked: false };
-    
-    // Reset if window expired
-    if (now > current.resetTime) {
-      current.count = 0;
-      current.resetTime = now + cfg.windowMs;
-      current.blocked = false;
+    const key = identifier;
+
+    // Get or initialize rate limit data
+    let rateLimitData = this.rateLimits.get(key);
+    if (!rateLimitData || now > rateLimitData.resetTime) {
+      rateLimitData = {
+        count: 0,
+        resetTime: now + windowMs
+      };
+      this.rateLimits.set(key, rateLimitData);
     }
 
-    // Check if currently blocked
-    if (current.blocked && now < current.resetTime) {
-      return { allowed: false, blocked: true, reason: 'Rate limit block active' };
-    }
+    // Increment count first to prevent off-by-one error
+    rateLimitData.count++;
 
-    // Check limit
-    if (current.count >= cfg.maxRequests) {
-      current.blocked = true;
-      current.resetTime = now + cfg.blockDurationMs;
-      this.rateLimits.set(key, current);
-      
+    // Check if limit exceeded
+    if (rateLimitData.count > maxRequests) {
       this.logEvent({
         type: SecurityEventType.RATE_LIMIT_EXCEEDED,
         severity: SecuritySeverity.MEDIUM,
-        source: 'security_monitor',
-        details: { identifier, count: current.count, limit: cfg.maxRequests },
+        source: 'rate_limit',
+        details: { identifier, count: rateLimitData.count, maxRequests },
         blocked: true,
-        remediation: 'Rate limit activated. Please reduce request frequency.'
+        remediation: 'Rate limit exceeded. Please try again later.'
       });
-      
-      return { allowed: false, blocked: true, reason: 'Rate limit exceeded' };
+
+      return {
+        allowed: false,
+        retryAfter: rateLimitData.resetTime - now,
+        reason: 'Rate limit exceeded'
+      };
     }
 
-    // Increment counter
-    current.count++;
-    this.rateLimits.set(key, current);
-    
-    return { allowed: true, blocked: false };
+    return { allowed: true };
   }
 
   /**
-   * Detect anomalous patterns in security events
+   * Get security events by type
    */
-  detectAnomalies(): SecurityEvent[] {
-    const now = Date.now();
-    const oneMinuteAgo = now - 60000;
-    const anomalies: SecurityEvent[] = [];
-
-    // Count events by type in last minute
-    const recentEvents = this.events.filter(event => event.timestamp.getTime() > oneMinuteAgo);
-    const eventCounts = new Map<SecurityEventType, number>();
-    
-    recentEvents.forEach(event => {
-      eventCounts.set(event.type, (eventCounts.get(event.type) || 0) + 1);
-    });
-
-    // Check for anomalous patterns
-    eventCounts.forEach((count, type) => {
-      switch (type) {
-        case SecurityEventType.COMMAND_INJECTION_ATTEMPT:
-        case SecurityEventType.PATH_TRAVERSAL_ATTEMPT:
-        case SecurityEventType.MODULE_HIJACKING_ATTEMPT:
-          if (count > 5) {
-            anomalies.push(this.createSecurityEvent({
-              type: SecurityEventType.ANOMALOUS_PATTERN,
-              severity: SecuritySeverity.HIGH,
-              source: 'security_monitor',
-              details: { pattern: type, count, threshold: 5 },
-              blocked: true,
-              remediation: 'Multiple security attack patterns detected. Investigation required.'
-            }));
-          }
-          break;
-      }
-    });
-
-    return anomalies;
+  getEventsByType(type: SecurityEventType): SecurityEvent[] {
+    return this.events.filter(event => event.type === type);
   }
 
   /**
-   * Create security event with ID and timestamp
+   * Get security events by severity
    */
-  private createSecurityEvent(eventData: {
-    type: SecurityEventType;
-    severity: SecuritySeverity;
-    source: string;
-    details: Record<string, any>;
-    blocked: boolean;
-    remediation?: string;
-  }): SecurityEvent {
-    return {
-      id: this.generateEventId(),
-      timestamp: new Date(),
-      ...eventData
-    };
+  getEventsBySeverity(severity: SecuritySeverity): SecurityEvent[] {
+    return this.events.filter(event => event.severity === severity);
   }
 
   /**
-   * Log security event with contextual information
+   * Get recent security events
    */
-  logEvent(eventData: {
-    type: SecurityEventType;
-    severity: SecuritySeverity;
-    source: string;
-    details: Record<string, any>;
-    blocked: boolean;
-    remediation?: string;
-  }): string {
-    const fullEvent = this.createSecurityEvent(eventData);
-
-    // Store event
-    this.events.push(fullEvent);
-    
-    // Log to qerrors for external monitoring
-    qerrors(
-      new Error(`Security Event: ${eventData.type}`),
-      'qtests.security.monitor',
-      {
-        eventId: fullEvent.id,
-        type: eventData.type,
-        severity: eventData.severity,
-        source: eventData.source,
-        details: eventData.details,
-        blocked: eventData.blocked,
-        remediation: eventData.remediation
-      }
+  getRecentEvents(minutes: number = 60): SecurityEvent[] {
+    const cutoff = new Date(Date.now() - minutes * 60 * 1000);
+    return this.events.filter(event => 
+      event.timestamp && new Date(event.timestamp) > cutoff
     );
-
-    // Check for anomalies after each event
-    const anomalies = this.detectAnomalies();
-    anomalies.forEach(anomaly => {
-      this.events.push(anomaly);
-      qerrors(
-        new Error(`Security Anomaly Detected`),
-        'qtests.security.anomaly',
-        {
-          eventId: anomaly.id,
-          type: anomaly.type,
-          severity: anomaly.severity,
-          details: anomaly.details,
-          blocked: anomaly.blocked
-        }
-      );
-    });
-
-    return fullEvent.id;
   }
 
   /**
-   * Get security metrics and statistics
-   */
-  getSecurityMetrics(): {
-    totalEvents: number;
-    eventsByType: Record<SecurityEventType, number>;
-    eventsBySeverity: Record<SecuritySeverity, number>;
-    recentEvents: SecurityEvent[];
-    rateLimitStats: { activeLimits: number; blockedRequests: number };
-  } {
-    const now = Date.now();
-    const lastHour = now - 3600000; // 1 hour ago
-    
-    const recentEvents = this.events.filter(event => event.timestamp.getTime() > lastHour);
-    
-    const eventsByType = Object.values(SecurityEventType).reduce((acc, type) => {
-      acc[type] = this.events.filter(event => event.type === type).length;
-      return acc;
-    }, {} as Record<SecurityEventType, number>);
-
-    const eventsBySeverity = Object.values(SecuritySeverity).reduce((acc, severity) => {
-      acc[severity] = this.events.filter(event => event.severity === severity).length;
-      return acc;
-    }, {} as Record<SecuritySeverity, number>);
-
-    const activeLimits = Array.from(this.rateLimits.values()).filter(rl => rl.blocked).length;
-    const blockedRequests = Array.from(this.rateLimits.values()).reduce((sum, rl) => sum + rl.count, 0);
-
-    return {
-      totalEvents: this.events.length,
-      eventsByType,
-      eventsBySeverity,
-      recentEvents: recentEvents.slice(-20), // Last 20 recent events
-      rateLimitStats: {
-        activeLimits,
-        blockedRequests
-      }
-    };
-  }
-
-  /**
-   * Clear old events to prevent memory leaks
-   */
-  cleanup(olderThanHours: number = 24): void {
-    const cutoffTime = Date.now() - (olderThanHours * 3600000);
-    this.events = this.events.filter(event => event.timestamp.getTime() > cutoffTime);
-    
-    // Clean up expired rate limits
-    const now = Date.now();
-    for (const [key, limit] of this.rateLimits.entries()) {
-      if (now > limit.resetTime) {
-        this.rateLimits.delete(key);
-      }
-    }
-  }
-
-  /**
-   * Generate security report for analysis
+   * Generate security report
    */
   generateReport(): string {
-    const metrics = this.getSecurityMetrics();
+    const now = new Date().toISOString();
+    const recentEvents = this.getRecentEvents(24 * 60); // Last 24 hours
+
     const report = [
-      '# QTests Security Monitor Report',
-      `Generated: ${new Date().toISOString()}`,
+      '# Security Monitor Report',
+      `Generated: ${now}`,
       '',
       '## Summary',
-      `- Total Events: ${metrics.totalEvents}`,
-      `- Active Rate Limits: ${metrics.rateLimitStats.activeLimits}`,
-      `- Blocked Requests: ${metrics.rateLimitStats.blockedRequests}`,
+      `- Total Events: ${this.events.length}`,
+      `- Recent Events (24h): ${recentEvents.length}`,
+      `- Critical Events: ${this.getEventsBySeverity(SecuritySeverity.CRITICAL).length}`,
+      `- High Events: ${this.getEventsBySeverity(SecuritySeverity.HIGH).length}`,
       '',
-      '## Events by Type',
-      ...Object.entries(metrics.eventsByType).map(([type, count]) => `- ${type}: ${count}`),
-      '',
-      '## Events by Severity',
-      ...Object.entries(metrics.eventsBySeverity).map(([severity, count]) => `- ${severity}: ${count}`),
-      '',
-      '## Recent Events (Last Hour)',
-      ...metrics.recentEvents.map(event => 
-        `- [${event.severity.toUpperCase()}] ${event.type}: ${JSON.stringify(event.details)}`
-      ),
+      '## Recent Events',
+      ...recentEvents.slice(-10).map(event => [
+        `### ${event.type}`,
+        `- Severity: ${event.severity}`,
+        `- Source: ${event.source}`,
+        `- Blocked: ${event.blocked}`,
+        `- Time: ${event.timestamp}`,
+        `- Details: ${JSON.stringify(event.details)}`,
+        ''
+      ]).flat(),
       '',
       '--- End of Report ---'
     ];
 
     return report.join('\n');
   }
+
+  /**
+   * Get security metrics
+   */
+  getMetrics(): {
+    totalEvents: number;
+    eventsByType: Record<string, number>;
+    eventsBySeverity: Record<string, number>;
+    blockedEvents: number;
+    recentEvents: number;
+  } {
+    const eventsByType: Record<string, number> = {};
+    const eventsBySeverity: Record<string, number> = {};
+    let blockedEvents = 0;
+
+    for (const event of this.events) {
+      eventsByType[event.type] = (eventsByType[event.type] || 0) + 1;
+      eventsBySeverity[event.severity] = (eventsBySeverity[event.severity] || 0) + 1;
+      if (event.blocked) {
+        blockedEvents++;
+      }
+    }
+
+    return {
+      totalEvents: this.events.length,
+      eventsByType,
+      eventsBySeverity,
+      blockedEvents,
+      recentEvents: this.getRecentEvents().length
+    };
+  }
+
+  /**
+   * Clear old events
+   */
+  clearOldEvents(olderThanHours: number = 24): void {
+    const cutoff = new Date(Date.now() - olderThanHours * 60 * 60 * 1000);
+    this.events = this.events.filter(event => 
+      event.timestamp && new Date(event.timestamp) > cutoff
+    );
+  }
+
+  /**
+   * Generate unique event ID
+   */
+  private generateEventId(): string {
+    return `evt_${Date.now()}_${randomBytes(8).toString('hex')}`;
+  }
+
+  /**
+   * Setup cleanup interval
+   */
+  private setupCleanup(): void {
+    this.cleanupInterval = setInterval(() => {
+      this.clearOldEvents(24); // Clear events older than 24 hours
+    }, 60 * 60 * 1000); // Run every hour
+  }
 }
 
-// Global security monitor instance
-export const securityMonitor = new SecurityMonitor();
+/**
+ * Validate security headers
+ */
+export function validateSecurityHeaders(headers: Record<string, string>): {
+  valid: boolean;
+  errors: string[];
+} {
   const errors: string[] = [];
 
   // Check for required headers in production
@@ -339,15 +289,15 @@ export const securityMonitor = new SecurityMonitor();
   // Validate CSP format
   if (headers['Content-Security-Policy']) {
     const csp = headers['Content-Security-Policy'];
-    if (typeof csp !== 'string' || csp.length === 0) {
-      errors.push('Content-Security-Policy must be a non-empty string');
+    if (!csp.includes('default-src')) {
+      errors.push('CSP should include default-src directive');
     }
   }
 
   // Validate HSTS
   if (headers['Strict-Transport-Security']) {
     const hsts = headers['Strict-Transport-Security'];
-    if (typeof hsts !== 'string' || !hsts.includes('max-age=')) {
+    if (!hsts.includes('max-age')) {
       errors.push('Strict-Transport-Security must include max-age directive');
     }
   }
@@ -358,9 +308,5 @@ export const securityMonitor = new SecurityMonitor();
   };
 }
 
-
-
-// Start automatic cleanup every hour
-setInterval(() => {
-  securityMonitor.cleanup();
-}, 3600000);
+// Export global instance
+export const securityMonitor = new SecurityMonitor();

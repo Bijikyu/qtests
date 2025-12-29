@@ -36,9 +36,12 @@ function generateKey(lengthOrType: number | string = 32, prefix?: string): strin
     // Handle normal scenario with numeric length
     const length = lengthOrType as number;
     
-    // Validate input to prevent infinite loops
+    // Validate input to prevent infinite loops and memory issues
     if (!Number.isInteger(length) || length <= 0) {
       throw new Error('Invalid key length: must be a positive integer');
+    }
+    if (length > 1000) {
+      throw new Error('Key length too large: maximum 1000 characters');
     }
     
     // Character set for generating random keys
@@ -48,9 +51,13 @@ function generateKey(lengthOrType: number | string = 32, prefix?: string): strin
     // Generate cryptographically secure random characters
     // Each character needs 2 bytes for proper distribution, so allocate length * 2
     const randomBuffer = randomBytes(length * 2);
+    const bufferLength = randomBuffer.length;
     for (let i = 0; i < length; i++) {
       const byteIndex = i * 2;
-      // Safe buffer access - we know buffer has length * 2 bytes, and byteIndex + 1 <= (length-1)*2 + 1 = length*2 - 1
+      // Safe buffer access with bounds checking
+      if (byteIndex + 1 >= bufferLength) {
+        throw new Error('Buffer index out of bounds during key generation');
+      }
       const byte1 = randomBuffer[byteIndex];
       const byte2 = randomBuffer[byteIndex + 1];
       result += chars.charAt((byte1 + byte2 * 256) % chars.length);

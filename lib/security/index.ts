@@ -62,7 +62,7 @@ export const logSecurityEvent = (
       source,
       details,
       blocked,
-      remediation
+      remediation: remediation || 'No remediation available'
     });
   });
 };
@@ -138,7 +138,7 @@ export const getSecurityStatus = () => {
     import('./SecurityPolicyManager.js'),
     import('./SecurityValidator.js')
   ]).then(([{ securityMonitor }, { securityPolicyManager }, { securityValidator }]) => {
-    const metrics = securityMonitor.getSecurityMetrics();
+    const metrics = securityMonitor.getMetrics();
     const headers = securityPolicyManager.generateSecurityHeaders();
     const ruleSets = securityValidator.getRuleSets();
 

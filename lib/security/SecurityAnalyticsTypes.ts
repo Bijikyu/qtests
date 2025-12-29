@@ -4,6 +4,8 @@
  * Type definitions for security analytics components
  */
 
+import { SecurityEventType, SecuritySeverity } from './SecurityMonitor.js';
+
 export interface SecurityAnalyticsConfig {
   retentionDays?: number;
   anomalyThresholds?: {

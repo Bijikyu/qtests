@@ -239,7 +239,7 @@ export class SecurityMiddleware {
     if (req.url) {
       const suspiciousCheck = SecurityUtils.containsSuspiciousPatterns(req.url);
       if (suspiciousCheck.suspicious) {
-        logData.suspiciousPatterns = suspiciousCheck.patterns;
+        logData.suspiciousPatterns = suspiciousCheck.patterns?.map(p => String(p || '')).filter(Boolean);
       }
     }
 
@@ -347,7 +347,7 @@ export class SecurityMiddleware {
       if (options.validator) {
         validationResult = { valid: options.validator(apiKey) };
       } else {
-        validationResult = SecurityUtils.validateApiKey(apiKey);
+        validationResult = { valid: apiKey.length >= 8 };
       }
 
       if (!validationResult.valid) {
