@@ -16,18 +16,40 @@ import * as path from 'path';
  * @returns The resolved file path to the stub file
  */
 function getStubPath(moduleName: string): string {
-  // Get the project root directory (where setup.ts is located)
-  const projectRoot = path.resolve(__dirname, '..');
+  // Validate module name to prevent path traversal
+  if (!moduleName || typeof moduleName !== 'string' || moduleName.includes('..') || moduleName.includes('/') || moduleName.includes('\\')) {
+    throw new Error('Invalid module name - potential path traversal');
+  }
   
-  // Construct the stub file path
-  const stubPath = path.join(projectRoot, 'stubs', `${moduleName}.ts`);
+  // Get project root directory (where setup.ts is located)
+  const projectRoot = path.normalize(path.resolve(__dirname, '..'));
   
-  // Check if the stub file exists, fallback to .js if .ts doesn't exist
+  // Construct the stub file path with validation
+  const stubPath = path.normalize(path.join(projectRoot, 'stubs', `${moduleName}.ts`));
+  const stubsDir = path.normalize(path.join(projectRoot, 'stubs'));
+  
+  // Validate stub path is within expected directory
+  if (!stubPath.startsWith(stubsDir + path.sep) && stubPath !== stubsDir) {
+    throw new Error('Invalid stub path - outside expected directory');
+  }
+  
+  // Check if stub file exists, fallback to .js if .ts doesn't exist
   try {
-    require.resolve(stubPath);
+    const resolvedPath = require.resolve(stubPath);
+    // Additional validation of resolved path
+    const normalizedResolved = path.normalize(path.resolve(resolvedPath));
+    if (!normalizedResolved.startsWith(stubsDir + path.sep) && normalizedResolved !== stubsDir) {
+      throw new Error('Resolved stub path - outside expected directory');
+    }
     return stubPath;
   } catch {
-    const jsStubPath = path.join(projectRoot, 'stubs', `${moduleName}.js`);
+    const jsStubPath = path.normalize(path.join(projectRoot, 'stubs', `${moduleName}.js`));
+    
+    // Validate JS stub path as well
+    if (!jsStubPath.startsWith(stubsDir + path.sep) && jsStubPath !== stubsDir) {
+      throw new Error('Invalid JS stub path - outside expected directory');
+    }
+    
     return jsStubPath;
   }
 }

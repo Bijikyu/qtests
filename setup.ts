@@ -36,8 +36,9 @@ import * as localVars from './config/localVars.js';
 registerDefaultMocks();
 installMocking();
 
-// Honor CI silence toggle to reduce noise
-const shouldLog = !((localVars.qtestsSilent || 'false') === '1' || (localVars.qtestsSilent || 'false') === 'true');
+// Honor CI silence toggle to reduce noise with secure boolean parsing
+const qtestsSilent = String(localVars.qtestsSilent || 'false').toLowerCase();
+const shouldLog = !(qtestsSilent === '1' || qtestsSilent === 'true');
 if (shouldLog) {
   console.log('qtests: Global module resolution patching activated');
   console.log(`qtests: Stub registry contains: ${mockRegistry.list().join(', ')}`);

@@ -18,7 +18,7 @@ export const cleanupWithMemoryTracking = async (): Promise<void> => {
     // Multiple passes help catch objects that become eligible for GC in subsequent passes
     for (let i = 0; i < 3; i++) {
       (global as any).gc(); // Force garbage collection if available (requires --expose-gc flag)
-      await new Promise(resolve => setTimeout(resolve, 10)); // Allow async operations to complete
+      await new Promise(resolve => setTimeout(resolve, 10)); // Fixed timeout - use safe delay value
     }
   }
 

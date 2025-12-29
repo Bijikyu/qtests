@@ -238,22 +238,34 @@ export function registerDefaultMocks(): void {
   mockRegistry.register('winston', () => {
     let winstonStub;
     try { 
-      // Validate path to prevent traversal - use proper path resolution
-      const winstonPath = require.resolve('../stubs/winston.ts');
-      const resolvedPath = path.resolve(winstonPath);
-      const expectedDir = path.resolve(process.cwd(), 'stubs');
-      if (!resolvedPath.startsWith(expectedDir + path.sep)) {
-        throw new Error('Invalid stub path - outside expected directory');
-      }
+        // Validate path to prevent traversal - use proper path resolution with security checks
+        const winstonPath = require.resolve('../stubs/winston.ts');
+        const resolvedPath = path.normalize(path.resolve(winstonPath));
+        const expectedDir = path.normalize(path.resolve(process.cwd(), 'stubs'));
+        
+        // Strict path validation - ensure resolved path is within expected directory
+        if (!resolvedPath.startsWith(expectedDir + path.sep) && resolvedPath !== expectedDir) {
+          throw new Error('Invalid stub path - outside expected directory');
+        }
+        
+        // Additional safety check - prevent directory traversal
+        const relativePath = path.relative(expectedDir, resolvedPath);
+        if (relativePath.startsWith('..') || relativePath.includes(path.sep + '..')) {
+          throw new Error('Invalid stub path - directory traversal detected');
+        }
       winstonStub = require(winstonPath).default; 
     } catch (tsError) {
       // TypeScript stub failed, try JavaScript
       try { 
         const winstonJsPath = require.resolve('../stubs/winston.js');
-        const resolvedPath = path.resolve(winstonJsPath);
-        const expectedDir = path.resolve(process.cwd(), 'stubs');
-        if (!resolvedPath.startsWith(expectedDir + path.sep)) {
+        const resolvedPath = path.normalize(path.resolve(winstonJsPath));
+        const expectedDir = path.normalize(path.resolve(process.cwd(), 'stubs'));
+        if (!resolvedPath.startsWith(expectedDir + path.sep) && resolvedPath !== expectedDir) {
           throw new Error('Invalid stub path - outside expected directory');
+        }
+        const relativePath = path.relative(expectedDir, resolvedPath);
+        if (relativePath.startsWith('..') || relativePath.includes(path.sep + '..')) {
+          throw new Error('Invalid stub path - directory traversal detected');
         }
         winstonStub = require(winstonJsPath).default; 
       } catch (jsError) {
@@ -267,13 +279,21 @@ export function registerDefaultMocks(): void {
   mockRegistry.register('mongoose', () => {
     // Prefer local manual mock if present in client repo via Jest mapping; otherwise a safe object
     try { 
-      // Validate path to prevent traversal - use proper path resolution
-      const mongoosePath = require.resolve('../../__mocks__/mongoose.js');
-      const resolvedPath = path.resolve(mongoosePath);
-      const expectedDir = path.resolve(process.cwd(), '__mocks__');
-      if (!resolvedPath.startsWith(expectedDir + path.sep)) {
-        throw new Error('Invalid mock path - outside expected directory');
-      }
+        // Validate path to prevent traversal - use proper path resolution with security checks
+        const mongoosePath = require.resolve('../../__mocks__/mongoose.js');
+        const resolvedPath = path.normalize(path.resolve(mongoosePath));
+        const expectedDir = path.normalize(path.resolve(process.cwd(), '__mocks__'));
+        
+        // Strict path validation - ensure resolved path is within expected directory
+        if (!resolvedPath.startsWith(expectedDir + path.sep) && resolvedPath !== expectedDir) {
+          throw new Error('Invalid mock path - outside expected directory');
+        }
+        
+        // Additional safety check - prevent directory traversal
+        const relativePath = path.relative(expectedDir, resolvedPath);
+        if (relativePath.startsWith('..') || relativePath.includes(path.sep + '..')) {
+          throw new Error('Invalid mock path - directory traversal detected');
+        }
       return require(mongoosePath); 
     } catch (error) {
       // Fall back to safe object if manual mock unavailable

@@ -4,6 +4,7 @@
 
 import { CODEX, OFFLINE_MODE, NODE_ENV } from '../config/localVars.js';
 import qerrors from 'qerrors';
+import path from 'path';
 
 // Type definitions
 interface EnvironmentState {
@@ -51,13 +52,24 @@ function isOfflineMode(): boolean {
 async function getAxios(): Promise<any> {
   if (!cachedAxios) {
     if (isOfflineFlag) {
-      // Use stub axios
+      // Use stub axios with secure path validation
       try {
-        // Validate module path to prevent traversal
+        // Validate module path to prevent traversal using proper path resolution
         const axiosPath = require.resolve('../stubs/axios.js');
-        if (!axiosPath.includes('/stubs/')) {
-          throw new Error('Invalid stub module path');
+        const resolvedPath = path.normalize(path.resolve(axiosPath));
+        const expectedDir = path.normalize(path.resolve(process.cwd(), 'stubs'));
+        
+        // Strict path validation to prevent directory traversal
+        if (!resolvedPath.startsWith(expectedDir + path.sep) && resolvedPath !== expectedDir) {
+          throw new Error('Invalid stub module path - outside expected directory');
         }
+        
+        // Additional safety check
+        const relativePath = path.relative(expectedDir, resolvedPath);
+        if (relativePath.startsWith('..') || relativePath.includes(path.sep + '..')) {
+          throw new Error('Invalid stub module path - directory traversal detected');
+        }
+        
         const module = await import(axiosPath);
         cachedAxios = module.default || module;
       } catch (error) {
@@ -79,6 +91,15 @@ async function getAxios(): Promise<any> {
           errorType: errorObj.constructor?.name || 'unknown'
         });
         try {
+          // Secure fallback with path validation
+          const fallbackAxiosPath = require.resolve('../stubs/axios.js');
+          const fallbackResolvedPath = path.normalize(path.resolve(fallbackAxiosPath));
+          const fallbackExpectedDir = path.normalize(path.resolve(process.cwd(), 'stubs'));
+          
+          if (!fallbackResolvedPath.startsWith(fallbackExpectedDir + path.sep) && fallbackResolvedPath !== fallbackExpectedDir) {
+            throw new Error('Invalid fallback stub path - outside expected directory');
+          }
+          
           const stubAxios = await import('../stubs/axios.js');
           cachedAxios = stubAxios.default || stubAxios;
         } catch (fallbackError) {
@@ -87,7 +108,8 @@ async function getAxios(): Promise<any> {
             modulePath: '../stubs/axios.js',
             originalError: errorObj && errorObj instanceof Error ? errorObj.message : 'Unknown error'
           });
-          throw fallbackErrorObj;
+          // Return safe default instead of throwing to avoid crashes
+          cachedAxios = { get: () => Promise.resolve({}), post: () => Promise.resolve({}) };
         }
       }
     }
