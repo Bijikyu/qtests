@@ -17,8 +17,9 @@
  *   loader hooks exist to intercept ESM early.
  */
 
-import Module from 'module';
-import path from 'path';
+import { Module } from 'module';
+import * as path from 'path';
+import * as fs from 'fs';
 
 type MockFactory = () => any;
 
@@ -279,20 +280,20 @@ export function registerDefaultMocks(): void {
   mockRegistry.register('mongoose', () => {
     // Prefer local manual mock if present in client repo via Jest mapping; otherwise a safe object
     try { 
-        // Validate path to prevent traversal - use proper path resolution with security checks
-        const mongoosePath = require.resolve('../../__mocks__/mongoose.js');
-        const resolvedPath = path.normalize(path.resolve(mongoosePath));
-        const expectedDir = path.normalize(path.resolve(process.cwd(), '__mocks__'));
+        // Secure path resolution - use absolute path to prevent traversal
+        const expectedDir = path.resolve(process.cwd(), '__mocks__');
+        const mongoosePath = path.join(expectedDir, 'mongoose.js');
         
-        // Strict path validation - ensure resolved path is within expected directory
-        if (!resolvedPath.startsWith(expectedDir + path.sep) && resolvedPath !== expectedDir) {
-          throw new Error('Invalid mock path - outside expected directory');
+        // Verify the file exists and is within expected directory
+        if (!fs.existsSync(mongoosePath)) {
+          throw new Error('Mock file not found');
         }
         
-        // Additional safety check - prevent directory traversal
-        const relativePath = path.relative(expectedDir, resolvedPath);
-        if (relativePath.startsWith('..') || relativePath.includes(path.sep + '..')) {
-          throw new Error('Invalid mock path - directory traversal detected');
+        // Final security check - ensure path is within expected directory
+        // Use path.relative() for cross-platform directory checking
+        const relativePath = path.relative(expectedDir, mongoosePath);
+        if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
+          throw new Error('Invalid mock path - outside expected directory');
         }
       return require(mongoosePath); 
     } catch (error) {

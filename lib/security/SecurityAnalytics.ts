@@ -5,6 +5,7 @@
  */
 
 import { securityMonitor, SecurityEventType, SecuritySeverity } from './SecurityMonitor.js';
+import { randomBytes } from 'crypto';
 
 /**
  * Simple security analytics engine
@@ -158,7 +159,7 @@ export class SecurityAnalytics {
    * Create security incident
    */
   createIncident(eventData: any): string {
-    const incidentId = `inc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const incidentId = `inc_${Date.now()}_${randomBytes(4).toString('hex')}`;
     
     this.incidents.set(incidentId, {
       id: incidentId,

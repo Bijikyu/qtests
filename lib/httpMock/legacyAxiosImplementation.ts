@@ -6,6 +6,7 @@
 import { AxiosResponse, MockHttpClient, MockHttpClientConfig } from './mockTypes.js';
 import { createAxiosStyleResponse } from './mockUtilities.js';
 import qerrors from '../qerrorsFallback.js';
+import { randomBytes } from 'crypto';
 
 export class LegacyAxiosMock implements MockHttpClient {
   private defaultResponse: any;
@@ -80,7 +81,7 @@ export class LegacyAxiosMock implements MockHttpClient {
       }
       
       console.log(`LegacyAxiosMock.get: ${url}`);
-      if (this.simulateErrors && Math.random() < 0.1) {
+      if (this.simulateErrors && randomBytes(1)[0] < 26) { // 26/256 ≈ 10.2% to avoid modulo bias
         const simulatedError = new Error('Simulated network error');
         qerrors(simulatedError, 'legacyAxiosMock.get: simulated network error', {
           url,
@@ -109,9 +110,15 @@ export class LegacyAxiosMock implements MockHttpClient {
   }
 
   async post(url: string, _data: any = {}, _config: any = {}): Promise<AxiosResponse> {
+    const startTime = Date.now();
     console.log(`LegacyAxiosMock.post: ${url}`);
-    if (this.simulateErrors && Math.random() < 0.1) {
-      throw new Error('Simulated network error');
+    if (this.simulateErrors && randomBytes(1)[0] < 26) { // 26/256 ≈ 10.2% to avoid modulo bias
+      const simulatedError = new Error('Simulated network error');
+      qerrors(simulatedError, 'legacyAxiosMock.post: simulated network error', {
+        url,
+        processingTime: Date.now() - startTime
+      });
+      throw simulatedError;
     }
     const response = createAxiosStyleResponse(this.defaultResponse, this.defaultStatus);
     console.log(`LegacyAxiosMock.post returning: ${JSON.stringify(response)}`);
@@ -119,9 +126,15 @@ export class LegacyAxiosMock implements MockHttpClient {
   }
 
   async put(url: string, _data: any = {}, _config: any = {}): Promise<AxiosResponse> {
+    const startTime = Date.now();
     console.log(`LegacyAxiosMock.put: ${url}`);
-    if (this.simulateErrors && Math.random() < 0.1) {
-      throw new Error('Simulated network error');
+    if (this.simulateErrors && randomBytes(1)[0] < 26) { // 26/256 ≈ 10.2% to avoid modulo bias
+      const simulatedError = new Error('Simulated network error');
+      qerrors(simulatedError, 'legacyAxiosMock.put: simulated network error', {
+        url,
+        processingTime: Date.now() - startTime
+      });
+      throw simulatedError;
     }
     const response = createAxiosStyleResponse(this.defaultResponse, this.defaultStatus);
     console.log(`LegacyAxiosMock.put returning: ${JSON.stringify(response)}`);
@@ -129,8 +142,15 @@ export class LegacyAxiosMock implements MockHttpClient {
   }
 
   async delete(url: string, _config: any = {}): Promise<AxiosResponse> {
+    const startTime = Date.now();
     console.log(`LegacyAxiosMock.delete: ${url}`);
-    if (this.simulateErrors && Math.random() < 0.1) {
+    if (this.simulateErrors && randomBytes(1)[0] < 26) { // 26/256 ≈ 10.2% to avoid modulo bias
+      const simulatedError = new Error('Simulated network error');
+      qerrors(simulatedError, 'legacyAxiosMock.delete: simulated network error', {
+        url,
+        processingTime: Date.now() - startTime
+      });
+      throw simulatedError;
       throw new Error('Simulated network error');
     }
     const response = createAxiosStyleResponse(this.defaultResponse, this.defaultStatus);
@@ -140,7 +160,7 @@ export class LegacyAxiosMock implements MockHttpClient {
 
   async patch(url: string, _data: any = {}, _config: any = {}): Promise<AxiosResponse> {
     console.log(`LegacyAxiosMock.patch: ${url}`);
-    if (this.simulateErrors && Math.random() < 0.1) {
+    if (this.simulateErrors && randomBytes(1)[0] < 26) { // 26/256 ≈ 10.2% to avoid modulo bias
       throw new Error('Simulated network error');
     }
     const response = createAxiosStyleResponse(this.defaultResponse, this.defaultStatus);
@@ -149,9 +169,15 @@ export class LegacyAxiosMock implements MockHttpClient {
   }
 
   async request(config: any = {}): Promise<AxiosResponse> {
+    const startTime = Date.now();
     console.log(`LegacyAxiosMock.request: ${JSON.stringify(config)}`);
-    if (this.simulateErrors && Math.random() < 0.1) {
-      throw new Error('Simulated network error');
+    if (this.simulateErrors && randomBytes(1)[0] < 26) { // 26/256 ≈ 10.2% to avoid modulo bias
+      const simulatedError = new Error('Simulated network error');
+      qerrors(simulatedError, 'legacyAxiosMock.request: simulated network error', {
+        config: config ? Object.keys(config) : [],
+        processingTime: Date.now() - startTime
+      });
+      throw simulatedError;
     }
     const response = createAxiosStyleResponse(this.defaultResponse, this.defaultStatus);
     console.log(`LegacyAxiosMock.request returning: ${JSON.stringify(response)}`);

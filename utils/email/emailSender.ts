@@ -9,6 +9,7 @@ import { logStart, logReturn } from '../../lib/logUtils.js';
 import { validateEmail } from './emailValidator.js';
 import { formatEmailContent } from './emailFormatter.js';
 import { addToHistory } from './emailHistory.js';
+import { randomBytes } from 'crypto';
 
 // Type definitions
 interface EmailOptions {
@@ -89,7 +90,7 @@ function sendEmail(recipient: string, subject: string, body: string, options: Em
     emailData,
     message: "Client should send this email using preferred mail service",
     timestamp: new Date(),
-    id: `mock-email-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
+    id: `mock-email-${Date.now()}-${randomBytes(4).toString('hex')}`
   };
   
   // Store in history for test verification

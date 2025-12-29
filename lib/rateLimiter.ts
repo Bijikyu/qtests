@@ -16,6 +16,7 @@
 
 import { redisUrl, redisCloudUrl } from '../config/localVars.js';
 import qerrors from 'qerrors';
+import { randomBytes } from 'crypto';
 
 export interface RateLimitConfig {
   windowMs: number;
@@ -103,15 +104,32 @@ export class DistributedRateLimiter {
 
       pipeline.zRemRangeByScore(key, 0, windowStart);
       pipeline.zCard(key);
-      pipeline.zAdd(key, { score: now, value: `${now}-${Math.random()}` });
+      pipeline.zAdd(key, { score: now, value: `${now}-${randomBytes(8).toString('hex')}` });
       pipeline.expire(key, Math.ceil(this.config.windowMs / 1000) + 1);
 
       const results = await pipeline.exec();
-      const currentCount = results[1];
+      if (!results || results.length < 4) {
+        throw new Error('Redis pipeline returned invalid results');
+      }
+      
+      // Check for Redis pipeline errors (all 4 operations)
+      const zRemErr = results[0]?.[0];
+      const zCardErr = results[1]?.[0];
+      const zAddErr = results[2]?.[0];
+      const expireErr = results[3]?.[0];
+      if (zRemErr || zCardErr || zAddErr || expireErr) {
+        const firstErr = zRemErr || zCardErr || zAddErr || expireErr;
+        throw new Error(`Redis pipeline operation failed: ${firstErr}`);
+      }
+      
+      const currentCount = results[1]?.[1] || 0; // results[1] is [err, zCardResult]
 
       if (currentCount >= this.config.maxRequests) {
         try {
           const oldestResult = await this.redis.zRange(key, 0, 0);
+          if (!oldestResult || oldestResult.length === 0) {
+            throw new Error('Redis zRange returned invalid result');
+          }
           const oldestTimestamp = parseFloat(oldestResult[0]?.split('-')[0] || '0');
 
           return {

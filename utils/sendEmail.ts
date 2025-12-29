@@ -4,6 +4,7 @@
 
 import { executeWithLogs } from '../lib/logUtils.js';
 import qerrors from 'qerrors';
+import { randomBytes } from 'crypto';
 
 // Email data interface
 interface EmailData {
@@ -49,7 +50,7 @@ function sendEmail(emailData: EmailData): Promise<EmailResult> {
       // Create mock result
       const result: EmailResult = {
         success: true,
-        messageId: `mock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        messageId: `mock-${Date.now()}-${randomBytes(4).toString('hex')}`,
         to: emailData.to,
         subject: emailData.subject || '',
         timestamp: new Date().toISOString()
