@@ -4,6 +4,7 @@
  * Provides standardized, configurable Jest setups for different project types
  */
 
+// @ts-ignore - Jest types may not be fully resolved in this context
 import type { Config } from '@jest/types';
 
 // ==================== CONFIGURATION INTERFACES ====================

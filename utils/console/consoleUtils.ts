@@ -156,7 +156,7 @@ export function withAllMockedConsole<T>(
         return null;
       });
       if (currentSpy) {
-        restores.push(() => currentSpy.mockRestore());
+        restores.push(() => currentSpy!.mockRestore());
       }
     }
     

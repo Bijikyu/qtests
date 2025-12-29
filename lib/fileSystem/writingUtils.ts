@@ -26,11 +26,12 @@ export function safeWriteFile(filePath: string, content: string | Buffer, encodi
     fs.writeFileSync(filePath, content, encoding);
     return true;
   } catch (error) {
-    qerrors(error, 'writingUtils.safeWriteFile: file write failed', { 
+    const errorObj = error instanceof Error ? error : new Error(String(error));
+    qerrors(errorObj, 'writingUtils.safeWriteFile: file write failed', { 
       filePath, 
       encoding, 
       contentType: typeof content,
-      contentLength: typeof content === 'string' ? content.length : content.byteLength,
+      contentLength: Buffer.isBuffer(content) ? content.byteLength : content.length,
       operation: 'writeFileSync'
     });
     return false;
@@ -49,7 +50,8 @@ export function ensureDir(dirPath: string): boolean {
     }
     return true;
   } catch (error) {
-    qerrors(error, 'writingUtils.ensureDir: directory creation failed', { 
+    const errorObj = error instanceof Error ? error : new Error(String(error));
+    qerrors(errorObj, 'writingUtils.ensureDir: directory creation failed', { 
       dirPath,
       operation: 'mkdirSync'
     });

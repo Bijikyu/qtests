@@ -33,7 +33,7 @@ export function createFallbackMock(
   implementation?: (...args: any[]) => any
 ): FallbackMock {
   const originalMethod = (console as any)[method];
-  const calls: any[][] = captureCalls ? [] : null;
+  const calls: any[] | null = captureCalls ? [] : null;
 
   // Define the mocked method
   const mockedMethod = function (...args: any[]) {

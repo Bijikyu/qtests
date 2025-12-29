@@ -26,7 +26,8 @@ export function safeDelete(targetPath: string, recursive: boolean = false): bool
     }
     return true;
   } catch (error) {
-    qerrors(error, 'managementUtils.safeDelete: deletion failed', { 
+    const errorObj = error instanceof Error ? error : new Error(String(error));
+    qerrors(errorObj, 'managementUtils.safeDelete: deletion failed', { 
       targetPath, 
       recursive,
       operation: recursive ? 'rmSync' : 'unlinkSync'

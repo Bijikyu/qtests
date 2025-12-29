@@ -63,8 +63,9 @@ function sendEmail(emailData: EmailData): Promise<EmailResult> {
       
       return result;
     } catch (error) {
-      qerrors(error, 'sendEmail: unexpected error', { emailData });
-      throw error;
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      qerrors(errorObj, 'sendEmail: unexpected error', { emailData });
+      throw errorObj;
     }
   }, emailData);
 }
@@ -111,7 +112,8 @@ function validateEmail(emailData: EmailData): boolean {
       }
       return true;
     } catch (error) {
-      qerrors(error, 'validateEmail: unexpected error', { emailData });
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      qerrors(errorObj, 'validateEmail: unexpected error', { emailData });
       return false;
     }
   }, emailData);

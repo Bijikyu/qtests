@@ -121,7 +121,8 @@ export function supertest(app: MockApp): SupertestClient {
         try { 
           body = JSON.parse(text); 
         } catch (error) {
-          qerrors(error, 'httpTest.shim: parsing response body as JSON', { textLength: text.length });
+          const errorObj = error instanceof Error ? error : new Error(String(error));
+          qerrors(errorObj, 'httpTest.shim: parsing response body as JSON', { textLength: text.length });
           // Ignore JSON parse errors
         }
       }
@@ -171,7 +172,8 @@ export function supertest(app: MockApp): SupertestClient {
               try { 
                 return JSON.parse(state.body); 
               } catch (error) {
-                qerrors(error, 'httpTest.shim: parsing request body as JSON', { contentType: ct });
+                const errorObj = error instanceof Error ? error : new Error(String(error));
+                qerrors(errorObj, 'httpTest.shim: parsing request body as JSON', { contentType: ct });
                 return state.body; 
               } 
             })() : state.body;

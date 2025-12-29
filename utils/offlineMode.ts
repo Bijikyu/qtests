@@ -61,7 +61,7 @@ async function getAxios(): Promise<any> {
         const module = await import(axiosPath);
         cachedAxios = module.default || module;
       } catch (error) {
-        qerrors(error, 'offlineMode.getEnvironment: stub axios import failed', {
+        qerrors(error instanceof Error ? error : new Error(String(error)), 'offlineMode.getEnvironment: stub axios import failed', {
           modulePath: '../stubs/axios.js',
           environment: 'offline'
         });
@@ -73,19 +73,21 @@ async function getAxios(): Promise<any> {
         const axios = await import('axios');
         cachedAxios = axios.default || axios;
       } catch (error) {
-        qerrors(error, 'offlineMode.getEnvironment: real axios import failed', {
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        qerrors(errorObj, 'offlineMode.getEnvironment: real axios import failed', {
           modulePath: 'axios',
-          errorType: error.constructor?.name || 'unknown'
+          errorType: errorObj.constructor?.name || 'unknown'
         });
         try {
           const stubAxios = await import('../stubs/axios.js');
           cachedAxios = stubAxios.default || stubAxios;
         } catch (fallbackError) {
-          qerrors(fallbackError, 'offlineMode.getEnvironment: fallback axios import failed', {
+          const fallbackErrorObj = fallbackError instanceof Error ? fallbackError : new Error(String(fallbackError));
+          qerrors(fallbackErrorObj as Error, 'offlineMode.getEnvironment: fallback axios import failed', {
             modulePath: '../stubs/axios.js',
-            originalError: error.message
+            originalError: errorObj && errorObj instanceof Error ? errorObj.message : 'Unknown error'
           });
-          throw fallbackError;
+          throw fallbackErrorObj;
         }
       }
     }
