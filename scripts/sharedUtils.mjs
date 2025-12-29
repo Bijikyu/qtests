@@ -329,17 +329,64 @@ export function executeCommand(command, args = [], options = {}) {
   try {
     const { spawnSync } = require('child_process');
     
-    // Validate command against allowlist to prevent command injection
-    const allowedCommands = ['npm', 'node', 'jest', 'git', 'tsc', 'rm', 'mkdir', 'cp', 'mv'];
-    if (!allowedCommands.includes(command)) {
+    // Enhanced command validation with detailed configurations
+    const allowedCommands = new Map([
+      ['npm', { maxArgs: 10, allowedFlags: ['--version', '--help', 'install', 'run', 'test', 'start'], allowedPrefixes: ['--'] }],
+      ['node', { maxArgs: 5, allowedFlags: ['--version', '--help'], allowedPrefixes: ['--'] }],
+      ['jest', { maxArgs: 8, allowedFlags: ['--version', '--help', '--config', '--runInBand', '--passWithNoTests'], allowedPrefixes: ['--'] }],
+      ['git', { maxArgs: 6, allowedFlags: ['--version', '--help', 'status', 'log', 'add', 'commit', 'push'], allowedPrefixes: ['--', '-'] }],
+      ['tsc', { maxArgs: 3, allowedFlags: ['--version', '--help', '--build'], allowedPrefixes: ['--'] }],
+      ['rm', { maxArgs: 2, allowedFlags: ['-r', '-f'], allowedPrefixes: ['-'] }],
+      ['mkdir', { maxArgs: 2, allowedFlags: ['-p'], allowedPrefixes: ['-'] }],
+      ['cp', { maxArgs: 3, allowedFlags: ['-r', '-f'], allowedPrefixes: ['-'] }],
+      ['mv', { maxArgs: 2, allowedFlags: ['-f'], allowedPrefixes: ['-'] }]
+    ]);
+    
+    if (!allowedCommands.has(command)) {
       throw new Error(`Command not allowed: ${command}`);
     }
     
-    // Validate arguments to prevent injection
-    const sanitizedArgs = args.map(arg => {
-      if (typeof arg !== 'string') return arg;
-      // Remove dangerous characters and patterns
-      return arg.replace(/[;&|`$(){}[\]]/g, '');
+    const commandConfig = allowedCommands.get(command);
+    
+    // Enhanced argument validation
+    const sanitizedArgs = args.map((arg, index) => {
+      if (typeof arg !== 'string') {
+        throw new Error(`Argument ${index} must be a string, got ${typeof arg}`);
+      }
+      
+      // Check argument count limit
+      if (index >= commandConfig.maxArgs) {
+        throw new Error(`Too many arguments for command ${command} (max: ${commandConfig.maxArgs})`);
+      }
+      
+      // Validate flag arguments
+      if (arg.startsWith('--')) {
+        if (!commandConfig.allowedPrefixes.includes('--')) {
+          throw new Error(`Double-dash flags not allowed for command ${command}`);
+        }
+        const flagName = arg.slice(2);
+        if (!commandConfig.allowedFlags.includes(flagName) && !commandConfig.allowedFlags.some(f => flagName.startsWith(f + '='))) {
+          throw new Error(`Flag not allowed: ${arg}`);
+        }
+      } else if (arg.startsWith('-')) {
+        if (!commandConfig.allowedPrefixes.includes('-')) {
+          throw new Error(`Single-dash flags not allowed for command ${command}`);
+        }
+        const flagName = arg.slice(1);
+        if (!commandConfig.allowedFlags.includes(flagName)) {
+          throw new Error(`Flag not allowed: ${arg}`);
+        }
+      } else {
+        // For non-flag arguments, perform stricter sanitization
+        if (arg.includes(';') || arg.includes('&') || arg.includes('|') || 
+            arg.includes('`') || arg.includes('$') || arg.includes('(') || 
+            arg.includes(')') || arg.includes('{') || arg.includes('}') || 
+            arg.includes('[') || arg.includes(']')) {
+          throw new Error(`Dangerous characters detected in argument: ${arg}`);
+        }
+      }
+      
+      return arg;
     });
     
     const result = spawnSync(command, sanitizedArgs, {

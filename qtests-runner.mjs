@@ -12,6 +12,33 @@ import path from 'path';
 import { createRequire } from 'module';
 import qerrors from 'qerrors';
 
+// Path validation utilities for security
+function validatePath(inputPath, allowedBase = process.cwd()) {
+  if (typeof inputPath !== 'string' || !inputPath.trim()) {
+    throw new Error('Invalid path: path must be a non-empty string');
+  }
+  
+  const resolvedPath = path.resolve(allowedBase, inputPath);
+  const normalizedBase = path.normalize(allowedBase);
+  const normalizedPath = path.normalize(resolvedPath);
+  
+  if (!normalizedPath.startsWith(normalizedBase)) {
+    throw new Error('Path traversal detected: path must be within allowed directory');
+  }
+  
+  return normalizedPath;
+}
+
+function safeWriteFile(filePath, content, options = {}) {
+  const validatedPath = validatePath(filePath);
+  return fs.writeFileSync(validatedPath, content, options);
+}
+
+async function safeWriteFileAsync(filePath, content, options = {}) {
+  const validatedPath = validatePath(filePath);
+  return await fs.promises.writeFile(validatedPath, content, options);
+}
+
 // ANSI color codes for terminal output
 const colors = {
   green: '\u001b[32m',
@@ -216,7 +243,7 @@ class TestRunner {
         if (runInBand) intendedArgs.push('--runInBand');
         else if (Number.isFinite(maxW) && maxW > 0) intendedArgs.push(`--maxWorkers=${maxW}`);
         intendedArgs.push('--cache', '--no-coverage');
-        fs.writeFileSync(path.join(process.cwd(), 'runner-jest-args.json'), JSON.stringify(intendedArgs), 'utf8');
+        safeWriteFile('runner-jest-args.json', JSON.stringify(intendedArgs), 'utf8');
       } catch (error) {
         qerrors(error, 'qtests-runner: writing runner-jest-args.json', { intendedArgs });
         /* best effort only */
@@ -347,7 +374,7 @@ class TestRunner {
     
     try { 
       // Use async file write to ensure proper completion tracking
-      await fs.promises.writeFile(debugFilePath, debugContent);
+      await safeWriteFileAsync(debugFilePath, debugContent);
     } catch (error) {
       qerrors(error, 'qtests-runner.generateDebugFile: failed to write debug file', {
         debugFilePath,

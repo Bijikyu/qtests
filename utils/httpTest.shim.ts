@@ -170,7 +170,50 @@ export function supertest(app: MockApp): SupertestClient {
             const ct = state.headers['content-type'] || '';
             req.body = (ct && ct.includes('application/json')) ? (() => { 
               try { 
-                return JSON.parse(state.body); 
+                // Validate input before JSON parsing
+                if (typeof state.body !== 'string') {
+                  throw new Error('Request body must be a string for JSON parsing');
+                }
+                
+                // Check for potentially dangerous JSON content
+                const bodySize = state.body.length;
+                if (bodySize > 1024 * 1024) { // 1MB limit
+                  throw new Error('Request body too large for JSON parsing');
+                }
+                
+                // Look for suspicious patterns in JSON
+                const suspiciousPatterns = [
+                  /constructor/i,
+                  /prototype/i,
+                  /__proto__/i,
+                  /<script/i,
+                  /javascript:/i,
+                ];
+                
+                for (const pattern of suspiciousPatterns) {
+                  if (pattern.test(state.body)) {
+                    qerrors(new Error('Suspicious content detected in JSON body'), 'httpTest.shim: security validation', { 
+                      pattern: pattern.source,
+                      bodySize 
+                    });
+                    return state.body; // Return original body instead of parsed
+                  }
+                }
+                
+                const parsed = JSON.parse(state.body);
+                
+                // Validate parsed object structure
+                if (parsed !== null && typeof parsed === 'object') {
+                  // Check for prototype pollution attempts
+                  if (parsed.hasOwnProperty('__proto__') || 
+                      parsed.hasOwnProperty('constructor') || 
+                      parsed.hasOwnProperty('prototype')) {
+                    qerrors(new Error('Prototype pollution attempt detected'), 'httpTest.shim: security validation');
+                    return state.body;
+                  }
+                }
+                
+                return parsed;
               } catch (error) {
                 const errorObj = error instanceof Error ? error : new Error(String(error));
                 qerrors(errorObj, 'httpTest.shim: parsing request body as JSON', { contentType: ct });

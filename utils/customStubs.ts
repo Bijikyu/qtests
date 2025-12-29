@@ -52,7 +52,39 @@ function patchLoaderOnce(): void {
   // Capture whatever loader is currently active (qtests core already patched it in setup.ts)
   const previousLoad = (Module as any)._load;
 
+  // Module ID validation to prevent supply chain attacks
+  function validateModuleId(id: string): boolean {
+    if (typeof id !== 'string' || !id.trim()) {
+      return false;
+    }
+    
+    // Reject dangerous patterns
+    const dangerousPatterns = [
+      /\.\./,  // Directory traversal
+      /^\//,   // Absolute paths
+      /[<>]/,  // HTML injection
+      /[|&;$`]/, // Command injection
+      /^(data|javascript|vbscript):/i, // Protocol injection
+    ];
+    
+    for (const pattern of dangerousPatterns) {
+      if (pattern.test(id)) {
+        console.error(`qtests: Dangerous module ID pattern detected: ${id}`);
+        return false;
+      }
+    }
+    
+    // Allow only typical module identifier patterns
+    const validPattern = /^[a-zA-Z0-9@/._-]+$/;
+    return validPattern.test(id);
+  }
+
   (Module as any)._load = function(id: string, parent: any, isMain?: boolean): any {
+    // Validate module ID before processing
+    if (!validateModuleId(id)) {
+      throw new Error(`qtests: Invalid or dangerous module ID: ${id}`);
+    }
+    
     // If a custom stub is registered, return its exports without touching disk
     if (Object.prototype.hasOwnProperty.call(CUSTOM_STUBS, id)) {
       const value = CUSTOM_STUBS[id];

@@ -15,17 +15,37 @@ interface DefaultEnv {
 }
 
 const defaultEnv: DefaultEnv = {
-  GOOGLE_API_KEY: 'key',
-  GOOGLE_CX: 'cx',
-  OPENAI_TOKEN: 'token'
+  GOOGLE_API_KEY: process.env.GOOGLE_API_KEY || '',
+  GOOGLE_CX: process.env.GOOGLE_CX || '',
+  OPENAI_TOKEN: process.env.OPENAI_TOKEN || ''
 };
+
+function validateEnvKey(key: string): boolean {
+  return /^[A-Z_][A-Z0-9_]*$/.test(key);
+}
+
+function sanitizeEnvValue(value: string): string {
+  if (typeof value !== 'string') return '';
+  return value.trim();
+}
 
 export function setTestEnv(): boolean {
   logStart('setTestEnv', 'default values');
   
   return withErrorLogging(() => {
     dotenv.config();
-    Object.assign(process.env, defaultEnv);
+    
+    const sanitizedEnv: Record<string, string> = {};
+    for (const [key, value] of Object.entries(defaultEnv)) {
+      if (validateEnvKey(key)) {
+        const sanitizedValue = sanitizeEnvValue(value);
+        if (sanitizedValue) {
+          sanitizedEnv[key] = sanitizedValue;
+        }
+      }
+    }
+    
+    Object.assign(process.env, sanitizedEnv);
     logReturn('setTestEnv', true);
     return true;
   }, 'setTestEnv');
