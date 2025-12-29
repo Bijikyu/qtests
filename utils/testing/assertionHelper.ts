@@ -55,7 +55,8 @@ class AssertionHelper {
         throw new Error('Entity cannot be null or undefined');
       }
       
-      // Check for database-specific properties
+      // Check for database-specific properties that are commonly used
+      // These are standard database entity fields that should be validated
       if (entity._id !== undefined) {
         if (!entity._id) {
           throw new Error('Entity _id must be defined and truthy');
@@ -68,13 +69,15 @@ class AssertionHelper {
         }
       }
       
+      // Validate timestamp fields are proper Date instances
       if (entity.createdAt !== undefined) {
         if (!(entity.createdAt instanceof Date)) {
           throw new Error('Entity createdAt must be a Date instance');
         }
       }
       
-      // Check expected properties
+      // Validate expected properties match actual values
+      // This ensures test data matches expected structure
       Object.entries(expectedProperties).forEach(([key, value]) => {
         if (entity[key] !== value) {
           throw new Error(`Expected entity.${key} to be ${value}, but got ${entity[key]}`);
@@ -83,10 +86,10 @@ class AssertionHelper {
       
       logReturn('AssertionHelper.assertDatabaseEntity', 'passed');
     } catch (error: any) {
-      qerrors(error, 'assertionHelper.assertDatabaseEntity: assertion failed', {
+      qerrors(error as Error, 'assertionHelper.assertDatabaseEntity: assertion failed', {
         entityType: 'database',
         errorMessage: error.message,
-        errorType: error.constructor?.name || 'unknown'
+        errorType: (error as Error).constructor?.name || 'unknown'
       });
       logReturn('AssertionHelper.assertDatabaseEntity', `failed: ${error.message}`);
       throw error;
@@ -104,16 +107,22 @@ class AssertionHelper {
         throw new Error('Response cannot be null or undefined');
       }
       
+      // Validate HTTP status matches expected value
+      // This is critical for API testing to ensure proper error handling
       if (response.status !== expectedStatus) {
         throw new Error(`Expected status ${expectedStatus}, but got ${response.status}`);
       }
       
+      // Validate response structure based on data requirement
+      // API responses should have either body or data property for content
       if (hasData) {
         if (!response.body && !response.data) {
           throw new Error('Response should have body or data property');
         }
       }
       
+      // For error responses (4xx/5xx), validate error structure
+      // This ensures errors are properly formatted for client consumption
       if (expectedStatus >= 400) {
         const errorData = response.body || response.data || {};
         if (!errorData.error && !errorData.message) {
@@ -123,11 +132,11 @@ class AssertionHelper {
       
       logReturn('AssertionHelper.assertApiResponse', 'passed');
     } catch (error: any) {
-      qerrors(error, 'assertionHelper.assertApiResponse: assertion failed', {
+      qerrors(error as Error, 'assertionHelper.assertApiResponse: assertion failed', {
         expectedStatus,
         hasData,
         errorMessage: error.message,
-        errorType: error.constructor?.name || 'unknown'
+        errorType: (error as Error).constructor?.name || 'unknown'
       });
       logReturn('AssertionHelper.assertApiResponse', `failed: ${error.message}`);
       throw error;
@@ -184,14 +193,19 @@ class AssertionHelper {
     logStart('AssertionHelper.assertArray', array, expectedLength);
     
     try {
+      // Validate input is actually an array
       if (!Array.isArray(array)) {
         throw new Error('Expected an array but got ' + typeof array);
       }
       
+      // Validate array length if specified
+      // This ensures expected number of items is present
       if (expectedLength !== undefined && array.length !== expectedLength) {
         throw new Error(`Expected array length ${expectedLength}, but got ${array.length}`);
       }
       
+      // Validate each item using provided validator function
+      // This allows custom validation logic for array contents
       if (itemValidator) {
         array.forEach((item, index) => {
           try {

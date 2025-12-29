@@ -4,12 +4,6 @@ export * from './decoratorTypes.js';
 // Re-export decorator implementations
 export * from './decorators.js';
 
-// Re-export decorator implementations
-export * from './decorators.js';
-
-// Re-export decorator types
-export * from './decoratorTypes.js';
-
 // Re-export basic wrapper functions
 export * from './basicWrappers.js';
 

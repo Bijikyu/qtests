@@ -11,8 +11,10 @@ declare const global: GlobalWithGC;
 
 export const forceGC = (): void => {
   if (global.gc) {
+    // Run GC multiple times to ensure thorough cleanup
+    // Multiple passes help catch objects that become eligible in subsequent iterations
     for (let i = 0; i < 3; i++) {
-      global.gc();
+      global.gc(); // Force garbage collection (requires --expose-gc flag)
     }
   }
 };

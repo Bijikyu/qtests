@@ -47,7 +47,7 @@ export class StreamingStringValidator {
         return sanitizeString(input).substring(0, actualMaxLength);
       }
     } catch (error) {
-      qerrors(error, 'streamingValidator.validateString: unexpected error', {
+      qerrors(error as Error, 'streamingValidator.validateString: unexpected error', {
         inputLength: input.length,
         maxLength: maxLength || this.maxStringLength
       });
@@ -88,7 +88,7 @@ export class StreamingStringValidator {
 
       return obj;
     } catch (error) {
-      qerrors(error, 'streamingValidator.validateObject: validation failed', {
+      qerrors(error as Error, 'streamingValidator.validateObject: validation failed', {
         currentDepth: depth,
         maxDepth,
         objType: typeof obj,

@@ -11,7 +11,7 @@ import qerrors from '../qerrorsFallback.js';
 export class UserConfigurableAxiosMock extends LegacyAxiosMock implements UserMockAxios {
   __set(url: string, data: any, status: number = 200, reject: boolean = false): void {
     try {
-      // Validate inputs
+      // Validate inputs to ensure consistent behavior
       if (!url || typeof url !== 'string') {
         throw new Error('Invalid URL provided');
       }
@@ -19,6 +19,8 @@ export class UserConfigurableAxiosMock extends LegacyAxiosMock implements UserMo
         throw new Error('Invalid HTTP status code');
       }
       
+      // Store response configuration for runtime modification
+      // This enables tests to change mock behavior during execution
       this.responses.set(url, { data, status, reject });
     } catch (error) {
       qerrors(error as Error, 'userConfigurableAxiosMock.__set: failed to set mock response', {
@@ -26,7 +28,7 @@ export class UserConfigurableAxiosMock extends LegacyAxiosMock implements UserMo
         status,
         reject,
         dataType: typeof data,
-        errorType: error.constructor?.name || 'unknown',
+        errorType: (error as Error).constructor?.name || 'unknown',
         errorMessage: error instanceof Error ? error.message : String(error)
       });
       throw error;
@@ -36,7 +38,7 @@ export class UserConfigurableAxiosMock extends LegacyAxiosMock implements UserMo
   async get(url: string, _config: any = {}): Promise<AxiosResponse> {
     const startTime = Date.now();
     try {
-      // Validate URL
+      // Validate URL for consistency and error handling
       if (!url || typeof url !== 'string') {
         throw new Error('Invalid URL provided');
       }
@@ -45,14 +47,19 @@ export class UserConfigurableAxiosMock extends LegacyAxiosMock implements UserMo
       const mock = this.responses.get(url);
       
       if (mock) {
+        // Create response using configured mock data
         const response = createAxiosStyleResponse(mock.data, mock.status);
+        
+        // Check if this response should be rejected
+        // Useful for testing error handling scenarios
         if (mock.reject) {
-          return Promise.reject({ response });
+          return Promise.reject({ response }); // Reject in axios format
         }
         return response;
       }
 
-      // Return error for unknown URLs
+      // Return error for URLs without configured mocks
+      // This ensures tests fail when accessing unconfigured endpoints
       const error = { response: { status: 500, data: 'error' } };
       return Promise.reject(error);
     } catch (error) {
@@ -60,7 +67,7 @@ export class UserConfigurableAxiosMock extends LegacyAxiosMock implements UserMo
         url,
         configKeys: _config ? Object.keys(_config) : [],
         processingTime: Date.now() - startTime,
-        errorType: error.constructor?.name || 'unknown',
+        errorType: (error as Error).constructor?.name || 'unknown',
         errorMessage: error instanceof Error ? error.message : String(error)
       });
       throw error;

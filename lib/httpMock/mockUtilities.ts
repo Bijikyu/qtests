@@ -35,7 +35,7 @@ export function createAxiosStyleResponse(
       dataType: typeof data,
       status,
       statusText,
-      errorType: error.constructor?.name || 'unknown',
+      errorType: (error as Error).constructor?.name || 'unknown',
       errorMessage: error instanceof Error ? error.message : String(error)
     });
     
@@ -72,7 +72,7 @@ export function createMockResponse(data: any, status: number = 200): MockRespons
     qerrors(error as Error, 'mockUtilities.createMockResponse: mock response creation failed', {
       dataType: typeof data,
       status,
-      errorType: error.constructor?.name || 'unknown',
+      errorType: (error as Error).constructor?.name || 'unknown',
       errorMessage: error instanceof Error ? error.message : String(error)
     });
     
@@ -111,7 +111,7 @@ export function createErrorResponse(status: number, message: string): MockRespon
     qerrors(error as Error, 'mockUtilities.createErrorResponse: error response creation failed', {
       status,
       message,
-      errorType: error.constructor?.name || 'unknown',
+      errorType: (error as Error).constructor?.name || 'unknown',
       errorMessage: error instanceof Error ? error.message : String(error)
     });
     

@@ -15,23 +15,26 @@ export class LegacyAxiosMock implements MockHttpClient {
 
   constructor(config: MockHttpClientConfig = {}) {
     try {
-      // Validate configuration
+      // Validate configuration parameters for safety and predictability
       if (config.defaultStatus && (config.defaultStatus < 100 || config.defaultStatus > 599)) {
         throw new Error('Invalid default status code');
       }
       
+      // Initialize instance state with defaults
       this.defaultResponse = config.defaultResponse || {};
       this.defaultStatus = config.defaultStatus || 200;
       this.simulateErrors = config.simulateErrors || false;
-      this.responses = new Map();
+      this.responses = new Map(); // Use Map for O(1) URL lookup performance
       
-      // Convert presetData to Map entries
+      // Convert presetData to Map entries for efficient lookup
+      // This allows per-URL response configuration while maintaining fast access
       if (config.presetData) {
         if (typeof config.presetData !== 'object') {
           throw new Error('presetData must be an object');
         }
         
         Object.entries(config.presetData).forEach(([url, response]) => {
+          // Validate each preset URL to ensure consistency
           if (!url || typeof url !== 'string') {
             throw new Error('Invalid URL in presetData');
           }
@@ -42,6 +45,7 @@ export class LegacyAxiosMock implements MockHttpClient {
             throw new Error('Invalid status code in presetData');
           }
           
+          // Store normalized response format for consistent handling
           this.responses.set(url, {
             data: response.data,
             status: response.status || 200,
@@ -50,7 +54,8 @@ export class LegacyAxiosMock implements MockHttpClient {
         });
       }
       
-      // Add default preset if none provided
+      // Add default preset if none provided to ensure some response is always available
+      // This prevents undefined behavior when no specific URL is configured
       if (this.responses.size === 0) {
         this.responses.set('http://a', { data: { mock: true }, status: 200, reject: false });
       }
@@ -59,7 +64,7 @@ export class LegacyAxiosMock implements MockHttpClient {
         configKeys: Object.keys(config),
         hasPresetData: !!config.presetData,
         presetDataSize: config.presetData ? Object.keys(config.presetData).length : 0,
-        errorType: error.constructor?.name || 'unknown',
+        errorType: (error as Error).constructor?.name || 'unknown',
         errorMessage: error instanceof Error ? error.message : String(error)
       });
       throw error;
@@ -87,8 +92,8 @@ export class LegacyAxiosMock implements MockHttpClient {
       console.log(`LegacyAxiosMock.get returning: ${JSON.stringify(response)}`);
       return response;
     } catch (error) {
-      if (error.message === 'Simulated network error') {
-        throw error; // Re-throw simulated errors
+      if (error instanceof Error && error.message === 'Simulated network error') {
+        throw error; // Re-throw simulated errors without additional processing
       }
       
       qerrors(error as Error, 'legacyAxiosMock.get: mock request failed', {
@@ -96,7 +101,7 @@ export class LegacyAxiosMock implements MockHttpClient {
         configKeys: _config ? Object.keys(_config) : [],
         processingTime: Date.now() - startTime,
         simulateErrors: this.simulateErrors,
-        errorType: error.constructor?.name || 'unknown',
+        errorType: (error as Error).constructor?.name || 'unknown',
         errorMessage: error instanceof Error ? error.message : String(error)
       });
       throw error;

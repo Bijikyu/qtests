@@ -71,13 +71,13 @@ export class DistributedRateLimiter {
 
       await this.redis.connect();
     } catch (error) {
-      qerrors(error, 'rateLimiter.initialize: Redis connection failed', {
+      qerrors(error as Error, 'rateLimiter.initialize: Redis connection failed', {
         redisUrl: redisUrl || redisCloudUrl,
-        errorType: error.constructor.name,
+        errorType: (error as Error).constructor.name,
         errorMessage: error instanceof Error ? error.message : String(error)
       });
       console.warn('Redis rate limiter initialization failed:',
-        error instanceof Error ? error.message : String(error));
+        (error as Error).message || String(error));
       this.isRedisAvailable = false;
     }
   }
@@ -121,10 +121,10 @@ export class DistributedRateLimiter {
             retryAfter: Math.max(0, Math.ceil((oldestTimestamp + this.config.windowMs - now) / 1000))
           };
         } catch (oldestReadError) {
-          qerrors(oldestReadError, 'rateLimiter.checkRedisLimit: reading oldest timestamp failed', {
+          qerrors(oldestReadError as Error, 'rateLimiter.checkRedisLimit: reading oldest timestamp failed', {
             key,
             redisUrl: redisUrl || redisCloudUrl,
-            errorType: oldestReadError.constructor?.name || 'unknown',
+            errorType: (oldestReadError as Error).constructor?.name || 'unknown',
             operation: 'zRange'
           });
           console.warn('Redis zRange failed, using fallback:', oldestReadError);
@@ -144,10 +144,10 @@ export class DistributedRateLimiter {
         resetTime: now + this.config.windowMs
       };
     } catch (error) {
-      qerrors(error, 'rateLimiter.checkRedisLimit: Redis pipeline execution failed', {
+      qerrors(error as Error, 'rateLimiter.checkRedisLimit: Redis pipeline execution failed', {
         key,
         redisUrl: redisUrl || redisCloudUrl,
-        errorType: error.constructor?.name || 'unknown',
+        errorType: (error as Error).constructor?.name || 'unknown',
         errorMessage: error instanceof Error ? error.message : String(error),
         operation: 'pipeline.exec'
       });

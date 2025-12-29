@@ -15,6 +15,8 @@ export function safeExists(filePath: string): boolean {
   try {
     return fs.existsSync(filePath);
   } catch {
+    // If existsSync throws an error (e.g., due to permissions), treat as non-existent
+    // This provides graceful degradation for file system access issues
     return false;
   }
 }
@@ -28,7 +30,7 @@ export function safeStats(filePath: string): fs.Stats | null {
   try {
     return fs.statSync(filePath);
   } catch (error) {
-    qerrors(error, 'fileExistence.safeStats: getting file stats failed', { 
+    qerrors(error as Error, 'fileExistence.safeStats: getting file stats failed', { 
       filePath,
       operation: 'statSync'
     });
@@ -43,7 +45,7 @@ export function safeStats(filePath: string): fs.Stats | null {
  */
 export function isDirectory(dirPath: string): boolean {
   const stats = safeStats(dirPath);
-  return stats ? stats.isDirectory() : false;
+  return stats ? stats.isDirectory() : false; // Return false if stats failed (path doesn't exist)
 }
 
 /**
@@ -53,5 +55,5 @@ export function isDirectory(dirPath: string): boolean {
  */
 export function isFile(filePath: string): boolean {
   const stats = safeStats(filePath);
-  return stats ? stats.isFile() : false;
+  return stats ? stats.isFile() : false; // Return false if stats failed (path doesn't exist)
 }

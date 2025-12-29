@@ -38,7 +38,7 @@ export function streamingValidationMiddleware(config: ValidationConfig = {}) {
       res.set('X-Validation-Time', `${processingTime}ms`);
       next();
     } catch (error) {
-      qerrors(error, 'validationMiddleware: request validation failed', req, res, next, {
+      qerrors(error as Error, 'validationMiddleware: request validation failed', {
         startTime,
         processingTime: Date.now() - startTime,
         hasBody: !!req.body,
@@ -50,7 +50,7 @@ export function streamingValidationMiddleware(config: ValidationConfig = {}) {
       });
       res.status(400).json({
         error: 'Validation failed',
-        message: error instanceof Error ? error.message : 'Invalid input'
+        message: (error as Error).message || 'Invalid input'
       });
     }
   };

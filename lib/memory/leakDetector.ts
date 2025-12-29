@@ -17,12 +17,15 @@ export class MemoryLeakDetector {
     try {
       const snapshots = this.snapshotManager.getAllSnapshots();
       
+      // Need at least 3 snapshots to establish a trend and detect consistent growth
       if (snapshots.length < 3) return false;
 
-      const recent = snapshots.slice(-3);
-      const heapGrowth = recent[2].heapUsed - recent[0].heapUsed;
-      const rssGrowth = recent[2].rss - recent[0].rss;
+      const recent = snapshots.slice(-3); // Analyze the 3 most recent snapshots
+      const heapGrowth = recent[2].heapUsed - recent[0].heapUsed; // Calculate heap memory growth
+      const rssGrowth = recent[2].rss - recent[0].rss; // Calculate RSS (Resident Set Size) growth
 
+      // Conservative thresholds to avoid false positives
+      // Heap growth of 50MB+ or RSS growth of 100MB+ across 3 snapshots indicates potential leak
       const heapLeakThreshold = 50;
       const rssLeakThreshold = 100;
 

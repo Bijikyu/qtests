@@ -16,11 +16,13 @@ export function wrapObject<T extends Record<string, (...args: any[]) => any>>(
 ): T {
   const wrapped = {} as any;
   
+  // Apply logging wrapper to each function in the object
+  // This is useful for adding consistent logging to entire API objects or service classes
   for (const [name, fn] of Object.entries(functions)) {
     wrapped[name] = withLogging(fn, name, options);
   }
   
-  return wrapped as T;
+return wrapped as T;
 }
 
 /**

@@ -32,9 +32,9 @@ export function LogMethod(options: LoggingOptions = {}) {
       return descriptor;
     }
     
-    descriptor.value = function (...args: any[]) {
+descriptor.value = function (this: any, ...args: any[]) {
       const functionName = `${config.prefix}${String(propertyKey)}${config.suffix}`;
-      const startTime = config.includeTiming ? Date.now() : 0;
+      const startTime = config.includeTiming ? Date.now() :0;
       
       try {
         // Log function entry

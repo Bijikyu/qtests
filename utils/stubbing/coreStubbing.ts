@@ -23,7 +23,7 @@ export type SinonMock = sinon.SinonMock;
  */
 export function stubMethod(data: {obj: any, methodName: string, stubFn: StubFunction}): {restore: StubRestoreFunction} {
   const restoreFunction = withErrorLogging(() => {
-    // Validate inputs
+    // Validate inputs to provide clear error messages for common misuse
     if (typeof data.obj !== 'object' || data.obj === null) {
       throw new Error(`stubMethod expected object but received ${data.obj}`);
     }
@@ -38,6 +38,7 @@ export function stubMethod(data: {obj: any, methodName: string, stubFn: StubFunc
     }
     
     // Check if property is configurable before attempting to stub
+    // Sinon needs to be able to modify the property descriptor to replace the method
     const descriptor = Object.getOwnPropertyDescriptor(data.obj, data.methodName);
     if (!descriptor) {
       throw new Error(`stubMethod cannot find property descriptor for ${data.methodName}`);
@@ -48,28 +49,31 @@ export function stubMethod(data: {obj: any, methodName: string, stubFn: StubFunc
       throw new Error(`stubMethod invalid property descriptor for ${data.methodName}`);
     }
     
-    // For data properties, check both configurable and writable
+    // Check property configurability based on descriptor type
+    // Data properties (with value) need both configurable and writable
+    // Accessor properties (get/set) only need configurable
     if (descriptor.value !== undefined) {
       if (!descriptor.configurable || !descriptor.writable) {
         throw new Error(`stubMethod cannot stub non-configurable or non-writable property ${data.methodName}`);
       }
     } else if (!descriptor.configurable) {
-      // For accessor properties, only check configurable
       throw new Error(`stubMethod cannot stub non-configurable property ${data.methodName}`);
     }
     if (typeof data.stubFn !== 'function') {
       throw new Error('stubMethod stubFn must be a Function');
     }
 
-    // Create and configure stub
+    // Create and configure stub using Sinon
+    // callsFake() replaces the method implementation with our custom function
     let stub;
     try {
       stub = sinon.stub(data.obj, data.methodName).callsFake(data.stubFn);
     } catch (sinonError) {
-      throw new Error(`stubMethod failed to create Sinon stub for ${data.methodName}: ${sinonError.message}`);
+      throw new Error(`stubMethod failed to create Sinon stub for ${data.methodName}: ${(sinonError as Error).message}`);
     }
     
     // Return restore function with error handling
+    // The restore function reverts the stub to the original implementation
     return (): void => {
       try {
         if (stub && typeof stub.restore === 'function') {
