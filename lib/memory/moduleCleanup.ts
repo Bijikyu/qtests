@@ -8,7 +8,6 @@ import qerrors from 'qerrors';
 
 export const clearModuleCache = (): number => {
   try {
-    const require = createRequire(import.meta.url);
     const moduleKeys = Object.keys(require.cache);
     let cleared = 0;
 
@@ -24,10 +23,10 @@ export const clearModuleCache = (): number => {
     });
 
     return cleared;
-  } catch (error) {
+  } catch (error: any) {
     qerrors(error, 'moduleCleanup.clearModuleCache: module cache clearing failed', {
-      errorType: error.constructor.name,
-      errorMessage: error.message
+      errorType: error?.constructor?.name || 'Unknown',
+      errorMessage: error?.message || String(error)
     });
     return 0;
   }

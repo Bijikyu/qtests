@@ -3,7 +3,11 @@
  * Handles garbage collection and memory management
  */
 
-declare const global: any;
+interface GlobalWithGC {
+  gc?: () => void;
+}
+
+declare const global: GlobalWithGC;
 
 export const forceGC = (): void => {
   if (global.gc) {

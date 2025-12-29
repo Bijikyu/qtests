@@ -1,4 +1,4 @@
-import qerrors from 'qerrors';
+import qerrors from './qerrorsFallback';
 
 export interface WaitForConditionOptions {
   timeoutMs?: number;
@@ -17,7 +17,7 @@ export async function waitForCondition(
     let ok = false;
     try {
       ok = await predicate();
-    } catch (error) {
+    } catch (error: any) {
       qerrors(error, 'waitForCondition: predicate execution failed', { 
         timeoutMs, 
         intervalMs, 
@@ -40,14 +40,10 @@ export async function waitForCondition(
     }
 
     try {
-      await new Promise<void>((resolve, reject) => {
-        const timeoutId = setTimeout(() => resolve(), intervalMs);
-        // Handle potential timer errors (unlikely but defensive)
-        if (timeoutId.unref) {
-          timeoutId.unref();
-        }
+      await new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), intervalMs);
       });
-    } catch (error) {
+    } catch (error: any) {
       qerrors(error, 'waitForCondition: setTimeout Promise failed', {
         intervalMs,
         elapsedMs: Date.now() - start,

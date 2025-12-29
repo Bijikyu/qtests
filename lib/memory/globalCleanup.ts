@@ -27,7 +27,7 @@ export const clearGlobalRefs = (): void => {
         if (typeof global[ref].disconnect === 'function') {
           global[ref].disconnect();
         }
-      } catch (error) {
+      } catch (error: any) {
         qerrors(error, 'globalCleanup.clearGlobalRefs: cleanup operation failed', {
           refName: ref,
           hasClose: typeof global[ref]?.close === 'function',

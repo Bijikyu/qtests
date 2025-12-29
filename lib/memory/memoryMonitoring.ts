@@ -20,4 +20,4 @@ export {
 export {
   cleanupWithMemoryTracking,
   aggressiveCleanup
-} from './cleanupOperations.js';
+} from './cleanupOperations';

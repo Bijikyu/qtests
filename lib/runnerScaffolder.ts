@@ -15,7 +15,7 @@ import { NODE_ENV } from '../config/localVars.js';
 import fs from 'fs';
 import path from 'path';
 import { safeExists, ensureDir, safeWriteFile, safeDelete } from './fileSystem/index.js';
-import qerrors from 'qerrors';
+import qerrors from './qerrorsFallback.js';
 
 // Configuration for runner scaffolding
 interface RunnerConfig {
@@ -374,7 +374,7 @@ export { createMockApp, supertest } from './httpTest.shim.js';
         fs.writeFileSync(runnerPath, content, 'utf8');
         fs.chmodSync(runnerPath, '755');
         console.log('✅ Created qtests-runner.mjs');
-      } catch (error) {
+      } catch (error: any) {
         qerrors(error, 'runnerScaffolder.writeRunner: file write failed', {
           runnerPath,
           contentLength: content.length,

@@ -37,8 +37,8 @@ export class MemoryLeakDetector {
     } catch (error: any) {
       qerrors(error, 'leakDetector.detectLeaks: leak detection failed', {
         snapshotCount: this.snapshotManager.getAllSnapshots().length,
-        errorMessage: error.message,
-        errorType: error.constructor.name
+        errorMessage: error?.message || String(error),
+        errorType: error?.constructor?.name || 'Unknown'
       });
       return false;
     }
@@ -67,8 +67,8 @@ export class MemoryLeakDetector {
     } catch (error: any) {
       qerrors(error, 'leakDetector.printSummary: summary print failed', {
         snapshotCount: this.snapshotManager.getAllSnapshots().length,
-        errorMessage: error.message,
-        errorType: error.constructor.name
+        errorMessage: error?.message || String(error),
+        errorType: error?.constructor?.name || 'Unknown'
       });
       console.log('   ❌ Failed to print memory summary');
     }

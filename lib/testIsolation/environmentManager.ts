@@ -45,8 +45,8 @@ export const restoreEnvironment = (): void => {
     qerrors(error, 'environmentManager.restoreEnvironment: environment restore failed', {
       originalEnvKeys: Object.keys(state.originalEnv),
       currentEnvKeys: Object.keys(process.env),
-      errorMessage: error.message,
-      errorType: error.constructor.name
+      errorMessage: error?.message || String(error),
+      errorType: error?.constructor?.name || 'Unknown'
     });
   }
 };

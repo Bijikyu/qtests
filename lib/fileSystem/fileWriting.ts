@@ -18,7 +18,7 @@ export function ensureDir(dirPath: string): boolean {
       fs.mkdirSync(dirPath, { recursive: true });
     }
     return true;
-  } catch (error) {
+  } catch (error: any) {
     qerrors(error, 'fileWriting.ensureDir: creating directory', { dirPath });
     return false;
   }
@@ -44,7 +44,7 @@ export function safeWriteFile(filePath: string, content: string | Buffer, encodi
     
     fs.writeFileSync(filePath, content, encoding);
     return true;
-  } catch (error) {
+  } catch (error: any) {
     qerrors(error, 'fileWriting.safeWriteFile: writing file', { filePath, encoding, contentType: typeof content });
     return false;
   }
