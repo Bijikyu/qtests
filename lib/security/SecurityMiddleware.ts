@@ -163,12 +163,24 @@ export class SecurityMiddleware {
             sanitized.body = bodyResult.sanitized;
           }
         } else if (typeof req.body === 'object') {
-          const bodyString = JSON.stringify(req.body);
-          const bodyResult = securityValidator.validateJSON(bodyString);
-          if (!bodyResult.valid) {
-            errors.push(`Body JSON validation: ${bodyResult.errors.join(', ')}`);
-          } else {
-            sanitized.body = bodyResult.sanitized;
+          // Optimize: check body size before full JSON.stringify
+          let bodyString: string;
+          try {
+            // Quick size check without full stringification
+            const bodySize = JSON.stringify(req.body).length;
+            if (bodySize > 1024 * 1024) { // 1MB limit
+              errors.push('Request body too large for validation');
+            } else {
+              bodyString = JSON.stringify(req.body);
+              const bodyResult = securityValidator.validateJSON(bodyString);
+              if (!bodyResult.valid) {
+                errors.push(`Body JSON validation: ${bodyResult.errors.join(', ')}`);
+              } else {
+                sanitized.body = bodyResult.sanitized;
+              }
+            }
+          } catch (error) {
+            errors.push('Invalid JSON in request body');
           }
         }
       }

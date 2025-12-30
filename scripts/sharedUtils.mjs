@@ -63,9 +63,23 @@ export function rmFileSafe(filePath, options = { force: true }) {
 }
 
 /**
- * Safely check if a path exists
+ * Safely check if path exists (async version)
  * @param filePath - Path to check
- * @returns true if exists, false otherwise
+ * @returns true if path exists, false otherwise
+ */
+export async function pathExistsAsync(filePath) {
+  try {
+    await fs.promises.access(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Safely check if path exists (sync version - use only in initialization)
+ * @param filePath - Path to check
+ * @returns true if path exists, false otherwise
  */
 export function pathExists(filePath) {
   try {
@@ -76,7 +90,27 @@ export function pathExists(filePath) {
 }
 
 /**
- * Safely read file contents
+ * Safely read file contents (async version)
+ * @param filePath - Path to read
+ * @param encoding - File encoding (default: utf8)
+ * @returns File contents as string, or null if failed
+ */
+export async function readFileSafeAsync(filePath, encoding = 'utf8') {
+  try {
+    return await fs.promises.readFile(filePath, encoding);
+  } catch (error) {
+    qerrors(error, 'sharedUtils.readFileSafeAsync: file read failed', {
+      filePath,
+      encoding,
+      operation: 'readFile'
+    });
+    console.debug(`Failed to read file ${filePath}: ${error.message}`);
+    return null;
+  }
+}
+
+/**
+ * Safely read file contents (sync version - use only in initialization)
  * @param filePath - Path to read
  * @param encoding - File encoding (default: utf8)
  * @returns File contents as string, or null if failed
@@ -96,7 +130,57 @@ export function readFileSafe(filePath, encoding = 'utf8') {
 }
 
 /**
- * Safely write file contents with directory creation
+ * Safely write file contents with directory creation (async version)
+ * @param filePath - Path to write
+ * @param content - Content to write
+ * @param encoding - File encoding (default: utf8)
+ * @returns true if successful, false otherwise
+ */
+export async function writeFileSafeAsync(filePath, content, encoding = 'utf8') {
+  try {
+    // Ensure directory exists
+    const dir = path.dirname(filePath);
+    if (!await pathExistsAsync(dir)) {
+      try {
+        await fs.promises.mkdir(dir, { recursive: true });
+      } catch (mkdirError) {
+        qerrors(mkdirError, 'sharedUtils.ensureDirectory: directory creation failed', {
+          dir,
+          filePath,
+          operation: 'mkdir'
+        });
+        console.debug(`Failed to create directory ${dir}: ${mkdirError.message}`);
+        return false;
+      }
+    }
+    
+    try {
+      await fs.promises.writeFile(filePath, content, encoding);
+      return true;
+    } catch (writeError) {
+      qerrors(writeError, 'sharedUtils.ensureDirectory: file write failed', {
+        filePath,
+        encoding,
+        contentLength: content.length,
+        operation: 'writeFile'
+      });
+      console.debug(`Failed to write file ${filePath}: ${writeError.message}`);
+      return false;
+    }
+  } catch (error) {
+    qerrors(error, 'sharedUtils.writeFileSafeAsync: unexpected error', {
+      filePath,
+      encoding,
+      contentLength: content.length,
+      operation: 'writeFile'
+    });
+    console.debug(`Unexpected error writing file ${filePath}: ${error.message}`);
+    return false;
+  }
+}
+
+/**
+ * Safely write file contents with directory creation (sync version - use only in initialization)
  * @param filePath - Path to write
  * @param content - Content to write
  * @param encoding - File encoding (default: utf8)

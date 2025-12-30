@@ -243,7 +243,7 @@ class TestRunner {
         if (runInBand) intendedArgs.push('--runInBand');
         else if (Number.isFinite(maxW) && maxW > 0) intendedArgs.push(`--maxWorkers=${maxW}`);
         intendedArgs.push('--cache', '--no-coverage');
-        safeWriteFile('runner-jest-args.json', JSON.stringify(intendedArgs), 'utf8');
+        await safeWriteFileAsync('runner-jest-args.json', JSON.stringify(intendedArgs), 'utf8');
       } catch (error) {
         qerrors(error, 'qtests-runner: writing runner-jest-args.json', { intendedArgs });
         /* best effort only */

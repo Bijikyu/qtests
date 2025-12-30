@@ -60,6 +60,7 @@ export class SecurityMonitor {
   private events: SecurityEvent[] = [];
   private rateLimits = new Map<string, { count: number; resetTime: number }>();
   private maxEvents = 1000;
+  private maxRateLimits = 10000; // Prevent unlimited growth
   private cleanupInterval?: NodeJS.Timeout;
 
   /**
@@ -115,9 +116,9 @@ export class SecurityMonitor {
     });
   }
 
-  /**
-   * Check rate limit
-   */
+/**
+    * Check rate limit
+    */
   checkRateLimit(identifier: string, options: {
     windowMs?: number;
     maxRequests?: number;
@@ -127,6 +128,9 @@ export class SecurityMonitor {
 
     const now = Date.now();
     const key = identifier;
+
+    // Cleanup expired rate limits to prevent memory leaks
+    this.cleanupExpiredRateLimits(now);
 
     // Get or initialize rate limit data
     let rateLimitData = this.rateLimits.get(key);
@@ -226,7 +230,7 @@ export class SecurityMonitor {
         `- Source: ${event.source}`,
         `- Blocked: ${event.blocked}`,
         `- Time: ${event.timestamp}`,
-        `- Details: ${JSON.stringify(event.details)}`,
+        `- Details: ${this.sanitizeDetailsForReport(event.details)}`,
         ''
       ]).flat(),
       '',
@@ -267,9 +271,9 @@ export class SecurityMonitor {
     };
   }
 
-  /**
-   * Clear old events (optimized to avoid creating intermediate arrays)
-   */
+/**
+    * Clear old events (optimized to avoid creating intermediate arrays)
+    */
   clearOldEvents(olderThanHours: number = 24): void {
     const cutoff = new Date(Date.now() - olderThanHours * 60 * 60 * 1000);
     const filteredEvents: SecurityEvent[] = [];
@@ -284,10 +288,59 @@ export class SecurityMonitor {
   }
 
   /**
-   * Generate unique event ID
-   */
+    * Cleanup expired rate limits to prevent memory leaks
+    */
+  private cleanupExpiredRateLimits(now: number): void {
+    if (this.rateLimits.size <= this.maxRateLimits) {
+      return; // Skip cleanup if under limit
+    }
+
+    const toDelete: string[] = [];
+    this.rateLimits.forEach((data, key) => {
+      if (now > data.resetTime) {
+        toDelete.push(key);
+      }
+    });
+
+    // Delete expired entries
+    for (const key of toDelete) {
+      this.rateLimits.delete(key);
+    }
+
+    // If still over limit, remove oldest entries
+    if (this.rateLimits.size > this.maxRateLimits) {
+      const entries = Array.from(this.rateLimits.entries());
+      entries.sort((a, b) => a[1].resetTime - b[1].resetTime);
+      const toRemove = entries.slice(0, this.rateLimits.size - this.maxRateLimits);
+      for (const [key] of toRemove) {
+        this.rateLimits.delete(key);
+      }
+    }
+  }
+
+/**
+    * Generate unique event ID
+    */
   private generateEventId(): string {
     return `evt_${Date.now()}_${randomBytes(8).toString('hex')}`;
+  }
+
+  /**
+    * Sanitize details for report to prevent large JSON output
+    */
+  private sanitizeDetailsForReport(details: any): string {
+    if (!details) return 'null';
+    
+    try {
+      const detailsStr = JSON.stringify(details);
+      if (detailsStr.length > 500) {
+        // Truncate large details
+        return detailsStr.substring(0, 497) + '...';
+      }
+      return detailsStr;
+    } catch (error) {
+      return '[Unable to serialize details]';
+    }
   }
 
   /**

@@ -17,6 +17,7 @@
 import { redisUrl, redisCloudUrl } from '../config/localVars.js';
 import qerrors from 'qerrors';
 import { randomBytes } from 'crypto';
+import { CircuitBreaker, circuitBreakerRegistry } from './circuitBreaker.js';
 
 export interface RateLimitConfig {
   windowMs: number;
@@ -44,10 +45,31 @@ export class DistributedRateLimiter {
   private fallbackCounters = new Map<string, { count: number; resetTime: number }>();
   private config: RateLimitConfig;
   private _cleanupInterval: NodeJS.Timeout | null = null;
+  private circuitBreaker?: CircuitBreaker;
 
   constructor(config: RateLimitConfig) {
     this.config = config;
+    this.setupCircuitBreaker();
     this.initializeRedis();
+  }
+
+  /**
+   * Setup circuit breaker for Redis operations
+   */
+  private setupCircuitBreaker(): void {
+    this.circuitBreaker = circuitBreakerRegistry.register('redis-rate-limiter', {
+      failureThreshold: 3,
+      resetTimeout: 30000,
+      timeout: 5000,
+      onFailure: (error) => {
+        console.warn('Redis rate limiter circuit breaker activated:', error.message);
+        this.isRedisAvailable = false;
+      },
+      onRecovery: () => {
+        console.log('Redis rate limiter circuit breaker recovered');
+        this.isRedisAvailable = true;
+      }
+    });
   }
 
     private async initializeRedis(): Promise<void> {
@@ -92,8 +114,8 @@ export class DistributedRateLimiter {
     const now = Date.now();
     const windowStart = now - this.config.windowMs;
 
-    if (this.isRedisAvailable && this.redis) {
-      return await this.checkRedisLimit(key, now, windowStart);
+    if (this.isRedisAvailable && this.redis && this.circuitBreaker) {
+      return await this.circuitBreaker.execute(() => this.checkRedisLimit(key, now, windowStart));
     } else {
       return this.checkFallbackLimit(key, now);
     }
