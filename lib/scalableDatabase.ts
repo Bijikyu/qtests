@@ -89,8 +89,8 @@ export class ScalableDatabaseClient extends EventEmitter {
       database: config.database,
       username: config.username || '',
       password: config.password || '',
-      maxConnections: config.maxConnections || 20,
-      minConnections: config.minConnections || 5,
+      maxConnections: config.maxConnections || 100, // Increased for production scalability
+      minConnections: config.minConnections || 10,
       acquireTimeout: config.acquireTimeout || 5000,
       idleTimeout: config.idleTimeout || 30000,
       queryTimeout: config.queryTimeout || 10000,

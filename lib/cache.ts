@@ -83,7 +83,7 @@ class LocalCache<T = any> {
   private maxSize: number;
   private metrics: CacheMetrics;
 
-  constructor(maxSize: number = 1000) {
+  constructor(maxSize: number = 5000) { // Increased default for better scalability
     this.maxSize = maxSize;
     this.metrics = {
       operations: { get: 0, set: 0, delete: 0, clear: 0 },
@@ -207,9 +207,20 @@ class LocalCache<T = any> {
   private evictLRU(): void {
     if (this.accessOrder.length === 0) return;
     
-    const lruKey = this.accessOrder[0];
-    this.cache.delete(lruKey);
-    this.accessOrder.shift();
+    // Find actual LRU item instead of just first item
+    let oldestKey = this.accessOrder[0];
+    let oldestTime = Date.now();
+    
+    for (const key of this.accessOrder) {
+      const item = this.cache.get(key);
+      if (item && item.lastAccessed < oldestTime) {
+        oldestTime = item.lastAccessed;
+        oldestKey = key;
+      }
+    }
+    
+    this.cache.delete(oldestKey);
+    this.removeFromAccessOrder(oldestKey);
   }
 
   private updateAccessOrder(key: string): void {
@@ -256,7 +267,7 @@ export class DistributedCache<T = any> extends EventEmitter {
     super();
     
     this.options = {
-      maxSize: options.maxSize || 1000,
+      maxSize: options.maxSize || 5000, // Increased for production scalability
       defaultTTL: options.defaultTTL || 300000, // 5 minutes
       enableDistributed: options.enableDistributed !== false,
       keyPrefix: options.keyPrefix || 'qtests:cache:',

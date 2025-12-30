@@ -69,9 +69,10 @@ export class AdvancedConnectionPool extends EventEmitter {
     timestamp: number;
   }> = [];
   
-  // Performance optimization: connection reuse tracking
+  // Performance optimization: connection reuse tracking with memory limits
   private connectionReuseStats = new Map<any, { uses: number; lastUsed: number }>();
   private readonly maxConnectionUses = 1000; // Recreate connection after N uses
+  private readonly maxReuseStatsSize = 10000; // Prevent memory leaks in reuse stats
   
   private circuitState: CircuitState = CircuitState.CLOSED;
   private failureCount = 0;
@@ -93,8 +94,8 @@ export class AdvancedConnectionPool extends EventEmitter {
     super();
     
     this.config = {
-      maxConnections: options.maxConnections || 10,
-      minConnections: options.minConnections || 2,
+      maxConnections: options.maxConnections || 50, // Increased for production scalability
+      minConnections: options.minConnections || 5,
       acquireTimeout: options.acquireTimeout || 5000,
       idleTimeout: options.idleTimeout || 30000,
       healthCheckInterval: options.healthCheckInterval || 10000,
@@ -252,10 +253,17 @@ export class AdvancedConnectionPool extends EventEmitter {
     connection.acquired = true;
     connection.lastUsed = Date.now();
     
-    // Track connection reuse for performance monitoring
+    // Track connection reuse for performance monitoring with memory limits
     const stats = this.connectionReuseStats.get(connection.connection) || { uses: 0, lastUsed: 0 };
     stats.uses++;
     stats.lastUsed = Date.now();
+    
+    // Prevent memory leaks by limiting reuse stats size
+    if (this.connectionReuseStats.size >= this.maxReuseStatsSize) {
+      const oldestKey = this.connectionReuseStats.keys().next().value;
+      this.connectionReuseStats.delete(oldestKey);
+    }
+    
     this.connectionReuseStats.set(connection.connection, stats);
     
     // Recreate connection if it has been used too many times (prevent connection fatigue)
@@ -336,6 +344,11 @@ export class AdvancedConnectionPool extends EventEmitter {
   }
 
   private async waitForConnection(): Promise<any> {
+    // Prevent unlimited queue growth
+    if (this.waitingQueue.length >= this.config.maxConnections * 2) {
+      throw new Error('Connection pool waiting queue is full');
+    }
+
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         const index = this.waitingQueue.findIndex(w => w.resolve === resolve);
