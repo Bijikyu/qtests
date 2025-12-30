@@ -14,11 +14,23 @@ interface DefaultEnv {
   OPENAI_TOKEN: string;
 }
 
-const defaultEnv: DefaultEnv = {
-  GOOGLE_API_KEY: process.env.GOOGLE_API_KEY || '',
-  GOOGLE_CX: process.env.GOOGLE_CX || '',
-  OPENAI_TOKEN: process.env.OPENAI_TOKEN || ''
+// Abstracted configuration management - centralizes env var access
+const getEnvConfig = (): DefaultEnv => {
+  // Get configuration from environment variables with fallbacks
+  const googleApiKey = process.env.GOOGLE_API_KEY || '';
+  const googleCx = process.env.GOOGLE_CX || '';
+  const openaiToken = process.env.OPENAI_TOKEN || '';
+
+  const config = {
+    GOOGLE_API_KEY: googleApiKey,
+    GOOGLE_CX: googleCx,
+    OPENAI_TOKEN: openaiToken
+  };
+  
+  return config;
 };
+
+const defaultEnv: DefaultEnv = getEnvConfig();
 
 function validateEnvKey(key: string): boolean {
   return /^[A-Z_][A-Z0-9_]*$/.test(key);

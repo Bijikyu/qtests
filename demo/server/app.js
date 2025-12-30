@@ -1,6 +1,8 @@
 // Express application setup used by tests and the server entrypoint.
 // Rationale: keep app creation separate from network binding to allow supertest usage.
 const express = require('express');
+const helmet = require('helmet');
+const cors = require('cors');
 const winston = require('winston');
 const qerrors = require('qerrors');
 
@@ -13,6 +15,33 @@ const logger = winston.createLogger({
 
 // Create the express app instance.
 const app = express();
+
+// Security headers middleware - helmet for security best practices
+app.use(helmet({
+  contentSecurityPolicy: process.env.NODE_ENV === 'production' ? {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  } : false, // Disable CSP in development to avoid breaking demo
+  hsts: process.env.NODE_ENV === 'production' ? {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  } : false // Disable HSTS in development
+}));
+
+// CORS configuration - restrict origins in production
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? (process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['https://yourdomain.com'])
+    : true, // Allow all origins in development
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // JSON parsing middleware with error handling
 app.use(express.json({
