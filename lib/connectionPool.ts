@@ -69,6 +69,10 @@ export class AdvancedConnectionPool extends EventEmitter {
     timestamp: number;
   }> = [];
   
+  // Performance optimization: connection reuse tracking
+  private connectionReuseStats = new Map<any, { uses: number; lastUsed: number }>();
+  private readonly maxConnectionUses = 1000; // Recreate connection after N uses
+  
   private circuitState: CircuitState = CircuitState.CLOSED;
   private failureCount = 0;
   private lastFailureTime = 0;
@@ -232,8 +236,8 @@ export class AdvancedConnectionPool extends EventEmitter {
   }
 
   private async tryAcquire(): Promise<any> {
-    // Try to find an idle connection
-    let connection = this.connections.find(c => !c.acquired);
+    // Try to find an idle connection with optimal reuse statistics
+    let connection = this.findOptimalIdleConnection();
     
     if (!connection) {
       // Can we create a new connection?
@@ -248,6 +252,19 @@ export class AdvancedConnectionPool extends EventEmitter {
     connection.acquired = true;
     connection.lastUsed = Date.now();
     
+    // Track connection reuse for performance monitoring
+    const stats = this.connectionReuseStats.get(connection.connection) || { uses: 0, lastUsed: 0 };
+    stats.uses++;
+    stats.lastUsed = Date.now();
+    this.connectionReuseStats.set(connection.connection, stats);
+    
+    // Recreate connection if it has been used too many times (prevent connection fatigue)
+    if (stats.uses > this.maxConnectionUses) {
+      await this.removeConnection(connection);
+      this.connectionReuseStats.delete(connection.connection);
+      return this.tryAcquire();
+    }
+    
     // Validate connection if validator is provided
     if (this.config.validate) {
       try {
@@ -255,16 +272,41 @@ export class AdvancedConnectionPool extends EventEmitter {
         if (!isValid) {
           // Remove invalid connection and try again
           await this.removeConnection(connection);
+          this.connectionReuseStats.delete(connection.connection);
           return this.tryAcquire();
         }
       } catch (error) {
         // Validation failed, remove connection and try again
         await this.removeConnection(connection);
+        this.connectionReuseStats.delete(connection.connection);
         return this.tryAcquire();
       }
     }
 
     return connection.connection;
+  }
+
+  /**
+   * Find the optimal idle connection based on reuse statistics
+   */
+  private findOptimalIdleConnection(): PooledConnection | undefined {
+    const idleConnections = this.connections.filter(c => !c.acquired);
+    
+    if (idleConnections.length === 0) {
+      return undefined;
+    }
+    
+    if (idleConnections.length === 1) {
+      return idleConnections[0];
+    }
+    
+    // Select connection with lowest reuse count to balance load
+    return idleConnections.reduce((optimal, current) => {
+      const optimalStats = this.connectionReuseStats.get(optimal.connection) || { uses: 0 };
+      const currentStats = this.connectionReuseStats.get(current.connection) || { uses: 0 };
+      
+      return currentStats.uses < optimalStats.uses ? current : optimal;
+    });
   }
 
   private async createConnection(): Promise<PooledConnection> {

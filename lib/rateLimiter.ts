@@ -46,6 +46,11 @@ export class DistributedRateLimiter {
   private config: RateLimitConfig;
   private _cleanupInterval: NodeJS.Timeout | null = null;
   private circuitBreaker?: CircuitBreaker;
+  
+  // Performance optimization: LRU cache for recent rate limit checks
+  private recentChecks = new Map<string, { result: RateLimitResult; timestamp: number }>();
+  private readonly cacheMaxSize = 1000;
+  private readonly cacheTtlMs = 1000; // 1 second cache TTL
 
   constructor(config: RateLimitConfig) {
     this.config = config;
@@ -112,13 +117,43 @@ export class DistributedRateLimiter {
       `rate_limit:${req.ip}:${req.path}`;
 
     const now = Date.now();
+    
+    // Check cache first for performance optimization
+    const cached = this.recentChecks.get(key);
+    if (cached && (now - cached.timestamp) < this.cacheTtlMs) {
+      return cached.result;
+    }
+
     const windowStart = now - this.config.windowMs;
 
+    let result: RateLimitResult;
     if (this.isRedisAvailable && this.redis && this.circuitBreaker) {
-      return await this.circuitBreaker.execute(() => this.checkRedisLimit(key, now, windowStart));
+      result = await this.circuitBreaker.execute(() => this.checkRedisLimit(key, now, windowStart));
     } else {
-      return this.checkFallbackLimit(key, now);
+      result = this.checkFallbackLimit(key, now);
     }
+
+    // Cache the result for future requests
+    this.cacheResult(key, result);
+    return result;
+  }
+
+  /**
+   * Cache rate limit result with LRU eviction
+   */
+  private cacheResult(key: string, result: RateLimitResult): void {
+    // Evict oldest entry if cache is full
+    if (this.recentChecks.size >= this.cacheMaxSize) {
+      const oldestKey = this.recentChecks.keys().next().value;
+      if (oldestKey) {
+        this.recentChecks.delete(oldestKey);
+      }
+    }
+    
+    this.recentChecks.set(key, {
+      result,
+      timestamp: Date.now()
+    });
   }
 
   private async checkRedisLimit(key: string, now: number, windowStart: number): Promise<RateLimitResult> {

@@ -23,6 +23,13 @@ export interface ValidationResult {
 export class StreamingStringValidator {
   private config: ValidationConfig;
   private maxStringLength: number;
+  
+  // Performance optimization: schema cache for repeated validations
+  private schemaCache = new Map<number, any>();
+  private readonly maxCacheSize = 100;
+  
+  // Performance optimization: compiled regex patterns
+  private readonly dangerousPatternCache = new Map<string, RegExp>();
 
   constructor(config: ValidationConfig = {}) {
     this.config = { ...config };
@@ -32,7 +39,27 @@ export class StreamingStringValidator {
   async validateString(input: string, maxLength?: number): Promise<string> {
     try {
       const actualMaxLength = maxLength ?? this.maxStringLength;
-      const schema = z.string().max(actualMaxLength).transform(sanitizeString);
+      
+      // Fast path: skip validation if input is clearly within limits
+      if (input.length <= actualMaxLength && !this.hasDangerousPatternsFast(input)) {
+        return input;
+      }
+      
+      // Use cached schema for performance
+      let schema = this.schemaCache.get(actualMaxLength);
+      if (!schema) {
+        schema = z.string().max(actualMaxLength).transform(sanitizeString);
+        
+        // Manage cache size
+        if (this.schemaCache.size >= this.maxCacheSize) {
+          const firstKey = this.schemaCache.keys().next().value;
+          if (firstKey) {
+            this.schemaCache.delete(firstKey);
+          }
+        }
+        this.schemaCache.set(actualMaxLength, schema);
+      }
+      
       const result = schema.safeParse(input);
       
       if (result.success) {
@@ -53,6 +80,17 @@ export class StreamingStringValidator {
       });
       return sanitizeString(input).substring(0, maxLength || this.maxStringLength);
     }
+  }
+
+  /**
+   * Fast dangerous pattern detection without full regex compilation
+   */
+  private hasDangerousPatternsFast(input: string): boolean {
+    // Quick check for common dangerous patterns using string methods
+    const dangerousStarts = ['<script', 'javascript:', 'vbscript:', 'data:', 'onload=', 'onerror='];
+    const lowerInput = input.toLowerCase();
+    
+    return dangerousStarts.some(start => lowerInput.includes(start));
   }
 
   async validateObject(obj: any, depth = 0, maxDepth = 10): Promise<any> {
