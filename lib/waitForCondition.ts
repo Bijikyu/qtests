@@ -13,21 +13,13 @@ export async function waitForCondition(
   const intervalMs = opts.intervalMs ?? 25;
   const start = Date.now();
 
+  // Add safety check for minimum timeout
+  if (timeoutMs < 100) {
+    console.warn('waitForCondition: timeoutMs too low, setting minimum of 100ms');
+  }
+
   while (true) {
-    let ok = false;
-    try {
-      ok = await predicate();
-    } catch (error: any) {
-      qerrors(error, 'waitForCondition: predicate execution failed', { 
-        timeoutMs, 
-        intervalMs, 
-        elapsedMs: Date.now() - start 
-      });
-      ok = false;
-    }
-
-    if (ok) return;
-
+    // Check timeout before predicate to prevent infinite loops
     const elapsed = Date.now() - start;
     if (elapsed > timeoutMs) {
       const timeoutError = new Error(`waitForCondition: timeout after ${timeoutMs}ms`);
@@ -39,9 +31,28 @@ export async function waitForCondition(
       throw timeoutError;
     }
 
+    let ok = false;
+    try {
+      ok = await predicate();
+    } catch (error: any) {
+      qerrors(error, 'waitForCondition: predicate execution failed', { 
+        timeoutMs, 
+        intervalMs, 
+        elapsedMs: elapsed 
+      });
+      ok = false;
+    }
+
+    if (ok) return;
+
     try {
       await new Promise<void>((resolve) => {
-        setTimeout(() => resolve(), intervalMs);
+        const timeoutId = setTimeout(() => resolve(), intervalMs);
+        // Add cleanup mechanism to prevent hanging
+        if (timeoutMs - elapsed < intervalMs) {
+          clearTimeout(timeoutId);
+          setTimeout(() => resolve(), Math.max(1, timeoutMs - elapsed));
+        }
       });
     } catch (error: any) {
       qerrors(error, 'waitForCondition: setTimeout Promise failed', {
@@ -49,7 +60,8 @@ export async function waitForCondition(
         elapsedMs: Date.now() - start,
         operation: 'createDelayPromise'
       });
-      // Continue without delay if timer fails
+      // Add minimum delay even if timer fails to prevent CPU spinning
+      await new Promise(resolve => setTimeout(resolve, 10));
     }
   }
 }

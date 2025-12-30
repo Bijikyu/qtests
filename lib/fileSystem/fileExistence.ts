@@ -22,6 +22,21 @@ export function safeExists(filePath: string): boolean {
 }
 
 /**
+ * Safely checks if a file or directory exists (async version)
+ * @param filePath - Path to check
+ * @returns true if exists, false otherwise
+ */
+export async function safeExistsAsync(filePath: string): Promise<boolean> {
+  try {
+    await fs.promises.access(filePath);
+    return true;
+  } catch {
+    // If access throws an error (e.g., due to permissions or non-existence), treat as non-existent
+    return false;
+  }
+}
+
+/**
  * Safely gets file stats
  * @param filePath - Path to check
  * @returns fs.Stats object or null if failed
@@ -33,6 +48,23 @@ export function safeStats(filePath: string): fs.Stats | null {
     qerrors(error as Error, 'fileExistence.safeStats: getting file stats failed', { 
       filePath,
       operation: 'statSync'
+    });
+    return null;
+  }
+}
+
+/**
+ * Safely gets file stats (async version)
+ * @param filePath - Path to check
+ * @returns fs.Stats object or null if failed
+ */
+export async function safeStatsAsync(filePath: string): Promise<fs.Stats | null> {
+  try {
+    return await fs.promises.stat(filePath);
+  } catch (error) {
+    qerrors(error as Error, 'fileExistence.safeStatsAsync: getting file stats failed', { 
+      filePath,
+      operation: 'stat'
     });
     return null;
   }

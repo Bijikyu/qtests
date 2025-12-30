@@ -43,6 +43,7 @@ export class DistributedRateLimiter {
   private isRedisAvailable = false;
   private fallbackCounters = new Map<string, { count: number; resetTime: number }>();
   private config: RateLimitConfig;
+  private _cleanupInterval: NodeJS.Timeout | null = null;
 
   constructor(config: RateLimitConfig) {
     this.config = config;
@@ -251,17 +252,24 @@ export class DistributedRateLimiter {
       console.warn('Redis rate limiter shutdown error:', error);
     }
 
+    // Clear cleanup interval to prevent memory leaks
+    if (this._cleanupInterval) {
+      clearInterval(this._cleanupInterval);
+      this._cleanupInterval = null;
+    }
+
     this.fallbackCounters.clear();
   }
 }
 
 export function createDistributedRateLimiter(config: RateLimitConfig): DistributedRateLimiter {
   const limiter = new DistributedRateLimiter(config);
-
-  setInterval(() => {
+  const cleanupInterval = setInterval(() => {
     limiter.cleanup();
   }, 60000);
 
+  // Store interval reference for cleanup
+  (limiter as any)._cleanupInterval = cleanupInterval;
   return limiter;
 }
 

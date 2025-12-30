@@ -18,6 +18,8 @@ export class SecurityAnalytics {
     threatScore: 0,
     riskLevel: 'low' as 'low' | 'medium' | 'high' | 'critical'
   };
+  
+  private cleanupInterval: NodeJS.Timeout | null = null;
 
   /**
    * Initialize analytics
@@ -159,7 +161,7 @@ export class SecurityAnalytics {
    */
   private setupCleanup(): void {
     try {
-      setInterval(() => {
+      this.cleanupInterval = setInterval(() => {
         try {
           // Cleanup old data periodically
           const now = Date.now();
@@ -177,6 +179,26 @@ export class SecurityAnalytics {
     } catch (error) {
       console.error('SecurityAnalytics setup error:', error);
     }
+  }
+
+  /**
+   * Cleanup resources and prevent memory leaks
+   */
+  public cleanup(): void {
+    if (this.cleanupInterval) {
+      clearInterval(this.cleanupInterval);
+      this.cleanupInterval = null;
+      console.log('🔒 SecurityAnalytics: Cleanup interval cleared');
+    }
+  }
+
+  /**
+   * Destructor method for cleanup
+   */
+  public destroy(): void {
+    this.cleanup();
+    this.analytics.uniqueIPs.clear();
+    console.log('🔒 SecurityAnalytics: Instance destroyed');
   }
 
   /**

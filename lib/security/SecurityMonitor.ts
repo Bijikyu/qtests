@@ -76,7 +76,18 @@ export class SecurityMonitor {
   dispose(): void {
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
+      this.cleanupInterval = undefined;
     }
+    this.events = [];
+    this.rateLimits.clear();
+  }
+
+  /**
+   * Destroy method for complete cleanup
+   */
+  destroy(): void {
+    this.dispose();
+    console.log('🔒 SecurityMonitor: Instance destroyed');
   }
 
   /**
@@ -152,27 +163,43 @@ export class SecurityMonitor {
   }
 
   /**
-   * Get security events by type
+   * Get security events by type (optimized to avoid creating new arrays)
    */
   getEventsByType(type: SecurityEventType): SecurityEvent[] {
-    return this.events.filter(event => event.type === type);
+    const result: SecurityEvent[] = [];
+    for (const event of this.events) {
+      if (event.type === type) {
+        result.push(event);
+      }
+    }
+    return result;
   }
 
   /**
-   * Get security events by severity
+   * Get security events by severity (optimized to avoid creating new arrays)
    */
   getEventsBySeverity(severity: SecuritySeverity): SecurityEvent[] {
-    return this.events.filter(event => event.severity === severity);
+    const result: SecurityEvent[] = [];
+    for (const event of this.events) {
+      if (event.severity === severity) {
+        result.push(event);
+      }
+    }
+    return result;
   }
 
   /**
-   * Get recent security events
+   * Get recent security events (optimized to avoid creating new arrays)
    */
   getRecentEvents(minutes: number = 60): SecurityEvent[] {
     const cutoff = new Date(Date.now() - minutes * 60 * 1000);
-    return this.events.filter(event => 
-      event.timestamp && new Date(event.timestamp) > cutoff
-    );
+    const result: SecurityEvent[] = [];
+    for (const event of this.events) {
+      if (event.timestamp && new Date(event.timestamp) > cutoff) {
+        result.push(event);
+      }
+    }
+    return result;
   }
 
   /**
@@ -241,13 +268,19 @@ export class SecurityMonitor {
   }
 
   /**
-   * Clear old events
+   * Clear old events (optimized to avoid creating intermediate arrays)
    */
   clearOldEvents(olderThanHours: number = 24): void {
     const cutoff = new Date(Date.now() - olderThanHours * 60 * 60 * 1000);
-    this.events = this.events.filter(event => 
-      event.timestamp && new Date(event.timestamp) > cutoff
-    );
+    const filteredEvents: SecurityEvent[] = [];
+    
+    for (const event of this.events) {
+      if (event.timestamp && new Date(event.timestamp) > cutoff) {
+        filteredEvents.push(event);
+      }
+    }
+    
+    this.events = filteredEvents;
   }
 
   /**
