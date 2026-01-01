@@ -1,6 +1,6 @@
 /**
  * Performance Monitoring Utilities
- * Comprehensive performance tracking with metrics collection and alerting
+ * Optimized performance tracking with memory-efficient metrics collection
  */
 
 import { EventEmitter } from 'events';
@@ -79,12 +79,12 @@ export class PerformanceMonitor extends EventEmitter {
   constructor(config: Partial<MonitorConfig> = {}) {
     super();
     
-    // Initialize config first
+    // Initialize config first with memory-efficient defaults
     this.config = {
-      intervalMs: 1000,        // Collect metrics every second
-      historySize: 3600,       // Keep 1 hour of history (1 second intervals)
-      alertCheckIntervalMs: 5000, // Check alerts every 5 seconds
-      enableEventLoopMonitoring: true,
+      intervalMs: 5000,        // Reduced frequency to lower overhead
+      historySize: 720,       // Reduced history to 2 hours (5 second intervals)
+      alertCheckIntervalMs: 10000, // Less frequent alert checks
+      enableEventLoopMonitoring: false, // Disabled by default for performance
       enableCpuMonitoring: true,
       enableMemoryMonitoring: true,
       ...config

@@ -53,13 +53,13 @@ export class ScalableApiClient extends EventEmitter {
   private circuitBreakers = new Map<string, CircuitBreakerState>();
   private activeRequests = new Set<string>();
   private requestQueue: Array<{ id: string; execute: () => Promise<any>; timestamp: number }> = [];
-  private maxConcurrentRequests = 100;
+  private maxConcurrentRequests = 20; // Reduced to prevent overload
   private processingQueue = false;
-  private readonly maxQueueSize = 1000; // Prevent unlimited queue growth
+  private readonly maxQueueSize = 100; // Reduced queue size for better memory management
 
   constructor(options: { maxConcurrentRequests?: number } = {}) {
     super();
-    this.maxConcurrentRequests = options.maxConcurrentRequests || 100;
+    this.maxConcurrentRequests = options.maxConcurrentRequests || 20; // Reduced to prevent overload
   }
 
   /**
@@ -143,8 +143,8 @@ export class ScalableApiClient extends EventEmitter {
   }
 
   private async executeWithRetries<T>(config: ApiRequestConfig, circuitKey: string): Promise<ApiResponse<T>> {
-    const maxRetries = config.retries || 3;
-    const retryDelay = config.retryDelay || 1000;
+    const maxRetries = Math.min(config.retries || 2, 2); // Limit retries to prevent resource waste
+    const retryDelay = Math.min(config.retryDelay || 500, 500); // Faster retry
     let lastError: Error;
 
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
@@ -153,14 +153,15 @@ export class ScalableApiClient extends EventEmitter {
       } catch (error) {
         lastError = error as Error;
         
-        // Don't retry on client errors (4xx)
-        if (error instanceof Error && error.message.includes('4')) {
+        // Don't retry on client errors (4xx) or timeouts
+        if (error instanceof Error && (error.message.includes('4') || error.message.includes('timeout'))) {
           throw error;
         }
         
-        // Wait before retry (exponential backoff)
+        // Wait before retry (exponential backoff with jitter)
         if (attempt < maxRetries) {
-          await new Promise(resolve => setTimeout(resolve, retryDelay * Math.pow(2, attempt)));
+          const jitter = Math.random() * 100; // Add jitter to prevent thundering herd
+          await new Promise(resolve => setTimeout(resolve, retryDelay * Math.pow(2, attempt) + jitter));
         }
       }
     }
@@ -275,7 +276,7 @@ export class ScalableApiClient extends EventEmitter {
       const request = this.requestQueue.shift();
       if (request) {
         // Execute without waiting to allow concurrent processing
-        request().catch(() => {}); // Errors handled in the request itself
+        request.execute().catch(() => {}); // Errors handled in the request itself
       }
     }
     

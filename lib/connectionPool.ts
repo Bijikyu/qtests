@@ -96,14 +96,14 @@ export class AdvancedConnectionPool extends EventEmitter {
     super();
     
     this.config = {
-      maxConnections: options.maxConnections || 50, // Increased for production scalability
-      minConnections: options.minConnections || 5,
-      acquireTimeout: options.acquireTimeout || 5000,
-      idleTimeout: options.idleTimeout || 30000,
-      healthCheckInterval: options.healthCheckInterval || 10000,
-      maxRetries: options.maxRetries || 3,
-      retryDelay: options.retryDelay || 1000,
-      connectionTimeout: options.connectionTimeout || 5000,
+      maxConnections: options.maxConnections || 20, // Reduced to prevent resource exhaustion
+      minConnections: options.minConnections || 2, // Reduced minimum
+      acquireTimeout: options.acquireTimeout || 3000, // Faster timeout
+      idleTimeout: options.idleTimeout || 15000, // Shorter idle timeout
+      healthCheckInterval: options.healthCheckInterval || 5000, // More frequent health checks
+      maxRetries: options.maxRetries || 2, // Fewer retries
+      retryDelay: options.retryDelay || 500, // Faster retry
+      connectionTimeout: options.connectionTimeout || 3000, // Faster connection timeout
       factory: options.factory,
       destroy: options.destroy,
       validate: options.validate || (() => Promise.resolve(true)), // Provide default validator

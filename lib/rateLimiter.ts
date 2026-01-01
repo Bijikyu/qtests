@@ -47,10 +47,10 @@ export class DistributedRateLimiter {
   private _cleanupInterval: NodeJS.Timeout | null = null;
   private circuitBreaker?: CircuitBreaker;
   
-  // Performance optimization: LRU cache for recent rate limit checks
-  private recentChecks = new Map<string, { result: RateLimitResult; timestamp: number }>();
-  private readonly cacheMaxSize = 1000;
-  private readonly cacheTtlMs = 1000; // 1 second cache TTL
+  // Performance optimization: LRU cache for recent rate limit checks with memory limits
+  private recentCache = new Map<string, { result: RateLimitResult; timestamp: number }>();
+  private readonly maxCacheSize = 500; // Reduced to prevent memory leaks
+  private readonly cacheTtl = 5000; // 5 seconds cache TTL
 
   constructor(config: RateLimitConfig) {
     this.config = config;
@@ -119,8 +119,8 @@ export class DistributedRateLimiter {
     const now = Date.now();
     
     // Check cache first for performance optimization
-    const cached = this.recentChecks.get(key);
-    if (cached && (now - cached.timestamp) < this.cacheTtlMs) {
+    const cached = this.recentCache.get(key);
+    if (cached && (now - cached.timestamp) < this.cacheTtl) {
       return cached.result;
     }
 
@@ -143,14 +143,14 @@ export class DistributedRateLimiter {
    */
   private cacheResult(key: string, result: RateLimitResult): void {
     // Evict oldest entry if cache is full
-    if (this.recentChecks.size >= this.cacheMaxSize) {
-      const oldestKey = this.recentChecks.keys().next().value;
+    if (this.recentCache.size >= this.maxCacheSize) {
+      const oldestKey = this.recentCache.keys().next().value;
       if (oldestKey) {
-        this.recentChecks.delete(oldestKey);
+        this.recentCache.delete(oldestKey);
       }
     }
     
-    this.recentChecks.set(key, {
+    this.recentCache.set(key, {
       result,
       timestamp: Date.now()
     });

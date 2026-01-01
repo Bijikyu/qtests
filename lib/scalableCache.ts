@@ -60,9 +60,9 @@ export class AdvancedCache<T = any> extends EventEmitter {
     super();
     
     this.config = {
-      maxSize: config.maxSize || 1000,
+      maxSize: config.maxSize || 500, // Reduced for better memory management
       defaultTtl: config.defaultTtl || 300000, // 5 minutes
-      cleanupIntervalMs: config.cleanupIntervalMs || 60000, // 1 minute
+      cleanupIntervalMs: config.cleanupIntervalMs || 30000, // More frequent cleanup
       enableStats: config.enableStats ?? true,
       enableCompression: config.enableCompression ?? false,
       compressionThreshold: config.compressionThreshold || 1024
@@ -190,8 +190,8 @@ export class AdvancedCache<T = any> extends EventEmitter {
   async mget(keys: string[]): Promise<Map<string, T | undefined>> {
     const results = new Map<string, T | undefined>();
     
-    // Process keys in parallel batches
-    const batchSize = 50;
+    // Process keys in smaller parallel batches to reduce memory pressure
+    const batchSize = 10; // Reduced batch size
     for (let i = 0; i < keys.length; i += batchSize) {
       const batch = keys.slice(i, i + batchSize);
       const batchPromises = batch.map(async (key) => {
@@ -201,6 +201,11 @@ export class AdvancedCache<T = any> extends EventEmitter {
       
       const batchResults = await Promise.all(batchPromises);
       batchResults.forEach(([key, value]) => results.set(key, value));
+      
+      // Add small delay between batches to prevent memory spikes
+      if (i + batchSize < keys.length) {
+        await new Promise(resolve => setTimeout(resolve, 1));
+      }
     }
     
     return results;

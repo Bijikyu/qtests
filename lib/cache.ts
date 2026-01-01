@@ -83,7 +83,7 @@ class LocalCache<T = any> {
   private maxSize: number;
   private metrics: CacheMetrics;
 
-  constructor(maxSize: number = 5000) { // Increased default for better scalability
+  constructor(maxSize: number = 1000) { // Reduced default to prevent memory bloat
     this.maxSize = maxSize;
     this.metrics = {
       operations: { get: 0, set: 0, delete: 0, clear: 0 },
@@ -278,7 +278,7 @@ export class DistributedCache<T = any> extends EventEmitter {
     super();
     
     this.options = {
-      maxSize: options.maxSize || 5000, // Increased for production scalability
+      maxSize: options.maxSize || 1000, // Reduced to prevent memory issues
       defaultTTL: options.defaultTTL || 300000, // 5 minutes
       enableDistributed: options.enableDistributed !== false,
       keyPrefix: options.keyPrefix || 'qtests:cache:',

@@ -1,6 +1,6 @@
 /**
  * Scalable Database Utilities
- * Optimized database operations with connection pooling, query batching, and caching
+ * Memory-efficient database operations with optimized connection pooling and query caching
  */
 
 import { EventEmitter } from 'events';
@@ -95,19 +95,19 @@ export class ScalableDatabaseClient extends EventEmitter {
       database: config.database,
       username: config.username || '',
       password: config.password || '',
-      maxConnections: config.maxConnections || 100, // Increased for production scalability
-      minConnections: config.minConnections || 10,
-      acquireTimeout: config.acquireTimeout || 5000,
-      idleTimeout: config.idleTimeout || 30000,
-      queryTimeout: config.queryTimeout || 10000,
+      maxConnections: config.maxConnections || 20, // Reduced to prevent resource exhaustion
+      minConnections: config.minConnections || 2,
+      acquireTimeout: config.acquireTimeout || 3000,
+      idleTimeout: config.idleTimeout || 15000, // Shorter idle timeout
+      queryTimeout: config.queryTimeout || 5000, // Faster query timeout
       enableQueryCache: config.enableQueryCache ?? true,
-      cacheMaxSize: config.cacheMaxSize || 1000,
-      cacheTtlMs: config.cacheTtlMs || 60000
+      cacheMaxSize: config.cacheMaxSize || 200, // Reduced cache size
+      cacheTtlMs: config.cacheTtlMs || 30000 // Shorter cache TTL
     };
     
     this.cacheMaxSize = this.config.cacheMaxSize;
     this.cacheTtlMs = this.config.cacheTtlMs;
-    this.maxQueueSize = this.config.maxConnections * 3; // Prevent unlimited queue growth
+    this.maxQueueSize = Math.min(this.config.maxConnections * 2, 50); // Stricter queue limit
     
     this.initializeConnectionPool();
     this.startCacheCleanup();
@@ -143,11 +143,18 @@ export class ScalableDatabaseClient extends EventEmitter {
         }
       }
 
-      // Execute query
-      const result = await this.executeQueryWithRetry<T>(sql, params, options);
+      // Execute query with memory limits
+      let result = await this.executeQueryWithRetry<T>(sql, params, options);
       
-      // Cache result if enabled
-      if (options.cache !== false && this.config.enableQueryCache) {
+      // Enforce result set size limits to prevent memory bloat
+      if (result.rows.length > this.maxResultRows) {
+        console.warn(`Query result truncated from ${result.rows.length} to ${this.maxResultRows} rows`);
+        result.rows = result.rows.slice(0, this.maxResultRows);
+        result.rowCount = result.rows.length;
+      }
+      
+      // Cache result if enabled and size is reasonable
+      if (options.cache !== false && this.config.enableQueryCache && result.rows.length < 1000) {
         const cacheKey = options.cacheKey || this.generateCacheKey(sql, params);
         this.setCache(cacheKey, result);
       }
