@@ -62,7 +62,13 @@ export class ScalableDatabaseClient extends EventEmitter {
     resolve: (connection: any) => void;
     reject: (error: Error) => void;
     timeout: NodeJS.Timeout;
+    timestamp: number;
   }> = [];
+  
+  private readonly maxQueueSize: number;
+  private readonly maxResultRows = 10000; // Prevent memory bloat from large result sets
+  private readonly maxBatchSize = 100; // Limit batch size for better performance
+  private isShutdown = false;
   
   // Query caching
   private queryCache = new Map<string, CachedQuery>();
@@ -101,6 +107,7 @@ export class ScalableDatabaseClient extends EventEmitter {
     
     this.cacheMaxSize = this.config.cacheMaxSize;
     this.cacheTtlMs = this.config.cacheTtlMs;
+    this.maxQueueSize = this.config.maxConnections * 3; // Prevent unlimited queue growth
     
     this.initializeConnectionPool();
     this.startCacheCleanup();
@@ -198,48 +205,71 @@ export class ScalableDatabaseClient extends EventEmitter {
     }
   }
 
-  /**
-   * Batch execute the same query with multiple parameter sets
-   */
-  async batchQuery<T = any>(
-    sql: string,
-    paramsList: any[][],
-    options: QueryOptions = {}
-  ): Promise<QueryResult<T>[]> {
-    const startTime = Date.now();
-    const results: QueryResult<T>[] = [];
-    
-    // Execute queries concurrently (but with connection limit)
-    const batchSize = Math.min(paramsList.length, this.config.maxConnections);
-    const batches: any[][] = [];
-    
-    for (let i = 0; i < paramsList.length; i += batchSize) {
-      batches.push(paramsList.slice(i, i + batchSize));
-    }
-    
-    for (const batch of batches) {
-      const batchPromises = batch.map(params => 
-        this.query<T>(sql, params, { ...options, cache: false }) // Disable cache for batch queries
-      );
-      
-      const batchResults = await Promise.allSettled(batchPromises);
-      
-      for (const promiseResult of batchResults) {
-        if (promiseResult.status === 'fulfilled') {
-          results.push(promiseResult.value);
-        } else {
-          // Handle failed query in batch
-          this.metrics.failedQueries++;
-          throw promiseResult.reason;
+/**
+ * Batch execute the same query with multiple parameter sets
+ */
+async batchQuery<T = any>(
+  sql: string,
+  paramsList: any[][],
+  options: QueryOptions = {}
+): Promise<QueryResult<T>[]> {
+  if (this.isShutdown) {
+    throw new Error('Database client is shutdown');
+  }
+
+  // Limit batch size to prevent resource exhaustion
+  if (paramsList.length > this.maxBatchSize) {
+    throw new Error(`Batch size too large (${paramsList.length} > ${this.maxBatchSize})`);
+  }
+
+  const startTime = Date.now();
+  const results: QueryResult<T>[] = [];
+  
+  // Execute queries concurrently with controlled parallelism
+  const concurrencyLimit = Math.min(paramsList.length, this.config.maxConnections);
+  const batches: any[][] = [];
+  
+  for (let i = 0; i < paramsList.length; i += concurrencyLimit) {
+    batches.push(paramsList.slice(i, i + concurrencyLimit));
+  }
+  
+  // Process batches sequentially but queries within each batch concurrently
+  for (const batch of batches) {
+    const batchPromises = batch.map(async (params, index) => {
+      try {
+        const result = await this.query<T>(sql, params, { ...options, cache: false });
+        
+        // Enforce result size limits to prevent memory bloat
+        if (result.rows.length > this.maxResultRows) {
+          console.warn(`Query result exceeds limit (${result.rows.length} > ${this.maxResultRows}), truncating`);
+          result.rows = result.rows.slice(0, this.maxResultRows);
+          result.rowCount = result.rows.length;
         }
+        
+        return result;
+      } catch (error) {
+        this.metrics.failedQueries++;
+        throw new Error(`Batch query ${index} failed: ${(error as Error).message}`);
+      }
+    });
+    
+    const batchResults = await Promise.allSettled(batchPromises);
+    
+    // Collect successful results and fail fast on errors
+    for (const promiseResult of batchResults) {
+      if (promiseResult.status === 'fulfilled') {
+        results.push(promiseResult.value);
+      } else {
+        throw promiseResult.reason;
       }
     }
-    
-    const duration = Date.now() - startTime;
-    this.emit('batch-query:success', { sql, paramCount: paramsList.length, duration });
-    
-    return results;
   }
+  
+  const duration = Date.now() - startTime;
+  this.emit('batch-query:success', { sql, paramCount: paramsList.length, duration });
+  
+  return results;
+}
 
   private async executeQueryWithRetry<T>(
     sql: string,
@@ -283,12 +313,19 @@ export class ScalableDatabaseClient extends EventEmitter {
     params: any[],
     timeout?: number
   ): Promise<QueryResult<T>> {
-    // This would be implemented based on the specific database driver
+    // This would be implemented based on specific database driver
     // For now, return a mock result
     const mockResult = {
       rows: [] as T[],
       rowCount: 0
     };
+    
+    // Enforce result size limits
+    if (mockResult.rows.length > this.maxResultRows) {
+      console.warn(`Query returned ${mockResult.rows.length} rows, truncating to ${this.maxResultRows}`);
+      mockResult.rows = mockResult.rows.slice(0, this.maxResultRows);
+      mockResult.rowCount = mockResult.rows.length;
+    }
     
     return {
       ...mockResult,
@@ -319,6 +356,10 @@ export class ScalableDatabaseClient extends EventEmitter {
     }
 
     // Wait for a connection to become available
+    if (this.waitingQueue.length >= this.maxQueueSize) {
+      throw new Error(`Connection waiting queue is full (${this.waitingQueue.length}/${this.maxQueueSize})`);
+    }
+
     return new Promise((resolve, reject) => {
       const timeoutId = setTimeout(() => {
         const index = this.waitingQueue.findIndex(w => w.resolve === resolve);
@@ -331,7 +372,8 @@ export class ScalableDatabaseClient extends EventEmitter {
       this.waitingQueue.push({
         resolve,
         reject,
-        timeout: timeoutId
+        timeout: timeoutId,
+        timestamp: Date.now()
       });
     });
   }
@@ -416,25 +458,58 @@ export class ScalableDatabaseClient extends EventEmitter {
     });
   }
 
-  private startCacheCleanup(): void {
-    setInterval(() => {
-      const now = Date.now();
-      const toDelete: string[] = [];
-      
-      this.queryCache.forEach((cached, key) => {
-        if (now - cached.timestamp > cached.ttl) {
-          toDelete.push(key);
+private startCacheCleanup(): void {
+  const cleanupInterval = setInterval(() => {
+    if (this.isShutdown) {
+      clearInterval(cleanupInterval);
+      return;
+    }
+
+    const now = Date.now();
+    const toDelete: string[] = [];
+    
+    // More efficient cleanup - avoid creating intermediate arrays when possible
+    for (const [key, cached] of this.queryCache.entries()) {
+      if (now - cached.timestamp > cached.ttl) {
+        toDelete.push(key);
+        // Early exit if we have many entries to delete
+        if (toDelete.length >= 100) {
+          break;
         }
-      });
-      
-      toDelete.forEach(key => this.queryCache.delete(key));
-    }, this.cacheTtlMs / 2); // Cleanup twice as often as TTL
-  }
+      }
+    }
+    
+    // Batch delete expired entries
+    for (const key of toDelete) {
+      this.queryCache.delete(key);
+    }
+    
+    // If cache is getting full, do additional cleanup based on LRU
+    if (this.queryCache.size > this.cacheMaxSize * 0.8) {
+      this.evictLeastRecentlyUsed(Math.floor(this.cacheMaxSize * 0.2));
+    }
+  }, this.cacheTtlMs / 2); // Cleanup twice as often as TTL
+}
 
   private updateAverageQueryTime(duration: number): void {
     const totalQueries = this.metrics.totalQueries - this.metrics.cachedQueries;
     this.metrics.averageQueryTime = 
       (this.metrics.averageQueryTime * (totalQueries - 1) + duration) / totalQueries;
+  }
+
+  /**
+   * Evict least recently used cache entries
+   */
+  private evictLeastRecentlyUsed(count: number): void {
+    const entries = Array.from(this.queryCache.entries());
+    
+    // Sort by timestamp (oldest first)
+    entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
+    
+    // Remove oldest entries
+    for (let i = 0; i < Math.min(count, entries.length); i++) {
+      this.queryCache.delete(entries[i][0]);
+    }
   }
 
   private isNonRetryableError(error: Error): boolean {
@@ -492,27 +567,40 @@ export class ScalableDatabaseClient extends EventEmitter {
     };
   }
 
-  /**
-   * Close all connections and cleanup
-   */
-  async close(): Promise<void> {
-    // Close all active connections
-    const closePromises = this.connectionPool.map(async (connection) => {
-      try {
-        if (connection.close) {
-          await connection.close();
-        }
-      } catch (error) {
-        console.warn('Error closing database connection:', error);
-      }
-    });
-    
-    await Promise.allSettled(closePromises);
-    
-    this.connectionPool = [];
-    this.activeConnections.clear();
-    this.queryCache.clear();
+/**
+ * Close all connections and cleanup
+ */
+async close(): Promise<void> {
+  if (this.isShutdown) {
+    return;
   }
+  
+  this.isShutdown = true;
+
+  // Reject all waiting requests
+  const waiting = this.waitingQueue.splice(0);
+  for (const waiter of waiting) {
+    clearTimeout(waiter.timeout);
+    waiter.reject(new Error('Database client is shutdown'));
+  }
+
+  // Close all active connections
+  const closePromises = this.connectionPool.map(async (connection) => {
+    try {
+      if (connection.close) {
+        await connection.close();
+      }
+    } catch (error) {
+      console.warn('Error closing database connection:', error);
+    }
+  });
+  
+  await Promise.allSettled(closePromises);
+  
+  this.connectionPool = [];
+  this.activeConnections.clear();
+  this.queryCache.clear();
+}
 }
 
 /**

@@ -73,6 +73,8 @@ export class AdvancedConnectionPool extends EventEmitter {
   private connectionReuseStats = new Map<any, { uses: number; lastUsed: number }>();
   private readonly maxConnectionUses = 1000; // Recreate connection after N uses
   private readonly maxReuseStatsSize = 10000; // Prevent memory leaks in reuse stats
+  private readonly maxWaitingQueue = 1000; // Prevent unlimited queue growth
+  private isShutdown = false; // Prevent operations after shutdown
   
   private circuitState: CircuitState = CircuitState.CLOSED;
   private failureCount = 0;
@@ -114,39 +116,43 @@ export class AdvancedConnectionPool extends EventEmitter {
     this.ensureMinConnections();
   }
 
-  /**
-   * Acquire a connection from the pool
-   */
-  async acquire(): Promise<any> {
-    // Check circuit breaker
-    if (!this.canAcquire()) {
-      throw new Error(`Circuit breaker is ${this.circuitState}`);
-    }
-
-    const startTime = Date.now();
-    
-    try {
-      const connection = await this.tryAcquire();
-      
-      // Update stats
-      const acquireTime = Date.now() - startTime;
-      this.stats.totalAcquisitions++;
-      this.stats.successfulAcquisitions++;
-      this.stats.totalAcquireTime += acquireTime;
-      
-      // Reset failure count on successful acquisition
-      if (this.failureCount > 0) {
-        this.failureCount = 0;
-        this.circuitState = CircuitState.CLOSED;
-      }
-      
-      return connection;
-    } catch (error) {
-      this.stats.failedAcquisitions++;
-      this.handleFailure(error as Error);
-      throw error;
-    }
+/**
+ * Acquire a connection from the pool
+ */
+async acquire(): Promise<any> {
+  if (this.isShutdown) {
+    throw new Error('Connection pool is shutdown');
   }
+
+  // Check circuit breaker
+  if (!this.canAcquire()) {
+    throw new Error(`Circuit breaker is ${this.circuitState}`);
+  }
+
+  const startTime = Date.now();
+  
+  try {
+    const connection = await this.tryAcquire();
+    
+    // Update stats
+    const acquireTime = Date.now() - startTime;
+    this.stats.totalAcquisitions++;
+    this.stats.successfulAcquisitions++;
+    this.stats.totalAcquireTime += acquireTime;
+    
+    // Reset failure count on successful acquisition
+    if (this.failureCount > 0) {
+      this.failureCount = 0;
+      this.circuitState = CircuitState.CLOSED;
+    }
+    
+    return connection;
+  } catch (error) {
+    this.stats.failedAcquisitions++;
+    this.handleFailure(error as Error);
+    throw error;
+  }
+}
 
   /**
    * Release a connection back to the pool
@@ -204,37 +210,44 @@ export class AdvancedConnectionPool extends EventEmitter {
     };
   }
 
-  /**
-   * Gracefully shutdown the pool
-   */
-  async shutdown(): Promise<void> {
-    // Clear intervals
-    if (this.healthCheckInterval) {
-      clearInterval(this.healthCheckInterval);
-    }
-    if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
-    }
-
-    // Reject all waiting requests
-    const waiting = this.waitingQueue.splice(0);
-    for (const waiter of waiting) {
-      clearTimeout(waiter.timeout);
-      waiter.reject(new Error('Pool is shutting down'));
-    }
-
-    // Close all connections
-    const closePromises = this.connections.map(async (pooled) => {
-      try {
-        await this.config.destroy(pooled.connection);
-      } catch (error) {
-        console.warn('Error closing connection during shutdown:', error);
-      }
-    });
-
-    await Promise.allSettled(closePromises);
-    this.connections = [];
+/**
+ * Gracefully shutdown the pool
+ */
+async shutdown(): Promise<void> {
+  if (this.isShutdown) {
+    return;
   }
+  
+  this.isShutdown = true;
+
+  // Clear intervals
+  if (this.healthCheckInterval) {
+    clearInterval(this.healthCheckInterval);
+  }
+  if (this.cleanupInterval) {
+    clearInterval(this.cleanupInterval);
+  }
+
+  // Reject all waiting requests
+  const waiting = this.waitingQueue.splice(0);
+  for (const waiter of waiting) {
+    clearTimeout(waiter.timeout);
+    waiter.reject(new Error('Pool is shutting down'));
+  }
+
+  // Close all connections
+  const closePromises = this.connections.map(async (pooled) => {
+    try {
+      await this.config.destroy(pooled.connection);
+    } catch (error) {
+      console.warn('Error closing connection during shutdown:', error);
+    }
+  });
+
+  await Promise.allSettled(closePromises);
+  this.connections = [];
+  this.connectionReuseStats.clear();
+}
 
   private async tryAcquire(): Promise<any> {
     // Try to find an idle connection with optimal reuse statistics
@@ -343,29 +356,45 @@ export class AdvancedConnectionPool extends EventEmitter {
     }
   }
 
-  private async waitForConnection(): Promise<any> {
-    // Prevent unlimited queue growth
-    if (this.waitingQueue.length >= this.config.maxConnections * 2) {
-      throw new Error('Connection pool waiting queue is full');
+private async waitForConnection(): Promise<any> {
+  // Aggressive cleanup before checking limit
+  this.cleanupTimedOutWaiters();
+  
+  // More aggressive queue management to prevent overflow
+  if (this.waitingQueue.length >= this.maxWaitingQueue) {
+    // Reject oldest requests to make room
+    const toReject = Math.min(10, this.waitingQueue.length);
+    for (let i = 0; i < toReject; i++) {
+      const waiter = this.waitingQueue.shift();
+      if (waiter) {
+        clearTimeout(waiter.timeout);
+        waiter.reject(new Error('Pool overloaded - request rejected'));
+      }
     }
-
-    return new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        const index = this.waitingQueue.findIndex(w => w.resolve === resolve);
-        if (index >= 0) {
-          this.waitingQueue.splice(index, 1);
-        }
-        reject(new Error('Connection acquire timeout'));
-      }, this.config.acquireTimeout);
-
-      this.waitingQueue.push({
-        resolve,
-        reject,
-        timeout,
-        timestamp: Date.now()
-      });
-    });
   }
+
+  // Still check if we're at limit after cleanup
+  if (this.waitingQueue.length >= this.maxWaitingQueue) {
+    throw new Error(`Connection pool waiting queue is full (${this.waitingQueue.length}/${this.maxWaitingQueue})`);
+  }
+
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      const index = this.waitingQueue.findIndex(w => w.resolve === resolve);
+      if (index >= 0) {
+        this.waitingQueue.splice(index, 1);
+      }
+      reject(new Error('Connection acquire timeout'));
+    }, this.config.acquireTimeout);
+
+    this.waitingQueue.push({
+      resolve,
+      reject,
+      timeout,
+      timestamp: Date.now()
+    });
+  });
+}
 
   private canAcquire(): boolean {
     switch (this.circuitState) {
@@ -482,16 +511,33 @@ export class AdvancedConnectionPool extends EventEmitter {
     }
   }
 
-  private async ensureMinConnections(): Promise<void> {
-    while (this.connections.length < this.config.minConnections) {
-      try {
-        await this.createConnection();
-      } catch (error) {
-        console.error('Failed to create minimum connection:', error);
-        break;
-      }
+private async ensureMinConnections(): Promise<void> {
+  while (this.connections.length < this.config.minConnections) {
+    try {
+      await this.createConnection();
+    } catch (error) {
+      console.error('Failed to create minimum connection:', error);
+      break;
     }
   }
+}
+
+/**
+ * Clean up timed out waiters to prevent memory leaks
+ */
+private cleanupTimedOutWaiters(): void {
+  const now = Date.now();
+  const timeoutThreshold = this.config.acquireTimeout * 2; // Allow some grace period
+  
+  for (let i = this.waitingQueue.length - 1; i >= 0; i--) {
+    const waiter = this.waitingQueue[i];
+    if (now - waiter.timestamp > timeoutThreshold) {
+      clearTimeout(waiter.timeout);
+      this.waitingQueue.splice(i, 1);
+      waiter.reject(new Error('Waiter cleaned up due to timeout'));
+    }
+  }
+}
 }
 
 /**

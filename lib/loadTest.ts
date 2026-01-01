@@ -231,8 +231,11 @@ export class LoadTestRunner extends EventEmitter {
   }
 
   private startUserActivity(user: ActiveUser, config: LoadTestConfig): void {
+    let requestCount = 0;
+    const maxRequestsPerUser = 10000; // Prevent infinite loops
+    
     const runActivity = async () => {
-      while (this.isRunning) {
+      while (this.isRunning && requestCount < maxRequestsPerUser) {
         try {
           const requestStart = Date.now();
           const result = await this.makeRequest(config);
@@ -248,12 +251,14 @@ export class LoadTestRunner extends EventEmitter {
 
           user.requests++;
           user.lastActivity = Date.now();
+          requestCount++;
 
           // Update monitoring
           monitoringSystem.recordRequest(responseTime, result.success);
 
         } catch (error) {
           user.errors++;
+          requestCount++;
           this.recordRequest({
             timestamp: Date.now(),
             responseTime: 0,
@@ -322,9 +327,9 @@ export class LoadTestRunner extends EventEmitter {
   private recordRequest(result: RequestResult): void {
     this.requestResults.push(result);
 
-    // Keep only recent results to manage memory
-    if (this.requestResults.length > 100000) {
-      this.requestResults = this.requestResults.slice(-50000);
+    // Keep only recent results to manage memory (reduced limits)
+    if (this.requestResults.length > 10000) {
+      this.requestResults = this.requestResults.slice(-5000);
     }
   }
 

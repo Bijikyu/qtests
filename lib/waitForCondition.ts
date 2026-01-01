@@ -18,7 +18,24 @@ export async function waitForCondition(
     console.warn('waitForCondition: timeoutMs too low, setting minimum of 100ms');
   }
 
+  let iterations = 0;
+  const maxIterations = Math.ceil(timeoutMs / intervalMs) + 10; // Safety margin
+
   while (true) {
+    iterations++;
+    
+    // Additional safety check to prevent infinite loops
+    if (iterations > maxIterations) {
+      const timeoutError = new Error(`waitForCondition: max iterations exceeded (${maxIterations})`);
+      qerrors(timeoutError, 'waitForCondition: max iterations exceeded', { 
+        timeoutMs, 
+        intervalMs, 
+        iterations,
+        maxIterations
+      });
+      throw timeoutError;
+    }
+
     // Check timeout before predicate to prevent infinite loops
     const elapsed = Date.now() - start;
     if (elapsed > timeoutMs) {
@@ -26,7 +43,8 @@ export async function waitForCondition(
       qerrors(timeoutError, 'waitForCondition: timeout exceeded', { 
         timeoutMs, 
         intervalMs, 
-        elapsedMs: elapsed 
+        elapsedMs: elapsed,
+        iterations
       });
       throw timeoutError;
     }

@@ -60,8 +60,10 @@ export class SecurityMonitor {
   private events: SecurityEvent[] = [];
   private rateLimits = new Map<string, { count: number; resetTime: number }>();
   private maxEvents = 1000;
-  private maxRateLimits = 10000; // Prevent unlimited growth
+  private maxRateLimits = 5000; // Reduced for more aggressive cleanup
   private cleanupInterval?: NodeJS.Timeout;
+  private isDestroyed = false; // Prevent operations after destroy
+  private serializationCache = new WeakMap<object, string>(); // Cache for JSON operations
 
   /**
    * Initialize security monitor
@@ -71,129 +73,151 @@ export class SecurityMonitor {
     this.setupCleanup();
   }
 
-  /**
-   * Cleanup resources
-   */
-  dispose(): void {
-    if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
-      this.cleanupInterval = undefined;
-    }
-    this.events = [];
-    this.rateLimits.clear();
+/**
+ * Cleanup resources
+ */
+dispose(): void {
+  if (this.isDestroyed) return;
+  
+  if (this.cleanupInterval) {
+    clearInterval(this.cleanupInterval);
+    this.cleanupInterval = undefined;
   }
-
-  /**
-   * Destroy method for complete cleanup
-   */
-  destroy(): void {
-    this.dispose();
-    console.log('🔒 SecurityMonitor: Instance destroyed');
-  }
-
-  /**
-   * Log security event
-   */
-  logEvent(event: SecurityEvent): void {
-    const securityEvent: SecurityEvent = {
-      ...event,
-      id: this.generateEventId(),
-      timestamp: new Date().toISOString()
-    };
-
-    this.events.push(securityEvent);
-
-    // Keep only recent events
-    if (this.events.length > this.maxEvents) {
-      this.events = this.events.slice(-this.maxEvents);
-    }
-
-    // Log to console for immediate visibility
-    console.log(`🚨 Security Event [${event.severity.toUpperCase()}]: ${event.type}`, {
-      source: event.source,
-      blocked: event.blocked,
-      details: event.details
-    });
-  }
+  
+  // Clear arrays and maps to free memory
+  this.events.length = 0;
+  this.rateLimits.clear();
+}
 
 /**
-    * Check rate limit
-    */
-  checkRateLimit(identifier: string, options: {
-    windowMs?: number;
-    maxRequests?: number;
-  } = {}): RateLimitResult {
-    const windowMs = options.windowMs || 60000; // 1 minute default
-    const maxRequests = options.maxRequests || 100; // 100 requests per minute default
+ * Destroy method for complete cleanup
+ */
+destroy(): void {
+  if (this.isDestroyed) return;
+  
+  this.dispose();
+  this.isDestroyed = true;
+  console.log('🔒 SecurityMonitor: Instance destroyed');
+}
 
-    const now = Date.now();
-    const key = identifier;
-
-    // Cleanup expired rate limits to prevent memory leaks
-    this.cleanupExpiredRateLimits(now);
-
-    // Get or initialize rate limit data
-    let rateLimitData = this.rateLimits.get(key);
-    if (!rateLimitData || now > rateLimitData.resetTime) {
-      rateLimitData = {
-        count: 0,
-        resetTime: now + windowMs
-      };
-      this.rateLimits.set(key, rateLimitData);
-    }
-
-    // Increment count first to prevent off-by-one error
-    rateLimitData.count++;
-
-    // Check if limit exceeded
-    if (rateLimitData.count > maxRequests) {
-      this.logEvent({
-        type: SecurityEventType.RATE_LIMIT_EXCEEDED,
-        severity: SecuritySeverity.MEDIUM,
-        source: 'rate_limit',
-        details: { identifier, count: rateLimitData.count, maxRequests },
-        blocked: true,
-        remediation: 'Rate limit exceeded. Please try again later.'
-      });
-
-      return {
-        allowed: false,
-        retryAfter: rateLimitData.resetTime - now,
-        reason: 'Rate limit exceeded'
-      };
-    }
-
-    return { allowed: true };
+/**
+ * Log security event
+ */
+logEvent(event: SecurityEvent): void {
+  if (this.isDestroyed) {
+    console.warn('SecurityMonitor: Cannot log event - instance destroyed');
+    return;
   }
 
+  const securityEvent: SecurityEvent = {
+    ...event,
+    id: this.generateEventId(),
+    timestamp: new Date().toISOString()
+  };
+
+  // More aggressive cleanup to prevent unbounded growth
+  if (this.events.length >= this.maxEvents * 0.8) {
+    // Remove oldest events in larger batches to avoid frequent array copying
+    const removeCount = Math.floor(this.maxEvents * 0.3); // Remove 30% at once
+    this.events.splice(0, removeCount);
+  }
+
+  this.events.push(securityEvent);
+
+  // Log to console for immediate visibility
+  console.log(`🚨 Security Event [${event.severity.toUpperCase()}]: ${event.type}`, {
+    source: event.source,
+    blocked: event.blocked,
+    details: event.details
+  });
+}
+
+/**
+ * Check rate limit
+ */
+checkRateLimit(identifier: string, options: {
+  windowMs?: number;
+  maxRequests?: number;
+} = {}): RateLimitResult {
+  if (this.isDestroyed) {
+    return { allowed: false, reason: 'SecurityMonitor destroyed' };
+  }
+
+  const windowMs = options.windowMs || 60000; // 1 minute default
+  const maxRequests = options.maxRequests || 100; // 100 requests per minute default
+
+  const now = Date.now();
+  const key = identifier;
+
+  // Cleanup expired rate limits to prevent memory leaks
+  this.cleanupExpiredRateLimits(now);
+
+  // Get or initialize rate limit data
+  let rateLimitData = this.rateLimits.get(key);
+  if (!rateLimitData || now > rateLimitData.resetTime) {
+    rateLimitData = {
+      count: 0,
+      resetTime: now + windowMs
+    };
+    this.rateLimits.set(key, rateLimitData);
+  }
+
+  // Increment count first to prevent off-by-one error
+  rateLimitData.count++;
+
+  // Check if limit exceeded
+  if (rateLimitData.count > maxRequests) {
+    this.logEvent({
+      type: SecurityEventType.RATE_LIMIT_EXCEEDED,
+      severity: SecuritySeverity.MEDIUM,
+      source: 'rate_limit',
+      details: { identifier, count: rateLimitData.count, maxRequests },
+      blocked: true,
+      remediation: 'Rate limit exceeded. Please try again later.'
+    });
+
+    return {
+      allowed: false,
+      retryAfter: rateLimitData.resetTime - now,
+      reason: 'Rate limit exceeded'
+    };
+  }
+
+  return { allowed: true };
+}
+
   /**
-   * Get security events by type (optimized to avoid creating new arrays)
+   * Get security events by type (optimized with early exit)
    */
   getEventsByType(type: SecurityEventType): SecurityEvent[] {
     const result: SecurityEvent[] = [];
     for (const event of this.events) {
       if (event.type === type) {
         result.push(event);
+        // Early exit if we have enough results
+        if (result.length >= 100) break;
       }
     }
     return result;
   }
 
   /**
-   * Get security events by severity (optimized to avoid creating new arrays)
+   * Get security events by severity (optimized with early exit)
    */
   getEventsBySeverity(severity: SecuritySeverity): SecurityEvent[] {
     const result: SecurityEvent[] = [];
     for (const event of this.events) {
       if (event.severity === severity) {
         result.push(event);
+        // Early exit if we have enough results
+        if (result.length >= 100) break;
       }
     }
     return result;
   }
 
   /**
-   * Get recent security events (optimized to avoid creating new arrays)
+   * Get recent security events (optimized with early exit)
    */
   getRecentEvents(minutes: number = 60): SecurityEvent[] {
     const cutoff = new Date(Date.now() - minutes * 60 * 1000);
@@ -201,6 +225,8 @@ export class SecurityMonitor {
     for (const event of this.events) {
       if (event.timestamp && new Date(event.timestamp) > cutoff) {
         result.push(event);
+        // Early exit if we have enough results
+        if (result.length >= 100) break;
       }
     }
     return result;
@@ -288,13 +314,10 @@ export class SecurityMonitor {
   }
 
   /**
-    * Cleanup expired rate limits to prevent memory leaks
-    */
+   * Cleanup expired rate limits to prevent memory leaks (more aggressive)
+   */
   private cleanupExpiredRateLimits(now: number): void {
-    if (this.rateLimits.size <= this.maxRateLimits) {
-      return; // Skip cleanup if under limit
-    }
-
+    // Always cleanup expired entries, not just when over limit
     const toDelete: string[] = [];
     this.rateLimits.forEach((data, key) => {
       if (now > data.resetTime) {
@@ -307,13 +330,13 @@ export class SecurityMonitor {
       this.rateLimits.delete(key);
     }
 
-    // If still over limit, remove oldest entries
-    if (this.rateLimits.size > this.maxRateLimits) {
+    // More aggressive cleanup if over limit
+    if (this.rateLimits.size > this.maxRateLimits * 0.8) {
       const entries = Array.from(this.rateLimits.entries());
       entries.sort((a, b) => a[1].resetTime - b[1].resetTime);
-      const toRemove = entries.slice(0, this.rateLimits.size - this.maxRateLimits);
-      for (const [key] of toRemove) {
-        this.rateLimits.delete(key);
+      const toRemove = Math.floor(this.maxRateLimits * 0.2); // Remove 20% oldest
+      for (let i = 0; i < toRemove && i < entries.length; i++) {
+        this.rateLimits.delete(entries[i][0]);
       }
     }
   }
@@ -326,17 +349,26 @@ export class SecurityMonitor {
   }
 
   /**
-    * Sanitize details for report to prevent large JSON output
-    */
+     * Sanitize details for report to prevent large JSON output (with caching)
+     */
   private sanitizeDetailsForReport(details: any): string {
     if (!details) return 'null';
     
     try {
+      // Use cached serialization if available
+      if (this.serializationCache.has(details)) {
+        return this.serializationCache.get(details)!;
+      }
+      
       const detailsStr = JSON.stringify(details);
       if (detailsStr.length > 500) {
         // Truncate large details
-        return detailsStr.substring(0, 497) + '...';
+        const truncated = detailsStr.substring(0, 497) + '...';
+        this.serializationCache.set(details, truncated);
+        return truncated;
       }
+      
+      this.serializationCache.set(details, detailsStr);
       return detailsStr;
     } catch (error) {
       return '[Unable to serialize details]';
@@ -344,13 +376,36 @@ export class SecurityMonitor {
   }
 
   /**
-   * Setup cleanup interval
+   * Serialize data once and cache result for performance
+   * @param data - Data to serialize
+   * @returns Serialized string or empty object on error
    */
-  private setupCleanup(): void {
-    this.cleanupInterval = setInterval(() => {
-      this.clearOldEvents(24); // Clear events older than 24 hours
-    }, 60 * 60 * 1000); // Run every hour
+  private serializeOnce(data: any): string {
+    if (this.serializationCache.has(data)) {
+      return this.serializationCache.get(data)!;
+    }
+    
+    try {
+      const result = JSON.stringify(data);
+      this.serializationCache.set(data, result);
+      return result;
+    } catch {
+      return '{}';
+    }
   }
+
+/**
+ * Setup cleanup interval (more frequent cleanup)
+ */
+private setupCleanup(): void {
+  this.cleanupInterval = setInterval(() => {
+    if (!this.isDestroyed) {
+      this.clearOldEvents(12); // Clear events older than 12 hours (more aggressive)
+      // Also cleanup rate limits
+      this.cleanupExpiredRateLimits(Date.now());
+    }
+  }, 30 * 60 * 1000); // Run every 30 minutes (more frequent)
+}
 }
 
 /**

@@ -25,11 +25,13 @@ export async function ensureDir(dirPath: string): Promise<boolean> {
 }
 
 /**
- * Ensures a directory exists, creating it if necessary (sync version - use only in initialization)
+ * Ensures a directory exists, creating it if necessary (sync version - DEPRECATED: use async version)
  * @param dirPath - Directory path to ensure
  * @returns true if directory exists or was created, false otherwise
+ * @deprecated Use ensureDir instead for better scalability
  */
 export function ensureDirSync(dirPath: string): boolean {
+  console.warn('ensureDirSync is deprecated - use ensureDir for better scalability');
   try {
     if (!safeExists(dirPath)) {
       const fs = require('fs');
@@ -69,13 +71,15 @@ export async function safeWriteFile(filePath: string, content: string | Buffer, 
 }
 
 /**
- * Safely writes a file with directory creation (sync version - use only in initialization)
+ * Safely writes a file with directory creation (sync version - DEPRECATED: use async version)
  * @param filePath - Path to write
  * @param content - Content to write
  * @param encoding - File encoding (default: utf8)
  * @returns true if successful, false otherwise
+ * @deprecated Use safeWriteFile instead for better scalability
  */
 export function safeWriteFileSync(filePath: string, content: string | Buffer, encoding: BufferEncoding = 'utf8'): boolean {
+  console.warn('safeWriteFileSync is deprecated - use safeWriteFile for better scalability');
   try {
     const fs = require('fs');
     const path = require('path');

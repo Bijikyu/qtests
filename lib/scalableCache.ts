@@ -536,7 +536,13 @@ export class MultiLayerCache<T = any> extends EventEmitter {
   }
 
   close(): void {
-    this.l1Cache.close();
+    // Remove all event listeners to prevent memory leaks
+    this.removeAllListeners();
+    
+    if (this.l1Cache) {
+      this.l1Cache.close();
+    }
+    
     this.emit('cache:closed');
   }
 }

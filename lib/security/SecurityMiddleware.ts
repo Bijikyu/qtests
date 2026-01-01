@@ -163,15 +163,15 @@ export class SecurityMiddleware {
             sanitized.body = bodyResult.sanitized;
           }
         } else if (typeof req.body === 'object') {
-          // Optimize: check body size before full JSON.stringify
+          // Optimize: avoid duplicate JSON.stringify calls
           let bodyString: string;
           try {
-            // Quick size check without full stringification
-            const bodySize = JSON.stringify(req.body).length;
+            // Single JSON.stringify call for both size check and validation
+            bodyString = JSON.stringify(req.body);
+            const bodySize = bodyString.length;
             if (bodySize > 1024 * 1024) { // 1MB limit
               errors.push('Request body too large for validation');
             } else {
-              bodyString = JSON.stringify(req.body);
               const bodyResult = securityValidator.validateJSON(bodyString);
               if (!bodyResult.valid) {
                 errors.push(`Body JSON validation: ${bodyResult.errors.join(', ')}`);
@@ -244,7 +244,7 @@ export class SecurityMiddleware {
       userAgent: req.get('User-Agent'),
       contentType: req.get('Content-Type'),
       timestamp: new Date().toISOString(),
-      bodySize: req.body ? JSON.stringify(req.body).length : 0
+      bodySize: 0 // Will be set below to avoid duplicate serialization
     };
 
     // Check for suspicious patterns
@@ -255,7 +255,17 @@ export class SecurityMiddleware {
       }
     }
 
-    // Log the request
+    // Log the request - optimize by caching serialized body
+    let serializedBody: string | undefined;
+    if (req.body) {
+      try {
+        serializedBody = JSON.stringify(req.body);
+        logData.bodySize = serializedBody.length;
+      } catch {
+        logData.bodySize = 0;
+      }
+    }
+    
     console.log('Security request log:', JSON.stringify(logData));
   }
 
@@ -306,15 +316,28 @@ export class SecurityMiddleware {
       // Capture original res.json
       const originalJson = res.json;
       
-      // Override res.json to log response
+      // Override res.json to log response - optimize JSON operations
       res.json = function(data: any) {
         const duration = Date.now() - startTime;
+        
+        // Optimize: single JSON serialization for both size calculation and logging
+        let serializedData: string;
+        let responseSize: number;
+        
+        try {
+          serializedData = JSON.stringify(data);
+          responseSize = serializedData.length;
+        } catch {
+          serializedData = '{}';
+          responseSize = 2;
+        }
+        
         const logData = {
           method: req.method,
           url: req.url,
           statusCode: res.statusCode,
           duration,
-          responseSize: JSON.stringify(data).length,
+          responseSize,
           timestamp: new Date().toISOString()
         };
 

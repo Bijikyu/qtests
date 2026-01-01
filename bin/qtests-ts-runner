@@ -41,13 +41,25 @@ class TestRunner {
     this.startTime = Date.now();
   }
 
-  // Discover all test files in the project (from current working directory)
-  discoverTests(dir = process.cwd(), depth = 0, maxDepth = 10, visited = new Set()) {
+  // Discover all test files in the project (from current working directory) - ASYNC VERSION
+  async discoverTests(dir = process.cwd(), depth = 0, maxDepth = 10, visited = new Set()) {
     const testFiles = [];
     if (depth > maxDepth) return testFiles;
     
     // Cycle detection - prevent infinite recursion
-    const realPath = fs.realpathSync(dir);
+    let realPath;
+    try {
+      realPath = await fs.promises.realpath(dir);
+    } catch (error) {
+      qerrors(error as Error, 'testRunner.discoverTests: realpath failed', {
+        directory: dir,
+        depth,
+        errorType: error.constructor.name,
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
+      return testFiles;
+    }
+    
     if (visited.has(realPath)) {
       qerrors(new Error('Directory cycle detected'), 'testRunner.discoverTests: cycle prevention', {
         directory: dir,
@@ -58,8 +70,9 @@ class TestRunner {
       return testFiles;
     }
     visited.add(realPath);
+    
     try {
-      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      const entries = await fs.promises.readdir(dir, { withFileTypes: true });
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
         // Skip node_modules, hidden directories, and demo directory
@@ -67,7 +80,7 @@ class TestRunner {
           continue;
         }
         if (entry.isDirectory()) {
-          testFiles.push(...this.discoverTests(fullPath, depth + 1, maxDepth, visited));
+          testFiles.push(...await this.discoverTests(fullPath, depth + 1, maxDepth, visited));
         } else if (entry.isFile()) {
           const isTestFile = TEST_PATTERNS.some(pattern => pattern.test(entry.name));
           if (!isTestFile) continue;
@@ -90,14 +103,9 @@ class TestRunner {
       // Silently skip directories we can't read
     } finally {
       // Clean up visited set for this branch
-      try {
-        const realPath = fs.realpathSync(dir);
-        visited.delete(realPath);
-      } catch (realpathError) {
-        // If realpath fails, still try to clean up with original path
-        visited.delete(dir);
-      }
+      visited.delete(realPath);
     }
+    
     // Optional pattern filter via env to limit scope for large repos/CI
     const pattern = process.env.QTESTS_PATTERN;
     if (pattern) {
@@ -117,24 +125,165 @@ class TestRunner {
     return testFiles;
   }
 
-  // Run a single test file via Jest and capture output
+// Run a single test file via Jest and capture output
   async runTestFile(testFile) {
-    const spawnOnce = (args) => new Promise((resolve) => {
+    const spawnOnce = async () => {
       const startTime = Date.now();
       let stdout = '';
       let stderr = '';
 
       try {
-        // Always use Jest with project config and allow empty matches
+        // Always use Jest with project config and allow empty matches - ASYNC CONFIG DISCOVERY
         const configCandidates = [
           path.join(process.cwd(), 'config', 'jest.config.mjs'),
           path.join(process.cwd(), 'jest.config.mjs')
         ];
         let cfg;
         try {
-          cfg = configCandidates.find(p => {
-            try { return fs.existsSync(p); } catch { return false; }
+          for (const candidate of configCandidates) {
+            try {
+              if (await fs.promises.access(candidate).then(() => true).catch(() => false)) {
+                cfg = candidate;
+                break;
+              }
+            } catch { continue; }
+          }
+        } catch (error) {
+          qerrors(error as Error, 'testRunner.runTestFile: config discovery failed', {
+            testFile,
+            configCandidates,
+            errorType: error.constructor.name,
+            errorMessage: error instanceof Error ? error.message : String(error)
           });
+        }
+        
+        const jestArgs = [];
+        if (cfg) {
+          jestArgs.push('--config', cfg);
+        }
+        jestArgs.push('--passWithNoTests');
+        // Per-file execution tuning: allow in-band or worker override via env
+        const fileWorkers = process.env.QTESTS_FILE_WORKERS ? String(process.env.QTESTS_FILE_WORKERS) : '';
+        const inBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
+        jestArgs.push(testFile);
+        if (inBand) {
+          jestArgs.push('--runInBand');
+        } else if (fileWorkers) {
+          jestArgs.push(`--maxWorkers=${fileWorkers}`);
+        }
+        jestArgs.push('--cache', '--no-coverage');
+
+        // Validate and sanitize jest arguments
+        const sanitizedEnv = { ...process.env };
+        const allowedEnvVars = ['NODE_ENV', 'NODE_OPTIONS', 'QTESTS_SILENT', 'QTESTS_INBAND', 'QTESTS_CONCURRENCY'];
+        
+        // Only allow known safe environment variables
+        Object.keys(sanitizedEnv).forEach(key => {
+          if (!allowedEnvVars.includes(key)) {
+            delete sanitizedEnv[key];
+          }
+        });
+
+        return new Promise((resolve) => {
+          const child = spawn('jest', jestArgs, {
+            stdio: ['pipe', 'pipe', 'pipe'],
+            shell: false, // CRITICAL: Remove shell to prevent command injection
+            env: {
+              ...sanitizedEnv,
+              NODE_ENV: 'test',
+              NODE_OPTIONS: [process.env.NODE_OPTIONS || '', '--experimental-vm-modules'].filter(Boolean).join(' ').trim()
+            },
+            timeout: 300000 // 5 minute timeout per test file
+          });
+
+          child.stdout.on('data', (data) => { stdout += data.toString(); });
+          child.stderr.on('data', (data) => { stderr += data.toString(); });
+
+          child.on('close', (code) => {
+            const duration = Date.now() - startTime;
+            let output = stdout + stderr;
+            if (code !== 0 && !output.trim()) {
+              output = 'No output captured from jest. Possible worker crash or environment restriction.';
+            }
+            resolve({ file: testFile, success: code === 0, duration, output, stdout, stderr });
+          });
+
+          child.on('error', (err) => {
+            qerrors(err, 'testRunner.runTestFile: jest process spawn failed', {
+              testFile,
+              jestArgs,
+              errorType: err.constructor.name,
+              errorMessage: err.message
+            });
+            const duration = Date.now() - startTime;
+            const msg = (stderr && stderr.trim()) || (err && err.message) || 'Runner error';
+            resolve({ file: testFile, success: false, duration, output: msg, stdout, stderr });
+          });
+
+          // Handle process timeout
+          if (child.timeout) {
+            child.on('timeout', () => {
+              qerrors(new Error('Test execution timeout'), 'testRunner.runTestFile: jest process timeout', {
+                testFile,
+                timeoutMs: 300000,
+                duration: Date.now() - startTime
+              });
+              child.kill('SIGTERM');
+              const duration = Date.now() - startTime;
+              resolve({ 
+                file: testFile, 
+                success: false, 
+                duration, 
+                output: 'Test execution timed out after 5 minutes', 
+                stdout, 
+                stderr 
+              });
+            });
+          }
+        });
+      } catch (error) {
+        qerrors(error as Error, 'testRunner.runTestFile: test execution setup failed', {
+          testFile,
+          errorType: error.constructor.name,
+          errorMessage: error instanceof Error ? error.message : String(error)
+        });
+        const duration = Date.now() - startTime;
+        return { 
+          file: testFile, 
+          success: false, 
+          duration, 
+          output: `Test setup failed: ${error instanceof Error ? error.message : String(error)}`, 
+          stdout: '', 
+          stderr: '' 
+        };
+      }
+    };
+
+    // First attempt
+    const first = await spawnOnce();
+    // Detect worker crash signature and retry in-band automatically
+    const crashed = /A jest worker process [^\n]* crashed/i.test(first.output || '');
+    const alreadyInBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
+    if (!first.success && crashed && !alreadyInBand) {
+      process.stderr.write(`${colors.yellow}Retrying in-band due to worker crash: ${testFile}${colors.reset}\n`);
+      // Store original environment value
+      const originalInBand = process.env.QTESTS_INBAND;
+      process.env.QTESTS_INBAND = '1';
+      try {
+        return await this.runTestFile(testFile);
+      } finally {
+        // Restore original environment completely
+        if (originalInBand) {
+          process.env.QTESTS_INBAND = originalInBand;
+        } else {
+          delete process.env.QTESTS_INBAND;
+        }
+      }
+    }
+    return first;
+  }
+            } catch { continue; }
+          }
         } catch (error) {
           qerrors(error as Error, 'testRunner.runTestFile: config discovery failed', {
             testFile,
@@ -286,8 +435,8 @@ class TestRunner {
     }
   }
 
-  // Generate debug file for failed tests
-  generateDebugFile() {
+  // Generate debug file for failed tests - ASYNC VERSION
+  async generateDebugFile() {
     try {
       const failedResults = this.testResults.filter(r => !r.success);
       if (failedResults.length === 0) return;
@@ -307,7 +456,7 @@ class TestRunner {
       debugContent += `- Failed test files: ${failedResults.map(r => r.file).join(', ')}\n`;
       debugContent += `- Generated: ${new Date().toISOString()}\n`;
       
-      fs.writeFileSync('DEBUG_TESTS.md', debugContent);
+      await fs.promises.writeFile('DEBUG_TESTS.md', debugContent);
       console.log(`\n${colors.yellow}📋 Debug file created: DEBUG_TESTS.md${colors.reset}`);
     } catch (error) {
       qerrors(error as Error, 'testRunner.generateDebugFile: debug file creation failed', {
@@ -345,7 +494,7 @@ class TestRunner {
   async run() {
     console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner - Parallel Mode${colors.reset}`);
     console.log(`${colors.dim}Discovering and running all tests...\n${colors.reset}`);
-    const testFiles = this.discoverTests();
+    const testFiles = await this.discoverTests();
     if (testFiles.length === 0) {
       console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
       console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
@@ -382,7 +531,7 @@ class TestRunner {
       }
     }
 
-    if (this.failedTests > 0) this.generateDebugFile();
+    if (this.failedTests > 0) await this.generateDebugFile();
     this.printSummary();
     process.exit(this.failedTests > 0 ? 1 : 0);
   }

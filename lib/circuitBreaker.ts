@@ -142,21 +142,25 @@ export class CircuitBreaker extends EventEmitter {
   }
 
   private async withTimeout<T>(promise: Promise<T>): Promise<T> {
-    return new Promise((resolve, reject) => {
+    // Create timeout promise first to avoid race conditions
+    const timeoutPromise = new Promise<never>((_, reject) => {
       const timeoutId = setTimeout(() => {
         reject(new Error(`Operation timed out after ${this.config.timeout}ms`));
       }, this.config.timeout);
-
-      promise
-        .then(result => {
-          clearTimeout(timeoutId);
-          resolve(result);
-        })
-        .catch(error => {
-          clearTimeout(timeoutId);
-          reject(error);
-        });
+      
+      // Store timeout ID for potential cleanup
+      (timeoutPromise as any)._timeoutId = timeoutId;
     });
+
+    try {
+      return await Promise.race([promise, timeoutPromise]);
+    } finally {
+      // Clean up timeout if it exists
+      const timeoutId = (timeoutPromise as any)._timeoutId;
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    }
   }
 
   private shouldTryReset(): boolean {

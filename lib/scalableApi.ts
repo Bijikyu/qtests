@@ -52,9 +52,10 @@ export class ScalableApiClient extends EventEmitter {
 
   private circuitBreakers = new Map<string, CircuitBreakerState>();
   private activeRequests = new Set<string>();
-  private requestQueue: Array<() => Promise<any>> = [];
+  private requestQueue: Array<{ id: string; execute: () => Promise<any>; timestamp: number }> = [];
   private maxConcurrentRequests = 100;
   private processingQueue = false;
+  private readonly maxQueueSize = 1000; // Prevent unlimited queue growth
 
   constructor(options: { maxConcurrentRequests?: number } = {}) {
     super();
@@ -70,14 +71,23 @@ export class ScalableApiClient extends EventEmitter {
     
     // Add to queue if at concurrency limit
     if (this.activeRequests.size >= this.maxConcurrentRequests) {
+      // Check queue size limit
+      if (this.requestQueue.length >= this.maxQueueSize) {
+        throw new Error('API request queue is full');
+      }
+      
       return new Promise((resolve, reject) => {
-        this.requestQueue.push(async () => {
-          try {
-            const result = await this.executeRequest<T>(config, requestId, startTime);
-            resolve(result);
-          } catch (error) {
-            reject(error);
-          }
+        this.requestQueue.push({
+          id: requestId,
+          execute: async () => {
+            try {
+              const result = await this.executeRequest<T>(config, requestId, startTime);
+              resolve(result);
+            } catch (error) {
+              reject(error);
+            }
+          },
+          timestamp: Date.now()
         });
         this.processQueue();
       });

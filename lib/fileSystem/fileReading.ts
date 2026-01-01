@@ -38,11 +38,13 @@ export async function safeReadFile(filePath: string): Promise<string | null> {
 }
 
 /**
- * Safely reads a file as UTF-8 text (sync version - use only in initialization)
+ * Safely reads a file as UTF-8 text (sync version - DEPRECATED: use async version)
  * @param filePath - Path to read
  * @returns File contents as string, or null if failed
+ * @deprecated Use safeReadFile instead for better scalability
  */
 export function safeReadFileSync(filePath: string): string | null {
+  console.warn('safeReadFileSync is deprecated - use safeReadFile for better scalability');
   try {
     // Validate file path to prevent path traversal
     if (!filePath || typeof filePath !== 'string') {
@@ -100,11 +102,13 @@ export async function safeReadFileBuffer(filePath: string): Promise<Buffer | nul
 }
 
 /**
- * Safely reads a file as buffer (sync version - use only in initialization)
+ * Safely reads a file as buffer (sync version - DEPRECATED: use async version)
  * @param filePath - Path to read
  * @returns File contents as buffer, or null if failed
+ * @deprecated Use safeReadFileBuffer instead for better scalability
  */
 export function safeReadFileBufferSync(filePath: string): Buffer | null {
+  console.warn('safeReadFileBufferSync is deprecated - use safeReadFileBuffer for better scalability');
   try {
     // Validate file path to prevent path traversal
     if (!filePath || typeof filePath !== 'string') {

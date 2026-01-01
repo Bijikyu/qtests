@@ -237,7 +237,18 @@ class LocalCache<T = any> {
 
   private generateChecksum(value: T): string {
     try {
-      const str = typeof value === 'string' ? value : JSON.stringify(value);
+      // Optimize: avoid JSON.stringify for checksum generation when possible
+      let str: string;
+      if (typeof value === 'string') {
+        str = value;
+      } else if (typeof value === 'number' || typeof value === 'boolean') {
+        str = String(value);
+      } else if (value === null || value === undefined) {
+        str = '';
+      } else {
+        // Only use JSON.stringify for complex objects
+        str = JSON.stringify(value);
+      }
       return randomBytes(16).toString('hex');
     } catch {
       return '';
@@ -545,7 +556,18 @@ export class DistributedCache<T = any> extends EventEmitter {
   private serializeValue(value: T): string {
     try {
       if (this.options.serializationFormat === 'json') {
-        return JSON.stringify(value);
+        // Optimize: handle primitive types without JSON.stringify
+        if (typeof value === 'string') {
+          return value;
+        } else if (typeof value === 'number' || typeof value === 'boolean') {
+          return String(value);
+        } else if (value === null) {
+          return 'null';
+        } else if (value === undefined) {
+          return 'undefined';
+        } else {
+          return JSON.stringify(value);
+        }
       }
       // Add binary serialization if needed
       return JSON.stringify(value);
@@ -557,6 +579,15 @@ export class DistributedCache<T = any> extends EventEmitter {
   private deserializeValue(value: string): T {
     try {
       if (this.options.serializationFormat === 'json') {
+        // Optimize: handle primitive types without JSON.parse
+        if (value === 'null') return null as T;
+        if (value === 'undefined') return undefined as T;
+        if (value === 'true') return true as T;
+        if (value === 'false') return false as T;
+        if (!isNaN(Number(value)) && value.trim() !== '') {
+          const num = Number(value);
+          if (num.toString() === value) return num as T;
+        }
         return JSON.parse(value);
       }
       return JSON.parse(value);

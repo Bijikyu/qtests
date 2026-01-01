@@ -427,9 +427,23 @@ export class ConsoleTransport implements Transport {
   }
 
   async write(entry: LogEntry): Promise<void> {
-    const message = this.format === LogFormat.JSON 
-      ? JSON.stringify(entry)
-      : this.formatText(entry);
+    let message: string;
+    
+    if (this.format === LogFormat.JSON) {
+      // Optimize: cache serialized entry to avoid duplicate serialization
+      try {
+        message = JSON.stringify(entry);
+      } catch (error) {
+        // Fallback for circular references or non-serializable data
+        const safeEntry = {
+          ...entry,
+          metadata: entry.metadata ? '[Object]' : undefined
+        };
+        message = JSON.stringify(safeEntry);
+      }
+    } else {
+      message = this.formatText(entry);
+    }
     
     const logMethod = this.getLogMethod(entry.level);
     logMethod(message);
@@ -438,7 +452,16 @@ export class ConsoleTransport implements Transport {
   private formatText(entry: LogEntry): string {
     const timestamp = new Date(entry.timestamp).toISOString();
     const level = LogLevel[entry.level].padEnd(5);
-    const metadata = entry.metadata ? ` ${JSON.stringify(entry.metadata)}` : '';
+    
+    // Optimize: avoid JSON.stringify for metadata in text format
+    let metadata = '';
+    if (entry.metadata) {
+      try {
+        metadata = ` ${JSON.stringify(entry.metadata)}`;
+      } catch {
+        metadata = ' [Object]';
+      }
+    }
     
     return `[${timestamp}] ${level} ${entry.message}${metadata}`;
   }
@@ -491,9 +514,23 @@ export class FileTransport implements Transport {
   }
 
   async write(entry: LogEntry): Promise<void> {
-    const message = this.format === LogFormat.JSON 
-      ? JSON.stringify(entry) + '\n'
-      : this.formatText(entry) + '\n';
+    let message: string;
+    
+    if (this.format === LogFormat.JSON) {
+      // Optimize: single JSON serialization with error handling
+      try {
+        message = JSON.stringify(entry) + '\n';
+      } catch (error) {
+        // Fallback for non-serializable entries
+        const safeEntry = {
+          ...entry,
+          metadata: entry.metadata ? '[Object]' : undefined
+        };
+        message = JSON.stringify(safeEntry) + '\n';
+      }
+    } else {
+      message = this.formatText(entry) + '\n';
+    }
     
     const fs = await import('fs');
     

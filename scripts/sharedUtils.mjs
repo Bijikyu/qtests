@@ -25,11 +25,32 @@ export function getCwd() {
 }
 
 /**
- * Safely remove a directory and all its contents
+ * Safely remove a directory and all its contents (async version)
  * @param dirPath - Directory path to remove
  * @param options - Removal options
  */
+export async function rmDirSafeAsync(dirPath, options = { recursive: true, force: true }) {
+  try {
+    await fs.promises.rm(dirPath, options);
+  } catch (error) {
+    qerrors(error, 'sharedUtils.rmDirSafeAsync: directory removal failed', {
+      dirPath,
+      options,
+      operation: 'rm'
+    });
+    // Silent failure for expected scenarios
+    console.debug(`Failed to remove directory ${dirPath}: ${error.message}`);
+  }
+}
+
+/**
+ * Safely remove a directory and all its contents (sync version - DEPRECATED: use async version)
+ * @param dirPath - Directory path to remove
+ * @param options - Removal options
+ * @deprecated Use rmDirSafeAsync for better scalability
+ */
 export function rmDirSafe(dirPath, options = { recursive: true, force: true }) {
+  console.warn('rmDirSafe is deprecated - use rmDirSafeAsync for better scalability');
   try {
     fs.rmSync(dirPath, options);
   } catch (error) {
@@ -44,11 +65,32 @@ export function rmDirSafe(dirPath, options = { recursive: true, force: true }) {
 }
 
 /**
- * Safely remove a file
+ * Safely remove a file (async version)
  * @param filePath - File path to remove
  * @param options - Removal options
  */
+export async function rmFileSafeAsync(filePath, options = { force: true }) {
+  try {
+    await fs.promises.rm(filePath, options);
+  } catch (error) {
+    qerrors(error, 'sharedUtils.rmFileSafeAsync: file removal failed', {
+      filePath,
+      options,
+      operation: 'rm'
+    });
+    // Silent failure for expected scenarios
+    console.debug(`Failed to remove file ${filePath}: ${error.message}`);
+  }
+}
+
+/**
+ * Safely remove a file (sync version - DEPRECATED: use async version)
+ * @param filePath - File path to remove
+ * @param options - Removal options
+ * @deprecated Use rmFileSafeAsync for better scalability
+ */
 export function rmFileSafe(filePath, options = { force: true }) {
+  console.warn('rmFileSafe is deprecated - use rmFileSafeAsync for better scalability');
   try {
     fs.rmSync(filePath, options);
   } catch (error) {
@@ -228,10 +270,72 @@ export function writeFileSafe(filePath, content, encoding = 'utf8') {
 }
 
 /**
- * Clean distribution directory of test files and mocks
+ * Clean distribution directory of test files and mocks (async version)
  * @param root - Root directory path
  */
+export async function cleanDistAsync(root = process.cwd()) {
+  const dist = path.join(root, 'dist');
+  
+  // Check if dist directory exists
+  if (!await pathExistsAsync(dist)) {
+    return;
+  }
+
+  const stack = [dist];
+  
+  while (stack.length) {
+    const dir = stack.pop();
+    let entries = [];
+    
+    try {
+      entries = await fs.promises.readdir(dir, { withFileTypes: true });
+    } catch (error) {
+      qerrors(error, 'sharedUtils.cleanDistAsync: directory read failed', {
+        dir,
+        operation: 'readdir'
+      });
+      console.debug(`Failed to read directory ${dir}: ${error.message}`);
+      continue;
+    }
+    
+    for (const entry of entries) {
+      const fullPath = path.join(dir, entry.name);
+      
+      if (entry.isDirectory()) {
+        // Remove __mocks__ directories
+        if (entry.name === '__mocks__') {
+          await rmDirSafeAsync(fullPath);
+          continue;
+        }
+        
+        // Process subdirectories - prevent infinite loops with depth tracking
+        if (stack.length >= 20) { // Reasonable depth limit
+          console.warn(`Directory traversal depth exceeded for ${fullPath}, skipping...`);
+          continue;
+        }
+        stack.push(fullPath);
+        continue;
+      }
+      
+      if (!entry.isFile()) {
+        continue;
+      }
+      
+      // Remove test and generated test files
+      if (/\.(test|spec)\.[cm]?jsx?$/.test(entry.name) || /GeneratedTest/.test(entry.name)) {
+        await rmFileSafeAsync(fullPath);
+      }
+    }
+  }
+}
+
+/**
+ * Clean distribution directory of test files and mocks (sync version - DEPRECATED: use async version)
+ * @param root - Root directory path
+ * @deprecated Use cleanDistAsync for better scalability
+ */
 export function cleanDist(root = process.cwd()) {
+  console.warn('cleanDist is deprecated - use cleanDistAsync for better scalability');
   const dist = path.join(root, 'dist');
   
   // Check if dist directory exists
@@ -288,11 +392,23 @@ export function cleanDist(root = process.cwd()) {
 }
 
 /**
- * Clean debug files
+ * Clean debug files (async version)
  * @param root - Root directory path
  * @param debugFileName - Name of debug file to remove (default: DEBUG_TESTS.md)
  */
+export async function cleanDebugAsync(root = process.cwd(), debugFileName = 'DEBUG_TESTS.md') {
+  const debugFilePath = path.join(root, debugFileName);
+  await rmFileSafeAsync(debugFilePath);
+}
+
+/**
+ * Clean debug files (sync version - DEPRECATED: use async version)
+ * @param root - Root directory path
+ * @param debugFileName - Name of debug file to remove (default: DEBUG_TESTS.md)
+ * @deprecated Use cleanDebugAsync for better scalability
+ */
 export function cleanDebug(root = process.cwd(), debugFileName = 'DEBUG_TESTS.md') {
+  console.warn('cleanDebug is deprecated - use cleanDebugAsync for better scalability');
   const debugFilePath = path.join(root, debugFileName);
   rmFileSafe(debugFilePath);
 }
@@ -312,12 +428,37 @@ export function validateContent(content, patterns) {
 }
 
 /**
- * Find first valid template from candidate paths
+ * Find first valid template from candidate paths (async version)
  * @param candidates - Array of candidate file paths
  * @param validator - Function to validate file content
  * @returns Valid template content or null if not found
  */
+export async function findValidTemplateAsync(candidates, validator) {
+  for (const candidatePath of candidates) {
+    try {
+      if (await pathExistsAsync(candidatePath)) {
+        const content = await readFileSafeAsync(candidatePath);
+        if (content && validator(content)) {
+          return content;
+        }
+      }
+    } catch (error) {
+      console.debug(`Failed to check template ${candidatePath}: ${error.message}`);
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Find first valid template from candidate paths (sync version - DEPRECATED: use async version)
+ * @param candidates - Array of candidate file paths
+ * @param validator - Function to validate file content
+ * @returns Valid template content or null if not found
+ * @deprecated Use findValidTemplateAsync for better scalability
+ */
 export function findValidTemplate(candidates, validator) {
+  console.warn('findValidTemplate is deprecated - use findValidTemplateAsync for better scalability');
   for (const candidatePath of candidates) {
     try {
       if (pathExists(candidatePath)) {
@@ -335,11 +476,45 @@ export function findValidTemplate(candidates, validator) {
 }
 
 /**
- * Ensure runner file exists by copying from template
+ * Ensure runner file exists by copying from template (async version)
  * @param root - Root directory path
  * @param runnerFileName - Name of runner file to ensure (default: qtests-runner.mjs)
  */
+export async function ensureRunnerAsync(root = process.cwd(), runnerFileName = 'qtests-runner.mjs') {
+  const targetPath = path.join(root, runnerFileName);
+  
+  // Skip if runner already exists
+  if (await pathExistsAsync(targetPath)) {
+    return;
+  }
+
+  // Define candidate template paths in order of preference
+  const candidates = [
+    path.join(root, 'lib', 'templates', 'qtests-runner.mjs.template'),
+    path.join(root, 'templates', 'qtests-runner.mjs.template'),
+    path.join(root, 'node_modules', 'qtests', 'lib', 'templates', 'qtests-runner.mjs.template'),
+    path.join(root, 'node_modules', 'qtests', 'templates', 'qtests-runner.mjs.template'),
+  ];
+
+  // Validate template content for essential features
+  const validator = (content) => validateContent(content, [/runCLI/, /API Mode/]);
+  
+  // Find and copy valid template
+  const templateContent = await findValidTemplateAsync(candidates, validator);
+  
+  if (templateContent) {
+    await writeFileSafeAsync(targetPath, templateContent);
+  }
+}
+
+/**
+ * Ensure runner file exists by copying from template (sync version - DEPRECATED: use async version)
+ * @param root - Root directory path
+ * @param runnerFileName - Name of runner file to ensure (default: qtests-runner.mjs)
+ * @deprecated Use ensureRunnerAsync for better scalability
+ */
 export function ensureRunner(root = process.cwd(), runnerFileName = 'qtests-runner.mjs') {
+  console.warn('ensureRunner is deprecated - use ensureRunnerAsync for better scalability');
   const targetPath = path.join(root, runnerFileName);
   
   // Skip if runner already exists
@@ -367,11 +542,33 @@ export function ensureRunner(root = process.cwd(), runnerFileName = 'qtests-runn
 }
 
 /**
- * Get package.json content
+ * Get package.json content (async version)
  * @param root - Root directory path
  * @returns Package.json content as object, or null if failed
  */
+export async function getPackageJsonAsync(root = process.cwd()) {
+  const packagePath = path.join(root, 'package.json');
+  const content = await readFileSafeAsync(packagePath);
+  
+  if (content) {
+    try {
+      return JSON.parse(content);
+    } catch (error) {
+      console.debug(`Failed to parse package.json: ${error.message}`);
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Get package.json content (sync version - DEPRECATED: use async version)
+ * @param root - Root directory path
+ * @returns Package.json content as object, or null if failed
+ * @deprecated Use getPackageJsonAsync for better scalability
+ */
 export function getPackageJson(root = process.cwd()) {
+  console.warn('getPackageJson is deprecated - use getPackageJsonAsync for better scalability');
   const packagePath = path.join(root, 'package.json');
   const content = readFileSafe(packagePath);
   
@@ -497,11 +694,30 @@ export function executeCommand(command, args = [], options = {}) {
 }
 
 /**
- * Create directory structure if it doesn't exist
+ * Create directory structure if it doesn't exist (async version)
  * @param dirPath - Directory path to create
  * @returns true if directory exists or was created, false otherwise
  */
+export async function ensureDirectoryAsync(dirPath) {
+  try {
+    if (!await pathExistsAsync(dirPath)) {
+      await fs.promises.mkdir(dirPath, { recursive: true });
+    }
+    return true;
+  } catch (error) {
+    console.debug(`Failed to ensure directory ${dirPath}: ${error.message}`);
+    return false;
+  }
+}
+
+/**
+ * Create directory structure if it doesn't exist (sync version - DEPRECATED: use async version)
+ * @param dirPath - Directory path to create
+ * @returns true if directory exists or was created, false otherwise
+ * @deprecated Use ensureDirectoryAsync for better scalability
+ */
 export function ensureDirectory(dirPath) {
+  console.warn('ensureDirectory is deprecated - use ensureDirectoryAsync for better scalability');
   try {
     if (!pathExists(dirPath)) {
       fs.mkdirSync(dirPath, { recursive: true });
@@ -514,13 +730,62 @@ export function ensureDirectory(dirPath) {
 }
 
 /**
- * List files in directory matching pattern
+ * List files in directory matching pattern (async version)
  * @param dirPath - Directory to search
  * @param pattern - Regex pattern to match filenames
  * @param recursive - Whether to search recursively (default: false)
  * @returns Array of matching file paths
  */
+export async function listFilesAsync(dirPath, pattern, recursive = false) {
+  const results = [];
+  
+  if (!await pathExistsAsync(dirPath)) {
+    return results;
+  }
+
+  const stack = [dirPath];
+  
+  while (stack.length) {
+    const currentDir = stack.pop();
+    let entries = [];
+    
+    try {
+      entries = await fs.promises.readdir(currentDir, { withFileTypes: true });
+    } catch (error) {
+      qerrors(error, 'sharedUtils.listFilesAsync: directory read failed', {
+        currentDir,
+        pattern: pattern.toString(),
+        recursive,
+        operation: 'readdir'
+      });
+      console.debug(`Failed to read directory ${currentDir}: ${error.message}`);
+      continue;
+    }
+    
+    for (const entry of entries) {
+      const fullPath = path.join(currentDir, entry.name);
+      
+      if (entry.isDirectory() && recursive) {
+        stack.push(fullPath);
+      } else if (entry.isFile() && pattern.test(entry.name)) {
+        results.push(fullPath);
+      }
+    }
+  }
+  
+  return results;
+}
+
+/**
+ * List files in directory matching pattern (sync version - DEPRECATED: use async version)
+ * @param dirPath - Directory to search
+ * @param pattern - Regex pattern to match filenames
+ * @param recursive - Whether to search recursively (default: false)
+ * @returns Array of matching file paths
+ * @deprecated Use listFilesAsync for better scalability
+ */
 export function listFiles(dirPath, pattern, recursive = false) {
+  console.warn('listFiles is deprecated - use listFilesAsync for better scalability');
   const results = [];
   
   if (!pathExists(dirPath)) {
@@ -565,20 +830,32 @@ export const sharedUtils = {
   getCurrentDir,
   getCwd,
   rmDirSafe,
+  rmDirSafeAsync,
   rmFileSafe,
+  rmFileSafeAsync,
   pathExists,
+  pathExistsAsync,
   readFileSafe,
+  readFileSafeAsync,
   writeFileSafe,
+  writeFileSafeAsync,
   cleanDist,
+  cleanDistAsync,
   cleanDebug,
+  cleanDebugAsync,
   validateContent,
   findValidTemplate,
+  findValidTemplateAsync,
   ensureRunner,
+  ensureRunnerAsync,
   getPackageJson,
+  getPackageJsonAsync,
   commandExists,
   executeCommand,
   ensureDirectory,
+  ensureDirectoryAsync,
   listFiles,
+  listFilesAsync,
 };
 
 // Export default for convenience
