@@ -69,11 +69,17 @@ export class AdvancedConnectionPool extends EventEmitter {
     timestamp: number;
   }> = [];
   
+  // O(1) queue implementation for high-performance dequeue operations
+  private queueHead = 0;
+  private queueTail = 0;
+  
   // Performance optimization: connection reuse tracking with memory limits
-  private connectionReuseStats = new Map<any, { uses: number; lastUsed: number }>();
+  private connectionReuseStats = new Map<any, { uses: number; lastUsed: number; created: number; lastValidated: number }>();
   private readonly maxConnectionUses = 1000; // Recreate connection after N uses
   private readonly maxReuseStatsSize = 10000; // Prevent memory leaks in reuse stats
   private readonly maxWaitingQueue = 1000; // Prevent unlimited queue growth
+  private readonly maxConnectionAge = 30 * 60 * 1000; // 30 minutes max connection age
+  private readonly validationInterval = 5 * 60 * 1000; // Validate connections every 5 minutes
   private isShutdown = false; // Prevent operations after shutdown
   
   private circuitState: CircuitState = CircuitState.CLOSED;
@@ -180,21 +186,91 @@ async acquire(): Promise<any> {
     pooled.acquired = false;
     pooled.lastUsed = Date.now();
 
-    // Process waiting queue
-    if (this.waitingQueue.length > 0) {
-      const waiter = this.waitingQueue.shift();
-      if (waiter) {
+    // Process waiting queue using O(1) dequeue
+    if (this.getOptimizedQueueSize() > 0) {
+      const waiter = this.waitingQueue[this.queueHead];
+      if (waiter && waiter.resolve) {
         clearTimeout(waiter.timeout);
         pooled.acquired = true;
         waiter.resolve(connection);
+        
+        // Move head forward (O(1) operation)
+        this.queueHead = (this.queueHead + 1) % this.waitingQueue.length;
+        
+        // Compact queue if it's getting sparse
+        if (this.getOptimizedQueueSize() < this.waitingQueue.length * 0.25 && this.waitingQueue.length > 100) {
+          this.compactQueue();
+        }
       }
     }
   }
 
+/**
+   * Test all connections and remove unhealthy ones
+   */
+  async testAllConnections(): Promise<{ healthy: number; unhealthy: number }> {
+    let healthy = 0;
+    let unhealthy = 0;
+    
+    const healthCheckPromises = this.connections.map(async (connection) => {
+      try {
+        const isHealthy = await this.performHealthCheck(connection);
+        if (isHealthy) {
+          healthy++;
+        } else {
+          unhealthy++;
+        }
+      } catch (error) {
+        console.warn(`Health check error for connection:`, error);
+        unhealthy++;
+      }
+    });
+    
+    await Promise.allSettled(healthCheckPromises);
+    
+    // Replace unhealthy connections
+    const unhealthyConnections = this.connections.filter((_, index) => {
+      const healthCheck = healthCheckPromises[index];
+      return healthCheck.status === 'rejected' || 
+             (healthCheck.status === 'fulfilled' && !healthCheck.value);
+    }).map(connection => connection.connection);
+    
+    for (const unhealthyConnection of unhealthyConnections) {
+      try {
+        await this.replaceUnhealthyConnection(unhealthyConnection);
+      } catch (error) {
+        console.error('Failed to replace unhealthy connection:', error);
+      }
+    }
+    
+    this.emit('pool:health-check-completed', { healthy, unhealthy });
+    
+    return { healthy, unhealthy };
+  }
+
   /**
-   * Get pool statistics
+   * Get connection pool statistics
    */
   getStats(): ConnectionStats {
+    const active = this.connections.filter(c => c.acquired).length;
+    const idle = this.connections.length - active;
+    const avgAcquireTime = this.stats.successfulAcquisitions > 0 
+      ? this.stats.totalAcquireTime / this.stats.successfulAcquisitions 
+      : 0;
+    const successRate = this.stats.successfulAcquisitions > 0 
+      ? (this.stats.successfulAcquisitions / this.stats.totalAcquisitions) * 100 
+      : 100;
+
+    return {
+      activeConnections: active,
+      idleConnections: idle,
+      totalConnections: this.connections.length,
+      averageAcquireTime: avgAcquireTime,
+      successRate,
+      memoryUsage: this.estimateMemoryUsage(),
+      queueSize: this.getOptimizedQueueSize()
+    };
+  }
     const active = this.connections.filter(c => c.acquired).length;
     const idle = this.connections.length - active;
     const avgAcquireTime = this.stats.successfulAcquisitions > 0 
@@ -274,23 +350,66 @@ async shutdown(): Promise<void> {
     connection.lastUsed = Date.now();
     
     // Track connection reuse for performance monitoring with memory limits
-    const stats = this.connectionReuseStats.get(connection.connection) || { uses: 0, lastUsed: 0 };
+    const now = Date.now();
+    let stats = this.connectionReuseStats.get(connection.connection);
+    
+    if (!stats) {
+      stats = {
+        uses: 0,
+        lastUsed: now,
+        created: now,
+        lastValidated: now
+      };
+    }
+    
     stats.uses++;
-    stats.lastUsed = Date.now();
+    stats.lastUsed = now;
     
     // Prevent memory leaks by limiting reuse stats size
     if (this.connectionReuseStats.size >= this.maxReuseStatsSize) {
       const oldestKey = this.connectionReuseStats.keys().next().value;
-      this.connectionReuseStats.delete(oldestKey);
+      if (oldestKey) {
+        this.connectionReuseStats.delete(oldestKey);
+      }
     }
     
     this.connectionReuseStats.set(connection.connection, stats);
     
-    // Recreate connection if it has been used too many times (prevent connection fatigue)
-    if (stats.uses > this.maxConnectionUses) {
+    // Check connection age and recreate if too old
+    const connectionAge = now - stats.created;
+    if (connectionAge > this.maxConnectionAge) {
+      console.debug(`Connection age exceeded limit (${connectionAge}ms > ${this.maxConnectionAge}ms), recreating`);
       await this.removeConnection(connection);
       this.connectionReuseStats.delete(connection.connection);
       return this.tryAcquire();
+    }
+    
+    // Recreate connection if it has been used too many times (prevent connection fatigue)
+    if (stats.uses > this.maxConnectionUses) {
+      console.debug(`Connection uses exceeded limit (${stats.uses} > ${this.maxConnectionUses}), recreating`);
+      await this.removeConnection(connection);
+      this.connectionReuseStats.delete(connection.connection);
+      return this.tryAcquire();
+    }
+    
+    // Validate connection periodically
+    const timeSinceValidation = now - stats.lastValidated;
+    if (timeSinceValidation > this.validationInterval) {
+      try {
+        const isValid = await this.config.validate!(connection.connection);
+        if (!isValid) {
+          console.debug('Connection validation failed, recreating');
+          await this.removeConnection(connection);
+          this.connectionReuseStats.delete(connection.connection);
+          return this.tryAcquire();
+        }
+        stats.lastValidated = now;
+      } catch (error) {
+        console.warn('Connection validation error, recreating:', error);
+        await this.removeConnection(connection);
+        this.connectionReuseStats.delete(connection.connection);
+        return this.tryAcquire();
+      }
     }
     
     // Validate connection if validator is provided
@@ -364,32 +483,92 @@ async shutdown(): Promise<void> {
   }
 
 private async waitForConnection(): Promise<any> {
-  // Aggressive cleanup before checking limit
-  this.cleanupTimedOutWaiters();
-  
-  // Simple, reliable queue management with hard limits
-  const memoryPressure = await this.getMemoryPressure();
-  const poolHealth = this.getPoolHealth();
-  
-  // Dynamic queue size adjustment based on conditions
-  let effectiveMaxQueue = this.maxWaitingQueue;
-  
-  if (memoryPressure > 0.9 || poolHealth < 0.5) {
-    // Reduce queue size under stress
-    effectiveMaxQueue = Math.floor(this.maxWaitingQueue * 0.5);
-  } else if (memoryPressure > 0.8 || poolHealth < 0.7) {
-    // Moderate reduction
-    effectiveMaxQueue = Math.floor(this.maxWaitingQueue * 0.75);
-  }
-  
-  // Simple, hard limit check - no complex rejection strategies that can fail
-  if (this.waitingQueue.length >= effectiveMaxQueue) {
-    const backoffDelay = Math.min(1000, this.waitingQueue.length * 100);
-    throw new Error(`Connection pool waiting queue is full (${this.waitingQueue.length}/${effectiveMaxQueue}). Retry after ${backoffDelay}ms`);
+    // Aggressive cleanup before checking limit
+    this.cleanupTimedOutWaiters();
+    
+    // Simple, reliable queue management with hard limits
+    const memoryPressure = await this.getMemoryPressure();
+    const poolHealth = this.getPoolHealth();
+    
+    // Dynamic queue size adjustment based on conditions
+    let effectiveMaxQueue = this.maxWaitingQueue;
+    
+    if (memoryPressure > 0.9 || poolHealth < 0.5) {
+      // Reduce queue size under stress
+      effectiveMaxQueue = Math.floor(this.maxWaitingQueue * 0.5);
+    } else if (memoryPressure > 0.8 || poolHealth < 0.7) {
+      // Moderate reduction
+      effectiveMaxQueue = Math.floor(this.maxWaitingQueue * 0.75);
+    }
+    
+    // Use O(1) queue size calculation
+    const currentQueueSize = this.getOptimizedQueueSize();
+    
+    // Simple, hard limit check - no complex rejection strategies that can fail
+    if (currentQueueSize >= effectiveMaxQueue) {
+      const backoffDelay = Math.min(1000, currentQueueSize * 100);
+      throw new Error(`Connection pool waiting queue is full (${currentQueueSize}/${effectiveMaxQueue}). Retry after ${backoffDelay}ms`);
+    }
+
+    return this.addToQueueWithBackpressure(effectiveMaxQueue);
   }
 
-  return this.addToQueueWithBackpressure(effectiveMaxQueue);
-}
+  /**
+   * Get optimized queue size using O(1) calculation
+   */
+  private getOptimizedQueueSize(): number {
+    if (this.queueTail >= this.queueHead) {
+      return this.queueTail - this.queueHead;
+    } else {
+      // Queue has wrapped around
+      return this.waitingQueue.length - this.queueHead + this.queueTail;
+    }
+  }
+
+  /**
+   * Expand queue array when needed (amortized O(1) operation)
+   */
+  private expandQueue(): void {
+    const newSize = Math.max(this.waitingQueue.length * 2, this.maxWaitingQueue * 2);
+    const newQueue = new Array(newSize);
+    
+    // Copy existing elements in order
+    const currentSize = this.getOptimizedQueueSize();
+    for (let i = 0; i < currentSize; i++) {
+      const sourceIndex = (this.queueHead + i) % this.waitingQueue.length;
+      newQueue[i] = this.waitingQueue[sourceIndex];
+    }
+    
+    this.waitingQueue = newQueue;
+    this.queueHead = 0;
+    this.queueTail = currentSize;
+  }
+
+  /**
+   * Compact queue to reclaim memory (amortized O(1) operation)
+   */
+  private compactQueue(): void {
+    const currentSize = this.getOptimizedQueueSize();
+    if (currentSize === 0) {
+      // Reset queue if empty
+      this.waitingQueue = new Array(Math.min(100, this.maxWaitingQueue));
+      this.queueHead = 0;
+      this.queueTail = 0;
+      return;
+    }
+    
+    const newQueue = new Array(Math.max(currentSize * 2, 50));
+    
+    // Copy active elements
+    for (let i = 0; i < currentSize; i++) {
+      const sourceIndex = (this.queueHead + i) % this.waitingQueue.length;
+      newQueue[i] = this.waitingQueue[sourceIndex];
+    }
+    
+    this.waitingQueue = newQueue;
+    this.queueHead = 0;
+    this.queueTail = currentSize;
+  }
   
   /**
    * Get current memory pressure (0-1 scale)
@@ -492,19 +671,30 @@ private async waitForConnection(): Promise<any> {
   private addToQueue(): Promise<any> {
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        const index = this.waitingQueue.findIndex(w => w.resolve === resolve);
-        if (index >= 0) {
-          this.waitingQueue.splice(index, 1);
+        // O(1) removal by marking as resolved (will be cleaned up in dequeue)
+        const index = this.queueHead;
+        if (index < this.waitingQueue.length && this.waitingQueue[index].resolve === resolve) {
+          this.waitingQueue[index].resolve = () => {}; // Mark as processed
+          this.queueHead++; // Move head forward
         }
         reject(new Error('Connection acquire timeout'));
       }, this.config.acquireTimeout);
 
-      this.waitingQueue.push({
+      // O(1) enqueue operation
+      this.waitingQueue[this.queueTail] = {
         resolve,
         reject,
         timeout,
         timestamp: Date.now()
-      });
+      };
+      
+      // Handle circular buffer wrap-around
+      this.queueTail = (this.queueTail + 1) % this.waitingQueue.length;
+      
+      // Expand array if needed (amortized O(1))
+      if (this.queueTail === this.queueHead && this.getOptimizedQueueSize() >= this.waitingQueue.length * 0.8) {
+        this.expandQueue();
+      }
     });
   }
 

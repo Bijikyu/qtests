@@ -26,6 +26,9 @@ export interface QueryOptions {
   cache?: boolean;
   cacheKey?: string;
   retries?: number;
+  limit?: number;
+  offset?: number;
+  batchSize?: number;
 }
 
 export interface QueryResult<T = any> {
@@ -33,6 +36,9 @@ export interface QueryResult<T = any> {
   rowCount: number;
   duration: number;
   cached: boolean;
+  hasMore?: boolean;
+  nextOffset?: number;
+  totalRows?: number;
 }
 
 export interface DatabaseMetrics {
@@ -82,6 +88,12 @@ export class ScalableDatabaseClient extends EventEmitter {
   private readonly maxQueryPatterns = 1000; // Prevent unbounded growth
   private queryComplexityThresholds = { simple: 1, medium: 5, complex: 10 };
   
+  // Index optimization properties
+  private indexSuggestions = new Map<string, { fields: string[]; score: number; lastAnalyzed: number }>();
+  private fieldUsageStats = new Map<string, { selectCount: number; whereCount: number; joinCount: number; orderByCount: number }>();
+  private readonly maxIndexSuggestions = 100; // Prevent unbounded growth
+  private readonly indexAnalysisInterval = 300000; // Analyze every 5 minutes
+  
   // Metrics tracking
   private metrics: DatabaseMetrics = {
     totalQueries: 0,
@@ -119,10 +131,11 @@ export class ScalableDatabaseClient extends EventEmitter {
     
     this.initializeConnectionPool();
     this.startCacheCleanup();
+    this.startIndexAnalysis();
   }
 
   /**
-   * Execute a query with caching and retry logic
+   * Execute a query with caching, retry logic, and pagination support
    */
   async query<T = any>(
     sql: string,
@@ -133,9 +146,12 @@ export class ScalableDatabaseClient extends EventEmitter {
     this.metrics.totalQueries++;
 
     try {
-      // Check query cache first
-      if (options.cache !== false && this.config.enableQueryCache) {
-        const cacheKey = options.cacheKey || this.generateCacheKey(sql, params);
+      // Apply pagination limits to prevent memory exhaustion
+      const effectiveOptions = this.applyPaginationLimits(sql, options);
+      
+      // Check query cache first (only for non-paginated queries)
+      if (effectiveOptions.cache !== false && this.config.enableQueryCache && !effectiveOptions.offset) {
+        const cacheKey = effectiveOptions.cacheKey || this.generateCacheKey(sql, params);
         const cached = this.getFromCache(cacheKey);
         
         if (cached) {
@@ -156,7 +172,7 @@ export class ScalableDatabaseClient extends EventEmitter {
       
       // Execute query with memory limits and adaptive timeout
       const timeoutMs = Math.min(30000, analysis.complexity * 2000); // Adaptive timeout
-      let result = await this.executeQueryWithRetry<T>(sql, params, { ...options, timeout: timeoutMs });
+      let result = await this.executeQueryWithRetry<T>(sql, params, { ...effectiveOptions, timeout: timeoutMs });
       
       // Update pattern tracking
       const patternKey = sql.substring(0, 100); // Use first 100 chars as pattern key
@@ -174,48 +190,22 @@ export class ScalableDatabaseClient extends EventEmitter {
         this.cleanupQueryPatterns();
       }
       
-      // Adaptive result size limits based on memory pressure and query complexity
-      const memoryPressure = this.getMemoryPressure();
-      const adaptiveLimit = this.calculateAdaptiveResultLimit(result.rows.length, analysis.complexity, memoryPressure);
+      // Apply result size limits and pagination metadata
+      const processedResult = await this.processQueryResult<T>(result, effectiveOptions, analysis);
       
-      if (result.rows.length > adaptiveLimit) {
-        const originalCount = result.rows.length;
-        
-        // Use more efficient array slicing (not splice which modifies in place)
-        result.rows = result.rows.slice(0, adaptiveLimit);
-        result.rowCount = adaptiveLimit;
-        
-        // Enhanced warning with context and recommendations
-        const warning = this.generateTruncationWarning(originalCount, adaptiveLimit, analysis, memoryPressure);
-        console.warn(warning);
-        
-        // Emit detailed truncation event for application-level handling
-        this.emit('query:truncated', { 
-          originalCount, 
-          truncatedCount: adaptiveLimit,
-          adaptiveLimit,
-          memoryPressure,
-          complexity: analysis.complexity,
-          sql: sql.substring(0, 100) + (sql.length > 100 ? '...' : ''),
-          recommendation: this.getTruncationRecommendation(analysis, memoryPressure)
-        });
-        
-        // Update metrics for truncation tracking
-        this.metrics.truncatedQueries = (this.metrics.truncatedQueries || 0) + 1;
-      }
-      
-      // Cache result if enabled and size is reasonable
-      if (options.cache !== false && this.config.enableQueryCache && result.rows.length < 1000) {
-        const cacheKey = options.cacheKey || this.generateCacheKey(sql, params);
-        this.setCache(cacheKey, result);
+      // Cache result if enabled and size is reasonable (only first page)
+      if (effectiveOptions.cache !== false && this.config.enableQueryCache && 
+          processedResult.rows.length < 1000 && !effectiveOptions.offset) {
+        const cacheKey = effectiveOptions.cacheKey || this.generateCacheKey(sql, params);
+        this.setCache(cacheKey, processedResult);
       }
       
       const duration = Date.now() - startTime;
       this.updateAverageQueryTime(duration);
       
-      this.emit('query:success', { sql, params, result, duration });
+      this.emit('query:success', { sql, params, result: processedResult, duration });
       return {
-        ...result,
+        ...processedResult,
         duration,
         cached: false
       };
@@ -225,6 +215,159 @@ export class ScalableDatabaseClient extends EventEmitter {
       this.emit('query:error', { sql, params, error });
       throw error;
     }
+  }
+
+  /**
+   * Apply pagination limits to prevent memory exhaustion
+   */
+  private applyPaginationLimits(sql: string, options: QueryOptions): QueryOptions {
+    const effectiveOptions = { ...options };
+    
+    // Set default batch size if not specified
+    if (!effectiveOptions.batchSize) {
+      effectiveOptions.batchSize = Math.min(1000, this.maxResultRows);
+    }
+    
+    // Enforce maximum batch size
+    effectiveOptions.batchSize = Math.min(effectiveOptions.batchSize, this.maxResultRows);
+    
+    // If no limit specified, use batch size as limit
+    if (!effectiveOptions.limit) {
+      effectiveOptions.limit = effectiveOptions.batchSize;
+    } else {
+      // Enforce maximum limit
+      effectiveOptions.limit = Math.min(effectiveOptions.limit, this.maxResultRows);
+    }
+    
+    return effectiveOptions;
+  }
+
+  /**
+   * Process query result with pagination and memory management
+   */
+  private async processQueryResult<T>(
+    result: { rows: T[]; rowCount: number },
+    options: QueryOptions,
+    analysis: any
+  ): Promise<QueryResult<T>> {
+    const memoryPressure = this.getMemoryPressure();
+    const adaptiveLimit = this.calculateAdaptiveResultLimit(result.rows.length, analysis.complexity, memoryPressure);
+    
+    let processedRows = result.rows;
+    let hasMore = false;
+    let nextOffset: number | undefined;
+    let totalRows: number | undefined;
+    
+    // Apply adaptive limits
+    if (processedRows.length > adaptiveLimit) {
+      const originalCount = processedRows.length;
+      processedRows = processedRows.slice(0, adaptiveLimit);
+      
+      // Enhanced warning with context and recommendations
+      const warning = this.generateTruncationWarning(originalCount, adaptiveLimit, analysis, memoryPressure);
+      console.warn(warning);
+      
+      // Emit detailed truncation event for application-level handling
+      this.emit('query:truncated', { 
+        originalCount, 
+        truncatedCount: adaptiveLimit,
+        adaptiveLimit,
+        memoryPressure,
+        complexity: analysis.complexity,
+        recommendation: this.getTruncationRecommendation(analysis, memoryPressure)
+      });
+      
+      // Update metrics for truncation tracking
+      this.metrics.truncatedQueries = (this.metrics.truncatedQueries || 0) + 1;
+    }
+    
+    // Handle pagination metadata
+    if (options.limit && processedRows.length >= options.limit) {
+      hasMore = true;
+      nextOffset = (options.offset || 0) + options.limit;
+    }
+    
+    // For paginated queries, try to get total count if feasible
+    if (options.offset && options.limit && memoryPressure < 0.8) {
+      try {
+        totalRows = await this.getTotalCount(result.rowCount, options);
+      } catch (error) {
+        // Don't fail the query if count fails
+        console.warn('Failed to get total row count for pagination:', error);
+      }
+    }
+    
+    return {
+      rows: processedRows,
+      rowCount: processedRows.length,
+      hasMore,
+      nextOffset,
+      totalRows,
+      duration: 0,
+      cached: false
+    };
+  }
+
+  /**
+   * Get total row count for paginated queries
+   */
+  private async getTotalCount(currentRowCount: number, options: QueryOptions): Promise<number> {
+    // This is a simplified implementation - in practice, you'd modify the query
+    // to get COUNT(*) or use database-specific methods
+    return currentRowCount + ((options.offset || 0) + (options.limit || 0));
+  }
+
+  /**
+   * Execute paginated query to get all results efficiently
+   */
+  async queryAll<T = any>(
+    sql: string,
+    params: any[] = [],
+    options: QueryOptions = {}
+  ): Promise<QueryResult<T>> {
+    const allRows: T[] = [];
+    let offset = 0;
+    let hasMore = true;
+    let totalRows: number | undefined;
+    const batchSize = options.batchSize || options.limit || 500;
+    
+    while (hasMore && offset < (this.maxResultRows * 2)) { // Safety limit
+      const result = await this.query<T>(sql, params, {
+        ...options,
+        limit: batchSize,
+        offset,
+        cache: false // Don't cache paginated results
+      });
+      
+      allRows.push(...result.rows);
+      hasMore = result.hasMore || false;
+      offset = result.nextOffset || offset + batchSize;
+      
+      if (result.totalRows !== undefined) {
+        totalRows = result.totalRows;
+      }
+      
+      // Stop if we got all results
+      if (!hasMore || result.rows.length < batchSize) {
+        break;
+      }
+      
+      // Check memory pressure and stop if too high
+      const memoryPressure = this.getMemoryPressure();
+      if (memoryPressure > 0.9) {
+        console.warn('High memory pressure detected, stopping paginated query');
+        break;
+      }
+    }
+    
+    return {
+      rows: allRows,
+      rowCount: allRows.length,
+      hasMore: false,
+      totalRows,
+      duration: 0,
+      cached: false
+    };
   }
 
   /**
@@ -751,6 +894,9 @@ private startCacheCleanup(): void {
     const whereCount = (upperSql.match(/\bWHERE\b/g) || []).length;
     complexity += whereCount * this.queryComplexityThresholds.simple;
     
+    // Extract and analyze field usage for index optimization
+    this.analyzeFieldUsage(sql, upperSql);
+    
     // Estimate result rows based on query patterns
     if (upperSql.includes('LIMIT')) {
       const limitMatch = sql.match(/LIMIT\s+(\d+)/i);
@@ -769,6 +915,238 @@ private startCacheCleanup(): void {
     }
     
     return { complexity, estimatedRows };
+  }
+
+  /**
+   * Analyze field usage for index optimization
+   */
+  private analyzeFieldUsage(sql: string, upperSql: string): void {
+    // Extract field names from SELECT clause
+    const selectMatch = upperSql.match(/SELECT\s+(.+?)\s+FROM/i);
+    if (selectMatch) {
+      const selectFields = this.extractFieldNames(selectMatch[1]);
+      selectFields.forEach(field => {
+        this.incrementFieldUsage(field, 'selectCount');
+      });
+    }
+    
+    // Extract field names from WHERE clause
+    const whereMatch = upperSql.match(/WHERE\s+(.+?)(?:\s+GROUP\s+BY|\s+ORDER\s+BY|\s+LIMIT|$)/i);
+    if (whereMatch) {
+      const whereFields = this.extractFieldNames(whereMatch[1]);
+      whereFields.forEach(field => {
+        this.incrementFieldUsage(field, 'whereCount');
+      });
+    }
+    
+    // Extract field names from ORDER BY clause
+    const orderByMatch = upperSql.match(/ORDER\s+BY\s+(.+?)(?:\s+LIMIT|$)/i);
+    if (orderByMatch) {
+      const orderByFields = this.extractFieldNames(orderByMatch[1]);
+      orderByFields.forEach(field => {
+        this.incrementFieldUsage(field, 'orderByCount');
+      });
+    }
+    
+    // Extract field names from JOIN conditions
+    const joinMatches = upperSql.match(/JOIN\s+.+?\s+ON\s+(.+?)(?:\s+JOIN|\s+WHERE|$)/gi);
+    if (joinMatches) {
+      joinMatches.forEach(joinClause => {
+        const joinFields = this.extractFieldNames(joinClause);
+        joinFields.forEach(field => {
+          this.incrementFieldUsage(field, 'joinCount');
+        });
+      });
+    }
+  }
+
+  /**
+   * Extract field names from SQL clause
+   */
+  private extractFieldNames(clause: string): string[] {
+    const fields: string[] = [];
+    
+    // Remove functions and keep only field references
+    const cleaned = clause.replace(/\b\w+\s*\([^)]*\)/g, '');
+    
+    // Match field patterns (table.field or field)
+    const fieldPattern = /(?:\w+\.)?([a-zA-Z_][a-zA-Z0-9_]*)/g;
+    let match;
+    
+    while ((match = fieldPattern.exec(cleaned)) !== null) {
+      const field = match[1];
+      // Skip SQL keywords and common functions
+      if (!['SELECT', 'FROM', 'WHERE', 'AND', 'OR', 'NOT', 'IN', 'LIKE', 'BETWEEN', 'IS', 'NULL', 'TRUE', 'FALSE', 'ASC', 'DESC', 'COUNT', 'SUM', 'AVG', 'MAX', 'MIN'].includes(field.toUpperCase())) {
+        fields.push(field);
+      }
+    }
+    
+    return [...new Set(fields)]; // Remove duplicates
+  }
+
+  /**
+   * Increment field usage statistics
+   */
+  private incrementFieldUsage(field: string, usageType: 'selectCount' | 'whereCount' | 'joinCount' | 'orderByCount'): void {
+    const stats = this.fieldUsageStats.get(field) || { selectCount: 0, whereCount: 0, joinCount: 0, orderByCount: 0 };
+    stats[usageType]++;
+    this.fieldUsageStats.set(field, stats);
+  }
+
+  /**
+   * Start periodic index analysis
+   */
+  private startIndexAnalysis(): void {
+    setInterval(() => {
+      this.performIndexAnalysis();
+    }, this.indexAnalysisInterval);
+  }
+
+  /**
+   * Perform index analysis and generate suggestions
+   */
+  private performIndexAnalysis(): void {
+    if (this.fieldUsageStats.size === 0) return;
+    
+    const suggestions: Array<{ fields: string[]; score: number }> = [];
+    
+    // Analyze each field for index potential
+    for (const [field, stats] of this.fieldUsageStats.entries()) {
+      const score = this.calculateIndexScore(stats);
+      
+      if (score > 50) { // Threshold for index suggestion
+        suggestions.push({
+          fields: [field],
+          score
+        });
+      }
+    }
+    
+    // Look for composite index opportunities (fields frequently used together)
+    const compositeSuggestions = this.findCompositeIndexOpportunities();
+    suggestions.push(...compositeSuggestions);
+    
+    // Sort by score and keep only top suggestions
+    suggestions.sort((a, b) => b.score - a.score);
+    
+    // Update index suggestions
+    this.indexSuggestions.clear();
+    const maxSuggestions = Math.min(suggestions.length, this.maxIndexSuggestions);
+    
+    for (let i = 0; i < maxSuggestions; i++) {
+      const suggestion = suggestions[i];
+      this.indexSuggestions.set(
+        suggestion.fields.join('_'),
+        {
+          fields: suggestion.fields,
+          score: suggestion.score,
+          lastAnalyzed: Date.now()
+        }
+      );
+    }
+    
+    // Emit index suggestions for monitoring
+    if (this.indexSuggestions.size > 0) {
+      this.emit('index:suggestions', this.getIndexSuggestions());
+    }
+  }
+
+  /**
+   * Calculate index score based on field usage statistics
+   */
+  private calculateIndexScore(stats: { selectCount: number; whereCount: number; joinCount: number; orderByCount: number }): number {
+    let score = 0;
+    
+    // WHERE clause usage is most important for indexes
+    score += stats.whereCount * 40;
+    
+    // JOIN conditions are also very important
+    score += stats.joinCount * 30;
+    
+    // ORDER BY clauses benefit from indexes
+    score += stats.orderByCount * 20;
+    
+    // SELECT alone (covering index) has some benefit
+    score += stats.selectCount * 10;
+    
+    // Apply diminishing returns for very high usage
+    return Math.min(100, score);
+  }
+
+  /**
+   * Find composite index opportunities
+   */
+  private findCompositeIndexOpportunities(): Array<{ fields: string[]; score: number }> {
+    const opportunities: Array<{ fields: string[]; score: number }> = [];
+    
+    // Look for field pairs that frequently appear together in WHERE clauses
+    const fieldPairs = new Map<string, number>();
+    
+    // This is a simplified implementation - in practice, you'd analyze actual query patterns
+    for (const [field1, stats1] of this.fieldUsageStats.entries()) {
+      for (const [field2, stats2] of this.fieldUsageStats.entries()) {
+        if (field1 >= field2) continue; // Avoid duplicates
+        
+        // Calculate co-occurrence score (simplified)
+        const coOccurrenceScore = Math.min(stats1.whereCount, stats2.whereCount) * 0.3;
+        
+        if (coOccurrenceScore > 20) {
+          const pairKey = `${field1}_${field2}`;
+          fieldPairs.set(pairKey, coOccurrenceScore);
+        }
+      }
+    }
+    
+    // Convert to opportunities array
+    for (const [pairKey, score] of fieldPairs.entries()) {
+      const [field1, field2] = pairKey.split('_');
+      opportunities.push({
+        fields: [field1, field2],
+        score
+      });
+    }
+    
+    return opportunities;
+  }
+
+  /**
+   * Get current index suggestions
+   */
+  public getIndexSuggestions(): Array<{ fields: string[]; score: number; recommendation: string }> {
+    const suggestions: Array<{ fields: string[]; score: number; recommendation: string }> = [];
+    
+    for (const [key, suggestion] of this.indexSuggestions.entries()) {
+      let recommendation = '';
+      
+      if (suggestion.score > 80) {
+        recommendation = 'High priority - create index immediately';
+      } else if (suggestion.score > 60) {
+        recommendation = 'Medium priority - consider creating index';
+      } else {
+        recommendation = 'Low priority - monitor before creating index';
+      }
+      
+      suggestions.push({
+        fields: suggestion.fields,
+        score: suggestion.score,
+        recommendation
+      });
+    }
+    
+    return suggestions.sort((a, b) => b.score - a.score);
+  }
+
+  /**
+   * Get field usage statistics for monitoring
+   */
+  public getFieldUsageStats(): Record<string, { selectCount: number; whereCount: number; joinCount: number; orderByCount: number }> {
+    const stats: Record<string, { selectCount: number; whereCount: number; joinCount: number; orderByCount: number }> = {};
+    
+    for (const [field, usage] of this.fieldUsageStats.entries()) {
+      stats[field] = { ...usage };
+    }
+    
+    return stats;
   }
 
   /**

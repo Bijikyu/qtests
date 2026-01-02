@@ -56,6 +56,13 @@ export class ScalableApiClient extends EventEmitter {
   private maxConcurrentRequests = 20; // Reduced to prevent overload
   private processingQueue = false;
   private readonly maxQueueSize = 100; // Reduced queue size for better memory management
+  
+  // Request batching for improved throughput
+  private batchQueue: Array<{ id: string; config: ApiRequestConfig; resolve: (result: any) => void; reject: (error: Error) => void; timestamp: number }> = [];
+  private readonly maxBatchSize = 10; // Max requests per batch
+  private readonly maxBatchWaitTime = 50; // Max wait time for batch formation (ms)
+  private batchTimer?: NodeJS.Timeout;
+  private readonly batchableMethods = new Set(['GET', 'POST', 'PUT', 'DELETE']);
 
   constructor(options: { maxConcurrentRequests?: number } = {}) {
     super();
@@ -66,6 +73,11 @@ export class ScalableApiClient extends EventEmitter {
    * Execute API request with retry logic and circuit breaker protection
    */
   async request<T = any>(config: ApiRequestConfig): Promise<ApiResponse<T>> {
+    // Check if request can be batched
+    if (this.canBatchRequest(config)) {
+      return this.batchRequest<T>(config);
+    }
+    
     const requestId = this.generateRequestId();
     const startTime = Date.now();
     
@@ -94,6 +106,89 @@ export class ScalableApiClient extends EventEmitter {
     }
 
     return this.executeRequest<T>(config, requestId, startTime);
+  }
+
+  /**
+   * Check if request can be batched
+   */
+  private canBatchRequest(config: ApiRequestConfig): boolean {
+    const method = config.method || 'GET';
+    return this.batchableMethods.has(method) && 
+           !config.timeout && 
+           !config.retries && 
+           this.batchQueue.length < this.maxBatchSize;
+  }
+
+  /**
+   * Add request to batch queue
+   */
+  private async batchRequest<T = any>(config: ApiRequestConfig): Promise<ApiResponse<T>> {
+    return new Promise((resolve, reject) => {
+      const requestId = this.generateRequestId();
+      
+      this.batchQueue.push({
+        id: requestId,
+        config,
+        resolve,
+        reject,
+        timestamp: Date.now()
+      });
+      
+      // Start batch timer if not already running
+      if (!this.batchTimer) {
+        this.batchTimer = setTimeout(() => {
+          this.processBatch();
+        }, this.maxBatchWaitTime);
+      }
+      
+      // Process batch immediately if full
+      if (this.batchQueue.length >= this.maxBatchSize) {
+        if (this.batchTimer) {
+          clearTimeout(this.batchTimer);
+          this.batchTimer = undefined;
+        }
+        this.processBatch();
+      }
+    });
+  }
+
+  /**
+   * Process batch of requests
+   */
+  private async processBatch(): Promise<void> {
+    if (this.batchQueue.length === 0) return;
+    
+    const batch = this.batchQueue.splice(0, this.maxBatchSize);
+    const batchId = this.generateRequestId();
+    const startTime = Date.now();
+    
+    try {
+      // For now, process requests sequentially but could be optimized for parallel execution
+      // In a real implementation, you'd use HTTP/2 multiplexing or connection pooling
+      for (const request of batch) {
+        try {
+          const result = await this.executeRequest(request.config, request.id, startTime);
+          request.resolve(result);
+        } catch (error) {
+          request.reject(error as Error);
+        }
+      }
+      
+      // Update metrics for batch processing
+      this.metrics.totalRequests += batch.length;
+      
+    } catch (error) {
+      // Reject all requests in batch on error
+      for (const request of batch) {
+        request.reject(error as Error);
+      }
+    }
+    
+    // Clear batch timer
+    if (this.batchTimer) {
+      clearTimeout(this.batchTimer);
+      this.batchTimer = undefined;
+    }
   }
 
   private async executeRequest<T>(
@@ -207,7 +302,7 @@ export class ScalableApiClient extends EventEmitter {
   }
 
   private async makeNodeRequest<T>(config: ApiRequestConfig): Promise<ApiResponse<T>> {
-    // Fallback implementation for Node.js environments without fetch
+    // Non-blocking HTTP request implementation for Node.js environments without fetch
     const https = await import('https');
     const http = await import('http');
     const url = new URL(config.url);
@@ -215,25 +310,37 @@ export class ScalableApiClient extends EventEmitter {
     const client = isHttps ? https : http;
 
     return new Promise((resolve, reject) => {
+      // Use AbortController for timeout handling
+      const abortController = new AbortController();
+      const timeoutId = setTimeout(() => {
+        abortController.abort();
+        reject(new Error('Request timeout'));
+      }, config.timeout || 10000);
+
       const req = client.request(config.url, {
         method: config.method || 'GET',
         headers: {
           'Content-Type': 'application/json',
           ...config.headers
         },
-        timeout: config.timeout || 10000
+        signal: abortController.signal
       }, (res: any) => {
-        let data = '';
+        // Use streaming approach to prevent blocking
+        const chunks: Buffer[] = [];
         
-        res.on('data', (chunk: any) => {
-          data += chunk;
+        res.on('data', (chunk: Buffer) => {
+          chunks.push(chunk);
         });
         
-        res.on('end', () => {
+        res.on('end', async () => {
           try {
-            const parsedData = JSON.parse(data);
-            const headers: Record<string, string> = {};
+            clearTimeout(timeoutId);
             
+            // Combine chunks and parse asynchronously
+            const data = Buffer.concat(chunks);
+            const parsedData = await this.parseResponseAsync<T>(data);
+            
+            const headers: Record<string, string> = {};
             Object.entries(res.headers).forEach(([key, value]) => {
               headers[key] = Array.isArray(value) ? value.join(', ') : String(value);
             });
@@ -246,22 +353,42 @@ export class ScalableApiClient extends EventEmitter {
               duration: 0 // Will be set by caller
             });
           } catch (error) {
+            clearTimeout(timeoutId);
             reject(new Error(`Failed to parse response: ${error}`));
           }
         });
       });
 
-      req.on('error', reject);
-      req.on('timeout', () => {
-        req.destroy();
-        reject(new Error('Request timeout'));
+      req.on('error', (error) => {
+        clearTimeout(timeoutId);
+        reject(error);
       });
 
+      // Write body asynchronously if present
       if (config.body) {
-        req.write(JSON.stringify(config.body));
+        const bodyData = JSON.stringify(config.body);
+        req.write(bodyData);
       }
       
       req.end();
+    });
+  }
+
+  /**
+   * Async response parsing to prevent blocking the event loop
+   */
+  private async parseResponseAsync<T>(data: Buffer): Promise<T> {
+    // Use setImmediate to break up parsing and prevent blocking
+    return new Promise((resolve, reject) => {
+      setImmediate(() => {
+        try {
+          const jsonString = data.toString('utf8');
+          const parsed = JSON.parse(jsonString);
+          resolve(parsed);
+        } catch (error) {
+          reject(error);
+        }
+      });
     });
   }
 

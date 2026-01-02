@@ -76,6 +76,10 @@ export class PerformanceMonitor extends EventEmitter {
   private isMonitoring = false;
   private config: MonitorConfig;
   
+  // Circular buffer implementation for memory-efficient history storage
+  private circularBuffers = new Map<string, { buffer: Array<{ value: number; timestamp: number }>; size: number; head: number; count: number }>();
+  private readonly defaultBufferSize = 720; // 2 hours of 5-second intervals
+  
   // Adaptive sampling properties
   private samplingRate = 1.0; // Start with full sampling
   private performanceBaseline: PerformanceMetrics | null = null;
@@ -147,9 +151,30 @@ export class PerformanceMonitor extends EventEmitter {
   }
 
   /**
-   * Get metrics history for a specific metric
+   * Get metrics history for a specific metric (optimized with circular buffer)
    */
   getHistory(metricPath: string, durationMs?: number): Array<{ value: number; timestamp: number }> {
+    // Prefer circular buffer data for efficiency
+    const buffer = this.circularBuffers.get(metricPath);
+    if (buffer && buffer.count > 0) {
+      const result: Array<{ value: number; timestamp: number }> = [];
+      
+      // Extract data from circular buffer in chronological order
+      for (let i = 0; i < buffer.count; i++) {
+        const index = (buffer.head - buffer.count + i + 1 + buffer.size) % buffer.size;
+        const entry = buffer.buffer[index];
+        if (entry) {
+          // Apply duration filter if specified
+          if (!durationMs || entry.timestamp >= Date.now() - durationMs) {
+            result.push(entry);
+          }
+        }
+      }
+      
+      return result;
+    }
+    
+    // Fallback to array-based history
     const history = this.history[metricPath] || [];
     
     if (!durationMs) {
@@ -458,15 +483,34 @@ export class PerformanceMonitor extends EventEmitter {
   }
 
   private updateHistory(path: string, value: number, timestamp: number): void {
+    // Use circular buffer for O(1) insertion and bounded memory usage
+    let buffer = this.circularBuffers.get(path);
+    
+    if (!buffer) {
+      buffer = {
+        buffer: new Array(this.config.historySize || this.defaultBufferSize),
+        size: this.config.historySize || this.defaultBufferSize,
+        head: 0,
+        count: 0
+      };
+      this.circularBuffers.set(path, buffer);
+    }
+    
+    // Add new entry to circular buffer (O(1) operation)
+    buffer.buffer[buffer.head] = { value, timestamp };
+    buffer.head = (buffer.head + 1) % buffer.size;
+    buffer.count = Math.min(buffer.count + 1, buffer.size);
+    
+    // Maintain backward compatibility with array-based history for existing code
     if (!this.history[path]) {
       this.history[path] = [];
     }
     
+    // Update array-based history for compatibility (but limit size)
     this.history[path].push({ value, timestamp });
     
-    // Aggressive memory management with adaptive sampling based on memory pressure
+    // Apply aggressive memory management to array-based history
     if (this.history[path].length > this.config.historySize) {
-      // Check memory pressure and adjust sampling accordingly
       const memoryPressure = this.getMemoryPressure();
       let keepRatio = 0.7; // Default keep 70%
       
@@ -477,14 +521,9 @@ export class PerformanceMonitor extends EventEmitter {
       }
       
       const keepCount = Math.floor(this.config.historySize * keepRatio);
-      const sampleCount = this.config.historySize - keepCount;
-      const oldestData = this.history[path].slice(0, -keepCount);
-      const recentData = this.history[path].slice(-keepCount);
       
-      // More intelligent sampling - preserve important data points
-      const sampledOldest = this.intelligentSample(oldestData, sampleCount);
-      
-      this.history[path] = [...sampledOldest, ...recentData];
+      // Keep most recent entries
+      this.history[path] = this.history[path].slice(-keepCount);
       
       // Additional cleanup under extreme memory pressure
       if (memoryPressure > 0.95) {

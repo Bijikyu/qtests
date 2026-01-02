@@ -83,6 +83,20 @@ class TestRunner {
       this.testResults.length = 0;
     }
     
+    // Clear Jest references to prevent memory leaks
+    if (this._runCLI) {
+      // Clear any cached Jest modules or references
+      try {
+        const require = createRequire(import.meta.url);
+        const jestPath = require.resolve('jest');
+        if (jestPath && require.cache[jestPath]) {
+          delete require.cache[jestPath];
+        }
+      } catch (error) {
+        // Ignore cleanup errors
+      }
+    }
+    
     // Delete properties to free memory (not just set to null)
     delete this.testResults;
     delete this._runCLI;
@@ -91,10 +105,17 @@ class TestRunner {
     delete this.startTime;
     delete this._cleanedUp;
     
+    // Clear any remaining event listeners
+    this.removeAllListeners();
+    
     // Force garbage collection if available
     if (global.gc) {
       global.gc();
     }
+    
+    // Additional cleanup for any remaining references
+    this._runCLI = null;
+    this.testResults = null;
   }
 
   // Resolve a binary path from PATH, preferring earlier entries explicitly.

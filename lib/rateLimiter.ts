@@ -47,8 +47,10 @@ export class DistributedRateLimiter {
   private _cleanupInterval: NodeJS.Timeout | null = null;
   private circuitBreaker?: CircuitBreaker;
   
-  // Performance optimization: Smart cache with pattern recognition
+  // Performance optimization: Smart cache with pattern recognition and bounded LRU
   private recentCache = new Map<string, { result: RateLimitResult; timestamp: number; frequency: number }>();
+  private cacheAccessOrder = new Map<string, number>(); // LRU tracking for rate limiter cache
+  private cacheAccessCounter = 0; // Monotonically increasing counter for LRU
   private readonly maxCacheSize = 500; // Reduced to prevent memory leaks
   private readonly cacheTtl = 5000; // 5 seconds cache TTL
   private readonly maxEventHandlers = 10; // Limit event handlers to prevent memory bloat
@@ -143,7 +145,7 @@ export class DistributedRateLimiter {
   }
 
 /**
- * Cache rate limit result with adaptive eviction based on memory pressure
+ * Cache rate limit result with adaptive eviction based on memory pressure and LRU
  */
 private cacheResult(key: string, result: RateLimitResult): void {
   // Check memory pressure and adjust cache size accordingly
@@ -161,12 +163,47 @@ private cacheResult(key: string, result: RateLimitResult): void {
     existing.frequency++;
     existing.timestamp = Date.now();
     existing.result = result; // Update with latest result
+    
+    // Update LRU access order
+    this.cacheAccessOrder.set(key, ++this.cacheAccessCounter);
   } else {
     this.recentCache.set(key, {
       result,
       timestamp: Date.now(),
       frequency: 1
     });
+    
+    // Add to LRU tracking
+    this.cacheAccessOrder.set(key, ++this.cacheAccessCounter);
+    
+    // Prevent unbounded growth of access order map
+    if (this.cacheAccessOrder.size > this.maxCacheSize * 1.5) {
+      this.cleanupCacheAccessOrder();
+    }
+  }
+}
+
+/**
+ * Cleanup cache access order to prevent memory leaks
+ */
+private cleanupCacheAccessOrder(): void {
+  if (this.cacheAccessOrder.size <= this.maxCacheSize) return;
+  
+  // Get least recently used keys to remove
+  const entries = Array.from(this.cacheAccessOrder.entries());
+  entries.sort((a, b) => a[1] - b[1]); // Sort by access time (oldest first)
+  
+  const removeCount = Math.floor(this.cacheAccessOrder.size * 0.3); // Remove 30%
+  const keysToRemove: string[] = [];
+  
+  for (let i = 0; i < removeCount && i < entries.length; i++) {
+    keysToRemove.push(entries[i][0]);
+  }
+  
+  // Remove from both maps
+  for (const key of keysToRemove) {
+    this.cacheAccessOrder.delete(key);
+    this.recentCache.delete(key);
   }
 }
 
@@ -202,28 +239,35 @@ private calculateAdaptiveCacheSize(memoryPressure: number): number {
 }
 
 /**
- * Perform adaptive eviction with intelligent prioritization (optimized for scalability)
+ * Perform adaptive eviction with LRU prioritization (optimized for scalability)
  */
 private performAdaptiveEviction(memoryPressure: number, effectiveMaxSize: number): void {
-  const entries = Array.from(this.recentCache.entries());
-  const entriesToEvict = Math.max(1, Math.floor(entries.length * 0.2)); // Evict 20% or minimum 1
+  const entriesToEvict = Math.max(1, Math.floor(this.recentCache.size * 0.2)); // Evict 20% or minimum 1
   
-  // Use simpler LRU strategy under high memory pressure to avoid CPU-intensive scoring
+  // Use LRU strategy with access order tracking for O(1) eviction
   if (memoryPressure > 0.8) {
-    // Fast LRU eviction - just sort by timestamp (oldest first)
-    entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
+    // Fast LRU eviction - use access order tracking
+    const entries = Array.from(this.cacheAccessOrder.entries());
+    entries.sort((a, b) => a[1] - b[1]); // Sort by access counter (oldest first)
     
+    const keysToRemove: string[] = [];
     for (let i = 0; i < Math.min(entriesToEvict, entries.length); i++) {
-      this.recentCache.delete(entries[i][0]);
+      keysToRemove.push(entries[i][0]);
+    }
+    
+    for (const key of keysToRemove) {
+      this.recentCache.delete(key);
+      this.cacheAccessOrder.delete(key);
     }
     
     if (entriesToEvict > 5) {
-      console.debug(`Rate limiter fast LRU eviction: removed ${entriesToEvict} entries, memory pressure: ${(memoryPressure * 100).toFixed(1)}%`);
+      console.debug(`Rate limiter fast LRU eviction: removed ${keysToRemove.length} entries, memory pressure: ${(memoryPressure * 100).toFixed(1)}%`);
     }
     return;
   }
   
   // Intelligent scoring only under moderate memory pressure
+  const entries = Array.from(this.recentCache.entries());
   const maxScoreItems = Math.min(entriesToEvict * 2, entries.length); // Limit scoring work
   const scoredEntries: Array<{ key: string; score: number }> = [];
   
@@ -251,7 +295,9 @@ private performAdaptiveEviction(memoryPressure: number, effectiveMaxSize: number
   scoredEntries.sort((a, b) => b.score - a.score);
   
   for (let i = 0; i < Math.min(entriesToEvict, scoredEntries.length); i++) {
-    this.recentCache.delete(scoredEntries[i].key);
+    const key = scoredEntries[i].key;
+    this.recentCache.delete(key);
+    this.cacheAccessOrder.delete(key);
   }
   
   // Log significant evictions
@@ -476,6 +522,11 @@ export class InMemoryRateLimiter {
   private maxHistorySize = 1000;
   private maxTrackedKeys = 10000; // Prevent memory bloat from too many tracked keys
   private patternAnalysisIntervalMs = 60000; // 1 minute
+  
+  // Token bucket implementation for smoother request distribution
+  private tokenBuckets = new Map<string, { tokens: number; lastRefill: number; capacity: number; refillRate: number }>();
+  private readonly defaultBucketCapacity = 100; // Default token capacity
+  private readonly defaultRefillRate = 10; // Default tokens per second
 
   constructor(config: RateLimitConfig) {
     this.config = config;
@@ -484,36 +535,62 @@ export class InMemoryRateLimiter {
 
   isAllowed(key: string): RateLimitResult {
     const now = Date.now();
-    const counter = this.counters.get(key);
-
-    if (!counter || now > counter.resetTime) {
-      this.counters.set(key, {
-        count: 1,
-        resetTime: now + this.config.windowMs
-      });
-
+    
+    // Use token bucket algorithm for smoother request distribution
+    const bucket = this.getOrCreateTokenBucket(key);
+    this.refillTokens(bucket, now);
+    
+    if (bucket.tokens >= 1) {
+      bucket.tokens--;
+      
       return {
         allowed: true,
-        remaining: this.config.maxRequests - 1,
-        resetTime: now + this.config.windowMs
+        remaining: Math.floor(bucket.tokens),
+        resetTime: now + Math.ceil((bucket.capacity - bucket.tokens) / bucket.refillRate * 1000)
       };
     }
-
-    if (counter.count >= this.config.maxRequests) {
-      return {
-        allowed: false,
-        remaining: 0,
-        resetTime: counter.resetTime,
-        retryAfter: Math.max(0, Math.ceil((counter.resetTime - now) / 1000))
-      };
-    }
-
-    counter.count++;
+    
+    // Calculate retry after based on token refill rate
+    const retryAfter = Math.ceil((1 - bucket.tokens) / bucket.refillRate * 1000);
+    
     return {
-      allowed: true,
-      remaining: this.config.maxRequests - counter.count,
-      resetTime: counter.resetTime
+      allowed: false,
+      remaining: 0,
+      resetTime: now + retryAfter,
+      retryAfter
     };
+  }
+
+  /**
+   * Get or create token bucket for key
+   */
+  private getOrCreateTokenBucket(key: string): { tokens: number; lastRefill: number; capacity: number; refillRate: number } {
+    let bucket = this.tokenBuckets.get(key);
+    
+    if (!bucket) {
+      bucket = {
+        tokens: this.defaultBucketCapacity,
+        lastRefill: Date.now(),
+        capacity: this.defaultBucketCapacity,
+        refillRate: this.defaultRefillRate
+      };
+      this.tokenBuckets.set(key, bucket);
+    }
+    
+    return bucket;
+  }
+
+  /**
+   * Refill tokens based on elapsed time
+   */
+  private refillTokens(bucket: { tokens: number; lastRefill: number; capacity: number; refillRate: number }, now: number): void {
+    const elapsed = (now - bucket.lastRefill) / 1000; // Convert to seconds
+    const tokensToAdd = Math.floor(elapsed * bucket.refillRate);
+    
+    if (tokensToAdd > 0) {
+      bucket.tokens = Math.min(bucket.capacity, bucket.tokens + tokensToAdd);
+      bucket.lastRefill = now;
+    }
   }
 
   reset(key: string): void {

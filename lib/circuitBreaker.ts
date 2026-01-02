@@ -29,11 +29,13 @@ export interface CircuitBreakerStats {
   state: CircuitState;
   failureCount: number;
   successCount: number;
-  lastFailureTime?: number;
-  lastSuccessTime?: number;
-  averageResponseTime: number;
   totalCalls: number;
   successRate: number;
+  averageResponseTime: number;
+  lastFailureTime?: number;
+  lastSuccessTime?: number;
+  isDisabled: boolean;
+  adaptiveTimeout?: number;
 }
 
 interface CallRecord {
@@ -58,6 +60,12 @@ export class CircuitBreaker extends EventEmitter {
 
   private config: Required<CircuitBreakerOptions>;
   private resetTimer?: NodeJS.Timeout;
+  private stats = {
+    totalCalls: 0,
+    successCount: 0,
+    totalResponseTime: 0,
+    averageResponseTime: 0
+  };
   
   // Binary search cleanup properties
   private maxHistorySize = 1000; // Limit history size for efficiency
@@ -112,7 +120,7 @@ export class CircuitBreaker extends EventEmitter {
     }
   }
 
-  /**
+/**
    * Get current circuit breaker state and statistics
    */
   getStats(): CircuitBreakerStats {
@@ -123,19 +131,49 @@ export class CircuitBreaker extends EventEmitter {
       state: this.state,
       failureCount: this.failureCount,
       successCount: this.successCount,
-      lastFailureTime: this.lastFailureTime || undefined,
-      lastSuccessTime: this.lastSuccessTime || undefined,
-      averageResponseTime: avgResponseTime,
       totalCalls: this.totalCalls,
-      successRate
+      successRate,
+      averageResponseTime: avgResponseTime,
+      lastFailureTime: this.lastFailureTime,
+      lastSuccessTime: this.lastSuccessTime,
+      isDisabled: this.state === CircuitState.CLOSED,
+      adaptiveTimeout: this.calculateAdaptiveTimeout()
     };
   }
 
-  /**
-   * Force circuit breaker to a specific state (for testing)
+/**
+   * Check if circuit breaker should try to reset
    */
-  forceState(state: CircuitState): void {
-    this.transitionTo(state);
+  private shouldTryReset(): boolean {
+    const timeSinceFailure = Date.now() - (this.lastFailureTime || 0);
+    return timeSinceFailure >= this.config.resetTimeout;
+  }
+
+  /**
+   * Calculate adaptive timeout based on historical response times
+   */
+  private calculateAdaptiveTimeout(): number {
+    let adaptiveTimeout = this.config.timeout;
+    
+    // Adaptive timeout scaling based on historical response times
+    if (this.config.adaptiveTimeout && this.stats.totalCalls > 10) {
+      const avgResponseTime = this.stats.averageResponseTime || 10000; // Default 10s if no history
+      const responseTimeRatio = avgResponseTime / this.config.timeout;
+      
+      if (responseTimeRatio > 2.0) {
+        // If responses are slow, increase timeout proportionally
+        adaptiveTimeout = Math.min(this.config.timeout * 1.5, avgResponseTime * 2.0);
+      } else if (responseTimeRatio > 1.5) {
+        adaptiveTimeout = Math.min(this.config.timeout * 1.2, avgResponseTime * 1.5);
+      } else if (responseTimeRatio > 1.2) {
+        adaptiveTimeout = Math.min(this.config.timeout * 1.1, avgResponseTime * 1.2);
+      }
+      
+      // Cap timeout to reasonable maximum
+      adaptiveTimeout = Math.min(adaptiveTimeout, 300000); // Max 5 minutes
+    }
+    
+    return adaptiveTimeout;
   }
 
   /**
@@ -248,7 +286,7 @@ export class CircuitBreaker extends EventEmitter {
   }
 
   /**
-   * Perform binary search cleanup of call history
+   * Perform binary search cleanup of call history with bounded memory management
    */
   private performBinarySearchCleanup(): void {
     const now = Date.now();
@@ -256,20 +294,33 @@ export class CircuitBreaker extends EventEmitter {
     
     this.lastCleanupTime = now;
     
-    if (this.callHistory.length <= this.maxHistorySize) return;
+    // Enforce maximum history size to prevent memory leaks
+    if (this.callHistory.length > this.maxHistorySize) {
+      // Remove oldest entries first (O(1) operation)
+      const excess = this.callHistory.length - this.maxHistorySize;
+      this.callHistory.splice(0, excess);
+      
+      console.debug(`Circuit breaker cleanup: removed ${excess} oldest entries to maintain size limit`);
+      return;
+    }
     
-    // Sort calls by timestamp for binary search
+    // Only perform expensive cleanup if we have enough data
+    if (this.callHistory.length < 100) return;
+    
+    // Sort calls by timestamp for binary search (only when necessary)
     const sortedCalls = [...this.callHistory].sort((a, b) => a.timestamp - b.timestamp);
     
     // Remove duplicate or outlier calls using binary search pattern
     const cleanedCalls: CallRecord[] = [];
     const seenPatterns = new Set<string>();
+    let duplicatesRemoved = 0;
     
     for (const call of sortedCalls) {
       const pattern = this.generateCallPattern(call);
       
       if (seenPatterns.has(pattern)) {
         // Skip duplicates - this is the binary search optimization
+        duplicatesRemoved++;
         continue;
       }
       
@@ -277,17 +328,16 @@ export class CircuitBreaker extends EventEmitter {
       cleanedCalls.push(call);
     }
     
-    // Keep only the most recent calls within size limit
-    if (cleanedCalls.length > this.maxHistorySize) {
-      const excess = cleanedCalls.length - this.maxHistorySize;
-      cleanedCalls.splice(0, excess);
+    // Only replace if we removed significant duplicates
+    if (duplicatesRemoved > sortedCalls.length * 0.1) { // More than 10% duplicates
+      this.callHistory = cleanedCalls;
+      
+      console.debug(`Circuit breaker binary search cleanup: removed ${duplicatesRemoved} duplicate/outlier calls`);
     }
     
-    this.callHistory = cleanedCalls;
-    
-    // Log cleanup results
-    if (sortedCalls.length !== cleanedCalls.length) {
-      console.debug(`Circuit breaker binary search cleanup: removed ${sortedCalls.length - cleanedCalls.length} duplicate/outlier calls`);
+    // Prevent pattern set from growing unbounded
+    if (seenPatterns.size > 1000) {
+      seenPatterns.clear();
     }
   }
 
@@ -387,10 +437,15 @@ export class CircuitBreaker extends EventEmitter {
 }
 
 /**
- * Circuit breaker factory for common patterns
- */
-export function createCircuitBreaker(options: CircuitBreakerOptions = {}): CircuitBreaker {
-  return new CircuitBreaker(options);
+   * Circuit breaker configuration
+   */
+export interface CircuitBreakerOptions {
+  failureThreshold?: number;      // Number of failures before opening circuit
+  resetTimeout?: number;           // Time to wait before trying again
+  timeout?: number;              // Request timeout in milliseconds
+  monitoringPeriod?: number;       // Time window for failure counting
+  expectedError?: string;        // Expected error message for testing
+  adaptiveTimeout?: boolean;        // Enable adaptive timeout scaling
 }
 
 /**
