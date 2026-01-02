@@ -80,7 +80,8 @@ export interface CacheMetrics {
  */
 class LocalCache<T = any> {
   private cache = new Map<string, CacheItem<T>>();
-  private accessOrder: string[] = [];
+  private accessOrder = new Map<string, number>(); // More efficient O(1) access tracking
+  private accessCounter = 0; // Monotonically increasing counter for LRU
   private maxSize: number;
   private metrics: CacheMetrics;
   
@@ -212,7 +213,8 @@ class LocalCache<T = any> {
     const startTime = Date.now();
     
     this.cache.clear();
-    this.accessOrder = [];
+    this.accessOrder.clear();
+    this.accessCounter = 0;
 
     this.metrics.operations.clear++;
     this.metrics.performance.avgResponseTime = 
@@ -240,23 +242,23 @@ class LocalCache<T = any> {
   }
 
   private evictLRU(): void {
-    if (this.accessOrder.length === 0) return;
+    if (this.accessOrder.size === 0) return;
     
     // Dynamic eviction based on memory pressure and usage patterns
     let evictCount = this.evictionBatchSize;
     
     // Increase eviction under memory pressure
     if (this.currentMemoryUsage > this.memoryThreshold) {
-      evictCount = Math.floor(this.accessOrder.length * 0.3); // Evict 30% under pressure
+      evictCount = Math.floor(this.accessOrder.size * 0.3); // Evict 30% under pressure
     } else if (this.currentMemoryUsage > this.memoryThreshold * 0.8) {
-      evictCount = Math.floor(this.accessOrder.length * 0.2); // Evict 20% near threshold
+      evictCount = Math.floor(this.accessOrder.size * 0.2); // Evict 20% near threshold
     } else {
-      evictCount = Math.max(1, Math.floor(this.accessOrder.length * 0.05)); // Normal 5% eviction
+      evictCount = Math.max(1, Math.floor(this.accessOrder.size * 0.05)); // Normal 5% eviction
     }
     const itemsWithTime: Array<{ key: string; lastAccessed: number; size: number }> = [];
     
-    // Collect items with their access times and sizes
-    for (const key of this.accessOrder) {
+    // Collect items with their access times and sizes - more efficient iteration
+    for (const [key, accessCounter] of Array.from(this.accessOrder)) {
       const item = this.cache.get(key);
       if (item) {
         itemsWithTime.push({
@@ -312,15 +314,13 @@ class LocalCache<T = any> {
   }
 
   private updateAccessOrder(key: string): void {
-    this.removeFromAccessOrder(key);
-    this.accessOrder.push(key);
+    // Update the access counter for LRU tracking - O(1) operation
+    this.accessOrder.set(key, ++this.accessCounter);
   }
 
   private removeFromAccessOrder(key: string): void {
-    const index = this.accessOrder.indexOf(key);
-    if (index > -1) {
-      this.accessOrder.splice(index, 1);
-    }
+    // Remove from access order tracking - O(1) operation
+    this.accessOrder.delete(key);
   }
 
   private generateChecksum(value: T): string {

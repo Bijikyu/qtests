@@ -18,21 +18,21 @@ export async function limitedPromiseAll<T>(
   const results = new Array<T>(tasks.length);
   let currentIndex = 0;
   
-  // More efficient rolling concurrency instead of batch processing
-  const executeNext = async (): Promise<void> => {
-    const index = currentIndex++;
-    if (index >= tasks.length) return;
+  // More efficient rolling concurrency with proper synchronization
+  const executeNext = async (startIndex: number): Promise<void> => {
+    if (startIndex >= tasks.length) return;
     
     try {
-      results[index] = await tasks[index]();
+      results[startIndex] = await tasks[startIndex]();
     } catch (error) {
       // Preserve error behavior of Promise.all
       throw error;
     }
     
-    // Continue executing if we still have tasks and concurrency slots
-    if (currentIndex < tasks.length) {
-      return executeNext();
+    // Calculate next index atomically to avoid race conditions
+    const nextIndex = currentIndex++;
+    if (nextIndex < tasks.length) {
+      return executeNext(nextIndex);
     }
   };
   
@@ -41,7 +41,7 @@ export async function limitedPromiseAll<T>(
   const initialBatchSize = Math.min(concurrency, tasks.length);
   
   for (let i = 0; i < initialBatchSize; i++) {
-    initialPromises.push(executeNext());
+    initialPromises.push(executeNext(currentIndex++));
   }
   
   await Promise.all(initialPromises);

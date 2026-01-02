@@ -7,6 +7,7 @@ export interface ValidationConfig {
   maxConcurrentChunks: number;
   dangerousPatterns: RegExp[];
   enableStreaming: boolean;
+  enableCaching?: boolean;
   timeout?: number;
 }
 

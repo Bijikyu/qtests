@@ -219,8 +219,9 @@ export class AdvancedMemoryLeakDetector extends EventEmitter {
     const sumY = snapshots.reduce((sum, s) => sum + s.heapUsed, 0);
     const sumXY = snapshots.reduce((sum, s, i) => sum + (i * s.heapUsed), 0);
     const sumX2 = (n * (n - 1) * (2 * n - 1)) / 6; // Sum of squared time indices
-const correlation = (n * sumXY - sumX * sumY) / 
-      Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY)));
+    const sumY2 = snapshots.reduce((sum, s) => sum + (s.heapUsed * s.heapUsed), 0);
+    const correlation = (n * sumXY - sumX * sumY) / 
+      Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
     
     return Math.max(0, Math.min(1, correlation));
   }

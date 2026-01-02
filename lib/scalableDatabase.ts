@@ -74,9 +74,11 @@ export class ScalableDatabaseClient extends EventEmitter {
   private queryCache = new Map<string, CachedQuery>();
   private cacheMaxSize: number;
   private cacheTtlMs: number;
+  private cleanupInterval?: NodeJS.Timeout;
   
   // Query optimization properties
   private queryPatterns = new Map<string, { avgResultSize: number; complexity: number; frequency: number }>();
+  private readonly maxQueryPatterns = 1000; // Prevent unbounded growth
   private queryComplexityThresholds = { simple: 1, medium: 5, complex: 10 };
   
   // Metrics tracking
@@ -164,6 +166,11 @@ export class ScalableDatabaseClient extends EventEmitter {
         complexity: analysis.complexity,
         frequency: (existing?.frequency || 0) + 1
       });
+      
+      // Cleanup old patterns if map gets too large
+      if (this.queryPatterns.size > this.maxQueryPatterns) {
+        this.cleanupQueryPatterns();
+      }
       
       // Enforce result set size limits with early termination support and better warnings
       if (result.rows.length > this.maxResultRows) {
@@ -493,9 +500,12 @@ async batchQuery<T = any>(
   }
 
 private startCacheCleanup(): void {
-  const cleanupInterval = setInterval(() => {
+  this.cleanupInterval = setInterval(() => {
     if (this.isShutdown) {
-      clearInterval(cleanupInterval);
+      if (this.cleanupInterval) {
+        clearInterval(this.cleanupInterval);
+        this.cleanupInterval = undefined;
+      }
       return;
     }
 
@@ -529,6 +539,22 @@ private startCacheCleanup(): void {
     const totalQueries = this.metrics.totalQueries - this.metrics.cachedQueries;
     this.metrics.averageQueryTime = 
       (this.metrics.averageQueryTime * (totalQueries - 1) + duration) / totalQueries;
+  }
+
+  /**
+   * Cleanup old query patterns to prevent memory leaks
+   */
+  private cleanupQueryPatterns(): void {
+    const entries = Array.from(this.queryPatterns.entries());
+    
+    // Sort by frequency (lowest first) to keep useful patterns
+    entries.sort((a, b) => a[1].frequency - b[1].frequency);
+    
+    // Remove least frequent patterns (keep 80% of patterns)
+    const removeCount = Math.floor(entries.length * 0.2);
+    for (let i = 0; i < removeCount; i++) {
+      this.queryPatterns.delete(entries[i][0]);
+    }
   }
 
   /**
@@ -657,6 +683,12 @@ async close(): Promise<void> {
   }
   
   this.isShutdown = true;
+
+  // Clear cleanup interval
+  if (this.cleanupInterval) {
+    clearInterval(this.cleanupInterval);
+    this.cleanupInterval = undefined;
+  }
 
   // Reject all waiting requests
   const waiting = this.waitingQueue.splice(0);

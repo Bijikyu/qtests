@@ -6,6 +6,11 @@ import qerrors from '../qerrorsFallback.js';
 // Circuit breaker state management using module-scoped Map
 const circuitBreakerState = new Map<string, { count: number; lastFailure: number }>();
 
+// Validation result cache to improve performance for repeated validations
+const validationCache = new Map<string, { result: ValidationResult; timestamp: number }>();
+const MAX_CACHE_SIZE = 1000;
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 function getCircuitBreakerState(key: string) {
   return circuitBreakerState.get(key) || { count: 0, lastFailure: 0 };
 }
@@ -28,6 +33,25 @@ export async function validateWithZod<T>(
   config: ValidationConfig
 ): Promise<ValidationResult> {
   const startTime = Date.now();
+  
+  // Check cache for validation results (only cache if data is serializable and not too large)
+  let cacheKey: string | null = null;
+  if (config.enableCaching !== false && typeof data !== 'function' && typeof data !== 'symbol') {
+    try {
+      // Create cache key from schema name and data hash
+      const dataStr = JSON.stringify(data);
+      if (dataStr.length < 1024) { // Only cache small data
+        cacheKey = `${schema.constructor.name}_${dataStr}`;
+        
+        const cached = validationCache.get(cacheKey);
+        if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+          return cached.result;
+        }
+      }
+    } catch {
+      // If JSON.stringify fails, skip caching
+    }
+  }
   
   // Add timeout protection for validation operations
   const timeoutMs = config.timeout || 30000; // 30 second default timeout

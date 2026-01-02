@@ -387,9 +387,15 @@ export function distributedRateLimit(config: RateLimitConfig) {
 export class InMemoryRateLimiter {
   private counters = new Map<string, { count: number; resetTime: number }>();
   private config: RateLimitConfig;
+  private requestHistory = new Map<string, number[]>();
+  private patternCache = new Map<string, { avgRequests: number; pattern: string }>();
+  private patternAnalysisInterval: NodeJS.Timeout | undefined;
+  private maxHistorySize = 1000;
+  private patternAnalysisIntervalMs = 60000; // 1 minute
 
   constructor(config: RateLimitConfig) {
     this.config = config;
+    this.startPatternAnalysis();
   }
 
   isAllowed(key: string): RateLimitResult {
@@ -462,10 +468,10 @@ export class InMemoryRateLimiter {
    * Start pattern analysis for predictive rate limiting
    */
   private startPatternAnalysis(): void {
-    setInterval(() => {
+    this.patternAnalysisInterval = setInterval(() => {
       this.analyzeRequestPatterns();
       this.cleanupOldHistory();
-    }, this.patternAnalysisInterval);
+    }, this.patternAnalysisIntervalMs);
   }
 
   /**
@@ -542,6 +548,19 @@ export class InMemoryRateLimiter {
         this.requestHistory.set(key, filteredTimestamps);
       }
     }
+  }
+
+  /**
+   * Cleanup method to prevent memory leaks
+   */
+  destroy(): void {
+    if (this.patternAnalysisInterval) {
+      clearInterval(this.patternAnalysisInterval);
+      this.patternAnalysisInterval = undefined;
+    }
+    this.counters.clear();
+    this.requestHistory.clear();
+    this.patternCache.clear();
   }
 }
 
