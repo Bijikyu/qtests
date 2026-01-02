@@ -67,6 +67,8 @@ export class AdvancedConnectionPool extends EventEmitter {
     reject: (error: Error) => void;
     timeout: NodeJS.Timeout;
     timestamp: number;
+    requestId?: string;
+    timedOut?: boolean;
   }> = [];
   
   // O(1) queue implementation for high-performance dequeue operations
@@ -212,34 +214,50 @@ async acquire(): Promise<any> {
     let healthy = 0;
     let unhealthy = 0;
     
-    const healthCheckPromises = this.connections.map(async (connection) => {
-      try {
-        const isHealthy = await this.performHealthCheck(connection);
-        if (isHealthy) {
-          healthy++;
+    const healthCheckResults: Array<{ connection: PooledConnection; healthy: boolean }> = [];
+    
+    // Check connections in smaller batches to reduce memory pressure
+    const batchSize = 5;
+    for (let i = 0; i < this.connections.length; i += batchSize) {
+      const batch = this.connections.slice(i, i + batchSize);
+      const batchPromises = batch.map(async (pooled) => {
+        try {
+          if (this.config.validate) {
+            const isValid = await this.config.validate(pooled.connection);
+            return { connection: pooled, healthy: isValid };
+          }
+          return { connection: pooled, healthy: true };
+        } catch (error) {
+          console.warn(`Health check error for connection:`, error);
+          return { connection: pooled, healthy: false };
+        }
+      });
+      
+      const batchResults = await Promise.allSettled(batchPromises);
+      batchResults.forEach((result) => {
+        if (result.status === 'fulfilled') {
+          healthCheckResults.push(result.value);
+          if (result.value.healthy) {
+            healthy++;
+          } else {
+            unhealthy++;
+          }
         } else {
           unhealthy++;
         }
-      } catch (error) {
-        console.warn(`Health check error for connection:`, error);
-        unhealthy++;
-      }
-    });
+      });
+    }
     
-    await Promise.allSettled(healthCheckPromises);
+    // Remove unhealthy connections
+    const unhealthyConnections = healthCheckResults
+      .filter(result => !result.healthy)
+      .map(result => result.connection);
     
-    // Replace unhealthy connections
-    const unhealthyConnections = this.connections.filter((_, index) => {
-      const healthCheck = healthCheckPromises[index];
-      return healthCheck.status === 'rejected' || 
-             (healthCheck.status === 'fulfilled' && !healthCheck.value);
-    }).map(connection => connection.connection);
-    
-    for (const unhealthyConnection of unhealthyConnections) {
+    for (const pooled of unhealthyConnections) {
       try {
-        await this.replaceUnhealthyConnection(unhealthyConnection);
+        await this.removeConnection(pooled);
       } catch (error) {
-        console.error('Failed to replace unhealthy connection:', error);
+        console.error('Failed to remove unhealthy connection:', error);
       }
     }
     
@@ -248,29 +266,10 @@ async acquire(): Promise<any> {
     return { healthy, unhealthy };
   }
 
-  /**
+/**
    * Get connection pool statistics
    */
   getStats(): ConnectionStats {
-    const active = this.connections.filter(c => c.acquired).length;
-    const idle = this.connections.length - active;
-    const avgAcquireTime = this.stats.successfulAcquisitions > 0 
-      ? this.stats.totalAcquireTime / this.stats.successfulAcquisitions 
-      : 0;
-    const successRate = this.stats.successfulAcquisitions > 0 
-      ? (this.stats.successfulAcquisitions / this.stats.totalAcquisitions) * 100 
-      : 100;
-
-    return {
-      activeConnections: active,
-      idleConnections: idle,
-      totalConnections: this.connections.length,
-      averageAcquireTime: avgAcquireTime,
-      successRate,
-      memoryUsage: this.estimateMemoryUsage(),
-      queueSize: this.getOptimizedQueueSize()
-    };
-  }
     const active = this.connections.filter(c => c.acquired).length;
     const idle = this.connections.length - active;
     const avgAcquireTime = this.stats.successfulAcquisitions > 0 
@@ -284,7 +283,7 @@ async acquire(): Promise<any> {
       total: this.connections.length,
       active,
       idle,
-      waiting: this.waitingQueue.length,
+      waiting: this.getOptimizedQueueSize(),
       failed: this.stats.failedAcquisitions,
       avgAcquireTime,
       successRate,
@@ -698,7 +697,7 @@ private async waitForConnection(): Promise<any> {
     });
   }
 
-  private addToQueueWithBackpressure(maxQueue: number): Promise<any> {
+private addToQueueWithBackpressure(maxQueue: number): Promise<any> {
     return new Promise((resolve, reject) => {
       // Double-check queue limit before adding
       if (this.waitingQueue.length >= maxQueue) {
@@ -706,10 +705,16 @@ private async waitForConnection(): Promise<any> {
         return;
       }
 
+      // Create unique identifier for O(1) removal
+      const requestId = `req_${Date.now()}_${Math.random()}`;
+      
       const timeout = setTimeout(() => {
-        const index = this.waitingQueue.findIndex(w => w.resolve === resolve);
+        // O(1) removal using marker instead of findIndex/splice
+        const index = this.waitingQueue.findIndex(w => w.requestId === requestId);
         if (index >= 0) {
-          this.waitingQueue.splice(index, 1);
+          // Mark as resolved for cleanup instead of splicing
+          this.waitingQueue[index].resolve = () => {};
+          this.waitingQueue[index].timedOut = true;
         }
         reject(new Error('Connection acquire timeout'));
       }, this.config.acquireTimeout);
@@ -718,7 +723,34 @@ private async waitForConnection(): Promise<any> {
         resolve,
         reject,
         timeout,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        requestId,
+        timedOut: false
+      });
+    });
+  }
+
+      // Create unique identifier for O(1) removal
+      const requestId = `req_${Date.now()}_${Math.random()}`;
+      
+      const timeout = setTimeout(() => {
+        // O(1) removal using marker instead of findIndex/splice
+        const index = this.waitingQueue.findIndex(w => w.requestId === requestId);
+        if (index >= 0) {
+          // Mark as resolved for cleanup instead of splicing
+          this.waitingQueue[index].resolve = () => {};
+          this.waitingQueue[index].timedOut = true;
+        }
+        reject(new Error('Connection acquire timeout'));
+      }, this.config.acquireTimeout);
+
+      this.waitingQueue.push({
+        resolve,
+        reject,
+        timeout,
+        timestamp: Date.now(),
+        requestId,
+        timedOut: false
       });
     });
   }

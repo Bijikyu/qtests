@@ -184,32 +184,42 @@ export class AdvancedCache<T = any> extends EventEmitter {
     this.emit('cache:clear', { clearedEntries: size });
   }
 
-  /**
-   * Get multiple values
-   */
-  async mget(keys: string[]): Promise<Map<string, T | undefined>> {
-    const results = new Map<string, T | undefined>();
+/**
+ * Get multiple values with optimized memory usage
+ */
+async mget(keys: string[]): Promise<Map<string, T | undefined>> {
+  const results = new Map<string, T | undefined>();
+  
+  // Process keys in sequential smaller batches to minimize memory pressure
+  const batchSize = 5; // Further reduced batch size for memory efficiency
+  
+  for (let i = 0; i < keys.length; i += batchSize) {
+    const batch = keys.slice(i, i + batchSize);
     
-    // Process keys in smaller parallel batches to reduce memory pressure
-    const batchSize = 10; // Reduced batch size
-    for (let i = 0; i < keys.length; i += batchSize) {
-      const batch = keys.slice(i, i + batchSize);
-      const batchPromises = batch.map(async (key) => {
+    // Process sequentially to avoid memory spikes from parallel operations
+    for (const key of batch) {
+      try {
         const value = await this.get(key);
-        return [key, value] as [string, T | undefined];
-      });
-      
-      const batchResults = await Promise.all(batchPromises);
-      batchResults.forEach(([key, value]) => results.set(key, value));
-      
-      // Add small delay between batches to prevent memory spikes
-      if (i + batchSize < keys.length) {
-        await new Promise(resolve => setTimeout(resolve, 1));
+        results.set(key, value);
+        
+        // Allow event loop to process other tasks periodically
+        if (results.size % 10 === 0) {
+          await new Promise(resolve => setTimeout(resolve, 0));
+        }
+      } catch (error) {
+        console.warn(`Cache mget error for key ${key}:`, error);
+        results.set(key, undefined);
       }
     }
     
-    return results;
+    // Force garbage collection hint between batches if available
+    if (i + batchSize < keys.length && global.gc) {
+      global.gc();
+    }
   }
+  
+  return results;
+}
 
   /**
    * Set multiple values
@@ -332,35 +342,59 @@ export class AdvancedCache<T = any> extends EventEmitter {
     return Date.now() - entry.timestamp > entry.ttl;
   }
 
-  private calculateSize(value: T): number {
-    // Rough estimation of memory size
-    if (value === null || value === undefined) {
-      return 0;
-    }
-    
-    if (typeof value === 'string') {
-      return value.length * 2; // UTF-16
-    }
-    
-    if (typeof value === 'number') {
-      return 8; // 64-bit number
-    }
-    
-    if (typeof value === 'boolean') {
-      return 4;
-    }
-    
-    if (value instanceof ArrayBuffer) {
-      return value.byteLength;
-    }
-    
-    // For objects, use a rough estimation
-    try {
-      return JSON.stringify(value).length * 2;
-    } catch {
-      return 100; // Default size for non-serializable objects
-    }
+private calculateSize(value: T): number {
+  // Optimized memory size estimation without JSON.stringify in hot paths
+  if (value === null || value === undefined) {
+    return 0;
   }
+  
+  if (typeof value === 'string') {
+    return value.length * 2; // UTF-16
+  }
+  
+  if (typeof value === 'number') {
+    return 8; // 64-bit number
+  }
+  
+  if (typeof value === 'boolean') {
+    return 4;
+  }
+  
+  if (value instanceof ArrayBuffer) {
+    return value.byteLength;
+  }
+  
+  if (value instanceof Buffer) {
+    return value.length;
+  }
+  
+  if (Array.isArray(value)) {
+    // Estimate array size without JSON.stringify
+    let size = 24; // Base array overhead
+    for (const item of value) {
+      size += this.calculateSize(item);
+    }
+    return size;
+  }
+  
+  if (typeof value === 'object') {
+    // Fast object size estimation without JSON.stringify
+    let size = 24; // Base object overhead
+    try {
+      for (const key of Object.keys(value)) {
+        size += key.length * 2 + 4; // Key size + property overhead
+        size += this.calculateSize((value as any)[key]);
+      }
+    } catch {
+      // Fallback for non-plain objects
+      return 100;
+    }
+    return size;
+  }
+  
+  // Default size for other types
+  return 50;
+}
 
   private startCleanup(): void {
     this.cleanupInterval = setInterval(async () => {

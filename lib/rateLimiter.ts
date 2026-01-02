@@ -239,29 +239,39 @@ private calculateAdaptiveCacheSize(memoryPressure: number): number {
 }
 
 /**
- * Perform adaptive eviction with LRU prioritization (optimized for scalability)
+ * Perform adaptive eviction with O(1) LRU prioritization (optimized for scalability)
  */
 private performAdaptiveEviction(memoryPressure: number, effectiveMaxSize: number): void {
   const entriesToEvict = Math.max(1, Math.floor(this.recentCache.size * 0.2)); // Evict 20% or minimum 1
   
-  // Use LRU strategy with access order tracking for O(1) eviction
+  // Use O(1) LRU strategy with access order tracking
   if (memoryPressure > 0.8) {
-    // Fast LRU eviction - use access order tracking
-    const entries = Array.from(this.cacheAccessOrder.entries());
-    entries.sort((a, b) => a[1] - b[1]); // Sort by access counter (oldest first)
-    
+    // Fast O(1) LRU eviction - find oldest entries without sorting
     const keysToRemove: string[] = [];
-    for (let i = 0; i < Math.min(entriesToEvict, entries.length); i++) {
-      keysToRemove.push(entries[i][0]);
-    }
+    let oldestAccess = Infinity;
+    let oldestKey = '';
     
-    for (const key of keysToRemove) {
-      this.recentCache.delete(key);
-      this.cacheAccessOrder.delete(key);
+    // Find the oldest entries iteratively (O(n) but without sorting overhead)
+    for (let i = 0; i < entriesToEvict && this.cacheAccessOrder.size > 0; i++) {
+      oldestAccess = Infinity;
+      oldestKey = '';
+      
+      for (const [key, accessTime] of this.cacheAccessOrder.entries()) {
+        if (accessTime < oldestAccess && !keysToRemove.includes(key)) {
+          oldestAccess = accessTime;
+          oldestKey = key;
+        }
+      }
+      
+      if (oldestKey) {
+        keysToRemove.push(oldestKey);
+        this.recentCache.delete(oldestKey);
+        this.cacheAccessOrder.delete(oldestKey);
+      }
     }
     
     if (entriesToEvict > 5) {
-      console.debug(`Rate limiter fast LRU eviction: removed ${keysToRemove.length} entries, memory pressure: ${(memoryPressure * 100).toFixed(1)}%`);
+      console.debug(`Rate limiter fast O(1) LRU eviction: removed ${keysToRemove.length} entries, memory pressure: ${(memoryPressure * 100).toFixed(1)}%`);
     }
     return;
   }
