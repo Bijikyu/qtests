@@ -92,6 +92,13 @@ export class AdvancedConnectionPool extends EventEmitter {
     connectionsDestroyed: 0
   };
 
+  // Intelligent eviction properties
+  private memoryThreshold = 100 * 1024 * 1024; // 100MB memory threshold
+  private maxAge = 30 * 60 * 1000; // 30 minutes max connection age
+  private lastEvictionCheck = 0;
+  private evictionCheckInterval = 60 * 1000; // Check every minute
+  private connectionMemoryEstimate = 0;
+
   constructor(options: PoolOptions) {
     super();
     
@@ -360,22 +367,23 @@ private async waitForConnection(): Promise<any> {
   // Aggressive cleanup before checking limit
   this.cleanupTimedOutWaiters();
   
-  // More aggressive queue management to prevent overflow
+  // More aggressive queue management with priority-based rejection
   if (this.waitingQueue.length >= this.maxWaitingQueue) {
-    // Reject oldest requests to make room
-    const toReject = Math.min(10, this.waitingQueue.length);
+    // Reject oldest 25% of requests to make room and prevent cascade failures
+    const toReject = Math.max(1, Math.floor(this.waitingQueue.length * 0.25));
     for (let i = 0; i < toReject; i++) {
       const waiter = this.waitingQueue.shift();
       if (waiter) {
         clearTimeout(waiter.timeout);
-        waiter.reject(new Error('Pool overloaded - request rejected'));
+        waiter.reject(new Error('Pool overloaded - request rejected due to high load'));
       }
     }
   }
 
-  // Still check if we're at limit after cleanup
+  // Final check with exponential backoff suggestion
   if (this.waitingQueue.length >= this.maxWaitingQueue) {
-    throw new Error(`Connection pool waiting queue is full (${this.waitingQueue.length}/${this.maxWaitingQueue})`);
+    const suggestedDelay = Math.min(1000, this.waitingQueue.length * 10);
+    throw new Error(`Connection pool waiting queue is full (${this.waitingQueue.length}/${this.maxWaitingQueue}). Retry after ${suggestedDelay}ms`);
   }
 
   return new Promise((resolve, reject) => {
@@ -430,6 +438,97 @@ private async waitForConnection(): Promise<any> {
     });
   }
 
+  /**
+   * Intelligent eviction to prevent memory leaks
+   */
+  private async performIntelligentEviction(): Promise<void> {
+    const now = Date.now();
+    
+    // Skip if not enough time has passed
+    if (now - this.lastEvictionCheck < this.evictionCheckInterval) {
+      return;
+    }
+    
+    this.lastEvictionCheck = now;
+    
+    // Get available connections for eviction
+    const availableConnections = this.connections.filter(conn => !conn.acquired);
+    
+    if (availableConnections.length === 0) {
+      return;
+    }
+
+    // Priority-based eviction:
+    // 1. Connections older than maxAge
+    // 2. Idle connections beyond minimum
+    // 3. Connections with high retry count
+    
+    const evictionCandidates: Array<{ connection: PooledConnection; score: number }> = [];
+    
+    for (const conn of availableConnections) {
+      let score = 0;
+      
+      // Age-based scoring
+      const age = now - conn.created;
+      if (age > this.maxAge) {
+        score += 100; // High priority for old connections
+      } else {
+        score += (age / this.maxAge) * 50;
+      }
+      
+      // Idle time scoring
+      const idleTime = now - conn.lastUsed;
+      score += Math.min(idleTime / this.config.idleTimeout, 1) * 30;
+      
+      // Retry count scoring
+      score += Math.min(conn.retries, 5) * 10;
+      
+      evictionCandidates.push({ connection: conn, score });
+    }
+    
+    // Sort by eviction priority (highest score first)
+    evictionCandidates.sort((a, b) => b.score - a.score);
+    
+    // Calculate how many to evict based on memory pressure
+    const minConnections = this.config.minConnections || 2;
+    const currentAvailable = availableConnections.length;
+    let evictCount = 0;
+    
+    // Evict if we have more than minimum + buffer
+    if (currentAvailable > minConnections + 2) {
+      evictCount = Math.min(
+        currentAvailable - minConnections - 2,
+        Math.floor(evictionCandidates.length * 0.3) // Evict up to 30%
+      );
+    }
+    
+    // Additional eviction under memory pressure
+    if (this.connectionMemoryEstimate > this.memoryThreshold) {
+      evictCount = Math.max(evictCount, Math.floor(evictionCandidates.length * 0.5));
+    }
+    
+    // Perform eviction
+    for (let i = 0; i < evictCount && i < evictionCandidates.length; i++) {
+      const candidate = evictionCandidates[i];
+      const index = this.connections.indexOf(candidate.connection);
+      if (index >= 0) {
+        this.connections.splice(index, 1);
+        this.connectionMemoryEstimate -= 1024; // Estimate 1KB per connection
+        this.stats.connectionsDestroyed++;
+      }
+      
+      try {
+        await this.config.destroy(candidate.connection.connection);
+      } catch (error) {
+        console.warn('Error during connection eviction:', error);
+      }
+    }
+    
+    if (evictCount > 0) {
+      console.debug(`Intelligent eviction: removed ${evictCount} connections, ${this.connections.length} remaining`);
+    }
+  }
+
   private async startHealthChecks(): Promise<void> {
     if (!this.config.validate) {
       return;
@@ -479,6 +578,7 @@ private async waitForConnection(): Promise<any> {
   private startCleanup(): void {
     this.cleanupInterval = setInterval(async () => {
       await this.cleanupIdleConnections();
+      await this.performIntelligentEviction();
     }, this.config.idleTimeout);
   }
 

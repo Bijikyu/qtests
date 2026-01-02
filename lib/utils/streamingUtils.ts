@@ -6,8 +6,100 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { pipeline } from 'stream/promises';
-import { Transform } from 'stream';
+import { Transform, Readable } from 'stream';
 import qerrors from '../qerrorsFallback.js';
+
+/**
+ * Adaptive buffer management for optimal memory usage
+ */
+class AdaptiveBufferManager {
+  private systemMemory = 0;
+  private availableMemory = 0;
+  private bufferSizes = new Map<string, number>();
+  private lastAdjustment = 0;
+  
+  constructor() {
+    this.updateSystemMemory();
+  }
+  
+  /**
+   * Update system memory information
+   */
+  private updateSystemMemory(): void {
+    if (typeof process !== 'undefined' && process.memoryUsage) {
+      const memUsage = process.memoryUsage();
+      this.systemMemory = memUsage.heapTotal;
+      this.availableMemory = this.systemMemory - memUsage.heapUsed;
+    }
+  }
+  
+  /**
+   * Calculate optimal buffer size based on available memory and file type
+   */
+  calculateOptimalBufferSize(filePath: string, defaultSize: number = 64 * 1024): number {
+    this.updateSystemMemory();
+    
+    // Adjust based on available memory
+    let memoryBasedSize = defaultSize;
+    const memoryUsageRatio = this.availableMemory / this.systemMemory;
+    
+    if (memoryUsageRatio < 0.3) {
+      // Low memory available - reduce buffer size
+      memoryBasedSize = Math.max(8 * 1024, Math.floor(defaultSize * 0.5));
+    } else if (memoryUsageRatio > 0.7) {
+      // Plenty of memory available - can increase buffer size
+      memoryBasedSize = Math.min(1024 * 1024, Math.floor(defaultSize * 1.5));
+    }
+    
+    // File-type based adjustments
+    const ext = path.extname(filePath).toLowerCase();
+    let fileTypeMultiplier = 1.0;
+    
+    switch (ext) {
+      case '.json':
+      case '.txt':
+      case '.csv':
+        // Text files compress well, can use smaller buffers
+        fileTypeMultiplier = 0.5;
+        break;
+      case '.mp4':
+      case '.avi':
+      case '.mov':
+        // Video files - use larger buffers for efficiency
+        fileTypeMultiplier = 2.0;
+        break;
+      case '.zip':
+      case '.tar':
+      case '.gz':
+        // Compressed files - larger buffers for better decompression
+        fileTypeMultiplier = 1.5;
+        break;
+    }
+    
+    const optimalSize = Math.floor(memoryBasedSize * fileTypeMultiplier);
+    
+    // Cache the result for this file type
+    this.bufferSizes.set(ext, optimalSize);
+    
+    return optimalSize;
+  }
+  
+  /**
+   * Get recommended highWaterMark for streams
+   */
+  getHighWaterMark(filePath: string, options: StreamOptions = {}): number {
+    const optimalSize = this.calculateOptimalBufferSize(filePath);
+    
+    // Respect explicit highWaterMark option if provided
+    if (options.highWaterMark && options.highWaterMark > 0) {
+      return Math.min(optimalSize, options.highWaterMark);
+    }
+    
+    return optimalSize;
+  }
+}
+
+const bufferManager = new AdaptiveBufferManager();
 
 /**
  * Stream configuration options
@@ -48,12 +140,33 @@ export async function* readFileChunks(
   let offset = options.start || 0;
   const end = options.end || fileSize;
   
+  // Adaptive chunk sizing based on file size and available memory
+  const adaptiveChunkSize = calculateAdaptiveChunkSize(fileSize, chunkSize);
+  
   const readStream = fs.createReadStream(filePath, {
-    highWaterMark: chunkSize,
+    highWaterMark: adaptiveChunkSize,
     start: offset,
     end,
     ...options
   });
+
+  function calculateAdaptiveChunkSize(fileSize: number, requestedChunkSize: number): number {
+    const memUsage = process.memoryUsage();
+    const availableHeap = memUsage.heapTotal - memUsage.heapUsed;
+    
+    // For very large files with limited memory, use smaller chunks
+    if (fileSize > 100 * 1024 * 1024 && availableHeap < 100 * 1024 * 1024) {
+      return Math.min(256 * 1024, requestedChunkSize); // 256KB max
+    }
+    
+    // For medium files, moderate chunk size
+    if (fileSize > 10 * 1024 * 1024) {
+      return Math.min(512 * 1024, requestedChunkSize); // 512KB max
+    }
+    
+    // For small files, use requested size
+    return requestedChunkSize;
+  }
 
   try {
     for await (const chunk of readStream) {
@@ -71,7 +184,7 @@ export async function* readFileChunks(
       if (isLast) break;
     }
   } catch (error) {
-    qerrors(error, 'streamingUtils.readFileChunks: stream read failed', {
+    qerrors(error as Error, 'streamingUtils.readFileChunks: stream read failed', {
       filePath,
       chunkSize,
       offset,
@@ -101,7 +214,7 @@ export function readFileStream(
       ...options
     });
   } catch (error) {
-    qerrors(error, 'streamingUtils.readFileStream: stream creation failed', {
+    qerrors(error as Error, 'streamingUtils.readFileStream: stream creation failed', {
       filePath,
       chunkSize,
       operation: 'createReadStream'
@@ -138,7 +251,7 @@ export async function writeFileStream(
     const writable = fs.createWriteStream(filePath, options);
     await pipeline(readable, writable);
   } catch (error) {
-    qerrors(error, 'streamingUtils.writeFileStream: stream write failed', {
+    qerrors(error as Error, 'streamingUtils.writeFileStream: stream write failed', {
       filePath,
       options,
       operation: 'createWriteStream'
@@ -195,7 +308,7 @@ export async function transformFile(
     
     await pipeline(readStream, transform, writeStream);
   } catch (error) {
-    qerrors(error, 'streamingUtils.transformFile: file transformation failed', {
+    qerrors(error as Error, 'streamingUtils.transformFile: file transformation failed', {
       inputPath,
       outputPath,
       options,
@@ -227,7 +340,7 @@ export async function countLines(
     
     return lineCount;
   } catch (error) {
-    qerrors(error, 'streamingUtils.countLines: line counting failed', {
+    qerrors(error as Error, 'streamingUtils.countLines: line counting failed', {
       filePath,
       encoding,
       operation: 'createReadStream'
@@ -283,7 +396,7 @@ export async function searchInFile(
     
     return matches;
   } catch (error) {
-    qerrors(error, 'streamingUtils.searchInFile: search failed', {
+    qerrors(error as Error, 'streamingUtils.searchInFile: search failed', {
       filePath,
       pattern: pattern.toString(),
       maxMatches,
@@ -314,7 +427,7 @@ export async function copyFileStream(
     const writeStream = fs.createWriteStream(destPath, options);
     await pipeline(readStream, writeStream);
   } catch (error) {
-    qerrors(error, 'streamingUtils.copyFileStream: copy failed', {
+    qerrors(error as Error, 'streamingUtils.copyFileStream: copy failed', {
       sourcePath,
       destPath,
       options,
@@ -334,7 +447,7 @@ export async function getFileSize(filePath: string): Promise<number> {
     const stats = await fs.promises.stat(filePath);
     return stats.size;
   } catch (error) {
-    qerrors(error, 'streamingUtils.getFileSize: stat failed', {
+    qerrors(error as Error, 'streamingUtils.getFileSize: stat failed', {
       filePath,
       operation: 'stat'
     });
@@ -371,5 +484,9 @@ export default {
   searchInFile,
   copyFileStream,
   getFileSize,
-  shouldUseStreaming
+  shouldUseStreaming,
+  // Adaptive buffer management
+  bufferManager,
+  getAdaptiveHighWaterMark: bufferManager.getHighWaterMark.bind(bufferManager),
+  calculateOptimalBufferSize: bufferManager.calculateOptimalBufferSize.bind(bufferManager)
 };

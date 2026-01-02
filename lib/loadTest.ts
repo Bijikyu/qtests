@@ -89,6 +89,13 @@ export class LoadTestRunner extends EventEmitter {
   private startTime = 0;
   private endTime = 0;
   private timelineInterval?: NodeJS.Timeout;
+  
+  // Adaptive memory management
+  private maxResultHistory = 1000; // Limit result history
+  private maxActiveUsers = 10000; // Limit concurrent active users
+  private memoryThreshold = 500 * 1024 * 1024; // 500MB memory threshold
+  private adaptiveMode = 'normal'; // 'normal', 'reduced', 'minimal'
+  private lastMemoryCheck = 0;
 
   constructor() {
     super();
@@ -107,10 +114,17 @@ export class LoadTestRunner extends EventEmitter {
       console.log(`Starting load test: ${config.name}`);
       console.log(`Concurrent users: ${config.concurrentUsers}, Duration: ${config.duration}s`);
 
+      // Check available memory and adjust test parameters
+      this.checkMemoryUsage();
+      
+      // Apply adaptive limits based on memory
+      const adjustedConfig = this.applyAdaptiveLimits(config);
+      
       // Start timeline monitoring
       this.startTimelineMonitoring();
 
-      // Ramp up users
+      // Ramp up users with adaptive configuration
+      await this.rampUpUsers(adjustedConfig);
       await this.rampUpUsers(config);
 
       // Run test for specified duration
@@ -327,10 +341,34 @@ export class LoadTestRunner extends EventEmitter {
   private recordRequest(result: RequestResult): void {
     this.requestResults.push(result);
 
-    // Keep only recent results to manage memory (reduced limits)
-    if (this.requestResults.length > 10000) {
-      this.requestResults = this.requestResults.slice(-5000);
+    // Adaptive memory management based on test duration
+    const maxResults = this.calculateMaxResults();
+    if (this.requestResults.length > maxResults) {
+      // Keep samples for percentile calculations while reducing memory
+      const keepCount = Math.floor(maxResults * 0.6); // Keep 60%
+      const sampleInterval = Math.floor(this.requestResults.length / keepCount);
+      
+      const sampled: RequestResult[] = [];
+      for (let i = 0; i < this.requestResults.length; i += sampleInterval) {
+        sampled.push(this.requestResults[i]);
+      }
+      
+      // Always keep the most recent 20% of results
+      const recentStart = Math.floor(this.requestResults.length * 0.8);
+      const recent = this.requestResults.slice(recentStart);
+      
+      this.requestResults = [...sampled.slice(0, keepCount - recent.length), ...recent];
     }
+  }
+
+  private calculateMaxResults(): number {
+    const duration = (this.endTime || Date.now()) - this.startTime;
+    const durationMinutes = duration / (1000 * 60);
+    
+    // Scale memory usage based on test duration
+    if (durationMinutes < 1) return 5000;      // Short tests
+    if (durationMinutes < 10) return 10000;    // Medium tests  
+    return 20000; // Long tests
   }
 
   private analyzeResults(config: LoadTestConfig): LoadTestResults {
@@ -405,6 +443,51 @@ export class LoadTestRunner extends EventEmitter {
     
     const index = Math.ceil((percentile / 100) * sortedArray.length) - 1;
     return sortedArray[Math.max(0, index)];
+  }
+
+  /**
+   * Check memory usage and adjust adaptive mode
+   */
+  private checkMemoryUsage(): void {
+    const now = Date.now();
+    if (now - this.lastMemoryCheck < 5000) return; // Check every 5 seconds
+    
+    this.lastMemoryCheck = now;
+    
+    if (typeof process !== 'undefined' && process.memoryUsage) {
+      const memUsage = process.memoryUsage();
+      const memoryUsageMB = memUsage.heapUsed / 1024 / 1024;
+      
+      if (memoryUsageMB > this.memoryThreshold * 0.9) {
+        this.adaptiveMode = 'minimal';
+        console.warn(`High memory usage (${memoryUsageMB.toFixed(1)}MB), switching to minimal mode`);
+      } else if (memoryUsageMB > this.memoryThreshold * 0.7) {
+        this.adaptiveMode = 'reduced';
+        console.info(`Moderate memory usage (${memoryUsageMB.toFixed(1)}MB), switching to reduced mode`);
+      } else {
+        this.adaptiveMode = 'normal';
+      }
+    }
+  }
+
+  /**
+   * Apply adaptive limits based on current memory and mode
+   */
+  private applyAdaptiveLimits(config: LoadTestConfig): LoadTestConfig {
+    const adjusted = { ...config };
+    
+    switch (this.adaptiveMode) {
+      case 'minimal':
+        adjusted.concurrentUsers = Math.min(config.concurrentUsers || 1, Math.floor(this.maxActiveUsers * 0.1));
+        adjusted.requestInterval = (adjusted.requestInterval || 1000) * 4; // Slower requests
+        break;
+      case 'reduced':
+        adjusted.concurrentUsers = Math.min(config.concurrentUsers || 1, Math.floor(this.maxActiveUsers * 0.3));
+        adjusted.requestInterval = (adjusted.requestInterval || 1000) * 2; // Slower requests
+        break;
+    }
+    
+    return adjusted;
   }
 
   private startTimelineMonitoring(): void {

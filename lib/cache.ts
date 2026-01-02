@@ -7,7 +7,7 @@
 
 import { EventEmitter } from 'events';
 import { CircuitBreaker, circuitBreakerRegistry } from './circuitBreaker.js';
-import { randomBytes } from 'crypto';
+import { randomBytes, createHash } from 'crypto';
 
 export interface CacheOptions {
   maxSize?: number;              // Maximum items in local cache
@@ -60,6 +60,7 @@ export interface CacheMetrics {
     set: number;
     delete: number;
     clear: number;
+    evictions: number;
   };
   performance: {
     avgResponseTime: number;
@@ -82,11 +83,23 @@ class LocalCache<T = any> {
   private accessOrder: string[] = [];
   private maxSize: number;
   private metrics: CacheMetrics;
+  
+  // Memory management properties
+  private currentMemoryUsage = 0;
+  private memoryThreshold: number;
+  private maxItemSize: number;
+  private evictionBatchSize: number;
 
   constructor(maxSize: number = 1000) { // Reduced default to prevent memory bloat
     this.maxSize = maxSize;
+    
+    // Memory management configuration
+    this.memoryThreshold = Math.max(50 * 1024 * 1024, maxSize * 1024); // 50MB or 1KB per item
+    this.maxItemSize = 1024 * 1024; // 1MB max per item
+    this.evictionBatchSize = Math.max(5, Math.floor(maxSize * 0.1)); // 10% or min 5 items
+    
     this.metrics = {
-      operations: { get: 0, set: 0, delete: 0, clear: 0 },
+      operations: { get: 0, set: 0, delete: 0, clear: 0, evictions: 0 },
       performance: { avgResponseTime: 0, minResponseTime: Infinity, maxResponseTime: 0 },
       errors: { serialization: 0, deserialization: 0, network: 0, validation: 0 }
     };
@@ -141,13 +154,30 @@ class LocalCache<T = any> {
         checksum: this.generateChecksum(value)
       };
 
-      // Evict if necessary
-      if (this.cache.size >= this.maxSize && !this.cache.has(key)) {
+      // Calculate item size and check limits
+      const itemSize = this.calculateItemSize(item);
+      if (itemSize > this.maxItemSize) {
+        console.warn(`Cache item too large: ${itemSize} bytes (max: ${this.maxItemSize})`);
+        return; // Skip storing oversized items
+      }
+
+      // Evict if necessary (size or count based)
+      const needsEviction = this.cache.size >= this.maxSize && !this.cache.has(key);
+      const memoryPressure = this.currentMemoryUsage + itemSize > this.memoryThreshold;
+      
+      if (needsEviction || memoryPressure) {
         this.evictLRU();
+      }
+
+      // Update memory usage (remove old item if exists)
+      const existingItem = this.cache.get(key);
+      if (existingItem) {
+        this.currentMemoryUsage = Math.max(0, this.currentMemoryUsage - this.calculateItemSize(existingItem));
       }
 
       this.cache.set(key, item);
       this.updateAccessOrder(key);
+      this.currentMemoryUsage += itemSize;
 
       this.metrics.operations.set++;
       this.metrics.performance.avgResponseTime = 
@@ -161,9 +191,14 @@ class LocalCache<T = any> {
   delete(key: string): boolean {
     const startTime = Date.now();
     
+    const existingItem = this.cache.get(key);
     const deleted = this.cache.delete(key);
     if (deleted) {
       this.removeFromAccessOrder(key);
+      // Update memory usage
+      if (existingItem) {
+        this.currentMemoryUsage = Math.max(0, this.currentMemoryUsage - this.calculateItemSize(existingItem));
+      }
     }
 
     this.metrics.operations.delete++;
@@ -207,20 +242,73 @@ class LocalCache<T = any> {
   private evictLRU(): void {
     if (this.accessOrder.length === 0) return;
     
-    // Find actual LRU item instead of just first item
-    let oldestKey = this.accessOrder[0];
-    let oldestTime = Date.now();
+    // Dynamic eviction based on memory pressure and usage patterns
+    let evictCount = this.evictionBatchSize;
     
+    // Increase eviction under memory pressure
+    if (this.currentMemoryUsage > this.memoryThreshold) {
+      evictCount = Math.floor(this.accessOrder.length * 0.3); // Evict 30% under pressure
+    } else if (this.currentMemoryUsage > this.memoryThreshold * 0.8) {
+      evictCount = Math.floor(this.accessOrder.length * 0.2); // Evict 20% near threshold
+    } else {
+      evictCount = Math.max(1, Math.floor(this.accessOrder.length * 0.05)); // Normal 5% eviction
+    }
+    const itemsWithTime: Array<{ key: string; lastAccessed: number; size: number }> = [];
+    
+    // Collect items with their access times and sizes
     for (const key of this.accessOrder) {
       const item = this.cache.get(key);
-      if (item && item.lastAccessed < oldestTime) {
-        oldestTime = item.lastAccessed;
-        oldestKey = key;
+      if (item) {
+        itemsWithTime.push({
+          key,
+          lastAccessed: item.lastAccessed,
+          size: this.calculateItemSize(item)
+        });
       }
     }
     
-    this.cache.delete(oldestKey);
-    this.removeFromAccessOrder(oldestKey);
+    // Sort by last accessed time (oldest first) then by size (smallest first for efficient cleanup)
+    itemsWithTime.sort((a, b) => {
+      if (a.lastAccessed !== b.lastAccessed) {
+        return a.lastAccessed - b.lastAccessed;
+      }
+      return a.size - b.size;
+    });
+    
+    // Evict the oldest items and track memory freed
+    let memoryFreed = 0;
+    for (let i = 0; i < Math.min(evictCount, itemsWithTime.length); i++) {
+      const { key, size } = itemsWithTime[i];
+      this.cache.delete(key);
+      this.removeFromAccessOrder(key);
+      memoryFreed += size;
+    }
+    
+    // Update memory usage tracking
+    this.currentMemoryUsage = Math.max(0, this.currentMemoryUsage - memoryFreed);
+    this.metrics.operations.evictions += Math.min(evictCount, itemsWithTime.length);
+    
+    // Log significant evictions
+    if (evictCount > 10 || this.currentMemoryUsage > this.memoryThreshold * 0.9) {
+      console.debug(`Cache eviction: removed ${Math.min(evictCount, itemsWithTime.length)} items, freed ${memoryFreed} bytes, ${this.currentMemoryUsage}/${this.memoryThreshold} bytes used`);
+    }
+  }
+
+  private calculateItemSize(item: CacheItem): number {
+    // Efficient size calculation without JSON.stringify for primitive types
+    const value = item.value;
+    if (value === null || value === undefined) return 8;
+    if (typeof value === 'string') return value.length * 2;
+    if (typeof value === 'number') return 8;
+    if (typeof value === 'boolean') return 4;
+    if (typeof value === 'object') {
+      try {
+        return JSON.stringify(value).length * 2;
+      } catch {
+        return 100; // Default size for non-serializable objects
+      }
+    }
+    return 50; // Default size for other types
   }
 
   private updateAccessOrder(key: string): void {
@@ -249,7 +337,7 @@ class LocalCache<T = any> {
         // Only use JSON.stringify for complex objects
         str = JSON.stringify(value);
       }
-      return randomBytes(16).toString('hex');
+      return createHash('sha256').update(str).digest('hex');
     } catch {
       return '';
     }

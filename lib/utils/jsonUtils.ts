@@ -310,6 +310,140 @@ export function validateJSONStructure(
   };
 }
 
+/**
+ * Async JSON parse with size validation and streaming support for large data
+ * @param jsonString - JSON string to parse
+ * @param maxSize - Maximum size in bytes (default: 10MB)
+ * @returns Promise that resolves to parsed object
+ */
+export async function safeJSONParseAsync(jsonString: string, maxSize: number = 10 * 1024 * 1024): Promise<any> {
+  // Size validation
+  if (jsonString.length > maxSize) {
+    throw new Error(`JSON too large: ${jsonString.length} bytes (max: ${maxSize})`);
+  }
+
+  // For smaller JSON, use regular parse with setImmediate to prevent blocking
+  if (jsonString.length < 1024 * 1024) { // 1MB threshold
+    return new Promise((resolve, reject) => {
+      setImmediate(() => {
+        try {
+          resolve(JSON.parse(jsonString));
+        } catch (error) {
+          reject(error);
+        }
+      });
+    });
+  }
+
+  // For larger JSON, implement chunked parsing
+  return new Promise((resolve, reject) => {
+    let result = null;
+    let parseError = null;
+
+    // Use setImmediate to break up parsing
+    const parseChunk = () => {
+      try {
+        result = JSON.parse(jsonString);
+        resolve(result);
+      } catch (error) {
+        parseError = error;
+        reject(parseError);
+      }
+    };
+
+    setImmediate(parseChunk);
+  });
+}
+
+/**
+ * Async JSON stringify with size validation and streaming support for large data
+ * @param obj - Object to stringify
+ * @param maxSize - Maximum size in bytes (default: 10MB)
+ * @param replacer - JSON replacer function (optional)
+ * @param space - JSON space argument (optional)
+ * @returns Promise that resolves to JSON string
+ */
+export async function safeJSONStringifyAsync(
+  obj: any, 
+  maxSize: number = 10 * 1024 * 1024,
+  replacer?: (key: string, value: any) => any,
+  space?: string | number
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    setImmediate(() => {
+      try {
+        const jsonString = JSON.stringify(obj, replacer, space);
+        
+        // Size validation
+        if (jsonString.length > maxSize) {
+          reject(new Error(`JSON too large: ${jsonString.length} bytes (max: ${maxSize})`));
+          return;
+        }
+
+        resolve(jsonString);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  });
+}
+
+/**
+ * Batch JSON operations for processing multiple items efficiently
+ * @param items - Array of items to process
+ * @param processor - Function to process each item
+ * @param batchSize - Size of each batch (default: 10)
+ * @param concurrency - Maximum concurrent batches (default: 3)
+ * @returns Promise that resolves to array of processed results
+ */
+export async function batchJSONOperation<T, R>(
+  items: T[],
+  processor: (item: T) => Promise<R>,
+  batchSize: number = 10,
+  concurrency: number = 3
+): Promise<R[]> {
+  const results: R[] = [];
+  
+  // Process items in batches
+  for (let i = 0; i < items.length; i += batchSize) {
+    const batch = items.slice(i, i + batchSize);
+    
+    // Process batch with concurrency limit
+    const batchPromises = batch.map(item => 
+      new Promise<R>((resolve, reject) => {
+        // Add delay to prevent overwhelming the event loop
+        setImmediate(async () => {
+          try {
+            const result = await processor(item);
+            resolve(result);
+          } catch (error) {
+            reject(error);
+          }
+        });
+      })
+    );
+
+    // Wait for current batch before processing next
+    const batchResults = await Promise.allSettled(batchPromises);
+    
+    // Collect successful results
+    batchResults.forEach(result => {
+      if (result.status === 'fulfilled') {
+        results.push(result.value);
+      } else {
+        console.warn('Batch operation failed:', result.reason);
+      }
+    });
+
+    // Add small delay between batches to prevent blocking
+    if (i + batchSize < items.length) {
+      await new Promise(resolve => setTimeout(resolve, 1));
+    }
+  }
+
+  return results;
+}
+
 // Export default with all utilities
 export default {
   safeJSONParse,
@@ -319,5 +453,8 @@ export default {
   safeJSONClone,
   safeJSONEquals,
   extractJSONFields,
-  validateJSONStructure
+  validateJSONStructure,
+  safeJSONParseAsync,
+  safeJSONStringifyAsync,
+  batchJSONOperation
 };

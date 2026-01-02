@@ -75,6 +75,10 @@ export class ScalableDatabaseClient extends EventEmitter {
   private cacheMaxSize: number;
   private cacheTtlMs: number;
   
+  // Query optimization properties
+  private queryPatterns = new Map<string, { avgResultSize: number; complexity: number; frequency: number }>();
+  private queryComplexityThresholds = { simple: 1, medium: 5, complex: 10 };
+  
   // Metrics tracking
   private metrics: DatabaseMetrics = {
     totalQueries: 0,
@@ -143,14 +147,37 @@ export class ScalableDatabaseClient extends EventEmitter {
         }
       }
 
-      // Execute query with memory limits
-      let result = await this.executeQueryWithRetry<T>(sql, params, options);
+      // Analyze query pattern for optimization
+      const analysis = this.analyzeQueryPattern(sql, params);
       
-      // Enforce result set size limits to prevent memory bloat
+      // Execute query with memory limits and adaptive timeout
+      const timeoutMs = Math.min(30000, analysis.complexity * 2000); // Adaptive timeout
+      let result = await this.executeQueryWithRetry<T>(sql, params, { ...options, timeout: timeoutMs });
+      
+      // Update pattern tracking
+      const patternKey = sql.substring(0, 100); // Use first 100 chars as pattern key
+      const existing = this.queryPatterns.get(patternKey);
+      const avgResultSize = existing ? ((existing.avgResultSize * existing.frequency) + result.rows.length) / (existing.frequency + 1) : result.rows.length;
+      
+      this.queryPatterns.set(patternKey, {
+        avgResultSize,
+        complexity: analysis.complexity,
+        frequency: (existing?.frequency || 0) + 1
+      });
+      
+      // Enforce result set size limits with early termination support and better warnings
       if (result.rows.length > this.maxResultRows) {
-        console.warn(`Query result truncated from ${result.rows.length} to ${this.maxResultRows} rows`);
-        result.rows = result.rows.slice(0, this.maxResultRows);
-        result.rowCount = result.rows.length;
+        console.warn(`Query result truncated from ${result.rows.length} to ${this.maxResultRows} rows. Consider pagination for large datasets.`);
+        // Use more efficient array manipulation
+        result.rows = result.rows.splice(0, this.maxResultRows);
+        result.rowCount = this.maxResultRows;
+        
+        // Emit warning for application-level handling
+        this.emit('query:truncated', { 
+          originalCount: result.rows.length + this.maxResultRows, 
+          truncatedCount: this.maxResultRows,
+          sql: sql.substring(0, 100) + (sql.length > 100 ? '...' : '')
+        });
       }
       
       // Cache result if enabled and size is reasonable
@@ -572,11 +599,58 @@ private startCacheCleanup(): void {
       size: this.queryCache.size,
       hitRate
     };
+}
+
+  /**
+   * Analyze query patterns for optimization
+   */
+  private analyzeQueryPattern(sql: string, params: any[]): { complexity: number; estimatedRows: number } {
+    // Simple complexity scoring based on SQL patterns
+    let complexity = this.queryComplexityThresholds.simple;
+    let estimatedRows = 100; // Default estimate
+    
+    // Analyze SQL for complexity indicators
+    const upperSql = sql.toUpperCase();
+    
+    // JOIN operations increase complexity
+    const joinCount = (upperSql.match(/JOIN/g) || []).length;
+    complexity += joinCount * this.queryComplexityThresholds.medium;
+    
+    // Subqueries increase complexity significantly
+    const subqueryCount = (upperSql.match(/\(.*SELECT/g) || []).length;
+    complexity += subqueryCount * this.queryComplexityThresholds.complex;
+    
+    // Aggregate functions
+    const aggregateCount = (upperSql.match(/\b(COUNT|SUM|AVG|MAX|MIN)\b/g) || []).length;
+    complexity += aggregateCount * this.queryComplexityThresholds.simple;
+    
+    // WHERE clauses
+    const whereCount = (upperSql.match(/\bWHERE\b/g) || []).length;
+    complexity += whereCount * this.queryComplexityThresholds.simple;
+    
+    // Estimate result rows based on query patterns
+    if (upperSql.includes('LIMIT')) {
+      const limitMatch = sql.match(/LIMIT\s+(\d+)/i);
+      if (limitMatch) {
+        estimatedRows = parseInt(limitMatch[1]);
+      }
+    } else if (upperSql.includes('COUNT(')) {
+      estimatedRows = 1; // COUNT queries return single row
+    } else if (joinCount > 0 || subqueryCount > 0) {
+      estimatedRows = 1000; // Complex queries likely return more data
+    }
+    
+    // Adjust based on parameters (often indicates filtering)
+    if (params.length > whereCount) {
+      estimatedRows = Math.max(1, Math.floor(estimatedRows / params.length));
+    }
+    
+    return { complexity, estimatedRows };
   }
 
-/**
- * Close all connections and cleanup
- */
+  /**
+   * Close all connections and cleanup
+   */
 async close(): Promise<void> {
   if (this.isShutdown) {
     return;

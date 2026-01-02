@@ -1,6 +1,6 @@
-// External service wrapper centralizing axios usage.
+// External service wrapper centralizing HTTP client usage.
 // Rationale: centralizing network calls simplifies stubbing and keeps routes thin.
-const axios = require('axios');
+const { httpClient } = require('../../lib/utils/httpClient');
 const winston = require('winston');
 const qerrors = require('qerrors');
 
@@ -14,10 +14,7 @@ async function fetchHello() {
   try {
     // Use a stable public endpoint; qtests stubs will short-circuit in tests.
     // Add timeout and retry configuration for robustness
-    const result = await axios.get('https://example.com/', {
-      timeout: 10000, // 10 second timeout
-      maxRedirects: 5
-    });
+    const result = await httpClient.get('https://example.com/');
     try { winston.info('external call complete'); } catch (_) { /* no-op under stubs */ }
     return result;
   } catch (err) {

@@ -75,6 +75,14 @@ export class PerformanceMonitor extends EventEmitter {
   private monitoringInterval?: NodeJS.Timeout;
   private isMonitoring = false;
   private config: MonitorConfig;
+  
+  // Adaptive sampling properties
+  private samplingRate = 1.0; // Start with full sampling
+  private performanceBaseline: PerformanceMetrics | null = null;
+  private lastSamplingAdjustment = 0;
+  private samplingAdjustmentInterval = 60000; // Adjust every minute
+  private highLoadThreshold = 0.8; // 80% resource usage
+  private lowLoadThreshold = 0.3; // 30% resource usage
 
   constructor(config: Partial<MonitorConfig> = {}) {
     super();
@@ -289,6 +297,14 @@ export class PerformanceMonitor extends EventEmitter {
   private collectMetrics(): void {
     const timestamp = Date.now();
     
+    // Adaptive sampling - skip collection based on current load
+    if (!this.shouldCollectMetrics()) {
+      return;
+    }
+    
+    // Adjust sampling rate periodically
+    this.adjustSamplingRate();
+    
     // Collect CPU metrics
     if (this.config.enableCpuMonitoring) {
       this.collectCpuMetrics(timestamp);
@@ -388,6 +404,59 @@ export class PerformanceMonitor extends EventEmitter {
     }
   }
 
+  /**
+   * Determine if metrics should be collected based on adaptive sampling
+   */
+  private shouldCollectMetrics(): boolean {
+    // Always collect the first few metrics to establish baseline
+    if (!this.performanceBaseline) {
+      return true;
+    }
+    
+    // Use random sampling based on current rate
+    return Math.random() < this.samplingRate;
+  }
+
+  /**
+   * Adjust sampling rate based on current system load
+   */
+  private adjustSamplingRate(): void {
+    const now = Date.now();
+    
+    // Only adjust periodically
+    if (now - this.lastSamplingAdjustment < this.samplingAdjustmentInterval) {
+      return;
+    }
+    
+    this.lastSamplingAdjustment = now;
+    
+    // Calculate overall system load (0-1 scale)
+    const memoryLoad = this.metrics.memory.percentage / 100;
+    const cpuLoad = Math.min(this.metrics.cpu.usage / 100, 1);
+    const eventLoopLoad = Math.min(this.metrics.eventLoop.utilization, 1);
+    
+    const overallLoad = (memoryLoad + cpuLoad + eventLoopLoad) / 3;
+    
+    // Adjust sampling rate based on load
+    if (overallLoad > this.highLoadThreshold) {
+      // High load - reduce sampling to save resources
+      this.samplingRate = Math.max(0.1, this.samplingRate * 0.8);
+      console.debug(`High load detected (${(overallLoad * 100).toFixed(1)}%), reducing sampling to ${(this.samplingRate * 100).toFixed(1)}%`);
+    } else if (overallLoad < this.lowLoadThreshold) {
+      // Low load - can afford full sampling
+      this.samplingRate = Math.min(1.0, this.samplingRate * 1.2);
+      console.debug(`Low load detected (${(overallLoad * 100).toFixed(1)}%), increasing sampling to ${(this.samplingRate * 100).toFixed(1)}%`);
+    } else {
+      // Medium load - maintain current sampling
+      this.samplingRate = Math.max(0.5, Math.min(0.9, this.samplingRate));
+    }
+    
+    // Ensure we have at least some baseline measurements
+    if (this.samplingRate < 0.3) {
+      this.samplingRate = 0.3;
+    }
+  }
+
   private updateHistory(path: string, value: number, timestamp: number): void {
     if (!this.history[path]) {
       this.history[path] = [];
@@ -395,9 +464,19 @@ export class PerformanceMonitor extends EventEmitter {
     
     this.history[path].push({ value, timestamp });
     
-    // Trim history to prevent memory leaks
+    // More aggressive memory management - trim history and add sampling
     if (this.history[path].length > this.config.historySize) {
-      this.history[path] = this.history[path].slice(-this.config.historySize);
+      // Keep most recent 70% and sample the oldest 30% to reduce memory while preserving trends
+      const keepCount = Math.floor(this.config.historySize * 0.7);
+      const sampleCount = this.config.historySize - keepCount;
+      const oldestData = this.history[path].slice(0, -keepCount);
+      const recentData = this.history[path].slice(-keepCount);
+      
+      // Sample oldest data (keep every Nth item)
+      const sampleInterval = Math.ceil(oldestData.length / sampleCount);
+      const sampledOldest = oldestData.filter((_, index) => index % sampleInterval === 0);
+      
+      this.history[path] = [...sampledOldest, ...recentData];
     }
   }
 

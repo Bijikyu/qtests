@@ -539,7 +539,7 @@ export class FileTransport implements Transport {
       await this.rotateFile();
     }
     
-    await fs.promises.appendFile(this.getCurrentFilePath(), message);
+    await fs.promises.appendFile(await this.getCurrentFilePath(), message);
     this.currentSize += message.length;
   }
 
@@ -567,7 +567,7 @@ export class FileTransport implements Transport {
     await fs.promises.mkdir(dir, { recursive: true });
     
     // Check current file size
-    const currentFile = this.getCurrentFilePath();
+    const currentFile = await this.getCurrentFilePath();
     try {
       const stats = await fs.promises.stat(currentFile);
       this.currentSize = stats.size;
@@ -576,7 +576,7 @@ export class FileTransport implements Transport {
     }
   }
 
-  private getCurrentFilePath(): string {
+  private async getCurrentFilePath(): Promise<string> {
     if (this.currentFile === 0) {
       return this.filePath;
     }
@@ -594,7 +594,7 @@ export class FileTransport implements Transport {
     const path = await import('path');
     
     // Move current file to numbered version
-    const currentPath = this.getCurrentFilePath();
+    const currentPath = await this.getCurrentFilePath();
     this.currentFile++;
     
     // Remove old files if we exceed max files
@@ -603,7 +603,7 @@ export class FileTransport implements Transport {
     }
     
     // Initialize new file
-    const newPath = this.getCurrentFilePath();
+    const newPath = await this.getCurrentFilePath();
     this.currentSize = 0;
   }
 

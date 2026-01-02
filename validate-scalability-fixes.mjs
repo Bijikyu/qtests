@@ -3,13 +3,13 @@
  */
 
 // Test concurrency utils
-import { limitedPromiseAll, Semaphore } from './lib/utils/concurrencyUtils.js';
+import { limitedPromiseAll, Semaphore } from './lib/utils/concurrencyUtils.ts';
 
 // Test JSON utils
-import { safeJSONParse, safeJSONStringify, cachedJSONStringify } from './lib/utils/jsonUtils.js';
+import { safeJSONParse, safeJSONStringify, cachedJSONStringify } from './lib/utils/jsonUtils.ts';
 
 // Test streaming utils
-import { shouldUseStreaming, getFileSize } from './lib/utils/streamingUtils.js';
+import { shouldUseStreaming, getFileSize } from './lib/utils/streamingUtils.ts';
 
 async function testConcurrencyUtils() {
   console.log('🧪 Testing concurrency utilities...');

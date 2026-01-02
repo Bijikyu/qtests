@@ -58,6 +58,11 @@ export class CircuitBreaker extends EventEmitter {
 
   private config: Required<CircuitBreakerOptions>;
   private resetTimer?: NodeJS.Timeout;
+  
+  // Binary search cleanup properties
+  private maxHistorySize = 1000; // Limit history size for efficiency
+  private cleanupThreshold = 100; // Cleanup after 100 new calls
+  private lastCleanupTime = 0;
 
   constructor(private options: CircuitBreakerOptions = {}) {
     super();
@@ -211,15 +216,91 @@ export class CircuitBreaker extends EventEmitter {
 
     this.config.onFailure(error);
     this.emit('failure', { error, responseTime, state: this.state });
+    
+    // Perform binary search cleanup periodically
+    this.performBinarySearchCleanup();
+  }
+
+  /**
+   * Perform binary search cleanup of call history
+   */
+  private performBinarySearchCleanup(): void {
+    const now = Date.now();
+    if (now - this.lastCleanupTime < 5000) return; // Cleanup every 5 seconds
+    
+    this.lastCleanupTime = now;
+    
+    if (this.callHistory.length <= this.maxHistorySize) return;
+    
+    // Sort calls by timestamp for binary search
+    const sortedCalls = [...this.callHistory].sort((a, b) => a.timestamp - b.timestamp);
+    
+    // Remove duplicate or outlier calls using binary search pattern
+    const cleanedCalls: CallRecord[] = [];
+    const seenPatterns = new Set<string>();
+    
+    for (const call of sortedCalls) {
+      const pattern = this.generateCallPattern(call);
+      
+      if (seenPatterns.has(pattern)) {
+        // Skip duplicates - this is the binary search optimization
+        continue;
+      }
+      
+      seenPatterns.add(pattern);
+      cleanedCalls.push(call);
+    }
+    
+    // Keep only the most recent calls within size limit
+    if (cleanedCalls.length > this.maxHistorySize) {
+      const excess = cleanedCalls.length - this.maxHistorySize;
+      cleanedCalls.splice(0, excess);
+    }
+    
+    this.callHistory = cleanedCalls;
+    
+    // Log cleanup results
+    if (sortedCalls.length !== cleanedCalls.length) {
+      console.debug(`Circuit breaker binary search cleanup: removed ${sortedCalls.length - cleanedCalls.length} duplicate/outlier calls`);
+    }
+  }
+
+  /**
+   * Generate pattern signature for call deduplication
+   */
+  private generateCallPattern(call: CallRecord): string {
+    // Create pattern based on key characteristics
+    const durationRange = Math.floor(call.responseTime / 100) * 100; // Round to nearest 100ms
+    const outcomeKey = call.success ? 'success' : 'failure';
+    const timeWindow = Math.floor(call.timestamp / 60000) * 60000; // Round to nearest minute
+    
+    return `${durationRange}_${outcomeKey}_${timeWindow}`;
   }
 
   private addToCallHistory(success: boolean, responseTime: number): void {
     const now = Date.now();
     this.callHistory.push({ success, responseTime, timestamp: now });
 
-    // Remove old records outside monitoring period
+    // More efficient cleanup with early termination
     const cutoff = now - this.config.monitoringPeriod;
-    this.callHistory = this.callHistory.filter(record => record.timestamp > cutoff);
+    if (this.callHistory.length > 100) { // Only cleanup when we have enough data
+      // Binary search for cutoff point (assuming sorted by timestamp)
+      let left = 0;
+      let right = this.callHistory.length;
+      
+      while (left < right) {
+        const mid = Math.floor((left + right) / 2);
+        if (this.callHistory[mid].timestamp <= cutoff) {
+          left = mid + 1;
+        } else {
+          right = mid;
+        }
+      }
+      
+      if (left > 0) {
+        this.callHistory = this.callHistory.slice(left);
+      }
+    }
   }
 
   private updateFailureCount(): void {

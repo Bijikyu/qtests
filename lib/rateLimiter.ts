@@ -47,10 +47,13 @@ export class DistributedRateLimiter {
   private _cleanupInterval: NodeJS.Timeout | null = null;
   private circuitBreaker?: CircuitBreaker;
   
-  // Performance optimization: LRU cache for recent rate limit checks with memory limits
-  private recentCache = new Map<string, { result: RateLimitResult; timestamp: number }>();
+  // Performance optimization: Smart cache with pattern recognition
+  private recentCache = new Map<string, { result: RateLimitResult; timestamp: number; frequency: number }>();
   private readonly maxCacheSize = 500; // Reduced to prevent memory leaks
   private readonly cacheTtl = 5000; // 5 seconds cache TTL
+  
+  // Enhanced cache properties
+  private readonly cacheHitThreshold = 0.8; // Cache hits above 80% are good
 
   constructor(config: RateLimitConfig) {
     this.config = config;
@@ -138,23 +141,41 @@ export class DistributedRateLimiter {
     return result;
   }
 
-  /**
-   * Cache rate limit result with LRU eviction
-   */
-  private cacheResult(key: string, result: RateLimitResult): void {
-    // Evict oldest entry if cache is full
-    if (this.recentCache.size >= this.maxCacheSize) {
-      const oldestKey = this.recentCache.keys().next().value;
-      if (oldestKey) {
-        this.recentCache.delete(oldestKey);
-      }
-    }
+/**
+ * Cache rate limit result with intelligent eviction
+ */
+private cacheResult(key: string, result: RateLimitResult): void {
+  // Smart eviction based on request patterns and result types
+  if (this.recentCache.size >= this.maxCacheSize) {
+    // Prioritize keeping blocked requests (need longer memory) 
+    // over allowed requests (can be recalculated)
+    const entries = Array.from(this.recentCache.entries());
+    const allowedEntries = entries.filter(([_, cached]) => cached.result.allowed);
+    const blockedEntries = entries.filter(([_, cached]) => !cached.result.allowed);
     
-    this.recentCache.set(key, {
-      result,
-      timestamp: Date.now()
-    });
+    // Evict oldest allowed requests first
+    const allowedToEvict = Math.ceil(allowedEntries.length * 0.3); // Evict 30% of allowed
+    allowedEntries
+      .sort((a, b) => a[1].timestamp - b[1].timestamp)
+      .slice(0, allowedToEvict)
+      .forEach(([key]) => this.recentCache.delete(key));
+    
+    // If still full, evict oldest blocked requests
+    if (this.recentCache.size >= this.maxCacheSize) {
+      const blockedToEvict = Math.ceil(blockedEntries.length * 0.1); // Only 10% of blocked
+      blockedEntries
+        .sort((a, b) => a[1].timestamp - b[1].timestamp)
+        .slice(0, blockedToEvict)
+        .forEach(([key]) => this.recentCache.delete(key));
+    }
   }
+  
+  this.recentCache.set(key, {
+    result,
+    timestamp: Date.now(),
+    frequency: 1 // Default frequency
+  });
+}
 
   private async checkRedisLimit(key: string, now: number, windowStart: number): Promise<RateLimitResult> {
     try {
@@ -420,6 +441,107 @@ export class InMemoryRateLimiter {
     });
 
     toDelete.forEach(key => this.counters.delete(key));
+  }
+
+  /**
+   * Get request frequency for a key based on historical data
+   */
+  private getRequestFrequency(key: string): number {
+    const history = this.requestHistory.get(key);
+    if (!history || history.length < 2) {
+      return 1; // Default frequency
+    }
+    
+    // Calculate requests per second from recent history
+    const now = Date.now();
+    const recentRequests = history.filter((timestamp: number) => now - timestamp < 60000); // Last minute
+    return recentRequests.length / 60; // Requests per second
+  }
+
+  /**
+   * Start pattern analysis for predictive rate limiting
+   */
+  private startPatternAnalysis(): void {
+    setInterval(() => {
+      this.analyzeRequestPatterns();
+      this.cleanupOldHistory();
+    }, this.patternAnalysisInterval);
+  }
+
+  /**
+   * Analyze request patterns to predict usage
+   */
+  private analyzeRequestPatterns(): void {
+    const now = Date.now();
+    
+    for (const [key, timestamps] of this.requestHistory.entries()) {
+      if (timestamps.length < 5) continue; // Need sufficient data
+      
+      // Calculate request rate pattern
+      const recentTimestamps = timestamps.filter((t: number) => now - t < 300000); // Last 5 minutes
+      if (recentTimestamps.length < 3) continue;
+      
+      // Sort timestamps to calculate intervals
+      recentTimestamps.sort((a: number, b: number) => a - b);
+      const intervals: number[] = [];
+      for (let i = 1; i < recentTimestamps.length; i++) {
+        intervals.push(recentTimestamps[i] - recentTimestamps[i - 1]);
+      }
+      
+      // Calculate average interval
+      const avgInterval = intervals.reduce((sum: number, interval: number) => sum + interval, 0) / intervals.length;
+      const avgRequestsPerSecond = 1000 / avgInterval;
+      
+      // Store pattern for predictive limiting
+      this.patternCache.set(key, {
+        avgRequests: avgRequestsPerSecond,
+        pattern: this.classifyPattern(avgRequestsPerSecond)
+      });
+    }
+  }
+
+  /**
+   * Classify request pattern for optimization
+   */
+  private classifyPattern(requestsPerSecond: number): string {
+    if (requestsPerSecond > 10) return 'burst';
+    if (requestsPerSecond > 5) return 'high';
+    if (requestsPerSecond > 1) return 'medium';
+    return 'low';
+  }
+
+  /**
+   * Update request history for pattern analysis
+   */
+  private updateRequestHistory(key: string): void {
+    if (!this.requestHistory.has(key)) {
+      this.requestHistory.set(key, []);
+    }
+    
+    const history = this.requestHistory.get(key)!;
+    history.push(Date.now());
+    
+    // Limit history size
+    if (history.length > this.maxHistorySize) {
+      history.splice(0, history.length - this.maxHistorySize);
+    }
+  }
+
+  /**
+   * Clean up old history data
+   */
+  private cleanupOldHistory(): void {
+    const now = Date.now();
+    const cutoff = now - (24 * 60 * 60 * 1000); // Keep last 24 hours
+    
+    for (const [key, timestamps] of this.requestHistory.entries()) {
+      const filteredTimestamps = timestamps.filter((t: number) => t > cutoff);
+      if (filteredTimestamps.length === 0) {
+        this.requestHistory.delete(key);
+      } else {
+        this.requestHistory.set(key, filteredTimestamps);
+      }
+    }
   }
 }
 

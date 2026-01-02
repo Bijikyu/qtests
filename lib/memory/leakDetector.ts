@@ -17,22 +17,34 @@ export class MemoryLeakDetector {
     try {
       const snapshots = this.snapshotManager.getAllSnapshots();
       
-      // Need at least 3 snapshots to establish a trend and detect consistent growth
-      if (snapshots.length < 3) return false;
+      // Need at least 5 snapshots for better trend analysis
+      if (snapshots.length < 5) return false;
 
-      const recent = snapshots.slice(-3); // Analyze the 3 most recent snapshots
-      const heapGrowth = recent[2].heapUsed - recent[0].heapUsed; // Calculate heap memory growth
-      const rssGrowth = recent[2].rss - recent[0].rss; // Calculate RSS (Resident Set Size) growth
+      const recent = snapshots.slice(-5); // Analyze 5 most recent snapshots
+      const timeSpan = recent[4].timestamp - recent[0].timestamp;
+      
+      // Calculate growth rates instead of absolute values
+      const heapGrowthRate = (recent[4].heapUsed - recent[0].heapUsed) / (timeSpan / 1000); // MB per second
+      const rssGrowthRate = (recent[4].rss - recent[0].rss) / (timeSpan / 1000); // MB per second
+      
+      // Detect abnormal growth patterns
+      const heapLeakThreshold = timeSpan > 60000 ? 1 : 5; // 1MB/s for long runs, 5MB/s for short
+      const rssLeakThreshold = timeSpan > 60000 ? 2 : 10; // 2MB/s for long runs, 10MB/s for short
+      
+      // Check for consistent growth (not just spikes)
+      const heapConsistentGrowth = this.checkConsistentGrowth(recent.map(s => s.heapUsed));
+      const rssConsistentGrowth = this.checkConsistentGrowth(recent.map(s => s.rss));
 
-      // Conservative thresholds to avoid false positives
-      // Heap growth of 50MB+ or RSS growth of 100MB+ across 3 snapshots indicates potential leak
-      const heapLeakThreshold = 50;
-      const rssLeakThreshold = 100;
+      const isHeapLeaking = heapGrowthRate > heapLeakThreshold && heapConsistentGrowth;
+      const isRssLeaking = rssGrowthRate > rssLeakThreshold && rssConsistentGrowth;
 
-      if (heapGrowth > heapLeakThreshold || rssGrowth > rssLeakThreshold) {
+      if (isHeapLeaking || isRssLeaking) {
         console.warn(`⚠️  Potential memory leak detected:`);
-        console.warn(`   Heap growth: +${heapGrowth}MB`);
-        console.warn(`   RSS growth: +${rssGrowth}MB`);
+        console.warn(`   Time span: ${(timeSpan / 1000).toFixed(1)}s`);
+        console.warn(`   Heap growth rate: ${heapGrowthRate.toFixed(2)}MB/s (threshold: ${heapLeakThreshold}MB/s)`);
+        console.warn(`   RSS growth rate: ${rssGrowthRate.toFixed(2)}MB/s (threshold: ${rssLeakThreshold}MB/s)`);
+        console.warn(`   Heap consistent growth: ${heapConsistentGrowth}`);
+        console.warn(`   RSS consistent growth: ${rssConsistentGrowth}`);
         return true;
       }
 
@@ -75,5 +87,24 @@ export class MemoryLeakDetector {
       });
       console.log('   ❌ Failed to print memory summary');
     }
+  }
+
+  private checkConsistentGrowth(values: number[]): boolean {
+    if (values.length < 3) return false;
+    
+    // Calculate correlation coefficient for growth trend
+    const n = values.length;
+    const x = Array.from({ length: n }, (_, i) => i);
+    const sumX = x.reduce((a, b) => a + b, 0);
+    const sumY = values.reduce((a, b) => a + b, 0);
+    const sumXY = x.reduce((sum, xi, i) => sum + xi * values[i], 0);
+    const sumX2 = x.reduce((sum, xi) => sum + xi * xi, 0);
+    const sumY2 = values.reduce((sum, yi) => sum + yi * yi, 0);
+    
+    const correlation = (n * sumXY - sumX * sumY) / 
+      Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
+    
+    // Return true if strong positive correlation (> 0.7)
+    return correlation > 0.7;
   }
 }
