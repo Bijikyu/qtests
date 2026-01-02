@@ -126,15 +126,10 @@ class LocalCache<T = any> {
         return null;
       }
 
-// Update access tracking
+      // Update access tracking
       item.accessCount++;
       item.lastAccessed = Date.now();
       this.updateAccessOrder(key);
-
-      // Track access frequency for cache warming
-      if (this.options.metricsEnabled) {
-        this.trackAccess(key);
-      }
 
       this.metrics.operations.get++;
       this.metrics.performance.avgResponseTime = 
@@ -290,115 +285,6 @@ class LocalCache<T = any> {
       console.debug(`Cache eviction: removed ${evicted} items, freed ${memoryFreed} bytes, memory pressure: ${(memoryPressure * 100).toFixed(1)}%`);
     }
   }
-  
-/**
-   * Get current memory pressure (0-1 scale)
-   */
-  private estimateMemoryUsage(): number {
-    const stats = this.localCache.getStats();
-    // Rough estimation - each item average 200 bytes
-    return stats.size * 200;
-  }
-
-  /**
-   * Start cache warming strategy
-   */
-  private startCacheWarming(): void {
-    this.warmingInterval = setInterval(() => {
-      this.performCacheWarming();
-    }, this.warmingIntervalMs);
-  }
-
-  /**
-   * Perform cache warming for frequently accessed keys
-   */
-  private async performCacheWarming(): Promise<void> {
-    if (this.accessFrequency.size === 0) return;
-    
-    const now = Date.now();
-    const keysToWarm: string[] = [];
-    
-    // Find keys that meet warming criteria
-    for (const [key, stats] of this.accessFrequency.entries()) {
-      // Warm keys accessed frequently and recently
-      if (stats.count >= this.warmingThreshold && 
-          (now - stats.lastAccess) < this.warmingIntervalMs * 2) {
-        keysToWarm.push(key);
-      }
-    }
-    
-    // Limit number of keys to warm
-    if (keysToWarm.length > this.maxWarmingKeys) {
-      // Sort by access frequency (most frequent first)
-      keysToWarm.sort((a, b) => {
-        const statsA = this.accessFrequency.get(a)!;
-        const statsB = this.accessFrequency.get(b)!;
-        return statsB.count - statsA.count;
-      });
-      keysToWarm.length = this.maxWarmingKeys;
-    }
-    
-    // Warm selected keys
-    for (const key of keysToWarm) {
-      try {
-        // Check if key exists in distributed cache
-        if (this.redis && this.circuitBreaker) {
-          const distributedValue = await this.circuitBreaker.execute(
-            () => this.getDistributedValue(key)
-          );
-          
-          // If distributed cache has value, warm local cache
-          if (distributedValue !== null) {
-            this.localCache.set(key, distributedValue, this.options.defaultTTL);
-            this.emit('cache:warm', { key, source: 'distributed' });
-          }
-        }
-      } catch (error) {
-        // Log warming errors but don't fail
-        console.debug(`Cache warming failed for key ${key}:`, error);
-      }
-    }
-    
-    // Clean up old access frequency data
-    this.cleanupAccessFrequency();
-    
-    // Emit warming metrics
-    if (keysToWarm.length > 0) {
-      this.emit('cache:warming-completed', { 
-        keysWarmed: keysToWarm.length,
-        totalAccessFrequency: this.accessFrequency.size
-      });
-    }
-  }
-
-  /**
-   * Clean up old access frequency data to prevent memory leaks
-   */
-  private cleanupAccessFrequency(): void {
-    const now = Date.now();
-    const maxAge = this.warmingIntervalMs * 10; // Keep data for 10 intervals
-    
-    for (const [key, stats] of this.accessFrequency.entries()) {
-      if (now - stats.lastAccess > maxAge) {
-        this.accessFrequency.delete(key);
-      }
-    }
-    
-    // Limit total size
-    if (this.accessFrequency.size > this.maxWarmingKeys * 2) {
-      const entries = Array.from(this.accessFrequency.entries())
-        .sort((a, b) => b[1].count - a[1].count) // Sort by frequency (least first)
-        .slice(0, this.maxWarmingKeys); // Keep top keys
-      
-      this.accessFrequency.clear();
-      for (const [key, stats] of entries) {
-        this.accessFrequency.set(key, stats);
-      }
-    }
-  }
-  }
-  
-  
 
   private calculateItemSize(item: CacheItem): number {
     // Efficient size calculation without JSON.stringify for primitive types
@@ -427,17 +313,6 @@ class LocalCache<T = any> {
     this.accessOrder.delete(key);
   }
 
-  /**
-   * Track access frequency for cache warming
-   */
-  private trackAccess(key: string): void {
-    const now = Date.now();
-    const stats = this.accessFrequency.get(key) || { count: 0, lastAccess: now };
-    stats.count++;
-    stats.lastAccess = now;
-    this.accessFrequency.set(key, stats);
-  }
-
   private generateChecksum(value: T): string {
     try {
       // Optimize: avoid JSON.stringify for checksum generation when possible
@@ -456,6 +331,10 @@ class LocalCache<T = any> {
     } catch {
       return '';
     }
+  }
+
+  private getMemoryPressure(): number {
+    return this.currentMemoryUsage / this.memoryThreshold;
   }
 }
 
@@ -518,6 +397,7 @@ export class DistributedCache<T = any> extends EventEmitter {
       const localValue = this.localCache.get(key);
       if (localValue !== null) {
         this.metrics.localHits++;
+        this.trackAccess(key);
         this.emit('hit', { key, source: 'local', responseTime: Date.now() - startTime });
         return localValue;
       }
@@ -533,6 +413,7 @@ export class DistributedCache<T = any> extends EventEmitter {
             // Cache locally for future access
             this.localCache.set(key, distributedValue, this.options.defaultTTL);
             this.metrics.distributedHits++;
+            this.trackAccess(key);
             this.emit('hit', { key, source: 'distributed', responseTime: Date.now() - startTime });
             return distributedValue;
           }
@@ -653,7 +534,7 @@ export class DistributedCache<T = any> extends EventEmitter {
         totalItems: this.localCache.getStats().size,
         hitRate: localHitRate,
         missRate: 100 - localHitRate,
-        evictions: 0, // TODO: Track evictions
+        evictions: localMetrics.operations.evictions,
         totalHits: this.metrics.localHits,
         totalMisses: this.metrics.localMisses,
         memoryUsage: this.estimateMemoryUsage()
@@ -684,6 +565,10 @@ export class DistributedCache<T = any> extends EventEmitter {
   }
 
   async shutdown(): Promise<void> {
+    if (this.warmingInterval) {
+      clearInterval(this.warmingInterval);
+    }
+    
     if (this.redis) {
       await this.redis.quit();
     }
@@ -781,32 +666,14 @@ export class DistributedCache<T = any> extends EventEmitter {
         } else if (value === undefined) {
           return 'undefined';
         } else {
-          // Use async JSON.stringify for large objects to prevent blocking
-          return this.serializeValueAsync(value);
+          return JSON.stringify(value);
         }
       }
       // Add binary serialization if needed
-      return this.serializeValueAsync(value);
+      return JSON.stringify(value);
     } catch (error) {
       throw new Error(`Serialization failed: ${error}`);
     }
-  }
-
-  /**
-   * Async JSON serialization to prevent blocking the event loop
-   */
-  private serializeValueAsync(value: any): string {
-    // For small objects, use synchronous serialization
-    const jsonString = JSON.stringify(value);
-    
-    // If the result is large, we would need async processing
-    // For now, return the synchronous result but add setImmediate for future async implementation
-    if (jsonString.length > 10000) { // 10KB threshold
-      // In a real implementation, you'd use chunked processing
-      console.debug('Large object detected, consider chunked serialization');
-    }
-    
-    return jsonString;
   }
 
   private deserializeValue(value: string): T {
@@ -822,238 +689,12 @@ export class DistributedCache<T = any> extends EventEmitter {
           if (num.toString() === value) return num as T;
         }
         
-        // Use async JSON.parse for large strings to prevent blocking
-        if (value.length > 10000) { // 10KB threshold
-          return this.deserializeValueAsync(value);
-        }
-        
-return JSON.parse(value);
-  }
-
-  /**
-   * Track access frequency for cache warming
-   */
-  private trackAccess(key: string): void {
-    const now = Date.now();
-    const stats = this.accessFrequency.get(key) || { count: 0, lastAccess: now };
-    stats.count++;
-    stats.lastAccess = now;
-    this.accessFrequency.set(key, stats);
-  }
-
-  /**
-   * Start cache warming strategy
-   */
-  private startCacheWarming(): void {
-    this.warmingInterval = setInterval(() => {
-      this.performCacheWarming();
-    }, this.warmingIntervalMs);
-  }
-
-  /**
-   * Perform cache warming for frequently accessed keys
-   */
-  private async performCacheWarming(): Promise<void> {
-    if (this.accessFrequency.size === 0) return;
-    
-    const now = Date.now();
-    const keysToWarm: string[] = [];
-    
-    // Find keys that meet warming criteria
-    for (const [key, stats] of this.accessFrequency.entries()) {
-      // Warm keys accessed frequently and recently
-      if (stats.count >= this.warmingThreshold && 
-          (now - stats.lastAccess) < this.warmingIntervalMs * 2) {
-        keysToWarm.push(key);
+        return JSON.parse(value);
       }
-    }
-    
-    // Limit number of keys to warm
-    if (keysToWarm.length > this.maxWarmingKeys) {
-      // Sort by access frequency (most frequent first)
-      keysToWarm.sort((a, b) => {
-        const statsA = this.accessFrequency.get(a)!;
-        const statsB = this.accessFrequency.get(b)!;
-        return statsB.count - statsA.count;
-      });
-      keysToWarm.length = this.maxWarmingKeys;
-    }
-    
-    // Warm selected keys
-    for (const key of keysToWarm) {
-      try {
-        // Check if key exists in distributed cache
-        if (this.redis && this.circuitBreaker) {
-          const distributedValue = await this.circuitBreaker.execute(
-            () => this.getDistributedValue(key)
-          );
-          
-          // If distributed cache has value, warm local cache
-          if (distributedValue !== null) {
-            this.localCache.set(key, distributedValue, this.options.defaultTTL);
-            this.emit('cache:warm', { key, source: 'distributed' });
-          }
-        }
-      } catch (error) {
-        // Log warming errors but don't fail
-        console.debug(`Cache warming failed for key ${key}:`, error);
-      }
-    }
-    
-    // Clean up old access frequency data
-    this.cleanupAccessFrequency();
-    
-    // Emit warming metrics
-    if (keysToWarm.length > 0) {
-      this.emit('cache:warming-completed', { 
-        keysWarmed: keysToWarm.length,
-        totalAccessFrequency: this.accessFrequency.size
-      });
-    }
-  }
-
-  /**
-   * Clean up old access frequency data to prevent memory leaks
-   */
-  private cleanupAccessFrequency(): void {
-    const now = Date.now();
-    const maxAge = this.warmingIntervalMs * 10; // Keep data for 10 intervals
-    
-    for (const [key, stats] of this.accessFrequency.entries()) {
-      if (now - stats.lastAccess > maxAge) {
-        this.accessFrequency.delete(key);
-      }
-    }
-    
-    // Limit total size
-    if (this.accessFrequency.size > this.maxWarmingKeys * 2) {
-      const entries = Array.from(this.accessFrequency.entries())
-        .sort((a, b) => b[1].count - a[1].count); // Sort by frequency (least first)
-        .slice(0, this.maxWarmingKeys); // Keep top keys
-      
-      this.accessFrequency.clear();
-      for (const [key, stats] of entries) {
-        this.accessFrequency.set(key, stats);
-      }
-    }
-  }
-}
-
-  /**
-   * Start cache warming strategy
-   */
-  private startCacheWarming(): void {
-    this.warmingInterval = setInterval(() => {
-      this.performCacheWarming();
-    }, this.warmingIntervalMs);
-  }
-
-  /**
-   * Perform cache warming for frequently accessed keys
-   */
-  private async performCacheWarming(): Promise<void> {
-    if (this.accessFrequency.size === 0) return;
-    
-    const now = Date.now();
-    const keysToWarm: string[] = [];
-    
-    // Find keys that meet warming criteria
-    for (const [key, stats] of this.accessFrequency.entries()) {
-      // Warm keys accessed frequently and recently
-      if (stats.count >= this.warmingThreshold && 
-          (now - stats.lastAccess) < this.warmingIntervalMs * 2) {
-        keysToWarm.push(key);
-      }
-    }
-    
-    // Limit number of keys to warm
-    if (keysToWarm.length > this.maxWarmingKeys) {
-      // Sort by access frequency (most frequent first)
-      keysToWarm.sort((a, b) => {
-        const statsA = this.accessFrequency.get(a)!;
-        const statsB = this.accessFrequency.get(b)!;
-        return statsB.count - statsA.count;
-      });
-      keysToWarm.length = this.maxWarmingKeys;
-    }
-    
-    // Warm selected keys
-    for (const key of keysToWarm) {
-      try {
-        // Check if key exists in distributed cache
-        if (this.redis && this.circuitBreaker) {
-          const distributedValue = await this.circuitBreaker.execute(
-            () => this.getDistributedValue(key)
-          );
-          
-          // If distributed cache has value, warm local cache
-          if (distributedValue !== null) {
-            this.localCache.set(key, distributedValue, this.options.defaultTTL);
-            this.emit('cache:warm', { key, source: 'distributed' });
-          }
-        }
-      } catch (error) {
-        // Log warming errors but don't fail
-        console.debug(`Cache warming failed for key ${key}:`, error);
-      }
-    }
-    
-    // Clean up old access frequency data
-    this.cleanupAccessFrequency();
-    
-    // Emit warming metrics
-    if (keysToWarm.length > 0) {
-      this.emit('cache:warming-completed', { 
-        keysWarmed: keysToWarm.length,
-        totalAccessFrequency: this.accessFrequency.size
-      });
-    }
-  }
-
-  /**
-   * Clean up old access frequency data to prevent memory leaks
-   */
-  private cleanupAccessFrequency(): void {
-    const now = Date.now();
-    const maxAge = this.warmingIntervalMs * 10; // Keep data for 10 intervals
-    
-    for (const [key, stats] of this.accessFrequency.entries()) {
-      if (now - stats.lastAccess > maxAge) {
-        this.accessFrequency.delete(key);
-      }
-    }
-    
-    // Limit total size
-    if (this.accessFrequency.size > this.maxWarmingKeys * 2) {
-      const entries = Array.from(this.accessFrequency.entries())
-        .sort((a, b) => b[1].count - a[1].count) // Sort by frequency (least first)
-        .slice(0, this.maxWarmingKeys); // Keep top keys
-      
-      this.accessFrequency.clear();
-      for (const [key, stats] of entries) {
-        this.accessFrequency.set(key, stats);
-      }
-    }
-  }
-}
-      
       return JSON.parse(value);
     } catch (error) {
       throw new Error(`Deserialization failed: ${error}`);
     }
-  }
-
-  /**
-   * Async JSON deserialization to prevent blocking the event loop
-   */
-  private deserializeValueAsync(value: string): T {
-    // For now, use synchronous parsing but add setImmediate for future async implementation
-    // In a real implementation, you'd use chunked processing or worker threads
-    if (value.length > 50000) { // 50KB threshold
-      console.debug('Large JSON string detected, consider chunked deserialization');
-    }
-    
-    return JSON.parse(value);
   }
 
   private estimateMemoryUsage(): number {
