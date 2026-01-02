@@ -359,7 +359,7 @@ export class DistributedCache<T = any> extends EventEmitter {
   // Cache warming strategy
   private accessFrequency = new Map<string, { count: number; lastAccess: number }>();
   private warmingInterval?: NodeJS.Timeout;
-  private readonly warmingIntervalMs = 60000; // Warm cache every minute
+  private readonly warmingIntervalMs = 300000; // Warm cache every 5 minutes (reduced frequency)
   private readonly warmingThreshold = 5; // Warm keys accessed 5+ times
   private readonly maxWarmingKeys = 50; // Limit warming to prevent overload
 
@@ -707,6 +707,18 @@ export class DistributedCache<T = any> extends EventEmitter {
    * Track access frequency for cache warming
    */
   private trackAccess(key: string): void {
+    // Enforce maximum access frequency tracking entries to prevent memory bloat
+    if (this.accessFrequency.size >= this.maxWarmingKeys && !this.accessFrequency.has(key)) {
+      // Remove least recently used entries to make room
+      const entries = Array.from(this.accessFrequency.entries())
+        .sort((a, b) => a[1].lastAccess - b[1].lastAccess);
+      
+      const removeCount = Math.min(5, Math.floor(this.maxWarmingKeys * 0.1)); // Remove 10% or min 5
+      for (let i = 0; i < removeCount; i++) {
+        this.accessFrequency.delete(entries[i][0]);
+      }
+    }
+    
     const now = Date.now();
     const stats = this.accessFrequency.get(key) || { count: 0, lastAccess: now };
     stats.count++;
@@ -798,8 +810,8 @@ export class DistributedCache<T = any> extends EventEmitter {
       }
     }
     
-    // Limit total size
-    if (this.accessFrequency.size > this.maxWarmingKeys * 2) {
+    // Limit total size (aggressive cleanup to prevent memory bloat)
+    if (this.accessFrequency.size > this.maxWarmingKeys) {
       const entries = Array.from(this.accessFrequency.entries())
         .sort((a, b) => b[1].count - a[1].count) // Sort by frequency (least first)
         .slice(0, this.maxWarmingKeys); // Keep top keys

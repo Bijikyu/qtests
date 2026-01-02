@@ -483,7 +483,7 @@ export function createDistributedRateLimiter(config: RateLimitConfig): Distribut
   const limiter = new DistributedRateLimiter(config);
   const cleanupInterval = setInterval(() => {
     limiter.cleanup();
-  }, 60000);
+  }, 300000); // Reduced from 60s to 5 minutes
 
   // Store interval reference for cleanup
   (limiter as any)._cleanupInterval = cleanupInterval;
@@ -529,9 +529,9 @@ export class InMemoryRateLimiter {
   private requestHistory = new Map<string, number[]>();
   private patternCache = new Map<string, { avgRequests: number; pattern: string }>();
   private patternAnalysisInterval: NodeJS.Timeout | undefined;
-  private maxHistorySize = 1000;
-  private maxTrackedKeys = 10000; // Prevent memory bloat from too many tracked keys
-  private patternAnalysisIntervalMs = 60000; // 1 minute
+  private maxHistorySize = 500; // Reduced from 1000 to save memory
+  private maxTrackedKeys = 5000; // Reduced from 10000 to prevent memory bloat
+  private patternAnalysisIntervalMs = 300000; // 5 minutes (reduced frequency)
   
   // Token bucket implementation for smoother request distribution
   private tokenBuckets = new Map<string, { tokens: number; lastRefill: number; capacity: number; refillRate: number }>();
@@ -708,11 +708,15 @@ private analyzeRequestPatterns(): void {
   private updateRequestHistory(key: string): void {
     // Enforce maximum number of tracked keys to prevent memory bloat
     if (this.requestHistory.size >= this.maxTrackedKeys && !this.requestHistory.has(key)) {
-      // Remove oldest key to make room
-      const oldestKey = this.requestHistory.keys().next().value;
-      if (oldestKey) {
-        this.requestHistory.delete(oldestKey);
-        this.patternCache.delete(oldestKey);
+      // Remove multiple oldest keys to make room (aggressive cleanup)
+      const keysToRemove = Math.min(10, Math.floor(this.maxTrackedKeys * 0.1)); // Remove 10% or min 10
+      const keys = Array.from(this.requestHistory.keys());
+      for (let i = 0; i < keysToRemove; i++) {
+        const oldestKey = keys[i];
+        if (oldestKey) {
+          this.requestHistory.delete(oldestKey);
+          this.patternCache.delete(oldestKey);
+        }
       }
     }
     
@@ -720,12 +724,15 @@ private analyzeRequestPatterns(): void {
       this.requestHistory.set(key, []);
     }
     
-    const history = this.requestHistory.get(key)!;
-    history.push(Date.now());
-    
-    // Limit history size per key
-    if (history.length > this.maxHistorySize) {
-      history.splice(0, history.length - this.maxHistorySize);
+    const history = this.requestHistory.get(key);
+    if (history) { // Defensive check to prevent runtime error
+      history.push(Date.now());
+      
+      // Limit history size per key
+      if (history.length > this.maxHistorySize) {
+        const removeCount = history.length - this.maxHistorySize;
+        history.splice(0, removeCount); // Remove only the excess amount
+      }
     }
   }
 

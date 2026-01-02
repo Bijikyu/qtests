@@ -64,7 +64,7 @@ EXAMPLES:
   `);
 }
 
-async function showVersion() {
+function showVersion() {
   try {
     const packageJsonPath = path.join(process.cwd(), 'node_modules', 'qtests', 'package.json');
     const content = fsSync.readFileSync(packageJsonPath, 'utf8');

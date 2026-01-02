@@ -554,10 +554,26 @@ export class PerformanceMonitor extends EventEmitter {
       return data;
     }
     
-    // Preserve outliers and significant changes
-    const values = data.map(d => d.value);
-    const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
-    const stdDev = Math.sqrt(values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length);
+    // Preserve outliers and significant changes - optimized single-pass calculation
+    let sum = 0;
+    let sumSquares = 0;
+    const values = new Array(data.length);
+    
+    // Handle empty data edge case to prevent division by zero
+    if (data.length === 0) {
+      return data; // Return empty array for empty input
+    }
+    
+    // Single pass to extract values and calculate sums
+    for (let i = 0; i < data.length; i++) {
+      const value = data[i].value;
+      values[i] = value;
+      sum += value;
+      sumSquares += value * value;
+    }
+    
+    const mean = sum / values.length;
+    const stdDev = Math.sqrt((sumSquares / values.length) - (mean * mean));
     const threshold = mean + (stdDev * 2); // 2 sigma threshold for outliers
     
     // Keep outliers and evenly sample the rest
