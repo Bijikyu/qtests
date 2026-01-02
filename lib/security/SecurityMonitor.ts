@@ -58,7 +58,7 @@ export interface RateLimitResult {
  */
 export class SecurityMonitor {
   private events: SecurityEvent[] = [];
-  private rateLimits = new Map<string, { count: number; resetTime: number }>();
+  private rateLimits = new Map<string, { count: number; resetTime: number; blocked?: boolean }>();
   private maxEvents = 1000;
   private maxRateLimits = 5000; // Reduced for more aggressive cleanup
   private cleanupInterval?: NodeJS.Timeout;
@@ -214,6 +214,41 @@ checkRateLimit(identifier: string, options: {
       }
     }
     return result;
+  }
+
+  /**
+   * Get security metrics and statistics
+   */
+  getSecurityMetrics() {
+    const now = Date.now();
+    const lastHour = now - 3600000; // 1 hour ago
+    const recentEvents = this.events.filter(event => 
+      new Date(event.timestamp || '').getTime() > lastHour
+    );
+    
+    const eventsByType = Object.values(SecurityEventType).reduce((acc, type) => {
+      acc[type] = this.events.filter(event => event.type === type).length;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const eventsBySeverity = Object.values(SecuritySeverity).reduce((acc, severity) => {
+      acc[severity] = this.events.filter(event => event.severity === severity).length;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    const activeLimits = Array.from(this.rateLimits.values()).filter(rl => rl.blocked).length;
+    const blockedRequests = Array.from(this.rateLimits.values()).reduce((sum, rl) => sum + rl.count, 0);
+    
+    return {
+      totalEvents: this.events.length,
+      recentEvents: recentEvents.length,
+      eventsByType,
+      eventsBySeverity,
+      activeRateLimits: activeLimits,
+      blockedRequests,
+      memoryUsage: process.memoryUsage(),
+      uptime: process.uptime()
+    };
   }
 
   /**

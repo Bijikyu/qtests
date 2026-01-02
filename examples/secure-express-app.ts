@@ -134,7 +134,7 @@ function setupSecureRoutes(app: express.Application, uploadRateLimiter: any) {
     const bodyValidation = validateJSON(JSON.stringify(req.body));
     if (!bodyValidation.valid) {
       securityMonitor.logEvent({
-        type: SecurityEventType.JSON_INJECTION_ATTEMPT,
+        type: SecurityEventType.INJECTION_ATTACK,
         severity: SecuritySeverity.MEDIUM,
         source: 'secure_api_endpoint',
         details: { apiKey: apiKey.substring(0, 8) + '...', errors: bodyValidation.errors },
@@ -161,21 +161,21 @@ function setupSecureRoutes(app: express.Application, uploadRateLimiter: any) {
   });
 
   // File upload with enhanced security
-  app.post('/api/upload', uploadRateLimiter.checkLimit.bind(uploadRateLimiter)), async (req: Request, res: Response) => {
+  app.post('/api/upload', uploadRateLimiter.checkLimit.bind(uploadRateLimiter), async (req: Request, res: Response) => {
     try {
       // Validate file path
       const pathValidation = validatePath(req.body.targetPath || '/uploads');
       if (!pathValidation.valid) {
-        securityMonitor.logEvent({
-          type: SecurityEventType.PATH_TRAVERSAL_ATTEMPT,
-          severity: SecuritySeverity.HIGH,
-          source: 'file_upload_endpoint',
-          details: { path: req.body.targetPath, errors: pathValidation.errors },
-          blocked: true,
-          remediation: 'Path traversal attempt in upload'
-        });
+      securityMonitor.logEvent({
+        type: SecurityEventType.PATH_TRAVERSAL,
+        severity: SecuritySeverity.HIGH,
+        source: 'file_upload_endpoint',
+        details: { path: req.body.targetPath, errors: pathValidation.errors },
+        blocked: true,
+        remediation: 'Path traversal attempt in upload'
+      });
 
-        const errorResponse = SecurityUtils.createSecureErrorResponse(
+      const errorResponse = SecurityUtils.createSecureErrorResponse(
           'Invalid file path',
           'PATH_VALIDATION_ERROR'
         );
@@ -212,56 +212,7 @@ function setupSecureRoutes(app: express.Application, uploadRateLimiter: any) {
       );
       res.status(500).json(errorResponse);
     }
-    try {
-      // Validate file path
-      const pathValidation = validatePath(req.body.targetPath || '/uploads');
-      if (!pathValidation.valid) {
-        securityMonitor.logEvent({
-          type: SecurityEventType.PATH_TRAVERSAL_ATTEMPT,
-          severity: SecuritySeverity.HIGH,
-          source: 'file_upload_endpoint',
-          details: { path: req.body.targetPath, errors: pathValidation.errors },
-          blocked: true,
-          remediation: 'Path traversal attempt in upload'
-        });
-
-        const errorResponse = SecurityUtils.createSecureErrorResponse(
-          'Invalid file path',
-          'PATH_VALIDATION_ERROR'
-        );
-        return res.status(400).json(errorResponse);
-      }
-
-      // Simulate file processing
-      const fileData = {
-        filename: req.file?.originalname || 'unknown',
-        path: pathValidation.sanitized,
-        size: req.file?.size || 0,
-        hash: createSecureHash(JSON.stringify(req.body))
-      };
-
-      res.json({
-        message: 'File uploaded successfully',
-        file: fileData,
-        timestamp: new Date().toISOString()
-      });
-
-    } catch (error) {
-      securityMonitor.logEvent({
-        type: SecurityEventType.ANOMALOUS_PATTERN,
-        severity: SecuritySeverity.MEDIUM,
-        source: 'file_upload_endpoint',
-        details: { error: String(error), path: req.body.targetPath },
-        blocked: false,
-        remediation: 'File upload processing failed'
-      });
-
-      const errorResponse = SecurityUtils.createSecureErrorResponse(
-        'File upload failed',
-        'UPLOAD_ERROR'
-      );
-      res.status(500).json(errorResponse);
-    }
+  });
   });
 
   // Admin endpoint with IP filtering
@@ -319,15 +270,18 @@ function setupSecurityEndpoints(app: express.Application) {
 
   // Security audit endpoint
   app.get('/security/audit', (req: Request, res: Response) => {
-    const audit = createSecurityAudit();
+    const audit = createSecurityAudit({
+      type: 'security_audit',
+      severity: 'low',
+      source: 'security_audit_endpoint',
+      details: { endpoint: '/security/audit', ip: req.ip },
+      blocked: false,
+      remediation: 'Periodic security audit'
+    });
     
     res.json({
       timestamp: audit.timestamp,
-      audit: {
-        system: audit.systemInfo,
-        security: audit.securityStatus,
-        recommendations: audit.recommendations
-      }
+      audit: audit.event
     });
   });
 
@@ -427,7 +381,14 @@ async function startSecureApplication() {
   const port = process.env.PORT || 3000;
   
   // Log security audit on startup
-  const audit = createSecurityAudit();
+  const audit = createSecurityAudit({
+    type: 'startup_audit',
+    severity: 'low',
+    source: 'application_startup',
+    details: { port, timestamp: new Date().toISOString() },
+    blocked: false,
+    remediation: 'Application startup security audit'
+  });
   console.log('Security Audit on Startup:');
   console.log(JSON.stringify(audit, null, 2));
   

@@ -5,6 +5,8 @@
 
 import { safeExists, safeExistsAsync } from './fileExistence.js';
 import qerrors from 'qerrors';
+import { promises as fsPromises } from 'fs';
+import { dirname } from 'path';
 
 /**
  * Ensures a directory exists, creating it if necessary (async version)
@@ -13,9 +15,8 @@ import qerrors from 'qerrors';
  */
 export async function ensureDir(dirPath: string): Promise<boolean> {
   try {
-    const fs = await import('fs');
     if (!await safeExistsAsync(dirPath)) {
-      await fs.promises.mkdir(dirPath, { recursive: true });
+      await fsPromises.mkdir(dirPath, { recursive: true });
     }
     return true;
   } catch (error: any) {
@@ -53,16 +54,13 @@ export function ensureDirSync(dirPath: string): boolean {
  */
 export async function safeWriteFile(filePath: string, content: string | Buffer, encoding: BufferEncoding = 'utf8'): Promise<boolean> {
   try {
-    const fs = await import('fs');
-    const path = await import('path');
-    
     // Ensure directory exists
-    const dir = path.dirname(filePath);
+    const dir = dirname(filePath);
     if (!await safeExistsAsync(dir)) {
-      await fs.promises.mkdir(dir, { recursive: true });
+      await fsPromises.mkdir(dir, { recursive: true });
     }
     
-    await fs.promises.writeFile(filePath, content, encoding);
+    await fsPromises.writeFile(filePath, content, encoding);
     return true;
   } catch (error: any) {
     qerrors(error, 'fileWriting.safeWriteFile: writing file', { filePath, encoding, contentType: typeof content });

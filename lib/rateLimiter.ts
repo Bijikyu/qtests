@@ -51,6 +51,7 @@ export class DistributedRateLimiter {
   private recentCache = new Map<string, { result: RateLimitResult; timestamp: number; frequency: number }>();
   private readonly maxCacheSize = 500; // Reduced to prevent memory leaks
   private readonly cacheTtl = 5000; // 5 seconds cache TTL
+  private readonly maxEventHandlers = 10; // Limit event handlers to prevent memory bloat
   
   // Enhanced cache properties
   private readonly cacheHitThreshold = 0.8; // Cache hits above 80% are good
@@ -201,51 +202,61 @@ private calculateAdaptiveCacheSize(memoryPressure: number): number {
 }
 
 /**
- * Perform adaptive eviction with intelligent prioritization
+ * Perform adaptive eviction with intelligent prioritization (optimized for scalability)
  */
 private performAdaptiveEviction(memoryPressure: number, effectiveMaxSize: number): void {
   const entries = Array.from(this.recentCache.entries());
+  const entriesToEvict = Math.max(1, Math.floor(entries.length * 0.2)); // Evict 20% or minimum 1
   
-  // Score entries for eviction (higher score = more likely to evict)
-  const scoredEntries = entries.map(([key, cached]) => {
+  // Use simpler LRU strategy under high memory pressure to avoid CPU-intensive scoring
+  if (memoryPressure > 0.8) {
+    // Fast LRU eviction - just sort by timestamp (oldest first)
+    entries.sort((a, b) => a[1].timestamp - b[1].timestamp);
+    
+    for (let i = 0; i < Math.min(entriesToEvict, entries.length); i++) {
+      this.recentCache.delete(entries[i][0]);
+    }
+    
+    if (entriesToEvict > 5) {
+      console.debug(`Rate limiter fast LRU eviction: removed ${entriesToEvict} entries, memory pressure: ${(memoryPressure * 100).toFixed(1)}%`);
+    }
+    return;
+  }
+  
+  // Intelligent scoring only under moderate memory pressure
+  const maxScoreItems = Math.min(entriesToEvict * 2, entries.length); // Limit scoring work
+  const scoredEntries: Array<{ key: string; score: number }> = [];
+  
+  for (let i = 0; i < maxScoreItems; i++) {
+    const [key, cached] = entries[i];
     let score = 0;
     
-    // Age factor (older = higher score)
+    // Simplified scoring - focus on age and frequency
     const age = Date.now() - cached.timestamp;
-    score += Math.min(30, (age / 60000) * 10); // Max 30 points for age
+    score += Math.min(20, (age / 60000) * 5); // Max 20 points for age
     
-    // Result type factor (allowed requests = higher score, blocked = lower)
     if (cached.result.allowed) {
-      score += 20; // Allowed requests are less critical
+      score += 15; // Allowed requests are less critical
     } else {
-      score -= 10; // Blocked requests are more important to keep
+      score -= 5; // Blocked requests are more important to keep
     }
     
     // Frequency factor (low frequency = higher score)
-    score += Math.max(0, 20 - cached.frequency * 2); // Max 20 points for low frequency
+    score += Math.max(0, 15 - cached.frequency); // Max 15 points for low frequency
     
-    // Memory pressure adjustment
-    if (memoryPressure > 0.8) {
-      score += 10; // Extra incentive to evict under high pressure
-    }
-    
-    return { key, cached, score };
-  });
+    scoredEntries.push({ key, score });
+  }
   
-  // Sort by score (highest first) and evict
+  // Sort and evict highest scoring items
   scoredEntries.sort((a, b) => b.score - a.score);
   
-  // Calculate how many to evict
-  const toEvict = Math.max(1, Math.floor(entries.length * 0.2)); // Evict 20% or minimum 1
-  
-  for (let i = 0; i < Math.min(toEvict, scoredEntries.length); i++) {
-    const { key } = scoredEntries[i];
-    this.recentCache.delete(key);
+  for (let i = 0; i < Math.min(entriesToEvict, scoredEntries.length); i++) {
+    this.recentCache.delete(scoredEntries[i].key);
   }
   
   // Log significant evictions
-  if (toEvict > 5 || memoryPressure > 0.8) {
-    console.debug(`Rate limiter cache eviction: removed ${toEvict} entries, memory pressure: ${(memoryPressure * 100).toFixed(1)}%`);
+  if (entriesToEvict > 5) {
+    console.debug(`Rate limiter cache eviction: removed ${entriesToEvict} entries, memory pressure: ${(memoryPressure * 100).toFixed(1)}%`);
   }
 }
 
@@ -537,47 +548,62 @@ export class InMemoryRateLimiter {
     return recentRequests.length / 60; // Requests per second
   }
 
-  /**
-   * Start pattern analysis for predictive rate limiting
-   */
-  private startPatternAnalysis(): void {
-    this.patternAnalysisInterval = setInterval(() => {
+/**
+ * Start pattern analysis for predictive rate limiting
+ */
+private startPatternAnalysis(): void {
+  // Only start pattern analysis if we have reasonable limits
+  if (this.maxTrackedKeys > 1000) {
+    console.warn('Pattern analysis disabled due to high key limit to prevent memory issues');
+    return;
+  }
+  
+  this.patternAnalysisInterval = setInterval(() => {
+    try {
       this.analyzeRequestPatterns();
       this.cleanupOldHistory();
-    }, this.patternAnalysisIntervalMs);
-  }
-
-  /**
-   * Analyze request patterns to predict usage
-   */
-  private analyzeRequestPatterns(): void {
-    const now = Date.now();
-    
-    for (const [key, timestamps] of this.requestHistory.entries()) {
-      if (timestamps.length < 5) continue; // Need sufficient data
-      
-      // Calculate request rate pattern
-      const recentTimestamps = timestamps.filter((t: number) => now - t < 300000); // Last 5 minutes
-      if (recentTimestamps.length < 3) continue;
-      
-      // Sort timestamps to calculate intervals
-      recentTimestamps.sort((a: number, b: number) => a - b);
-      const intervals: number[] = [];
-      for (let i = 1; i < recentTimestamps.length; i++) {
-        intervals.push(recentTimestamps[i] - recentTimestamps[i - 1]);
+    } catch (error) {
+      console.error('Pattern analysis error:', error);
+      // Disable pattern analysis on repeated errors
+      if (this.patternAnalysisInterval) {
+        clearInterval(this.patternAnalysisInterval);
+        this.patternAnalysisInterval = undefined;
       }
-      
-      // Calculate average interval
-      const avgInterval = intervals.reduce((sum: number, interval: number) => sum + interval, 0) / intervals.length;
-      const avgRequestsPerSecond = 1000 / avgInterval;
-      
-      // Store pattern for predictive limiting
-      this.patternCache.set(key, {
-        avgRequests: avgRequestsPerSecond,
-        pattern: this.classifyPattern(avgRequestsPerSecond)
-      });
     }
+  }, this.patternAnalysisIntervalMs);
+}
+
+/**
+ * Analyze request patterns to predict usage (optimized for scalability)
+ */
+private analyzeRequestPatterns(): void {
+  const now = Date.now();
+  const maxAnalyzeKeys = 100; // Limit analysis to prevent CPU overload
+  let analyzedCount = 0;
+  
+  for (const [key, timestamps] of this.requestHistory.entries()) {
+    if (analyzedCount >= maxAnalyzeKeys) break; // Prevent CPU-intensive loops
+    if (timestamps.length < 5) continue; // Need sufficient data
+    
+    // Calculate request rate pattern
+    const recentTimestamps = timestamps.filter((t: number) => now - t < 300000); // Last 5 minutes
+    if (recentTimestamps.length < 3) continue;
+    
+    // Simplified pattern calculation - avoid sorting for performance
+    const timeSpan = recentTimestamps[recentTimestamps.length - 1] - recentTimestamps[0];
+    if (timeSpan <= 0) continue;
+    
+    const avgRequestsPerSecond = (recentTimestamps.length - 1) / (timeSpan / 1000);
+    
+    // Store pattern for predictive limiting
+    this.patternCache.set(key, {
+      avgRequests: avgRequestsPerSecond,
+      pattern: this.classifyPattern(avgRequestsPerSecond)
+    });
+    
+    analyzedCount++;
   }
+}
 
   /**
    * Classify request pattern for optimization
