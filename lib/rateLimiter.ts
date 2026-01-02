@@ -463,6 +463,7 @@ export class InMemoryRateLimiter {
   private patternCache = new Map<string, { avgRequests: number; pattern: string }>();
   private patternAnalysisInterval: NodeJS.Timeout | undefined;
   private maxHistorySize = 1000;
+  private maxTrackedKeys = 10000; // Prevent memory bloat from too many tracked keys
   private patternAnalysisIntervalMs = 60000; // 1 minute
 
   constructor(config: RateLimitConfig) {
@@ -592,6 +593,16 @@ export class InMemoryRateLimiter {
    * Update request history for pattern analysis
    */
   private updateRequestHistory(key: string): void {
+    // Enforce maximum number of tracked keys to prevent memory bloat
+    if (this.requestHistory.size >= this.maxTrackedKeys && !this.requestHistory.has(key)) {
+      // Remove oldest key to make room
+      const oldestKey = this.requestHistory.keys().next().value;
+      if (oldestKey) {
+        this.requestHistory.delete(oldestKey);
+        this.patternCache.delete(oldestKey);
+      }
+    }
+    
     if (!this.requestHistory.has(key)) {
       this.requestHistory.set(key, []);
     }
@@ -599,25 +610,45 @@ export class InMemoryRateLimiter {
     const history = this.requestHistory.get(key)!;
     history.push(Date.now());
     
-    // Limit history size
+    // Limit history size per key
     if (history.length > this.maxHistorySize) {
       history.splice(0, history.length - this.maxHistorySize);
     }
   }
 
   /**
-   * Clean up old history data
+   * Clean up old history data with aggressive memory management
    */
   private cleanupOldHistory(): void {
     const now = Date.now();
-    const cutoff = now - (24 * 60 * 60 * 1000); // Keep last 24 hours
+    const cutoff = now - (6 * 60 * 60 * 1000); // Keep last 6 hours (reduced from 24)
+    
+    const keysToDelete: string[] = [];
     
     for (const [key, timestamps] of this.requestHistory.entries()) {
       const filteredTimestamps = timestamps.filter((t: number) => t > cutoff);
       if (filteredTimestamps.length === 0) {
-        this.requestHistory.delete(key);
-      } else {
+        keysToDelete.push(key);
+      } else if (filteredTimestamps.length < timestamps.length * 0.5) {
+        // Significant cleanup, update the history
         this.requestHistory.set(key, filteredTimestamps);
+      }
+    }
+    
+    // Delete empty histories and clean up pattern cache
+    for (const key of keysToDelete) {
+      this.requestHistory.delete(key);
+      this.patternCache.delete(key);
+    }
+    
+    // Additional safety: if we still have too many keys, remove the oldest ones
+    if (this.requestHistory.size > this.maxTrackedKeys) {
+      const keysToRemove = Array.from(this.requestHistory.keys())
+        .slice(0, this.requestHistory.size - this.maxTrackedKeys);
+      
+      for (const key of keysToRemove) {
+        this.requestHistory.delete(key);
+        this.patternCache.delete(key);
       }
     }
   }

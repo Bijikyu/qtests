@@ -244,25 +244,45 @@ class LocalCache<T = any> {
   private evictLRU(): void {
     if (this.accessOrder.size === 0) return;
     
-    // Adaptive eviction based on multiple factors
+    // Simple, efficient LRU eviction - O(1) complexity
     const memoryPressure = this.getMemoryPressure();
-    let evictCount = this.calculateEvictionCount(memoryPressure);
+    let evictCount = 1; // Default to minimal eviction
     
-    // Collect eviction candidates with comprehensive scoring
-    const candidates = this.getEvictionCandidates();
+    // Adaptive eviction count based on memory pressure
+    if (memoryPressure > 0.9) {
+      evictCount = Math.max(1, Math.floor(this.accessOrder.size * 0.3));
+    } else if (memoryPressure > 0.8) {
+      evictCount = Math.max(1, Math.floor(this.accessOrder.size * 0.2));
+    } else if (this.currentMemoryUsage > this.memoryThreshold) {
+      evictCount = Math.max(1, Math.floor(this.accessOrder.size * 0.1));
+    }
     
-    // Sort by eviction priority (highest score first)
-    candidates.sort((a, b) => b.score - a.score);
+    let evicted = 0;
+    let memoryFreed = 0;
     
-    // Perform eviction with memory tracking
-    const evictionResult = this.performEviction(candidates, evictCount);
+    // Simple LRU eviction - remove oldest items
+    while (evicted < evictCount && this.accessOrder.size > 0) {
+      const oldestKey = this.accessOrder.keys().next().value;
+      if (!oldestKey) break;
+      
+      const item = this.cache.get(oldestKey);
+      if (item) {
+        const size = this.calculateItemSize(item);
+        memoryFreed += size;
+        this.currentMemoryUsage = Math.max(0, this.currentMemoryUsage - size);
+      }
+      
+      this.cache.delete(oldestKey);
+      this.accessOrder.delete(oldestKey);
+      evicted++;
+    }
     
-    // Update metrics and log significant evictions
-    this.metrics.operations.evictions += evictionResult.evicted;
-    this.currentMemoryUsage = Math.max(0, this.currentMemoryUsage - evictionResult.memoryFreed);
+    // Update metrics
+    this.metrics.operations.evictions += evicted;
     
-    if (evictionResult.evicted > 10 || memoryPressure > 0.9) {
-      console.debug(`Cache eviction: removed ${evictionResult.evicted} items, freed ${evictionResult.memoryFreed} bytes, memory pressure: ${(memoryPressure * 100).toFixed(1)}%`);
+    // Log significant evictions
+    if (evicted > 5 || memoryPressure > 0.9) {
+      console.debug(`Cache eviction: removed ${evicted} items, freed ${memoryFreed} bytes, memory pressure: ${(memoryPressure * 100).toFixed(1)}%`);
     }
   }
   
@@ -280,114 +300,7 @@ class LocalCache<T = any> {
     }
   }
   
-  /**
-   * Calculate eviction count based on memory pressure
-   */
-  private calculateEvictionCount(memoryPressure: number): number {
-    const totalItems = this.accessOrder.size;
-    
-    if (memoryPressure > 0.9) {
-      // Critical memory pressure - aggressive eviction
-      return Math.floor(totalItems * 0.5);
-    } else if (memoryPressure > 0.8) {
-      // High memory pressure - significant eviction
-      return Math.floor(totalItems * 0.3);
-    } else if (memoryPressure > 0.7) {
-      // Medium memory pressure - moderate eviction
-      return Math.floor(totalItems * 0.2);
-    } else if (this.currentMemoryUsage > this.memoryThreshold * 0.9) {
-      // Local memory pressure - targeted eviction
-      return Math.floor(totalItems * 0.15);
-    } else {
-      // Normal operation - minimal eviction
-      return Math.max(1, Math.floor(totalItems * 0.05));
-    }
-  }
   
-  /**
-   * Get eviction candidates with comprehensive scoring
-   */
-  private getEvictionCandidates(): Array<{ 
-    key: string; 
-    score: number; 
-    size: number; 
-    age: number; 
-    accessCount: number;
-    lastAccessed: number;
-  }> {
-    const candidates: Array<{ 
-      key: string; 
-      score: number; 
-      size: number; 
-      age: number; 
-      accessCount: number;
-      lastAccessed: number;
-    }> = [];
-    
-    const now = Date.now();
-    
-    for (const [key, accessCounter] of this.accessOrder) {
-      const item = this.cache.get(key);
-      if (!item) continue;
-      
-      const size = this.calculateItemSize(item);
-      const age = now - item.timestamp;
-      const accessFrequency = item.accessCount / Math.max(1, age / 1000); // accesses per second
-      const timeSinceLastAccess = now - item.lastAccessed;
-      
-      // Comprehensive eviction score (higher = more likely to evict)
-      let score = 0;
-      
-      // Age factor (older items get higher score)
-      score += Math.min(50, (age / (10 * 60 * 1000)) * 20); // Max 50 points for age
-      
-      // Size factor (larger items get higher score)
-      score += Math.min(30, (size / (100 * 1024)) * 15); // Max 30 points for size
-      
-      // Access frequency factor (less frequently accessed get higher score)
-      score += Math.min(20, (1 / Math.max(0.1, accessFrequency)) * 5); // Max 20 points for low frequency
-      
-      // Time since last access factor
-      score += Math.min(10, (timeSinceLastAccess / (5 * 60 * 1000)) * 5); // Max 10 points for stale access
-      
-      candidates.push({
-        key,
-        score,
-        size,
-        age,
-        accessCount: item.accessCount,
-        lastAccessed: item.lastAccessed
-      });
-    }
-    
-    return candidates;
-  }
-  
-  /**
-   * Perform eviction with memory tracking
-   */
-  private performEviction(candidates: Array<{ key: string; score: number; size: number }>, evictCount: number): { evicted: number; memoryFreed: number } {
-    let memoryFreed = 0;
-    let evicted = 0;
-    
-    for (let i = 0; i < Math.min(evictCount, candidates.length); i++) {
-      const candidate = candidates[i];
-      
-      // Double-check item exists before eviction
-      const item = this.cache.get(candidate.key);
-      if (!item) continue;
-      
-      // Remove from cache and access order
-      this.cache.delete(candidate.key);
-      this.removeFromAccessOrder(candidate.key);
-      
-      // Track memory freed
-      memoryFreed += candidate.size;
-      evicted++;
-    }
-    
-    return { evicted, memoryFreed };
-  }
 
   private calculateItemSize(item: CacheItem): number {
     // Efficient size calculation without JSON.stringify for primitive types

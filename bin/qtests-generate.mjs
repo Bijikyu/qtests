@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-import fs from 'fs';
+import fs from 'fs/promises';
+import fsSync from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import qerrors from 'qerrors';
@@ -63,10 +64,11 @@ EXAMPLES:
   `);
 }
 
-function showVersion() {
+async function showVersion() {
   try {
     const packageJsonPath = path.join(process.cwd(), 'node_modules', 'qtests', 'package.json');
-    const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    const content = fsSync.readFileSync(packageJsonPath, 'utf8');
+    const pkg = JSON.parse(content);
     console.log(`qtests v${pkg.version}`);
   } catch (error) {
     qerrors(error, 'showVersion: reading qtests package.json', { 
@@ -74,7 +76,8 @@ function showVersion() {
       cwd: process.cwd() 
     });
     try {
-      const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
+      const content = fsSync.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8');
+      const pkg = JSON.parse(content);
       console.log(`qtests v${pkg.version ?? 'unknown'}`);
     } catch (fallbackError) {
       qerrors(fallbackError, 'showVersion: reading project package.json', { 
@@ -86,18 +89,18 @@ function showVersion() {
   }
 }
 
-function exists(p) {
+async function exists(p) {
   try { 
-    return fs.existsSync(p); 
+    await fs.access(p);
+    return true;
   } catch (error) {
-    qerrors(error, 'exists: checking file existence', { filePath: p });
     return false; 
   }
 }
 
-function resolveClientRoot() {
+async function resolveClientRoot() {
   const icwd = process.env.INIT_CWD && String(process.env.INIT_CWD).trim();
-  if (icwd && exists(icwd) && !icwd.includes(`${path.sep}node_modules${path.sep}`)) return icwd;
+  if (icwd && await exists(icwd) && !icwd.includes(`${path.sep}node_modules${path.sep}`)) return icwd;
   return process.cwd();
 }
 
@@ -233,24 +236,24 @@ try {
 }
 
 async scaffoldRunner() {
-  const projectRoot = resolveClientRoot();
+  const projectRoot = await resolveClientRoot();
   
-  this.writeRunner(projectRoot);
-  this.writeJestConfig(projectRoot);
-  this.writeJestSetup(projectRoot);
-  this.writeRequirePolyfill(projectRoot);
+  await this.writeRunner(projectRoot);
+  await this.writeJestConfig(projectRoot);
+  await this.writeJestSetup(projectRoot);
+  await this.writeRequirePolyfill(projectRoot);
   
   console.log('✅ qtests runner and configuration files scaffolded successfully');
 }
 
-writeRunner(projectRoot) {
+async writeRunner(projectRoot) {
   const runnerPath = path.join(projectRoot, 'qtests-runner.mjs');
   const content = this.getRunnerTemplate();
   
   if (!this.config.dryRun) {
     try {
-      fs.writeFileSync(runnerPath, content, 'utf8');
-      fs.chmodSync(runnerPath, '755');
+      await fs.writeFile(runnerPath, content, 'utf8');
+      await fs.chmod(runnerPath, '755');
       console.log('✅ Created qtests-runner.mjs');
     } catch (error) {
       qerrors(error, 'writeRunner: file creation failed', { 
@@ -323,19 +326,21 @@ main();
 `;
 }
 
-writeJestConfig(projectRoot) {
+async writeJestConfig(projectRoot) {
   const configDir = path.join(projectRoot, 'config');
   const configPath = path.join(configDir, 'jest.config.mjs');
   
   if (!this.config.dryRun) {
     try {
-if (!fs.existsSync(configDir)) {
-        fs.mkdirSync(configDir, { recursive: true });
+      const configDirExists = await exists(configDir);
+      if (!configDirExists) {
+        await fs.mkdir(configDir, { recursive: true });
       }
       
-      if (!fs.existsSync(configPath) || this.config.force) {
+      const configPathExists = await exists(configPath);
+      if (!configPathExists || this.config.force) {
         const configContent = this.getJestConfig();
-        fs.writeFileSync(configPath, configContent, 'utf8');
+        await fs.writeFile(configPath, configContent, 'utf8');
         console.log('✅ Created config/jest.config.mjs');
       } else {
         console.log('ℹ️ config/jest.config.mjs already exists');
@@ -354,17 +359,19 @@ if (!fs.existsSync(configDir)) {
   }
 }
 
-writeJestSetup(projectRoot) {
+async writeJestSetup(projectRoot) {
   const configDir = path.join(projectRoot, 'config');
   const setupPath = path.join(configDir, 'jest-setup.ts');
   
   if (!this.config.dryRun) {
-    if (!fs.existsSync(configDir)) {
-      fs.mkdirSync(configDir, { recursive: true });
+    const configDirExists = await exists(configDir);
+    if (!configDirExists) {
+      await fs.mkdir(configDir, { recursive: true });
     }
     
-    if (!fs.existsSync(setupPath) || this.config.force) {
-      fs.writeFileSync(setupPath, this.getJestSetup(), 'utf8');
+    const setupPathExists = await exists(setupPath);
+    if (!setupPathExists || this.config.force) {
+      await fs.writeFile(setupPath, this.getJestSetup(), 'utf8');
       console.log('✅ Created config/jest-setup.ts');
     } else {
       console.log('ℹ️ config/jest-setup.ts already exists');
@@ -374,17 +381,19 @@ writeJestSetup(projectRoot) {
   }
 }
 
-writeRequirePolyfill(projectRoot) {
+async writeRequirePolyfill(projectRoot) {
   const configDir = path.join(projectRoot, 'config');
   const polyfillPath = path.join(configDir, 'jest-require-polyfill.cjs');
   
   if (!this.config.dryRun) {
-    if (!fs.existsSync(configDir)) {
-      fs.mkdirSync(configDir, { recursive: true });
+    const configDirExists = await exists(configDir);
+    if (!configDirExists) {
+      await fs.mkdir(configDir, { recursive: true });
     }
     
-    if (!fs.existsSync(polyfillPath) || this.config.force) {
-      fs.writeFileSync(polyfillPath, this.getRequirePolyfill(), 'utf8');
+    const polyfillPathExists = await exists(polyfillPath);
+    if (!polyfillPathExists || this.config.force) {
+      await fs.writeFile(polyfillPath, this.getRequirePolyfill(), 'utf8');
       console.log('✅ Created config/jest-require-polyfill.cjs');
     } else {
       console.log('ℹ️ config/jest-require-polyfill.cjs already exists');
@@ -394,14 +403,15 @@ writeRequirePolyfill(projectRoot) {
   }
 }
 
-updatePackageScript(projectRoot) {
+async updatePackageScript(projectRoot) {
   if (!this.config.updatePackageScript) return;
   
   const pkgPath = path.join(projectRoot, 'package.json');
-  if (!exists(pkgPath)) return;
+  if (!(await exists(pkgPath))) return;
   
   try {
-    const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8'));
+    const content = await fs.readFile(pkgPath, 'utf8');
+    const pkg = JSON.parse(content);
     pkg.scripts = pkg.scripts || {};
     
     const testScript = 'node qtests-runner.mjs';
@@ -412,7 +422,7 @@ updatePackageScript(projectRoot) {
     
     pkg.scripts.test = testScript;
     
-    fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8');
+    await fs.writeFile(pkgPath, JSON.stringify(pkg, null, 2), 'utf8');
     console.log('✅ Updated package.json test script');
   } catch (error) {
     qerrors(error, 'updatePackageScript: parsing or writing package.json', { projectRoot, pkgPath });
@@ -438,7 +448,7 @@ async function main() {
       await scaffolder.scaffoldRunner();
     } else {
       await scaffolder.scaffoldRunner();
-      scaffolder.updatePackageScript(resolveClientRoot());
+      await scaffolder.updatePackageScript(await resolveClientRoot());
     }
 
     console.log('\n💡 Next steps:');

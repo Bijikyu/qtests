@@ -367,8 +367,8 @@ private async waitForConnection(): Promise<any> {
   // Aggressive cleanup before checking limit
   this.cleanupTimedOutWaiters();
   
-  // Adaptive queue management based on system load and pool health
-  const memoryPressure = this.getMemoryPressure();
+  // Simple, reliable queue management with hard limits
+  const memoryPressure = await this.getMemoryPressure();
   const poolHealth = this.getPoolHealth();
   
   // Dynamic queue size adjustment based on conditions
@@ -382,29 +382,24 @@ private async waitForConnection(): Promise<any> {
     effectiveMaxQueue = Math.floor(this.maxWaitingQueue * 0.75);
   }
   
-  // Priority-based rejection with different strategies
+  // Simple, hard limit check - no complex rejection strategies that can fail
   if (this.waitingQueue.length >= effectiveMaxQueue) {
-    const rejectionStrategy = this.selectRejectionStrategy(memoryPressure, poolHealth);
-    await this.executeRejectionStrategy(rejectionStrategy);
-  }
-
-  // Final check with intelligent backoff suggestion
-  if (this.waitingQueue.length >= effectiveMaxQueue) {
-    const backoffDelay = this.calculateBackoffDelay(memoryPressure, poolHealth);
+    const backoffDelay = Math.min(1000, this.waitingQueue.length * 100);
     throw new Error(`Connection pool waiting queue is full (${this.waitingQueue.length}/${effectiveMaxQueue}). Retry after ${backoffDelay}ms`);
   }
 
-  return this.addToQueue();
+  return this.addToQueueWithBackpressure(effectiveMaxQueue);
 }
   
   /**
    * Get current memory pressure (0-1 scale)
    */
-  private getMemoryPressure(): number {
+  private async getMemoryPressure(): Promise<number> {
     try {
       const memUsage = process.memoryUsage();
-      const totalMem = require('os').totalmem();
-      const usedMem = totalMem - require('os').freemem();
+      const os = await import('os');
+      const totalMem = os.totalmem();
+      const usedMem = totalMem - os.freemem();
       return Math.min(1, usedMem / totalMem);
     } catch {
       return 0.5; // Default to medium pressure on error
@@ -496,6 +491,31 @@ private async waitForConnection(): Promise<any> {
    */
   private addToQueue(): Promise<any> {
     return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        const index = this.waitingQueue.findIndex(w => w.resolve === resolve);
+        if (index >= 0) {
+          this.waitingQueue.splice(index, 1);
+        }
+        reject(new Error('Connection acquire timeout'));
+      }, this.config.acquireTimeout);
+
+      this.waitingQueue.push({
+        resolve,
+        reject,
+        timeout,
+        timestamp: Date.now()
+      });
+    });
+  }
+
+  private addToQueueWithBackpressure(maxQueue: number): Promise<any> {
+    return new Promise((resolve, reject) => {
+      // Double-check queue limit before adding
+      if (this.waitingQueue.length >= maxQueue) {
+        reject(new Error(`Connection pool queue exceeded limit (${this.waitingQueue.length}/${maxQueue})`));
+        return;
+      }
+
       const timeout = setTimeout(() => {
         const index = this.waitingQueue.findIndex(w => w.resolve === resolve);
         if (index >= 0) {
@@ -652,37 +672,50 @@ private async waitForConnection(): Promise<any> {
     }, this.config.healthCheckInterval);
   }
 
-  private async performHealthCheck(): Promise<void> {
-    const unhealthy: PooledConnection[] = [];
-    
-    for (const pooled of this.connections) {
-      if (pooled.acquired) {
-        continue; // Skip active connections
-      }
+private async performHealthCheck(): Promise<void> {
+    // Set a timeout for health check to prevent blocking
+    const healthCheckTimeout = setTimeout(() => {
+      this.emit('health-check-timeout');
+    }, 5000); // 5 second max for health checks
 
-      try {
-        const isValid = await this.config.validate!(pooled.connection);
-        if (!isValid) {
-          unhealthy.push(pooled);
-        }
-      } catch (error) {
-        unhealthy.push(pooled);
-      }
+    try {
+      const unhealthy: PooledConnection[] = [];
+      
+      // Check connections in parallel with a limit
+      const checkPromises = this.connections
+        .filter(pooled => !pooled.acquired)
+        .map(async (pooled) => {
+          try {
+            const isValid = await Promise.race([
+              this.config.validate!(pooled.connection),
+              new Promise<boolean>((_, reject) => 
+                setTimeout(() => reject(new Error('Health check timeout')), 2000)
+              )
+            ]);
+            if (!isValid) {
+              unhealthy.push(pooled);
+            }
+          } catch (error) {
+            unhealthy.push(pooled);
+          }
+        });
+
+      await Promise.allSettled(checkPromises);
+
+      // Remove unhealthy connections in parallel
+      const removePromises = unhealthy.map(pooled => 
+        this.removeConnection(pooled).catch(err => 
+          this.emit('connection-removal-error', { error: err, connection: pooled })
+        )
+      );
+      await Promise.allSettled(removePromises);
+
+      // Ensure minimum connections
+      await this.ensureMinConnections();
+    } finally {
+      clearTimeout(healthCheckTimeout);
     }
-
-    // Remove unhealthy connections
-    for (const pooled of unhealthy) {
-      await this.removeConnection(pooled);
-    }
-
-    // Ensure minimum connections
-    await this.ensureMinConnections();
-
-    this.emit('health-check', {
-      totalConnections: this.connections.length,
-      unhealthyRemoved: unhealthy.length
-    });
-  }
+}
 
   private startCleanup(): void {
     this.cleanupInterval = setInterval(async () => {
