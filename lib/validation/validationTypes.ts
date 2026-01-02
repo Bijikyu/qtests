@@ -9,6 +9,7 @@ export interface ValidationConfig {
   enableStreaming: boolean;
   enableCaching?: boolean;
   timeout?: number;
+  requireFullValidation?: boolean; // Skip expensive final validation by default
 }
 
 export interface ValidationResult {

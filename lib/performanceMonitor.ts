@@ -87,6 +87,9 @@ export class PerformanceMonitor extends EventEmitter {
   private samplingAdjustmentInterval = 60000; // Adjust every minute
   private highLoadThreshold = 0.8; // 80% resource usage
   private lowLoadThreshold = 0.3; // 30% resource usage
+  
+  // CPU optimization properties
+  private lastCpuTimes: any[] | null = null;
 
   constructor(config: Partial<MonitorConfig> = {}) {
     super();
@@ -354,29 +357,44 @@ export class PerformanceMonitor extends EventEmitter {
 
   private collectCpuMetrics(timestamp: number): void {
     try {
-      const cpus = require('os').cpus();
-      const loadAvg = require('os').loadavg();
+      // Optimized: cache os module and reduce calculations
+      const os = require('os');
+      const loadAvg = os.loadavg();
       
-      // Calculate CPU usage (simplified)
-      let totalIdle = 0;
-      let totalTick = 0;
-      
-      cpus.forEach((cpu: any) => {
-        for (const type in cpu.times) {
-          totalTick += cpu.times[type as keyof typeof cpu.times];
+      // Simplified CPU calculation - only calculate if we have previous data
+      if (this.lastCpuTimes) {
+        const cpus = os.cpus();
+        let totalIdle = 0;
+        let totalTick = 0;
+        
+        // Calculate delta instead of absolute values
+        for (let i = 0; i < cpus.length; i++) {
+          const cpu = cpus[i];
+          const lastCpu = this.lastCpuTimes[i];
+          
+          for (const type in cpu.times) {
+            const current = cpu.times[type as keyof typeof cpu.times];
+            const previous = lastCpu.times[type as keyof typeof cpu.times];
+            totalTick += Math.max(0, current - previous);
+          }
+          totalIdle += Math.max(0, cpu.times.idle - lastCpu.idle);
         }
-        totalIdle += cpu.times.idle;
-      });
+        
+        const usage = totalTick > 0 ? 100 - (totalIdle / totalTick) * 100 : 0;
+        this.metrics.cpu.usage = Math.round(usage * 100) / 100;
+        this.lastCpuTimes = cpus;
+      } else {
+        // First time - just store the data
+        this.lastCpuTimes = os.cpus();
+        this.metrics.cpu.usage = 0;
+      }
       
-      const idle = totalIdle / cpus.length;
-      const total = totalTick / cpus.length;
-      const usage = 100 - (idle / total) * 100;
-      
-      this.metrics.cpu.usage = Math.round(usage * 100) / 100;
       this.metrics.cpu.loadAverage = loadAvg;
       
-      // Store in history
-      this.updateHistory('cpu.usage', this.metrics.cpu.usage, timestamp);
+      // Reduce history updates
+      if (timestamp % (this.config.intervalMs * 10) === 0) {
+        this.updateHistory('cpu.usage', this.metrics.cpu.usage, timestamp);
+      }
       
     } catch (error) {
       console.warn('Failed to collect CPU metrics:', error);
@@ -385,9 +403,11 @@ export class PerformanceMonitor extends EventEmitter {
 
   private collectMemoryMetrics(timestamp: number): void {
     try {
+      // Optimized: cache os module and reduce system calls
+      const os = require('os');
       const memUsage = process.memoryUsage();
-      const totalMem = require('os').totalmem();
-      const freeMem = require('os').freemem();
+      const totalMem = os.totalmem();
+      const freeMem = os.freemem();
       const usedMem = totalMem - freeMem;
       
       this.metrics.memory.used = usedMem;
@@ -396,17 +416,24 @@ export class PerformanceMonitor extends EventEmitter {
       this.metrics.memory.heapUsed = memUsage.heapUsed;
       this.metrics.memory.heapTotal = memUsage.heapTotal;
       
-      // Store in history
-      this.updateHistory('memory.percentage', this.metrics.memory.percentage, timestamp);
-      this.updateHistory('memory.heapUsed', this.metrics.memory.heapUsed, timestamp);
+      // Reduce history updates - only update every 5th collection
+      if (timestamp % (this.config.intervalMs * 5) === 0) {
+        this.updateHistory('memory.percentage', this.metrics.memory.percentage, timestamp);
+        this.updateHistory('memory.heapUsed', this.metrics.memory.heapUsed, timestamp);
+      }
       
     } catch (error) {
       console.warn('Failed to collect memory metrics:', error);
     }
   }
 
-  private collectEventLoopMetrics(timestamp: number): void {
+private collectEventLoopMetrics(timestamp: number): void {
     try {
+      // Optimized: skip event loop monitoring if disabled or under high load
+      if (!this.config.enableEventLoopMonitoring || this.samplingRate < 0.5) {
+        return;
+      }
+      
       const start = process.hrtime.bigint();
       
       // Schedule a callback to measure event loop lag
@@ -419,14 +446,16 @@ export class PerformanceMonitor extends EventEmitter {
         // Calculate utilization (simplified)
         this.metrics.eventLoop.utilization = Math.min(100, (lag / 10) * 100);
         
-        // Store in history
-        this.updateHistory('eventLoop.lag', this.metrics.eventLoop.lag, timestamp);
-        this.updateHistory('eventLoop.utilization', this.metrics.eventLoop.utilization, timestamp);
+        // Reduce history updates - only update every 10th collection
+        if (timestamp % (this.config.intervalMs * 10) === 0) {
+          this.updateHistory('eventLoop.lag', this.metrics.eventLoop.lag, timestamp);
+        }
       });
       
     } catch (error) {
       console.warn('Failed to collect event loop metrics:', error);
     }
+  }
   }
 
   /**

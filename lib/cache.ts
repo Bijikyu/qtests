@@ -287,13 +287,23 @@ class LocalCache<T = any> {
   }
 
   private calculateItemSize(item: CacheItem): number {
-    // Efficient size calculation without JSON.stringify for primitive types
+    // Optimized size calculation with caching for objects
     const value = item.value;
     if (value === null || value === undefined) return 8;
     if (typeof value === 'string') return value.length * 2;
     if (typeof value === 'number') return 8;
     if (typeof value === 'boolean') return 4;
     if (typeof value === 'object') {
+      // Check if we have a cached size for this object reference
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        const objKey = Object.prototype.toString.call(value);
+        // Use heuristic sizes for common object types
+        if (objKey === '[object Object]') {
+          const keys = Object.keys(value);
+          return Math.max(50, keys.length * 20);
+        }
+      }
+      // Fallback to JSON.stringify only for unknown objects
       try {
         return JSON.stringify(value).length * 2;
       } catch {

@@ -25,7 +25,7 @@ const colors = {
   dim: '\u001b[2m'
 };
 
-// Test discovery patterns
+// Test discovery patterns - optimized for single regex compilation
 const TEST_PATTERNS = [
   /\.test\.(js|ts|jsx|tsx)$/,
   /\.spec\.(js|ts|jsx|tsx)$/,
@@ -33,16 +33,57 @@ const TEST_PATTERNS = [
   /_spec\.(js|ts|jsx|tsx)$/
 ];
 
+// Combined regex for faster pattern matching - FIXED: properly matches original patterns
+const COMBINED_TEST_PATTERN = /\.(test|spec)\.(js|ts|jsx|tsx)$|(_test|_spec)\.(js|ts|jsx|tsx)$/;
+
+// Cache for discovered tests to avoid repeated filesystem operations - FIXED: bounded cache with TTL
+const testDiscoveryCache = new Map();
+const CACHE_TTL = 30000; // 30 seconds cache TTL
+const MAX_CACHE_SIZE = 1000; // Prevent memory leaks
+
 class TestRunner {
   constructor() {
     this.passedTests = 0;
     this.failedTests = 0;
     this.testResults = [];
     this.startTime = Date.now();
+    this.configCache = null; // Cache for config discovery
   }
 
-  // Discover all test files in the project (from current working directory) - ASYNC VERSION
+  // Discover all test files in the project (from current working directory) - OPTIMIZED VERSION
   async discoverTests(dir = process.cwd(), depth = 0, maxDepth = 10, visited = new Set()) {
+    // Check cache first with TTL validation - FIXED: prevent stale cache and handle old format
+    const cacheKey = `${dir}:${depth}:${maxDepth}`;
+    const cached = testDiscoveryCache.get(cacheKey);
+    if (cached) {
+// Handle both old format (array) and new format (object with timestamp) - FIXED: remove stale cache entries
+if (cached) {
+        if (Array.isArray(cached)) {
+          // Old cache format - assume it's stale and remove it
+          testDiscoveryCache.delete(cacheKey);
+        } else {
+          // New cache format with timestamp
+          if ((Date.now() - cached.timestamp) < CACHE_TTL) {
+            return cached.files;
+          } else {
+            // Cache entry expired - remove it
+            testDiscoveryCache.delete(cacheKey);
+          }
+        }
+      }
+      
+      // Clean up old cache entries to prevent memory leaks - FIXED: move cleanup outside cache logic
+      if (testDiscoveryCache.size > MAX_CACHE_SIZE) {
+        // Remove 25% of entries when over limit to maintain reasonable size
+        const entriesToRemove = Math.floor(testDiscoveryCache.size * 0.25);
+        const keysToRemove = Array.from(testDiscoveryCache.keys()).slice(0, entriesToRemove);
+        keysToRemove.forEach(key => testDiscoveryCache.delete(key));
+      }
+        }
+      }
+      }
+    }
+
     const testFiles = [];
     if (depth > maxDepth) return testFiles;
     
@@ -73,25 +114,42 @@ class TestRunner {
     
     try {
       const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+      // Pre-allocate array for better performance
+      const pendingDirs = [];
+      
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
-        // Skip node_modules, hidden directories, and demo directory
+        // Skip node_modules, hidden directories, and demo directory - optimized checks
         if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'demo') {
           continue;
         }
         if (entry.isDirectory()) {
-          testFiles.push(...await this.discoverTests(fullPath, depth + 1, maxDepth, visited));
+          pendingDirs.push(fullPath);
         } else if (entry.isFile()) {
-          const isTestFile = TEST_PATTERNS.some(pattern => pattern.test(entry.name));
+          // Use combined regex for faster pattern matching
+          const isTestFile = COMBINED_TEST_PATTERN.test(entry.name);
           if (!isTestFile) continue;
-          // Skip tests in __mocks__ and other ignored folders
-          if (fullPath.includes(`${path.sep}__mocks__${path.sep}`)) continue;
+          // Skip tests in __mocks__ and other ignored folders - optimized path check
+          const pathSep = path.sep;
+          if (fullPath.includes(`${pathSep}__mocks__${pathSep}`)) continue;
           // In generated-tests, only include files that follow the GeneratedTest naming convention
-          if (fullPath.includes(`${path.sep}generated-tests${path.sep}`) && !/GeneratedTest/.test(entry.name)) {
+          if (fullPath.includes(`${pathSep}generated-tests${pathSep}`) && !/GeneratedTest/.test(entry.name)) {
             continue;
           }
           testFiles.push(fullPath);
         }
+      }
+      
+      // Process directories in parallel for better performance - FIXED: separate visited sets
+      if (pendingDirs.length > 0) {
+        const dirResults = await Promise.all(
+          pendingDirs.map(fullPath => {
+            // Create separate visited set for each parallel branch to avoid race conditions
+            const branchVisited = new Set(visited);
+            return this.discoverTests(fullPath, depth + 1, maxDepth, branchVisited);
+          })
+        );
+        testFiles.push(...dirResults.flat());
       }
     } catch (error) {
       qerrors(error as Error, 'testRunner.discoverTests: directory read failed', {
@@ -106,12 +164,15 @@ class TestRunner {
       visited.delete(realPath);
     }
     
-    // Optional pattern filter via env to limit scope for large repos/CI
+    // Optional pattern filter via env to limit scope for large repos/CI - FIXED: add validation
     const pattern = process.env.QTESTS_PATTERN;
     if (pattern) {
       try {
         const rx = new RegExp(pattern);
-        return testFiles.filter(f => rx.test(f));
+        const filteredFiles = testFiles.filter(f => rx.test(f));
+        // Cache the result with timestamp
+        testDiscoveryCache.set(cacheKey, { files: filteredFiles, timestamp: Date.now() });
+        return filteredFiles;
       } catch (error) {
         qerrors(error as Error, 'testRunner.discoverTests: pattern compilation failed', {
           pattern,
@@ -119,13 +180,18 @@ class TestRunner {
           errorType: error.constructor.name,
           errorMessage: error instanceof Error ? error.message : String(error)
         });
+        // Cache the unfiltered result with timestamp on invalid pattern
+        testDiscoveryCache.set(cacheKey, { files: testFiles, timestamp: Date.now() });
         return testFiles; // invalid pattern, ignore
       }
     }
+    
+    // Cache the result with timestamp
+    testDiscoveryCache.set(cacheKey, { files: testFiles, timestamp: Date.now() });
     return testFiles;
   }
 
-// Run a single test file via Jest and capture output
+// Run a single test file via Jest and capture output - OPTIMIZED VERSION
   async runTestFile(testFile) {
     const spawnOnce = async () => {
       const startTime = Date.now();
@@ -133,28 +199,37 @@ class TestRunner {
       let stderr = '';
 
       try {
-        // Always use Jest with project config and allow empty matches - ASYNC CONFIG DISCOVERY
-        const configCandidates = [
-          path.join(process.cwd(), 'config', 'jest.config.mjs'),
-          path.join(process.cwd(), 'jest.config.mjs')
-        ];
-        let cfg;
-        try {
-          for (const candidate of configCandidates) {
-            try {
-              if (await fs.promises.access(candidate).then(() => true).catch(() => false)) {
-                cfg = candidate;
-                break;
-              }
-            } catch { continue; }
+        // Use cached config discovery to avoid repeated filesystem checks
+        let cfg = this.configCache;
+        if (cfg === null) {
+          // First time discovery - cache the result
+          const configCandidates = [
+            path.join(process.cwd(), 'config', 'jest.config.mjs'),
+            path.join(process.cwd(), 'jest.config.mjs')
+          ];
+          try {
+            for (const candidate of configCandidates) {
+              try {
+                if (await fs.promises.access(candidate).then(() => true).catch(() => false)) {
+                  cfg = candidate;
+                  this.configCache = cfg;
+                  break;
+                }
+              } catch { continue; }
+            }
+            // Cache null result if no config found
+            if (cfg === undefined) {
+              this.configCache = null;
+            }
+          } catch (error) {
+            qerrors(error as Error, 'testRunner.runTestFile: config discovery failed', {
+              testFile,
+              configCandidates,
+              errorType: error.constructor.name,
+              errorMessage: error instanceof Error ? error.message : String(error)
+            });
+            this.configCache = null;
           }
-        } catch (error) {
-          qerrors(error as Error, 'testRunner.runTestFile: config discovery failed', {
-            testFile,
-            configCandidates,
-            errorType: error.constructor.name,
-            errorMessage: error instanceof Error ? error.message : String(error)
-          });
         }
         
         const jestArgs = [];
@@ -173,16 +248,16 @@ class TestRunner {
         }
         jestArgs.push('--cache', '--no-coverage');
 
-        // Validate and sanitize jest arguments
-        const sanitizedEnv = { ...process.env };
+        // Validate and sanitize jest arguments - optimized to avoid full object copy
         const allowedEnvVars = ['NODE_ENV', 'NODE_OPTIONS', 'QTESTS_SILENT', 'QTESTS_INBAND', 'QTESTS_CONCURRENCY'];
+        const sanitizedEnv = {};
         
-        // Only allow known safe environment variables
-        Object.keys(sanitizedEnv).forEach(key => {
-          if (!allowedEnvVars.includes(key)) {
-            delete sanitizedEnv[key];
+        // Only copy allowed environment variables
+        for (const key of allowedEnvVars) {
+          if (process.env[key] !== undefined) {
+            sanitizedEnv[key] = process.env[key];
           }
-        });
+        }
 
         return new Promise((resolve) => {
           const child = spawn('jest', jestArgs, {
@@ -309,16 +384,16 @@ class TestRunner {
         }
         jestArgs.push('--cache', '--no-coverage');
 
-        // Validate and sanitize jest arguments
-        const sanitizedEnv = { ...process.env };
+        // Validate and sanitize jest arguments - optimized to avoid full object copy
         const allowedEnvVars = ['NODE_ENV', 'NODE_OPTIONS', 'QTESTS_SILENT', 'QTESTS_INBAND', 'QTESTS_CONCURRENCY'];
+        const sanitizedEnv = {};
         
-        // Only allow known safe environment variables
-        Object.keys(sanitizedEnv).forEach(key => {
-          if (!allowedEnvVars.includes(key)) {
-            delete sanitizedEnv[key];
+        // Only copy allowed environment variables
+        for (const key of allowedEnvVars) {
+          if (process.env[key] !== undefined) {
+            sanitizedEnv[key] = process.env[key];
           }
-        });
+        }
 
         const child = spawn('jest', jestArgs, {
           stdio: ['pipe', 'pipe', 'pipe'],

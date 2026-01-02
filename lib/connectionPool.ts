@@ -436,23 +436,26 @@ async shutdown(): Promise<void> {
    * Find the optimal idle connection based on reuse statistics
    */
   private findOptimalIdleConnection(): PooledConnection | undefined {
-    const idleConnections = this.connections.filter(c => !c.acquired);
+    // Optimized: avoid array creation, use direct iteration
+    let optimal: PooledConnection | undefined;
+    let minUses = Infinity;
     
-    if (idleConnections.length === 0) {
-      return undefined;
+    for (const connection of this.connections) {
+      if (!connection.acquired) {
+        if (!optimal) {
+          optimal = connection;
+          minUses = this.connectionReuseStats.get(connection.connection)?.uses || 0;
+        } else {
+          const uses = this.connectionReuseStats.get(connection.connection)?.uses || 0;
+          if (uses < minUses) {
+            optimal = connection;
+            minUses = uses;
+          }
+        }
+      }
     }
     
-    if (idleConnections.length === 1) {
-      return idleConnections[0];
-    }
-    
-    // Select connection with lowest reuse count to balance load
-    return idleConnections.reduce((optimal, current) => {
-      const optimalStats = this.connectionReuseStats.get(optimal.connection) || { uses: 0 };
-      const currentStats = this.connectionReuseStats.get(current.connection) || { uses: 0 };
-      
-      return currentStats.uses < optimalStats.uses ? current : optimal;
-    });
+    return optimal;
   }
 
   private async createConnection(): Promise<PooledConnection> {
