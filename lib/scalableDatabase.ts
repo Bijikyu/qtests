@@ -43,6 +43,7 @@ export interface DatabaseMetrics {
   activeConnections: number;
   connectionPoolHits: number;
   connectionPoolMisses: number;
+  truncatedQueries: number;
 }
 
 interface CachedQuery {
@@ -89,7 +90,8 @@ export class ScalableDatabaseClient extends EventEmitter {
     averageQueryTime: 0,
     activeConnections: 0,
     connectionPoolHits: 0,
-    connectionPoolMisses: 0
+    connectionPoolMisses: 0,
+    truncatedQueries: 0
   };
 
   constructor(config: DatabaseConfig) {
@@ -172,19 +174,34 @@ export class ScalableDatabaseClient extends EventEmitter {
         this.cleanupQueryPatterns();
       }
       
-      // Enforce result set size limits with early termination support and better warnings
-      if (result.rows.length > this.maxResultRows) {
-        console.warn(`Query result truncated from ${result.rows.length} to ${this.maxResultRows} rows. Consider pagination for large datasets.`);
-        // Use more efficient array manipulation
-        result.rows = result.rows.splice(0, this.maxResultRows);
-        result.rowCount = this.maxResultRows;
+      // Adaptive result size limits based on memory pressure and query complexity
+      const memoryPressure = this.getMemoryPressure();
+      const adaptiveLimit = this.calculateAdaptiveResultLimit(result.rows.length, analysis.complexity, memoryPressure);
+      
+      if (result.rows.length > adaptiveLimit) {
+        const originalCount = result.rows.length;
         
-        // Emit warning for application-level handling
+        // Use more efficient array slicing (not splice which modifies in place)
+        result.rows = result.rows.slice(0, adaptiveLimit);
+        result.rowCount = adaptiveLimit;
+        
+        // Enhanced warning with context and recommendations
+        const warning = this.generateTruncationWarning(originalCount, adaptiveLimit, analysis, memoryPressure);
+        console.warn(warning);
+        
+        // Emit detailed truncation event for application-level handling
         this.emit('query:truncated', { 
-          originalCount: result.rows.length + this.maxResultRows, 
-          truncatedCount: this.maxResultRows,
-          sql: sql.substring(0, 100) + (sql.length > 100 ? '...' : '')
+          originalCount, 
+          truncatedCount: adaptiveLimit,
+          adaptiveLimit,
+          memoryPressure,
+          complexity: analysis.complexity,
+          sql: sql.substring(0, 100) + (sql.length > 100 ? '...' : ''),
+          recommendation: this.getTruncationRecommendation(analysis, memoryPressure)
         });
+        
+        // Update metrics for truncation tracking
+        this.metrics.truncatedQueries = (this.metrics.truncatedQueries || 0) + 1;
       }
       
       // Cache result if enabled and size is reasonable
@@ -626,6 +643,86 @@ private startCacheCleanup(): void {
       hitRate
     };
 }
+
+  /**
+   * Get current memory pressure (0-1 scale)
+   */
+  private getMemoryPressure(): number {
+    try {
+      const memUsage = process.memoryUsage();
+      const totalMem = require('os').totalmem();
+      const usedMem = totalMem - require('os').freemem();
+      return Math.min(1, usedMem / totalMem);
+    } catch {
+      return 0.5; // Default to medium pressure on error
+    }
+  }
+
+  /**
+   * Calculate adaptive result limit based on conditions
+   */
+  private calculateAdaptiveResultLimit(resultCount: number, complexity: number, memoryPressure: number): number {
+    let adaptiveLimit = this.maxResultRows;
+    
+    // Reduce limit based on memory pressure
+    if (memoryPressure > 0.9) {
+      adaptiveLimit = Math.floor(adaptiveLimit * 0.3); // 70% reduction
+    } else if (memoryPressure > 0.8) {
+      adaptiveLimit = Math.floor(adaptiveLimit * 0.5); // 50% reduction
+    } else if (memoryPressure > 0.7) {
+      adaptiveLimit = Math.floor(adaptiveLimit * 0.7); // 30% reduction
+    }
+    
+    // Reduce limit based on query complexity
+    if (complexity > 10) {
+      adaptiveLimit = Math.floor(adaptiveLimit * 0.5); // Complex queries get smaller limits
+    } else if (complexity > 5) {
+      adaptiveLimit = Math.floor(adaptiveLimit * 0.7); // Medium complexity
+    }
+    
+    // Ensure minimum limit
+    return Math.max(10, adaptiveLimit);
+  }
+
+  /**
+   * Generate detailed truncation warning
+   */
+  private generateTruncationWarning(originalCount: number, truncatedCount: number, analysis: any, memoryPressure: number): string {
+    const complexityDesc = analysis.complexity > 10 ? 'very complex' : 
+                          analysis.complexity > 5 ? 'complex' : 
+                          analysis.complexity > 1 ? 'moderate' : 'simple';
+    
+    const pressureDesc = memoryPressure > 0.9 ? 'critical' : 
+                        memoryPressure > 0.8 ? 'high' : 
+                        memoryPressure > 0.7 ? 'medium' : 'low';
+    
+    return `Query result truncated from ${originalCount} to ${truncatedCount} rows. ` +
+           `Query complexity: ${complexityDesc}, Memory pressure: ${pressureDesc}. ` +
+           `Consider pagination, query optimization, or reducing result set size.`;
+  }
+
+  /**
+   * Get truncation recommendation based on analysis
+   */
+  private getTruncationRecommendation(analysis: any, memoryPressure: number): string {
+    const recommendations: string[] = [];
+    
+    if (analysis.complexity > 5) {
+      recommendations.push('Consider query optimization or breaking into simpler queries');
+    }
+    
+    if (memoryPressure > 0.8) {
+      recommendations.push('Reduce memory usage by implementing pagination');
+    }
+    
+    if (analysis.estimatedRows > 1000) {
+      recommendations.push('Add LIMIT clause or implement cursor-based pagination');
+    }
+    
+    recommendations.push('Consider caching frequently accessed results');
+    
+    return recommendations.join('; ');
+  }
 
   /**
    * Analyze query patterns for optimization

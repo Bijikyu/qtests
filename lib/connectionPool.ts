@@ -367,42 +367,151 @@ private async waitForConnection(): Promise<any> {
   // Aggressive cleanup before checking limit
   this.cleanupTimedOutWaiters();
   
-  // More aggressive queue management with priority-based rejection
-  if (this.waitingQueue.length >= this.maxWaitingQueue) {
-    // Reject oldest 25% of requests to make room and prevent cascade failures
-    const toReject = Math.max(1, Math.floor(this.waitingQueue.length * 0.25));
-    for (let i = 0; i < toReject; i++) {
+  // Adaptive queue management based on system load and pool health
+  const memoryPressure = this.getMemoryPressure();
+  const poolHealth = this.getPoolHealth();
+  
+  // Dynamic queue size adjustment based on conditions
+  let effectiveMaxQueue = this.maxWaitingQueue;
+  
+  if (memoryPressure > 0.9 || poolHealth < 0.5) {
+    // Reduce queue size under stress
+    effectiveMaxQueue = Math.floor(this.maxWaitingQueue * 0.5);
+  } else if (memoryPressure > 0.8 || poolHealth < 0.7) {
+    // Moderate reduction
+    effectiveMaxQueue = Math.floor(this.maxWaitingQueue * 0.75);
+  }
+  
+  // Priority-based rejection with different strategies
+  if (this.waitingQueue.length >= effectiveMaxQueue) {
+    const rejectionStrategy = this.selectRejectionStrategy(memoryPressure, poolHealth);
+    await this.executeRejectionStrategy(rejectionStrategy);
+  }
+
+  // Final check with intelligent backoff suggestion
+  if (this.waitingQueue.length >= effectiveMaxQueue) {
+    const backoffDelay = this.calculateBackoffDelay(memoryPressure, poolHealth);
+    throw new Error(`Connection pool waiting queue is full (${this.waitingQueue.length}/${effectiveMaxQueue}). Retry after ${backoffDelay}ms`);
+  }
+
+  return this.addToQueue();
+}
+  
+  /**
+   * Get current memory pressure (0-1 scale)
+   */
+  private getMemoryPressure(): number {
+    try {
+      const memUsage = process.memoryUsage();
+      const totalMem = require('os').totalmem();
+      const usedMem = totalMem - require('os').freemem();
+      return Math.min(1, usedMem / totalMem);
+    } catch {
+      return 0.5; // Default to medium pressure on error
+    }
+  }
+  
+  /**
+   * Get pool health score (0-1 scale)
+   */
+  private getPoolHealth(): number {
+    try {
+      const totalConnections = this.connections.length;
+      const activeConnections = this.connections.filter(c => c.acquired).length;
+      const successRate = this.stats.totalAcquisitions > 0 ? 
+        this.stats.successfulAcquisitions / this.stats.totalAcquisitions : 1;
+      
+      // Health factors
+      const utilizationHealth = 1 - Math.abs(0.7 - (activeConnections / Math.max(1, totalConnections))); // Optimal 70% utilization
+      const successHealth = successRate;
+      const sizeHealth = totalConnections <= this.config.maxConnections ? 1 : 0.5;
+      
+      return (utilizationHealth + successHealth + sizeHealth) / 3;
+    } catch {
+      return 0.5; // Default to medium health on error
+    }
+  }
+  
+  /**
+   * Select rejection strategy based on current conditions
+   */
+  private selectRejectionStrategy(memoryPressure: number, poolHealth: number): 'aggressive' | 'moderate' | 'conservative' {
+    if (memoryPressure > 0.9 || poolHealth < 0.3) {
+      return 'aggressive';
+    } else if (memoryPressure > 0.8 || poolHealth < 0.6) {
+      return 'moderate';
+    } else {
+      return 'conservative';
+    }
+  }
+  
+  /**
+   * Execute the selected rejection strategy
+   */
+  private async executeRejectionStrategy(strategy: 'aggressive' | 'moderate' | 'conservative'): Promise<void> {
+    let toReject: number;
+    let rejectMessage: string;
+    
+    switch (strategy) {
+      case 'aggressive':
+        toReject = Math.max(1, Math.floor(this.waitingQueue.length * 0.5)); // Reject 50%
+        rejectMessage = 'Pool under extreme stress - request rejected';
+        break;
+      case 'moderate':
+        toReject = Math.max(1, Math.floor(this.waitingQueue.length * 0.25)); // Reject 25%
+        rejectMessage = 'Pool under high load - request rejected';
+        break;
+      case 'conservative':
+        toReject = Math.max(1, Math.floor(this.waitingQueue.length * 0.1)); // Reject 10%
+        rejectMessage = 'Pool approaching capacity - request rejected';
+        break;
+    }
+    
+    // Reject oldest requests first (FIFO)
+    for (let i = 0; i < toReject && i < this.waitingQueue.length; i++) {
       const waiter = this.waitingQueue.shift();
       if (waiter) {
         clearTimeout(waiter.timeout);
-        waiter.reject(new Error('Pool overloaded - request rejected due to high load'));
+        waiter.reject(new Error(rejectMessage));
       }
     }
+    
+    console.debug(`Pool rejection: removed ${toReject} requests from queue (${this.waitingQueue.length} remaining)`);
   }
-
-  // Final check with exponential backoff suggestion
-  if (this.waitingQueue.length >= this.maxWaitingQueue) {
-    const suggestedDelay = Math.min(1000, this.waitingQueue.length * 10);
-    throw new Error(`Connection pool waiting queue is full (${this.waitingQueue.length}/${this.maxWaitingQueue}). Retry after ${suggestedDelay}ms`);
+  
+  /**
+   * Calculate intelligent backoff delay
+   */
+  private calculateBackoffDelay(memoryPressure: number, poolHealth: number): number {
+    const baseDelay = 100;
+    const queueFactor = Math.min(this.waitingQueue.length, 10) * 50;
+    const memoryFactor = memoryPressure * 500;
+    const healthFactor = (1 - poolHealth) * 300;
+    
+    return Math.min(5000, baseDelay + queueFactor + memoryFactor + healthFactor);
   }
+  
+  /**
+   * Add request to queue with enhanced error handling
+   */
+  private addToQueue(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        const index = this.waitingQueue.findIndex(w => w.resolve === resolve);
+        if (index >= 0) {
+          this.waitingQueue.splice(index, 1);
+        }
+        reject(new Error('Connection acquire timeout'));
+      }, this.config.acquireTimeout);
 
-  return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      const index = this.waitingQueue.findIndex(w => w.resolve === resolve);
-      if (index >= 0) {
-        this.waitingQueue.splice(index, 1);
-      }
-      reject(new Error('Connection acquire timeout'));
-    }, this.config.acquireTimeout);
-
-    this.waitingQueue.push({
-      resolve,
-      reject,
-      timeout,
-      timestamp: Date.now()
+      this.waitingQueue.push({
+        resolve,
+        reject,
+        timeout,
+        timestamp: Date.now()
+      });
     });
-  });
-}
+  }
 
   private canAcquire(): boolean {
     switch (this.circuitState) {

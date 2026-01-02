@@ -147,23 +147,49 @@ export class CircuitBreaker extends EventEmitter {
   }
 
   private async withTimeout<T>(promise: Promise<T>): Promise<T> {
-    // Create timeout promise first to avoid race conditions
+    // Enhanced timeout handling with proper cleanup and abort controller
+    const abortController = new AbortController();
+    let timeoutId: NodeJS.Timeout | null = null;
+    
     const timeoutPromise = new Promise<never>((_, reject) => {
-      const timeoutId = setTimeout(() => {
+      timeoutId = setTimeout(() => {
+        abortController.abort();
         reject(new Error(`Operation timed out after ${this.config.timeout}ms`));
       }, this.config.timeout);
-      
-      // Store timeout ID for potential cleanup
-      (timeoutPromise as any)._timeoutId = timeoutId;
     });
 
     try {
-      return await Promise.race([promise, timeoutPromise]);
+      // Create a wrapper promise that can be aborted
+      const wrappedPromise = new Promise<T>((resolve, reject) => {
+        const originalPromise = promise;
+        
+        // Handle successful completion
+        originalPromise.then(
+          (result) => {
+            if (!abortController.signal.aborted) {
+              resolve(result);
+            }
+          },
+          (error) => {
+            if (!abortController.signal.aborted) {
+              reject(error);
+            }
+          }
+        );
+        
+        // Handle abort signal
+        abortController.signal.addEventListener('abort', () => {
+          reject(new Error(`Operation aborted due to timeout after ${this.config.timeout}ms`));
+        });
+      });
+      
+      return await Promise.race([wrappedPromise, timeoutPromise]);
+      
     } finally {
-      // Clean up timeout if it exists
-      const timeoutId = (timeoutPromise as any)._timeoutId;
+      // Always clean up timeout to prevent memory leaks
       if (timeoutId) {
         clearTimeout(timeoutId);
+        timeoutId = null;
       }
     }
   }

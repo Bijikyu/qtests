@@ -464,19 +464,90 @@ export class PerformanceMonitor extends EventEmitter {
     
     this.history[path].push({ value, timestamp });
     
-    // More aggressive memory management - trim history and add sampling
+    // Aggressive memory management with adaptive sampling based on memory pressure
     if (this.history[path].length > this.config.historySize) {
-      // Keep most recent 70% and sample the oldest 30% to reduce memory while preserving trends
-      const keepCount = Math.floor(this.config.historySize * 0.7);
+      // Check memory pressure and adjust sampling accordingly
+      const memoryPressure = this.getMemoryPressure();
+      let keepRatio = 0.7; // Default keep 70%
+      
+      if (memoryPressure > 0.9) {
+        keepRatio = 0.5; // High pressure - keep only 50%
+      } else if (memoryPressure > 0.8) {
+        keepRatio = 0.6; // Medium pressure - keep 60%
+      }
+      
+      const keepCount = Math.floor(this.config.historySize * keepRatio);
       const sampleCount = this.config.historySize - keepCount;
       const oldestData = this.history[path].slice(0, -keepCount);
       const recentData = this.history[path].slice(-keepCount);
       
-      // Sample oldest data (keep every Nth item)
-      const sampleInterval = Math.ceil(oldestData.length / sampleCount);
-      const sampledOldest = oldestData.filter((_, index) => index % sampleInterval === 0);
+      // More intelligent sampling - preserve important data points
+      const sampledOldest = this.intelligentSample(oldestData, sampleCount);
       
       this.history[path] = [...sampledOldest, ...recentData];
+      
+      // Additional cleanup under extreme memory pressure
+      if (memoryPressure > 0.95) {
+        this.cleanupOldHistory();
+      }
+    }
+  }
+  
+  /**
+   * Get current memory pressure (0-1 scale)
+   */
+  private getMemoryPressure(): number {
+    try {
+      const memUsage = process.memoryUsage();
+      const totalMem = require('os').totalmem();
+      const usedMem = totalMem - require('os').freemem();
+      return Math.min(1, usedMem / totalMem);
+    } catch {
+      return 0.5; // Default to medium pressure on error
+    }
+  }
+  
+  /**
+   * Intelligent sampling to preserve important data points
+   */
+  private intelligentSample(data: Array<{ value: number; timestamp: number }>, targetCount: number): Array<{ value: number; timestamp: number }> {
+    if (data.length <= targetCount) {
+      return data;
+    }
+    
+    // Preserve outliers and significant changes
+    const values = data.map(d => d.value);
+    const mean = values.reduce((sum, v) => sum + v, 0) / values.length;
+    const stdDev = Math.sqrt(values.reduce((sum, v) => sum + Math.pow(v - mean, 2), 0) / values.length);
+    const threshold = mean + (stdDev * 2); // 2 sigma threshold for outliers
+    
+    // Keep outliers and evenly sample the rest
+    const outliers = data.filter(d => Math.abs(d.value - mean) > stdDev);
+    const normal = data.filter(d => Math.abs(d.value - mean) <= stdDev);
+    
+    // Sample normal data
+    const sampleInterval = Math.ceil(normal.length / (targetCount - outliers.length));
+    const sampledNormal = normal.filter((_, index) => index % sampleInterval === 0);
+    
+    // Combine and sort by timestamp
+    return [...outliers, ...sampledNormal]
+      .sort((a, b) => a.timestamp - b.timestamp)
+      .slice(0, targetCount);
+  }
+  
+  /**
+   * Cleanup old history data to prevent memory leaks
+   */
+  private cleanupOldHistory(): void {
+    const now = Date.now();
+    const maxAge = 24 * 60 * 60 * 1000; // 24 hours max age
+    
+    for (const [path, history] of Object.entries(this.history)) {
+      const filtered = history.filter(entry => now - entry.timestamp < maxAge);
+      if (filtered.length !== history.length) {
+        this.history[path] = filtered;
+        console.debug(`Cleaned up old history for ${path}: ${history.length - filtered.length} entries removed`);
+      }
     }
   }
 

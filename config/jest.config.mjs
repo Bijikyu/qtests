@@ -88,7 +88,6 @@ export default {
    // Fix for security module imports
    "^\\./lib/security/(.*)$": "<rootDir>/lib/security/$1.ts",
    "^\\.\\/lib\\/security\\/(.*)$": "<rootDir>/lib/security/$1.ts",
-    // Mock source-map-generator to avoid import issues
-    "^\\.\\/lib\\/source-map-generator$": "<rootDir>/__mocks__/fileMock.js",
+
    }
 };

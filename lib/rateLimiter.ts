@@ -142,39 +142,111 @@ export class DistributedRateLimiter {
   }
 
 /**
- * Cache rate limit result with intelligent eviction
+ * Cache rate limit result with adaptive eviction based on memory pressure
  */
 private cacheResult(key: string, result: RateLimitResult): void {
-  // Smart eviction based on request patterns and result types
-  if (this.recentCache.size >= this.maxCacheSize) {
-    // Prioritize keeping blocked requests (need longer memory) 
-    // over allowed requests (can be recalculated)
-    const entries = Array.from(this.recentCache.entries());
-    const allowedEntries = entries.filter(([_, cached]) => cached.result.allowed);
-    const blockedEntries = entries.filter(([_, cached]) => !cached.result.allowed);
-    
-    // Evict oldest allowed requests first
-    const allowedToEvict = Math.ceil(allowedEntries.length * 0.3); // Evict 30% of allowed
-    allowedEntries
-      .sort((a, b) => a[1].timestamp - b[1].timestamp)
-      .slice(0, allowedToEvict)
-      .forEach(([key]) => this.recentCache.delete(key));
-    
-    // If still full, evict oldest blocked requests
-    if (this.recentCache.size >= this.maxCacheSize) {
-      const blockedToEvict = Math.ceil(blockedEntries.length * 0.1); // Only 10% of blocked
-      blockedEntries
-        .sort((a, b) => a[1].timestamp - b[1].timestamp)
-        .slice(0, blockedToEvict)
-        .forEach(([key]) => this.recentCache.delete(key));
-    }
+  // Check memory pressure and adjust cache size accordingly
+  const memoryPressure = this.getMemoryPressure();
+  const effectiveMaxSize = this.calculateAdaptiveCacheSize(memoryPressure);
+  
+  // Adaptive eviction strategy based on memory pressure and result importance
+  if (this.recentCache.size >= effectiveMaxSize) {
+    this.performAdaptiveEviction(memoryPressure, effectiveMaxSize);
   }
   
-  this.recentCache.set(key, {
-    result,
-    timestamp: Date.now(),
-    frequency: 1 // Default frequency
+  // Update frequency tracking for existing entries
+  const existing = this.recentCache.get(key);
+  if (existing) {
+    existing.frequency++;
+    existing.timestamp = Date.now();
+    existing.result = result; // Update with latest result
+  } else {
+    this.recentCache.set(key, {
+      result,
+      timestamp: Date.now(),
+      frequency: 1
+    });
+  }
+}
+
+/**
+ * Get current memory pressure (0-1 scale)
+ */
+private getMemoryPressure(): number {
+  try {
+    const memUsage = process.memoryUsage();
+    const totalMem = require('os').totalmem();
+    const usedMem = totalMem - require('os').freemem();
+    return Math.min(1, usedMem / totalMem);
+  } catch {
+    return 0.5; // Default to medium pressure on error
+  }
+}
+
+/**
+ * Calculate adaptive cache size based on memory pressure
+ */
+private calculateAdaptiveCacheSize(memoryPressure: number): number {
+  let effectiveSize = this.maxCacheSize;
+  
+  if (memoryPressure > 0.9) {
+    effectiveSize = Math.floor(this.maxCacheSize * 0.3); // 70% reduction
+  } else if (memoryPressure > 0.8) {
+    effectiveSize = Math.floor(this.maxCacheSize * 0.5); // 50% reduction
+  } else if (memoryPressure > 0.7) {
+    effectiveSize = Math.floor(this.maxCacheSize * 0.7); // 30% reduction
+  }
+  
+  return Math.max(10, effectiveSize); // Minimum cache size
+}
+
+/**
+ * Perform adaptive eviction with intelligent prioritization
+ */
+private performAdaptiveEviction(memoryPressure: number, effectiveMaxSize: number): void {
+  const entries = Array.from(this.recentCache.entries());
+  
+  // Score entries for eviction (higher score = more likely to evict)
+  const scoredEntries = entries.map(([key, cached]) => {
+    let score = 0;
+    
+    // Age factor (older = higher score)
+    const age = Date.now() - cached.timestamp;
+    score += Math.min(30, (age / 60000) * 10); // Max 30 points for age
+    
+    // Result type factor (allowed requests = higher score, blocked = lower)
+    if (cached.result.allowed) {
+      score += 20; // Allowed requests are less critical
+    } else {
+      score -= 10; // Blocked requests are more important to keep
+    }
+    
+    // Frequency factor (low frequency = higher score)
+    score += Math.max(0, 20 - cached.frequency * 2); // Max 20 points for low frequency
+    
+    // Memory pressure adjustment
+    if (memoryPressure > 0.8) {
+      score += 10; // Extra incentive to evict under high pressure
+    }
+    
+    return { key, cached, score };
   });
+  
+  // Sort by score (highest first) and evict
+  scoredEntries.sort((a, b) => b.score - a.score);
+  
+  // Calculate how many to evict
+  const toEvict = Math.max(1, Math.floor(entries.length * 0.2)); // Evict 20% or minimum 1
+  
+  for (let i = 0; i < Math.min(toEvict, scoredEntries.length); i++) {
+    const { key } = scoredEntries[i];
+    this.recentCache.delete(key);
+  }
+  
+  // Log significant evictions
+  if (toEvict > 5 || memoryPressure > 0.8) {
+    console.debug(`Rate limiter cache eviction: removed ${toEvict} entries, memory pressure: ${(memoryPressure * 100).toFixed(1)}%`);
+  }
 }
 
   private async checkRedisLimit(key: string, now: number, windowStart: number): Promise<RateLimitResult> {

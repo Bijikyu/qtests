@@ -16,7 +16,14 @@
     "test": "node qtests-runner.mjs",
     "ci:verify": "node scripts/ci-verify-runner.mjs",
     "build": "tsc -p tsconfig.json",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "test:scalability": "node scripts/benchmarks/memory-benchmark.js",
+    "test:scalability:memory": "node scripts/benchmarks/memory-benchmark.js",
+    "test:scalability:database": "node scripts/benchmarks/database-benchmark.js",
+    "test:scalability:pool": "node scripts/benchmarks/connection-pool-benchmark.js",
+    "test:scalability:circuit": "node scripts/benchmarks/circuit-breaker-benchmark.js",
+    "test:scalability:report": "node scripts/benchmarks/generate-report.js",
+    "monitor:scalability": "node scripts/monitoring/scalability-monitor.js"
   },
   "keywords": [
     "testing",
@@ -70,7 +77,7 @@
     "msw": "^2.12.4",
     "multer": "^2.0.2",
     "npmcontext": "^1.0.4",
-    "opencode-ai": "1.0.224",
+    "opencode-ai": "1.0.223",
     "qtests": "^2.0.0",
     "quantumagent": "^1.0.5",
     "repomix": "^1.2.0",
