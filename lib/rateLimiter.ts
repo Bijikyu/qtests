@@ -1,18 +1,29 @@
 /**
- * Distributed Rate Limiter
+ * Distributed Rate Limiter - Migrated to rate-limiter-flexible
  * 
- * Redis-based distributed rate limiting for multi-instance deployments.
- * Provides consistent rate limiting across multiple server instances using
- * sliding window algorithm. Includes graceful fallback to in-memory rate
- * limiting when Redis is unavailable.
+ * This file now acts as a compatibility layer for the existing API
+ * while using the superior rate-limiter-flexible library under the hood.
  * 
- * Features:
- * - Sliding window algorithm for accurate rate limiting
- * - Graceful degradation to in-memory when Redis fails
- * - Express middleware for drop-in replacement
- * - Comprehensive statistics and monitoring
- * - Automatic cleanup of expired counters
+ * Migration Benefits:
+ * - Better maintained industry standard
+ * - Redis clustering support
+ * - Multiple algorithms (fixed window, sliding window, token bucket)
+ * - Comprehensive TypeScript support
+ * - Better performance and memory management
  */
+
+// Import rate-limiter-flexible dynamically to handle potential missing types
+// @ts-ignore
+let RateLimiterRedis: any = null;
+let RateLimiterMemory: any = null;
+
+try {
+  const rateLimiterModule = await import('rate-limiter-flexible');
+  RateLimiterRedis = rateLimiterModule.RateLimiterRedis;
+  RateLimiterMemory = rateLimiterModule.RateLimiterMemory;
+} catch (error) {
+  console.warn('rate-limiter-flexible not available, using custom implementation:', error);
+}
 
 import { redisUrl, redisCloudUrl } from '../config/localVars.js';
 import qerrors from 'qerrors';

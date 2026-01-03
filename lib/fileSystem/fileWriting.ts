@@ -1,12 +1,16 @@
 /**
  * File System Writing Utilities
- * Handles safe file writing operations
+ * Replaced with fs-extra for better maintainability and industry-standard implementation
+ * 
+ * Migration Guide:
+ * - ensureDir() -> fs.ensureDir()
+ * - safeWriteFile() -> fs.outputFile()
+ * - ensureDirSync() -> fs.ensureDirSync()
+ * - safeWriteFileSync() -> fs.outputFileSync()
  */
 
-import { safeExists, safeExistsAsync } from './fileExistence.js';
+import fs from 'fs-extra';
 import qerrors from 'qerrors';
-import { promises as fsPromises } from 'fs';
-import { dirname } from 'path';
 
 /**
  * Ensures a directory exists, creating it if necessary (async version)
@@ -15,9 +19,7 @@ import { dirname } from 'path';
  */
 export async function ensureDir(dirPath: string): Promise<boolean> {
   try {
-    if (!await safeExistsAsync(dirPath)) {
-      await fsPromises.mkdir(dirPath, { recursive: true });
-    }
+    await fs.ensureDir(dirPath);
     return true;
   } catch (error: any) {
     qerrors(error, 'fileWriting.ensureDir: creating directory', { dirPath });
@@ -34,10 +36,7 @@ export async function ensureDir(dirPath: string): Promise<boolean> {
 export function ensureDirSync(dirPath: string): boolean {
   console.warn('ensureDirSync is deprecated - use ensureDir for better scalability');
   try {
-    if (!safeExists(dirPath)) {
-      const fs = require('fs');
-      fs.mkdirSync(dirPath, { recursive: true });
-    }
+    fs.ensureDirSync(dirPath);
     return true;
   } catch (error: any) {
     qerrors(error, 'fileWriting.ensureDirSync: creating directory', { dirPath });
@@ -54,13 +53,7 @@ export function ensureDirSync(dirPath: string): boolean {
  */
 export async function safeWriteFile(filePath: string, content: string | Buffer, encoding: BufferEncoding = 'utf8'): Promise<boolean> {
   try {
-    // Ensure directory exists
-    const dir = dirname(filePath);
-    if (!await safeExistsAsync(dir)) {
-      await fsPromises.mkdir(dir, { recursive: true });
-    }
-    
-    await fsPromises.writeFile(filePath, content, encoding);
+    await fs.outputFile(filePath, content, encoding);
     return true;
   } catch (error: any) {
     qerrors(error, 'fileWriting.safeWriteFile: writing file', { filePath, encoding, contentType: typeof content });
@@ -79,19 +72,16 @@ export async function safeWriteFile(filePath: string, content: string | Buffer, 
 export function safeWriteFileSync(filePath: string, content: string | Buffer, encoding: BufferEncoding = 'utf8'): boolean {
   console.warn('safeWriteFileSync is deprecated - use safeWriteFile for better scalability');
   try {
-    const fs = require('fs');
-    const path = require('path');
-    
-    // Ensure directory exists
-    const dir = path.dirname(filePath);
-    if (!safeExists(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
-    
-    fs.writeFileSync(filePath, content, encoding);
+    fs.outputFileSync(filePath, content, encoding);
     return true;
   } catch (error: any) {
     qerrors(error, 'fileWriting.safeWriteFileSync: writing file', { filePath, encoding, contentType: typeof content });
     return false;
   }
 }
+
+/**
+ * Direct access to fs-extra for advanced use cases
+ * For new code, prefer using fs-extra directly
+ */
+export { fs };

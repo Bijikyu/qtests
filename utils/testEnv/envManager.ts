@@ -6,7 +6,8 @@ import { nodeEnv } from '../../config/localVars.js';
 if (nodeEnv !== 'test') {
   setLogging(false);
 }
-import * as dotenv from 'dotenv';
+
+import dotenv from 'dotenv';
 
 interface DefaultEnv {
   GOOGLE_API_KEY: string;
@@ -45,7 +46,11 @@ export function setTestEnv(): boolean {
   logStart('setTestEnv', 'default values');
   
   return withErrorLogging(() => {
-    dotenv.config();
+    // Use dotenv directly instead of wrapper
+    const result = dotenv.config();
+    if (result.error) {
+      console.warn('dotenv config error:', result.error);
+    }
     
     const sanitizedEnv: Record<string, string> = {};
     for (const [key, value] of Object.entries(defaultEnv)) {
