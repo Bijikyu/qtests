@@ -1,10 +1,18 @@
 /**
- * File System Existence Checking Utilities
- * Handles safe file and directory existence checks
+ * File System Existence Checking Utilities using fs-extra
+ * Replaced with fs-extra for better maintainability and industry-standard implementation
+ * 
+ * Migration Guide:
+ * - safeExists() -> fs.pathExists()
+ * - safeExistsAsync() -> fs.pathExists()
+ * - safeStats() -> fs.stat() with error handling
+ * - safeStatsAsync() -> fs.stat() with error handling
+ * - isDirectory() -> fs.pathExists() + fs.stat()
+ * - isFile() -> fs.pathExists() + fs.stat()
  */
 
-import * as fs from 'fs';
-import qerrors from 'qerrors';
+import fs from 'fs-extra';
+import qerrors from '../qerrorsFallback.js';
 
 /**
  * Safely checks if a file or directory exists (sync version - DEPRECATED: use async version)
@@ -15,10 +23,9 @@ import qerrors from 'qerrors';
 export function safeExists(filePath: string): boolean {
   console.warn('safeExists is deprecated - use safeExistsAsync for better scalability');
   try {
-    return fs.existsSync(filePath);
+    return fs.pathExistsSync(filePath);
   } catch {
-    // If existsSync throws an error (e.g., due to permissions), treat as non-existent
-    // This provides graceful degradation for file system access issues
+    // If pathExistsSync throws an error (e.g., due to permissions), treat as non-existent
     return false;
   }
 }
@@ -30,10 +37,9 @@ export function safeExists(filePath: string): boolean {
  */
 export async function safeExistsAsync(filePath: string): Promise<boolean> {
   try {
-    await fs.promises.access(filePath);
-    return true;
+    return await fs.pathExists(filePath);
   } catch {
-    // If access throws an error (e.g., due to permissions or non-existence), treat as non-existent
+    // If pathExists throws an error (e.g., due to permissions), treat as non-existent
     return false;
   }
 }
@@ -64,7 +70,7 @@ export function safeStats(filePath: string): fs.Stats | null {
  */
 export async function safeStatsAsync(filePath: string): Promise<fs.Stats | null> {
   try {
-    return await fs.promises.stat(filePath);
+    return await fs.stat(filePath);
   } catch (error) {
     qerrors(error as Error, 'fileExistence.safeStatsAsync: getting file stats failed', { 
       filePath,
@@ -82,8 +88,11 @@ export async function safeStatsAsync(filePath: string): Promise<fs.Stats | null>
  */
 export function isDirectory(dirPath: string): boolean {
   console.warn('isDirectory is deprecated - use isDirectoryAsync for better scalability');
-  const stats = safeStats(dirPath);
-  return stats ? stats.isDirectory() : false; // Return false if stats failed (path doesn't exist)
+  try {
+    return fs.pathExistsSync(dirPath) && fs.statSync(dirPath).isDirectory();
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -94,8 +103,11 @@ export function isDirectory(dirPath: string): boolean {
  */
 export function isFile(filePath: string): boolean {
   console.warn('isFile is deprecated - use isFileAsync for better scalability');
-  const stats = safeStats(filePath);
-  return stats ? stats.isFile() : false; // Return false if stats failed (path doesn't exist)
+  try {
+    return fs.pathExistsSync(filePath) && fs.statSync(filePath).isFile();
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -104,8 +116,14 @@ export function isFile(filePath: string): boolean {
  * @returns true if directory exists, false otherwise
  */
 export async function isDirectoryAsync(dirPath: string): Promise<boolean> {
-  const stats = await safeStatsAsync(dirPath);
-  return stats ? stats.isDirectory() : false; // Return false if stats failed (path doesn't exist)
+  try {
+    const exists = await fs.pathExists(dirPath);
+    if (!exists) return false;
+    const stats = await fs.stat(dirPath);
+    return stats.isDirectory();
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -114,6 +132,18 @@ export async function isDirectoryAsync(dirPath: string): Promise<boolean> {
  * @returns true if file exists, false otherwise
  */
 export async function isFileAsync(filePath: string): Promise<boolean> {
-  const stats = await safeStatsAsync(filePath);
-  return stats ? stats.isFile() : false; // Return false if stats failed (path doesn't exist)
+  try {
+    const exists = await fs.pathExists(filePath);
+    if (!exists) return false;
+    const stats = await fs.stat(filePath);
+    return stats.isFile();
+  } catch {
+    return false;
+  }
 }
+
+/**
+ * Direct access to fs-extra for advanced use cases
+ * For new code, prefer using fs-extra directly
+ */
+export { fs };

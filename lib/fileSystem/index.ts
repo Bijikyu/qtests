@@ -7,21 +7,31 @@ export * from './writingUtils.js';
 // Re-export file system management utilities
 export * from './managementUtils.js';
 
-// Import functions for default export
+// Import functions for default export using the updated module structure
 import {
   safeExists,
-  safeReadFile,
-  safeWriteFile,
-  ensureDir,
-  safeDelete,
   safeStats,
   isDirectory,
-  isFile,
-  withFileErrorHandling
-} from './readingUtils.js';
+  isFile
+} from './fileExistence.js';
 
-import { ensureDir as ensureDirFromWriting } from './writingUtils.js';
-import { safeDelete as safeDeleteFromManagement, withFileErrorHandling as withFileErrorHandlingFromManagement } from './managementUtils.js';
+import {
+  safeReadFile,
+  safeReadFileBuffer
+} from './fileReading.js';
+
+import {
+  ensureDir,
+  safeWriteFile
+} from './fileWriting.js';
+
+import {
+  safeDelete
+} from './fileDeletion.js';
+
+import {
+  withFileErrorHandling
+} from './errorHandling.js';
 
 // Default export for compatibility
 const fileSystemUtils = {
