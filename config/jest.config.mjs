@@ -69,9 +69,8 @@ export default {
    "^\\./index\\.js$": "<rootDir>/index.ts",
    "^\\./setup\\.js$": "<rootDir>/setup.ts",
     "^\\./lib/(.*)\\.js$": "<rootDir>/lib/$1.ts",
-    "^\\./lib/(.*)$": "<rootDir>/lib/$1.ts",
-    // Special handling for source-map-generator to avoid issues
-    "^\\./lib/source-map-generator$": "<rootDir>/__mocks__/fileMock.js",
+    "^\\./lib/(circuitBreaker|connectionPool|performanceMonitor|rateLimiter|cache|security|memory|fileSystem|httpMock|polyfills|testIsolation|errorHandling|validation|templates|utils|stubs|setup|coreUtils|envUtils)(.*)$": "<rootDir>/lib/$1$2.ts",
+
    "^\\./utils/httpTest\\.shim\\.js$": "<rootDir>/utils/httpTest.shim.ts",
    "^\\./utils/(.*)\\.js$": "<rootDir>/utils/$1.ts",
    "^(.*/httpTest\\.shim)\\.js$": "$1.ts",

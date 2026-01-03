@@ -14,6 +14,8 @@ export interface CircuitBreakerOptions {
   expectedRecoveryTime?: number;    // Expected time for service recovery
   halfOpenMaxCalls?: number;        // Max calls in half-open state
   timeout?: number;                // Timeout for individual calls
+  expectedError?: (error: Error) => boolean;  // Function to check if error is expected
+  adaptiveTimeout?: boolean;        // Enable adaptive timeout scaling
   onStateChange?: (state: CircuitState) => void;
   onFailure?: (error: Error) => void;
   onRecovery?: () => void;
@@ -82,12 +84,20 @@ export class CircuitBreaker extends EventEmitter {
       expectedRecoveryTime: options.expectedRecoveryTime || 30000, // 30 seconds
       halfOpenMaxCalls: options.halfOpenMaxCalls || 3,
       timeout: options.timeout || 10000,               // 10 seconds
-      expectedError: options.expectedError || (() => {}),
+      expectedError: options.expectedError || (() => false),
       adaptiveTimeout: options.adaptiveTimeout || false,
       onStateChange: options.onStateChange || (() => {}),
       onFailure: options.onFailure || (() => {}),
       onRecovery: options.onRecovery || (() => {})
     };
+  }
+
+  /**
+   * Check if circuit breaker should try to reset
+   */
+  private shouldTryReset(): boolean {
+    const timeSinceFailure = Date.now() - (this.lastFailureTime || 0);
+    return timeSinceFailure >= this.config.resetTimeout;
   }
 
   /**
@@ -146,11 +156,6 @@ export class CircuitBreaker extends EventEmitter {
 /**
    * Check if circuit breaker should try to reset
    */
-  private shouldTryReset(): boolean {
-    const timeSinceFailure = Date.now() - (this.lastFailureTime || 0);
-    return timeSinceFailure >= this.config.resetTimeout;
-  }
-
   /**
    * Calculate adaptive timeout based on historical response times
    */
@@ -232,11 +237,6 @@ export class CircuitBreaker extends EventEmitter {
         timeoutId = null;
       }
     }
-  }
-
-  private shouldTryReset(): boolean {
-    const timeSinceFailure = Date.now() - this.lastFailureTime;
-    return timeSinceFailure >= this.config.resetTimeout;
   }
 
   private recordSuccess(responseTime: number): void {
@@ -441,14 +441,7 @@ export class CircuitBreaker extends EventEmitter {
 /**
    * Circuit breaker configuration
    */
-export interface CircuitBreakerOptions {
-  failureThreshold?: number;      // Number of failures before opening circuit
-  resetTimeout?: number;           // Time to wait before trying again
-  timeout?: number;              // Request timeout in milliseconds
-  monitoringPeriod?: number;       // Time window for failure counting
-  expectedError?: string;        // Expected error message for testing
-  adaptiveTimeout?: boolean;        // Enable adaptive timeout scaling
-}
+
 
 /**
  * Wrap an existing function with circuit breaker protection

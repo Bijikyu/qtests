@@ -49,6 +49,7 @@
     "chai": "^5.3.3",
     "dotenv": "^17.2.3",
     "fs-extra": "^11.3.3",
+    "happy-dom": "^17.2.3",
     "langchain": "^0.3.37",
     "opossum": "^9.0.0",
     "p-queue": "^8.1.1",

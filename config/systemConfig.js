@@ -1,9 +1,8 @@
 /**
- * System Configuration
+ * System Configuration using dotenv
  * 
- * This module provides configuration for system-level settings
- * including circuit breakers, rate limiting, memory monitoring,
- * validation, error handling, logging, and security.
+ * This module provides system-level configuration using dotenv
+ * for industry-standard environment variable management.
  */
 
 // ==================== CIRCUIT BREAKER CONSTANTS ====================
@@ -51,6 +50,10 @@ export const securityDefaultTokenExpiry = 3600; // 1 hour
 export const securityMaxTokenExpiry = 86400; // 24 hours
 export const securityDefaultSaltLength = 32;
 export const securityDefaultKeyLength = 256;
+
+// Load environment variables using dotenv
+import { config } from 'dotenv';
+config();
 
 // ==================== REDIS CONFIGURATION ====================
 export const redisUrl = process.env.REDIS_URL || '';

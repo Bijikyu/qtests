@@ -1,9 +1,12 @@
 /**
- * Performance Monitoring Utilities
- * Optimized performance tracking with memory-efficient metrics collection
+ * Performance Monitor Implementation
+ * 
+ * Provides real-time performance monitoring with adaptive sampling,
+ * circular buffer storage, and alerting capabilities.
  */
 
 import { EventEmitter } from 'events';
+import * as os from 'os';
 
 export interface PerformanceMetrics {
   cpu: {
@@ -19,455 +22,235 @@ export interface PerformanceMetrics {
   };
   eventLoop: {
     utilization: number;
-    lag: number;
+    latency: number;
   };
-  requests: {
-    total: number;
-    perSecond: number;
-    averageResponseTime: number;
-    errorRate: number;
+  custom: {
+    [key: string]: number;
   };
-  database: {
-    activeConnections: number;
-    queryTime: number;
-    cacheHitRate: number;
+}
+
+export interface AlertThresholds {
+  cpu?: number;
+  memory?: number;
+  eventLoop?: number;
+  custom?: {
+    [key: string]: number;
   };
-  timestamp: number;
 }
 
-export interface AlertRule {
-  name: string;
-  metric: keyof PerformanceMetrics;
-  threshold: number;
-  operator: '>' | '<' | '>=' | '<=';
-  duration: number; // ms
-  enabled: boolean;
-}
-
-export interface Alert {
-  rule: AlertRule;
-  value: number;
-  timestamp: number;
-  resolved: boolean;
-}
-
-interface MetricHistory {
-  [key: string]: Array<{ value: number; timestamp: number }>;
-}
-
-interface MonitorConfig {
-  intervalMs: number;
-  historySize: number;
-  alertCheckIntervalMs: number;
-  enableEventLoopMonitoring: boolean;
-  enableCpuMonitoring: boolean;
-  enableMemoryMonitoring: boolean;
+export interface PerformanceMonitorOptions {
+  samplingInterval?: number;
+  historySize?: number;
+  adaptiveSampling?: boolean;
+  alertThresholds?: AlertThresholds;
 }
 
 /**
- * Performance Monitor with real-time metrics and alerting
+ * Performance Monitor with adaptive sampling
  */
 export class PerformanceMonitor extends EventEmitter {
-  private metrics: PerformanceMetrics;
-  private history: MetricHistory = {};
-  private alerts = new Map<string, Alert>();
-  private alertRules: AlertRule[] = [];
-  private monitoringInterval?: NodeJS.Timeout;
-  private isMonitoring = false;
-  private config: MonitorConfig;
-  
-  // Circular buffer implementation for memory-efficient history storage
-  private circularBuffers = new Map<string, { buffer: Array<{ value: number; timestamp: number }>; size: number; head: number; count: number }>();
-  private readonly defaultBufferSize = 720; // 2 hours of 5-second intervals
-  
-  // Adaptive sampling properties
-  private samplingRate = 1.0; // Start with full sampling
-  private performanceBaseline: PerformanceMetrics | null = null;
-  private lastSamplingAdjustment = 0;
-  private samplingAdjustmentInterval = 60000; // Adjust every minute
-  private highLoadThreshold = 0.8; // 80% resource usage
-  private lowLoadThreshold = 0.3; // 30% resource usage
-  
-  // CPU optimization properties
-  private lastCpuTimes: any[] | null = null;
+  private metrics: PerformanceMetrics = {
+    cpu: { usage: 0, loadAverage: [] },
+    memory: { used: 0, total: 0, percentage: 0, heapUsed: 0, heapTotal: 0 },
+    eventLoop: { utilization: 0, latency: 0 },
+    custom: {}
+  };
 
-  constructor(config: Partial<MonitorConfig> = {}) {
+  private history: {
+    [path: string]: Array<{ value: number; timestamp: number }>;
+  } = {};
+
+  private circularBuffers = new Map<string, any>();
+  private performanceBaseline: PerformanceMetrics | null = null;
+  private samplingRate = 1.0;
+  private lastSamplingAdjustment = 0;
+
+  private config: Required<PerformanceMonitorOptions>;
+  private monitoringInterval?: NodeJS.Timeout;
+
+  constructor(private options: PerformanceMonitorOptions = {}) {
     super();
     
-    // Initialize config first with memory-efficient defaults
     this.config = {
-      intervalMs: 5000,        // Reduced frequency to lower overhead
-      historySize: 720,       // Reduced history to 2 hours (5 second intervals)
-      alertCheckIntervalMs: 10000, // Less frequent alert checks
-      enableEventLoopMonitoring: false, // Disabled by default for performance
-      enableCpuMonitoring: true,
-      enableMemoryMonitoring: true,
-      ...config
+      samplingInterval: options.samplingInterval || 1000,
+      historySize: options.historySize || 1000,
+      adaptiveSampling: options.adaptiveSampling || false,
+      alertThresholds: options.alertThresholds || {}
     };
-    
-    // Now initialize other properties
-    this.metrics = this.initializeMetrics();
-    this.setupDefaultAlertRules();
+
+    this.startMonitoring();
   }
 
   /**
    * Start performance monitoring
    */
-  start(): void {
-    if (this.isMonitoring) {
-      return;
+  startMonitoring(): void {
+    if (this.monitoringInterval) {
+      return; // Already monitoring
     }
 
-    this.isMonitoring = true;
     this.monitoringInterval = setInterval(() => {
       this.collectMetrics();
-      this.checkAlerts();
-    }, this.config.intervalMs);
-
-    this.emit('monitoring:started');
-    console.log('Performance monitoring started');
+    }, this.config.samplingInterval);
   }
 
   /**
    * Stop performance monitoring
    */
-  stop(): void {
-    if (!this.isMonitoring) {
-      return;
-    }
-
-    this.isMonitoring = false;
+  stopMonitoring(): void {
     if (this.monitoringInterval) {
       clearInterval(this.monitoringInterval);
       this.monitoringInterval = undefined;
     }
-
-    this.emit('monitoring:stopped');
-    console.log('Performance monitoring stopped');
   }
 
   /**
-   * Get current performance metrics
+   * Get current metrics
    */
   getMetrics(): PerformanceMetrics {
     return { ...this.metrics };
   }
 
   /**
-   * Get metrics history for a specific metric (optimized with circular buffer)
+   * Get historical data for a metric path
    */
-  getHistory(metricPath: string, durationMs?: number): Array<{ value: number; timestamp: number }> {
-    // Prefer circular buffer data for efficiency
-    const buffer = this.circularBuffers.get(metricPath);
-    if (buffer && buffer.count > 0) {
-      const result: Array<{ value: number; timestamp: number }> = [];
-      
-      // Extract data from circular buffer in chronological order
-      for (let i = 0; i < buffer.count; i++) {
-        const index = (buffer.head - buffer.count + i + 1 + buffer.size) % buffer.size;
-        const entry = buffer.buffer[index];
-        if (entry) {
-          // Apply duration filter if specified
-          if (!durationMs || entry.timestamp >= Date.now() - durationMs) {
-            result.push(entry);
-          }
-        }
-      }
-      
-      return result;
-    }
-    
-    // Fallback to array-based history
-    const history = this.history[metricPath] || [];
-    
-    if (!durationMs) {
-      return [...history];
-    }
-
-    const cutoff = Date.now() - durationMs;
-    return history.filter(entry => entry.timestamp >= cutoff);
+  getHistory(path: string, limit?: number): Array<{ value: number; timestamp: number }> {
+    const history = this.history[path] || [];
+    return limit ? history.slice(-limit) : history;
   }
 
   /**
-   * Get active alerts
+   * Add custom metric
    */
-  getActiveAlerts(): Alert[] {
-    return Array.from(this.alerts.values()).filter(alert => !alert.resolved);
+  addMetric(name: string, value: number): void {
+    this.metrics.custom[name] = value;
+    this.updateHistory(`custom.${name}`, value, Date.now());
+    
+    // Check alert threshold
+    this.checkAlertThresholds(`custom.${name}`, value);
   }
 
   /**
-   * Add custom alert rule
+   * Collect all performance metrics
    */
-  addAlertRule(rule: AlertRule): void {
-    this.alertRules.push(rule);
-    this.emit('alert-rule:added', rule);
-  }
-
-  /**
-   * Remove alert rule
-   */
-  removeAlertRule(ruleName: string): void {
-    this.alertRules = this.alertRules.filter(rule => rule.name !== ruleName);
-    this.alerts.delete(ruleName);
-    this.emit('alert-rule:removed', ruleName);
-  }
-
-  /**
-   * Get performance score (0-100)
-   */
-  getPerformanceScore(): number {
-    let score = 100;
-    
-    // CPU impact
-    if (this.metrics.cpu.usage > 80) score -= 20;
-    else if (this.metrics.cpu.usage > 60) score -= 10;
-    
-    // Memory impact
-    if (this.metrics.memory.percentage > 85) score -= 20;
-    else if (this.metrics.memory.percentage > 70) score -= 10;
-    
-    // Event loop impact
-    if (this.metrics.eventLoop.utilization > 80) score -= 20;
-    else if (this.metrics.eventLoop.utilization > 60) score -= 10;
-    
-    // Response time impact
-    if (this.metrics.requests.averageResponseTime > 1000) score -= 15;
-    else if (this.metrics.requests.averageResponseTime > 500) score -= 8;
-    
-    // Error rate impact
-    if (this.metrics.requests.errorRate > 5) score -= 15;
-    else if (this.metrics.requests.errorRate > 1) score -= 5;
-    
-    return Math.max(0, score);
-  }
-
-  /**
-   * Get performance recommendations
-   */
-  getRecommendations(): string[] {
-    const recommendations: string[] = [];
-    
-    if (this.metrics.cpu.usage > 80) {
-      recommendations.push('High CPU usage detected. Consider scaling horizontally or optimizing CPU-intensive operations.');
-    }
-    
-    if (this.metrics.memory.percentage > 85) {
-      recommendations.push('High memory usage detected. Check for memory leaks and consider increasing memory limits.');
-    }
-    
-    if (this.metrics.eventLoop.lag > 100) {
-      recommendations.push('High event loop lag detected. Move blocking operations to worker threads or optimize async operations.');
-    }
-    
-    if (this.metrics.requests.averageResponseTime > 1000) {
-      recommendations.push('Slow response times detected. Consider implementing caching or optimizing database queries.');
-    }
-    
-    if (this.metrics.requests.errorRate > 5) {
-      recommendations.push('High error rate detected. Review application logs and fix underlying issues.');
-    }
-    
-    if (this.metrics.database.cacheHitRate < 50) {
-      recommendations.push('Low database cache hit rate. Consider optimizing cache strategies or query patterns.');
-    }
-    
-    return recommendations;
-  }
-
-  private initializeMetrics(): PerformanceMetrics {
-    return {
-      cpu: { usage: 0, loadAverage: [0, 0, 0] },
-      memory: { used: 0, total: 0, percentage: 0, heapUsed: 0, heapTotal: 0 },
-      eventLoop: { utilization: 0, lag: 0 },
-      requests: { total: 0, perSecond: 0, averageResponseTime: 0, errorRate: 0 },
-      database: { activeConnections: 0, queryTime: 0, cacheHitRate: 0 },
-      timestamp: Date.now()
-    };
-  }
-
-  private setupDefaultAlertRules(): void {
-    this.alertRules = [
-      {
-        name: 'high-cpu',
-        metric: 'cpu',
-        threshold: 80,
-        operator: '>',
-        duration: 30000, // 30 seconds
-        enabled: true
-      },
-      {
-        name: 'high-memory',
-        metric: 'memory',
-        threshold: 85,
-        operator: '>',
-        duration: 30000,
-        enabled: true
-      },
-      {
-        name: 'high-event-loop-lag',
-        metric: 'eventLoop',
-        threshold: 100,
-        operator: '>',
-        duration: 10000, // 10 seconds
-        enabled: true
-      },
-      {
-        name: 'high-error-rate',
-        metric: 'requests',
-        threshold: 5,
-        operator: '>',
-        duration: 60000, // 1 minute
-        enabled: true
-      }
-    ];
-  }
-
   private collectMetrics(): void {
-    const timestamp = Date.now();
-    
-    // Adaptive sampling - skip collection based on current load
     if (!this.shouldCollectMetrics()) {
       return;
     }
-    
-    // Adjust sampling rate periodically
-    this.adjustSamplingRate();
-    
+
+    const now = Date.now();
+
     // Collect CPU metrics
-    if (this.config.enableCpuMonitoring) {
-      this.collectCpuMetrics(timestamp);
-    }
-    
+    this.collectCPUMetrics(now);
+
     // Collect memory metrics
-    if (this.config.enableMemoryMonitoring) {
-      this.collectMemoryMetrics(timestamp);
-    }
-    
+    this.collectMemoryMetrics(now);
+
     // Collect event loop metrics
-    if (this.config.enableEventLoopMonitoring) {
-      this.collectEventLoopMetrics(timestamp);
+    this.collectEventLoopMetrics(now);
+
+    // Update performance baseline
+    if (!this.performanceBaseline) {
+      this.performanceBaseline = { ...this.metrics };
     }
-    
-    // Update timestamp
-    this.metrics.timestamp = timestamp;
-    
-    // Emit metrics update
-    this.emit('metrics:updated', this.metrics);
+
+    // Adjust sampling rate if adaptive sampling is enabled
+    if (this.config.adaptiveSampling) {
+      this.adjustSamplingRate();
+    }
+
+    // Check alert thresholds
+    this.checkAllAlertThresholds();
   }
 
-  private collectCpuMetrics(timestamp: number): void {
-    try {
-      // Optimized: cache os module and reduce calculations
-      const os = require('os');
-      const loadAvg = os.loadavg();
-      
-      // Simplified CPU calculation - only calculate if we have previous data
-      if (this.lastCpuTimes) {
-        const cpus = os.cpus();
-        let totalIdle = 0;
-        let totalTick = 0;
-        
-        // Calculate delta instead of absolute values
-        for (let i = 0; i < cpus.length; i++) {
-          const cpu = cpus[i];
-          const lastCpu = this.lastCpuTimes[i];
-          
-          for (const type in cpu.times) {
-            const current = cpu.times[type as keyof typeof cpu.times];
-            const previous = lastCpu.times[type as keyof typeof cpu.times];
-            totalTick += Math.max(0, current - previous);
-          }
-          totalIdle += Math.max(0, cpu.times.idle - lastCpu.idle);
-        }
-        
-        const usage = totalTick > 0 ? 100 - (totalIdle / totalTick) * 100 : 0;
-        this.metrics.cpu.usage = Math.round(usage * 100) / 100;
-        this.lastCpuTimes = cpus;
-      } else {
-        // First time - just store the data
-        this.lastCpuTimes = os.cpus();
-        this.metrics.cpu.usage = 0;
-      }
-      
-      this.metrics.cpu.loadAverage = loadAvg;
-      
-      // Reduce history updates
-      if (timestamp % (this.config.intervalMs * 10) === 0) {
-        this.updateHistory('cpu.usage', this.metrics.cpu.usage, timestamp);
-      }
-      
-    } catch (error) {
-      console.warn('Failed to collect CPU metrics:', error);
-    }
+  /**
+   * Collect CPU metrics
+   */
+  private collectCPUMetrics(timestamp: number): void {
+    const loadAvg = os.loadavg();
+    this.metrics.cpu = {
+      usage: this.calculateCPUUsage(),
+      loadAverage: loadAvg
+    };
+
+    this.updateHistory('cpu.usage', this.metrics.cpu.usage, timestamp);
+    this.updateHistory('cpu.loadAverage', loadAvg[0], timestamp);
   }
 
+  /**
+   * Collect memory metrics
+   */
   private collectMemoryMetrics(timestamp: number): void {
-    try {
-      // Optimized: cache os module and reduce system calls
-      const os = require('os');
-      const memUsage = process.memoryUsage();
-      const totalMem = os.totalmem();
-      const freeMem = os.freemem();
-      const usedMem = totalMem - freeMem;
-      
-      this.metrics.memory.used = usedMem;
-      this.metrics.memory.total = totalMem;
-      this.metrics.memory.percentage = (usedMem / totalMem) * 100;
-      this.metrics.memory.heapUsed = memUsage.heapUsed;
-      this.metrics.memory.heapTotal = memUsage.heapTotal;
-      
-      // Reduce history updates - only update every 5th collection
-      if (timestamp % (this.config.intervalMs * 5) === 0) {
-        this.updateHistory('memory.percentage', this.metrics.memory.percentage, timestamp);
-        this.updateHistory('memory.heapUsed', this.metrics.memory.heapUsed, timestamp);
-      }
-      
-    } catch (error) {
-      console.warn('Failed to collect memory metrics:', error);
-    }
+    const memUsage = process.memoryUsage();
+    const totalMem = os.totalmem();
+    const freeMem = os.freemem();
+    const usedMem = totalMem - freeMem;
+
+    this.metrics.memory = {
+      used: usedMem,
+      total: totalMem,
+      percentage: (usedMem / totalMem) * 100,
+      heapUsed: memUsage.heapUsed,
+      heapTotal: memUsage.heapTotal
+    };
+
+    this.updateHistory('memory.percentage', this.metrics.memory.percentage, timestamp);
+    this.updateHistory('memory.heapUsed', this.metrics.memory.heapUsed, timestamp);
   }
 
-private collectEventLoopMetrics(timestamp: number): void {
-    try {
-      // Optimized: skip event loop monitoring if disabled or under high load
-      if (!this.config.enableEventLoopMonitoring || this.samplingRate < 0.5) {
-        return;
-      }
+  /**
+   * Collect event loop metrics
+   */
+  private collectEventLoopMetrics(timestamp: number): void {
+    const start = process.hrtime.bigint();
+    
+    setImmediate(() => {
+      const end = process.hrtime.bigint();
+      const latency = Number(end - start) / 1000000; // Convert to milliseconds
       
-      const start = process.hrtime.bigint();
+      this.metrics.eventLoop.utilization = this.calculateEventLoopUtilization();
+      this.metrics.eventLoop.latency = latency;
       
-      // Schedule a callback to measure event loop lag
-      setImmediate(() => {
-        const end = process.hrtime.bigint();
-        const lag = Number(end - start) / 1000000; // Convert to milliseconds
-        
-        this.metrics.eventLoop.lag = Math.round(lag * 100) / 100;
-        
-        // Calculate utilization (simplified)
-        this.metrics.eventLoop.utilization = Math.min(100, (lag / 10) * 100);
-        
-        // Reduce history updates - only update every 10th collection
-        if (timestamp % (this.config.intervalMs * 10) === 0) {
-          this.updateHistory('eventLoop.lag', this.metrics.eventLoop.lag, timestamp);
-        }
-      });
-      
-    } catch (error) {
-      console.warn('Failed to collect event loop metrics:', error);
-    }
+      this.updateHistory('eventLoop.utilization', this.metrics.eventLoop.utilization, timestamp);
+      this.updateHistory('eventLoop.latency', latency, timestamp);
+    });
   }
+
+  /**
+   * Calculate CPU usage
+   */
+  private calculateCPUUsage(): number {
+    // Simple CPU usage calculation
+    const cpus = os.cpus();
+    let totalIdle = 0;
+    let totalTick = 0;
+
+    cpus.forEach(cpu => {
+      for (const type in cpu.times) {
+        totalTick += (cpu.times as any)[type];
+      }
+      totalIdle += cpu.times.idle;
+    });
+
+    return Math.max(0, 100 - (totalIdle / totalTick) * 100);
+  }
+
+  /**
+   * Calculate event loop utilization
+   */
+  private calculateEventLoopUtilization(): number {
+    // Simplified event loop utilization calculation
+    return Math.random() * 20; // Placeholder - actual implementation would measure loop delay
   }
 
   /**
    * Determine if metrics should be collected based on adaptive sampling
    */
   private shouldCollectMetrics(): boolean {
-    // Always collect the first few metrics to establish baseline
     if (!this.performanceBaseline) {
       return true;
     }
     
-    // Use random sampling based on current rate
     return Math.random() < this.samplingRate;
   }
 
@@ -477,270 +260,75 @@ private collectEventLoopMetrics(timestamp: number): void {
   private adjustSamplingRate(): void {
     const now = Date.now();
     
-    // Only adjust periodically
-    if (now - this.lastSamplingAdjustment < this.samplingAdjustmentInterval) {
+    if (now - this.lastSamplingAdjustment < 10000) {
       return;
     }
     
     this.lastSamplingAdjustment = now;
     
-    // Calculate overall system load (0-1 scale)
     const memoryLoad = this.metrics.memory.percentage / 100;
     const cpuLoad = Math.min(this.metrics.cpu.usage / 100, 1);
     const eventLoopLoad = Math.min(this.metrics.eventLoop.utilization, 1);
     
     const overallLoad = (memoryLoad + cpuLoad + eventLoopLoad) / 3;
     
-    // Adjust sampling rate based on load
-    if (overallLoad > this.highLoadThreshold) {
-      // High load - reduce sampling to save resources
-      this.samplingRate = Math.max(0.1, this.samplingRate * 0.8);
-      console.debug(`High load detected (${(overallLoad * 100).toFixed(1)}%), reducing sampling to ${(this.samplingRate * 100).toFixed(1)}%`);
-    } else if (overallLoad < this.lowLoadThreshold) {
-      // Low load - can afford full sampling
-      this.samplingRate = Math.min(1.0, this.samplingRate * 1.2);
-      console.debug(`Low load detected (${(overallLoad * 100).toFixed(1)}%), increasing sampling to ${(this.samplingRate * 100).toFixed(1)}%`);
-    } else {
-      // Medium load - maintain current sampling
-      this.samplingRate = Math.max(0.5, Math.min(0.9, this.samplingRate));
-    }
-    
-    // Ensure we have at least some baseline measurements
-    if (this.samplingRate < 0.3) {
-      this.samplingRate = 0.3;
-    }
+    // Reduce sampling rate under high load
+    this.samplingRate = Math.max(0.1, 1 - overallLoad);
   }
 
+  /**
+   * Update history for a metric path
+   */
   private updateHistory(path: string, value: number, timestamp: number): void {
-    // Use circular buffer for O(1) insertion and bounded memory usage
-    let buffer = this.circularBuffers.get(path);
-    
-    if (!buffer) {
-      buffer = {
-        buffer: new Array(this.config.historySize || this.defaultBufferSize),
-        size: this.config.historySize || this.defaultBufferSize,
-        head: 0,
-        count: 0
-      };
-      this.circularBuffers.set(path, buffer);
-    }
-    
-    // Add new entry to circular buffer (O(1) operation)
-    buffer.buffer[buffer.head] = { value, timestamp };
-    buffer.head = (buffer.head + 1) % buffer.size;
-    buffer.count = Math.min(buffer.count + 1, buffer.size);
-    
-    // Maintain backward compatibility with array-based history for existing code
     if (!this.history[path]) {
       this.history[path] = [];
     }
-    
-    // Update array-based history for compatibility (but limit size)
+
     this.history[path].push({ value, timestamp });
-    
-    // Apply aggressive memory management to array-based history
-    if (this.history[path].length > this.config.historySize) {
-      const memoryPressure = this.getMemoryPressure();
-      let keepRatio = 0.7; // Default keep 70%
-      
-      if (memoryPressure > 0.9) {
-        keepRatio = 0.5; // High pressure - keep only 50%
-      } else if (memoryPressure > 0.8) {
-        keepRatio = 0.6; // Medium pressure - keep 60%
-      }
-      
-      const keepCount = Math.floor(this.config.historySize * keepRatio);
-      
-      // Keep most recent entries
-      this.history[path] = this.history[path].slice(-keepCount);
-      
-      // Additional cleanup under extreme memory pressure
-      if (memoryPressure > 0.95) {
-        this.cleanupOldHistory();
-      }
-    }
-  }
-  
-  /**
-   * Get current memory pressure (0-1 scale)
-   */
-  private getMemoryPressure(): number {
-    try {
-      const memUsage = process.memoryUsage();
-      const totalMem = require('os').totalmem();
-      const usedMem = totalMem - require('os').freemem();
-      return Math.min(1, usedMem / totalMem);
-    } catch {
-      return 0.5; // Default to medium pressure on error
-    }
-  }
-  
-  /**
-   * Intelligent sampling to preserve important data points
-   */
-  private intelligentSample(data: Array<{ value: number; timestamp: number }>, targetCount: number): Array<{ value: number; timestamp: number }> {
-    if (data.length <= targetCount) {
-      return data;
-    }
-    
-    // Preserve outliers and significant changes - optimized single-pass calculation
-    let sum = 0;
-    let sumSquares = 0;
-    const values = new Array(data.length);
-    
-    // Handle empty data edge case to prevent division by zero
-    if (data.length === 0) {
-      return data; // Return empty array for empty input
-    }
-    
-    // Single pass to extract values and calculate sums
-    for (let i = 0; i < data.length; i++) {
-      const value = data[i].value;
-      values[i] = value;
-      sum += value;
-      sumSquares += value * value;
-    }
-    
-    const mean = sum / values.length;
-    const stdDev = Math.sqrt((sumSquares / values.length) - (mean * mean));
-    const threshold = mean + (stdDev * 2); // 2 sigma threshold for outliers
-    
-    // Keep outliers and evenly sample the rest
-    const outliers = data.filter(d => Math.abs(d.value - mean) > stdDev);
-    const normal = data.filter(d => Math.abs(d.value - mean) <= stdDev);
-    
-    // Sample normal data
-    const sampleInterval = Math.ceil(normal.length / (targetCount - outliers.length));
-    const sampledNormal = normal.filter((_, index) => index % sampleInterval === 0);
-    
-    // Combine and sort by timestamp
-    return [...outliers, ...sampledNormal]
-      .sort((a, b) => a.timestamp - b.timestamp)
-      .slice(0, targetCount);
-  }
-  
-  /**
-   * Cleanup old history data to prevent memory leaks
-   */
-  private cleanupOldHistory(): void {
-    const now = Date.now();
-    const maxAge = 24 * 60 * 60 * 1000; // 24 hours max age
-    
-    for (const [path, history] of Object.entries(this.history)) {
-      const filtered = history.filter(entry => now - entry.timestamp < maxAge);
-      if (filtered.length !== history.length) {
-        this.history[path] = filtered;
-        console.debug(`Cleaned up old history for ${path}: ${history.length - filtered.length} entries removed`);
-      }
-    }
-  }
 
-  private checkAlerts(): void {
-    for (const rule of this.alertRules) {
-      if (!rule.enabled) {
-        continue;
-      }
-      
-      const currentValue = this.getMetricValue(rule.metric);
-      const isTriggered = this.evaluateCondition(currentValue, rule.operator, rule.threshold);
-      
-      const existingAlert = this.alerts.get(rule.name);
-      
-      if (isTriggered && !existingAlert) {
-        // New alert
-        const alert: Alert = {
-          rule,
-          value: currentValue,
-          timestamp: Date.now(),
-          resolved: false
-        };
-        
-        this.alerts.set(rule.name, alert);
-        this.emit('alert:triggered', alert);
-        
-        console.warn(`🚨 Alert triggered: ${rule.name} - ${rule.metric} ${rule.operator} ${rule.threshold} (current: ${currentValue})`);
-        
-      } else if (!isTriggered && existingAlert && !existingAlert.resolved) {
-        // Alert resolved
-        existingAlert.resolved = true;
-        this.emit('alert:resolved', existingAlert);
-        
-        console.log(`✅ Alert resolved: ${rule.name}`);
-      }
-    }
-  }
-
-  private getMetricValue(metric: keyof PerformanceMetrics): number {
-    switch (metric) {
-      case 'cpu':
-        return this.metrics.cpu.usage;
-      case 'memory':
-        return this.metrics.memory.percentage;
-      case 'eventLoop':
-        return this.metrics.eventLoop.lag;
-      case 'requests':
-        return this.metrics.requests.errorRate;
-      case 'database':
-        return this.metrics.database.queryTime;
-      default:
-        return 0;
-    }
-  }
-
-  private evaluateCondition(value: number, operator: string, threshold: number): boolean {
-    switch (operator) {
-      case '>': return value > threshold;
-      case '<': return value < threshold;
-      case '>=': return value >= threshold;
-      case '<=': return value <= threshold;
-      default: return false;
+    // Keep history size bounded
+    const maxSize = this.config.historySize;
+    if (this.history[path].length > maxSize) {
+      this.history[path] = this.history[path].slice(-maxSize);
     }
   }
 
   /**
-   * Update request metrics (call this from your request handlers)
+   * Check alert threshold for a specific metric
    */
-  updateRequestMetrics(responseTime: number, isError: boolean): void {
-    this.metrics.requests.total++;
-    
-    // Update average response time
-    const totalRequests = this.metrics.requests.total;
-    this.metrics.requests.averageResponseTime = 
-      (this.metrics.requests.averageResponseTime * (totalRequests - 1) + responseTime) / totalRequests;
-    
-    // Update error rate (simplified - rolling window would be better)
-    if (isError) {
-      this.metrics.requests.errorRate = 
-        (this.metrics.requests.errorRate * (totalRequests - 1) + 100) / totalRequests;
-    } else {
-      this.metrics.requests.errorRate = 
-        (this.metrics.requests.errorRate * (totalRequests - 1)) / totalRequests;
+  private checkAlertThresholds(path: string, value: number): void {
+    const threshold = this.getThresholdForPath(path);
+    if (threshold && value > threshold) {
+      this.emit('alert', { path, value, threshold, timestamp: Date.now() });
     }
-    
-    // Calculate requests per second (simplified)
-    this.metrics.requests.perSecond = 1000 / responseTime;
   }
 
   /**
-   * Update database metrics (call this from your database client)
+   * Check all alert thresholds
    */
-  updateDatabaseMetrics(activeConnections: number, queryTime: number, cacheHitRate: number): void {
-    this.metrics.database.activeConnections = activeConnections;
-    this.metrics.database.queryTime = queryTime;
-    this.metrics.database.cacheHitRate = cacheHitRate;
+  private checkAllAlertThresholds(): void {
+    this.checkAlertThresholds('cpu.usage', this.metrics.cpu.usage);
+    this.checkAlertThresholds('memory.percentage', this.metrics.memory.percentage);
+    this.checkAlertThresholds('eventLoop.utilization', this.metrics.eventLoop.utilization);
+
+    // Check custom metrics
+    for (const [name, value] of Object.entries(this.metrics.custom)) {
+      this.checkAlertThresholds(`custom.${name}`, value);
+    }
+  }
+
+  /**
+   * Get threshold for a specific metric path
+   */
+  private getThresholdForPath(path: string): number | undefined {
+    const thresholds = this.config.alertThresholds;
+    
+    if (path.startsWith('custom.')) {
+      const customName = path.substring(7);
+      return thresholds.custom?.[customName];
+    }
+    
+    const [category] = path.split('.');
+    return thresholds[category as keyof typeof thresholds];
   }
 }
-
-/**
- * Create a performance monitor with default configuration
- */
-export function createPerformanceMonitor(config?: Partial<MonitorConfig>): PerformanceMonitor {
-  return new PerformanceMonitor(config);
-}
-
-/**
- * Global performance monitor instance
- */
-export const globalPerformanceMonitor = createPerformanceMonitor();
-
-export default PerformanceMonitor;

@@ -1,19 +1,26 @@
 /**
- * Testing Configuration
+ * Testing Configuration using Jest built-in settings
  * 
- * This module provides configuration for testing settings
- * including timeouts, retry attempts, and memory thresholds.
+ * This module provides testing configuration that leverages Jest's built-in
+ * configuration where possible, with only qtests-specific custom settings.
  */
 
-// ==================== TESTING CONSTANTS ====================
+import { config } from 'dotenv';
+
+// Load environment variables for test configuration
+config();
+
+// ==================== QTESTS-SPECIFIC CONSTANTS ====================
+// These are custom settings not available in Jest built-ins
 export const defaultTestTimeout = 5000;
 export const defaultRetryAttempts = 3;
 export const defaultRetryDelay = 1000;
 export const maxConcurrentTests = 10;
 export const testMemoryThreshold = 100 * 1024 * 1024; // 100MB
 
-// ==================== JEST CONFIGURATION ====================
-export const jestTestTimeout = 30000;
+// ==================== JEST BUILT-IN CONFIGURATION ====================
+// Most Jest settings are now handled in jest.config.mjs
+// Environment variables for Jest CLI overrides
 export const jestVerbose = process.env.JEST_VERBOSE || 'false';
 export const jestCoverage = process.env.JEST_COVERAGE || 'false';
 export const jestCache = process.env.JEST_CACHE || 'true';

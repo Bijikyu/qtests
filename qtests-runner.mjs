@@ -462,7 +462,7 @@ runner.run().catch(error => {
   qerrors(error, 'qtests-runner: test runner failed', {
     errorType: error.constructor?.name || 'unknown',
     errorMessage: error?.message || String(error)
-  });
+  }, {}, {}, {});
   console.error(`${colors.red}Test runner error:${colors.reset}`, error);
   process.exit(1);
 });

@@ -1,13 +1,18 @@
 /**
- * File System Reading Utilities
- * Handles safe file reading operations
+ * File System Reading Utilities using fs-extra
+ * Replaced with fs-extra for better maintainability and industry-standard implementation
+ * 
+ * Migration Guide:
+ * - safeReadFile() -> fs.readFile() with error handling
+ * - safeReadFileBuffer() -> fs.readFile() with error handling
+ * - Use fs-extra directly for advanced use cases
  */
 
-import * as fs from 'fs';
+import fs from 'fs-extra';
 import qerrors from '../qerrorsFallback.js';
 
 /**
- * Safely reads a file as UTF-8 text (async version)
+ * Safely reads a file as UTF-8 text using fs-extra
  * @param filePath - Path to read
  * @returns File contents as string, or null if failed
  */
@@ -19,12 +24,12 @@ export async function safeReadFile(filePath: string): Promise<string | null> {
     }
     
     // Check file existence and size before reading
-    const stats = await fs.promises.stat(filePath);
+    const stats = await fs.stat(filePath);
     if (stats.size > 100 * 1024 * 1024) { // 100MB limit
       throw new Error('File too large for safe reading');
     }
     
-    return await fs.promises.readFile(filePath, 'utf8');
+    return await fs.readFile(filePath, 'utf8');
   } catch (error: any) {
     qerrors(error, 'fileReading.safeReadFile: reading file as UTF-8', { 
       filePath,
@@ -71,7 +76,7 @@ export function safeReadFileSync(filePath: string): string | null {
 }
 
 /**
- * Safely reads a file as buffer (async version)
+ * Safely reads a file as buffer using fs-extra
  * @param filePath - Path to read
  * @returns File contents as buffer, or null if failed
  */
@@ -83,12 +88,12 @@ export async function safeReadFileBuffer(filePath: string): Promise<Buffer | nul
     }
     
     // Check file existence and size before reading
-    const stats = await fs.promises.stat(filePath);
+    const stats = await fs.stat(filePath);
     if (stats.size > 500 * 1024 * 1024) { // 500MB limit for buffer reads
       throw new Error('File too large for safe buffer reading');
     }
     
-    return await fs.promises.readFile(filePath);
+    return await fs.readFile(filePath);
   } catch (error: any) {
     qerrors(error, 'fileReading.safeReadFileBuffer: reading file as buffer', { 
       filePath,
@@ -133,3 +138,9 @@ export function safeReadFileBufferSync(filePath: string): Buffer | null {
     return null;
   }
 }
+
+/**
+ * Direct access to fs-extra for advanced use cases
+ * For new code, prefer using fs-extra directly
+ */
+export { fs };

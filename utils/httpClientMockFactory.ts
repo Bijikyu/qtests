@@ -61,7 +61,7 @@ if (NODE_ENV !== 'test') setLogging(false);
 /**
  * Create mock response using MSW HttpResponse
  */
-export function createMockResponse(data: any, status: number = 200, headers?: Record<string, string>): HttpResponse {
+export function createMockResponse(data: any, status: number = 200, headers?: Record<string, string>): HttpResponse<any> {
   return HttpResponse.json(data, { 
     status, 
     headers: {
@@ -74,7 +74,7 @@ export function createMockResponse(data: any, status: number = 200, headers?: Re
 /**
  * Create error response using MSW HttpResponse
  */
-export function createErrorResponse(message: string, status: number = 400): HttpResponse {
+export function createErrorResponse(message: string, status: number = 400): HttpResponse<any> {
   return HttpResponse.json(
     { error: message }, 
     { status }
