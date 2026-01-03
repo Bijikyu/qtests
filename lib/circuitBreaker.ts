@@ -82,6 +82,8 @@ export class CircuitBreaker extends EventEmitter {
       expectedRecoveryTime: options.expectedRecoveryTime || 30000, // 30 seconds
       halfOpenMaxCalls: options.halfOpenMaxCalls || 3,
       timeout: options.timeout || 10000,               // 10 seconds
+      expectedError: options.expectedError || (() => {}),
+      adaptiveTimeout: options.adaptiveTimeout || false,
       onStateChange: options.onStateChange || (() => {}),
       onFailure: options.onFailure || (() => {}),
       onRecovery: options.onRecovery || (() => {})

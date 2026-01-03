@@ -28,7 +28,7 @@ import {
   InMemoryRateLimiter,
   createDistributedRateLimiter,
   distributedRateLimit,
-} from './lib/rateLimiter.ts';
+} from './lib/rateLimiter.js';
 
 import {
   StreamingStringValidator,
@@ -39,7 +39,7 @@ import {
   relaxedValidator,
   type ValidationConfig,
   type ValidationResult
-} from './lib/streamingValidatorModern.ts';
+} from './lib/streamingValidatorModern.js';
 
 // Error wrapper utilities
 import {
@@ -123,10 +123,8 @@ export type {
   TimeoutErrorWrapperOptions,
   TransformedError,
   BatchProcessingResult,
-  ScalingAction,
   MemoryStats,
   AdaptiveScalingConfig,
-  ScalingAction,
   PerformanceMetrics
   CleanupManagerConfig,
   CleanupMetrics,

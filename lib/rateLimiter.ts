@@ -17,13 +17,19 @@
 let RateLimiterRedis: any = null;
 let RateLimiterMemory: any = null;
 
-try {
-  const rateLimiterModule = await import('rate-limiter-flexible');
-  RateLimiterRedis = rateLimiterModule.RateLimiterRedis;
-  RateLimiterMemory = rateLimiterModule.RateLimiterMemory;
-} catch (error) {
-  console.warn('rate-limiter-flexible not available, using custom implementation:', error);
-}
+// Initialize rate limiter modules asynchronously
+const initializeRateLimiters = async () => {
+  try {
+    const rateLimiterModule = await import('rate-limiter-flexible');
+    RateLimiterRedis = rateLimiterModule.RateLimiterRedis;
+    RateLimiterMemory = rateLimiterModule.RateLimiterMemory;
+  } catch (error) {
+    console.warn('rate-limiter-flexible not available, using custom implementation:', error);
+  }
+};
+
+// Call the initialization function
+initializeRateLimiters();
 
 import { redisUrl, redisCloudUrl } from '../config/localVars.js';
 import qerrors from 'qerrors';
