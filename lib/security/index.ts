@@ -25,6 +25,19 @@ export {
   ValidationResult,
   SanitizeOptions
 } from './SecurityValidator.js';
+
+// Export Joi-based validator for enhanced security
+export { 
+  JoiSecurityValidator,
+  joiSecurityValidator,
+  validateInput as validateInputJoi,
+  validateJSON as validateJSONJoi,
+  validateModuleId as validateModuleIdJoi,
+  validatePath as validatePathJoi,
+  validateEmail,
+  validateURL,
+  validateUserInput
+} from './JoiSecurityValidator.js';
 export { 
   SecurityPolicyManager, 
   securityPolicyManager, 

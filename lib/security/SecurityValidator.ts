@@ -2,11 +2,12 @@
  * Advanced Input Validation Framework
  * 
  * Provides comprehensive input validation, sanitization, and security
- * for all data entering the qtests system. Implements multiple layers
- * of validation to prevent injection attacks and data corruption.
+ * for all data entering the qtests system. Now enhanced with Joi
+ * for enterprise-grade validation while maintaining backward compatibility.
  */
 
 import { securityMonitor, SecurityEventType, SecuritySeverity } from './SecurityMonitor.js';
+import { joiSecurityValidator } from './JoiSecurityValidator.js';
 
 /**
  * Validation rule configuration
@@ -163,8 +164,18 @@ export class SecurityValidator {
 
   /**
    * Validate input against specified rules
+   * Enhanced with Joi for improved security while maintaining compatibility
    */
   validate(input: any, ruleName?: string, customRules?: ValidationRule[]): ValidationResult {
+    // First try Joi validation for common cases
+    const joiResult = joiSecurityValidator.validate(input, ruleName);
+    
+    // If we have a matching Joi schema and it passes, return that result
+    if (joiResult.valid && ruleName && joiSecurityValidator.getSchemas().includes(ruleName)) {
+      return joiResult;
+    }
+    
+    // Fall back to legacy validation for custom rules or when Joi doesn't have the rule
     const rules = customRules || this.defaultRules.get(ruleName || '') || [];
     const result: ValidationResult = {
       valid: true,
@@ -449,3 +460,15 @@ export function validateModuleId(moduleId: string): ValidationResult {
 export function validatePath(filePath: string): ValidationResult {
   return securityValidator.validatePath(filePath);
 }
+
+// Export Joi-based validator for direct access
+export { joiSecurityValidator };
+export { 
+  validateInput as validateInputJoi,
+  validateJSON as validateJSONJoi,
+  validateModuleId as validateModuleIdJoi,
+  validatePath as validatePathJoi,
+  validateEmail,
+  validateURL,
+  validateUserInput
+} from './JoiSecurityValidator.js';

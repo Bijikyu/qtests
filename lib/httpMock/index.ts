@@ -8,6 +8,7 @@ export * from './mockUtilities.js';
 export * from './legacyAxiosImplementation.js';
 export * from './userConfigurableAxiosMock.js';
 export * from './modernMSWMock.js';
+export * from './advancedMSWMock.js';
 
 // Re-export mock factories
 export * from './clientFactories.js';

@@ -1,7 +1,11 @@
 /**
- * JSON Operation Caching Utilities
- * Provides optimized JSON operations with caching and size limits
+ * Enhanced JSON Utilities with Security Focus
+ * 
+ * Provides optimized JSON operations with security protections using secure-json-parse
+ * for superior security against JSON injection and prototype pollution attacks.
  */
+
+import { parse } from 'secure-json-parse';
 
 /**
  * JSON operation cache with WeakMap for automatic garbage collection
@@ -72,7 +76,11 @@ export function safeJSONParse<T = any>(
   }
 
   try {
-    return JSON.parse(jsonString);
+    // Use secure-json-parse for protection against prototype pollution
+    return parse(jsonString, undefined, {
+      protoAction: 'remove',
+      constructorAction: 'remove'
+    });
   } catch (error) {
     console.warn('JSON parse failed:', error instanceof Error ? error.message : error);
     return fallback;
@@ -204,7 +212,12 @@ export function safeJSONClone<T = any>(
       console.warn(`Object too large for cloning: ${jsonString.length} bytes (max: ${maxSize})`);
       return null;
     }
-    return JSON.parse(jsonString);
+    
+    // Use secure-json-parse for protection against prototype pollution
+    return parse(jsonString, undefined, {
+      protoAction: 'remove',
+      constructorAction: 'remove'
+    });
   } catch (error) {
     console.warn('JSON clone failed:', error instanceof Error ? error.message : error);
     return null;
@@ -275,10 +288,13 @@ export function validateJSONStructure(
     return { valid: false, errors };
   }
 
-  // Parse JSON
+  // Parse JSON securely
   let data: any;
   try {
-    data = JSON.parse(jsonString);
+    data = parse(jsonString, undefined, {
+      protoAction: 'remove',
+      constructorAction: 'remove'
+    });
   } catch (error) {
     errors.push(`Invalid JSON: ${error instanceof Error ? error.message : error}`);
     return { valid: false, errors };
@@ -322,12 +338,15 @@ export async function safeJSONParseAsync(jsonString: string, maxSize: number = 1
     throw new Error(`JSON too large: ${jsonString.length} bytes (max: ${maxSize})`);
   }
 
-  // For smaller JSON, use regular parse with setImmediate to prevent blocking
+  // For smaller JSON, use secure parse with setImmediate to prevent blocking
   if (jsonString.length < 1024 * 1024) { // 1MB threshold
     return new Promise((resolve, reject) => {
       setImmediate(() => {
         try {
-          resolve(JSON.parse(jsonString));
+          resolve(parse(jsonString, undefined, {
+            protoAction: 'remove',
+            constructorAction: 'remove'
+          }));
         } catch (error) {
           reject(error);
         }
@@ -335,7 +354,7 @@ export async function safeJSONParseAsync(jsonString: string, maxSize: number = 1
     });
   }
 
-  // For larger JSON, implement chunked parsing
+  // For larger JSON, implement secure chunked parsing
   return new Promise((resolve, reject) => {
     let result = null;
     let parseError = null;
@@ -343,7 +362,10 @@ export async function safeJSONParseAsync(jsonString: string, maxSize: number = 1
     // Use setImmediate to break up parsing
     const parseChunk = () => {
       try {
-        result = JSON.parse(jsonString);
+        result = parse(jsonString, undefined, {
+          protoAction: 'remove',
+          constructorAction: 'remove'
+        });
         resolve(result);
       } catch (error) {
         parseError = error;
