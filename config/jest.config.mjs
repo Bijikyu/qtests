@@ -69,15 +69,17 @@ export default {
    "^\\./index\\.js$": "<rootDir>/index.ts",
    "^\\./setup\\.js$": "<rootDir>/setup.ts",
     "^\\./lib/(.*)\\.js$": "<rootDir>/lib/$1.ts",
-    "^\\./lib/(circuitBreaker|connectionPool|performanceMonitor|rateLimiter|cache|security|memory|fileSystem|httpMock|polyfills|testIsolation|errorHandling|validation|templates|utils|stubs|setup|coreUtils|envUtils)(.*)$": "<rootDir>/lib/$1$2.ts",
+    "^\\./lib/(circuitBreaker|connectionPool|performanceMonitor|rateLimiter|cache|security|memory|fileSystem|httpMock|polyfills|testIsolation|errorHandling|validation|templates|utils|stubs|setup|coreUtils|envUtils|routeTestUtils)(.*)$": "<rootDir>/lib/$1$2.ts",
 
-   "^\\./utils/httpTest\\.shim\\.js$": "<rootDir>/utils/httpTest.shim.ts",
-   "^\\./utils/(.*)\\.js$": "<rootDir>/utils/$1.ts",
+"^\\./lib/(.*)/utils/httpTest\\.shim\\.js$": "<rootDir>/utils/httpTest.shim.ts",
+    "^\\./utils/httpTest\\.js$": "<rootDir>/utils/httpTest.ts",
+    "^\\./utils/(.*)\\.js$": "<rootDir>/utils/$1.ts",
     // Remove problematic module mapper for better compatibility
     // "^(.*/httpTest\\.shim)\\.js$": "$1.ts",
    "^external-service-client$": "<rootDir>/utils/jest-proxies/external-service-client.cjs",
    "^feature-x$": "<rootDir>/utils/jest-proxies/feature-x.cjs",
-   "^\\.{1,2}/(.*)\\.js$": "$1",
+   // Remove problematic mapping that interferes with react-is
+    // "^\\.{1,2}/(.*)\\.js$": "$1",
    "^qtests/lib/(.*)$": "<rootDir>/lib/$1.ts",
    "^qtests/utils/(.*)$": "<rootDir>/utils/$1.ts",
    "^qtests/setup$": "<rootDir>/setup.ts",

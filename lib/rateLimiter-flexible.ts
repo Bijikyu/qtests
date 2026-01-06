@@ -171,9 +171,9 @@ export class InMemoryRateLimiter {
     });
   }
 
-  isAllowed(key: string): RateLimitResult {
+  async isAllowed(key: string): Promise<RateLimitResult> {
     try {
-      const result = this.limiter.consume(key, 1);
+      const result = await this.limiter.consume(key, 1);
       return {
         allowed: true,
         remaining: result.remainingPoints || 0,

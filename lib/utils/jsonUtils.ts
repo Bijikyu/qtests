@@ -1,57 +1,11 @@
 /**
- * Enhanced JSON Utilities with Direct secure-json-parse Integration
+ * JSON Utilities using secure-json-parse
  * 
- * Uses secure-json-parse for superior security against JSON injection
- * and prototype pollution attacks while maintaining custom caching and utilities.
+ * Simplified JSON utilities that directly use secure-json-parse for security
+ * against JSON injection and prototype pollution attacks.
  */
 
 import { parse } from 'secure-json-parse';
-
-/**
- * JSON operation cache with WeakMap for automatic garbage collection
- */
-class JSONCache {
-  private cache = new WeakMap<object, string>();
-  private maxSize = 10000; // Maximum cache entries
-  private size = 0;
-
-  /**
-   * Get cached JSON string
-   * @param obj - Object to get cached string for
-   * @returns Cached JSON string or undefined
-   */
-  get(obj: object): string | undefined {
-    return this.cache.get(obj);
-  }
-
-  /**
-   * Set cached JSON string
-   * @param obj - Object to cache
-   * @param jsonString - JSON string to cache
-   */
-  set(obj: object, jsonString: string): void {
-    if (this.size >= this.maxSize) {
-      // WeakMap automatically handles cleanup, so we don't need manual eviction
-      // The size limit is more of a guideline for usage patterns
-      return;
-    }
-    
-    this.cache.set(obj, jsonString);
-    this.size++;
-  }
-
-  /**
-   * Clear cache (Note: WeakMap doesn't have clear method)
-   */
-  clear(): void {
-    // Create new WeakMap to effectively clear
-    this.cache = new WeakMap();
-    this.size = 0;
-  }
-}
-
-// Global JSON cache instance
-const jsonCache = new JSONCache();
 
 /**
  * Safe JSON parsing using secure-json-parse
@@ -120,25 +74,17 @@ export function safeJSONStringify(
 }
 
 /**
- * Cached JSON stringification for frequently serialized objects
+ * JSON stringification with size validation
  * @param obj - Object to stringify
  * @param maxSize - Maximum string size in bytes (default: 10MB)
  * @returns JSON string
  */
-export function cachedJSONStringify(
+export function safeJSONStringifyWithSize(
   obj: any,
   maxSize: number = 10 * 1024 * 1024
 ): string {
   if (obj === undefined || obj === null) {
     return '{}';
-  }
-
-  // Check cache first for objects
-  if (typeof obj === 'object' && obj !== null) {
-    const cached = jsonCache.get(obj);
-    if (cached) {
-      return cached;
-    }
   }
 
   try {
@@ -148,11 +94,6 @@ export function cachedJSONStringify(
     if (jsonString.length > maxSize) {
       console.warn(`JSON string too large: ${jsonString.length} bytes (max: ${maxSize})`);
       return '{}';
-    }
-    
-    // Cache result for objects
-    if (typeof obj === 'object' && obj !== null) {
-      jsonCache.set(obj, jsonString);
     }
     
     return jsonString;
@@ -461,7 +402,7 @@ export { parse as secureParse };
 export default {
   safeJSONParse,
   safeJSONStringify,
-  cachedJSONStringify,
+  safeJSONStringifyWithSize,
   truncateJSON,
   safeJSONClone,
   safeJSONEquals,

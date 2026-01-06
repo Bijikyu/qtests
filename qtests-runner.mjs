@@ -10,7 +10,8 @@
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
-import { create as qerrors } from 'qerrors';
+import qerrorsDefault from 'qerrors';
+const { create: qerrors } = qerrorsDefault;
 
 // Path validation utilities for security
 function validatePath(inputPath, allowedBase = process.cwd()) {
@@ -459,7 +460,7 @@ class TestRunner {
 // Run the test suite
 const runner = new TestRunner();
 runner.run().catch(error => {
-  qerrors(error, 'qtests-runner: test runner failed', {
+  qerrors.create(error, 'qtests-runner: test runner failed', {
     errorType: error.constructor?.name || 'unknown',
     errorMessage: error?.message || String(error)
   });

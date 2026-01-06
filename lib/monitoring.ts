@@ -7,7 +7,6 @@
 
 import { EventEmitter } from 'events';
 import { CircuitBreakerStats, circuitBreakerRegistry } from './circuitBreaker.js';
-import { ConnectionStats } from './connectionPool.js';
 
 export interface MonitoringConfig {
   enabled: boolean;
@@ -48,7 +47,7 @@ export interface SystemMetrics {
     errorRate: number;
     avgResponseTime: number;
   };
-  connectionPools: Record<string, ConnectionStats>;
+  connectionPools: Record<string, any>;
   circuitBreakers: Record<string, CircuitBreakerStats>;
 }
 
@@ -271,7 +270,7 @@ export class MonitoringSystem extends EventEmitter {
     };
 
     // Connection pool metrics - get from registered connection pools if available
-    const connectionPools: Record<string, ConnectionStats> = {}; // TODO: Integrate with connection pool registry
+    const connectionPools: Record<string, any> = {}; // TODO: Integrate with connection pool registry
 
     // Circuit breaker metrics
     const circuitBreakers = circuitBreakerRegistry.getAllStats();

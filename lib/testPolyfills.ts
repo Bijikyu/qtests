@@ -12,28 +12,30 @@
  * - polyfills/polyfillOrchestrator.ts - Coordinates all polyfill setup
  */
 
-// Import modular polyfill components
+// Import polyfill components
 import {
-  setupClipboard,
-  ClipboardSpies,
-  MockIntersectionObserver,
-  setupIntersectionObserver,
-  MockMediaQueryList,
-  setupMatchMedia,
-  MockResizeObserver,
-  setupResizeObserver,
-  setupAllPolyfills
+  initializePolyfills,
+  resetPolyfills,
+  getResizeObserver,
+  getIntersectionObserver,
+  matchMedia,
+  ClipboardAPI,
+  clipboard,
+  ResizeObserver,
+  IntersectionObserver,
+  polyfillOrchestrator
 } from './polyfills/index.js';
 
 // Re-export all functionality for backward compatibility
 export {
-  setupClipboard,
-  ClipboardSpies,
-  MockIntersectionObserver,
-  setupIntersectionObserver,
-  MockMediaQueryList,
-  setupMatchMedia,
-  MockResizeObserver,
-  setupResizeObserver,
-  setupAllPolyfills,
+  initializePolyfills,
+  resetPolyfills,
+  getResizeObserver,
+  getIntersectionObserver,
+  matchMedia,
+  ClipboardAPI,
+  clipboard,
+  ResizeObserver,
+  IntersectionObserver,
+  polyfillOrchestrator
 };

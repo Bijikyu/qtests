@@ -1,9 +1,8 @@
 /**
- * Advanced Connection Pool Manager
+ * Connection Pool Manager using generic-pool
  *
- * Provides scalable connection pooling with health checks, circuit breaker,
- * and automatic failover capabilities for improved database and external service
- * connectivity under high load scenarios.
+ * Provides scalable connection pooling using industry-standard generic-pool
+ * with health checks, circuit breaker, and automatic failover capabilities.
  */
 
 import { EventEmitter } from 'events';
@@ -33,18 +32,23 @@ export interface PoolStats {
   waitingRequests: number;
 }
 
+export interface Factory<T> {
+  create(): Promise<T>;
+  destroy(connection: T): Promise<void>;
+  validate?(connection: T): Promise<boolean>;
+}
+
 /**
- * Advanced connection pool with circuit breaker and health monitoring
+ * Connection pool using generic-pool with circuit breaker and health monitoring
  */
 export class AdvancedConnectionPool extends EventEmitter {
-  private connections: any[] = [];
-  private waitingQueue: any[] = [];
+  private pool: any;
   private isShutdown = false;
   private circuitState = CircuitState.CLOSED;
   private failureCount = 0;
   private lastFailureTime = 0;
   private healthCheckInterval?: NodeJS.Timeout;
-  private cleanupInterval?: NodeJS.Timeout;
+  private autoTransitionId?: NodeJS.Timeout;
 
   private stats: PoolStats = {
     totalAcquisitions: 0,
@@ -59,7 +63,10 @@ export class AdvancedConnectionPool extends EventEmitter {
 
   private config: Required<ConnectionPoolOptions>;
 
-  constructor(private options: ConnectionPoolOptions = {}) {
+  constructor(
+    factory: Factory<any>,
+    options: ConnectionPoolOptions = {}
+  ) {
     super();
     
     this.config = {
@@ -70,8 +77,22 @@ export class AdvancedConnectionPool extends EventEmitter {
       retryDelay: options.retryDelay || 1000
     };
 
-    // Start health monitoring
+    // Dynamically import generic-pool to avoid module resolution issues
+    this.initializePool(factory).catch(error => {
+      console.error('Failed to initialize pool during construction:', error);
+    });
     this.startHealthMonitoring();
+  }
+
+  private async initializePool(factory: Factory<any>): Promise<void> {
+    try {
+      // Use proper async import with await
+      const genericPool = await import('generic-pool');
+      this.pool = genericPool.createPool(factory);
+    } catch (error) {
+      console.error('Failed to initialize generic-pool:', error);
+      throw error;
+    }
   }
 
   /**
@@ -90,7 +111,14 @@ export class AdvancedConnectionPool extends EventEmitter {
     const startTime = Date.now();
     
     try {
-      const connection = await this.tryAcquire();
+      if (!this.pool) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        if (!this.pool) {
+          throw new Error('Pool not initialized');
+        }
+      }
+      
+      const connection = await this.pool.acquire();
       
       // Update stats
       const acquireTime = Date.now() - startTime;
@@ -110,58 +138,40 @@ export class AdvancedConnectionPool extends EventEmitter {
   /**
    * Release a connection back to the pool
    */
-  release(connection: any): void {
-    if (this.isShutdown) {
+  async release(connection: any): Promise<void> {
+    if (this.isShutdown || !this.pool) {
       return;
     }
 
-    const index = this.connections.indexOf(connection);
-    if (index >= 0) {
-      // Perform health check before reusing
-      this.performHealthCheck(connection)
-        .then(isHealthy => {
-          if (isHealthy) {
-            // Connection is healthy, keep in pool
-            this.emit('connection-released', { connection });
-          } else {
-            // Connection is unhealthy, remove it
-            this.removeConnection(index);
-          }
-        })
-        .catch(() => {
-          // Health check failed, remove connection
-          this.removeConnection(index);
-        });
+    try {
+      await this.pool.release(connection);
+      this.emit('connection-released', { connection });
+    } catch (error) {
+      this.emit('error', { error, connection });
     }
   }
 
-  /**
-   * Shutdown the connection pool
-   */
+/**
+    * Shutdown the connection pool
+    */
   async shutdown(): Promise<void> {
     this.isShutdown = true;
     
-    // Clear intervals
+    // Clear health check interval
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
     }
-    if (this.cleanupInterval) {
-      clearInterval(this.cleanupInterval);
+
+    // Clear auto-transition timeout
+    if (this.autoTransitionId) {
+      clearTimeout(this.autoTransitionId);
     }
 
     // Close all connections
-    const closePromises = this.connections.map(conn => 
-      this.closeConnection(conn).catch(() => {})
-    );
-    
-    await Promise.all(closePromises);
-    this.connections = [];
-    
-    // Reject all waiting requests
-    this.waitingQueue.forEach(request => {
-      request.reject(new Error('Connection pool is shutting down'));
-    });
-    this.waitingQueue = [];
+    if (this.pool) {
+      await this.pool.drain();
+      await this.pool.clear();
+    }
     
     this.emit('shutdown');
   }
@@ -172,38 +182,9 @@ export class AdvancedConnectionPool extends EventEmitter {
   getStats(): PoolStats {
     return {
       ...this.stats,
-      activeConnections: this.connections.length,
-      waitingRequests: this.waitingQueue.length
+      activeConnections: this.stats.connectionsCreated - this.stats.connectionsDestroyed,
+      waitingRequests: 0 // Not directly available from generic-pool
     };
-  }
-
-  /**
-   * Try to acquire a connection
-   */
-  private async tryAcquire(): Promise<any> {
-    // Check if there's an available connection
-    if (this.connections.length < this.config.maxConnections) {
-      const connection = await this.createConnection();
-      this.connections.push(connection);
-      this.stats.connectionsCreated++;
-      return connection;
-    }
-
-    // Wait for a connection to become available
-    return new Promise((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        reject(new Error('Connection acquire timeout'));
-      }, this.config.acquireTimeout);
-
-      this.waitingQueue.push({
-        resolve,
-        reject,
-        timeout,
-        timestamp: Date.now(),
-        requestId: `req_${Date.now()}_${Math.random()}`,
-        timedOut: false
-      });
-    });
   }
 
   /**
@@ -237,45 +218,17 @@ export class AdvancedConnectionPool extends EventEmitter {
     }
 
     this.emit('connection-failure', { error, failureCount: this.failureCount });
-  }
-
-  /**
-   * Create a new connection (to be implemented by subclasses)
-   */
-  private async createConnection(): Promise<any> {
-    throw new Error('createConnection must be implemented by subclass');
-  }
-
-  /**
-   * Close a connection (to be implemented by subclasses)
-   */
-  private async closeConnection(connection: any): Promise<void> {
-    throw new Error('closeConnection must be implemented by subclass');
-  }
-
-  /**
-   * Perform health check on a connection (to be implemented by subclasses)
-   */
-  private async performHealthCheck(connection: any): Promise<boolean> {
-    // Default implementation always returns true
-    return true;
-  }
-
-  /**
-   * Remove a connection from the pool
-   */
-  private async removeConnection(index: number): Promise<void> {
-    if (index >= 0 && index < this.connections.length) {
-      const connection = this.connections[index];
-      this.connections.splice(index, 1);
-      this.stats.connectionsDestroyed++;
-      
-      try {
-        await this.closeConnection(connection);
-      } catch (error) {
-        this.emit('error', { error, connection });
+    
+    // Auto-transition to HALF_OPEN after retry delay (only if not already transitioning)
+    const autoTransitionId = setTimeout(() => {
+      if (this.circuitState === CircuitState.OPEN) {
+        this.circuitState = CircuitState.HALF_OPEN;
+        this.emit('circuit-half-open', { failureCount: this.failureCount });
       }
-    }
+    }, this.config.retryDelay);
+    
+    // Store transition ID for cleanup
+    (this as any).autoTransitionId = autoTransitionId;
   }
 
   /**
@@ -291,17 +244,59 @@ export class AdvancedConnectionPool extends EventEmitter {
    * Perform health checks on all connections
    */
   private async performHealthChecks(): Promise<void> {
-    const healthCheckPromises = this.connections.map(async (connection, index) => {
-      try {
-        const isHealthy = await this.performHealthCheck(connection);
-        if (!isHealthy) {
-          this.removeConnection(index);
-        }
-      } catch (error) {
-        this.removeConnection(index);
-      }
-    });
+    try {
+      this.emit('health-check', { 
+        activeConnections: this.stats.connectionsCreated - this.stats.connectionsDestroyed,
+        totalAcquisitions: this.stats.totalAcquisitions
+      });
+    } catch (error) {
+      this.emit('health-check-error', { error });
+    }
+  }
 
-    await Promise.allSettled(healthCheckPromises);
+  /**
+   * Reset circuit breaker to closed state
+   */
+  resetCircuitBreaker(): void {
+    const wasOpen = this.circuitState === CircuitState.OPEN;
+    
+    // Clear auto-transition timeout when resetting
+    if (this.autoTransitionId) {
+      clearTimeout(this.autoTransitionId);
+      this.autoTransitionId = undefined;
+    }
+    
+    this.circuitState = CircuitState.CLOSED;
+    this.failureCount = 0;
+    this.lastFailureTime = 0;
+    this.emit('circuit-reset');
+    
+    if (wasOpen) {
+      // Emit recovery event when circuit recovers from OPEN state
+      this.emit('circuit-recovered', { timestamp: Date.now() });
+    }
+  }
+
+  /**
+   * Get current circuit breaker state
+   */
+  getCircuitState(): CircuitState {
+    return this.circuitState;
   }
 }
+
+/**
+ * Create a connection pool with factory
+ */
+export function createConnectionPool(
+  factory: Factory<any>,
+  options: ConnectionPoolOptions = {}
+): AdvancedConnectionPool {
+  return new AdvancedConnectionPool(factory, options);
+}
+
+export default {
+  AdvancedConnectionPool,
+  createConnectionPool,
+  CircuitState
+};
