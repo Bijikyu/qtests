@@ -1,3 +1,18 @@
+/**
+ * Environment Manager - Consolidated Environment Variable Utilities
+ * Replaced with dotenv and unified environment management from utils/helpers/envManager.ts
+ * 
+ * This module now re-exports functionality from the consolidated environment manager
+ * to eliminate code duplication while maintaining backward compatibility.
+ */
+
+import { 
+  backupEnvVars, 
+  restoreEnvVars, 
+  withSavedEnv, 
+  loadEnv, 
+  configureEnv 
+} from '../helpers/envManager.js';
 import { logStart, logReturn, setLogging } from '../../lib/logUtils.js';
 import { withErrorLogging } from '../../lib/errorHandling/index.js';
 import { nodeEnv } from '../../config/localVars.js';
@@ -6,8 +21,6 @@ import { nodeEnv } from '../../config/localVars.js';
 if (nodeEnv !== 'test') {
   setLogging(false);
 }
-
-import dotenv from 'dotenv';
 
 interface DefaultEnv {
   GOOGLE_API_KEY: string;
@@ -42,42 +55,48 @@ function sanitizeEnvValue(value: string): string {
   return value.trim();
 }
 
+/**
+ * Set test environment using consolidated environment manager
+ */
 export function setTestEnv(): boolean {
   logStart('setTestEnv', 'default values');
   
   return withErrorLogging(() => {
-    // Use dotenv directly instead of wrapper
-    const result = dotenv.config();
-    if (result.error) {
-      console.warn('dotenv config error:', result.error);
+    // Use consolidated environment manager
+    try {
+      loadEnv(); // Load from .env file
+    } catch (error) {
+      console.warn('Failed to load .env file:', error);
     }
     
-    const sanitizedEnv: Record<string, string> = {};
-    for (const [key, value] of Object.entries(defaultEnv)) {
-      if (validateEnvKey(key)) {
-        const sanitizedValue = sanitizeEnvValue(value);
-        if (sanitizedValue) {
-          sanitizedEnv[key] = sanitizedValue;
-        }
-      }
-    }
+    // Configure with defaults - convert DefaultEnv to Record<string, string>
+    const defaultsAsRecord: Record<string, string> = {};
+    Object.entries(defaultEnv).forEach(([key, value]) => {
+      defaultsAsRecord[key] = value || '';
+    });
+    configureEnv(defaultsAsRecord, {});
     
-    Object.assign(process.env, sanitizedEnv);
     logReturn('setTestEnv', true);
     return true;
   }, 'setTestEnv');
 }
 
+/**
+ * Save environment using consolidated environment manager
+ */
 export function saveEnv(): Record<string, string | undefined> {
   logStart('saveEnv');
   
   return withErrorLogging(() => {
-    const savedEnv = { ...process.env };
+    const savedEnv = backupEnvVars();
     logReturn('saveEnv', `${Object.keys(savedEnv).length} env vars`);
     return savedEnv;
   }, 'saveEnv');
 }
 
+/**
+ * Restore environment using consolidated environment manager
+ */
 export function restoreEnv(savedEnv: Record<string, string | undefined>): boolean {
   logStart('restoreEnv', savedEnv);
 
@@ -87,20 +106,19 @@ export function restoreEnv(savedEnv: Record<string, string | undefined>): boolea
       return false;
     }
 
-    const currentKeys = new Set(Object.keys(process.env));
-    const backupKeys = new Set(Object.keys(savedEnv));
-
-    currentKeys.forEach(key => {
-      if (!backupKeys.has(key)) delete process.env[key];
-    });
-
-    for (const [key, value] of Object.entries(savedEnv)) {
-      if (value !== undefined) process.env[key] = value; else delete process.env[key];
-    }
-
+    restoreEnvVars(savedEnv);
     logReturn('restoreEnv', true);
     return true;
   }, 'restoreEnv');
 }
+
+// Re-export consolidated environment manager functions for direct use
+export {
+  backupEnvVars,
+  restoreEnvVars,
+  withSavedEnv,
+  loadEnv,
+  configureEnv
+};
 
 export { defaultEnv };

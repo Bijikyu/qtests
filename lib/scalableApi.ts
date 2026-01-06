@@ -4,6 +4,7 @@
  */
 
 import { EventEmitter } from 'events';
+import { parse as secureParse } from 'secure-json-parse';
 
 export interface ApiRequestConfig {
   url: string;
@@ -383,7 +384,11 @@ export class ScalableApiClient extends EventEmitter {
       setImmediate(() => {
         try {
           const jsonString = data.toString('utf8');
-          const parsed = JSON.parse(jsonString);
+          // Use secure-json-parse for protection against prototype pollution
+          const parsed = secureParse(jsonString, undefined, {
+            protoAction: 'remove',
+            constructorAction: 'remove'
+          });
           resolve(parsed);
         } catch (error) {
           reject(error);

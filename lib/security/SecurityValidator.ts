@@ -8,6 +8,7 @@
 
 import { securityMonitor, SecurityEventType, SecuritySeverity } from './SecurityMonitor.js';
 import { joiSecurityValidator } from './JoiSecurityValidator.js';
+import { parse as secureParse } from 'secure-json-parse';
 
 /**
  * Validation rule configuration
@@ -144,14 +145,11 @@ export class SecurityValidator {
         ],
         customValidator: (value: string) => {
           try {
-            const parsed = JSON.parse(value);
-            if (parsed && typeof parsed === 'object' && parsed !== null) {
-              if (parsed.hasOwnProperty('__proto__') || 
-                  parsed.hasOwnProperty('constructor') || 
-                  parsed.hasOwnProperty('prototype')) {
-                return 'Prototype pollution attempt detected';
-              }
-            }
+// Use secure-json-parse for protection against prototype pollution
+          const parsed = secureParse(value, undefined, {
+            protoAction: 'remove',
+            constructorAction: 'remove'
+          });
             return true;
           } catch {
             return 'Invalid JSON format';

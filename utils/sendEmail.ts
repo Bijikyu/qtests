@@ -1,10 +1,12 @@
 /**
  * Email Mock Utility for Testing - TypeScript Implementation
+ * Uses Joi-based validation for enterprise-grade email validation
  */
 
 import { executeWithLogs } from '../lib/logUtils.js';
 import qerrors from 'qerrors';
 import { randomBytes } from 'crypto';
+import { validateEmail as joiValidateEmail } from '../lib/security/JoiSecurityValidator.js';
 
 // Email data interface
 interface EmailData {
@@ -40,10 +42,14 @@ function sendEmail(emailData: EmailData): Promise<EmailResult> {
         throw error;
       }
       
-      // Validate email format
-      if (typeof emailData.to !== 'string' || !emailData.to.includes('@')) {
-        const error = new Error('Invalid email format in "to" field');
-        qerrors(error, 'sendEmail: invalid email format', { to: emailData.to });
+      // Validate email format using Joi-based validation
+      const validationResult = joiValidateEmail(emailData.to);
+      if (!validationResult.valid) {
+        const error = new Error(`Invalid email format: ${validationResult.errors.join(', ')}`);
+        qerrors(error, 'sendEmail: Joi validation failed', { 
+          to: emailData.to, 
+          errors: validationResult.errors 
+        });
         throw error;
       }
       
@@ -90,7 +96,7 @@ function clearEmailHistory(): number {
 }
 
 /**
- * Validate email data
+ * Validate email data using Joi-based validation
  */
 function validateEmail(emailData: EmailData): boolean {
   return executeWithLogs('validateEmail', () => {
@@ -103,14 +109,17 @@ function validateEmail(emailData: EmailData): boolean {
         qerrors(new Error('Email missing "to" field'), 'validateEmail: missing to field', { emailData });
         return false;
       }
-      if (typeof emailData.to !== 'string') {
-        qerrors(new Error('Email "to" field is not a string'), 'validateEmail: invalid to type', { toType: typeof emailData.to });
+      
+      // Use Joi-based validation for enterprise-grade email validation
+      const validationResult = joiValidateEmail(emailData.to);
+      if (!validationResult.valid) {
+        qerrors(new Error(`Invalid email format: ${validationResult.errors.join(', ')}`), 'validateEmail: Joi validation failed', { 
+          to: emailData.to, 
+          errors: validationResult.errors 
+        });
         return false;
       }
-      if (!emailData.to.includes('@')) {
-        qerrors(new Error('Email "to" field missing @ symbol'), 'validateEmail: invalid email format', { to: emailData.to });
-        return false;
-      }
+      
       return true;
     } catch (error) {
       const errorObj = error instanceof Error ? error : new Error(String(error));

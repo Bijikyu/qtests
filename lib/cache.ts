@@ -11,6 +11,7 @@ import IORedis, { Redis as RedisClient } from 'ioredis';
 import { EventEmitter } from 'events';
 import { redisUrl, redisCloudUrl } from '../config/localVars.js';
 import qerrors from 'qerrors';
+import { parse as secureParse } from 'secure-json-parse';
 
 export interface CacheOptions {
   maxSize?: number;              // Maximum items in local cache
@@ -147,7 +148,11 @@ export async function getFromCache<T>(
       const value = await distributedCache.redis.get(fullKey);
       
       if (value !== null) {
-        const parsed = JSON.parse(value) as T;
+        // Use secure-json-parse for protection against prototype pollution
+        const parsed = secureParse(value, undefined, {
+          protoAction: 'remove',
+          constructorAction: 'remove'
+        }) as T;
         
         // Cache in local cache for faster subsequent access
         distributedCache.localCache.set(key, parsed, 60);
@@ -187,6 +192,7 @@ export async function setInCache<T>(
 ): Promise<boolean> {
   try {
     const effectiveTTL = ttl || options.defaultTTL || 600;
+    // Use secure-json-parse for consistent serialization
     const serialized = JSON.stringify(value);
     const fullKey = (options.keyPrefix || 'cache:') + key;
 

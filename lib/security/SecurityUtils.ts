@@ -6,6 +6,7 @@
  */
 
 import crypto from 'crypto';
+import { parse as secureParse } from 'secure-json-parse';
 
 /**
  * Security utilities class
@@ -68,22 +69,17 @@ export class SecurityUtils {
   /**
    * Validate JSON with security context
    */
-  static validateJSON(jsonString: string, context: string = 'unknown'): { valid: boolean; data?: any; error?: string } {
+static validateJSON(jsonString: string, context: string = 'unknown'): { valid: boolean; data?: any; error?: string } {
     try {
-      const data = JSON.parse(jsonString);
+      // Use secure-json-parse for protection against prototype pollution
+      const data = secureParse(jsonString, undefined, {
+        protoAction: 'remove',
+        constructorAction: 'remove'
+      });
       
-      // Check for prototype pollution
-      if (data && typeof data === 'object') {
-        if (data.hasOwnProperty('__proto__') || 
-            data.hasOwnProperty('constructor') || 
-            data.hasOwnProperty('prototype')) {
-          return { valid: false, error: 'Prototype pollution detected' };
-        }
-      }
-
       return { valid: true, data };
     } catch (error) {
-      return { valid: false, error: `JSON parsing error: ${String(error)}` };
+      return { valid: false, error: `Invalid JSON: ${error instanceof Error ? error.message : 'Unknown error'}` };
     }
   }
 
