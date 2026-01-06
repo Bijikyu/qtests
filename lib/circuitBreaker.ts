@@ -1,22 +1,24 @@
 /**
  * Circuit Breaker Implementation using Opossum
- * Replaced with opossum for better maintainability and industry-standard implementation
+ * Direct use of industry-standard circuit breaker with simplified interfaces
  * 
- * Direct use of opossum recommended for new code:
- * 
- * import CircuitBreaker from 'opossum';
- * const breaker = new CircuitBreaker(options);
- * breaker.fire(() => someAsyncFunction());
+ * This module provides simplified interfaces to opossum
+ * while maintaining the same API for backward compatibility.
  */
 
-import * as OpossumModule from 'opossum';
+import CircuitBreakerLib, { Options } from 'opossum';
 import { EventEmitter } from 'events';
 
 // Extract constructor and types
-const OpossumBreaker = OpossumModule.default;
-type OpossumOptions = OpossumModule.Options;
+const OpossumBreaker = CircuitBreakerLib;
+type OpossumOptions = Options;
 
-// Legacy interfaces for backward compatibility
+export enum CircuitState {
+  CLOSED = 'closed',
+  OPEN = 'open',
+  HALF_OPEN = 'half-open'
+}
+
 export interface CircuitBreakerOptions {
   failureThreshold?: number;
   resetTimeout?: number;
@@ -30,12 +32,6 @@ export interface CircuitBreakerOptions {
   onFailure?: (error: Error) => void;
   onRecovery?: () => void;
   name?: string;
-}
-
-export enum CircuitState {
-  CLOSED = 'closed',
-  OPEN = 'open',
-  HALF_OPEN = 'half-open'
 }
 
 export interface CircuitBreakerStats {
@@ -52,7 +48,169 @@ export interface CircuitBreakerStats {
 }
 
 /**
- * Circuit Breaker wrapper around opossum for backward compatibility
+ * Create a circuit breaker using opossum
+ * @param options - Circuit breaker options
+ * @returns Opossum breaker instance
+ */
+export function createCircuitBreaker(options: CircuitBreakerOptions = {}): any {
+  // Convert to opossum options
+  const opossumOptions: OpossumOptions = {
+    timeout: options.timeout || 10000,
+    resetTimeout: options.resetTimeout || 60000,
+    name: options.name || 'circuit-breaker'
+  };
+
+  const breaker = new OpossumBreaker(() => Promise.resolve(), opossumOptions);
+
+  // Setup event handlers
+  breaker.on('open', () => {
+    options.onStateChange?.(CircuitState.OPEN);
+  });
+
+  breaker.on('halfOpen', () => {
+    options.onStateChange?.(CircuitState.HALF_OPEN);
+  });
+
+  breaker.on('close', () => {
+    options.onRecovery?.();
+    options.onStateChange?.(CircuitState.CLOSED);
+  });
+
+  breaker.on('failure', (error: any) => {
+    options.onFailure?.(error);
+  });
+
+  return breaker;
+}
+
+/**
+ * Execute a function with circuit breaker protection
+ * @param fn - Function to execute
+ * @param options - Circuit breaker options
+ * @returns Promise resolving to function result
+ */
+export async function executeWithCircuitBreaker<T>(
+  fn: () => Promise<T>,
+  options: CircuitBreakerOptions = {}
+): Promise<T> {
+  const breaker = createCircuitBreaker(options);
+  
+  // Replace the internal action with our function
+  (breaker as any).action = fn;
+  
+  try {
+    return await breaker.fire() as Promise<T>;
+  } finally {
+    // Cleanup the breaker
+    (breaker as any).removeAllListeners();
+  }
+}
+
+/**
+ * Get circuit breaker statistics
+ * @param breaker - Opossum breaker instance
+ * @returns CircuitBreakerStats
+ */
+export function getCircuitBreakerStats(breaker: any): CircuitBreakerStats {
+  const stats = breaker.stats;
+  const currentState = getCurrentState(breaker);
+  
+  return {
+    state: currentState,
+    failureCount: stats.failures || 0,
+    successCount: stats.successes || 0,
+    totalCalls: stats.fires || 0,
+    successRate: (stats.fires || 0) > 0 ? ((stats.successes || 0) / (stats.fires || 0)) * 100 : 0,
+    averageResponseTime: 0, // opossum doesn't track this
+    lastFailureTime: undefined,
+    lastSuccessTime: undefined,
+    isDisabled: currentState === CircuitState.CLOSED,
+    adaptiveTimeout: undefined
+  };
+}
+
+/**
+ * Get current circuit breaker state from opossum
+ * @param breaker - Opossum breaker instance
+ * @returns Current circuit state
+ */
+function getCurrentState(breaker: any): CircuitState {
+  const stats = breaker.stats;
+  if (stats.state === 'open') {
+    return CircuitState.OPEN;
+  } else if (stats.state === 'half-open') {
+    return CircuitState.HALF_OPEN;
+  } else {
+    return CircuitState.CLOSED;
+  }
+}
+
+/**
+ * Reset circuit breaker to closed state
+ * @param breaker - Opossum breaker instance
+ */
+export function resetCircuitBreaker(breaker: any): void {
+  breaker.close();
+}
+
+/**
+ * Wrap a function with circuit breaker protection
+ * @param fn - Function to wrap
+ * @param options - Circuit breaker options
+ * @returns Wrapped function with circuit breaker protection
+ */
+export function withCircuitBreaker<T extends any[], R>(
+  fn: (...args: T) => Promise<R>,
+  options: CircuitBreakerOptions = {}
+): (...args: T) => Promise<R> {
+  const breaker = createCircuitBreaker(options);
+  
+  return async (...args: T): Promise<R> => {
+    (breaker as any).action = () => fn(...args);
+    return breaker.fire() as Promise<R>;
+  };
+}
+
+/**
+ * Utility class for managing multiple circuit breakers
+ */
+export class CircuitBreakerRegistry {
+  private breakers = new Map<string, any>();
+
+  register(name: string, options: CircuitBreakerOptions = {}): any {
+    const breaker = createCircuitBreaker({ ...options, name });
+    this.breakers.set(name, breaker);
+    return breaker;
+  }
+
+  get(name: string): any | undefined {
+    return this.breakers.get(name);
+  }
+
+  getAllStats(): Record<string, CircuitBreakerStats> {
+    const stats: Record<string, CircuitBreakerStats> = {};
+    
+    for (const [name, breaker] of this.breakers) {
+      stats[name] = getCircuitBreakerStats(breaker);
+    }
+    
+    return stats;
+  }
+
+  resetAll(): void {
+    for (const breaker of this.breakers.values()) {
+      resetCircuitBreaker(breaker);
+    }
+  }
+
+  shutdown(): void {
+    this.breakers.clear();
+  }
+}
+
+/**
+ * Legacy CircuitBreaker class for backward compatibility
+ * @deprecated Use createCircuitBreaker function instead
  */
 export class CircuitBreaker extends EventEmitter {
   private opossumBreaker: any; // OpossumBreaker instance
@@ -76,30 +234,20 @@ export class CircuitBreaker extends EventEmitter {
       ...options
     };
 
-    // Convert to opossum options
-    const opossumOptions: OpossumOptions = {
-      timeout: this.legacyOptions.timeout,
-      resetTimeout: this.legacyOptions.resetTimeout,
-      name: this.legacyOptions.name || 'circuit-breaker'
-    };
+    // Create opossum breaker
+    this.opossumBreaker = createCircuitBreaker(this.legacyOptions);
 
-    this.opossumBreaker = new OpossumBreaker(() => Promise.resolve(), opossumOptions);
-
-    // Forward events
+    // Forward events for backward compatibility
     this.opossumBreaker.on('open', () => {
       this.emit('state-change', { from: CircuitState.CLOSED, to: CircuitState.OPEN });
-      this.legacyOptions.onStateChange?.(CircuitState.OPEN);
     });
 
     this.opossumBreaker.on('halfOpen', () => {
       this.emit('state-change', { from: CircuitState.OPEN, to: CircuitState.HALF_OPEN });
-      this.legacyOptions.onStateChange?.(CircuitState.HALF_OPEN);
     });
 
     this.opossumBreaker.on('close', () => {
       this.emit('state-change', { from: CircuitState.HALF_OPEN, to: CircuitState.CLOSED });
-      this.legacyOptions.onRecovery?.();
-      this.legacyOptions.onStateChange?.(CircuitState.CLOSED);
     });
 
     this.opossumBreaker.on('success', (result: any) => {
@@ -111,7 +259,6 @@ export class CircuitBreaker extends EventEmitter {
     });
 
     this.opossumBreaker.on('failure', (error: any) => {
-      this.legacyOptions.onFailure?.(error);
       this.emit('failure', { 
         error, 
         state: this.getCurrentState(),
@@ -133,42 +280,21 @@ export class CircuitBreaker extends EventEmitter {
    * Get current circuit breaker state and statistics
    */
   getStats(): CircuitBreakerStats {
-    const stats = this.opossumBreaker.stats;
-    const currentState = this.getCurrentState();
-    
-    return {
-      state: currentState,
-      failureCount: stats.failures || 0,
-      successCount: stats.successes || 0,
-      totalCalls: stats.fires || 0,
-      successRate: (stats.fires || 0) > 0 ? ((stats.successes || 0) / (stats.fires || 0)) * 100 : 0,
-      averageResponseTime: 0, // opossum doesn't track this
-      lastFailureTime: undefined,
-      lastSuccessTime: undefined,
-      isDisabled: currentState === CircuitState.CLOSED,
-      adaptiveTimeout: this.legacyOptions.adaptiveTimeout ? this.legacyOptions.timeout : undefined
-    };
+    return getCircuitBreakerStats(this.opossumBreaker);
   }
 
   /**
    * Reset circuit breaker to closed state
    */
   reset(): void {
-    this.opossumBreaker.close();
+    resetCircuitBreaker(this.opossumBreaker);
   }
 
   /**
    * Get current state from opossum
    */
   private getCurrentState(): CircuitState {
-    const stats = this.opossumBreaker.stats;
-    if (stats.state === 'open') {
-      return CircuitState.OPEN;
-    } else if (stats.state === 'half-open') {
-      return CircuitState.HALF_OPEN;
-    } else {
-      return CircuitState.CLOSED;
-    }
+    return getCurrentState(this.opossumBreaker);
   }
 
   // Access to underlying opossum breaker
@@ -177,61 +303,20 @@ export class CircuitBreaker extends EventEmitter {
   }
 }
 
-/**
- * Wrap an existing function with circuit breaker protection
- */
-export function withCircuitBreaker<T extends any[], R>(
-  fn: (...args: T) => Promise<R>,
-  options: CircuitBreakerOptions = {}
-): (...args: T) => Promise<R> {
-  const breaker = new CircuitBreaker(options);
-  
-  return async (...args: T): Promise<R> => {
-    return breaker.execute(() => fn(...args));
-  };
-}
-
-/**
- * Utility class for managing multiple circuit breakers
- */
-export class CircuitBreakerRegistry {
-  private breakers = new Map<string, CircuitBreaker>();
-
-  register(name: string, options: CircuitBreakerOptions = {}): CircuitBreaker {
-    const breaker = new CircuitBreaker({ ...options, name });
-    this.breakers.set(name, breaker);
-    return breaker;
-  }
-
-  get(name: string): CircuitBreaker | undefined {
-    return this.breakers.get(name);
-  }
-
-  getAllStats(): Record<string, CircuitBreakerStats> {
-    const stats: Record<string, CircuitBreakerStats> = {};
-    
-    for (const [name, breaker] of this.breakers) {
-      stats[name] = breaker.getStats();
-    }
-    
-    return stats;
-  }
-
-  resetAll(): void {
-    for (const breaker of this.breakers.values()) {
-      breaker.reset();
-    }
-  }
-
-  shutdown(): void {
-    this.breakers.clear();
-  }
-}
-
 // Global registry instance
 export const circuitBreakerRegistry = new CircuitBreakerRegistry();
 
 // Export opossum for direct use
-export { OpossumModule, OpossumOptions };
+export type { Options } from 'opossum';
 
-export default CircuitBreaker;
+export default {
+  createCircuitBreaker,
+  executeWithCircuitBreaker,
+  getCircuitBreakerStats,
+  resetCircuitBreaker,
+  withCircuitBreaker,
+  CircuitBreakerRegistry,
+  circuitBreakerRegistry,
+  CircuitBreaker,
+  CircuitBreakerLib
+};

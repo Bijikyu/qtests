@@ -1,14 +1,7 @@
-// Re-export file system reading utilities
-export * from './readingUtils.js';
+// File system utilities re-export
+// Re-export all file system utilities with minimal conflicts
 
-// Re-export file system writing utilities
-export * from './writingUtils.js';
-
-// Re-export file system management utilities
-export * from './managementUtils.js';
-
-// Import functions for default export using the updated module structure
-import {
+import { 
   safeExists,
   safeStats,
   isDirectory,
@@ -21,17 +14,38 @@ import {
 } from './fileReading.js';
 
 import {
-  ensureDir,
-  safeWriteFile
-} from './fileWriting.js';
+  ensureDir as writingEnsureDir,
+  safeWriteFile as writingSafeWriteFile
+} from './writingUtils.js';
 
 import {
-  safeDelete
-} from './fileDeletion.js';
+  safeDelete as managementSafeDelete,
+  safeDeleteSync as managementSafeDeleteSync,
+  ensureDir as managementEnsureDir,
+  ensureDirSync as managementEnsureDirSync
+} from './managementUtils.js';
 
 import {
   withFileErrorHandling
 } from './errorHandling.js';
+
+// Resolve naming conflicts by providing prefixed versions
+export const ensureDir = writingEnsureDir;
+export const safeWriteFile = writingSafeWriteFile;
+export const ensureDirSync = managementEnsureDirSync;
+export const safeDelete = managementSafeDelete;
+export const safeDeleteSync = managementSafeDeleteSync;
+
+// Re-export without conflict
+export {
+  safeExists,
+  safeStats,
+  isDirectory,
+  isFile,
+  safeReadFile,
+  safeReadFileBuffer,
+  withFileErrorHandling
+};
 
 // Default export for compatibility
 const fileSystemUtils = {
@@ -40,6 +54,7 @@ const fileSystemUtils = {
   safeWriteFile,
   ensureDir,
   safeDelete,
+  safeDeleteSync,
   safeStats,
   isDirectory,
   isFile,
@@ -47,16 +62,3 @@ const fileSystemUtils = {
 };
 
 export default fileSystemUtils;
-
-// Also export individual functions for compatibility
-export {
-  safeExists,
-  safeReadFile,
-  safeWriteFile,
-  ensureDir,
-  safeDelete,
-  safeStats,
-  isDirectory,
-  isFile,
-  withFileErrorHandling
-};

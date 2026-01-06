@@ -1,12 +1,9 @@
 /**
- * Rate Limiter Implementation using rate-limiter-flexible
- * Simplified wrapper around rate-limiter-flexible for better maintainability
+ * Rate Limiting Implementation using rate-limiter-flexible
+ * Direct use of industry-standard rate limiting with simplified interfaces
  * 
- * Direct use of rate-limiter-flexible recommended for new code:
- * 
- * import { RateLimiterRedis, RateLimiterMemory } from 'rate-limiter-flexible';
- * const limiter = new RateLimiterRedis(options);
- * await limiter.consume(key);
+ * This module provides simplified interfaces to rate-limiter-flexible
+ * while maintaining the same API for backward compatibility.
  */
 
 import { RateLimiterRedis, RateLimiterMemory, RateLimiterAbstract } from 'rate-limiter-flexible';
@@ -34,13 +31,158 @@ export interface RateLimitStats {
 }
 
 /**
- * Simplified Distributed Rate Limiter using rate-limiter-flexible
+ * Create a distributed rate limiter using rate-limiter-flexible
+ * @param config - Rate limit configuration
+ * @returns Promise resolving to RateLimiterAbstract instance
+ */
+export async function createDistributedRateLimiter(config: RateLimitConfig): Promise<RateLimiterAbstract> {
+  try {
+    const redisUrlToUse = redisUrl || redisCloudUrl;
+    
+    if (redisUrlToUse) {
+      // Use Redis for distributed rate limiting
+      const { createClient } = await import('redis');
+      const redis = createClient(redisUrlToUse);
+      
+      await redis.connect();
+      
+      const limiter = new RateLimiterRedis({
+        storeClient: redis,
+        keyPrefix: 'rlflx',
+        points: config.points || config.maxRequests,
+        duration: config.duration || Math.ceil(config.windowMs / 1000),
+      });
+      
+      console.log('Redis rate limiter initialized');
+      return limiter;
+    } else {
+      throw new Error('Redis not configured');
+    }
+  } catch (error) {
+    qerrors(error as Error, 'createDistributedRateLimiter: Redis setup failed, falling back to memory', {
+      redisUrl: redisUrl || redisCloudUrl,
+      errorType: (error as Error).constructor.name
+    });
+    
+    // Fallback to in-memory rate limiting
+    return new RateLimiterMemory({
+      points: config.points || config.maxRequests,
+      duration: config.duration || Math.ceil(config.windowMs / 1000),
+    });
+  }
+}
+
+/**
+ * Create an in-memory rate limiter using rate-limiter-flexible
+ * @param config - Rate limit configuration
+ * @returns RateLimiterMemory instance
+ */
+export function createInMemoryRateLimiter(config: RateLimitConfig): RateLimiterMemory {
+  return new RateLimiterMemory({
+    points: config.points || config.maxRequests,
+    duration: config.duration || Math.ceil(config.windowMs / 1000),
+  });
+}
+
+/**
+ * Check rate limit for a request using a rate limiter
+ * @param limiter - Rate limiter instance
+ * @param req - Request object
+ * @param config - Rate limit configuration
+ * @returns Promise resolving to RateLimitResult
+ */
+export async function checkRateLimit(
+  limiter: RateLimiterAbstract,
+  req: any,
+  config: RateLimitConfig
+): Promise<RateLimitResult> {
+  const key = config.keyGenerator ?
+    config.keyGenerator(req) :
+    `rate_limit:${req.ip || 'unknown'}:${req.path || 'default'}`;
+
+  try {
+    const result = await limiter.consume(key);
+    
+    return {
+      allowed: true,
+      remaining: result.remainingPoints || 0,
+      resetTime: Date.now() + (result.msBeforeNext || 0),
+    };
+  } catch (rejRes: any) {
+    if (rejRes instanceof Error) {
+      // Unexpected error
+      qerrors(rejRes, 'checkRateLimit: unexpected error', { key });
+      return {
+        allowed: true, // Allow on error to prevent blocking
+        remaining: 0,
+        resetTime: Date.now() + config.windowMs,
+      };
+    }
+    
+    // Rate limit exceeded
+    return {
+      allowed: false,
+      remaining: 0,
+      resetTime: Date.now() + (rejRes.msBeforeNext || 0),
+      retryAfter: Math.ceil((rejRes.msBeforeNext || 0) / 1000),
+    };
+  }
+}
+
+/**
+ * Reset rate limit for a specific key
+ * @param limiter - Rate limiter instance
+ * @param key - Key to reset
+ * @returns Promise that resolves when reset is complete
+ */
+export async function resetRateLimitKey(
+  limiter: RateLimiterAbstract,
+  key: string
+): Promise<void> {
+  try {
+    await limiter.delete(key);
+  } catch (error) {
+    qerrors(error as Error, 'resetRateLimitKey: failed', { key });
+  }
+}
+
+/**
+ * Get rate limit statistics
+ * @param limiter - Rate limiter instance
+ * @returns RateLimitStats
+ */
+export function getRateLimitStats(limiter: RateLimiterAbstract): RateLimitStats {
+  return {
+    isDistributed: limiter instanceof RateLimiterRedis,
+    redisConnected: limiter instanceof RateLimiterRedis
+  };
+}
+
+/**
+ * Convenience function to create and use a distributed rate limiter
+ * @param config - Rate limit configuration
+ * @returns Promise resolving to rate limiter instance
+ */
+export async function getDistributedRateLimiter(config: RateLimitConfig): Promise<RateLimiterAbstract> {
+  return createDistributedRateLimiter(config);
+}
+
+/**
+ * Convenience function to create and use an in-memory rate limiter
+ * @param config - Rate limit configuration
+ * @returns Rate limiter instance
+ */
+export function getInMemoryRateLimiter(config: RateLimitConfig): RateLimiterMemory {
+  return createInMemoryRateLimiter(config);
+}
+
+/**
+ * Legacy DistributedRateLimiter class for backward compatibility
+ * @deprecated Use createDistributedRateLimiter function instead
  */
 export class DistributedRateLimiter {
   private limiter: RateLimiterAbstract;
-  private isRedisAvailable = false;
   private config: RateLimitConfig;
-  private initialized = false;
 
   constructor(config: RateLimitConfig) {
     this.config = config;
@@ -49,101 +191,23 @@ export class DistributedRateLimiter {
   }
 
   private async setupLimiter(): Promise<void> {
-    try {
-      const redisUrlToUse = redisUrl || redisCloudUrl;
-      
-      if (redisUrlToUse) {
-        // Use Redis for distributed rate limiting
-        const { createClient } = await import('redis');
-        const redis = createClient({ url: redisUrlToUse });
-        
-        await redis.connect();
-        
-        this.limiter = new RateLimiterRedis({
-          storeClient: redis,
-          keyPrefix: 'rlflx',
-          points: this.config.points || this.config.maxRequests,
-          duration: this.config.duration || Math.ceil(this.config.windowMs / 1000),
-        });
-        
-        this.isRedisAvailable = true;
-        console.log('Redis rate limiter initialized');
-        
-      } else {
-        // Use in-memory rate limiting as fallback
-        this.limiter = new RateLimiterMemory({
-          points: this.config.points || this.config.maxRequests,
-          duration: this.config.duration || Math.ceil(this.config.windowMs / 1000),
-        });
-        
-        this.isRedisAvailable = false;
-        console.log('In-memory rate limiter initialized');
-      }
-    } catch (error) {
-      qerrors(error as Error, 'rateLimiter.setup: initialization failed', {
-        redisUrl: redisUrl || redisCloudUrl,
-        errorType: (error as Error).constructor.name,
-        errorMessage: error instanceof Error ? error.message : String(error)
-      });
-      
-      // Fallback to in-memory rate limiting
-      this.limiter = new RateLimiterMemory({
-        points: this.config.points || this.config.maxRequests,
-        duration: this.config.duration || Math.ceil(this.config.windowMs / 1000),
-      });
-      
-      this.isRedisAvailable = false;
-      console.warn('Rate limiter failed to initialize, using in-memory fallback');
-    }
+    this.limiter = await createDistributedRateLimiter(this.config);
   }
 
   async isAllowed(req: any): Promise<RateLimitResult> {
-    const key = this.config.keyGenerator ?
-      this.config.keyGenerator(req) :
-      `rate_limit:${req.ip || 'unknown'}:${req.path || 'default'}`;
-
-    try {
-      const result = await this.limiter.consume(key);
-      
-      return {
-        allowed: true,
-        remaining: result.remainingPoints || 0,
-        resetTime: Date.now() + (result.msBeforeNext || 0),
-      };
-    } catch (rejRes: any) {
-      if (rejRes instanceof Error) {
-        // Unexpected error
-        qerrors(rejRes, 'rateLimiter.isAllowed: unexpected error', { key });
-        return {
-          allowed: true, // Allow on error to prevent blocking
-          remaining: 0,
-          resetTime: Date.now() + this.config.windowMs,
-        };
-      }
-      
-      // Rate limit exceeded
-      return {
-        allowed: false,
-        remaining: 0,
-        resetTime: Date.now() + (rejRes.msBeforeNext || 0),
-        retryAfter: Math.ceil((rejRes.msBeforeNext || 0) / 1000),
-      };
+    // Ensure limiter is initialized
+    if (this.limiter instanceof RateLimiterMemory && this.limiter.points === 0) {
+      await this.setupLimiter();
     }
+    return checkRateLimit(this.limiter, req, this.config);
   }
 
   async resetKey(key: string): Promise<void> {
-    try {
-      await this.limiter.delete(key);
-    } catch (error) {
-      qerrors(error as Error, 'rateLimiter.resetKey: failed', { key });
-    }
+    return resetRateLimitKey(this.limiter, key);
   }
 
   getStats(): RateLimitStats {
-    return {
-      isDistributed: this.isRedisAvailable,
-      redisConnected: this.isRedisAvailable,
-    };
+    return getRateLimitStats(this.limiter);
   }
 
   // Get access to underlying limiter for advanced operations
@@ -153,7 +217,8 @@ export class DistributedRateLimiter {
 }
 
 /**
- * In-Memory Rate Limiter using rate-limiter-flexible
+ * Legacy InMemoryRateLimiter class for backward compatibility
+ * @deprecated Use createInMemoryRateLimiter function instead
  */
 export class InMemoryRateLimiter {
   private limiter: RateLimiterMemory;
@@ -161,59 +226,19 @@ export class InMemoryRateLimiter {
 
   constructor(config: RateLimitConfig) {
     this.config = config;
-    this.limiter = new RateLimiterMemory({
-      points: this.config.points || this.config.maxRequests,
-      duration: this.config.duration || Math.ceil(this.config.windowMs / 1000),
-    });
+    this.limiter = createInMemoryRateLimiter(config);
   }
 
   async isAllowed(req: any): Promise<RateLimitResult> {
-    const key = this.config.keyGenerator ?
-      this.config.keyGenerator(req) :
-      `rate_limit:${req.ip || 'unknown'}:${req.path || 'default'}`;
-
-    try {
-      const result = await this.limiter.consume(key);
-      
-      return {
-        allowed: true,
-        remaining: result.remainingPoints || 0,
-        resetTime: Date.now() + (result.msBeforeNext || 0),
-      };
-    } catch (rejRes: any) {
-      if (rejRes instanceof Error) {
-        // Unexpected error
-        qerrors(rejRes, 'rateLimiter.isAllowed: unexpected error', { key });
-        return {
-          allowed: true, // Allow on error to prevent blocking
-          remaining: 0,
-          resetTime: Date.now() + this.config.windowMs,
-        };
-      }
-      
-      // Rate limit exceeded
-      return {
-        allowed: false,
-        remaining: 0,
-        resetTime: Date.now() + (rejRes.msBeforeNext || 0),
-        retryAfter: Math.ceil((rejRes.msBeforeNext || 0) / 1000),
-      };
-    }
+    return checkRateLimit(this.limiter, req, this.config);
   }
 
   async resetKey(key: string): Promise<void> {
-    try {
-      await this.limiter.delete(key);
-    } catch (error) {
-      qerrors(error as Error, 'rateLimiter.resetKey: failed', { key });
-    }
+    return resetRateLimitKey(this.limiter, key);
   }
 
   getStats(): RateLimitStats {
-    return {
-      isDistributed: false,
-      redisConnected: false,
-    };
+    return getRateLimitStats(this.limiter);
   }
 
   // Get access to underlying limiter for advanced operations
@@ -226,6 +251,16 @@ export class InMemoryRateLimiter {
 export { RateLimiterRedis, RateLimiterMemory, RateLimiterAbstract };
 
 export default {
+  createDistributedRateLimiter,
+  createInMemoryRateLimiter,
+  checkRateLimit,
+  resetRateLimitKey,
+  getRateLimitStats,
+  getDistributedRateLimiter,
+  getInMemoryRateLimiter,
   DistributedRateLimiter,
   InMemoryRateLimiter,
+  RateLimiterRedis,
+  RateLimiterMemory,
+  RateLimiterAbstract
 };

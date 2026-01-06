@@ -1,11 +1,9 @@
 /**
  * Cache Implementation using node-cache and ioredis
- * Replaced with industry-standard caching libraries for better maintainability
+ * Direct use of industry-standard caching libraries with simplified interfaces
  * 
- * Migration Guide:
- * - Use node-cache directly for in-memory caching
- * - Use ioredis for distributed caching
- * - Better performance and maintenance
+ * This module provides simplified interfaces to node-cache and ioredis
+ * while maintaining the same API for backward compatibility.
  */
 
 import NodeCache from 'node-cache';
@@ -46,136 +44,284 @@ export interface CacheStats {
 }
 
 /**
- * Local Cache using node-cache
+ * Create a local cache using node-cache
+ * @param options - Cache options
+ * @returns NodeCache instance
  */
-class LocalCacheImpl {
-  private cache: NodeCache;
-  private stats = {
-    hits: 0,
-    misses: 0,
-    evictions: 0
-  };
+export function createLocalCache(options: CacheOptions = {}): NodeCache {
+  const cache = new NodeCache({
+    stdTTL: options.defaultTTL || 600, // 10 minutes default
+    checkperiod: options.checkperiod || 120, // 2 minutes
+    useClones: false, // Better performance
+    deleteOnExpire: true, // Auto cleanup
+    enableLegacyCallbacks: false,
+    maxKeys: options.maxSize || 1000
+  });
 
-  constructor(options: CacheOptions = {}) {
-    this.cache = new NodeCache({
-      stdTTL: options.defaultTTL || 600, // 10 minutes default
-      checkperiod: options.checkperiod || 120, // 2 minutes
-      useClones: false, // Better performance
-      deleteOnExpire: true, // Auto cleanup
-      enableLegacyCallbacks: false,
-      maxKeys: options.maxSize || 1000
+  return cache;
+}
+
+/**
+ * Create a distributed cache using Redis
+ * @param options - Cache options
+ * @returns Promise resolving to Redis client and local cache
+ */
+export async function createDistributedCache(options: CacheOptions = {}): Promise<{
+  redis: RedisClient | null;
+  localCache: NodeCache;
+  isConnected: boolean;
+}> {
+  const localCache = createLocalCache({
+    maxSize: 100, // Smaller local cache for distributed mode
+    defaultTTL: 60, // Shorter TTL for local cache
+    checkperiod: 30
+  });
+
+  let redis: RedisClient | null = null;
+  let isConnected = false;
+
+  if (!options.enableDistributed) {
+    console.log('Distributed caching disabled, using local cache only');
+    return { redis: null, localCache, isConnected: false };
+  }
+
+  try {
+    const redisUrlToUse = redisUrl || redisCloudUrl;
+    if (!redisUrlToUse) {
+      console.warn('Redis not configured for distributed caching, using local cache only');
+      return { redis: null, localCache, isConnected: false };
+    }
+
+    redis = new IORedis(redisUrlToUse, {
+      maxRetriesPerRequest: 3,
+      lazyConnect: true,
+      keepAlive: 30000,
+      connectTimeout: 10000,
+      commandTimeout: 5000
     });
 
-    // Track cache events for statistics
-    this.cache.on('set', (key: string, value: any) => {
-      this.trackOperation('set', key, value);
+    redis.on('connect', () => {
+      isConnected = true;
+      console.log('Distributed cache connected to Redis');
     });
 
-    this.cache.on('del', (key: string, value: any) => {
-      this.trackOperation('del', key, value);
+    redis.on('error', (error: Error) => {
+      isConnected = false;
+      qerrors(error, 'DistributedCache: Redis error', { operation: 'connection' });
     });
 
-    this.cache.on('expired', (key: string, value: any) => {
-      this.trackOperation('expired', key, value);
+    redis.on('close', () => {
+      isConnected = false;
+      console.log('Distributed cache disconnected from Redis');
     });
+
+    await redis.connect();
+  } catch (error) {
+    qerrors(error as Error, 'DistributedCache: initialization failed', {
+      redisUrl: redisUrl || redisCloudUrl
+    });
+    return { redis: null, localCache, isConnected: false };
   }
 
-  async get<T>(key: string): Promise<T | null> {
-    try {
-      const value = this.cache.get<T>(key);
-      if (value !== undefined) {
-        this.stats.hits++;
-        return value;
-      } else {
-        this.stats.misses++;
-        return null;
-      }
-    } catch (error) {
-      qerrors(error as Error, 'LocalCache.get: operation failed', { key });
-      this.stats.misses++;
-      return null;
-    }
-  }
+  return { redis, localCache, isConnected };
+}
 
-  async set<T>(key: string, value: T, ttl?: number): Promise<boolean> {
-    try {
-      return this.cache.set(key, value, ttl || 0);
-    } catch (error) {
-      qerrors(error as Error, 'LocalCache.set: operation failed', { key, ttl });
-      return false;
-    }
-  }
-
-  async delete(key: string): Promise<boolean> {
-    try {
-      return this.cache.del(key) > 0;
-    } catch (error) {
-      qerrors(error as Error, 'LocalCache.delete: operation failed', { key });
-      return false;
-    }
-  }
-
-  async clear(): Promise<void> {
-    try {
-      this.cache.keys().forEach((key) => this.cache.del(key));
-    } catch (error) {
-      qerrors(error as Error, 'LocalCache.clear: operation failed');
-    }
-  }
-
-  getStats(): CacheStats['local'] {
-    const keys = this.cache.keys();
-    const totalItems = keys.length;
-    const totalOperations = this.stats.hits + this.stats.misses;
-    const hitRate = totalOperations > 0 ? (this.stats.hits / totalOperations) * 100 : 0;
-    const missRate = totalOperations > 0 ? (this.stats.misses / totalOperations) * 100 : 0;
-
-    return {
-      totalItems,
-      hitRate,
-      missRate,
-      evictions: this.stats.evictions,
-      totalHits: this.stats.hits,
-      totalMisses: this.stats.misses,
-      memoryUsage: this.getMemoryUsage()
-    };
-  }
-
-  private trackOperation(operation: string, key: string, value: any): void {
-    // Track operations for advanced metrics if needed
-    if (operation === 'expired') {
-      this.stats.evictions++;
-    }
-  }
-
-  private getMemoryUsage(): number {
-    // Rough estimation based on cache size
-    const keys = this.cache.keys();
-    let totalSize = 0;
-    
-    for (const key of keys) {
-      const value = this.cache.get(key);
-      if (value !== undefined) {
-        totalSize += Buffer.byteLength(JSON.stringify(value));
+/**
+ * Get value from cache with distributed fallback
+ * @param key - Cache key
+ * @param distributedCache - Distributed cache components
+ * @param options - Cache options
+ * @returns Promise resolving to cached value or null
+ */
+export async function getFromCache<T>(
+  key: string,
+  distributedCache: { redis: RedisClient | null; localCache: NodeCache; isConnected: boolean },
+  options: CacheOptions = {}
+): Promise<T | null> {
+  const startTime = Date.now();
+  
+  try {
+    // Try distributed cache first if connected
+    if (distributedCache.isConnected && distributedCache.redis) {
+      const fullKey = (options.keyPrefix || 'cache:') + key;
+      const value = await distributedCache.redis.get(fullKey);
+      
+      if (value !== null) {
+        const parsed = JSON.parse(value) as T;
+        
+        // Cache in local cache for faster subsequent access
+        distributedCache.localCache.set(key, parsed, 60);
+        
+        return parsed;
       }
     }
-    
-    return totalSize;
-  }
 
-  // Access to underlying node-cache for advanced operations
-  get nodeCache(): NodeCache {
-    return this.cache;
+    // Fallback to local cache
+    const localValue = distributedCache.localCache.get<T>(key);
+    if (localValue !== undefined) {
+      return localValue;
+    }
+
+    return null;
+  } catch (error) {
+    qerrors(error as Error, 'getFromCache: operation failed', { key });
+    return null;
   }
 }
 
 /**
- * Distributed Cache using Redis (ioredis)
+ * Set value in cache with distributed support
+ * @param key - Cache key
+ * @param value - Value to cache
+ * @param ttl - TTL in seconds (optional)
+ * @param distributedCache - Distributed cache components
+ * @param options - Cache options
+ * @returns Promise resolving to success boolean
  */
-class DistributedCacheImpl extends EventEmitter {
-  private redis: RedisClient | null = null;
-  private localCache: LocalCacheImpl;
-  private isConnected = false;
+export async function setInCache<T>(
+  key: string,
+  value: T,
+  ttl: number | undefined,
+  distributedCache: { redis: RedisClient | null; localCache: NodeCache; isConnected: boolean },
+  options: CacheOptions = {}
+): Promise<boolean> {
+  try {
+    const effectiveTTL = ttl || options.defaultTTL || 600;
+    const serialized = JSON.stringify(value);
+    const fullKey = (options.keyPrefix || 'cache:') + key;
+
+    // Set in distributed cache if connected
+    if (distributedCache.isConnected && distributedCache.redis) {
+      await distributedCache.redis.setex(fullKey, effectiveTTL, serialized);
+    }
+
+    // Always set in local cache for performance
+    distributedCache.localCache.set(key, value, Math.min(effectiveTTL, 300)); // Max 5 min local
+    
+    return true;
+  } catch (error) {
+    qerrors(error as Error, 'setInCache: operation failed', { key, ttl });
+    return false;
+  }
+}
+
+/**
+ * Delete value from cache
+ * @param key - Cache key
+ * @param distributedCache - Distributed cache components
+ * @param options - Cache options
+ * @returns Promise resolving to success boolean
+ */
+export async function deleteFromCache(
+  key: string,
+  distributedCache: { redis: RedisClient | null; localCache: NodeCache; isConnected: boolean },
+  options: CacheOptions = {}
+): Promise<boolean> {
+  try {
+    const fullKey = (options.keyPrefix || 'cache:') + key;
+    let deleted = false;
+
+    // Delete from distributed cache if connected
+    if (distributedCache.isConnected && distributedCache.redis) {
+      const result = await distributedCache.redis.del(fullKey);
+      deleted = result > 0;
+    }
+
+    // Always delete from local cache
+    const localDeleted = distributedCache.localCache.del(key) > 0;
+    
+    return deleted || localDeleted;
+  } catch (error) {
+    qerrors(error as Error, 'deleteFromCache: operation failed', { key });
+    return false;
+  }
+}
+
+/**
+ * Clear all cache entries
+ * @param distributedCache - Distributed cache components
+ * @param options - Cache options
+ * @returns Promise that resolves when clear is complete
+ */
+export async function clearCache(
+  distributedCache: { redis: RedisClient | null; localCache: NodeCache; isConnected: boolean },
+  options: CacheOptions = {}
+): Promise<void> {
+  try {
+    // Clear distributed cache if connected
+    if (distributedCache.isConnected && distributedCache.redis) {
+      const pattern = (options.keyPrefix || 'cache:') + '*';
+      const keys = await distributedCache.redis.keys(pattern);
+      
+      if (keys.length > 0) {
+        await distributedCache.redis.del(...keys);
+      }
+    }
+
+    // Always clear local cache
+    distributedCache.localCache.keys().forEach((key) => distributedCache.localCache.del(key));
+  } catch (error) {
+    qerrors(error as Error, 'clearCache: operation failed');
+  }
+}
+
+/**
+ * Get cache statistics
+ * @param distributedCache - Distributed cache components
+ * @param stats - Internal stats tracking
+ * @returns CacheStats
+ */
+export function getCacheStats(
+  distributedCache: { redis: RedisClient | null; localCache: NodeCache; isConnected: boolean },
+  stats: {
+    hits: number;
+    misses: number;
+    errors: number;
+    responseTimes: number[];
+  }
+): CacheStats {
+  const keys = distributedCache.localCache.keys();
+  const totalItems = keys.length;
+  const totalOperations = stats.hits + stats.misses;
+  const hitRate = totalOperations > 0 ? (stats.hits / totalOperations) * 100 : 0;
+  const missRate = totalOperations > 0 ? (stats.misses / totalOperations) * 100 : 0;
+  
+  const avgResponseTime = stats.responseTimes.length > 0
+    ? stats.responseTimes.reduce((a, b) => a + b, 0) / stats.responseTimes.length
+    : 0;
+
+  return {
+    local: {
+      totalItems,
+      hitRate,
+      missRate,
+      evictions: 0, // node-cache doesn't expose this easily
+      totalHits: stats.hits,
+      totalMisses: stats.misses,
+      memoryUsage: 0 // Estimated if needed
+    },
+    distributed: {
+      hitRate,
+      missRate,
+      errors: stats.errors,
+      totalHits: stats.hits,
+      totalMisses: stats.misses,
+      avgResponseTime,
+      connected: distributedCache.isConnected
+    }
+  };
+}
+
+/**
+ * Legacy CacheManager class for backward compatibility
+ * @deprecated Use the functional API instead
+ */
+export class CacheManager {
+  private distributedCache!: {
+    redis: RedisClient | null;
+    localCache: NodeCache;
+    isConnected: boolean;
+  };
   private options: CacheOptions;
   private stats = {
     hits: 0,
@@ -185,7 +331,6 @@ class DistributedCacheImpl extends EventEmitter {
   };
 
   constructor(options: CacheOptions = {}) {
-    super();
     this.options = {
       defaultTTL: 600,
       enableDistributed: true,
@@ -193,270 +338,81 @@ class DistributedCacheImpl extends EventEmitter {
       ...options
     };
     
-    // Local cache for fallback and performance
-    this.localCache = new LocalCacheImpl({
-      maxSize: 100, // Smaller local cache for distributed mode
-      defaultTTL: 60, // Shorter TTL for local cache
-      checkperiod: 30
-    });
-    
-    this.initializeRedis();
+    this.initializeCache();
   }
 
-  private async initializeRedis(): Promise<void> {
-    if (!this.options.enableDistributed) {
-      console.log('Distributed caching disabled, using local cache only');
-      return;
-    }
-
-    try {
-      const redisUrlToUse = redisUrl || redisCloudUrl;
-      if (!redisUrlToUse) {
-        console.warn('Redis not configured for distributed caching, using local cache only');
-        return;
-      }
-
-      this.redis = new IORedis(redisUrlToUse, {
-        retryDelayOnFailover: 100,
-        enableReadyCheck: false,
-        maxRetriesPerRequest: 3,
-        lazyConnect: true,
-        keepAlive: 30000,
-        connectTimeout: 10000,
-        commandTimeout: 5000
-      } as any);
-
-      this.redis.on('connect', () => {
-        this.isConnected = true;
-        this.emit('connected');
-        console.log('Distributed cache connected to Redis');
-      });
-
-      this.redis.on('error', (error: Error) => {
-        this.isConnected = false;
-        this.stats.errors++;
-        this.emit('error', error);
-        qerrors(error, 'DistributedCache: Redis error', { operation: 'connection' });
-      });
-
-      this.redis.on('close', () => {
-        this.isConnected = false;
-        this.emit('disconnected');
-        console.log('Distributed cache disconnected from Redis');
-      });
-
-      await this.redis.connect();
-    } catch (error) {
-      this.isConnected = false;
-      this.stats.errors++;
-      qerrors(error as Error, 'DistributedCache: initialization failed', {
-        redisUrl: redisUrl || redisCloudUrl
-      });
-    }
+  private async initializeCache(): Promise<void> {
+    this.distributedCache = await createDistributedCache(this.options);
   }
 
   async get<T>(key: string): Promise<T | null> {
-    const startTime = Date.now();
-    
     try {
-      // Try distributed cache first if connected
-      if (this.isConnected && this.redis) {
-        const fullKey = this.options.keyPrefix! + key;
-        const value = await this.redis.get(fullKey);
-        
-        if (value !== null) {
-          const parsed = JSON.parse(value) as T;
-          this.stats.hits++;
-          this.recordResponseTime(startTime);
-          
-          // Cache in local cache for faster subsequent access
-          await this.localCache.set(key, parsed, 60);
-          
-          return parsed;
-        }
-      }
-
-      // Fallback to local cache
-      const localValue = await this.localCache.get<T>(key);
-      if (localValue !== null) {
+      const result = await getFromCache<T>(key, this.distributedCache, this.options);
+      if (result !== null) {
         this.stats.hits++;
-        this.recordResponseTime(startTime);
-        return localValue;
+      } else {
+        this.stats.misses++;
       }
-
+      return result;
+    } catch (error) {
+      this.stats.errors++;
       this.stats.misses++;
-      this.recordResponseTime(startTime);
-      return null;
-    } catch (error) {
-      this.stats.errors++;
-      qerrors(error as Error, 'DistributedCache.get: operation failed', { key });
-      this.recordResponseTime(startTime);
       return null;
     }
   }
 
   async set<T>(key: string, value: T, ttl?: number): Promise<boolean> {
-    const startTime = Date.now();
-    
     try {
-      const effectiveTTL = ttl || this.options.defaultTTL || 600;
-      const serialized = JSON.stringify(value);
-      const fullKey = this.options.keyPrefix! + key;
-
-      // Set in distributed cache if connected
-      if (this.isConnected && this.redis) {
-        await this.redis.setex(fullKey, effectiveTTL, serialized);
-      }
-
-      // Always set in local cache for performance
-      await this.localCache.set(key, value, Math.min(effectiveTTL, 300)); // Max 5 min local
-      this.recordResponseTime(startTime);
-      
-      return true;
+      const result = await setInCache(key, value, ttl, this.distributedCache, this.options);
+      return result;
     } catch (error) {
       this.stats.errors++;
-      qerrors(error as Error, 'DistributedCache.set: operation failed', { key, ttl });
-      this.recordResponseTime(startTime);
       return false;
     }
   }
 
   async delete(key: string): Promise<boolean> {
-    const startTime = Date.now();
-    
     try {
-      const fullKey = this.options.keyPrefix! + key;
-      let deleted = false;
-
-      // Delete from distributed cache if connected
-      if (this.isConnected && this.redis) {
-        const result = await this.redis.del(fullKey);
-        deleted = result > 0;
-      }
-
-      // Always delete from local cache
-      const localDeleted = await this.localCache.delete(key);
-      
-      this.recordResponseTime(startTime);
-      return deleted || localDeleted;
+      const result = await deleteFromCache(key, this.distributedCache, this.options);
+      return result;
     } catch (error) {
       this.stats.errors++;
-      qerrors(error as Error, 'DistributedCache.delete: operation failed', { key });
-      this.recordResponseTime(startTime);
       return false;
     }
   }
 
   async clear(): Promise<void> {
     try {
-      // Clear distributed cache if connected
-      if (this.isConnected && this.redis) {
-        const pattern = this.options.keyPrefix! + '*';
-        const keys = await this.redis.keys(pattern);
-        
-        if (keys.length > 0) {
-          await this.redis.del(...keys);
-        }
-      }
-
-      // Always clear local cache
-      await this.localCache.clear();
+      await clearCache(this.distributedCache, this.options);
     } catch (error) {
-      qerrors(error as Error, 'DistributedCache.clear: operation failed');
+      this.stats.errors++;
     }
   }
 
   getStats(): CacheStats {
-    const localStats = this.localCache.getStats();
-    const totalOperations = this.stats.hits + this.stats.misses;
-    const hitRate = totalOperations > 0 ? (this.stats.hits / totalOperations) * 100 : 0;
-    const missRate = totalOperations > 0 ? (this.stats.misses / totalOperations) * 100 : 0;
-    
-    const avgResponseTime = this.stats.responseTimes.length > 0
-      ? this.stats.responseTimes.reduce((a, b) => a + b, 0) / this.stats.responseTimes.length
-      : 0;
-
-    return {
-      local: localStats,
-      distributed: {
-        hitRate,
-        missRate,
-        errors: this.stats.errors,
-        totalHits: this.stats.hits,
-        totalMisses: this.stats.misses,
-        avgResponseTime,
-        connected: this.isConnected
-      }
-    };
-  }
-
-  private recordResponseTime(startTime: number): void {
-    const responseTime = Date.now() - startTime;
-    this.stats.responseTimes.push(responseTime);
-    
-    // Keep only last 100 response times to prevent memory growth
-    if (this.stats.responseTimes.length > 100) {
-      this.stats.responseTimes = this.stats.responseTimes.slice(-100);
-    }
+    return getCacheStats(this.distributedCache, this.stats);
   }
 
   async shutdown(): Promise<void> {
-    if (this.redis) {
-      await this.redis.quit();
-      this.redis = null;
-      this.isConnected = false;
+    if (this.distributedCache.redis) {
+      await this.distributedCache.redis.quit();
     }
-  }
-
-  // Access to underlying Redis client for advanced operations
-  get redisClient(): RedisClient | null {
-    return this.redis;
-  }
-
-  get localCacheInstance(): LocalCacheImpl {
-    return this.localCache;
-  }
-}
-
-/**
- * Cache Manager for unified caching interface
- */
-export class CacheManager {
-  private distributedCache: DistributedCacheImpl;
-  private options: CacheOptions;
-
-  constructor(options: CacheOptions = {}) {
-    this.options = options;
-    this.distributedCache = new DistributedCacheImpl(options);
-  }
-
-  async get<T>(key: string): Promise<T | null> {
-    return this.distributedCache.get<T>(key);
-  }
-
-  async set<T>(key: string, value: T, ttl?: number): Promise<boolean> {
-    return this.distributedCache.set(key, value, ttl);
-  }
-
-  async delete(key: string): Promise<boolean> {
-    return this.distributedCache.delete(key);
-  }
-
-  async clear(): Promise<void> {
-    return this.distributedCache.clear();
-  }
-
-  getStats(): CacheStats {
-    return this.distributedCache.getStats();
-  }
-
-  async shutdown(): Promise<void> {
-    return this.distributedCache.shutdown();
   }
 }
 
 // Export with correct names to avoid conflicts
-export const LocalCache = LocalCacheImpl;
-export const DistributedCache = DistributedCacheImpl;
+export const LocalCache = NodeCache;
+export const DistributedCache = CacheManager;
 
-export default CacheManager;
+export default {
+  createLocalCache,
+  createDistributedCache,
+  getFromCache,
+  setInCache,
+  deleteFromCache,
+  clearCache,
+  getCacheStats,
+  CacheManager,
+  LocalCache,
+  DistributedCache
+};

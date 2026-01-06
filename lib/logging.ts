@@ -1,10 +1,11 @@
 /**
- * Advanced Logging and Tracing System
+ * Enhanced Logging System with Winston Integration
  * 
- * Structured logging with distributed tracing, correlation IDs, and performance tracking.
- * Supports multiple log levels, output formats, and integration with logging services.
+ * Uses winston for industry-standard logging while maintaining
+ * custom tracing and correlation features for qtests.
  */
 
+import winston from 'winston';
 import { EventEmitter } from 'events';
 import { randomBytes } from 'crypto';
 
@@ -85,21 +86,12 @@ export interface LoggerConfig {
   tags?: string[];
 }
 
-export interface Transport {
-  name: string;
-  level: LogLevel;
-  format: LogFormat;
-  write(entry: LogEntry): Promise<void>;
-  flush?(): Promise<void>;
-  close?(): Promise<void>;
-}
-
 /**
- * Advanced structured logger with tracing capabilities
+ * Enhanced logger with winston backend and custom tracing
  */
 export class Logger extends EventEmitter {
+  private winston!: winston.Logger;
   private config: Required<Omit<LoggerConfig, 'level' | 'format'>> & { level: LogLevel; format: LogFormat };
-  private transports: Transport[] = [];
   private activeSpans = new Map<string, TracingSpan>();
   private correlationContext = new Map<string, string>();
 
@@ -114,7 +106,7 @@ export class Logger extends EventEmitter {
       environment: config.environment || process.env.NODE_ENV || 'development',
       enableConsole: config.enableConsole !== false,
       enableFile: config.enableFile || false,
-      filePath: config.filePath || './logs/app.log',
+      filePath: config.filePath || './logs/qtests.log',
       maxFileSize: config.maxFileSize || 10 * 1024 * 1024, // 10MB
       maxFiles: config.maxFiles || 5,
       enableTracing: config.enableTracing !== false,
@@ -123,7 +115,7 @@ export class Logger extends EventEmitter {
       tags: config.tags || []
     };
 
-    this.setupDefaultTransports();
+    this.setupWinston();
   }
 
   trace(message: string, metadata?: Record<string, any>): void {
@@ -184,7 +176,7 @@ export class Logger extends EventEmitter {
       pid: process.pid
     };
 
-    this.writeToTransports(entry);
+    this.writeToWinston(entry);
     this.emit('log', entry);
   }
 
@@ -311,20 +303,15 @@ export class Logger extends EventEmitter {
     this.correlationContext.clear();
   }
 
-  // Transport management
-  addTransport(transport: Transport): void {
-    this.transports.push(transport);
+  // Winston transport management
+  addTransport(transport: winston.transport): void {
+    this.winston.add(transport);
     this.emit('transport-added', transport);
   }
 
-  removeTransport(name: string): boolean {
-    const index = this.transports.findIndex(t => t.name === name);
-    if (index >= 0) {
-      this.transports.splice(index, 1);
-      this.emit('transport-removed', name);
-      return true;
-    }
-    return false;
+  removeTransport(transport: winston.transport): void {
+    this.winston.remove(transport);
+    this.emit('transport-removed', transport);
   }
 
   getActiveSpans(): TracingSpan[] {
@@ -332,11 +319,7 @@ export class Logger extends EventEmitter {
   }
 
   async flush(): Promise<void> {
-    const flushPromises = this.transports
-      .filter(t => t.flush)
-      .map(t => t.flush!());
-    
-    await Promise.allSettled(flushPromises);
+    // Winston doesn't have explicit flush, but we can emit event
     this.emit('flushed');
   }
 
@@ -346,42 +329,105 @@ export class Logger extends EventEmitter {
       this.finishSpan(spanId, 'timeout');
     }
 
-    // Close all transports
-    const closePromises = this.transports
-      .filter(t => t.close)
-      .map(t => t.close!());
-    
-    await Promise.allSettled(closePromises);
-    
+    // Close winston
+    this.winston.close();
     this.removeAllListeners();
     this.emit('closed');
   }
 
-  private setupDefaultTransports(): void {
+  private setupWinston(): void {
+    const transports: winston.transport[] = [];
+
     if (this.config.enableConsole) {
-      this.addTransport(new ConsoleTransport({
-        level: this.config.level,
-        format: this.config.format
-      }));
+      const consoleFormat = this.config.format === LogFormat.JSON 
+        ? winston.format.json()
+        : winston.format.combine(
+            winston.format.timestamp(),
+            winston.format.printf(({ timestamp, level, message, ...meta }) => {
+              return `[${timestamp}] ${level}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+            })
+          );
+
+      transports.push(
+        new winston.transports.Console({
+          level: this.getWinstonLevel(this.config.level),
+          format: consoleFormat
+        })
+      );
     }
 
     if (this.config.enableFile) {
-      this.addTransport(new FileTransport({
-        level: this.config.level,
-        format: this.config.format,
-        filePath: this.config.filePath,
-        maxFileSize: this.config.maxFileSize,
-        maxFiles: this.config.maxFiles
-      }));
+      const fileFormat = this.config.format === LogFormat.JSON
+        ? winston.format.json()
+        : winston.format.combine(
+            winston.format.timestamp(),
+            winston.format.printf(({ timestamp, level, message, ...meta }) => {
+              return `[${timestamp}] ${level}: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+            })
+          );
+
+      transports.push(
+        new winston.transports.File({
+          filename: this.config.filePath,
+          level: this.getWinstonLevel(this.config.level),
+          format: fileFormat,
+          maxsize: this.config.maxFileSize,
+          maxFiles: this.config.maxFiles
+        })
+      );
     }
+
+    this.winston = winston.createLogger({
+      level: this.getWinstonLevel(this.config.level),
+      transports,
+      defaultMeta: {
+        service: this.config.service,
+        version: this.config.version,
+        environment: this.config.environment,
+        host: this.getHostInfo(),
+        pid: process.pid
+      }
+    });
   }
 
-  private async writeToTransports(entry: LogEntry): Promise<void> {
-    const writePromises = this.transports
-      .filter(transport => entry.level >= transport.level)
-      .map(transport => transport.write(entry));
-    
-    await Promise.allSettled(writePromises);
+  private writeToWinston(entry: LogEntry): void {
+    const logData: any = {
+      timestamp: entry.timestamp,
+      message: entry.message,
+      level: this.getWinstonLevel(entry.level),
+      traceId: entry.traceId,
+      spanId: entry.spanId,
+      correlationId: entry.correlationId,
+      userId: entry.userId,
+      sessionId: entry.sessionId,
+      requestId: entry.requestId,
+      duration: entry.duration,
+      metadata: entry.metadata,
+      tags: entry.tags,
+      service: entry.service,
+      version: entry.version,
+      environment: entry.environment,
+      host: entry.host,
+      pid: entry.pid
+    };
+
+    if (entry.error) {
+      logData.error = entry.error;
+    }
+
+    this.winston.log(logData.level, logData.message, logData);
+  }
+
+  private getWinstonLevel(level: LogLevel): string {
+    switch (level) {
+      case LogLevel.TRACE: return 'silly';
+      case LogLevel.DEBUG: return 'debug';
+      case LogLevel.INFO: return 'info';
+      case LogLevel.WARN: return 'warn';
+      case LogLevel.ERROR: return 'error';
+      case LogLevel.FATAL: return 'error';
+      default: return 'info';
+    }
   }
 
   private generateTraceId(): string {
@@ -410,209 +456,6 @@ export class Logger extends EventEmitter {
       status: 'ok',
       service: this.config.service
     };
-  }
-}
-
-/**
- * Console transport for logging
- */
-export class ConsoleTransport implements Transport {
-  name = 'console';
-  level: LogLevel;
-  format: LogFormat;
-
-  constructor(config: { level: LogLevel; format: LogFormat }) {
-    this.level = config.level;
-    this.format = config.format;
-  }
-
-  async write(entry: LogEntry): Promise<void> {
-    let message: string;
-    
-    if (this.format === LogFormat.JSON) {
-      // Optimize: cache serialized entry to avoid duplicate serialization
-      try {
-        message = JSON.stringify(entry);
-      } catch (error) {
-        // Fallback for circular references or non-serializable data
-        const safeEntry = {
-          ...entry,
-          metadata: entry.metadata ? '[Object]' : undefined
-        };
-        message = JSON.stringify(safeEntry);
-      }
-    } else {
-      message = this.formatText(entry);
-    }
-    
-    const logMethod = this.getLogMethod(entry.level);
-    logMethod(message);
-  }
-
-  private formatText(entry: LogEntry): string {
-    const timestamp = new Date(entry.timestamp).toISOString();
-    const level = LogLevel[entry.level].padEnd(5);
-    
-    // Optimize: avoid JSON.stringify for metadata in text format
-    let metadata = '';
-    if (entry.metadata) {
-      try {
-        metadata = ` ${JSON.stringify(entry.metadata)}`;
-      } catch {
-        metadata = ' [Object]';
-      }
-    }
-    
-    return `[${timestamp}] ${level} ${entry.message}${metadata}`;
-  }
-
-  private getLogMethod(level: LogLevel): (message: string) => void {
-    switch (level) {
-      case LogLevel.TRACE:
-      case LogLevel.DEBUG:
-        return console.debug;
-      case LogLevel.INFO:
-        return console.info;
-      case LogLevel.WARN:
-        return console.warn;
-      case LogLevel.ERROR:
-      case LogLevel.FATAL:
-        return console.error;
-      default:
-        return console.log;
-    }
-  }
-}
-
-/**
- * File transport for persistent logging
- */
-export class FileTransport implements Transport {
-  name = 'file';
-  level: LogLevel;
-  format: LogFormat;
-  filePath: string;
-  maxFileSize: number;
-  maxFiles: number;
-  private currentSize = 0;
-  private currentFile = 0;
-
-  constructor(config: {
-    level: LogLevel;
-    format: LogFormat;
-    filePath: string;
-    maxFileSize: number;
-    maxFiles: number;
-  }) {
-    this.level = config.level;
-    this.format = config.format;
-    this.filePath = config.filePath;
-    this.maxFileSize = config.maxFileSize;
-    this.maxFiles = config.maxFiles;
-    
-    this.initializeFile();
-  }
-
-  async write(entry: LogEntry): Promise<void> {
-    let message: string;
-    
-    if (this.format === LogFormat.JSON) {
-      // Optimize: single JSON serialization with error handling
-      try {
-        message = JSON.stringify(entry) + '\n';
-      } catch (error) {
-        // Fallback for non-serializable entries
-        const safeEntry = {
-          ...entry,
-          metadata: entry.metadata ? '[Object]' : undefined
-        };
-        message = JSON.stringify(safeEntry) + '\n';
-      }
-    } else {
-      message = this.formatText(entry) + '\n';
-    }
-    
-    const fs = await import('fs');
-    
-    // Check if we need to rotate file
-    if (this.currentSize + message.length > this.maxFileSize) {
-      await this.rotateFile();
-    }
-    
-    await fs.promises.appendFile(await this.getCurrentFilePath(), message);
-    this.currentSize += message.length;
-  }
-
-  async flush(): Promise<void> {
-    // No additional flushing needed for file transport
-  }
-
-  async close(): Promise<void> {
-    // No special cleanup needed
-  }
-
-  private initializeFile(): void {
-    // Initialize asynchronously but don't block constructor
-    this.initializeFileAsync().catch(error => {
-      console.warn('Failed to initialize file transport:', error);
-    });
-  }
-
-  private async initializeFileAsync(): Promise<void> {
-    const fs = await import('fs');
-    const path = await import('path');
-    
-    // Ensure directory exists
-    const dir = path.dirname(this.filePath);
-    await fs.promises.mkdir(dir, { recursive: true });
-    
-    // Check current file size
-    const currentFile = await this.getCurrentFilePath();
-    try {
-      const stats = await fs.promises.stat(currentFile);
-      this.currentSize = stats.size;
-    } catch {
-      this.currentSize = 0;
-    }
-  }
-
-  private async getCurrentFilePath(): Promise<string> {
-    if (this.currentFile === 0) {
-      return this.filePath;
-    }
-    
-    const path = await import('path');
-    const ext = path.extname(this.filePath);
-    const base = path.basename(this.filePath, ext);
-    const dir = path.dirname(this.filePath);
-    
-    return path.join(dir, `${base}.${this.currentFile}${ext}`);
-  }
-
-  private async rotateFile(): Promise<void> {
-    const fs = await import('fs');
-    const path = await import('path');
-    
-    // Move current file to numbered version
-    const currentPath = await this.getCurrentFilePath();
-    this.currentFile++;
-    
-    // Remove old files if we exceed max files
-    if (this.currentFile >= this.maxFiles) {
-      this.currentFile = 1;
-    }
-    
-    // Initialize new file
-    const newPath = await this.getCurrentFilePath();
-    this.currentSize = 0;
-  }
-
-  private formatText(entry: LogEntry): string {
-    const timestamp = new Date(entry.timestamp).toISOString();
-    const level = LogLevel[entry.level].padEnd(5);
-    const metadata = entry.metadata ? ` ${JSON.stringify(entry.metadata)}` : '';
-    
-    return `[${timestamp}] ${level} ${entry.message}${metadata}`;
   }
 }
 
@@ -657,5 +500,8 @@ export const logger = new Logger({
   enableFile: process.env.LOG_TO_FILE === 'true',
   filePath: process.env.LOG_FILE_PATH || './logs/qtests.log'
 });
+
+// Export winston for direct use
+export { winston };
 
 export default Logger;

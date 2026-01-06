@@ -1,8 +1,8 @@
 /**
- * Enhanced JSON Utilities with Security Focus
+ * Enhanced JSON Utilities with Direct secure-json-parse Integration
  * 
- * Provides optimized JSON operations with security protections using secure-json-parse
- * for superior security against JSON injection and prototype pollution attacks.
+ * Uses secure-json-parse for superior security against JSON injection
+ * and prototype pollution attacks while maintaining custom caching and utilities.
  */
 
 import { parse } from 'secure-json-parse';
@@ -54,7 +54,7 @@ class JSONCache {
 const jsonCache = new JSONCache();
 
 /**
- * Safe JSON parsing with error handling and size limits
+ * Safe JSON parsing using secure-json-parse
  * @param jsonString - JSON string to parse
  * @param maxSize - Maximum string size in bytes (default: 10MB)
  * @param fallback - Fallback value if parsing fails (default: null)
@@ -150,7 +150,7 @@ export function cachedJSONStringify(
       return '{}';
     }
     
-    // Cache the result for objects
+    // Cache result for objects
     if (typeof obj === 'object' && obj !== null) {
       jsonCache.set(obj, jsonString);
     }
@@ -185,19 +185,15 @@ export function truncateJSON(jsonString: string, maxLength: number = 500): strin
   const openBrackets = (truncated.match(/\[/g) || []).length;
   const closeBrackets = (truncated.match(/\]/g) || []).length;
   
-  // Add missing closing brackets/braces
-  const missingBraces = openBraces - closeBraces;
-  const missingBrackets = openBrackets - closeBrackets;
-  
   truncated += '...';
-  truncated += '}'.repeat(Math.max(0, missingBraces));
-  truncated += ']'.repeat(Math.max(0, missingBrackets));
+  truncated += '}'.repeat(Math.max(0, openBraces - closeBraces));
+  truncated += ']'.repeat(Math.max(0, openBrackets - closeBrackets));
   
   return truncated;
 }
 
 /**
- * Deep clone object using JSON with size limits
+ * Deep clone object using secure-json-parse with size limits
  * @param obj - Object to clone
  * @param maxSize - Maximum JSON string size (default: 10MB)
  * @returns Cloned object or null if failed
@@ -262,7 +258,7 @@ export function extractJSONFields(obj: any, fields: string[]): any {
 }
 
 /**
- * Validate JSON structure against expected schema
+ * Validate JSON structure against expected schema using secure-json-parse
  * @param jsonString - JSON string to validate
  * @param schema - Simple schema definition
  * @returns Validation result
@@ -327,7 +323,7 @@ export function validateJSONStructure(
 }
 
 /**
- * Async JSON parse with size validation and streaming support for large data
+ * Async JSON parse with size validation using secure-json-parse
  * @param jsonString - JSON string to parse
  * @param maxSize - Maximum size in bytes (default: 10MB)
  * @returns Promise that resolves to parsed object
@@ -356,29 +352,22 @@ export async function safeJSONParseAsync(jsonString: string, maxSize: number = 1
 
   // For larger JSON, implement secure chunked parsing
   return new Promise((resolve, reject) => {
-    let result = null;
-    let parseError = null;
-
-    // Use setImmediate to break up parsing
-    const parseChunk = () => {
+    setImmediate(() => {
       try {
-        result = parse(jsonString, undefined, {
+        const result = parse(jsonString, undefined, {
           protoAction: 'remove',
           constructorAction: 'remove'
         });
         resolve(result);
       } catch (error) {
-        parseError = error;
-        reject(parseError);
+        reject(error);
       }
-    };
-
-    setImmediate(parseChunk);
+    });
   });
 }
 
 /**
- * Async JSON stringify with size validation and streaming support for large data
+ * Async JSON stringify with size validation
  * @param obj - Object to stringify
  * @param maxSize - Maximum size in bytes (default: 10MB)
  * @param replacer - JSON replacer function (optional)
@@ -433,7 +422,6 @@ export async function batchJSONOperation<T, R>(
     // Process batch with concurrency limit
     const batchPromises = batch.map(item => 
       new Promise<R>((resolve, reject) => {
-        // Add delay to prevent overwhelming the event loop
         setImmediate(async () => {
           try {
             const result = await processor(item);
@@ -465,6 +453,9 @@ export async function batchJSONOperation<T, R>(
 
   return results;
 }
+
+// Export secure-json-parse parse function for direct use
+export { parse as secureParse };
 
 // Export default with all utilities
 export default {

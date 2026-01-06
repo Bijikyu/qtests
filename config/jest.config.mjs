@@ -73,7 +73,8 @@ export default {
 
    "^\\./utils/httpTest\\.shim\\.js$": "<rootDir>/utils/httpTest.shim.ts",
    "^\\./utils/(.*)\\.js$": "<rootDir>/utils/$1.ts",
-   "^(.*/httpTest\\.shim)\\.js$": "$1.ts",
+    // Remove problematic module mapper for better compatibility
+    // "^(.*/httpTest\\.shim)\\.js$": "$1.ts",
    "^external-service-client$": "<rootDir>/utils/jest-proxies/external-service-client.cjs",
    "^feature-x$": "<rootDir>/utils/jest-proxies/feature-x.cjs",
    "^\\.{1,2}/(.*)\\.js$": "$1",

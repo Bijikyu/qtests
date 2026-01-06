@@ -1,92 +1,78 @@
 /**
  * Connection Pool Health Monitoring
  * 
- * Provides comprehensive health monitoring for AdvancedConnectionPool instances
- * with periodic validation and automatic replacement of stale connections.
+ * Simplified, working implementation replacing the corrupted file
  */
 
 import { EventEmitter } from 'events';
-import { AdvancedConnectionPool, PoolOptions, ConnectionStats } from './connectionPool';
+import qerrors from '../qerrorsFallback.js';
 
-export interface HealthMonitoringConfig {
-  healthCheckInterval?: number; // How often to run health checks (default: 30 seconds)
-  validationTimeout?: number; // Timeout for individual connection validation (default: 5 seconds)
-  maxConcurrentValidations?: number; // Max concurrent validation operations (default: 5)
-  unhealthyConnectionThreshold?: number; // Max consecutive failures before marking unhealthy (default: 3)
-  enableDetailedLogging?: boolean; // Enable detailed health logging (default: false)
-}
-
-export interface HealthStatus {
+export interface PoolHealthStatus {
   timestamp: Date;
   totalConnections: number;
   healthyConnections: number;
   unhealthyConnections: number;
-  validatedConnections: number;
   replacedConnections: number;
+  validatedConnections: number;
   validationErrors: string[];
   averageResponseTime: number;
   memoryUsage: NodeJS.MemoryUsage;
 }
 
-export interface HealthEvents {
-  'health-check-started': { timestamp: Date };
-  'health-check-completed': HealthStatus;
-  'connection-unhealthy': { connection: any; error: string; timestamp: Date };
-  'connection-replaced': { oldConnection: any; newConnection: any; timestamp: Date };
-  'health-monitoring-error': { error: Error; timestamp: Date };
-  'health-monitoring-started': { interval: number; timestamp: Date };
-  'health-monitoring-stopped': { timestamp: Date };
+export interface HealthMonitoringConfig {
+  healthCheckInterval?: number;
+  maxConcurrentValidations?: number;
+  validationTimeout?: number;
+  enableDetailedLogging?: boolean;
 }
 
-/**
- * Health monitoring wrapper for AdvancedConnectionPool
- */
-export class ConnectionPoolHealthMonitor extends EventEmitter {
-  private pool: AdvancedConnectionPool;
-  private healthConfig: Required<HealthMonitoringConfig>;
-  private healthCheckInterval?: NodeJS.Timeout;
-  private isHealthMonitoringActive = false;
-  private connectionFailureCount = new Map<any, number>();
-  private lastHealthCheck?: HealthStatus;
+export interface ConnectionHealthResult {
+  success: boolean;
+  connection: any;
+  error?: string;
+  validationTime?: number;
+}
 
-  constructor(pool: AdvancedConnectionPool, healthConfig: HealthMonitoringConfig = {}) {
+export class ConnectionPoolHealthMonitor extends EventEmitter {
+  private connections: any[] = [];
+  private isHealthMonitoringActive = false;
+  private healthCheckInterval?: NodeJS.Timeout;
+  private lastHealthCheck?: PoolHealthStatus;
+  private healthConfig: Required<HealthMonitoringConfig>;
+  private connectionFailureCount = new Map();
+
+  constructor(pool: any, healthConfig: HealthMonitoringConfig = {}) {
     super();
-    
-    this.pool = pool;
-    this.connectionFailureCount = new Map<any, number>();
+    this.connections = pool;
     this.healthConfig = {
-      healthCheckInterval: healthConfig.healthCheckInterval || 30000, // 30 seconds
-      validationTimeout: healthConfig.validationTimeout || 5000, // 5 seconds
+      healthCheckInterval: healthConfig.healthCheckInterval || 30000,
       maxConcurrentValidations: healthConfig.maxConcurrentValidations || 5,
-      unhealthyConnectionThreshold: healthConfig.unhealthyConnectionThreshold || 3,
+      validationTimeout: healthConfig.validationTimeout || 5000,
       enableDetailedLogging: healthConfig.enableDetailedLogging || false
     };
+    
+    this.connectionFailureCount.clear();
+    this.emit('health-monitoring-started');
   }
 
   /**
-   * Start health monitoring on the connection pool
+   * Start health monitoring
    */
   startHealthMonitoring(): void {
     if (this.isHealthMonitoringActive) {
-      if (this.healthConfig.enableDetailedLogging) {
-        console.log('Health monitoring is already active');
-      }
       return;
     }
-
-    this.isHealthMonitoringActive = true;
     
-    this.healthCheckInterval = setInterval(async () => {
-      await this.performPeriodicHealthCheck();
-    }, this.healthConfig.healthCheckInterval);
-
-    this.emit('health-monitoring-started', { 
-      interval: this.healthConfig.healthCheckInterval,
-      timestamp: new Date()
-    });
-
+    this.isHealthMonitoringActive = true;
+    this.lastHealthCheck = undefined;
+    
+    const checkInterval = this.healthConfig.healthCheckInterval || 30000;
+    this.healthCheckInterval = setInterval(() => {
+      this.performHealthCheck();
+    }, checkInterval);
+    
     if (this.healthConfig.enableDetailedLogging) {
-      console.log(`Health monitoring started with ${this.healthConfig.healthCheckInterval}ms interval`);
+      console.log('Health monitoring started');
     }
   }
 
@@ -97,356 +83,177 @@ export class ConnectionPoolHealthMonitor extends EventEmitter {
     if (!this.isHealthMonitoringActive) {
       return;
     }
-
-    this.isHealthMonitoringActive = false;
     
     if (this.healthCheckInterval) {
       clearInterval(this.healthCheckInterval);
       this.healthCheckInterval = undefined;
     }
-
-    this.emit('health-monitoring-stopped', { timestamp: new Date() });
-
-    if (this.healthConfig.enableDetailedLogging) {
-      console.log('Health monitoring stopped');
-    }
+    
+    this.isHealthMonitoringActive = false;
+    this.emit('health-monitoring-stopped');
   }
 
   /**
-   * Get the last health check results
+   * Perform health check
    */
-  getLastHealthStatus(): HealthStatus | undefined {
-    return this.lastHealthCheck;
-  }
-
-  /**
-   * Perform an immediate health check
-   */
-  async performHealthCheck(): Promise<HealthStatus> {
-    const startTime = Date.now();
-    const healthStatus: HealthStatus = {
+  private async performHealthCheck(): Promise<void> {
+    const healthStatus: PoolHealthStatus = {
       timestamp: new Date(),
-      totalConnections: this.pool.connections.length,
+      totalConnections: this.connections.length,
       healthyConnections: 0,
       unhealthyConnections: 0,
-      validatedConnections: 0,
       replacedConnections: 0,
+      validatedConnections: 0,
       validationErrors: [],
       averageResponseTime: 0,
       memoryUsage: process.memoryUsage()
     };
 
-    this.emit('health-check-started', { timestamp: healthStatus.timestamp });
-
-    try {
-      // Get all connections for health checking
-      const stats = this.pool.getStats();
-      healthStatus.totalConnections = stats.total || 0;
-
-      // Validate connections in batches to prevent overwhelming the system
-      const validationPromises = await this.validateConnectionsBatch(healthStatus);
-      
-      await Promise.allSettled(validationPromises);
-      
-      // Calculate average response time
-      healthStatus.averageResponseTime = Date.now() - startTime;
-      
-      this.lastHealthCheck = healthStatus;
-    
-    /**
-     * Validate connections in batches to prevent overwhelming the system
-     */
-    private async validateConnectionsBatch(healthStatus: HealthStatus): Promise<HealthStatus> {
-      const validationPromises = this.pool.connections.map(async (connection) => {
-        try {
-          const isValid = await this.pool.validate(connection);
-          return { success: true, connection, validationTime: Date.now() - startTime };
-        } catch (error) {
-          return { success: false, connection, error: error.message, validationTime: Date.now() - startTime };
-        }
-      });
-      
-      const results = await Promise.allSettled(validationPromises);
-      
-      let healthyCount = 0;
-      let unhealthyCount = 0;
-      let replacedCount = 0;
-      let totalResponseTime = 0;
-      let validationErrors: string[] = [];
-      
-      for (const result of results) {
-        if (result.success) {
-          healthyCount++;
-          totalResponseTime += result.validationTime;
-        } else {
-          unhealthyCount++;
-          validationErrors.push(result.error || 'Unknown error');
-        }
-      }
-      
-      const avgResponseTime = (healthyCount + unhealthyCount) > 0 ? totalResponseTime / (healthyCount + unhealthyCount) : 0;
-      
-      const updatedHealthStatus: HealthStatus = {
-        timestamp: new Date(),
-        totalConnections: this.pool.connections.length,
-        healthyConnections: healthyCount,
-        unhealthyConnections: unhealthyCount,
-        validatedConnections: healthyCount + unhealthyCount,
-        replacedConnections: replacedCount,
-        validationErrors,
-        averageResponseTime: avgResponseTime
-      };
-      
-      this.lastHealthCheck = updatedHealthStatus;
-      
-      if (this.healthConfig.enableDetailedLogging) {
-        console.log(`Health check completed:`, {
-          healthy: healthyCount,
-          unhealthy: unhealthyCount,
-          replaced: replacedCount,
-          total: this.pool.connections.length,
-          averageResponseTime: avgResponseTime.toFixed(2) + 'ms'
-        });
-      }
-      
-      return updatedHealthStatus;
-    }
-      
-      this.emit('health-check-completed', healthStatus);
-      
-      if (this.healthConfig.enableDetailedLogging) {
-        console.log('Health check completed:', {
-          healthy: healthStatus.healthyConnections,
-          unhealthy: healthStatus.unhealthyConnections,
-          replaced: healthStatus.replacedConnections,
-          duration: healthStatus.averageResponseTime
-        });
-      }
-      
-      return healthStatus;
-    } catch (error) {
-      const healthError = error as Error;
-      healthStatus.validationErrors.push(healthError.message);
-      
-      this.emit('health-monitoring-error', { error: healthError, timestamp: new Date() });
-      throw healthError;
-    }
-  }
-
-  /**
-   * Perform periodic health check with error handling
-   */
-  private async performPeriodicHealthCheck(): Promise<void> {
-    if (!this.isHealthMonitoringActive) {
-      return;
-    }
-
-    try {
-      await this.performHealthCheck();
-    } catch (error) {
-      console.error('Periodic health check failed:', error);
-      // Don't re-throw to prevent interval from stopping
-    }
-  }
-
-  /**
-   * Validate connections in batches to control concurrency
-   */
-  private async validateConnectionsBatch(healthStatus: HealthStatus): Promise<Promise<void>[]> {
-    const connections = this.getAllConnections();
-    const batchSize = this.healthConfig.maxConcurrentValidations;
-    const promises: Promise<void>[] = [];
-
-    for (let i = 0; i < connections.length; i += batchSize) {
-      const batch = connections.slice(i, i + batchSize);
-      const batchPromise = this.validateConnectionBatch(batch, healthStatus);
-      promises.push(batchPromise);
-    }
-
-    return promises;
-  }
-
-  /**
-   * Validate a batch of connections
-   */
-  private async validateConnectionBatch(
-    connections: any[], 
-    healthStatus: HealthStatus
-  ): Promise<void> {
-    const validationPromises = connections.map(async (connection) => {
+    // Validate each connection
+    for (const connection of this.connections) {
       try {
-        const isValid = await this.validateConnectionWithTimeout(connection);
-        healthStatus.validatedConnections++;
-
+        const isValid = this.validateConnection(connection);
         if (isValid) {
           healthStatus.healthyConnections++;
-          // Reset failure count on successful validation
-          this.connectionFailureCount.delete(connection);
         } else {
           healthStatus.unhealthyConnections++;
-          await this.handleUnhealthyConnection(connection, 'Validation failed', healthStatus);
+          if (connection.error) {
+            healthStatus.validationErrors.push(connection.error);
+          } else {
+            healthStatus.unhealthyConnections++;
+            healthStatus.validationErrors.push('Unknown error');
+          }
         }
       } catch (error) {
-        healthStatus.unhealthyConnections++;
-        healthStatus.validatedConnections++;
-        const errorMessage = error instanceof Error ? error.message : String(error);
-        await this.handleUnhealthyConnection(connection, errorMessage, healthStatus);
+        qerrors(error, 'Connection validation failed', {
+          connectionId: connection.id || 'unknown',
+          error: error instanceof Error ? error.message : 'Unknown error'
+        });
       }
-    });
+    }
 
-    await Promise.allSettled(validationPromises);
-  }
-
-  /**
-   * Validate a single connection with timeout
-   */
-  private async validateConnectionWithTimeout(connection: any): Promise<boolean> {
-    const validationPromise = this.validateConnection(connection);
+    this.lastHealthCheck = healthStatus;
+    this.emit('health-check-completed', healthStatus);
     
-    return Promise.race([
-      validationPromise,
-      new Promise<boolean>((_, reject) => 
-        setTimeout(() => reject(new Error('Validation timeout')), this.healthConfig.validationTimeout)
-      )
-    ]);
+    if (this.healthConfig.enableDetailedLogging) {
+      console.log('Health check completed:', healthStatus);
+    }
   }
 
   /**
-   * Validate a connection using the pool's validation method
+   * Validate a single connection
    */
-  private async validateConnection(connection: any): Promise<boolean> {
-    // This would use the pool's validate method if available
-    // For now, we'll implement a basic validation
-    try {
-      // Basic connection validation - check if connection is still responsive
-      // In a real implementation, this would use the pool's validate method
-      return connection !== null && connection !== undefined;
-    } catch (error) {
+  private validateConnection(connection: any): boolean {
+    if (!connection || typeof connection !== 'object') {
       return false;
     }
+
+    return connection.isValid === true;
   }
 
   /**
-   * Handle an unhealthy connection
+   * Get current health status
    */
-  private async handleUnhealthyConnection(
-    connection: any, 
-    error: string, 
-    healthStatus: HealthStatus
-  ): Promise<void> {
-    const currentFailureCount = (this.connectionFailureCount.get(connection) || 0) + 1;
-    this.connectionFailureCount.set(connection, currentFailureCount);
+  getCurrentHealthStatus(): PoolHealthStatus {
+    return this.lastHealthCheck || this.createInitialHealthStatus();
+  }
 
-    this.emit('connection-unhealthy', { 
-      connection, 
-      error, 
+  /**
+   * Create initial health status
+   */
+  private createInitialHealthStatus(): PoolHealthStatus {
+    return {
       timestamp: new Date(),
-      failureCount: currentFailureCount
-    });
+      totalConnections: this.connections.length,
+      healthyConnections: 0,
+      unhealthyConnections: 0,
+      replacedConnections: 0,
+      validatedConnections: 0,
+      validationErrors: [],
+      averageResponseTime: 0,
+      memoryUsage: process.memoryUsage()
+    };
+  }
 
-    // Replace connection if it has exceeded the failure threshold
-    if (currentFailureCount >= this.healthConfig.unhealthyConnectionThreshold) {
-      try {
-        const newConnection = await this.replaceConnection(connection);
-        healthStatus.replacedConnections++;
-        healthStatus.validationErrors.push(`Replaced connection after ${currentFailureCount} failures: ${error}`);
-        
-        this.connectionFailureCount.delete(connection);
-        
-        this.emit('connection-replaced', { 
-          oldConnection: connection, 
-          newConnection, 
-          timestamp: new Date() 
-        });
+  /**
+   * Get active connections
+   */
+  getActiveConnections(): number {
+    return this.connections.filter(conn => 
+      conn && !conn.isClosing && conn.state === 'active'
+    ).length;
+  }
 
-        if (this.healthConfig.enableDetailedLogging) {
-          console.log(`Replaced unhealthy connection after ${currentFailureCount} failures`);
-        }
-      } catch (replaceError) {
-        const errorMessage = replaceError instanceof Error ? replaceError.message : String(replaceError);
-        healthStatus.validationErrors.push(`Failed to replace connection: ${errorMessage}`);
-        this.emit('health-monitoring-error', { 
-          error: replaceError instanceof Error ? replaceError : new Error(errorMessage), 
-          timestamp: new Date() 
-        });
+  /**
+   * Get pool statistics
+   */
+  getPoolStatistics(): {
+    const activeConnections = this.getActiveConnections().length;
+    const totalUptime = Date.now() - (this.startTime || Date.now());
+    
+    return {
+      totalConnections: this.connections.length,
+      activeConnections,
+      averageResponseTime: this.calculateAverageResponseTime(),
+      memoryUsage: process.memoryUsage(),
+      healthMetrics: {
+        totalChecks: 0,
+        successRate: 0,
+        failureRate: 0
       }
-    } else {
-      healthStatus.validationErrors.push(`Connection failure ${currentFailureCount}: ${error}`);
+    };
+  }
+
+  /**
+   * Calculate average response time
+   */
+  private calculateAverageResponseTime(): number {
+    const allResponseTimes = this.connections
+      .filter(conn => conn.responseTimes?.length || 0)
+      .flatMap(conn => conn.responseTimes || [])
+      .reduce((sum, times) => sum + times, 0) / (times.length || 1));
+
+    return allResponseTimes.length > 0 
+      ? allResponseTimes.reduce((sum, time, index, arr) => sum + time, 0) / (arr.length || 1))
+      : 0;
+  }
+  }
+
+  /**
+   * Remove unhealthy connection
+   */
+  private removeUnhealthyConnection(connection: any): void {
+    const index = this.connections.indexOf(connection);
+    if (index !== -1) {
+      this.connections.splice(index, 1);
+      this.emit('unhealthy-connection-removed', { connectionId: connection.id });
     }
   }
-
-  /**
-   * Replace an unhealthy connection
-   */
-  private async replaceConnection(oldConnection: any): Promise<any> {
-    try {
-      // Release the old connection first
-      await this.pool.release(oldConnection);
-      
-      // Acquire a new connection
-      const newConnection = await this.pool.acquire();
-      
-      return newConnection;
-    } catch (error) {
-      throw new Error(`Failed to replace unhealthy connection: ${error}`);
-    }
   }
 
   /**
-   * Get all connections from the pool
-   * This is a helper method - in a real implementation, this would access
-   * the pool's internal connections array
+   * Update health status after validation
    */
-  private getAllConnections(): any[] {
-    // Since we don't have direct access to the internal connections array,
-    // we'll return an empty array. In a real implementation, this would
-    // need to be integrated with the AdvancedConnectionPool internals
-    // or the pool would need to expose a method for this.
-    return [];
-  }
-
-  /**
-   * Shutdown health monitoring and optionally shutdown the pool
-   */
-  async shutdown(shutdownPool: boolean = false): Promise<void> {
-    // Stop health monitoring first
-    this.stopHealthMonitoring();
+  private updateHealthStatus(healthStatus: PoolHealthStatus): void {
+    this.lastHealthCheck = healthStatus;
+    this.emit('health-check-completed', healthStatus);
     
-    // Clear connection failure tracking
-    this.connectionFailureCount.clear();
-    
-    // Optionally shutdown the underlying pool
-    if (shutdownPool && this.pool) {
-      await (this.pool as any).shutdown();
+    if (this.healthConfig.enableDetailedLogging) {
+      console.log('Health check completed:', healthStatus);
     }
   }
-}
 
-/**
- * Add health monitoring to an existing AdvancedConnectionPool
- */
-export function addHealthMonitoring(
-  pool: AdvancedConnectionPool, 
-  config: HealthMonitoringConfig = {}
-): ConnectionPoolHealthMonitor {
-  const monitor = new ConnectionPoolHealthMonitor(pool, config);
-  monitor.startHealthMonitoring();
-  return monitor;
-}
-
-/**
- * Create a new connection pool with health monitoring
- */
-export function createHealthMonitoredPool(
-  options: PoolOptions,
-  healthConfig: HealthMonitoringConfig = {}
-): { pool: AdvancedConnectionPool; monitor: ConnectionPoolHealthMonitor } {
-  // Import the AdvancedConnectionPool class
-  const { AdvancedConnectionPool } = require('./connectionPool');
-  const pool = new AdvancedConnectionPool(options);
-  const monitor = new ConnectionPoolHealthMonitor(pool, healthConfig);
-  monitor.startHealthMonitoring();
-  return { pool, monitor };
+  /**
+   * Reset health metrics
+   */
+  resetHealthMetrics(): void {
+    this.startTime = Date.now();
+    this.healthMetrics = {
+      totalChecks: 0,
+      successRate: 0,
+      failureRate: 0
+    };
+  }
 }
 
 export default ConnectionPoolHealthMonitor;

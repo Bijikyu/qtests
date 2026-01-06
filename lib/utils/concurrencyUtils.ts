@@ -1,21 +1,12 @@
 /**
- * Concurrency Control Utilities - Replaced with p-queue
+ * Concurrency Control Utilities
+ * Direct use of p-queue industry-standard concurrency control
  * 
- * Migration Guide:
- * - limitedPromiseAll() -> p-queue with concurrency limit
- * - Semaphore -> p-queue with single concurrency
- * - throttle() -> p-queue with interval
- * - debounce() -> Custom implementation or lodash
- * 
- * Benefits of p-queue:
- * - Industry standard for queue management
- * - Excellent TypeScript support
- * - Better performance and memory management
- * - Built-in priority and pause/resume
+ * This module provides simplified interfaces to p-queue functionality
+ * while maintaining the same API for backward compatibility.
  */
 
-// Import p-queue for industry-standard concurrency control
-import PQueue, { DefaultAddOptions } from 'p-queue';
+import PQueue from 'p-queue';
 
 /**
  * Execute promises with controlled concurrency limit using p-queue
@@ -32,7 +23,7 @@ export async function limitedPromiseAll<T>(
   const queue = new PQueue({ concurrency });
   
   // Add all tasks to queue and wait for completion
-  const results = await Promise.all(tasks.map(task => queue.add(task)));
+  const results = await Promise.all(tasks.map(task => queue.add(task) as Promise<T>));
   
   return results;
 }
@@ -52,7 +43,9 @@ export async function limitedPromiseAllSettled<T>(
   const queue = new PQueue({ concurrency });
   
   try {
-    const results = await Promise.allSettled(tasks.map(task => queue.add(task)));
+    const results = await Promise.allSettled(
+      tasks.map(task => queue.add(task) as Promise<T>)
+    );
     return results;
   } finally {
     await queue.onIdle();
@@ -80,7 +73,9 @@ export async function rateLimitedPromiseAll<T>(
   });
   
   try {
-    const results = await Promise.all(tasks.map(task => queue.add(task)));
+    const results = await Promise.all(
+      tasks.map(task => queue.add(task) as Promise<T>)
+    );
     return results;
   } finally {
     await queue.onIdle();
@@ -242,19 +237,9 @@ export async function rollingConcurrency<T>(
   console.log(`Starting rolling concurrency with ${currentConcurrency} initial workers`);
   
   const processBatch = async (batchTasks: (() => Promise<T>)[], concurrency: number) => {
+    const queue = new PQueue({ concurrency });
     const batchResults = await Promise.allSettled(
-      batchTasks.map(task => 
-        new Promise<PromiseSettledResult<T>>((resolve) => {
-          setImmediate(async () => {
-            try {
-              const result = await task();
-              resolve({ status: 'fulfilled', value: result });
-            } catch (error) {
-              resolve({ status: 'rejected', reason: error });
-            }
-          });
-        })
-      )
+      batchTasks.map(task => queue.add(task))
     );
     
     // Update performance metrics
@@ -366,7 +351,8 @@ export async function adaptiveConcurrency<T>(
     const batch = tasks.slice(i, i + currentConcurrency);
     
     // Process current batch
-    const batchPromises = batch.map(task => processTask(task));
+    const queue = new PQueue({ concurrency: currentConcurrency });
+    const batchPromises = batch.map(task => queue.add(() => processTask(task)));
     await Promise.allSettled(batchPromises);
     
     // Calculate average latency from recent samples
@@ -399,6 +385,9 @@ export async function adaptiveConcurrency<T>(
   return results;
 }
 
+// Re-export p-queue for direct use
+export { PQueue };
+
 // Export default with all utilities
 export default {
   limitedPromiseAll,
@@ -407,5 +396,8 @@ export default {
   throttle,
   debounce,
   Semaphore,
-  withSemaphore
+  withSemaphore,
+  adaptiveConcurrency,
+  rollingConcurrency,
+  PQueue
 };

@@ -325,10 +325,10 @@ export class PerformanceMonitor extends EventEmitter {
     
     if (path.startsWith('custom.')) {
       const customName = path.substring(7);
-      return thresholds.custom?.[customName];
+      return thresholds.custom?.[customName] as number;
     }
     
     const [category] = path.split('.');
-    return thresholds[category as keyof typeof thresholds];
+    return thresholds[category as keyof typeof thresholds] as number;
   }
 }
