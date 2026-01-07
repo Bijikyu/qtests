@@ -3,7 +3,13 @@
   "version": "2.0.0",
   "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
   "type": "module",
-  "main": "index.ts",
+  "main": "dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./lib/routeTestUtils": "./dist/lib/routeTestUtils.js",
+    "./utils/*": "./dist/utils/*.js",
+    "./config/*": "./dist/config/*.js"
+  },
   "bin": {
     "qtests-ts-runner": "./bin/qtests-ts-runner",
     "qtests-ts-generate": "./bin/qtests-generate.mjs",
