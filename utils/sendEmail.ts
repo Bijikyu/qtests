@@ -1,14 +1,20 @@
-/** Email Mock Utility for Testing - TypeScript Implementation */
-import{executeWithLogs}from'../lib/logUtils.js';import qerrors from'qerrors';import{randomBytes}from'crypto';import{validateEmail as joiValidateEmail}from'../lib/security/JoiSecurityValidator.js';
-interface EmailData{to:string;subject?:string;text?:string;html?:string;from?:string;[key:string]:any;}
-interface EmailResult{success:boolean;messageId:string;to:string;subject:string;timestamp:string;}
-let emailHistory:Array<EmailData&EmailResult>=[];
+/** Email Mock Utility for Testing - Consolidated Implementation */
+import { validateEmail } from './email/emailValidator.js';
+import { formatEmailContent } from './email/emailFormatter.js';
+import { addToHistory, getEmailHistory, clearEmailHistory, type EmailHistoryEntry } from './email/emailHistory.js';
+import { sendEmail as coreSendEmail, sendEmailBatch, type EmailOptions, type EmailResponse, type EmailBatchItem, type BatchResult } from './email/emailSender.js';
 
-function sendEmail(emailData:EmailData):Promise<EmailResult>{return executeWithLogs('sendEmail',async()=>{try{if(!emailData||!emailData.to){const error=new Error('Email requires "to" field');qerrors(error,'sendEmail: missing required field',{emailData});throw error;}const validationResult=joiValidateEmail(emailData.to);if(!validationResult.valid){const error=new Error(`Invalid email format: ${validationResult.errors.join(', ')}`);qerrors(error,'sendEmail: Joi validation failed',{to:emailData.to,errors:validationResult.errors});throw error;}const result:EmailResult={success:true,messageId:`mock-${Date.now()}-${randomBytes(4).toString('hex')}`,to:emailData.to,subject:emailData.subject||'',timestamp:new Date().toISOString()};emailHistory.push({...emailData,...result});return result;}catch(error){const errorObj=error instanceof Error?error:new Error(String(error));qerrors(errorObj,'sendEmail: unexpected error',{emailData});throw errorObj;}},emailData);}
+// Re-export core functionality
+export { coreSendEmail as sendEmail, sendEmailBatch, addToHistory, getEmailHistory, clearEmailHistory };
 
-function getEmailHistory():Array<EmailData&EmailResult>{return[...emailHistory];}
-function clearEmailHistory():number{return executeWithLogs('clearEmailHistory',()=>{const cleared=emailHistory.length;emailHistory=[];return cleared;});}
-function validateEmail(emailData:EmailData):boolean{return executeWithLogs('validateEmail',()=>{try{if(!emailData){qerrors(new Error('Email data is null or undefined'),'validateEmail: null email data');return false;}if(!emailData.to){qerrors(new Error('Email missing "to" field'),'validateEmail: missing to field',{emailData});return false;}const validationResult=joiValidateEmail(emailData.to);if(!validationResult.valid){qerrors(new Error(`Invalid email format: ${validationResult.errors.join(', ')}`),'validateEmail: Joi validation failed',{to:emailData.to,errors:validationResult.errors});return false;}return true;}catch(error){const errorObj=error instanceof Error?error:new Error(String(error));qerrors(errorObj,'validateEmail: unexpected error',{emailData});return false;}},emailData);}
-export{sendEmail,getEmailHistory,clearEmailHistory,validateEmail};
-const emailUtilities={sendEmail,getEmailHistory,clearEmailHistory,validateEmail,emailHistory:()=>emailHistory};
-export default emailUtilities;
+// Re-export validation and formatting functions
+export { validateEmail } from './email/emailValidator.js';
+export { formatEmailContent } from './email/emailFormatter.js';
+
+// Re-export types
+export type { EmailOptions, EmailResponse, EmailBatchItem, BatchResult } from './email/emailSender.js';
+export type { EmailHistoryEntry } from './email/emailHistory.js';
+
+// Legacy compatibility - alias EmailHistoryEntry to EmailData
+export type EmailData = EmailHistoryEntry;
+export type EmailResult = EmailResponse;

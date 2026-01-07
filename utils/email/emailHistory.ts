@@ -56,6 +56,11 @@ function getEmailHistory(): EmailHistoryEntry[] {
  */
 function addToHistory(emailData: EmailHistoryEntry): void {
   emailHistory.push(emailData);
+  
+  // Prevent unbounded memory growth by keeping only last 1000 entries
+  if (emailHistory.length > 1000) {
+    emailHistory.splice(0, emailHistory.length - 1000);
+  }
 }
 
 // Export using ES module syntax
@@ -65,3 +70,5 @@ export {
   addToHistory, 
   emailHistory // Export for direct access in advanced testing scenarios
 };
+
+export type { EmailHistoryEntry };

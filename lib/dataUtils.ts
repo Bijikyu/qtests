@@ -31,7 +31,7 @@ import mockModels from '../utils/mockModels.js';
 // Import sendEmail utility for email system mocking
 // sendEmail provides lightweight email mocking for testing notification systems
 // without requiring external mail service configuration or actual email delivery
-import sendEmail from '../utils/sendEmail.js';
+import { sendEmail } from '../utils/sendEmail.js';
 
 /**
  * Export data and database testing utilities

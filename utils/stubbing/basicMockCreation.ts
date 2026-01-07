@@ -1,4 +1,0 @@
-/** Basic Mock Creation Functions */
-import*as sinon from'sinon';import{withErrorLogging}from'../../lib/errorHandling/index.js';import{StubFunction}from'./types.js';
-export const createMock=<T extends object>(data:{template?:Partial<T>}):{mock:sinon.SinonMock}=>{const mock=withErrorLogging(()=>sinon.mock(data.template||{}),'createMock');return{mock};};
-export const createFake=(data:{methods?:Record<string,StubFunction>}):{fake:any}=>{const fake=withErrorLogging(()=>{const fakeObj:any={};const methods=data.methods||{};for(const[methodName,methodFn]of Object.entries(methods)){fakeObj[methodName]=sinon.fake(methodFn);}return fakeObj;},'createFake');return{fake};};
