@@ -2,7 +2,7 @@
 // Import qerrors for basic error handling
 import qerrors from 'qerrors';
 import { jest as jestFromGlobals } from '@jest/globals';
-import { configureJestGlobals, clearJestMocks, getJestRef } from '../utils/testing/jestSetupHelper.js';
+import { configureJestGlobals, clearJestMocks, getJestRef } from '../utils/testing/jestSetupHelper';
 
 // Set test environment early - NODE_ENV is managed in localVars.ts
 import { 
