@@ -1,53 +1,9 @@
-/**
- * Scalable Database Utilities
- * Memory-efficient database operations with optimized connection pooling and query caching
- */
-
-import { EventEmitter } from 'events';
-
-export interface DatabaseConfig {
-  host: string;
-  port?: number;
-  database: string;
-  username?: string;
-  password?: string;
-  maxConnections?: number;
-  minConnections?: number;
-  acquireTimeout?: number;
-  idleTimeout?: number;
-  queryTimeout?: number;
-  enableQueryCache?: boolean;
-  cacheMaxSize?: number;
-  cacheTtlMs?: number;
-}
-
-export interface QueryOptions {
-  timeout?: number;
-  cache?: boolean;
-  cacheKey?: string;
-  retries?: number;
-  limit?: number;
-  offset?: number;
-  batchSize?: number;
-}
-
-export interface QueryResult<T = any> {
-  rows: T[];
-  rowCount: number;
-  duration: number;
-  cached: boolean;
-  hasMore?: boolean;
-  nextOffset?: number;
-  totalRows?: number;
-}
-
-export interface DatabaseMetrics {
-  totalQueries: number;
-  cachedQueries: number;
-  failedQueries: number;
-  averageQueryTime: number;
-  activeConnections: number;
-  connectionPoolHits: number;
+/** Scalable Database Utilities */
+import{EventEmitter}from'events';
+export interface DatabaseConfig{host:string;port?:number;database:string;username?:string;password?:string;maxConnections?:number;minConnections?:number;acquireTimeout?:number;idleTimeout?:number;queryTimeout?:number;enableQueryCache?:boolean;cacheMaxSize?:number;cacheTtlMs?:number;}
+export interface QueryOptions{timeout?:number;cache?:boolean;cacheKey?:string;retries?:number;limit?:number;offset?:number;batchSize?:number;}
+export interface QueryResult<T=any>{rows:T[];rowCount:number;duration:number;cached:boolean;hasMore?:boolean;nextOffset?:number;totalRows?:number;}
+export interface DatabaseMetrics{totalQueries:number;cachedQueries:number;failedQueries:number;averageQueryTime:number;activeConnections:number;connectionPoolHits:number;
   connectionPoolMisses: number;
   truncatedQueries: number;
 }

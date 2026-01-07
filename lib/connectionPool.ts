@@ -1,88 +1,11 @@
-/**
- * Connection Pool Manager using generic-pool
- *
- * Provides scalable connection pooling using industry-standard generic-pool
- * with health checks, circuit breaker, and automatic failover capabilities.
- */
+/** Connection Pool Manager using generic-pool */
+import{EventEmitter}from'events';
+export enum CircuitState{CLOSED='closed',OPEN='open',HALF_OPEN='half-open'}
+export interface ConnectionPoolOptions{maxConnections?:number;acquireTimeout?:number;healthCheckInterval?:number;maxRetries?:number;retryDelay?:number;}
+export interface PoolStats{totalAcquisitions:number;successfulAcquisitions:number;failedAcquisitions:number;totalAcquireTime:number;connectionsCreated:number;connectionsDestroyed:number;activeConnections:number;waitingRequests:number;}
+export interface Factory<T>{create():Promise<T>;destroy(connection:T):Promise<void>;validate?(connection:T):Promise<boolean>;}
 
-import { EventEmitter } from 'events';
-
-export enum CircuitState {
-  CLOSED = 'closed',
-  OPEN = 'open',
-  HALF_OPEN = 'half-open'
-}
-
-export interface ConnectionPoolOptions {
-  maxConnections?: number;
-  acquireTimeout?: number;
-  healthCheckInterval?: number;
-  maxRetries?: number;
-  retryDelay?: number;
-}
-
-export interface PoolStats {
-  totalAcquisitions: number;
-  successfulAcquisitions: number;
-  failedAcquisitions: number;
-  totalAcquireTime: number;
-  connectionsCreated: number;
-  connectionsDestroyed: number;
-  activeConnections: number;
-  waitingRequests: number;
-}
-
-export interface Factory<T> {
-  create(): Promise<T>;
-  destroy(connection: T): Promise<void>;
-  validate?(connection: T): Promise<boolean>;
-}
-
-/**
- * Connection pool using generic-pool with circuit breaker and health monitoring
- */
-export class AdvancedConnectionPool extends EventEmitter {
-  private pool: any;
-  private isShutdown = false;
-  private circuitState = CircuitState.CLOSED;
-  private failureCount = 0;
-  private lastFailureTime = 0;
-  private healthCheckInterval?: NodeJS.Timeout;
-  private autoTransitionId?: NodeJS.Timeout;
-
-  private stats: PoolStats = {
-    totalAcquisitions: 0,
-    successfulAcquisitions: 0,
-    failedAcquisitions: 0,
-    totalAcquireTime: 0,
-    connectionsCreated: 0,
-    connectionsDestroyed: 0,
-    activeConnections: 0,
-    waitingRequests: 0
-  };
-
-  private config: Required<ConnectionPoolOptions>;
-
-  constructor(
-    factory: Factory<any>,
-    options: ConnectionPoolOptions = {}
-  ) {
-    super();
-    
-    this.config = {
-      maxConnections: options.maxConnections || 10,
-      acquireTimeout: options.acquireTimeout || 30000,
-      healthCheckInterval: options.healthCheckInterval || 300000,
-      maxRetries: options.maxRetries || 3,
-      retryDelay: options.retryDelay || 1000
-    };
-
-    // Dynamically import generic-pool to avoid module resolution issues
-    this.initializePool(factory).catch(error => {
-      console.error('Failed to initialize pool during construction:', error);
-    });
-    this.startHealthMonitoring();
-  }
+export class AdvancedConnectionPool extends EventEmitter{private pool:any;private isShutdown=false;private circuitState=CircuitState.CLOSED;private failureCount=0;private lastFailureTime=0;private healthCheckInterval?:NodeJS.Timeout;private autoTransitionId?:NodeJS.Timeout;private config:ConnectionPoolOptions;private stats:PoolStats={totalAcquisitions:0,successfulAcquisitions:0,failedAcquisitions:0,totalAcquireTime:0,connectionsCreated:0,connectionsDestroyed:0,activeConnections:0,waitingRequests:0};constructor(private factory:Factory<any>,private options:ConnectionPoolOptions={}){super();this.config={maxConnections:10,acquireTimeout:30000,healthCheckInterval:30000,maxRetries:3,retryDelay:1000,...options};this.initializePool(factory);this.startHealthMonitoring();}
 
   private async initializePool(factory: Factory<any>): Promise<void> {
     try {
@@ -196,7 +119,7 @@ export class AdvancedConnectionPool extends EventEmitter {
         return true;
       case CircuitState.OPEN:
         const timeSinceFailure = Date.now() - this.lastFailureTime;
-        return timeSinceFailure > this.config.retryDelay * Math.pow(2, Math.min(this.failureCount, 5));
+        return timeSinceFailure > (this.config.retryDelay||1000) * Math.pow(2, Math.min(this.failureCount, 5));
       case CircuitState.HALF_OPEN:
         return true;
       default:
@@ -212,7 +135,7 @@ export class AdvancedConnectionPool extends EventEmitter {
     this.lastFailureTime = Date.now();
     
     // Update circuit breaker state
-    if (this.failureCount >= this.config.maxRetries) {
+    if (this.failureCount >= (this.config.maxRetries||3)) {
       this.circuitState = CircuitState.OPEN;
       this.emit('circuit-open', { error, failureCount: this.failureCount });
     }
