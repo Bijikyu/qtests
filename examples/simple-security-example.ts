@@ -5,100 +5,73 @@
  * without complex TypeScript or Express.js dependencies.
  */
 
-// Import security modules (simplified)
+import { 
+  securityTestFixtures, 
+  securityOutputFormatters, 
+  securityTestRunner,
+  runStandardSecurityValidation 
+} from './lib/security/SecurityTestFramework.js';
+
 console.log('🔒 Loading QTests Security Framework...');
 
-// Example 1: Basic validation
-function demonstrateValidation() {
+// Example 1: Basic validation using shared framework
+async function demonstrateValidation() {
   console.log('\n1. Basic Security Validation:');
   
-  // Import validation modules
-  import('../lib/security/SecurityValidator.js').then(({ validateModuleId, validateJSON, validatePath }) => {
-    
-    // Test module ID validation
-    const testModules = ['user-service', '../../../etc/passwd', 'valid-module', 'module;rm -rf /'];
-    console.log('  Module ID Validation:');
-    testModules.forEach(moduleId => {
-      const result = validateModuleId(moduleId);
-      console.log(`    ${moduleId}: ${result.valid ? '✅ Valid' : '❌ Invalid'}`);
-      if (!result.valid) {
-        console.log(`      Errors: ${result.errors.join(', ')}`);
-      }
-    });
+  const { validateModuleId, validateJSON, validatePath } = await import('../lib/security/SecurityValidator.js');
+  
+  // Test module ID validation
+  console.log('  Module ID Validation:');
+  securityTestFixtures.moduleIds.forEach((testCase, index) => {
+    const result = validateModuleId(testCase.input);
+    console.log(securityOutputFormatters.formatValidationResult(testCase, result));
+  });
 
-    // Test JSON validation
-    const testJSON = [
-      '{"user": "admin"}', // Valid
-      '{"__proto__": {"isAdmin": true}}', // Prototype pollution
-      '{"$where": "this.username == \\"admin\\""}', // NoSQL injection
-      '<script>alert("xss")</script>' // XSS attempt
-    ];
-    
-    console.log('\n  JSON Validation:');
-    testJSON.forEach((jsonString, index) => {
-      const result = validateJSON(jsonString);
-      console.log(`    Test ${index + 1}: ${result.valid ? '✅ Valid' : '❌ Invalid'}`);
-      if (!result.valid) {
-        console.log(`      Errors: ${result.errors.join(', ')}`);
-      }
-    });
+  // Test JSON validation
+  console.log('\n  JSON Validation:');
+  securityTestFixtures.jsonStrings.forEach((testCase, index) => {
+    const result = validateJSON(testCase.input);
+    console.log(securityOutputFormatters.formatValidationResult(testCase, result));
+  });
 
-    // Test path validation
-    const testPaths = ['/tmp/file.txt', '../../../etc/passwd', '/var/www/data', '/valid/path'];
-    console.log('\n  Path Validation:');
-    testPaths.forEach(testPath => {
-      const result = validatePath(testPath);
-      console.log(`    ${testPath}: ${result.valid ? '✅ Valid' : '❌ Invalid'}`);
-      if (!result.valid) {
-        console.log(`      Errors: ${result.errors.join(', ')}`);
-      }
-    });
+  // Test path validation
+  console.log('\n  Path Validation:');
+  securityTestFixtures.filePaths.forEach((testCase, index) => {
+    const result = validatePath(testCase.input);
+    console.log(securityOutputFormatters.formatValidationResult(testCase, result));
   });
 }
 
-// Example 2: Security monitoring
-function demonstrateMonitoring() {
+// Example 2: Security monitoring using shared framework
+async function demonstrateMonitoring() {
   console.log('\n2. Security Monitoring:');
   
-  import('../lib/security/SecurityMonitor.js').then(({ securityMonitor, SecurityEventType, SecuritySeverity }) => {
-    
-    // Log some example security events
-    console.log('  Logging security events...');
-    
-    securityMonitor.logEvent({
-      type: SecurityEventType.COMMAND_INJECTION_ATTEMPT,
-      severity: SecuritySeverity.HIGH,
+  const { securityMonitor, SecurityEventType, SecuritySeverity } = await import('../lib/security/SecurityMonitor.js');
+  
+  console.log('  Logging security events...');
+  
+  // Log events from shared fixtures
+  securityTestFixtures.securityEvents.forEach((eventData, index) => {
+    const event = {
+      type: eventData.type as any, // Cast to any for compatibility
+      severity: eventData.severity as any,
       source: 'demo_script',
-      details: { 
-        command: 'rm -rf /',
-        userInput: '../../../etc/passwd; rm -rf /',
-        blocked: true
-      },
-      blocked: true,
-      remediation: 'Command injection attempt blocked by validation'
-    });
-
-    securityMonitor.logEvent({
-      type: SecurityEventType.PATH_TRAVERSAL_ATTEMPT,
-      severity: SecuritySeverity.HIGH,
-      source: 'demo_script',
-      details: { 
-        path: '../../../etc/passwd',
-        userInput: '../../../etc/passwd',
-        blocked: true
-      },
-      blocked: true,
-      remediation: 'Path traversal attempt blocked by validation'
-    });
-
-    // Get security metrics
-    const metrics = securityMonitor.getSecurityMetrics();
-    console.log('\n  Security Metrics:');
-    console.log(`    Total Events: ${metrics.totalEvents}`);
-    console.log(`    Events by Type:`, metrics.eventsByType);
-    console.log(`    Events by Severity:`, metrics.eventsBySeverity);
-    console.log(`    Rate Limit Stats:`, metrics.rateLimitStats);
+      details: eventData.details,
+      blocked: eventData.expected.blocked,
+      remediation: `${eventData.type} ${eventData.expected.blocked ? 'blocked' : 'logged'} by validation`
+    };
+    
+    securityMonitor.logEvent(event);
+    console.log(securityOutputFormatters.formatSecurityEvent(event));
   });
+
+  // Get security metrics
+  const metrics = securityMonitor.getSecurityMetrics();
+  console.log('\n  Security Metrics:');
+  console.log(`    Total Events: ${metrics.totalEvents}`);
+  console.log(`    Events by Type:`, metrics.eventsByType);
+  console.log(`    Events by Severity:`, metrics.eventsBySeverity);
+  console.log(`    Active Rate Limits: ${metrics.activeRateLimits}`);
 }
 
 // Example 3: Security policies
@@ -138,60 +111,58 @@ function demonstratePolicies() {
   });
 }
 
-// Example 4: Rate limiting
-function demonstrateRateLimiting() {
+// Example 4: Rate limiting using shared framework
+async function demonstrateRateLimiting() {
   console.log('\n4. Rate Limiting:');
   
-  import('../lib/security/SecurityMonitor.js').then(({ securityMonitor }) => {
-    
-    const testIdentifiers = ['user1', 'user2', 'user3'];
-    
-    console.log('  Testing rate limiting...');
-    
-    // Test rate limiting with multiple requests
-    testIdentifiers.forEach((identifier, index) => {
-      for (let i = 0; i < 5; i++) {
-        const result = securityMonitor.checkRateLimit(identifier, {
-          windowMs: 10000, // 10 seconds
-          maxRequests: 3
-        });
-        
-        console.log(`    ${identifier} Request ${i + 1}: ${result.allowed ? '✅ Allowed' : '❌ Blocked'}`);
-        if (!result.allowed) {
-          console.log(`      Reason: ${result.reason}`);
-        }
-      }
-    });
+  const { securityMonitor } = await import('../lib/security/SecurityMonitor.js');
+  
+  const testIdentifiers = ['user1', 'user2', 'user3'];
+  const rateLimitConfig = {
+    windowMs: 10000, // 10 seconds
+    maxRequests: 3,
+    testRequests: 5
+  };
+  
+  console.log('  Testing rate limiting...');
+  
+  // Use shared test runner for rate limiting tests
+  await securityTestRunner.runRateLimitTests(
+    testIdentifiers, 
+    (identifier) => securityMonitor.checkRateLimit(identifier, rateLimitConfig),
+    rateLimitConfig
+  );
 
-    // Show final rate limit stats
-    const metrics = securityMonitor.getSecurityMetrics();
-    console.log(`\n  Final Rate Limit Stats:`, metrics.rateLimitStats);
+  // Show final rate limit stats
+  const metrics = securityMonitor.getSecurityMetrics();
+  console.log(`\n  Final Rate Limit Stats:`, {
+    activeRateLimits: metrics.activeRateLimits,
+    blockedRequests: metrics.blockedRequests
   });
 }
 
-// Example 5: Security testing
-function demonstrateSecurityTesting() {
+// Example 5: Security testing using shared framework
+async function demonstrateSecurityTesting() {
   console.log('\n5. Security Testing:');
   
-  import('../lib/security/SecurityTestingFramework.js').then(({ runFullSecurityTest, generateSecurityTestReport }) => {
-    
-    console.log('  Running security regression tests...');
-    
-    const results = runFullSecurityTest();
-    console.log(`    Total Tests: ${results.length}`);
-    console.log(`    Passed: ${results.filter(r => r.passed).length}`);
-    console.log(`    Failed: ${results.filter(r => !r.passed).length}`);
-    console.log(`    Vulnerabilities: ${results.reduce((sum, r) => sum + r.vulnerabilities.length, 0)}`);
+  const { runFullSecurityTest, generateSecurityTestReport } = await import('../lib/security/SecurityTestingFramework.js');
+  
+  console.log('  Running security regression tests...');
+  
+  const results = runFullSecurityTest();
+  console.log(`    Total Tests: ${results.length}`);
+  console.log(`    Passed: ${results.filter(r => r.passed).length}`);
+  console.log(`    Failed: ${results.filter(r => !r.passed).length}`);
+  console.log(`    Vulnerabilities: ${results.reduce((sum, r) => sum + r.vulnerabilities.length, 0)}`);
 
-    // Generate report
-    const report = generateSecurityTestReport(results);
-    console.log('\n  Security Test Report Generated');
-    
-    // Save report to file
-    const fs = await import('fs');
-    await fs.promises.writeFile('./demo-security-report.md', report);
-    console.log('    Report saved to: ./demo-security-report.md');
-  });
+  // Generate report
+  const report = generateSecurityTestReport(results);
+  console.log('\n  Security Test Report Generated');
+  
+  // Save report to file
+  const fs = await import('fs');
+  await fs.promises.writeFile('./demo-security-report.md', report);
+  console.log('    Report saved to: ./demo-security-report.md');
 }
 
 // Example 6: Security utilities

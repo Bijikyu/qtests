@@ -5,6 +5,12 @@
  * This version avoids complex imports and type issues
  */
 
+import { 
+  securityTestFixtures, 
+  securityOutputFormatters, 
+  securityValidationPatterns 
+} from './lib/security/SecurityTestFramework.js';
+
 console.log('🔒 QTests Security Framework - Minimal Working Example');
 
 async function main() {
@@ -22,15 +28,14 @@ async function main() {
     try {
       const result = await fn();
       if (result) {
-        console.log(`✅ ${test}: ${result}`);
+        console.log(`✅ ${test}: passed`);
         passed++;
       } else {
-        console.log(`❌ ${test}: ${result}`);
+        console.log(`❌ ${test}: failed`);
       }
     } catch (error) {
       console.error(`❌ ${test} failed: ${error.message}`);
     }
-  }
   }
 
   console.log(`\n✅ ${passed}/${tests.length} tests passed`);
@@ -39,48 +44,41 @@ async function main() {
     console.log('🎉 All security tests passed successfully!');
   } else {
     console.log('\n❌ Some tests failed');
-    }
   }
 }
 
 async function testInputValidation() {
   console.log('\n🔍 Testing Input Validation...');
   try {
-    const { validateInput } = await import('../lib/security/SecurityUtils.js');
-    
-    const testCases = [
-      { input: 'good-input', expected: true },
-      { input: '../../etc/passwd', expected: false },
-      { input: 'module;rm -rf /', expected: false },
-      { input: '<script>alert("xss")</script>', expected: false }
-    ];
-
-    for (const testCase of testCases) {
-      const result = validateInput(testCase.input);
+    // Use shared framework test fixtures
+    for (const testCase of securityTestFixtures.moduleIds.slice(0, 4)) {
+      const result = securityValidationPatterns.quickValidate(
+        testCase.input, 
+        ['pathTraversal', 'commandInjection']
+      );
       console.log(`  Input "${testCase.input}": ${result.valid ? '✅ Valid' : '❌ Invalid'}`);
       if (!result.valid && testCase.expected === false) {
-        console.log(`    ⚠️ Security Issue: ${result.errors.join(', ')}`);
+        console.log(`    ⚠️ Security Issue: ${testCase.description}`);
       }
-    }
     }
     
     return true;
   } catch (error) {
     console.error('Input validation test failed:', error.message);
     return false;
-    }
   }
 }
 
 async function testSecurityMonitoring() {
   console.log('\n📊 Testing Security Monitoring...');
   try {
-    const { securityMonitor } = await import('../lib/security/SecurityMonitor.js');
+    const { securityMonitor, SecurityEventType, SecuritySeverity } = await import('../lib/security/SecurityMonitor.js');
     
-    // Test event logging
+    // Test event logging using shared framework
+    const testEvent = securityTestFixtures.securityEvents[0]; // Use first event
     securityMonitor.logEvent({
-      type: 'test_event',
-      severity: 'low',
+      type: testEvent.type as any, // Cast for compatibility
+      severity: testEvent.severity as any,
       source: 'minimal_example',
       details: { test: 'event logging test' },
       blocked: false,
@@ -96,7 +94,7 @@ async function testSecurityMonitoring() {
     console.error('Security monitoring test failed:', error.message);
     return false;
   }
-  }
+}
 
 async function testSecurityHeaders() {
   console.log('\n🛡️ Testing Security Headers...');
@@ -110,15 +108,12 @@ async function testSecurityHeaders() {
     });
 
     console.log('Security Headers:');
-    Object.entries(headers).forEach(([name, value]) => {
-      console.log(`  ${name}: ${value}`);
-    });
+    console.log(securityOutputFormatters.formatSecurityHeaders(headers));
     
     return true;
   } catch (error) {
-      console.error('Security headers test failed:', error.message);
-      return false;
-    }
+    console.error('Security headers test failed:', error.message);
+    return false;
   }
 }
 

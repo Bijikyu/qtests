@@ -5,22 +5,20 @@
 
 import { forceGC } from './garbageCollection';
 import { checkpointMemory } from './monitoringOrchestration';
-import qerrors from 'qerrors';
+import { handleMemoryError } from '../utils/errorHandling.js';
 
 import { clearGlobalRefs } from './globalCleanup';
 import { clearModuleCache } from './moduleCleanup';
+import { performGarbageCollection, performMemoryCleanup } from '../utils/memoryManagement.js';
 
 export const cleanupWithMemoryTracking = async (): Promise<void> => {
   checkpointMemory('pre-cleanup'); // Record memory state before cleanup for comparison
 
-  if ((global as any).gc) {
-    // Run garbage collection multiple times with delays to ensure thorough cleanup
-    // Multiple passes help catch objects that become eligible for GC in subsequent passes
-    for (let i = 0; i < 3; i++) {
-      (global as any).gc(); // Force garbage collection if available (requires --expose-gc flag)
-      await new Promise(resolve => setTimeout(resolve, 10)); // Fixed timeout - use safe delay value
-    }
-  }
+  await performGarbageCollection({
+    forceGC: true,
+    gcPasses: 3,
+    delayBetweenPasses: 10
+  });
 
   checkpointMemory('post-cleanup'); // Record final memory state to measure cleanup effectiveness
 };
@@ -33,7 +31,7 @@ export const aggressiveCleanup = (): void => {
     console.log(`Memory cleanup: cleared ${clearedModules} modules`); // Log cleanup success for debugging
   } catch (error: any) {
     // Log detailed error information for debugging while allowing cleanup to continue
-    qerrors(error, 'cleanupOperations.aggressiveCleanup: memory cleanup failed', {
+    handleMemoryError(error, 'aggressiveCleanup', {
       errorType: error.constructor?.name || 'Unknown',
       errorMessage: error?.message || String(error)
     });

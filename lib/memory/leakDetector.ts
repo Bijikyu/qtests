@@ -4,7 +4,13 @@
  */
 
 import { MemorySnapshotManager } from './snapshotManager.js';
-import qerrors from 'qerrors';
+import { handleMemoryError, getErrorMessage } from '../utils/errorHandling.js';
+import { 
+  getMemorySnapshot, 
+  analyzeMemoryGrowth, 
+  calculateMemoryDelta,
+  formatMemorySnapshot 
+} from '../utils/memoryManagement.js';
 
 export class MemoryLeakDetector {
   private snapshotManager: MemorySnapshotManager;
@@ -50,9 +56,9 @@ export class MemoryLeakDetector {
 
       return false;
     } catch (error: any) {
-      qerrors(error, 'leakDetector.detectLeaks: leak detection failed', {
+      handleMemoryError(error, 'detectLeaks', {
         snapshotCount: this.snapshotManager.getAllSnapshots().length,
-        errorMessage: error?.message || String(error),
+        errorMessage: getErrorMessage(error),
         errorType: error?.constructor?.name || 'Unknown'
       });
       return false;
@@ -80,9 +86,9 @@ export class MemoryLeakDetector {
         console.log('   ✅ No significant memory leaks detected');
       }
     } catch (error: any) {
-      qerrors(error, 'leakDetector.printSummary: summary print failed', {
+      handleMemoryError(error, 'printSummary', {
         snapshotCount: this.snapshotManager.getAllSnapshots().length,
-        errorMessage: error?.message || String(error),
+        errorMessage: getErrorMessage(error),
         errorType: error?.constructor?.name || 'Unknown'
       });
       console.log('   ❌ Failed to print memory summary');

@@ -5,105 +5,80 @@
  * that compiles and runs successfully.
  */
 
+import { 
+  securityTestFixtures, 
+  securityOutputFormatters, 
+  securityValidationPatterns,
+  securityTestRunner 
+} from './lib/security/SecurityTestFramework.js';
+
 /**
- * Test 1: Basic validation
+ * Test 1: Basic validation using shared framework
  */
-function test1_BasicValidation() {
+async function test1_BasicValidation() {
   console.log('\n1. Basic Security Validation Demo:');
-  const testModules = [
-    'user-service',           // ✅ Valid
-    '../../../etc/passwd',    // ❌ Path traversal
-    'module;rm -rf /',    // ❌ Command injection
-    'valid-module',          // ✅ Valid
-    '__proto__',             // ❌ Prototype pollution
-  ];
-
+  
+  // Use shared test fixtures and patterns
   console.log('Module ID Validation:');
-  testModules.forEach(module => {
-    const hasBadPattern = /[.;\\&|`$(){}[\]]/.test(module);
-    console.log(`  ${module}: ${hasBadPattern ? '❌ Invalid' : '✅ Valid'}`);
+  securityTestFixtures.moduleIds.forEach(testCase => {
+    const result = securityValidationPatterns.quickValidate(
+      testCase.input, 
+      ['commandInjection', 'prototypePollution']
+    );
+    const isValid = result.valid && testCase.expected;
+    console.log(`  ${testCase.input}: ${isValid ? '✅ Valid' : '❌ Invalid'} (${testCase.description})`);
   });
-  }
 
-  // Test 2: JSON validation
+  // Test JSON validation
   console.log('\n2. JSON Content Validation:');
-  const testJSONs = [
-    '{"user": "admin", "role": "user"}',           // ✅ Valid JSON
-    '{"__proto__": {"isAdmin": true}}',            // ❌ Prototype pollution
-    '<script>alert("xss")</script>',             // ❌ XSS attempt
-    '{"$where": "this.username == \\"admin\\""}',     // ❌ NoSQL injection
-    '{"valid": true}'                               // ✅ Valid simple JSON
-  ];
-
-  testJSONs.forEach((jsonString, index) => {
-    const hasBadPattern = /(__proto__|prototype|\$where|<script|javascript:)/i.test(json);
-    console.log(`  Test ${index + 1}: ${hasBadPattern ? '❌ Invalid' : '✅ Valid'}`);
+  securityTestFixtures.jsonStrings.forEach((testCase, index) => {
+    const result = securityValidationPatterns.quickValidate(
+      testCase.input, 
+      ['xss', 'prototypePollution', 'nosqlInjection']
+    );
+    const isValid = result.valid && testCase.expected;
+    console.log(`  Test ${index + 1}: ${isValid ? '✅ Valid' : '❌ Invalid'} (${testCase.description})`);
   });
 
-  // Test 3: Path validation
+  // Test path validation
   console.log('\n3. File Path Validation:');
-  const testPaths = [
-    '/tmp/test.txt',           // ✅ Valid path
-    '../../../etc/passwd',       // ❌ Path traversal
-    '/var/www/data',           // ✅ Valid path
-    '/etc/passwd',            // ❌ System file
-    'C:\\Windows\\System32'
-  ];
-
-  testPaths.forEach(testPath => {
-    const hasTraversal = /\.\.[\/\\]/.test(testPath);
-    const hasSystemAccess = /\/(etc|var|Windows|System)/.test(testPath);
-    const isValid = !hasTraversal && !hasSystemAccess;
-    console.log(`  ${testPath}: ${isValid ? '✅ Valid' : '❌ Invalid'}`);
+  securityTestFixtures.filePaths.forEach(testCase => {
+    const result = securityValidationPatterns.quickValidate(
+      testCase.input, 
+      ['pathTraversal', 'systemAccess']
+    );
+    const isValid = result.valid && testCase.expected;
+    console.log(`  ${testCase.input}: ${isValid ? '✅ Valid' : '❌ Invalid'} (${testCase.description})`);
   });
-}
 
   console.log('\n✅ Basic security validation completed');
   return true;
 }
 
 /**
- * Test 2: Security monitoring
+ * Test 2: Security monitoring using shared framework
  */
-function test2_SecurityMonitoring() {
+async function test2_SecurityMonitoring() {
   console.log('\n2. Security Monitoring Demo:');
   
-  // Simulate security events
-  const events = [
-    { type: 'command_injection_attempt', severity: 'high', details: 'rm -rf / command blocked' },
-    { type: 'path_traversal_attempt', severity: 'high', details: 'Path to /etc/passwd blocked' },
-    { type: 'json_injection_attempt', severity: 'medium', details: 'Prototype pollution attempt blocked' },
-    { type: 'rate_limit_exceeded', severity: 'medium', details: 'API rate limit activated' },
-    { type: 'unauthorized_access', severity: 'low', details: 'Invalid API key used' }
-  ];
-
   console.log('\n📝 Simulated Security Events:');
-  events.forEach((event, index) => {
-    const severityEmoji = {
-      high: '🔴',
-      medium: '🟡',
-      low: '🟠'
-    };
-    
-    console.log(`  Event ${index + 1}:`);
-    console.log(`    Type: ${event.type}`);
-    console.log(`    Severity: ${severityEmoji[event.severity]} ${event.severity.toUpperCase()}`);
-    console.log(`    Details: ${event.details}`);
+  securityTestFixtures.securityEvents.forEach((eventData) => {
+    console.log(securityOutputFormatters.formatSecurityEvent(eventData));
   });
 
   console.log('\n📊 Security Monitoring Statistics:');
+  const events = securityTestFixtures.securityEvents;
   console.log(`  Total Events: ${events.length}`);
   console.log(`  High Severity: ${events.filter(e => e.severity === 'high').length}`);
   console.log(`  Medium Severity: ${events.filter(e => e.severity === 'medium').length}`);
-    console.log(`  Low Severity: ${events.filter(e => e.severity === 'low').length}`);
-  }
+  console.log(`  Low Severity: ${events.filter(e => e.severity === 'low').length}`);
 
   console.log('\n✅ Security monitoring demonstration completed');
   return true;
 }
 
 /**
- * Test 3: Security headers
+ * Test 3: Security headers using shared framework
  */
 function test3_SecurityHeaders() {
   console.log('\n3. Security Headers Demo:');
@@ -118,17 +93,15 @@ function test3_SecurityHeaders() {
   };
 
   console.log('\n📝 Recommended Security Headers for Production:');
-  Object.entries(headers).forEach(([name, value]) => {
-    console.log(`  ${name}: ${value}`);
-  });
+  console.log(securityOutputFormatters.formatSecurityHeaders(headers));
 
   console.log('\n📋 Header Validation Rules:');
-    console.log('  ✓ Content Security Policy prevents XSS and code injection');
-    console.log(' ✓ X-Content-Type-Options prevents MIME sniffing');
-    console.log(' ✓ X-Frame-Options prevents clickjacking');
-    console.log(' ✓ X-XSS-Protection enables XSS filtering in browsers');
-    console.log(' ✓ Referrer-Policy controls referrer information leakage');
-    console.log(' ✓ Strict-Transport-Security enforces HTTPS');
+  console.log('  ✓ Content Security Policy prevents XSS and code injection');
+  console.log('  ✓ X-Content-Type-Options prevents MIME sniffing');
+  console.log('  ✓ X-Frame-Options prevents clickjacking');
+  console.log('  ✓ X-XSS-Protection enables XSS filtering in browsers');
+  console.log('  ✓ Referrer-Policy controls referrer information leakage');
+  console.log('  ✓ Strict-Transport-Security enforces HTTPS');
 
   console.log('\n✅ Security headers demonstration completed');
   return true;
@@ -218,7 +191,6 @@ function test5_SecurityBestPractices() {
         '✅ Use Referrer-Policy for privacy'
       ]
     },
-    },
     {
       category: 'Monitoring & Logging',
       practices: [
@@ -228,7 +200,6 @@ function test5_SecurityBestPractices() {
         '✅ Regular security audits and penetration testing',
         '✅ Monitor for anomalies and attack patterns'
       ]
-    }
     }
   ];
 
@@ -249,8 +220,8 @@ async function runSecurityDemo() {
   console.log('==============================================');
   
   try {
-    const success1 = test1_BasicValidation();
-    const success2 = test2_SecurityMonitoring();
+    const success1 = await test1_BasicValidation();
+    const success2 = await test2_SecurityMonitoring();
     const success3 = test3_SecurityHeaders();
     const success4 = test4_RateLimiting();
     const success5 = test5_SecurityBestPractices();
@@ -282,7 +253,6 @@ async function runSecurityDemo() {
   } catch (error) {
     console.error('❌ Security demo failed:', error);
     process.exit(1);
-  }
   }
 }
 

@@ -5,6 +5,7 @@
 
 import { logStart, logReturn } from '../logUtils.js';
 import { LoggingOptions, DEFAULT_OPTIONS } from './decoratorTypes.js';
+import { Timer } from '../utils/timingUtils.js';
 
 /**
  * Higher-order function that adds logging to any function
@@ -19,7 +20,7 @@ export function withLogging<T extends (...args: any[]) => any>(
   const functionName = name || fn.name || 'anonymous';
   
   return function (...args: any[]) {
-    const startTime = config.includeTiming ? Date.now() : 0;
+    const timer = new Timer(functionName);
     
     try {
       // Log function entry if configured
@@ -45,22 +46,16 @@ export function withLogging<T extends (...args: any[]) => any>(
               } else {
                 console.log(`${functionName}() completed`); // Simple completion log
               }
-              
-              // Log timing for async functions
-              if (config.includeTiming) {
-                const duration = Date.now() - startTime;
-                console.log(`${functionName}() took ${duration}ms`);
-              }
             }
             return asyncResult;
           })
           .catch((error: any) => {
             // Log async function errors
             if (config.logErrors) {
+              const timing = timer.stop();
               console.log(`${functionName}() error: ${error.message}`);
               if (config.includeTiming) {
-                const duration = Date.now() - startTime;
-                console.log(`${functionName}() failed after ${duration}ms`);
+                console.log(`${functionName}() failed after ${timing.formattedDuration}`);
               }
             }
             throw error; // Re-throw to maintain error flow
@@ -74,12 +69,6 @@ export function withLogging<T extends (...args: any[]) => any>(
         } else {
           console.log(`${functionName}() completed`); // Simple completion log
         }
-        
-        // Log timing for sync functions
-        if (config.includeTiming) {
-          const duration = Date.now() - startTime;
-          console.log(`${functionName}() took ${duration}ms`);
-        }
       }
       
       return result; // Return sync result
@@ -87,10 +76,10 @@ export function withLogging<T extends (...args: any[]) => any>(
     } catch (error: any) {
       // Log synchronous function errors
       if (config.logErrors) {
+        const timing = timer.stop();
         console.log(`${functionName}() error: ${error.message}`);
         if (config.includeTiming) {
-          const duration = Date.now() - startTime;
-          console.log(`${functionName}() failed after ${duration}ms`);
+          console.log(`${functionName}() failed after ${timing.formattedDuration}`);
         }
       }
       throw error; // Re-throw to maintain error flow
