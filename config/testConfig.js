@@ -1,3 +1,27 @@
 /** Testing Configuration using Jest built-in settings */
-import{config}from'dotenv';config();
-export const defaultTestTimeout=5000,defaultRetryAttempts=3,defaultRetryDelay=1000,maxConcurrentTests=10,testMemoryThreshold=100*1024*1024,jestVerbose=process.env.JEST_VERBOSE||'false',jestCoverage=process.env.JEST_COVERAGE||'false',jestCache=process.env.JEST_CACHE||'true',jestPassWithNoTests='true',integrationTestTimeout=60000,integrationTestRetryAttempts=5,integrationTestRetryDelay=5000,integrationTestCleanupDelay=1000,performanceTestDuration=30000,performanceTestSamples=1000,performanceTestThreshold=100;
+import './init.js';
+import { getEnvVar } from '../dist/utils/helpers/envManager.js';
+
+// Basic Test Configuration
+export const defaultTestTimeout = 5000;
+export const defaultRetryAttempts = 3;
+export const defaultRetryDelay = 1000;
+export const maxConcurrentTests = 10;
+export const testMemoryThreshold = 100 * 1024 * 1024;
+
+// Jest Configuration
+export const jestVerbose = getEnvVar('JEST_VERBOSE', 'false');
+export const jestCoverage = getEnvVar('JEST_COVERAGE', 'false');
+export const jestCache = getEnvVar('JEST_CACHE', 'true');
+export const jestPassWithNoTests = 'true';
+
+// Integration Test Configuration
+export const integrationTestTimeout = 60000;
+export const integrationTestRetryAttempts = 5;
+export const integrationTestRetryDelay = 5000;
+export const integrationTestCleanupDelay = 1000;
+
+// Performance Test Configuration
+export const performanceTestDuration = 30000;
+export const performanceTestSamples = 1000;
+export const performanceTestThreshold = 100;

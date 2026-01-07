@@ -5,8 +5,9 @@
 
 import winston from 'winston';
 import winstonDailyRotateFile from 'winston-daily-rotate-file';
+import { getEnvVar } from '../../utils/helpers/envManager.js';
 
-const NODE_ENV = process.env.NODE_ENV || 'development';
+const NODE_ENV = getEnvVar('NODE_ENV', 'development');
 
 export interface WinstonConfig {
   level?: string;

@@ -5,6 +5,8 @@
  * duplication across configuration-related modules.
  */
 
+import { safeWriteFile } from '../../utils/fileSystem/safeOperations.js';
+
 // Configuration interface
 export interface Configuration {
   [key: string]: any;
@@ -122,11 +124,9 @@ export class ConfigurationManager {
    * Save configuration to file
    */
   static async saveToFile(filePath: string): Promise<void> {
-    try {
-      const fs = await import('fs-extra');
-      await fs.writeFile(filePath, JSON.stringify(this.config, null, 2), 'utf8');
-    } catch (error) {
-      console.error(`❌ Failed to save config to ${filePath}:`, error);
+    const success = await safeWriteFile(filePath, JSON.stringify(this.config, null, 2), 'utf8');
+    if (!success) {
+      console.error(`❌ Failed to save config to ${filePath}`);
     }
   }
 

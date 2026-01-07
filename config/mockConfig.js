@@ -1,3 +1,20 @@
 /** Mocking Configuration using Jest built-in */
-import{config}from'dotenv';config();
-export const defaultMockStatusCode=200,defaultMockResponse={},defaultMockHeaders={'content-type':'application/json'},axiosStubTimeout=100,consoleMockLevels=['log','warn','error','info','debug'],consoleCaptureAll=process.env.CONSOLE_CAPTURE_ALL||'true',stubModules=['axios','winston','redis','mongoose','pg','mysql','aws-sdk'],stubModulePaths={axios:'./stubs/axios',winston:'./stubs/winston',redis:'./stubs/redis',mongoose:'./stubs/mongoose',pg:'./stubs/pg',mysql:'./stubs/mysql','aws-sdk':'./stubs/aws-sdk'};
+import './init.js';
+import { getEnvVar } from '../dist/utils/helpers/envManager.js';
+
+export const defaultMockStatusCode = 200;
+export const defaultMockResponse = {};
+export const defaultMockHeaders = { 'content-type': 'application/json' };
+export const axiosStubTimeout = 100;
+export const consoleMockLevels = ['log', 'warn', 'error', 'info', 'debug'];
+export const consoleCaptureAll = getEnvVar('CONSOLE_CAPTURE_ALL', 'true');
+export const stubModules = ['axios', 'winston', 'redis', 'mongoose', 'pg', 'mysql', 'aws-sdk'];
+export const stubModulePaths = {
+    axios: 'axios',
+    winston: 'winston',
+    redis: 'redis',
+    mongoose: 'mongoose',
+    pg: 'pg',
+    mysql: 'mysql',
+    'aws-sdk': 'aws-sdk'
+};

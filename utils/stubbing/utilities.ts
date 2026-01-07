@@ -7,6 +7,7 @@
 
 import * as sinon from 'sinon';
 import { withErrorLogging } from '../../lib/errorHandling/index.js';
+import { safeMethodCall } from '../helpers/safeExecution.js';
 
 /**
  * Get access to the underlying Sinon library
@@ -28,8 +29,8 @@ export function getSinonLibrary(): {library: typeof sinon} {
  */
 export function restoreAll(data: {restoreObject?: any} = {}): {success: boolean} {
   withErrorLogging(() => {
-    if (data.restoreObject && 'restore' in data.restoreObject && typeof data.restoreObject.restore === 'function') {
-      data.restoreObject.restore();
+    if (safeMethodCall(data.restoreObject, 'restore')) {
+      // Method called successfully
     } else {
       sinon.restore();
     }

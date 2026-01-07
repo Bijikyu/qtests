@@ -7,6 +7,7 @@
 
 import { EventEmitter } from 'events';
 import { CircuitBreakerStats, circuitBreakerRegistry } from './circuitBreaker.js';
+import { getEnvVar } from '../utils/helpers/envManager.js';
 
 export interface MonitoringConfig {
   enabled: boolean;
@@ -449,11 +450,11 @@ export class MonitoringSystem extends EventEmitter {
  */
 export const monitoringSystem = new MonitoringSystem({
   enabled: process.env.MONITORING_ENABLED !== 'false',
-  metricsInterval: parseInt(process.env.MONITORING_INTERVAL || '10000'),
+  metricsInterval: parseInt(getEnvVar('MONITORING_INTERVAL', '10000')),
   alertThresholds: {
-    errorRate: parseFloat(process.env.ALERT_ERROR_RATE || '5'),
-    responseTime: parseFloat(process.env.ALERT_RESPONSE_TIME || '1000'),
-    memoryUsage: parseFloat(process.env.ALERT_MEMORY_USAGE || '85')
+    errorRate: parseFloat(getEnvVar('ALERT_ERROR_RATE', '5')),
+    responseTime: parseFloat(getEnvVar('ALERT_RESPONSE_TIME', '1000')),
+    memoryUsage: parseFloat(getEnvVar('ALERT_MEMORY_USAGE', '85'))
   }
 });
 

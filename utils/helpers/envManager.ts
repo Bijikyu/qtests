@@ -119,4 +119,22 @@ export const configureEnv = (
   });
 };
 
+/**
+ * Initialize dotenv configuration with simple interface
+ * This function matches the pattern used across config files
+ */
+export const initializeDotenv = (): void => {
+  dotenv.config();
+};
+
+/**
+ * Gets an environment variable with a default fallback value
+ * @param key - Environment variable name
+ * @param defaultValue - Default value if variable is not set
+ * @returns Environment variable value or default
+ */
+export const getEnvVar = (key: string, defaultValue: string): string => {
+  return process.env[key] || defaultValue;
+};
+
 export { dotenv };

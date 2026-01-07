@@ -1,6 +1,7 @@
 /** Consolidated Method Stubbing Utilities */
 import sinon from 'sinon';
 import { withErrorLogging } from '../lib/errorHandling/index.js';
+import { validateObject, validateString } from './helpers/validation.js';
 
 // Re-export Sinon functionality
 export { 
@@ -86,10 +87,9 @@ export const createFakeXHR = () => ({
 export const stubMethod = (data: { obj: any, methodName: string, stubFn: StubFunction }): { restore: StubRestoreFunction } => {
   const restoreFunction = withErrorLogging(() => {
     // Validation
-    if (typeof data.obj !== 'object' || data.obj === null) {
-      throw new Error(`stubMethod expected object but received ${data.obj}`);
-    }
-    if (typeof data.methodName !== 'string' || !data.methodName?.trim()) {
+    validateObject(data.obj, 'stubMethod object');
+    validateString(data.methodName, 'stubMethod methodName');
+    if (!data.methodName?.trim()) {
       throw new Error(`stubMethod methodName must be a non-empty string, received ${data.methodName}`);
     }
     if (!(data.methodName in data.obj)) {

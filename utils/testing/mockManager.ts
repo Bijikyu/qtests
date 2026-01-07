@@ -6,6 +6,7 @@
  */
 
 import { logStart, logReturn } from '../../lib/logUtils.js';
+import { safeFunctionCall } from '../helpers/safeExecution.js';
 
 // Type definitions
 interface MockResponse {

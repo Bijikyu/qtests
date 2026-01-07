@@ -5,6 +5,8 @@
  * for API testing scenarios without requiring actual HTTP infrastructure.
  */
 
+import { createMockResponse, createJsonResponse } from '../http/mockResponse.js';
+
 // Type definitions for HTTP response objects
 interface MockResponse {
   status: (code: number) => MockResponse;

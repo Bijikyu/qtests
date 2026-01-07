@@ -8,6 +8,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
+import { validateArray } from '../../utils/helpers/validation.js';
 
 export interface PathValidationOptions {
   allowedExtensions?: string[];
@@ -91,9 +92,7 @@ export const validateSecurePaths = (
   allowedBase: string = process.cwd(),
   options: PathValidationOptions = {}
 ): string[] => {
-  if (!Array.isArray(paths)) {
-    throw new Error('Paths must be provided as an array');
-  }
+  validateArray(paths, 'paths');
 
   return paths.map(path => validateSecurePath(path, allowedBase, options));
 };

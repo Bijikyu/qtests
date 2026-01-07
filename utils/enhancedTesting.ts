@@ -1,5 +1,6 @@
 /** Enhanced Testing Support for Modern Frameworks */
 import qerrors from '../lib/qerrorsFallback.js';
+import { promiseWithTimeout } from './helpers/promiseUtils.js';
 export interface EnhancedTestConfig{enablePerformance?:boolean;enableMemoryProfiling?:boolean;enableErrorCapture?:boolean;timeout?:number;}
 export interface TestMetrics{duration:number;memoryBefore:number;memoryAfter:number;success:boolean;error?:string;}
 
@@ -11,7 +12,7 @@ const createTestRunner=(config:EnhancedTestConfig={})=>{
     async runTest<T>(testName:string,testFn:()=>Promise<T>):Promise<{result:T;metrics:TestMetrics}>{
       const startTime=Date.now();const memoryBefore=enableMemoryProfiling?getMemoryUsage():0;
       try{
-        const result=await Promise.race([testFn(),new Promise<never>((_,reject)=>setTimeout(()=>reject(new Error(`Test timeout after ${timeout}ms`)),timeout))]);
+        const result=await promiseWithTimeout(testFn(),timeout,`Test timeout after ${timeout}ms`);
         const endTime=Date.now();const memoryAfter=enableMemoryProfiling?getMemoryUsage():0;
         return{result,metrics:{duration:endTime-startTime,memoryBefore,memoryAfter,success:true}};}
       catch(error){
