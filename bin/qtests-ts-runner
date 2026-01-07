@@ -10,6 +10,8 @@ import path from 'path';
 import { spawn } from 'child_process';
 import os from 'os';
 import qerrors from '../dist/lib/qerrorsFallback.js';
+import { testDiscoveryCache } from '../lib/optimization/testDiscoveryCache.js';
+import { AdvancedMemoryLeakDetector } from '../lib/advancedMemoryLeakDetector.js';
 
 // ANSI color codes for terminal output
 const colors = {
@@ -33,52 +35,130 @@ const TEST_PATTERNS = [
   /_spec\.(js|ts|jsx|tsx)$/
 ];
 
-// Combined regex for faster pattern matching - FIXED: properly matches original patterns
+// Combined regex for faster pattern matching
 const COMBINED_TEST_PATTERN = /\.(test|spec)\.(js|ts|jsx|tsx)$|(_test|_spec)\.(js|ts|jsx|tsx)$/;
 
-// Cache for discovered tests to avoid repeated filesystem operations - FIXED: bounded cache with TTL
-const testDiscoveryCache = new Map();
-const CACHE_TTL = 30000; // 30 seconds cache TTL
-const MAX_CACHE_SIZE = 1000; // Prevent memory leaks
-
 class TestRunner {
+  private memoryDetector?: AdvancedMemoryLeakDetector;
+  private passedTests: number = 0;
+  private failedTests: number = 0;
+    private readonly MAX_CACHE_SIZE = 1000;
+    private configCache: string | null = null;
+  private testResults: any[] = [];
+    private startTime: number;
+    private testResults: any[] = [];
+  private startTime: number;
+  private configCache: string | null = null; // Cache for config discovery
+  private readonly MAX_CACHE_SIZE = 1000;
+
   constructor() {
     this.passedTests = 0;
     this.failedTests = 0;
     this.testResults = [];
     this.startTime = Date.now();
-    this.configCache = null; // Cache for config discovery
+    this.configCache = null;
+    this.initializeMemoryDetection();
   }
 
-  // Discover all test files in the project (from current working directory) - OPTIMIZED VERSION
+// Discover all test files in the project with optimized caching
   async discoverTests(dir = process.cwd(), depth = 0, maxDepth = 10, visited = new Set()) {
-    // Check cache first with TTL validation - FIXED: prevent stale cache and handle old format
     const cacheKey = `${dir}:${depth}:${maxDepth}`;
+    
+    // Try to get from optimized cache first
     const cached = testDiscoveryCache.get(cacheKey);
-    if (cached) {
-// Handle both old format (array) and new format (object with timestamp) - FIXED: remove stale cache entries
-if (cached) {
-        if (Array.isArray(cached)) {
-          // Old cache format - assume it's stale and remove it
-          testDiscoveryCache.delete(cacheKey);
-        } else {
-          // New cache format with timestamp
-          if ((Date.now() - cached.timestamp) < CACHE_TTL) {
-            return cached.files;
-          } else {
-            // Cache entry expired - remove it
-            testDiscoveryCache.delete(cacheKey);
-          }
+    if (cached) return cached;
+
+    const testFiles = await this.performDiscovery(dir, depth, maxDepth, visited);
+    
+    // Apply optional pattern filter via env
+    const pattern = process.env.QTESTS_PATTERN;
+    const finalFiles = pattern ? this.applyPatternFilter(testFiles, pattern) : testFiles;
+    
+    // Cache the result
+    testDiscoveryCache.set(cacheKey, finalFiles);
+    
+    return finalFiles;
+  }
+
+  // Separate method for the actual discovery logic
+  private async performDiscovery(dir: string, depth: number, maxDepth: number, visited: Set<string>): Promise<string[]> {
+    const testFiles: string[] = [];
+    if (depth > maxDepth) return testFiles;
+    
+    // Cycle detection
+    let realPath: string;
+    try {
+      realPath = await fs.promises.realpath(dir);
+    } catch (error) {
+      qerrors(error as Error, 'testRunner.performDiscovery: realpath failed', { directory: dir, depth });
+      return testFiles;
+    }
+    
+    if (visited.has(realPath)) {
+      qerrors(new Error('Directory cycle detected'), 'testRunner.performDiscovery: cycle prevention', { directory: dir });
+      return testFiles;
+    }
+    visited.add(realPath);
+    
+    try {
+      const entries = await fs.promises.readdir(dir, { withFileTypes: true });
+      const pendingDirs: string[] = [];
+      const pathSep = path.sep;
+      
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        
+        // Skip unnecessary directories and files
+        if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'demo') continue;
+        
+        if (entry.isDirectory()) {
+          pendingDirs.push(fullPath);
+        } else if (entry.isFile() && COMBINED_TEST_PATTERN.test(entry.name)) {
+          // Skip tests in ignored directories
+          if (fullPath.includes(`${pathSep}__mocks__${pathSep}`)) continue;
+          if (fullPath.includes(`${pathSep}generated-tests${pathSep}`) && !/GeneratedTest/.test(entry.name)) continue;
+          testFiles.push(fullPath);
         }
       }
       
-      // Clean up old cache entries to prevent memory leaks - FIXED: move cleanup outside cache logic
-      if (testDiscoveryCache.size > MAX_CACHE_SIZE) {
-        // Remove 25% of entries when over limit to maintain reasonable size
-        const entriesToRemove = Math.floor(testDiscoveryCache.size * 0.25);
-        const keysToRemove = Array.from(testDiscoveryCache.keys()).slice(0, entriesToRemove);
-        keysToRemove.forEach(key => testDiscoveryCache.delete(key));
+      // Process subdirectories in parallel
+      if (pendingDirs.length > 0) {
+        const dirResults = await Promise.all(
+          pendingDirs.map(fullPath => this.discoverTests(fullPath, depth + 1, maxDepth, new Set(visited)))
+        );
+        testFiles.push(...dirResults.flat());
       }
+    } catch (error) {
+      qerrors(error as Error, 'testRunner.performDiscovery: directory read failed', { directory: dir, depth });
+    } finally {
+      visited.delete(realPath);
+    }
+    
+    return testFiles;
+  }
+
+  // Apply regex pattern filter with error handling
+  private applyPatternFilter(files: string[], pattern: string): string[] {
+    try {
+      const rx = new RegExp(pattern);
+      return files.filter(f => rx.test(f));
+    } catch (error) {
+      qerrors(error as Error, 'testRunner.applyPatternFilter: pattern compilation failed', { pattern });
+      return files; // Return unfiltered on invalid pattern
+    }
+  }
+        }
+      }
+      
+// Clean up old cache entries to prevent memory leaks
+  private cleanupCache() {
+    if (testDiscoveryCache.size > MAX_CACHE_SIZE) {
+      // Remove 25% of entries when over limit to maintain reasonable size
+      const entriesToRemove = Math.floor(testDiscoveryCache.size * 0.25);
+      const keysToRemove = Array.from(testDiscoveryCache.keys()).slice(0, entriesToRemove);
+      keysToRemove.forEach(key => testDiscoveryCache.delete(key));
+    }
+  }
         }
       }
       }
@@ -191,131 +271,141 @@ if (cached) {
     return testFiles;
   }
 
+  // Helper method to build Jest arguments
+  buildJestArgs(testFile, config) {
+    const jestArgs = [];
+    if (config) jestArgs.push('--config', config);
+    jestArgs.push('--passWithNoTests');
+    
+    const fileWorkers = process.env.QTESTS_FILE_WORKERS ? String(process.env.QTESTS_FILE_WORKERS) : '';
+    const inBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
+    
+    jestArgs.push(testFile);
+    if (inBand) {
+      jestArgs.push('--runInBand');
+    } else if (fileWorkers) {
+      jestArgs.push(`--maxWorkers=${fileWorkers}`);
+    }
+    jestArgs.push('--cache', '--no-coverage');
+    return jestArgs;
+  }
+
+  // Helper method to create sanitized environment
+  createSanitizedEnv() {
+    const allowedEnvVars = ['NODE_ENV', 'NODE_OPTIONS', 'QTESTS_SILENT', 'QTESTS_INBAND', 'QTESTS_CONCURRENCY'];
+    const sanitizedEnv = {};
+    
+    for (const key of allowedEnvVars) {
+      if (process.env[key] !== undefined) {
+        sanitizedEnv[key] = process.env[key];
+      }
+    }
+    
+    return {
+      ...sanitizedEnv,
+      NODE_ENV: 'test',
+      NODE_OPTIONS: [process.env.NODE_OPTIONS || '', '--experimental-vm-modules'].filter(Boolean).join(' ').trim()
+    };
+  }
+
+  // Helper method to spawn Jest process
+  spawnJestProcess(testFile, jestArgs, startTime) {
+    let stdout = '';
+    let stderr = '';
+    
+    return new Promise((resolve) => {
+      const child = spawn('jest', jestArgs, {
+        stdio: ['pipe', 'pipe', 'pipe'],
+        shell: false, // CRITICAL: Remove shell to prevent command injection
+        env: this.createSanitizedEnv(),
+        timeout: 300000 // 5 minute timeout per test file
+      });
+
+      child.stdout.on('data', (data) => { stdout += data.toString(); });
+      child.stderr.on('data', (data) => { stderr += data.toString(); });
+
+      child.on('close', (code) => {
+        const duration = Date.now() - startTime;
+        let output = stdout + stderr;
+        if (code !== 0 && !output.trim()) {
+          output = 'No output captured from jest. Possible worker crash or environment restriction.';
+        }
+        resolve({ file: testFile, success: code === 0, duration, output, stdout, stderr });
+      });
+
+      child.on('error', (err) => {
+        qerrors(err, 'testRunner.runTestFile: jest process spawn failed', {
+          testFile,
+          jestArgs,
+          errorType: err.constructor.name,
+          errorMessage: err.message
+        });
+        const duration = Date.now() - startTime;
+        const msg = (stderr && stderr.trim()) || (err && err.message) || 'Runner error';
+        resolve({ file: testFile, success: false, duration, output: msg, stdout, stderr });
+      });
+
+      if (child.timeout) {
+        child.on('timeout', () => {
+          qerrors(new Error('Test execution timeout'), 'testRunner.runTestFile: jest process timeout', {
+            testFile,
+            timeoutMs: 300000,
+            duration: Date.now() - startTime
+          });
+          child.kill('SIGTERM');
+          const duration = Date.now() - startTime;
+          resolve({ 
+            file: testFile, 
+            success: false, 
+            duration, 
+            output: 'Test execution timed out after 5 minutes', 
+            stdout, 
+            stderr 
+          });
+        });
+      }
+    });
+  }
+
+  // Helper method to discover and cache config
+  async discoverConfig() {
+    if (this.configCache !== null) return this.configCache;
+    
+    const configCandidates = [
+      path.join(process.cwd(), 'config', 'jest.config.mjs'),
+      path.join(process.cwd(), 'jest.config.mjs')
+    ];
+    
+    try {
+      for (const candidate of configCandidates) {
+        try {
+          if (await fs.promises.access(candidate).then(() => true).catch(() => false)) {
+            this.configCache = candidate;
+            return candidate;
+          }
+        } catch { continue; }
+      }
+      this.configCache = null;
+      return null;
+    } catch (error) {
+      qerrors(error as Error, 'testRunner.discoverConfig: config discovery failed', {
+        configCandidates,
+        errorType: error.constructor.name,
+        errorMessage: error instanceof Error ? error.message : String(error)
+      });
+      this.configCache = null;
+      return null;
+    }
+  }
+
 // Run a single test file via Jest and capture output - OPTIMIZED VERSION
   async runTestFile(testFile) {
     const spawnOnce = async () => {
       const startTime = Date.now();
-      let stdout = '';
-      let stderr = '';
-
       try {
-        // Use cached config discovery to avoid repeated filesystem checks
-        let cfg = this.configCache;
-        if (cfg === null) {
-          // First time discovery - cache the result
-          const configCandidates = [
-            path.join(process.cwd(), 'config', 'jest.config.mjs'),
-            path.join(process.cwd(), 'jest.config.mjs')
-          ];
-          try {
-            for (const candidate of configCandidates) {
-              try {
-                if (await fs.promises.access(candidate).then(() => true).catch(() => false)) {
-                  cfg = candidate;
-                  this.configCache = cfg;
-                  break;
-                }
-              } catch { continue; }
-            }
-            // Cache null result if no config found
-            if (cfg === undefined) {
-              this.configCache = null;
-            }
-          } catch (error) {
-            qerrors(error as Error, 'testRunner.runTestFile: config discovery failed', {
-              testFile,
-              configCandidates,
-              errorType: error.constructor.name,
-              errorMessage: error instanceof Error ? error.message : String(error)
-            });
-            this.configCache = null;
-          }
-        }
-        
-        const jestArgs = [];
-        if (cfg) {
-          jestArgs.push('--config', cfg);
-        }
-        jestArgs.push('--passWithNoTests');
-        // Per-file execution tuning: allow in-band or worker override via env
-        const fileWorkers = process.env.QTESTS_FILE_WORKERS ? String(process.env.QTESTS_FILE_WORKERS) : '';
-        const inBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
-        jestArgs.push(testFile);
-        if (inBand) {
-          jestArgs.push('--runInBand');
-        } else if (fileWorkers) {
-          jestArgs.push(`--maxWorkers=${fileWorkers}`);
-        }
-        jestArgs.push('--cache', '--no-coverage');
-
-        // Validate and sanitize jest arguments - optimized to avoid full object copy
-        const allowedEnvVars = ['NODE_ENV', 'NODE_OPTIONS', 'QTESTS_SILENT', 'QTESTS_INBAND', 'QTESTS_CONCURRENCY'];
-        const sanitizedEnv = {};
-        
-        // Only copy allowed environment variables
-        for (const key of allowedEnvVars) {
-          if (process.env[key] !== undefined) {
-            sanitizedEnv[key] = process.env[key];
-          }
-        }
-
-        return new Promise((resolve) => {
-          const child = spawn('jest', jestArgs, {
-            stdio: ['pipe', 'pipe', 'pipe'],
-            shell: false, // CRITICAL: Remove shell to prevent command injection
-            env: {
-              ...sanitizedEnv,
-              NODE_ENV: 'test',
-              NODE_OPTIONS: [process.env.NODE_OPTIONS || '', '--experimental-vm-modules'].filter(Boolean).join(' ').trim()
-            },
-            timeout: 300000 // 5 minute timeout per test file
-          });
-
-          child.stdout.on('data', (data) => { stdout += data.toString(); });
-          child.stderr.on('data', (data) => { stderr += data.toString(); });
-
-          child.on('close', (code) => {
-            const duration = Date.now() - startTime;
-            let output = stdout + stderr;
-            if (code !== 0 && !output.trim()) {
-              output = 'No output captured from jest. Possible worker crash or environment restriction.';
-            }
-            resolve({ file: testFile, success: code === 0, duration, output, stdout, stderr });
-          });
-
-          child.on('error', (err) => {
-            qerrors(err, 'testRunner.runTestFile: jest process spawn failed', {
-              testFile,
-              jestArgs,
-              errorType: err.constructor.name,
-              errorMessage: err.message
-            });
-            const duration = Date.now() - startTime;
-            const msg = (stderr && stderr.trim()) || (err && err.message) || 'Runner error';
-            resolve({ file: testFile, success: false, duration, output: msg, stdout, stderr });
-          });
-
-          // Handle process timeout
-          if (child.timeout) {
-            child.on('timeout', () => {
-              qerrors(new Error('Test execution timeout'), 'testRunner.runTestFile: jest process timeout', {
-                testFile,
-                timeoutMs: 300000,
-                duration: Date.now() - startTime
-              });
-              child.kill('SIGTERM');
-              const duration = Date.now() - startTime;
-              resolve({ 
-                file: testFile, 
-                success: false, 
-                duration, 
-                output: 'Test execution timed out after 5 minutes', 
-                stdout, 
-                stderr 
-              });
-            });
-          }
-        });
+        const config = await this.discoverConfig();
+        const jestArgs = this.buildJestArgs(testFile, config);
+        return await this.spawnJestProcess(testFile, jestArgs, startTime);
       } catch (error) {
         qerrors(error as Error, 'testRunner.runTestFile: test execution setup failed', {
           testFile,
@@ -357,142 +447,57 @@ if (cached) {
     }
     return first;
   }
-            } catch { continue; }
-          }
-        } catch (error) {
-          qerrors(error as Error, 'testRunner.runTestFile: config discovery failed', {
-            testFile,
-            configCandidates,
-            errorType: error.constructor.name,
-            errorMessage: error instanceof Error ? error.message : String(error)
-          });
-        }
-        
-        const jestArgs = [];
-        if (cfg) {
-          jestArgs.push('--config', cfg);
-        }
-        jestArgs.push('--passWithNoTests');
-        // Per-file execution tuning: allow in-band or worker override via env
-        const fileWorkers = process.env.QTESTS_FILE_WORKERS ? String(process.env.QTESTS_FILE_WORKERS) : '';
-        const inBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
-        jestArgs.push(testFile);
-        if (inBand) {
-          jestArgs.push('--runInBand');
-        } else if (fileWorkers) {
-          jestArgs.push(`--maxWorkers=${fileWorkers}`);
-        }
-        jestArgs.push('--cache', '--no-coverage');
-
-        // Validate and sanitize jest arguments - optimized to avoid full object copy
-        const allowedEnvVars = ['NODE_ENV', 'NODE_OPTIONS', 'QTESTS_SILENT', 'QTESTS_INBAND', 'QTESTS_CONCURRENCY'];
-        const sanitizedEnv = {};
-        
-        // Only copy allowed environment variables
-        for (const key of allowedEnvVars) {
-          if (process.env[key] !== undefined) {
-            sanitizedEnv[key] = process.env[key];
-          }
-        }
-
-        const child = spawn('jest', jestArgs, {
-          stdio: ['pipe', 'pipe', 'pipe'],
-          shell: false, // CRITICAL: Remove shell to prevent command injection
-          env: {
-            ...sanitizedEnv,
-            NODE_ENV: 'test',
-            NODE_OPTIONS: [process.env.NODE_OPTIONS || '', '--experimental-vm-modules'].filter(Boolean).join(' ').trim()
-          },
-          timeout: 300000 // 5 minute timeout per test file
-        });
-
-        child.stdout.on('data', (data) => { stdout += data.toString(); });
-        child.stderr.on('data', (data) => { stderr += data.toString(); });
-
-        child.on('close', (code) => {
-          const duration = Date.now() - startTime;
-          let output = stdout + stderr;
-          if (code !== 0 && !output.trim()) {
-            output = 'No output captured from jest. Possible worker crash or environment restriction.';
-          }
-          resolve({ file: testFile, success: code === 0, duration, output, stdout, stderr });
-        });
-
-        child.on('error', (err) => {
-          qerrors(err, 'testRunner.runTestFile: jest process spawn failed', {
-            testFile,
-            jestArgs,
-            errorType: err.constructor.name,
-            errorMessage: err.message
-          });
-          const duration = Date.now() - startTime;
-          const msg = (stderr && stderr.trim()) || (err && err.message) || 'Runner error';
-          resolve({ file: testFile, success: false, duration, output: msg, stdout, stderr });
-        });
-
-        // Handle process timeout
-        if (child.timeout) {
-          child.on('timeout', () => {
-            qerrors(new Error('Test execution timeout'), 'testRunner.runTestFile: jest process timeout', {
-              testFile,
-              timeoutMs: 300000,
-              duration: Date.now() - startTime
-            });
-            child.kill('SIGTERM');
-            const duration = Date.now() - startTime;
-            resolve({ 
-              file: testFile, 
-              success: false, 
-              duration, 
-              output: 'Test execution timed out after 5 minutes', 
-              stdout, 
-              stderr 
-            });
-          });
-        }
-      } catch (error) {
-        qerrors(error as Error, 'testRunner.runTestFile: test execution setup failed', {
-          testFile,
-          errorType: error.constructor.name,
-          errorMessage: error instanceof Error ? error.message : String(error)
-        });
-        const duration = Date.now() - startTime;
-        resolve({ 
-          file: testFile, 
-          success: false, 
-          duration, 
-          output: `Test setup failed: ${error instanceof Error ? error.message : String(error)}`, 
-          stdout: '', 
-          stderr: '' 
-        });
-      }
-    });
-
-    // First attempt
-    const first = await spawnOnce([]);
-    // Detect worker crash signature and retry in-band automatically
-    const crashed = /A jest worker process [^\n]* crashed/i.test(first.output || '');
-    const alreadyInBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
-    if (!first.success && crashed && !alreadyInBand) {
-      process.stderr.write(`${colors.yellow}Retrying in-band due to worker crash: ${testFile}${colors.reset}\n`);
-      // Store original environment value
-      const originalInBand = process.env.QTESTS_INBAND;
-      process.env.QTESTS_INBAND = '1';
-      try {
-        return await this.runTestFile(testFile);
-      } finally {
-        // Restore original environment completely
-        if (originalInBand) {
-          process.env.QTESTS_INBAND = originalInBand;
-        } else {
-          delete process.env.QTESTS_INBAND;
-        }
-      }
-    }
-    return first;
   }
 
-  // Print colored status indicator
+  // Initialize memory leak detection
+  initializeMemoryDetection() {
+    if (process.env.QTESTS_MEMORY_DETECTION === 'false') return;
+    
+    try {
+      this.memoryDetector = new AdvancedMemoryLeakDetector();
+      
+      // Set up memory leak alerts
+      this.memoryDetector.on('alert', (alert) => {
+        const color = alert.type === 'critical' ? colors.red : colors.yellow;
+        console.log(`${color}⚠ Memory Alert [${alert.type.toUpperCase()}]: ${alert.message}${colors.reset}`);
+        console.log(`  Heap growth: ${alert.analysis.growthRate.toFixed(2)} MB/min`);
+        console.log(`  Current heap: ${alert.snapshot.heapUsed} MB`);
+        
+        // Log to qerrors for external monitoring
+        qerrors(new Error(alert.message), 'testRunner.memory.leak', {
+          alertType: alert.type,
+          heapUsed: alert.snapshot.heapUsed,
+          growthRate: alert.analysis.growthRate,
+          leakProbability: alert.analysis.leakProbability,
+          trend: alert.analysis.trend
+        });
+      });
+      
+      this.memoryDetector.start();
+    } catch (error) {
+      console.log('Memory leak detection initialization failed, continuing without it');
+}
+
+  // Cleanup method for proper resource management
+  cleanup() {
+    // Stop memory detection
+    if (this.memoryDetector) {
+      this.memoryDetector.stop();
+    }
+    
+    this.testResults = [];
+    this.passedTests = 0;
+    this.failedTests = 0;
+    delete this.startTime;
+    delete this._cleanedUp;
+    
+    // Force garbage collection if available
+    if (global.gc) {
+      global.gc();
+    }
+  }
+
+// Print colored status indicator
   printStatus(success, text) {
     const indicator = success ? `${colors.green}${colors.bold}✓${colors.reset}` : `${colors.red}${colors.bold}✗${colors.reset}`;
     console.log(`${indicator} ${text}`);

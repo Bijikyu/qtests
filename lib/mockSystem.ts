@@ -20,6 +20,7 @@
 import { Module } from 'module';
 import * as path from 'path';
 import * as fs from 'fs';
+import { validateSecurePath, VALIDATORS } from './security/pathValidator.js';
 
 type MockFactory = () => any;
 
@@ -31,9 +32,12 @@ interface MockEntry {
 class MockRegistry {
   private map = new Map<string, MockEntry>();
   private installed = false;
+  private esmInstalled = false;
   private _origLoad: any = null;
   private _installing = false;
+  private _esmInstalling = false;
   private _lockMap = new Map<string, Promise<any>>();
+  private _importMap: { [key: string]: any } = {};
 
   register(name: string, factory: MockFactory): void {
     const key = String(name).trim();
@@ -128,6 +132,11 @@ class MockRegistry {
 
   list(): string[] { return Array.from(this.map.keys()); }
 
+  async installHooks(): Promise<void> {
+    this.installRequireHook();
+    await this.installESMHook();
+  }
+
   installRequireHook(): void {
     if (this.installed || this._installing) return;
     
@@ -157,6 +166,60 @@ class MockRegistry {
     }
   }
 
+  async installESMHook(): Promise<void> {
+    if (this.esmInstalled || this._esmInstalling) return;
+    
+    this._esmInstalling = true;
+    
+    try {
+      // Register import maps and hooks for ESM support
+      const globalObj = globalThis as any;
+      if (typeof globalObj.register !== 'function') {
+        // Node.js import hooks not available, fallback to import map manipulation
+        this.setupImportMapFallback();
+        this.esmInstalled = true;
+        return;
+      }
+
+      // Use experimental Node.js import hooks if available
+      const self = this;
+      
+      try {
+        // Register a simple import interceptor
+        globalObj.register = function(specifier: string, parent: string, defaultImport: any) {
+          if (self.has(specifier)) {
+            return self._importMap[specifier] || (self._importMap[specifier] = self.getSync(specifier));
+          }
+          return defaultImport;
+        };
+        
+        this.esmInstalled = true;
+      } catch (error) {
+        // Fallback to import map approach
+        this.setupImportMapFallback();
+        this.esmInstalled = true;
+      }
+    } finally {
+      this._esmInstalling = false;
+    }
+  }
+
+  private setupImportMapFallback(): void {
+    // Create import map overrides for commonly mocked modules
+    const globalObj = globalThis as any;
+    const originalImport = globalObj.import;
+    const self = this;
+    
+    if (typeof originalImport === 'function') {
+      globalObj.import = async function(specifier: string, parent?: any) {
+        if (self.has(specifier)) {
+          return self._importMap[specifier] || (self._importMap[specifier] = await self.get(specifier));
+        }
+        return originalImport.call(this, specifier, parent);
+      };
+    }
+  }
+
   private evictRequireCache(moduleName: string): void {
     // Best effort: remove cache entries that look like this package name under node_modules
     try {
@@ -180,53 +243,13 @@ export function registerDefaultMocks(): void {
   mockRegistry.register('axios', () => {
     let axiosStub;
     try { 
-      // Validate path to prevent traversal - use absolute path resolution and normalize
-      const axiosPath = require.resolve('../stubs/axios.ts');
-      const resolvedPath = path.normalize(path.resolve(axiosPath));
-      const expectedDir = path.normalize(path.resolve(process.cwd(), 'stubs'));
-      
-      // More robust path validation - check for directory traversal attempts
-      if (!resolvedPath.startsWith(expectedDir + path.sep) && resolvedPath !== expectedDir) {
-        throw new Error('Invalid stub path - outside expected directory');
-      }
-      
-      // Additional safety check - double-check no directory traversal after all validations
-      // This is redundant with the directory check above but provides additional safety
-      const relativePath = path.relative(expectedDir, resolvedPath);
-      if (relativePath.startsWith('..') || relativePath.includes(path.sep + '..')) {
-        throw new Error('Invalid stub path - directory traversal detected');
-      }
-      
-      // Prevent infinite recursion - check if we're already loading this specific file
-      if (resolvedPath === __filename) {
-        throw new Error('Recursive stub loading detected');
-      }
-      
+      // Use centralized path validation
+      const axiosPath = VALIDATORS.stubFile('../stubs/axios.ts');
       axiosStub = require(axiosPath).default; 
     } catch (tsError) {
       // TypeScript stub failed, try JavaScript
       try { 
-        const axiosJsPath = require.resolve('../stubs/axios.js');
-        const resolvedPath = path.normalize(path.resolve(axiosJsPath));
-        const expectedDir = path.normalize(path.resolve(process.cwd(), 'stubs'));
-        
-        // More robust path validation
-        if (!resolvedPath.startsWith(expectedDir + path.sep) && resolvedPath !== expectedDir) {
-          throw new Error('Invalid stub path - outside expected directory');
-        }
-        
-        // Additional safety check - double-check no directory traversal after all validations
-        // This is redundant with the directory check above but provides additional safety
-        const relativePath = path.relative(expectedDir, resolvedPath);
-        if (relativePath.startsWith('..') || relativePath.includes(path.sep + '..')) {
-          throw new Error('Invalid stub path - directory traversal detected');
-        }
-        
-        // Prevent infinite recursion
-        if (resolvedPath === __filename) {
-          throw new Error('Recursive stub loading detected');
-        }
-        
+        const axiosJsPath = VALIDATORS.stubFile('../stubs/axios.js');
         axiosStub = require(axiosJsPath).default; 
       } catch (jsError) {
         // Both stubs failed, use fallback
@@ -239,62 +262,23 @@ export function registerDefaultMocks(): void {
   mockRegistry.register('winston', () => {
     let winstonStub;
     try { 
-        // Validate path to prevent traversal - use proper path resolution with security checks
-        const winstonPath = require.resolve('../stubs/winston.ts');
-        const resolvedPath = path.normalize(path.resolve(winstonPath));
-        const expectedDir = path.normalize(path.resolve(process.cwd(), 'stubs'));
-        
-        // Strict path validation - ensure resolved path is within expected directory
-        if (!resolvedPath.startsWith(expectedDir + path.sep) && resolvedPath !== expectedDir) {
-          throw new Error('Invalid stub path - outside expected directory');
-        }
-        
-        // Additional safety check - prevent directory traversal
-        const relativePath = path.relative(expectedDir, resolvedPath);
-        if (relativePath.startsWith('..') || relativePath.includes(path.sep + '..')) {
-          throw new Error('Invalid stub path - directory traversal detected');
-        }
+      const winstonPath = VALIDATORS.stubFile('../stubs/winston.ts');
       winstonStub = require(winstonPath).default; 
     } catch (tsError) {
-      // TypeScript stub failed, try JavaScript
       try { 
-        const winstonJsPath = require.resolve('../stubs/winston.js');
-        const resolvedPath = path.normalize(path.resolve(winstonJsPath));
-        const expectedDir = path.normalize(path.resolve(process.cwd(), 'stubs'));
-        if (!resolvedPath.startsWith(expectedDir + path.sep) && resolvedPath !== expectedDir) {
-          throw new Error('Invalid stub path - outside expected directory');
-        }
-        const relativePath = path.relative(expectedDir, resolvedPath);
-        if (relativePath.startsWith('..') || relativePath.includes(path.sep + '..')) {
-          throw new Error('Invalid stub path - directory traversal detected');
-        }
+        const winstonJsPath = VALIDATORS.stubFile('../stubs/winston.js');
         winstonStub = require(winstonJsPath).default; 
       } catch (jsError) {
-        // Both stubs failed, use fallback
         winstonStub = { createLogger: () => ({ error() {}, warn() {}, info() {}, debug() {}, verbose() {}, silly() {} }), format: {}, transports: {} };
       }
     }
     return winstonStub || { createLogger: () => ({ error() {}, warn() {}, info() {}, debug() {}, verbose() {}, silly() {} }), format: {}, transports: {} };
   });
   // mongoose: if projects still import it in unit tests, hand back a tiny proxy
-  mockRegistry.register('mongoose', () => {
+mockRegistry.register('mongoose', () => {
     // Prefer local manual mock if present in client repo via Jest mapping; otherwise a safe object
     try { 
-        // Secure path resolution - use absolute path to prevent traversal
-        const expectedDir = path.resolve(process.cwd(), '__mocks__');
-        const mongoosePath = path.join(expectedDir, 'mongoose.js');
-        
-        // Verify the file exists and is within expected directory
-        if (!fs.existsSync(mongoosePath)) {
-          throw new Error('Mock file not found');
-        }
-        
-        // Final security check - ensure path is within expected directory
-        // Use path.relative() for cross-platform directory checking
-        const relativePath = path.relative(expectedDir, mongoosePath);
-        if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
-          throw new Error('Invalid mock path - outside expected directory');
-        }
+      const mongoosePath = VALIDATORS.mockFile('__mocks__/mongoose.js');
       return require(mongoosePath); 
     } catch (error) {
       // Fall back to safe object if manual mock unavailable
@@ -303,8 +287,8 @@ export function registerDefaultMocks(): void {
   });
 }
 
-export function installMocking(): void {
-  mockRegistry.installRequireHook();
+export async function installMocking(): Promise<void> {
+  await mockRegistry.installHooks();
 }
 
 // Public facade used by index.ts

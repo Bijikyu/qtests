@@ -64,7 +64,7 @@ async function setup(): Promise<void> {
     
     // Perform the same setup as root setup.js
     registerDefaultMocks();
-    installMocking();
+    await installMocking();
     
     // Honor CI silence toggle to reduce noise
     const shouldLog = !((qtestsSilent || 'false') === '1' || (qtestsSilent || 'false') === 'true');

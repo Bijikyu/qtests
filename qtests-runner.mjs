@@ -10,8 +10,8 @@
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
-import qerrorsDefault from 'qerrors';
-const { create: qerrors } = qerrorsDefault;
+import qerrorsModule from 'qerrors';
+const { qerrors } = qerrorsModule;
 
 // Path validation utilities for security
 function validatePath(inputPath, allowedBase = process.cwd()) {
@@ -107,7 +107,7 @@ class TestRunner {
     delete this._cleanedUp;
     
     // Clear any remaining event listeners
-    this.removeAllListeners();
+    // Note: TestRunner doesn't extend EventEmitter, so no listeners to clear
     
     // Force garbage collection if available
     if (global.gc) {
@@ -460,7 +460,7 @@ class TestRunner {
 // Run the test suite
 const runner = new TestRunner();
 runner.run().catch(error => {
-  qerrors.create(error, 'qtests-runner: test runner failed', {
+  qerrors(error, 'qtests-runner: test runner failed', {
     errorType: error.constructor?.name || 'unknown',
     errorMessage: error?.message || String(error)
   });
