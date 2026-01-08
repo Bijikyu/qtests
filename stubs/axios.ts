@@ -76,6 +76,9 @@ interface MockAxiosInstance {
   delete<T = any>(url: string, config?: MockAxiosRequestConfig): Promise<MockAxiosResponse<T>>;
   head<T = any>(url: string, config?: MockAxiosRequestConfig): Promise<MockAxiosResponse<T>>;
   options<T = any>(url: string, config?: MockAxiosRequestConfig): Promise<MockAxiosResponse<T>>;
+  postForm<T = any>(url: string, data?: any, config?: MockAxiosRequestConfig): Promise<MockAxiosResponse<T>>;
+  putForm<T = any>(url: string, data?: any, config?: MockAxiosRequestConfig): Promise<MockAxiosResponse<T>>;
+  patchForm<T = any>(url: string, data?: any, config?: MockAxiosRequestConfig): Promise<MockAxiosResponse<T>>;
   getUri(config?: MockAxiosRequestConfig): string;
   interceptors: MockInterceptors;
   defaults: MockDefaults;
@@ -291,6 +294,12 @@ function createAxiosInstance(defaultConfig: MockAxiosRequestConfig = {}): MockAx
       request<T>({ ...config, method: 'head', url }),
     options: <T = any>(url: string, config?: MockAxiosRequestConfig) => 
       request<T>({ ...config, method: 'options', url }),
+    postForm: <T = any>(url: string, data?: any, config?: MockAxiosRequestConfig) => 
+      request<T>({ ...config, method: 'post', url, data, headers: { ...config?.headers, 'Content-Type': 'multipart/form-data' } }),
+    putForm: <T = any>(url: string, data?: any, config?: MockAxiosRequestConfig) => 
+      request<T>({ ...config, method: 'put', url, data, headers: { ...config?.headers, 'Content-Type': 'multipart/form-data' } }),
+    patchForm: <T = any>(url: string, data?: any, config?: MockAxiosRequestConfig) => 
+      request<T>({ ...config, method: 'patch', url, data, headers: { ...config?.headers, 'Content-Type': 'multipart/form-data' } }),
     getUri: (config?: MockAxiosRequestConfig) => {
       const finalConfig = { ...getDefaultConfig(), ...config };
       return finalConfig.baseURL ? finalConfig.baseURL + (finalConfig.url || '') : (finalConfig.url || '');
@@ -316,7 +325,7 @@ const axios = Object.assign(defaultAxios, {
   isAxiosError: (error: any): error is MockAxiosError => 
     error && error.isAxiosError === true,
   CancelToken: MockCancelToken,
-  VERSION: '1.6.0' // Match current axios version
+  VERSION: '1.7.0' // Match current axios version
 });
 
 // Export axios stub using ES module syntax
