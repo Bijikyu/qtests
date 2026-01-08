@@ -29,7 +29,7 @@
     "test:scalability:pool": "node scripts/benchmarks/connection-pool-benchmark.js",
     "test:scalability:circuit": "node scripts/benchmarks/circuit-breaker-benchmark.js",
     "test:scalability:report": "node scripts/benchmarks/generate-report.js",
-    "monitor:scalability": "node scripts/monitoring/scalability-monitor.js"
+    "monitor:scalability": "node scripts/simple-scalability-test-clean.js"
   },
   "keywords": [
     "testing",

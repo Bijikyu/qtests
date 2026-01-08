@@ -20,7 +20,7 @@
 import { Module } from 'module';
 import * as path from 'path';
 import * as fs from 'fs';
-import { validateSecurePath, VALIDATORS } from './security/pathValidator.js';
+import { validateSecurePath, VALIDATORS } from './security/pathValidator';
 
 type MockFactory = () => any;
 

@@ -8,7 +8,7 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import { validateArray } from '../../utils/helpers/validation.js';
+import { validateArray } from '../../utils/helpers/validation';
 
 export interface PathValidationOptions {
   allowedExtensions?: string[];
