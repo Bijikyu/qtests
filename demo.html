@@ -1342,6 +1342,54 @@ LOG_LEVEL=debug"></textarea>
                     </div>
                     <div id="http-results" class="status info" style="margin-top: 10px;">Ready to test HTTP</div>
                 </div>
+
+                <div class="card">
+                    <h3>🔐 API Key Authentication</h3>
+                    <div class="input-group">
+                        <label for="api-key">API Key (qtests_...)</label>
+                        <input type="text" id="api-key" placeholder="qtests_your_20_plus_char_key_here">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="setApiKey()">Set API Key</button>
+                        <button class="btn secondary" onclick="clearApiKey()">Clear API Key</button>
+                    </div>
+                    <div id="auth-results" class="status info" style="margin-top: 10px;">API key required for secure endpoints</div>
+                </div>
+
+                <div class="card">
+                    <h3>🔗 Backend API Testing</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button class="btn success" onclick="testPublicAPI()">Test /api/public</button>
+                        <button class="btn warning" onclick="testSecureAPI()">Test /api/secure</button>
+                        <button class="btn" onclick="testFileUpload()">Test /api/upload</button>
+                        <button class="btn secondary" onclick="testAdminUsers()">Test /admin/users</button>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button class="btn" onclick="testSecurityMetrics()">Security Metrics</button>
+                            <button class="btn" onclick="testSecurityAudit()">Security Audit</button>
+                            <button class="btn" onclick="testSecurityFramework()">Security Framework</button>
+                        </div>
+                    </div>
+                    <div id="backend-results" class="status info" style="margin-top: 10px;">Ready to test backend APIs</div>
+                </div>
+
+                <div class="card">
+                    <h3>📁 File Upload Testing</h3>
+                    <div class="input-group">
+                        <label for="file-input">Choose File</label>
+                        <input type="file" id="file-input">
+                    </div>
+                    <div class="input-group">
+                        <label for="target-path">Target Path</label>
+                        <input type="text" id="target-path" value="/uploads" placeholder="/uploads">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn" onclick="uploadFile()">Upload File</button>
+                        <button class="btn secondary" onclick="clearFileInput()">Clear</button>
+                    </div>
+                    <div id="upload-results" class="status info" style="margin-top: 10px;">Ready to upload files</div>
+                </div>
             </div>
 
             <div class="demo-section">
@@ -3235,7 +3283,7 @@ test('renders user name', async () => {
         }
 
         // Email & HTTP Testing Functions
-        function sendTestEmail() {
+        async function sendTestEmail() {
             const to = document.getElementById('email-to').value;
             const subject = document.getElementById('email-subject').value;
             const body = document.getElementById('email-body').value;
@@ -3248,11 +3296,26 @@ test('renders user name', async () => {
             
             results.innerHTML = `<div class="status warning">Sending email...</div>`;
             
-            setTimeout(() => {
-                const messageId = `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-                results.innerHTML = `<div class="status success">✅ Email sent - ID: ${messageId}</div>`;
-                updateEmailHistory(to, subject, body, messageId);
-            }, 800);
+            try {
+                const response = await fetch('/api/email/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ to, subject, body })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                results.innerHTML = `<div class="status success">✅ Email sent - ID: ${data.messageId}</div>`;
+                updateEmailHistory(to, subject, body, data.messageId);
+                
+            } catch (error) {
+                results.innerHTML = `<div class="status error">❌ Failed to send email: ${error.message}</div>`;
+            }
         }
 
         function updateEmailHistory(to, subject, body, messageId) {
@@ -3287,27 +3350,55 @@ test('renders user name', async () => {
             document.getElementById('email-results').innerHTML = '<div class="status info">History cleared</div>';
         }
 
-        function createMockRoute() {
+        async function createMockRoute() {
             const method = document.getElementById('http-method').value;
             const path = document.getElementById('http-path').value;
             const server = document.getElementById('http-server-display');
+            const results = document.getElementById('http-results');
             
-            if (server.innerHTML.includes('No routes configured yet')) {
-                server.innerHTML = '';
+            if (!path) {
+                results.innerHTML = `<div class="status error">❌ Please enter a route path</div>`;
+                return;
             }
             
-            server.innerHTML = `
-                <div style="color: #10b981;">✅ Route Created</div>
-                <div>🌐 ${method} ${path}</div>
-                <div>📝 Handler: Mock response</div>
-                <div>⏰ Time: ${new Date().toLocaleTimeString()}</div>
-                <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;"></div>
-            ` + server.innerHTML;
+            results.innerHTML = `<div class="status warning">Creating route ${method} ${path}...</div>`;
             
-            document.getElementById('http-results').innerHTML = `<div class="status success">✅ Route created: ${method} ${path}</div>`;
+            try {
+                const response = await fetch('/api/routes/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ method, path })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (server.innerHTML.includes('No routes configured yet')) {
+                    server.innerHTML = '';
+                }
+                
+                server.innerHTML = `
+                    <div style="color: #10b981;">✅ Route Created</div>
+                    <div>🌐 ${method} ${path}</div>
+                    <div>📝 Handler: ${data.handler || 'Mock response'}</div>
+                    <div>⏰ Time: ${new Date().toLocaleTimeString()}</div>
+                    <div>🆔 Route ID: ${data.routeId || 'N/A'}</div>
+                    <div style="border-top: 1px solid #444; margin-top: 10px; padding-top: 10px;"></div>
+                ` + server.innerHTML;
+                
+                results.innerHTML = `<div class="status success">✅ Route created: ${method} ${path}</div>`;
+                
+            } catch (error) {
+                results.innerHTML = `<div class="status error">❌ Failed to create route: ${error.message}</div>`;
+            }
         }
 
-        function testHttpEndpoint() {
+        async function testHttpEndpoint() {
             const method = document.getElementById('http-method').value;
             const path = document.getElementById('http-path').value;
             const body = document.getElementById('http-body').value;
@@ -3315,16 +3406,415 @@ test('renders user name', async () => {
             
             results.innerHTML = `<div class="status warning">Testing ${method} ${path}...</div>`;
             
-            setTimeout(() => {
-                const statusCodes = { GET: 200, POST: 201, PUT: 200, PATCH: 200, DELETE: 204 };
-                const status = statusCodes[method] || 200;
+            try {
+                const startTime = Date.now();
+                
+                const options: RequestInit = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                };
+                
+                if (method !== 'GET' && body) {
+                    try {
+                        options.body = JSON.parse(body);
+                    } catch {
+                        options.body = body;
+                    }
+                }
+                
+                const response = await fetch(path, options);
+                const duration = Date.now() - startTime;
+                
+                const responseData = response.headers.get('content-type')?.includes('application/json') 
+                    ? await response.json() 
+                    : await response.text();
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
                 
                 results.innerHTML = `
                     <div class="status success">✅ Request completed</div>
-                    <div>📊 Status: ${status}</div>
-                    <div>⏱️ Duration: ${Math.floor(Math.random() * 100) + 10}ms</div>
+                    <div>📊 Status: ${response.status}</div>
+                    <div>⏱️ Duration: ${duration}ms</div>
+                    <div>📄 Response: ${JSON.stringify(responseData, null, 2)}</div>
                 `;
-            }, 600);
+                
+            } catch (error) {
+                results.innerHTML = `<div class="status error">❌ Request failed: ${error.message}</div>`;
+            }
+        }
+
+        // Error Handling Utilities
+        class HttpError extends Error {
+            constructor(message, status, data = null) {
+                super(message);
+                this.name = 'HttpError';
+                this.status = status;
+                this.data = data;
+            }
+        }
+
+        async function makeHttpRequest(url, options = {}) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+            
+            try {
+                const response = await fetch(url, {
+                    ...options,
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                
+                // Check for HTTP errors
+                if (!response.ok) {
+                    let errorData;
+                    try {
+                        errorData = response.headers.get('content-type')?.includes('application/json') 
+                            ? await response.json() 
+                            : await response.text();
+                    } catch {
+                        errorData = null;
+                    }
+                    
+                    throw new HttpError(
+                        `HTTP ${response.status}: ${response.statusText}`,
+                        response.status,
+                        errorData
+                    );
+                }
+                
+                // Validate response
+                const contentType = response.headers.get('content-type');
+                let responseData;
+                
+                if (contentType?.includes('application/json')) {
+                    responseData = await response.json();
+                } else if (contentType?.includes('text/')) {
+                    responseData = await response.text();
+                } else {
+                    responseData = await response.blob();
+                }
+                
+                return {
+                    status: response.status,
+                    statusText: response.statusText,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    data: responseData
+                };
+                
+            } catch (error) {
+                clearTimeout(timeoutId);
+                
+                if (error.name === 'AbortError') {
+                    throw new HttpError('Request timeout', 408);
+                } else if (error instanceof HttpError) {
+                    throw error;
+                } else {
+                    throw new HttpError(`Network error: ${error.message}`, 0);
+                }
+            }
+        }
+
+        function validateApiResponse(response, expectedFields = []) {
+            if (!response || typeof response !== 'object') {
+                throw new HttpError('Invalid response format', 500);
+            }
+            
+            // Check required fields
+            const missingFields = expectedFields.filter(field => !(field in response));
+            if (missingFields.length > 0) {
+                throw new HttpError(
+                    `Response missing required fields: ${missingFields.join(', ')}`,
+                    422,
+                    { missingFields }
+                );
+            }
+            
+            // Validate common response structure
+            if (response.data && typeof response.data === 'object' && response.data.error) {
+                throw new HttpError(
+                    response.data.message || response.data.error,
+                    response.status || 400,
+                    response.data
+                );
+            }
+            
+            return response;
+        }
+
+        // Backend API Testing Functions
+        function setApiKey() {
+            const apiKey = document.getElementById('api-key').value;
+            const results = document.getElementById('auth-results');
+            
+            if (!apiKey) {
+                results.innerHTML = `<div class="status error">❌ Please enter API key</div>`;
+                return;
+            }
+            
+            if (!apiKey.startsWith('qtests_') || apiKey.length < 20) {
+                results.innerHTML = `<div class="status error">❌ Invalid API key format. Must start with 'qtests_' and be 20+ characters</div>`;
+                return;
+            }
+            
+            localStorage.setItem('qtests_api_key', apiKey);
+            results.innerHTML = `<div class="status success">✅ API key set successfully</div>`;
+        }
+        
+        function getApiKey() {
+            return localStorage.getItem('qtests_api_key') || '';
+        }
+        
+        function clearApiKey() {
+            localStorage.removeItem('qtests_api_key');
+            document.getElementById('api-key').value = '';
+            document.getElementById('auth-results').innerHTML = '<div class="status info">API key cleared</div>';
+        }
+        
+        async function testPublicAPI() {
+            const results = document.getElementById('backend-results');
+            results.innerHTML = `<div class="status warning">Testing public API...</div>`;
+            
+            try {
+                const response = await fetch('/api/public', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                results.innerHTML = `
+                    <div class="status success">✅ Public API successful</div>
+                    <div>📊 Status: ${response.status}</div>
+                    <div>📄 Response: ${JSON.stringify(data, null, 2)}</div>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `<div class="status error">❌ Public API failed: ${error.message}</div>`;
+            }
+        }
+        
+        async function testSecureAPI() {
+            const results = document.getElementById('backend-results');
+            const apiKey = getApiKey();
+            
+            if (!apiKey) {
+                results.innerHTML = `<div class="status error">❌ API key required for secure endpoint</div>`;
+                return;
+            }
+            
+            results.innerHTML = `<div class="status warning">Testing secure API...</div>`;
+            
+            try {
+                const testData = { test: 'data', timestamp: Date.now() };
+                const response = await fetch('/api/secure', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': apiKey
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                results.innerHTML = `
+                    <div class="status success">✅ Secure API successful</div>
+                    <div>📊 Status: ${response.status}</div>
+                    <div>📄 Response: ${JSON.stringify(data, null, 2)}</div>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `<div class="status error">❌ Secure API failed: ${error.message}</div>`;
+            }
+        }
+        
+        async function testFileUpload() {
+            const results = document.getElementById('backend-results');
+            const apiKey = getApiKey();
+            const fileInput = document.getElementById('file-input');
+            const targetPath = document.getElementById('target-path').value;
+            
+            if (!apiKey) {
+                results.innerHTML = `<div class="status error">❌ API key required for file upload</div>`;
+                return;
+            }
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                results.innerHTML = `<div class="status error">❌ Please select a file</div>`;
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            results.innerHTML = `<div class="status warning">Uploading file...</div>`;
+            
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('targetPath', targetPath);
+                
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    headers: {
+                        'X-API-Key': apiKey
+                    },
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                results.innerHTML = `
+                    <div class="status success">✅ File upload successful</div>
+                    <div>📊 Status: ${response.status}</div>
+                    <div>📁 File: ${file.name}</div>
+                    <div>📏 Size: ${file.size} bytes</div>
+                    <div>📄 Response: ${JSON.stringify(data, null, 2)}</div>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `<div class="status error">❌ File upload failed: ${error.message}</div>`;
+            }
+        }
+        
+        async function testAdminUsers() {
+            const results = document.getElementById('backend-results');
+            const apiKey = getApiKey();
+            
+            if (!apiKey) {
+                results.innerHTML = `<div class="status error">❌ API key required for admin endpoint</div>`;
+                return;
+            }
+            
+            results.innerHTML = `<div class="status warning">Testing admin endpoint...</div>`;
+            
+            try {
+                const response = await fetch('/admin/users?role=admin', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': apiKey
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                results.innerHTML = `
+                    <div class="status success">✅ Admin endpoint successful</div>
+                    <div>📊 Status: ${response.status}</div>
+                    <div>👤 Admin IP: ${data.accessedBy}</div>
+                    <div>📄 Response: ${JSON.stringify(data, null, 2)}</div>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `<div class="status error">❌ Admin endpoint failed: ${error.message}</div>`;
+            }
+        }
+        
+        async function testSecurityMetrics() {
+            const results = document.getElementById('backend-results');
+            results.innerHTML = `<div class="status warning">Fetching security metrics...</div>`;
+            
+            try {
+                const response = await fetch('/security/metrics', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                results.innerHTML = `
+                    <div class="status success">✅ Security metrics retrieved</div>
+                    <div>📊 Status: ${response.status}</div>
+                    <div>📄 Security Data: ${JSON.stringify(data.security || {}, null, 2)}</div>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `<div class="status error">❌ Security metrics failed: ${error.message}</div>`;
+            }
+        }
+        
+        async function testSecurityAudit() {
+            const results = document.getElementById('backend-results');
+            results.innerHTML = `<div class="status warning">Running security audit...</div>`;
+            
+            try {
+                const response = await fetch('/security/audit', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                results.innerHTML = `
+                    <div class="status success">✅ Security audit completed</div>
+                    <div>📊 Status: ${response.status}</div>
+                    <div>📄 Audit Data: ${JSON.stringify(data.audit || {}, null, 2)}</div>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `<div class="status error">❌ Security audit failed: ${error.message}</div>`;
+            }
+        }
+        
+        async function testSecurityFramework() {
+            const results = document.getElementById('backend-results');
+            results.innerHTML = `<div class="status warning">Testing security framework...</div>`;
+            
+            try {
+                const response = await fetch('/security/test', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                results.innerHTML = `
+                    <div class="status success">✅ Security framework test completed</div>
+                    <div>📊 Status: ${response.status}</div>
+                    <div>📄 Test Results: ${JSON.stringify(data.testResults || {}, null, 2)}</div>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `<div class="status error">❌ Security framework test failed: ${error.message}</div>`;
+            }
+        }
+        
+        function clearFileInput() {
+            document.getElementById('file-input').value = '';
+            document.getElementById('upload-results').innerHTML = '<div class="status info">File input cleared</div>';
         }
 
         // Performance Functions
@@ -6078,6 +6568,13 @@ describe('${routeName}', () => {
                 shortcutsHint.style.cssText = 'font-size: 12px; color: #6b7280; margin-top: 10px;';
                 shortcutsHint.innerHTML = '💡 Press <strong>?</strong> for keyboard shortcuts';
                 header.appendChild(shortcutsHint);
+            }
+            
+            // Initialize API key display on page load
+            const savedApiKey = getApiKey();
+            if (savedApiKey) {
+                document.getElementById('api-key').value = savedApiKey;
+                document.getElementById('auth-results').innerHTML = '<div class="status success">✅ API key loaded</div>';
             }
             
             // Cleanup intervals on page unload to prevent memory leaks
