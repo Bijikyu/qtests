@@ -26,15 +26,17 @@ class SecurityTestRunner{
       console.log('');
       console.log('✅ Security testing completed successfully');
     }catch(error){
-      console.error('❌ Security testing failed:',error);
       try{
         const qerrors=await import('qerrors');
         if(qerrors.default){
-          qerrors.default(error instanceof Error?error:new Error('Security test execution failed'),'qtests.security.test_runner',{config:this.config,error:String(error)});
+          qerrors.default(error instanceof Error?error:new Error('Security test execution failed'),'qtests.security.test_runner',{config:this.config,error:String(error),phase:'main_execution'});
+        } else {
+          console.error('❌ Security testing failed:',error);
         }
       }catch(importError){
-        console.error('Failed to import qerrors:',importError);
-        console.error('Security test execution failed:',error);
+        console.error('Failed to import qerrors - falling back to console.error');
+        console.error('❌ Security testing failed:',error);
+        console.error('Import error details:',importError);
       }
       process.exit(1);
     }

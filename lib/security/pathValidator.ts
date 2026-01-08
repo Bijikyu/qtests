@@ -34,6 +34,11 @@ export const validateSecurePath = (
     throw new Error('Invalid path: path must be a non-empty string');
   }
 
+  // Prevent null byte injection attacks
+  if (inputPath.includes('\0')) {
+    throw new Error('Security error: null bytes not allowed in paths');
+  }
+
   const normalizedInput = path.normalize(inputPath.trim());
   const allowRelative = options.allowRelative !== false;
   if (!allowRelative && !path.isAbsolute(normalizedInput)) {

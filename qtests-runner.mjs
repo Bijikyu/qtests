@@ -19,6 +19,11 @@ function validatePath(inputPath, allowedBase = process.cwd()) {
     throw new Error('Invalid path: path must be a non-empty string');
   }
   
+  // Prevent null byte injection attacks
+  if (inputPath.includes('\0')) {
+    throw new Error('Security error: null bytes not allowed in paths');
+  }
+  
   const absoluteBase = path.resolve(path.normalize(allowedBase));
   const absolutePath = path.isAbsolute(inputPath) ? path.resolve(inputPath) : path.resolve(absoluteBase, inputPath);
   const rel = path.relative(absoluteBase, absolutePath);
@@ -190,9 +195,31 @@ class TestRunner {
     const pattern = process.env.QTESTS_PATTERN;
     if (pattern) {
       try {
+        // Validate pattern to prevent ReDoS attacks
+        if (typeof pattern !== 'string' || pattern.length > 1000) {
+          throw new Error('Invalid pattern: too long or not a string');
+        }
+        
+        // Block dangerous regex patterns
+        const dangerousPatterns = [
+          /\(\?=.*\)/,  // Lookahead
+          /\(\?<=.*\)/, // Lookbehind
+          /\(\?!.*\)/,  // Negative lookahead
+          /\(\?<!.*\)/, // Negative lookbehind
+          /\{.*\}/,     // Nested quantifiers
+          /\(\(\)\)/     // Nested groups
+        ];
+        
+        for (const dangerous of dangerousPatterns) {
+          if (dangerous.test(pattern)) {
+            throw new Error('Invalid pattern: contains dangerous constructs');
+          }
+        }
+        
         const rx = new RegExp(pattern);
         return testFiles.filter(f => rx.test(f));
-      } catch {
+      } catch (error) {
+        console.warn(`Invalid test pattern: ${pattern}, using all files`);
         return testFiles; // invalid pattern, ignore
       }
     }
