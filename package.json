@@ -6,6 +6,10 @@
   "main": "dist/index.js",
   "exports": {
     ".": "./dist/index.js",
+    "./setup": "./dist/setup.js",
+    "./setup.js": "./dist/setup.js",
+    "./loader": "./loader.mjs",
+    "./loader.mjs": "./loader.mjs",
     "./lib/routeTestUtils": "./dist/lib/routeTestUtils.js",
     "./utils/*": "./dist/utils/*.js",
     "./config/*": "./dist/config/*.js"

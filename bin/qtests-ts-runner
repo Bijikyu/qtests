@@ -1,33 +1,24 @@
 #!/usr/bin/env node
-// IMPORTANT: This CLI is sacrosanct and not generated. Do not overwrite.
-// Provides batching, summaries, and debug report creation for failing tests.
-
-// qtests Test Runner - Feature-rich CLI with batching, summaries, and debug file
-// Restores original functionality while ensuring Jest is launched with project config
+// IMPORTANT: This CLI is sacrosanct and not generated.
+// Policy: API-only via Jest `runCLI` (no child processes).
 
 import fs from 'fs';
 import path from 'path';
-import { spawn } from 'child_process';
 import os from 'os';
+import { Worker } from 'worker_threads';
 import qerrors from '../dist/lib/qerrorsFallback.js';
-import { testDiscoveryCache } from '../lib/optimization/testDiscoveryCache.js';
-import { AdvancedMemoryLeakDetector } from '../lib/advancedMemoryLeakDetector.js';
 
-// ANSI color codes for terminal output
 const colors = {
   green: '\u001b[32m',
   red: '\u001b[31m',
   yellow: '\u001b[33m',
   blue: '\u001b[34m',
-  magenta: '\u001b[35m',
   cyan: '\u001b[36m',
-  white: '\u001b[37m',
   reset: '\u001b[0m',
   bold: '\u001b[1m',
   dim: '\u001b[2m'
 };
 
-// Test discovery patterns - optimized for single regex compilation
 const TEST_PATTERNS = [
   /\.test\.(js|ts|jsx|tsx)$/,
   /\.spec\.(js|ts|jsx|tsx)$/,
@@ -35,597 +26,207 @@ const TEST_PATTERNS = [
   /_spec\.(js|ts|jsx|tsx)$/
 ];
 
-// Combined regex for faster pattern matching
-const COMBINED_TEST_PATTERN = /\.(test|spec)\.(js|ts|jsx|tsx)$|(_test|_spec)\.(js|ts|jsx|tsx)$/;
+function isEnvTruthy(name) {
+  const v = process.env[name];
+  if (!v) return false;
+  const s = String(v).trim().toLowerCase();
+  return s === '1' || s === 'true' || s === 'yes';
+}
 
-class TestRunner {
-  private memoryDetector?: AdvancedMemoryLeakDetector;
-  private passedTests: number = 0;
-  private failedTests: number = 0;
-    private readonly MAX_CACHE_SIZE = 1000;
-    private configCache: string | null = null;
-  private testResults: any[] = [];
-    private startTime: number;
-    private testResults: any[] = [];
-  private startTime: number;
-  private configCache: string | null = null; // Cache for config discovery
-  private readonly MAX_CACHE_SIZE = 1000;
-
-  constructor() {
-    this.passedTests = 0;
-    this.failedTests = 0;
-    this.testResults = [];
-    this.startTime = Date.now();
-    this.configCache = null;
-    this.initializeMemoryDetection();
+function writeRunnerArgs(configPath) {
+  const args = ['--config', configPath, '--passWithNoTests', '--runInBand', '--cache', '--no-coverage'];
+  try {
+    fs.writeFileSync(path.join(process.cwd(), 'runner-jest-args.json'), JSON.stringify(args), 'utf8');
+  } catch (error) {
+    qerrors(error, 'qtests-ts-runner: failed to write runner-jest-args.json', { configPath });
   }
+}
 
-// Discover all test files in the project with optimized caching
-  async discoverTests(dir = process.cwd(), depth = 0, maxDepth = 10, visited = new Set()) {
-    const cacheKey = `${dir}:${depth}:${maxDepth}`;
-    
-    // Try to get from optimized cache first
-    const cached = testDiscoveryCache.get(cacheKey);
-    if (cached) return cached;
-
-    const testFiles = await this.performDiscovery(dir, depth, maxDepth, visited);
-    
-    // Apply optional pattern filter via env
-    const pattern = process.env.QTESTS_PATTERN;
-    const finalFiles = pattern ? this.applyPatternFilter(testFiles, pattern) : testFiles;
-    
-    // Cache the result
-    testDiscoveryCache.set(cacheKey, finalFiles);
-    
-    return finalFiles;
-  }
-
-  // Separate method for the actual discovery logic
-  private async performDiscovery(dir: string, depth: number, maxDepth: number, visited: Set<string>): Promise<string[]> {
-    const testFiles: string[] = [];
-    if (depth > maxDepth) return testFiles;
-    
-    // Cycle detection
-    let realPath: string;
-    try {
-      realPath = await fs.promises.realpath(dir);
-    } catch (error) {
-      qerrors(error as Error, 'testRunner.performDiscovery: realpath failed', { directory: dir, depth });
-      return testFiles;
-    }
-    
-    if (visited.has(realPath)) {
-      qerrors(new Error('Directory cycle detected'), 'testRunner.performDiscovery: cycle prevention', { directory: dir });
-      return testFiles;
-    }
-    visited.add(realPath);
-    
-    try {
-      const entries = await fs.promises.readdir(dir, { withFileTypes: true });
-      const pendingDirs: string[] = [];
-      const pathSep = path.sep;
-      
-      for (const entry of entries) {
-        const fullPath = path.join(dir, entry.name);
-        
-        // Skip unnecessary directories and files
-        if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'demo') continue;
-        
-        if (entry.isDirectory()) {
-          pendingDirs.push(fullPath);
-        } else if (entry.isFile() && COMBINED_TEST_PATTERN.test(entry.name)) {
-          // Skip tests in ignored directories
-          if (fullPath.includes(`${pathSep}__mocks__${pathSep}`)) continue;
-          if (fullPath.includes(`${pathSep}generated-tests${pathSep}`) && !/GeneratedTest/.test(entry.name)) continue;
-          testFiles.push(fullPath);
-        }
-      }
-      
-      // Process subdirectories in parallel
-      if (pendingDirs.length > 0) {
-        const dirResults = await Promise.all(
-          pendingDirs.map(fullPath => this.discoverTests(fullPath, depth + 1, maxDepth, new Set(visited)))
-        );
-        testFiles.push(...dirResults.flat());
-      }
-    } catch (error) {
-      qerrors(error as Error, 'testRunner.performDiscovery: directory read failed', { directory: dir, depth });
-    } finally {
-      visited.delete(realPath);
-    }
-    
+function discoverTests(dir, depth = 0, maxDepth = 10) {
+  const testFiles = [];
+  if (depth > maxDepth) return testFiles;
+  let entries;
+  try {
+    entries = fs.readdirSync(dir, { withFileTypes: true });
+  } catch {
     return testFiles;
   }
 
-  // Apply regex pattern filter with error handling
-  private applyPatternFilter(files: string[], pattern: string): string[] {
-    try {
-      const rx = new RegExp(pattern);
-      return files.filter(f => rx.test(f));
-    } catch (error) {
-      qerrors(error as Error, 'testRunner.applyPatternFilter: pattern compilation failed', { pattern });
-      return files; // Return unfiltered on invalid pattern
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (
+      entry.name.startsWith('.') ||
+      entry.name === 'node_modules' ||
+      entry.name === 'dist' ||
+      entry.name === 'build' ||
+      entry.name === 'demo'
+    ) {
+      continue;
     }
+    if (entry.isDirectory()) {
+      testFiles.push(...discoverTests(fullPath, depth + 1, maxDepth));
+      continue;
+    }
+    if (!entry.isFile()) continue;
+    if (!TEST_PATTERNS.some((p) => p.test(entry.name))) continue;
+    if (fullPath.includes(`${path.sep}__mocks__${path.sep}`)) continue;
+    if (fullPath.includes(`${path.sep}generated-tests${path.sep}`) && !/GeneratedTest/.test(entry.name)) continue;
+    testFiles.push(fullPath);
   }
-        }
-      }
-      
-// Clean up old cache entries to prevent memory leaks
-  private cleanupCache() {
-    if (testDiscoveryCache.size > MAX_CACHE_SIZE) {
-      // Remove 25% of entries when over limit to maintain reasonable size
-      const entriesToRemove = Math.floor(testDiscoveryCache.size * 0.25);
-      const keysToRemove = Array.from(testDiscoveryCache.keys()).slice(0, entriesToRemove);
-      keysToRemove.forEach(key => testDiscoveryCache.delete(key));
-    }
+  return testFiles;
+}
+
+function applyPatternFilter(files, pattern) {
+  try {
+    const rx = new RegExp(pattern);
+    return files.filter((f) => rx.test(f));
+  } catch {
+    return files;
   }
-        }
-      }
-      }
-    }
+}
 
-    const testFiles = [];
-    if (depth > maxDepth) return testFiles;
-    
-    // Cycle detection - prevent infinite recursion
-    let realPath;
-    try {
-      realPath = await fs.promises.realpath(dir);
-    } catch (error) {
-      qerrors(error as Error, 'testRunner.discoverTests: realpath failed', {
-        directory: dir,
-        depth,
-        errorType: error.constructor.name,
-        errorMessage: error instanceof Error ? error.message : String(error)
-      });
-      return testFiles;
-    }
-    
-    if (visited.has(realPath)) {
-      qerrors(new Error('Directory cycle detected'), 'testRunner.discoverTests: cycle prevention', {
-        directory: dir,
-        realPath,
-        depth,
-        visitedCount: visited.size
-      });
-      return testFiles;
-    }
-    visited.add(realPath);
-    
-    try {
-      const entries = await fs.promises.readdir(dir, { withFileTypes: true });
-      // Pre-allocate array for better performance
-      const pendingDirs = [];
-      
-      for (const entry of entries) {
-        const fullPath = path.join(dir, entry.name);
-        // Skip node_modules, hidden directories, and demo directory - optimized checks
-        if (entry.name.startsWith('.') || entry.name === 'node_modules' || entry.name === 'demo') {
-          continue;
-        }
-        if (entry.isDirectory()) {
-          pendingDirs.push(fullPath);
-        } else if (entry.isFile()) {
-          // Use combined regex for faster pattern matching
-          const isTestFile = COMBINED_TEST_PATTERN.test(entry.name);
-          if (!isTestFile) continue;
-          // Skip tests in __mocks__ and other ignored folders - optimized path check
-          const pathSep = path.sep;
-          if (fullPath.includes(`${pathSep}__mocks__${pathSep}`)) continue;
-          // In generated-tests, only include files that follow the GeneratedTest naming convention
-          if (fullPath.includes(`${pathSep}generated-tests${pathSep}`) && !/GeneratedTest/.test(entry.name)) {
-            continue;
-          }
-          testFiles.push(fullPath);
-        }
-      }
-      
-      // Process directories in parallel for better performance - FIXED: separate visited sets
-      if (pendingDirs.length > 0) {
-        const dirResults = await Promise.all(
-          pendingDirs.map(fullPath => {
-            // Create separate visited set for each parallel branch to avoid race conditions
-            const branchVisited = new Set(visited);
-            return this.discoverTests(fullPath, depth + 1, maxDepth, branchVisited);
-          })
-        );
-        testFiles.push(...dirResults.flat());
-      }
-    } catch (error) {
-      qerrors(error as Error, 'testRunner.discoverTests: directory read failed', {
-        directory: dir,
-        depth,
-        errorType: error.constructor.name,
-        errorMessage: error instanceof Error ? error.message : String(error)
-      });
-      // Silently skip directories we can't read
-    } finally {
-      // Clean up visited set for this branch
-      visited.delete(realPath);
-    }
-    
-    // Optional pattern filter via env to limit scope for large repos/CI - FIXED: add validation
-    const pattern = process.env.QTESTS_PATTERN;
-    if (pattern) {
-      try {
-        const rx = new RegExp(pattern);
-        const filteredFiles = testFiles.filter(f => rx.test(f));
-        // Cache the result with timestamp
-        testDiscoveryCache.set(cacheKey, { files: filteredFiles, timestamp: Date.now() });
-        return filteredFiles;
-      } catch (error) {
-        qerrors(error as Error, 'testRunner.discoverTests: pattern compilation failed', {
-          pattern,
-          testFilesCount: testFiles.length,
-          errorType: error.constructor.name,
-          errorMessage: error instanceof Error ? error.message : String(error)
-        });
-        // Cache the unfiltered result with timestamp on invalid pattern
-        testDiscoveryCache.set(cacheKey, { files: testFiles, timestamp: Date.now() });
-        return testFiles; // invalid pattern, ignore
-      }
-    }
-    
-    // Cache the result with timestamp
-    testDiscoveryCache.set(cacheKey, { files: testFiles, timestamp: Date.now() });
-    return testFiles;
+function splitBatches(files, workers) {
+  const buckets = Array.from({ length: workers }, () => []);
+  for (let i = 0; i < files.length; i += 1) {
+    buckets[i % workers].push(files[i]);
   }
+  return buckets.filter((b) => b.length > 0);
+}
 
-  // Helper method to build Jest arguments
-  buildJestArgs(testFile, config) {
-    const jestArgs = [];
-    if (config) jestArgs.push('--config', config);
-    jestArgs.push('--passWithNoTests');
-    
-    const fileWorkers = process.env.QTESTS_FILE_WORKERS ? String(process.env.QTESTS_FILE_WORKERS) : '';
-    const inBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
-    
-    jestArgs.push(testFile);
-    if (inBand) {
-      jestArgs.push('--runInBand');
-    } else if (fileWorkers) {
-      jestArgs.push(`--maxWorkers=${fileWorkers}`);
-    }
-    jestArgs.push('--cache', '--no-coverage');
-    return jestArgs;
-  }
-
-  // Helper method to create sanitized environment
-  createSanitizedEnv() {
-    const allowedEnvVars = ['NODE_ENV', 'NODE_OPTIONS', 'QTESTS_SILENT', 'QTESTS_INBAND', 'QTESTS_CONCURRENCY'];
-    const sanitizedEnv = {};
-    
-    for (const key of allowedEnvVars) {
-      if (process.env[key] !== undefined) {
-        sanitizedEnv[key] = process.env[key];
-      }
-    }
-    
-    return {
-      ...sanitizedEnv,
-      NODE_ENV: 'test',
-      NODE_OPTIONS: [process.env.NODE_OPTIONS || '', '--experimental-vm-modules'].filter(Boolean).join(' ').trim()
-    };
-  }
-
-  // Helper method to spawn Jest process
-  spawnJestProcess(testFile, jestArgs, startTime) {
-    let stdout = '';
-    let stderr = '';
-    
-    return new Promise((resolve) => {
-      const child = spawn('jest', jestArgs, {
-        stdio: ['pipe', 'pipe', 'pipe'],
-        shell: false, // CRITICAL: Remove shell to prevent command injection
-        env: this.createSanitizedEnv(),
-        timeout: 300000 // 5 minute timeout per test file
-      });
-
-      child.stdout.on('data', (data) => { stdout += data.toString(); });
-      child.stderr.on('data', (data) => { stderr += data.toString(); });
-
-      child.on('close', (code) => {
-        const duration = Date.now() - startTime;
-        let output = stdout + stderr;
-        if (code !== 0 && !output.trim()) {
-          output = 'No output captured from jest. Possible worker crash or environment restriction.';
-        }
-        resolve({ file: testFile, success: code === 0, duration, output, stdout, stderr });
-      });
-
-      child.on('error', (err) => {
-        qerrors(err, 'testRunner.runTestFile: jest process spawn failed', {
-          testFile,
-          jestArgs,
-          errorType: err.constructor.name,
-          errorMessage: err.message
-        });
-        const duration = Date.now() - startTime;
-        const msg = (stderr && stderr.trim()) || (err && err.message) || 'Runner error';
-        resolve({ file: testFile, success: false, duration, output: msg, stdout, stderr });
-      });
-
-      if (child.timeout) {
-        child.on('timeout', () => {
-          qerrors(new Error('Test execution timeout'), 'testRunner.runTestFile: jest process timeout', {
-            testFile,
-            timeoutMs: 300000,
-            duration: Date.now() - startTime
-          });
-          child.kill('SIGTERM');
-          const duration = Date.now() - startTime;
-          resolve({ 
-            file: testFile, 
-            success: false, 
-            duration, 
-            output: 'Test execution timed out after 5 minutes', 
-            stdout, 
-            stderr 
-          });
-        });
-      }
+async function runWorkerBatch(workerUrl, configPath, projectRoot, testFiles) {
+  return await new Promise((resolve, reject) => {
+    const worker = new Worker(workerUrl, {
+      type: 'module',
+      workerData: { configPath, projectRoot, testFiles }
     });
-  }
-
-  // Helper method to discover and cache config
-  async discoverConfig() {
-    if (this.configCache !== null) return this.configCache;
-    
-    const configCandidates = [
-      path.join(process.cwd(), 'config', 'jest.config.mjs'),
-      path.join(process.cwd(), 'jest.config.mjs')
-    ];
-    
-    try {
-      for (const candidate of configCandidates) {
-        try {
-          if (await fs.promises.access(candidate).then(() => true).catch(() => false)) {
-            this.configCache = candidate;
-            return candidate;
-          }
-        } catch { continue; }
-      }
-      this.configCache = null;
-      return null;
-    } catch (error) {
-      qerrors(error as Error, 'testRunner.discoverConfig: config discovery failed', {
-        configCandidates,
-        errorType: error.constructor.name,
-        errorMessage: error instanceof Error ? error.message : String(error)
-      });
-      this.configCache = null;
-      return null;
-    }
-  }
-
-// Run a single test file via Jest and capture output - OPTIMIZED VERSION
-  async runTestFile(testFile) {
-    const spawnOnce = async () => {
-      const startTime = Date.now();
-      try {
-        const config = await this.discoverConfig();
-        const jestArgs = this.buildJestArgs(testFile, config);
-        return await this.spawnJestProcess(testFile, jestArgs, startTime);
-      } catch (error) {
-        qerrors(error as Error, 'testRunner.runTestFile: test execution setup failed', {
-          testFile,
-          errorType: error.constructor.name,
-          errorMessage: error instanceof Error ? error.message : String(error)
-        });
-        const duration = Date.now() - startTime;
-        return { 
-          file: testFile, 
-          success: false, 
-          duration, 
-          output: `Test setup failed: ${error instanceof Error ? error.message : String(error)}`, 
-          stdout: '', 
-          stderr: '' 
-        };
-      }
-    };
-
-    // First attempt
-    const first = await spawnOnce();
-    // Detect worker crash signature and retry in-band automatically
-    const crashed = /A jest worker process [^\n]* crashed/i.test(first.output || '');
-    const alreadyInBand = process.env.QTESTS_INBAND === '1' || process.env.QTESTS_INBAND === 'true';
-    if (!first.success && crashed && !alreadyInBand) {
-      process.stderr.write(`${colors.yellow}Retrying in-band due to worker crash: ${testFile}${colors.reset}\n`);
-      // Store original environment value
-      const originalInBand = process.env.QTESTS_INBAND;
-      process.env.QTESTS_INBAND = '1';
-      try {
-        return await this.runTestFile(testFile);
-      } finally {
-        // Restore original environment completely
-        if (originalInBand) {
-          process.env.QTESTS_INBAND = originalInBand;
-        } else {
-          delete process.env.QTESTS_INBAND;
-        }
-      }
-    }
-    return first;
-  }
-  }
-
-  // Initialize memory leak detection
-  initializeMemoryDetection() {
-    if (process.env.QTESTS_MEMORY_DETECTION === 'false') return;
-    
-    try {
-      this.memoryDetector = new AdvancedMemoryLeakDetector();
-      
-      // Set up memory leak alerts
-      this.memoryDetector.on('alert', (alert) => {
-        const color = alert.type === 'critical' ? colors.red : colors.yellow;
-        console.log(`${color}⚠ Memory Alert [${alert.type.toUpperCase()}]: ${alert.message}${colors.reset}`);
-        console.log(`  Heap growth: ${alert.analysis.growthRate.toFixed(2)} MB/min`);
-        console.log(`  Current heap: ${alert.snapshot.heapUsed} MB`);
-        
-        // Log to qerrors for external monitoring
-        qerrors(new Error(alert.message), 'testRunner.memory.leak', {
-          alertType: alert.type,
-          heapUsed: alert.snapshot.heapUsed,
-          growthRate: alert.analysis.growthRate,
-          leakProbability: alert.analysis.leakProbability,
-          trend: alert.analysis.trend
-        });
-      });
-      
-      this.memoryDetector.start();
-    } catch (error) {
-      console.log('Memory leak detection initialization failed, continuing without it');
+    worker.once('message', (msg) => resolve(msg));
+    worker.once('error', reject);
+    worker.once('exit', (code) => {
+      if (code !== 0) reject(new Error(`Worker exited with code ${code}`));
+    });
+  });
 }
 
-  // Cleanup method for proper resource management
-  cleanup() {
-    // Stop memory detection
-    if (this.memoryDetector) {
-      this.memoryDetector.stop();
-    }
-    
-    this.testResults = [];
-    this.passedTests = 0;
-    this.failedTests = 0;
-    delete this.startTime;
-    delete this._cleanedUp;
-    
-    // Force garbage collection if available
-    if (global.gc) {
-      global.gc();
-    }
-  }
-
-// Print colored status indicator
-  printStatus(success, text) {
-    const indicator = success ? `${colors.green}${colors.bold}✓${colors.reset}` : `${colors.red}${colors.bold}✗${colors.reset}`;
-    console.log(`${indicator} ${text}`);
-  }
-
-  // Print test file result
-  printTestResult(result) {
-    const { file, success, duration } = result;
-    const durationText = `${colors.dim}(${duration}ms)${colors.reset}`;
-    const fileText = `${colors.cyan}${file}${colors.reset}`;
-    this.printStatus(success, `${fileText} ${durationText}`);
-    if (!success && result.output) {
-      const lines = result.output.split('\n');
-      lines.forEach(line => { if (line.trim()) console.log(`  ${colors.dim}${line}${colors.reset}`); });
-    }
-  }
-
-  // Generate debug file for failed tests - ASYNC VERSION
-  async generateDebugFile() {
-    try {
-      const failedResults = this.testResults.filter(r => !r.success);
-      if (failedResults.length === 0) return;
-      let debugContent = '# Test Failure Analysis\n\n';
-      debugContent += 'Analyze and address the following test failures:\n\n';
-      failedResults.forEach((result, index) => {
-        debugContent += `## Failed Test ${index + 1}: ${result.file}\n\n`;
-        debugContent += '### Output:\n';
-        debugContent += '```\n';
-        debugContent += result.output;
-        debugContent += '\n```\n\n';
-        debugContent += `### Duration: ${result.duration}ms\n\n`;
-        debugContent += '---\n\n';
-      });
-      debugContent += '## Summary\n\n';
-      debugContent += `- Total failed tests: ${failedResults.length}\n`;
-      debugContent += `- Failed test files: ${failedResults.map(r => r.file).join(', ')}\n`;
-      debugContent += `- Generated: ${new Date().toISOString()}\n`;
-      
-      await fs.promises.writeFile('DEBUG_TESTS.md', debugContent);
-      console.log(`\n${colors.yellow}📋 Debug file created: DEBUG_TESTS.md${colors.reset}`);
-    } catch (error) {
-      qerrors(error as Error, 'testRunner.generateDebugFile: debug file creation failed', {
-        failedTestsCount: this.testResults.filter(r => !r.success).length,
-        errorType: error.constructor.name,
-        errorMessage: error instanceof Error ? error.message : String(error)
-      });
-      console.error(`${colors.red}Failed to create debug file:${colors.reset}`, error);
-    }
-  }
-
-  // Print comprehensive summary
-  printSummary() {
-    const duration = Date.now() - this.startTime;
-    const totalFiles = this.testResults.length;
-    console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
-    console.log(`${colors.bold}${colors.white}           TEST SUMMARY${colors.reset}`);
-    console.log(`${colors.bold}═══════════════════════════════════════${colors.reset}`);
-    const allPassed = this.failedTests === 0;
-    const statusColor = allPassed ? colors.green : colors.red;
-    const statusText = allPassed ? 'ALL TESTS PASSED' : 'SOME TESTS FAILED';
-    console.log(`${statusColor}${colors.bold}${statusText}${colors.reset}\n`);
-    console.log(`${colors.green}✓ Passed:${colors.reset} ${colors.bold}${this.passedTests}${colors.reset}`);
-    console.log(`${colors.red}✗ Failed:${colors.reset} ${colors.bold}${this.failedTests}${colors.reset}`);
-    console.log(`${colors.blue}📁 Files:${colors.reset} ${colors.bold}${totalFiles}${colors.reset}`);
-    console.log(`${colors.magenta}⏱  Duration:${colors.reset} ${colors.bold}${duration}ms${colors.reset}`);
-    if (this.failedTests > 0) {
-      console.log(`\n${colors.red}Failed test files:${colors.reset}`);
-      this.testResults.filter(r => !r.success).forEach(r => console.log(`  ${colors.red}•${colors.reset} ${r.file}`));
-    }
-    console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
-  }
-
-  // Main runner method - optimized for parallel execution
-  async run() {
-    console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner - Parallel Mode${colors.reset}`);
-    console.log(`${colors.dim}Discovering and running all tests...\n${colors.reset}`);
-    const testFiles = await this.discoverTests();
-    if (testFiles.length === 0) {
-      console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
-      console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
-      process.exit(0);
-    }
-    console.log(`${colors.blue}Found ${testFiles.length} test file(s):${colors.reset}`);
-    testFiles.forEach(file => console.log(`  ${colors.dim}•${colors.reset} ${file}`));
-    console.log(`\n${colors.magenta}🚀 Running tests in parallel...${colors.reset}\n`);
-    const cpuCount = os.cpus().length;
-    const envConcurrency = parseInt(process.env.QTESTS_CONCURRENCY || '', 10);
-    const defaultConcurrency = Math.max(4, cpuCount * 2);
-    const maxConcurrency = Math.min(
-      testFiles.length,
-      Number.isFinite(envConcurrency) && envConcurrency > 0 ? envConcurrency : defaultConcurrency
+async function generateDebugFile(failedResults) {
+  if (failedResults.length === 0) return;
+  if (isEnvTruthy('QTESTS_SUPPRESS_DEBUG') || isEnvTruthy('QTESTS_NO_DEBUG_FILE')) return;
+  const debugFilePath = (process.env.QTESTS_DEBUG_FILE && String(process.env.QTESTS_DEBUG_FILE).trim()) || 'DEBUG_TESTS.md';
+  const lines = ['# Test Failure Analysis', '', 'Analyze and address the following test failures:', ''];
+  failedResults.forEach((r, idx) => {
+    lines.push(
+      `## Failed Test ${idx + 1}: ${r.file}`,
+      '',
+      '### Output:',
+      '```',
+      r.failureMessage || '',
+      '```',
+      '',
+      `### Duration: ${r.durationMs}ms`,
+      '',
+      '---',
+      ''
     );
-    console.log(`${colors.dim}Max concurrency: ${maxConcurrency} workers (${cpuCount} CPU cores)${colors.reset}\n`);
+  });
+  lines.push(
+    '## Summary',
+    '',
+    `- Total failed tests: ${failedResults.length}`,
+    `- Failed test files: ${failedResults.map((r) => r.file).join(', ')}`,
+    `- Generated: ${new Date().toISOString()}`,
+    ''
+  );
 
-    const runBatch = async (batch) => {
-      const results = await Promise.all(batch.map(async (testFile) => {
-        const result = await this.runTestFile(testFile);
-        if (result.success) this.passedTests++; else this.failedTests++;
-        this.printTestResult(result);
-        return result;
-      }));
-      return results;
-    };
-
-    for (let i = 0; i < testFiles.length; i += maxConcurrency) {
-      const batch = testFiles.slice(i, i + maxConcurrency);
-      const batchResults = await runBatch(batch);
-      this.testResults.push(...batchResults);
-      if (i + maxConcurrency < testFiles.length) {
-        console.log(`${colors.dim}Completed batch ${Math.floor(i / maxConcurrency) + 1}, starting next...${colors.reset}\n`);
-      }
-    }
-
-    if (this.failedTests > 0) await this.generateDebugFile();
-    this.printSummary();
-    process.exit(this.failedTests > 0 ? 1 : 0);
+  try {
+    fs.writeFileSync(debugFilePath, lines.join('\n'), 'utf8');
+  } catch (error) {
+    qerrors(error, 'qtests-ts-runner: failed to write debug file', { debugFilePath });
   }
 }
 
-// Run the test suite
-const runner = new TestRunner();
-runner.run().catch(error => {
-  qerrors(error, 'testRunner.main: test runner execution failed', {
-    errorType: error.constructor.name,
-    errorMessage: error instanceof Error ? error.message : String(error)
+async function main() {
+  const projectRoot = process.cwd();
+  const configPath = path.join(projectRoot, 'config', 'jest.config.mjs');
+  if (!fs.existsSync(configPath)) {
+    console.error(`${colors.red}Missing required Jest config:${colors.reset} ${configPath}`);
+    process.exit(1);
+  }
+
+  const silent = isEnvTruthy('QTESTS_SILENT');
+  if (!silent) {
+    console.log(`${colors.bold}${colors.blue}🧪 qtests Test Runner - API Mode${colors.reset}`);
+  }
+
+  writeRunnerArgs(configPath);
+
+  const manualDirs = [path.join(projectRoot, 'tests', 'manual-tests'), path.join(projectRoot, 'manual-tests')];
+  const manualFiles = manualDirs.flatMap((d) => (fs.existsSync(d) ? discoverTests(d, 0, 10) : []));
+
+  const allFiles = discoverTests(projectRoot, 0, 10);
+  const manualSet = new Set(manualFiles);
+  let files = allFiles.filter((f) => !manualSet.has(f));
+
+  const pattern = process.env.QTESTS_PATTERN;
+  if (pattern) files = applyPatternFilter(files, pattern);
+
+  const ordered = [...manualFiles, ...files];
+  if (ordered.length === 0) {
+    if (!silent) console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
+    process.exit(0);
+  }
+
+  const inBand = isEnvTruthy('QTESTS_INBAND');
+  const workerStr = process.env.QTESTS_FILE_WORKERS || process.env.QTESTS_CONCURRENCY;
+  const requestedWorkers = workerStr ? parseInt(String(workerStr), 10) : NaN;
+  const defaultWorkers = Math.max(1, Math.min(os.cpus().length || 1, 4));
+  const fileWorkers = inBand ? 1 : (Number.isFinite(requestedWorkers) && requestedWorkers > 0 ? requestedWorkers : defaultWorkers);
+
+  const workerUrl = new URL('../dist/lib/runner/jestWorker.js', import.meta.url);
+
+  let passedFiles = 0;
+  let failedFiles = 0;
+  const perFileResults = [];
+
+  for (const f of manualFiles) {
+    const msg = await runWorkerBatch(workerUrl, configPath, projectRoot, [f]);
+    if (msg?.error) throw new Error(msg.error.message || 'Worker error');
+    passedFiles += msg.passedFiles || 0;
+    failedFiles += msg.failedFiles || 0;
+    perFileResults.push(...(msg.results || []));
+  }
+
+  const batches = splitBatches(files, fileWorkers);
+  const batchResults = await Promise.all(batches.map((b) => runWorkerBatch(workerUrl, configPath, projectRoot, b)));
+  for (const msg of batchResults) {
+    if (msg?.error) throw new Error(msg.error.message || 'Worker error');
+    passedFiles += msg.passedFiles || 0;
+    failedFiles += msg.failedFiles || 0;
+    perFileResults.push(...(msg.results || []));
+  }
+
+  if (!silent) {
+    for (const r of perFileResults) {
+      const indicator = r.success ? `${colors.green}${colors.bold}✓${colors.reset}` : `${colors.red}${colors.bold}✗${colors.reset}`;
+      console.log(`${indicator} ${colors.cyan}${r.file}${colors.reset} ${colors.dim}(${r.durationMs}ms)${colors.reset}`);
+      if (!r.success && r.failureMessage) {
+        const firstLines = String(r.failureMessage).split('\n').slice(0, 20);
+        firstLines.forEach((ln) => ln.trim() && console.log(`  ${colors.dim}${ln}${colors.reset}`));
+      }
+    }
+    console.log(`${colors.bold}═══════════════════════════════════════${colors.reset}`);
+    console.log(`${colors.green}✓ Passed:${colors.reset} ${colors.bold}${passedFiles}${colors.reset}`);
+    console.log(`${colors.red}✗ Failed:${colors.reset} ${colors.bold}${failedFiles}${colors.reset}`);
+    console.log(`${colors.bold}═══════════════════════════════════════${colors.reset}`);
+  }
+
+  await generateDebugFile(perFileResults.filter((r) => !r.success));
+  process.exit(failedFiles > 0 ? 1 : 0);
+}
+
+main().catch((error) => {
+  qerrors(error, 'qtests-ts-runner: runner crashed', {
+    errorType: error?.constructor?.name || 'unknown',
+    errorMessage: error?.message || String(error)
   });
   console.error(`${colors.red}Test runner error:${colors.reset}`, error);
   process.exit(1);
 });
-
-export default TestRunner;

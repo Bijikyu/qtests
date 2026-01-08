@@ -4,14 +4,15 @@ import{testEnv,offlineMode,testHelpers}from'./lib/envUtils.js';
 import{initializePolyfills,resetPolyfills,getWindow,matchMedia,clipboard,polyfillOrchestrator}from'./lib/polyfills/index.js';
 import{safeReadFile,safeReadFileBuffer}from'./lib/fileSystem/fileReading.js';import{safeWriteFile,ensureDir}from'./lib/fileSystem/fileWriting.js';
 
-export const stubMethod=()=>{throw new Error('stubMethod not available - import from utils/stubMethod');};
-export const mockConsole=()=>{throw new Error('mockConsole not available - import from utils/mockConsole');};
-export const createMockApp=()=>{throw new Error('createMockApp not available - import from utils/httpTest');};
-export const runTestSuite=()=>{throw new Error('runTestSuite not available - import from utils/runTestSuite');};
-export const runTestSuites=()=>{throw new Error('runTestSuites not available - import from utils/runTestSuite');};
-export const createAssertions=()=>{throw new Error('createAssertions not available - import from utils/runTestSuite');};
+import{stubMethod as enhancedStubMethod}from'./utils/stubMethod.js';
+import{mockConsole}from'./utils/mockConsole.js';
+import{createMockApp}from'./utils/httpTest.js';
+import{runTestSuite,runTestSuites,createAssertions}from'./utils/runTestSuite.js';
+
+export const stubMethod=(obj:any,methodName:string,replacement:(...args:any[])=>any)=>enhancedStubMethod({obj,methodName,stubFn:replacement}).restore;
 
 export{setup,stubs,testEnv,offlineMode,testHelpers,initializePolyfills,resetPolyfills,getWindow,matchMedia,clipboard,polyfillOrchestrator,safeReadFile,safeReadFileBuffer,safeWriteFile,ensureDir};
+export{mockConsole,createMockApp,runTestSuite,runTestSuites,createAssertions};
 
 export{nodeEnv,testMode,debugMode,runtimeNodeVersion,runtimePlatform,runtimeArch,devHotReload,devSourceMaps,devVerboseLogging,experimentalFeatures,experimentalParallelExecution,experimentalAdvancedMocking,legacyMode,legacyWarnings}from'./config/localVars.js';
 export{defaultTestTimeout,defaultRetryAttempts,defaultRetryDelay,maxConcurrentTests,testMemoryThreshold,jestTestTimeout,jestVerbose,jestCoverage,jestCache,jestPassWithNoTests,integrationTestTimeout,integrationTestRetryAttempts,integrationTestRetryDelay,integrationTestCleanupDelay,performanceTestDuration,performanceTestSamples,performanceTestThreshold}from'./config/localVars.js';

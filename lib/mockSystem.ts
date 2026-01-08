@@ -20,7 +20,10 @@
 import { Module } from 'module';
 import * as path from 'path';
 import * as fs from 'fs';
-import { validateSecurePath, VALIDATORS } from './security/pathValidator';
+import { createRequire } from 'module';
+import { validateSecurePath, VALIDATORS } from './security/pathValidator.js';
+
+const nodeRequire = createRequire(path.resolve(process.cwd(), 'package.json'));
 
 type MockFactory = () => any;
 
@@ -63,22 +66,20 @@ class MockRegistry {
     if (this._lockMap.has(name)) {
       const existingPromise = this._lockMap.get(name);
       if (existingPromise) {
-        // Add timeout to prevent indefinite waiting with cleanup
-        let timeoutId = null;
+        let timeoutId: ReturnType<typeof setTimeout> | null = null;
         const timeoutPromise = new Promise((_, reject) => {
           timeoutId = setTimeout(() => reject(new Error('Mock factory timeout')), 5000);
         });
-        
+
         try {
           return await Promise.race([existingPromise, timeoutPromise]);
-        } catch (timeoutError) {
-          // If timeout occurs, clean up and remove the lock to retry
-          if (timeoutId) clearTimeout(timeoutId);
+        } catch {
           this._lockMap.delete(name);
           console.warn(`Mock factory timeout for ${name}, falling back to empty object`);
-          // Return fallback object to prevent infinite loop
           entry.instance = {};
           return entry.instance;
+        } finally {
+          if (timeoutId) clearTimeout(timeoutId);
         }
       }
     }
@@ -223,11 +224,11 @@ class MockRegistry {
   private evictRequireCache(moduleName: string): void {
     // Best effort: remove cache entries that look like this package name under node_modules
     try {
-      const keys = Object.keys((require as any).cache || {});
+      const keys = Object.keys((nodeRequire as any).cache || {});
       const needle = `${path.sep}node_modules${path.sep}${moduleName}${path.sep}`;
       for (const k of keys) {
         if (k.includes(needle) || k.endsWith(`${path.sep}${moduleName}.js`) || k.endsWith(`${path.sep}${moduleName}.cjs`)) {
-          try { delete (require as any).cache[k]; } catch {}
+          try { delete (nodeRequire as any).cache[k]; } catch {}
         }
       }
     } catch {}
@@ -244,13 +245,13 @@ export function registerDefaultMocks(): void {
     let axiosStub;
     try { 
       // Use centralized path validation
-      const axiosPath = VALIDATORS.stubFile('../stubs/axios.ts');
-      axiosStub = require(axiosPath).default; 
+      const axiosPath = VALIDATORS.stubFile('axios.ts');
+      axiosStub = nodeRequire(axiosPath).default; 
     } catch (tsError) {
       // TypeScript stub failed, try JavaScript
       try { 
-        const axiosJsPath = VALIDATORS.stubFile('../stubs/axios.js');
-        axiosStub = require(axiosJsPath).default; 
+        const axiosJsPath = VALIDATORS.stubFile('axios.js');
+        axiosStub = nodeRequire(axiosJsPath).default; 
       } catch (jsError) {
         // Both stubs failed, use fallback
         axiosStub = {};
@@ -262,12 +263,12 @@ export function registerDefaultMocks(): void {
   mockRegistry.register('winston', () => {
     let winstonStub;
     try { 
-      const winstonPath = VALIDATORS.stubFile('../stubs/winston.ts');
-      winstonStub = require(winstonPath).default; 
+      const winstonPath = VALIDATORS.stubFile('winston.ts');
+      winstonStub = nodeRequire(winstonPath).default; 
     } catch (tsError) {
       try { 
-        const winstonJsPath = VALIDATORS.stubFile('../stubs/winston.js');
-        winstonStub = require(winstonJsPath).default; 
+        const winstonJsPath = VALIDATORS.stubFile('winston.js');
+        winstonStub = nodeRequire(winstonJsPath).default; 
       } catch (jsError) {
         winstonStub = { createLogger: () => ({ error() {}, warn() {}, info() {}, debug() {}, verbose() {}, silly() {} }), format: {}, transports: {} };
       }
@@ -275,11 +276,11 @@ export function registerDefaultMocks(): void {
     return winstonStub || { createLogger: () => ({ error() {}, warn() {}, info() {}, debug() {}, verbose() {}, silly() {} }), format: {}, transports: {} };
   });
   // mongoose: if projects still import it in unit tests, hand back a tiny proxy
-mockRegistry.register('mongoose', () => {
+	mockRegistry.register('mongoose', () => {
     // Prefer local manual mock if present in client repo via Jest mapping; otherwise a safe object
     try { 
-      const mongoosePath = VALIDATORS.mockFile('__mocks__/mongoose.js');
-      return require(mongoosePath); 
+      const mongoosePath = VALIDATORS.mockFile('mongoose.js');
+      return nodeRequire(mongoosePath); 
     } catch (error) {
       // Fall back to safe object if manual mock unavailable
       return { model: () => ({}) };
@@ -287,8 +288,11 @@ mockRegistry.register('mongoose', () => {
   });
 }
 
-export async function installMocking(): Promise<void> {
-  await mockRegistry.installHooks();
+export function installMocking(): void {
+  mockRegistry.installRequireHook();
+  mockRegistry.installESMHook().catch(() => {
+    /* best effort only */
+  });
 }
 
 // Public facade used by index.ts
@@ -297,4 +301,3 @@ export const mockAPI = {
     mockRegistry.register(name, factory);
   }
 };
-

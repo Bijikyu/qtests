@@ -1,5 +1,6 @@
 // Simplified jest-setup.ts with proper error handling
 // Import qerrors for basic error handling
+import 'qtests/setup';
 import qerrors from 'qerrors';
 import { jest as jestFromGlobals } from '@jest/globals';
 import { configureJestGlobals, clearJestMocks, getJestRef } from '../utils/testing/jestSetupHelper';

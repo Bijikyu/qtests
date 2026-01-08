@@ -8,7 +8,8 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
-import { validateArray } from '../../utils/helpers/validation';
+import { createRequire } from 'module';
+import { validateArray } from '../../utils/helpers/validation.js';
 
 export interface PathValidationOptions {
   allowedExtensions?: string[];
@@ -33,15 +34,18 @@ export const validateSecurePath = (
     throw new Error('Invalid path: path must be a non-empty string');
   }
 
-  const normalizedPath = path.normalize(inputPath.trim());
-  
-  if (normalizedPath.includes('..')) {
-    throw new Error('Path traversal detected: path contains parent directory references');
+  const normalizedInput = path.normalize(inputPath.trim());
+  const allowRelative = options.allowRelative !== false;
+  if (!allowRelative && !path.isAbsolute(normalizedInput)) {
+    throw new Error('Invalid path: relative paths are not allowed');
   }
 
   let absolutePath: string;
   try {
-    absolutePath = path.resolve(normalizedPath);
+    const absoluteBase = path.resolve(path.normalize(allowedBase));
+    absolutePath = path.isAbsolute(normalizedInput)
+      ? path.resolve(normalizedInput)
+      : path.resolve(absoluteBase, normalizedInput);
   } catch (error) {
     throw new Error(`Path resolution failed: ${error instanceof Error ? error.message : String(error)}`);
   }
@@ -52,10 +56,6 @@ export const validateSecurePath = (
   
   if (relativePath.startsWith('..') || path.isAbsolute(relativePath)) {
     throw new Error('Path security violation: path is outside allowed directory');
-  }
-
-  if (!absolutePath.startsWith(absoluteBase + path.sep) && !absolutePath.startsWith(absoluteBase + '/') && !absolutePath.startsWith(absoluteBase + '\\') && absolutePath !== absoluteBase) {
-    throw new Error('Path security violation: path traversal detected');
   }
 
   if (options.mustExist) {
@@ -104,9 +104,30 @@ export const createPathValidator = (
     validateSecurePath(path, allowedBase, { ...options, ...overrideOptions });
 
 // Common validation configurations
+const STUBS_BASE = (() => {
+  try {
+    const require = createRequire(path.resolve(process.cwd(), 'package.json'));
+    const entryPath = require.resolve('qtests');
+    const packageRoot = path.resolve(path.dirname(entryPath), '..');
+    const candidates = [
+      path.join(packageRoot, 'dist', 'stubs'),
+      path.join(packageRoot, 'stubs')
+    ];
+    for (const candidate of candidates) {
+      try {
+        if (fs.existsSync(candidate) && fs.statSync(candidate).isDirectory()) return candidate;
+      } catch {
+        /* ignore */
+      }
+    }
+    return path.resolve(process.cwd(), 'stubs');
+  } catch {
+    return path.resolve(process.cwd(), 'stubs');
+  }
+})();
 export const VALIDATORS = {
-  stubFile: createPathValidator(path.resolve(process.cwd(), 'stubs'), {
-    allowedExtensions: ['.js', '.ts', '.mjs'],
+  stubFile: createPathValidator(STUBS_BASE, {
+    allowedExtensions: ['.js', '.ts', '.mjs', '.cjs'],
     mustExist: true,
     checkSymlinks: true
   }),

@@ -18,6 +18,7 @@
     "lib/**/*.ts",
     "utils/**/*.ts",
     "stubs/**/*.ts",
+    "config/**/*.ts",
     "@types/**/*.ts"
   ],
   "exclude": [

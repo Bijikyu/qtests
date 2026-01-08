@@ -9,91 +9,12 @@
  * New values should be added in the appropriate focused configuration modules.
  */
 
-// Import JavaScript modules with proper ESM compatibility
-import { createRequire } from 'module';
-
-// Use createRequire from current module context for ESM compatibility
-const nodeRequire = createRequire(__filename);
-
-// Production-ready fallback error handling to avoid qerrors dependency issues
-const qerrors = (error: Error, message?: string, context?: any) => {
-  // In production, we need reliable error logging without complex dependencies
-  const timestamp = new Date().toISOString();
-  const errorInfo = {
-    timestamp,
-    message: message || error.message,
-    stack: error.stack,
-    context: context || {}
-  };
-  
-  // Use console.error for production reliability - avoid complex logging dependencies
-  console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
-  
-  // Don't re-throw here - let the caller handle the error appropriately
-  // This prevents duplicate error reporting and stack traces
-};
-
-let envConfig, qtestsConfig, testConfig, fileSystemConfig, mockConfig, systemConfig;
-
-try {
-  envConfig = nodeRequire('./envConfig.js');
-} catch (error: any) {
-  qerrors(error, 'localVars: failed to load envConfig.js', { 
-    modulePath: './envConfig.js',
-    errorType: error.constructor?.name || 'unknown'
-  });
-  throw error; // Re-throw to maintain error propagation
-}
-
-try {
-  qtestsConfig = nodeRequire('./qtestsConfig.js');
-} catch (error: any) {
-  qerrors(error, 'localVars: failed to load qtestsConfig.js', { 
-    modulePath: './qtestsConfig.js',
-    errorType: error.constructor?.name || 'unknown'
-  });
-  throw error; // Re-throw to maintain error propagation
-}
-
-try {
-  testConfig = nodeRequire('./testConfig.js');
-} catch (error: any) {
-  qerrors(error, 'localVars: failed to load testConfig.js', { 
-    modulePath: './testConfig.js',
-    errorType: error.constructor?.name || 'unknown'
-  });
-  throw error; // Re-throw to maintain error propagation
-}
-
-try {
-  fileSystemConfig = nodeRequire('./fileSystemConfig.js');
-} catch (error: any) {
-  qerrors(error, 'localVars: failed to load fileSystemConfig.js', { 
-    modulePath: './fileSystemConfig.js',
-    errorType: error.constructor?.name || 'unknown'
-  });
-  throw error; // Re-throw to maintain error propagation
-}
-
-try {
-  mockConfig = nodeRequire('./mockConfig.js');
-} catch (error: any) {
-  qerrors(error, 'localVars: failed to load mockConfig.js', { 
-    modulePath: './mockConfig.js',
-    errorType: error.constructor?.name || 'unknown'
-  });
-  throw error; // Re-throw to maintain error propagation
-}
-
-try {
-  systemConfig = nodeRequire('./systemConfig.js');
-} catch (error: any) {
-  qerrors(error, 'localVars: failed to load systemConfig.js', { 
-    modulePath: './systemConfig.js',
-    errorType: error.constructor?.name || 'unknown'
-  });
-  throw error; // Re-throw to maintain error propagation
-}
+import * as envConfig from './envConfig.js';
+import * as qtestsConfig from './qtestsConfig.js';
+import * as testConfig from './testConfig.js';
+import * as fileSystemConfig from './fileSystemConfig.js';
+import * as mockConfig from './mockConfig.js';
+import * as systemConfig from './systemConfig.js';
 
 // Re-export from focused configuration modules for backward compatibility
 

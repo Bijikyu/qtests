@@ -2,7 +2,7 @@
 
 Analyze and address the following test failures:
 
-## Failed Test 1: /home/runner/workspace/tests/integration/resolveStubPaths.test.ts
+## Failed Test 1: /home/runner/workspace/tests/integration/runner-cli.test.js
 
 ### Output:
 ```
@@ -30,13 +30,23 @@ Analyze and address the following test failures:
 
     Details:
 
-    /home/runner/workspace/config/jest-setup.ts:43
-        qerrors = (await Promise.resolve().then(() => __importStar(require('../dist/lib/qerrorsFallback.js')))).default;
-                         ^^^^^^^
+    /home/runner/workspace/dist/config/localVars.js:21
+    const nodeRequire = (0, _module.createRequire)(import.meta.url);
+                                                          ^^^^
 
-    SyntaxError: Unexpected identifier 'Promise'
+    SyntaxError: Cannot use 'import.meta' outside a module
+
+      30 | // how Node.js resolves module names to file paths
+      31 | import { mockRegistry, installMocking, registerDefaultMocks } from './lib/mockSystem.js';
+    > 32 | import * as localVars from './config/localVars.js';
+         | ^
+      33 | // Install clean, registry-based mocking for module ids
+      34 | registerDefaultMocks();
+      35 | installMocking();
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1505:14)
+      at Object.require (dist/setup.js:32:1)
+      at Object.<anonymous> (config/jest-setup.ts:3:1)
 
 ```
 
@@ -44,7 +54,7 @@ Analyze and address the following test failures:
 
 ---
 
-## Failed Test 2: /home/runner/workspace/tests/integration/demo__server__app__get.test.js
+## Failed Test 2: /home/runner/workspace/tests/integration/resolveStubPaths.test.ts
 
 ### Output:
 ```
@@ -72,13 +82,23 @@ Analyze and address the following test failures:
 
     Details:
 
-    /home/runner/workspace/config/jest-setup.ts:43
-        qerrors = (await Promise.resolve().then(() => __importStar(require('../dist/lib/qerrorsFallback.js')))).default;
-                         ^^^^^^^
+    /home/runner/workspace/dist/config/localVars.js:21
+    const nodeRequire = (0, _module.createRequire)(import.meta.url);
+                                                          ^^^^
 
-    SyntaxError: Unexpected identifier 'Promise'
+    SyntaxError: Cannot use 'import.meta' outside a module
+
+      30 | // how Node.js resolves module names to file paths
+      31 | import { mockRegistry, installMocking, registerDefaultMocks } from './lib/mockSystem.js';
+    > 32 | import * as localVars from './config/localVars.js';
+         | ^
+      33 | // Install clean, registry-based mocking for module ids
+      34 | registerDefaultMocks();
+      35 | installMocking();
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1505:14)
+      at Object.require (dist/setup.js:32:1)
+      at Object.<anonymous> (config/jest-setup.ts:3:1)
 
 ```
 
@@ -114,13 +134,127 @@ Analyze and address the following test failures:
 
     Details:
 
-    /home/runner/workspace/config/jest-setup.ts:43
-        qerrors = (await Promise.resolve().then(() => __importStar(require('../dist/lib/qerrorsFallback.js')))).default;
-                         ^^^^^^^
+    /home/runner/workspace/dist/config/localVars.js:21
+    const nodeRequire = (0, _module.createRequire)(import.meta.url);
+                                                          ^^^^
 
-    SyntaxError: Unexpected identifier 'Promise'
+    SyntaxError: Cannot use 'import.meta' outside a module
+
+      30 | // how Node.js resolves module names to file paths
+      31 | import { mockRegistry, installMocking, registerDefaultMocks } from './lib/mockSystem.js';
+    > 32 | import * as localVars from './config/localVars.js';
+         | ^
+      33 | // Install clean, registry-based mocking for module ids
+      34 | registerDefaultMocks();
+      35 | installMocking();
 
       at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1505:14)
+      at Object.require (dist/setup.js:32:1)
+      at Object.<anonymous> (config/jest-setup.ts:3:1)
+
+```
+
+### Duration: 0ms
+
+---
+
+## Failed Test 4: /home/runner/workspace/tests/integration/frontend-backend-compatibility.test.js
+
+### Output:
+```
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/dist/config/localVars.js:21
+    const nodeRequire = (0, _module.createRequire)(import.meta.url);
+                                                          ^^^^
+
+    SyntaxError: Cannot use 'import.meta' outside a module
+
+      30 | // how Node.js resolves module names to file paths
+      31 | import { mockRegistry, installMocking, registerDefaultMocks } from './lib/mockSystem.js';
+    > 32 | import * as localVars from './config/localVars.js';
+         | ^
+      33 | // Install clean, registry-based mocking for module ids
+      34 | registerDefaultMocks();
+      35 | installMocking();
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1505:14)
+      at Object.require (dist/setup.js:32:1)
+      at Object.<anonymous> (config/jest-setup.ts:3:1)
+
+```
+
+### Duration: 0ms
+
+---
+
+## Failed Test 5: /home/runner/workspace/tests/integration/demo__server__app__get.test.js
+
+### Output:
+```
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    /home/runner/workspace/dist/config/localVars.js:21
+    const nodeRequire = (0, _module.createRequire)(import.meta.url);
+                                                          ^^^^
+
+    SyntaxError: Cannot use 'import.meta' outside a module
+
+      30 | // how Node.js resolves module names to file paths
+      31 | import { mockRegistry, installMocking, registerDefaultMocks } from './lib/mockSystem.js';
+    > 32 | import * as localVars from './config/localVars.js';
+         | ^
+      33 | // Install clean, registry-based mocking for module ids
+      34 | registerDefaultMocks();
+      35 | installMocking();
+
+      at Runtime.createScriptFromCode (node_modules/jest-runtime/build/index.js:1505:14)
+      at Object.require (dist/setup.js:32:1)
+      at Object.<anonymous> (config/jest-setup.ts:3:1)
 
 ```
 
@@ -130,6 +264,6 @@ Analyze and address the following test failures:
 
 ## Summary
 
-- Total failed tests: 3
-- Failed test files: /home/runner/workspace/tests/integration/resolveStubPaths.test.ts, /home/runner/workspace/tests/integration/demo__server__app__get.test.js, /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js
-- Generated: 2025-12-27T22:32:33.842Z
+- Total failed tests: 5
+- Failed test files: /home/runner/workspace/tests/integration/runner-cli.test.js, /home/runner/workspace/tests/integration/resolveStubPaths.test.ts, /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js, /home/runner/workspace/tests/integration/frontend-backend-compatibility.test.js, /home/runner/workspace/tests/integration/demo__server__app__get.test.js
+- Generated: 2026-01-08T19:12:35.055Z

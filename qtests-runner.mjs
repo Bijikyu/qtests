@@ -19,15 +19,13 @@ function validatePath(inputPath, allowedBase = process.cwd()) {
     throw new Error('Invalid path: path must be a non-empty string');
   }
   
-  const resolvedPath = path.resolve(allowedBase, inputPath);
-  const normalizedBase = path.normalize(allowedBase);
-  const normalizedPath = path.normalize(resolvedPath);
-  
-  if (!normalizedPath.startsWith(normalizedBase)) {
+  const absoluteBase = path.resolve(path.normalize(allowedBase));
+  const absolutePath = path.isAbsolute(inputPath) ? path.resolve(inputPath) : path.resolve(absoluteBase, inputPath);
+  const rel = path.relative(absoluteBase, absolutePath);
+  if (rel.startsWith('..') || path.isAbsolute(rel)) {
     throw new Error('Path traversal detected: path must be within allowed directory');
   }
-  
-  return normalizedPath;
+  return absolutePath;
 }
 
 function safeWriteFile(filePath, content, options = {}) {
@@ -203,12 +201,11 @@ class TestRunner {
 
   // API-only: execute all tests via Jest's programmatic API in one run
   async runAll(testFiles) {
-    let stdout = '';
-    let stderr = '';
+    let jestModule = null;
+    let intendedArgs = null;
     try {
       // Lazily require jest to avoid upfront overhead and allow CJS interop from ESM
       if (!this._runCLI) {
-        let jestModule;
         try {
           const require = createRequire(import.meta.url);
           jestModule = require('jest');
@@ -259,7 +256,7 @@ class TestRunner {
 
       // Record intended Jest invocation for debugging/tests
       try {
-        const intendedArgs = [];
+        intendedArgs = [];
         if (cfg) intendedArgs.push('--config', cfg);
         intendedArgs.push('--passWithNoTests');
         if (runInBand) intendedArgs.push('--runInBand');
@@ -288,26 +285,17 @@ class TestRunner {
       this.failedTests++;
     }
     this.printSummary();
-    
-    // Cleanup before exit with proper async handling
-    await this.cleanup();
-    
-    // Ensure async operations complete before exit
-    let debugFilePromise = null;
-    if (this.failedTests > 0) {
-      debugFilePromise = this.generateDebugFile().catch(err => {
-        console.error('Failed to generate debug file:', err);
-      });
-    }
-    
-    // Wait for debug file generation if it was started
-    if (debugFilePromise) {
+
+    const failedCount = this.failedTests;
+    if (failedCount > 0) {
       try {
-        await debugFilePromise;
+        await this.generateDebugFile();
       } catch (err) {
-        // Error already logged above
+        console.error('Failed to generate debug file:', err);
       }
     }
+
+    await this.cleanup();
     
     // Wait for all microtasks to complete with proper timeout
     await new Promise(resolve => {
@@ -351,7 +339,7 @@ class TestRunner {
     });
     
     // Final exit - ensure this only runs once
-    process.exit(this.failedTests > 0 ? 1 : 0);
+    process.exit(failedCount > 0 ? 1 : 0);
   }
 
   // Print colored status indicator
