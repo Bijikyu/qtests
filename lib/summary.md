@@ -17,7 +17,32 @@ The `lib/` directory contains the core qtests framework functionality, including
 - Better error handling and state management
 **Request/Response Flows**: 
 - Input: Async functions and configuration options
-- Output: Protected function execution with circuit breaking  
+- Output: Protected function execution with circuit breaking
+
+### errorHandling/
+**Role**: Comprehensive error handling utilities for robust test environments  
+**Components**:
+- `errorWrappers.ts` - Wraps functions with error handling and fallbacks
+- `fallbackHandlers.ts` - Provides standard fallback strategies
+**Key Features**:
+- Structured error handling with context preservation
+- Automatic fallback value generation
+- Performance monitoring for error rates
+- Integration with logging systems
+**Request/Response Flows**: 
+- Input: Functions or promises with error context
+- Output: Handled results with optional fallbacks
+
+### performanceTesting/
+**Role**: Built-in performance testing and benchmarking capabilities  
+**Key Features**:
+- Memory usage monitoring and tracking
+- Execution time measurement with statistical analysis
+- Scalability testing with configurable load patterns
+- Automated performance regression detection
+**Request/Response Flows**: 
+- Input: Test functions and performance configuration
+- Output: Detailed performance metrics and reports  
 **Key Features**:
 - Analyzes TypeScript/JavaScript source files for exports and API routes
 - Generates `.GeneratedTest.test.ts` integration tests for API endpoints and Express routes
@@ -93,9 +118,31 @@ The `lib/` directory contains the core qtests framework functionality, including
 - Batch test generation for multiple routes
 - Resource-based test generation for REST APIs
 
-### logUtils.ts (if exists)
-**Role**: Legacy logging utilities (now superseded by centralizedLogging.ts)
-**Features**: Provides controlled logging for test environments
+### polyfills/index.ts
+**Role**: Comprehensive browser polyfills for cross-environment testing
+**Features**:
+- Browser API simulation (window, document, navigator)
+- Clipboard API mocking for clipboard operations
+- Media query simulation for responsive testing
+- Automatic polyfill orchestration and cleanup
+
+### fileSystem/
+**Role**: Safe file system operations for testing environments
+**Components**:
+- `fileReading.ts` - Safe file reading with error handling
+- `fileWriting.ts` - Atomic file writing with directory creation
+**Features**:
+- Graceful handling of missing files and permissions
+- Automatic directory creation for file writes
+- Backup and rollback capabilities for test isolation
+
+### streamingValidator.ts & streamingValidatorModern.ts
+**Role**: Real-time data stream validation for large dataset testing
+**Features**:
+- Progressive validation without memory overload
+- Configurable validation rules and error thresholds
+- Stream-based processing for scalability testing
+- Modern version supports async generators and Promise-based streams
 
 ## Known Side Effects
 - Test generation modifies filesystem by creating new `.GeneratedTest.test.ts` files (non-dry runs)

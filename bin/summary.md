@@ -5,7 +5,7 @@ The `bin/` directory contains executable CLI tools for the qtests framework.
 
 ## Files and Their Roles
 
-### qtests-generate (alias: qtests-ts-generate)
+### qtests-generate (Primary CLI, backward-compatible alias: qtests-ts-generate)
 **Role**: Command-line interface for generating automated TypeScript tests  
 **Key Features**:
 - Supports multiple analysis modes: `heuristic` (default) and `ast` (TypeScript AST)
@@ -17,7 +17,8 @@ The `bin/` directory contains executable CLI tools for the qtests framework.
  - Package script update: `--update-pkg-script` opt-in to update `package.json` test script
 
 **Recent Updates**:
-- New command name `qtests-generate` added (keeps `qtests-ts-generate` as a backward-compatible alias).
+- New primary command name `qtests-generate` established (maintains `qtests-ts-generate` as backward-compatible alias).
+- **Recommended Usage**: Prefer `qtests-generate` for new projects; `qtests-ts-generate` supported for legacy compatibility.
 - Imports compiled generator from `../dist/lib/testGenerator.js` for predictable runtime without tsx.
 - ALWAYS writes/overwrites `qtests-runner.mjs` at the client root (INIT_CWD) using a validated API‑only template (runCLI + API Mode).
 

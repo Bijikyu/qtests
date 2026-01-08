@@ -1,6 +1,6 @@
 # qtests
 
-A comprehensive Node.js testing framework with zero dependencies. Provides intelligent integration test generation, method stubbing, console mocking, and drop-in replacements for popular modules. **Now with ES Module and TypeScript support!**
+A comprehensive Node.js testing framework with minimal production dependencies. Provides intelligent integration test generation, method stubbing, console mocking, error handling, performance testing, and drop-in replacements for popular modules. **Now with ES Module and TypeScript support!**
 
 🎉 **Latest Updates (September 2025)**:
 - ✅ ESM + TypeScript Jest harness: runner always loads `config/jest.config.mjs` and passes `--passWithNoTests` for stable CI
@@ -49,12 +49,16 @@ const restore = stubMethod(myObject, 'methodName', mockImplementation);
 - **🌍 Environment Management** - Safe backup and restore of environment variables
 - **📦 Module Stubs** - Drop-in replacements for axios, winston, and other dependencies
 - **🔌 Offline Mode** - Automatic stub resolution when external services are unavailable
-- **🏃 Lightweight Test Runner** - Zero-dependency test execution engine
+- **🏃 Lightweight Test Runner** - Minimal dependency test execution engine
 - **🌐 HTTP Testing** - Integration testing utilities (supertest alternative)
 - **📧 Email Mocking** - Email testing without external mail services
+- **🔧 Error Handling** - Comprehensive error handling and logging utilities
+- **⚡ Performance Testing** - Built-in performance and scalability testing
+- **🔗 Circuit Breaker** - Opossum-based circuit breaker for production reliability
+- **📊 Health Monitoring** - Connection pool health monitoring and metrics
 - **🆕 ES Module Support** - Full compatibility with modern ES Module syntax
 - **🔷 TypeScript Support** - Complete type definitions and intellisense
-- **⚡ Zero Dependencies** - No production dependencies to bloat your project
+- **⚡ Minimal Dependencies** - Only essential production dependencies
 
 ## 🧩 Mock API (Runtime‑Safe)
 
@@ -207,6 +211,27 @@ const results = generator.getResults();
 console.log(`Generated ${results.length} test files`);
 ```
 
+### Custom Module Stubs (Advanced)
+
+When you need to stub a niche dependency (beyond the built‑ins axios/winston) without changing qtests itself, register a custom stub in tests:
+
+```ts
+// Always load setup first so axios/winston are stubbed globally
+import './node_modules/qtests/setup.js';
+
+// Then register your ad‑hoc stub(s)
+import { registerModuleStub } from 'qtests/utils/customStubs.js';
+
+registerModuleStub('external-service-client', {
+  ping: () => 'pong',
+  get: async () => ({ ok: true })
+});
+
+// Now this resolves to your in‑memory stub even if the module is not installed
+const client = require('external-service-client');
+await client.get(); // { ok: true }
+```
+
 **Smart Discovery Features:**
 - Walks entire project directory structure
 - Supports feature-first projects (tests alongside source files)
@@ -325,6 +350,130 @@ console.log(sendEmail.getHistory()); // Array of sent emails
 
 ## 🛠️ Advanced Features
 
+### Error Handling Utilities
+
+```typescript
+import { handleError, handleAsyncError } from 'qtests/lib/errorHandling.js';
+
+// Synchronous error handling with logging
+try {
+  riskyOperation();
+} catch (error) {
+  handleError(error, 'operation-context', {
+    logToConsole: true,
+    includeStack: true,
+    fallbackMessage: 'Operation failed'
+  });
+}
+
+// Async error handling with fallback
+const result = await handleAsyncError(
+  riskyAsyncOperation(), 
+  'async-operation',
+  { fallbackValue: null }
+);
+if (result === null) {
+  console.log('Operation failed but was handled gracefully');
+}
+```
+
+### Performance Testing
+
+```typescript
+import { runPerformanceTest, measureMemoryUsage } from 'qtests/lib/performance.js';
+
+// Performance benchmark
+const results = await runPerformanceTest({
+  testFunction: () => processLargeDataset(data),
+  duration: 5000, // 5 seconds
+  samples: 100
+});
+
+console.log(`Average time: ${results.averageTime}ms`);
+console.log(`Operations per second: ${results.opsPerSecond}`);
+
+// Memory monitoring
+const memoryBefore = measureMemoryUsage();
+// ... run your code ...
+const memoryAfter = measureMemoryUsage();
+console.log(`Memory delta: ${memoryAfter.heapUsed - memoryBefore.heapUsed} bytes`);
+```
+
+### Circuit Breaker Pattern
+
+```typescript
+import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
+
+// Wrap external service calls with circuit breaker
+const serviceBreaker = createCircuitBreaker(
+  async (data) => externalService.process(data),
+  {
+    timeout: 5000,
+    errorThresholdPercentage: 50,
+    resetTimeout: 30000
+  }
+);
+
+// Use like normal function
+try {
+  const result = await serviceBreaker.fire(userData);
+  console.log('Service responded:', result);
+} catch (error) {
+  if (error.code === 'EOPENBREAKER') {
+    console.log('Circuit is open - using fallback');
+  }
+}
+```
+
+### Connection Pool Health Monitoring
+
+```typescript
+import { addHealthMonitoring, createHealthMonitoredPool } from 'qtests/lib/connectionPoolHealth.js';
+
+// Add health monitoring to existing pool
+const pool = createDatabasePool();
+const monitor = addHealthMonitoring(pool, {
+  healthCheckInterval: 30000, // 30 seconds
+  unhealthyConnectionThreshold: 3,
+  enableDetailedLogging: true
+});
+
+// Listen to health events
+monitor.on('health-check-completed', (status) => {
+  console.log(`Healthy: ${status.healthyConnections}/${status.totalConnections}`);
+});
+
+monitor.on('connection-unhealthy', (data) => {
+  alertingService.sendAlert('Database connection unhealthy', data);
+});
+
+// Start monitoring
+monitor.startHealthMonitoring();
+```
+
+### Jest Configuration Factory
+
+```typescript
+import { createJestConfig } from 'qtests/lib/jestConfigFactory.js';
+
+// Standardized Jest configurations
+const config = createJestConfig('typescript-esm', {
+  coverageDirectory: 'coverage',
+  collectCoverageFrom: ['src/**/*.ts'],
+  testEnvironment: 'node'
+});
+
+// For React projects
+const reactConfig = createJestConfig('react-typescript', {
+  setupFilesAfterEnv: ['<rootDir>/src/setupTests.ts'],
+  testEnvironment: 'jsdom'
+});
+
+// Write to jest.config.mjs
+import { writeFileSync } from 'fs';
+writeFileSync('jest.config.mjs', `export default ${JSON.stringify(config, null, 2)};`);
+```
+
 ### Offline Mode
 
 ```typescript
@@ -362,6 +511,8 @@ test('console output', async () => {
 | `testEnv.setTestEnv()` | Set standard test environment |
 | `testEnv.saveEnv()` / `restoreEnv()` | Backup/restore environment |
 | `offlineMode.setOfflineMode(enabled)` | Toggle offline mode |
+| `handleError(error, context, options)` | Comprehensive error handling |
+| `handleAsyncError(promise, context, options)` | Async error handling with fallback |
 
 ### Test Generation
 
@@ -378,6 +529,27 @@ test('console output', async () => {
 |--------|-------------|
 | `runTestSuite(name, tests)` | Execute test suite |
 | `createAssertions()` | Get assertion methods |
+| `runPerformanceTest(config)` | Execute performance benchmark |
+| `measureMemoryUsage()` | Get current memory usage |
+
+### Error Handling & Performance
+
+| Method | Description |
+|--------|-------------|
+| `handleError(error, context, options?)` | Handle and log errors with context |
+| `handleAsyncError(promise, context, options?)` | Async error handling with fallback |
+| `createCircuitBreaker(fn, options)` | Create circuit breaker wrapper |
+| `addHealthMonitoring(pool, options)` | Add health monitoring to pools |
+| `createJestConfig(type, options)` | Generate standardized Jest config |
+
+### Advanced Utilities
+
+| Method | Description |
+|--------|-------------|
+| `registerModuleStub(name, exports)` | Register custom module stub |
+| `runTestSuites(suites, options)` | Run multiple test suites |
+| `initializePolyfills()` | Initialize browser polyfills |
+| `polyfillOrchestrator()` | Manage polyfill lifecycle |
 
 ## 🔷 TypeScript Configuration
 
@@ -411,14 +583,48 @@ And ensure your `tsconfig.json` supports ES modules:
 
 ```typescript
 // Core utilities with full type safety
-import { stubMethod, mockConsole, testEnv, TestGenerator, QtestsAPI } from 'qtests';
+import { stubMethod, mockConsole, testEnv, QtestsAPI } from 'qtests';
 
-// Advanced utilities
-import { httpTest, sendEmail, testSuite } from 'qtests/lib/envUtils.js';
+// Test Generator (Note: Use compiled path for production)
+import { TestGenerator } from 'qtests/dist/lib/testGenerator.js';
 
-// Module stubs
+// Advanced utilities with specific paths
+import { httpTest, sendEmail } from 'qtests/lib/envUtils.js';
+import { handleError, handleAsyncError } from 'qtests/lib/errorHandling.js';
+import { runPerformanceTest } from 'qtests/lib/performance.js';
+import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
+import { addHealthMonitoring } from 'qtests/lib/connectionPoolHealth.js';
+
+// Custom module stubs
+import { registerModuleStub } from 'qtests/utils/customStubs.js';
+
+// Jest configuration factory
+import { createJestConfig } from 'qtests/lib/jestConfigFactory.js';
+
+// Module stubs (still available)
 import { stubs } from 'qtests';
 await stubs.axios.get('https://example.com');
+```
+
+### Browser Testing Polyfills
+
+```typescript
+// For React/browser component testing
+import { 
+  initializePolyfills, 
+  getWindow, 
+  matchMedia, 
+  clipboard 
+} from 'qtests';
+
+// Set up browser environment
+initializePolyfills();
+
+// Now you have access to browser APIs in Node.js tests
+const window = getWindow();
+window.innerWidth = 1024;
+const mediaQuery = matchMedia('(max-width: 768px)');
+clipboard.writeText('test text');
 ```
 
 ## 🎯 Testing Philosophy
@@ -429,9 +635,10 @@ await stubs.axios.get('https://example.com');
 
 ## 🧰 CLI Reference
 
-### qtests-generate (alias: qtests-ts-generate)
+### qtests-generate (Primary CLI) 
 - Usage: `qtests-generate [options]`
 - Purpose: Scans source files and generates missing tests.
+- Note: `qtests-ts-generate` is maintained as a backward-compatible alias but `qtests-generate` is the preferred command
 - Options:
   - `-s, --src <dir>`: Source directory root to scan. Default: `.`
   - `-t, --test-dir <dir>`: Directory for integration/API tests. Default: `tests/generated-tests`
@@ -538,6 +745,81 @@ test('environment test', async () => {
 });
 ```
 
+## 🧪 Testing Patterns & Organization
+
+### Test File Types
+qtests supports multiple testing patterns depending on your needs:
+
+| Pattern | When to Use | File Location |
+|---------|-------------|---------------|
+| **Unit Tests** | Testing individual functions/classes | `src/module.test.ts` or `tests/unit/` |
+| **Integration Tests** | Testing API routes and service interactions | `tests/integration/` or `tests/generated-tests/` |
+| **Manual Tests** | Complex scenarios requiring custom setup | `tests/manual-tests/` |
+| **Performance Tests** | Benchmarking and load testing | `tests/performance/` |
+| **End-to-End Tests** | Full application workflows | `tests/e2e/` |
+
+### Choosing Test Patterns
+
+```typescript
+// Unit test - test individual functions
+import './node_modules/qtests/setup.js';
+import { calculateTotal } from './billing.js';
+
+test('calculates total with tax', () => {
+  const total = calculateTotal(100, 0.1);
+  expect(total).toBe(110);
+});
+
+// Integration test - test API endpoints
+import { createMockApp, supertest } from '../utils/httpTest.js';
+import billingRoutes from './billingRoutes.js';
+
+describe('POST /api/billing/calculate', () => {
+  it('should calculate total with discounts', async () => {
+    const app = createMockApp();
+    app.use('/api/billing', billingRoutes);
+    
+    const response = await supertest(app)
+      .post('/api/billing/calculate')
+      .send({ amount: 100, discount: 0.2 })
+      .expect(200);
+      
+    expect(response.body.total).toBe(80);
+  });
+});
+
+// Performance test - benchmark critical operations
+import { runPerformanceTest } from 'qtests/lib/performance.js';
+
+test('performance: total calculation', async () => {
+  const results = await runPerformanceTest({
+    testFunction: () => calculateTotal(100, 0.1),
+    duration: 1000,
+    samples: 1000
+  });
+  
+  expect(results.averageTime).toBeLessThan(1); // Should be under 1ms
+});
+```
+
+### Test Environment Setup
+
+```typescript
+// Global test setup (setupTests.ts)
+import './node_modules/qtests/setup.js';
+import { testEnv } from 'qtests';
+
+// Set up test environment before all tests
+beforeAll(() => {
+  testEnv.setTestEnv();
+});
+
+// Clean up after all tests
+afterAll(() => {
+  testEnv.restoreEnv();
+});
+```
+
 ## 🐛 Troubleshooting
 
 | Issue | Solution |
@@ -548,12 +830,173 @@ test('environment test', async () => {
 | ES Module syntax errors | Ensure `"module": "ES2020"` in tsconfig.json |
 | Console pollution | Use `mockConsole()` to capture output |
 | Environment leaks | Use `testHelpers.withSavedEnv()` for isolation |
-| Module not found | Import advanced utilities from `qtests/lib/envUtils` |
+| Module not found for advanced features | Use specific import paths: `qtests/lib/errorHandling.js`, `qtests/lib/performance.js` |
 | CLI not found | Use `npx qtests-generate` (alias: `qtests-ts-generate`) or install globally |
 | File extension errors | Use `.js` extensions in ES module imports |
 | Test generation creates tests for config files | Enhanced filtering now automatically skips demo/, examples/, config/, and test directories |
 | generateKey returns empty string | Fixed in latest version - now correctly returns test keys like "test-api-key-user" |
-| qtests-runner.mjs vs qtests-ts-runner.ts | Use `qtests-runner.mjs` as the generated runner; the CLI command remains `qtests-ts-runner` |
+| Circuit breaker not opening | Check error threshold settings and ensure proper error handling |
+| Health monitoring not working | Ensure `pool.start()` is called before adding health monitoring |
+| Performance tests timing out | Increase timeout in Jest config or reduce test duration |
+| Custom module stubs not loading | Call `registerModuleStub()` before importing the target module |
+
+## 🏢 Enterprise Integration
+
+### CI/CD Pipeline Integration
+
+```yaml
+# GitHub Actions example
+name: Tests
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Generate tests
+        run: npx qtests-generate --force --update-pkg-script
+        
+      - name: Run tests
+        run: npm test
+        
+      - name: Performance tests
+        run: npm run test:performance
+        
+      - name: Upload coverage
+        uses: codecov/codecov-action@v3
+```
+
+```bash
+# Jenkins Pipeline example
+pipeline {
+  agent any
+  stages {
+    stage('Install') {
+      steps {
+        sh 'npm ci'
+      }
+    }
+    stage('Generate Tests') {
+      steps {
+        sh 'npx qtests-generate --force --integration'
+      }
+    }
+    stage('Test') {
+      steps {
+        sh 'npm test'
+      }
+    }
+    stage('Performance') {
+      steps {
+        sh 'npm run test:scalability'
+      }
+    }
+  }
+}
+```
+
+### Large Codebase Strategies
+
+```typescript
+// jest.config.mjs for monorepos
+export default {
+  projects: [
+    {
+      displayName: 'frontend',
+      testMatch: ['<rootDir>/packages/frontend/**/*.test.ts'],
+      setupFilesAfterEnv: ['<rootDir>/packages/frontend/setupTests.ts'],
+      moduleNameMapper: {
+        '^@shared/(.*)$': '<rootDir>/packages/shared/$1'
+      }
+    },
+    {
+      displayName: 'backend',
+      testMatch: ['<rootDir>/packages/backend/**/*.test.ts'],
+      setupFilesAfterEnv: ['<rootDir>/packages/backend/setupTests.ts']
+    },
+    {
+      displayName: 'generated-tests',
+      testMatch: ['<rootDir>/tests/generated-tests/**/*.test.ts'],
+      testTimeout: 30000 // Longer timeout for integration tests
+    }
+  ]
+};
+```
+
+```bash
+# Scripts for large projects
+# package.json
+{
+  "scripts": {
+    "test:unit": "jest --testPathPattern=packages/*/src/**/*.test.ts",
+    "test:integration": "jest --testPathPattern=tests/generated-tests",
+    "test:performance": "jest --testPathPattern=tests/performance",
+    "test:all": "npm run test:unit && npm run test:integration && npm run test:performance",
+    "test:watch": "jest --watch --testPathPattern=packages",
+    "test:coverage": "jest --coverage --coverageReporters=text-lcov | coveralls"
+  }
+}
+```
+
+### Team Adoption Guidelines
+
+1. **Start Small**: Begin with unit tests for new features
+2. **Gradual Expansion**: Add integration tests for critical API endpoints
+3. **Performance Baselines**: Establish performance benchmarks early
+4. **Code Review**: Require test coverage in pull requests
+5. **Documentation**: Maintain test patterns in team wikis
+
+### Monitoring & Alerting
+
+```typescript
+// tests/monitoring/setup.js
+import { addHealthMonitoring } from 'qtests/lib/connectionPoolHealth.js';
+import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
+
+// Global health monitoring for test environments
+if (process.env.NODE_ENV === 'test') {
+  const pool = global.databasePool;
+  const monitor = addHealthMonitoring(pool, {
+    healthCheckInterval: 15000,
+    unhealthyConnectionThreshold: 2
+  });
+  
+  monitor.on('health-check-completed', (status) => {
+    if (status.unhealthyConnections > 0) {
+      console.warn(`Test database has ${status.unhealthyConnections} unhealthy connections`);
+    }
+  });
+}
+```
+
+## 📚 Additional Resources
+
+### Configuration Examples
+- [Jest Configuration Factory](./lib/jestConfigFactory.ts) - Standardized configs for different project types
+- [Test Setup Patterns](./lib/testSetupFactory.ts) - Reusable test environment setups
+- [Error Handling Patterns](./lib/utils/__tests__/errorHandling.test.ts) - Comprehensive error handling examples
+
+### Advanced Features
+- [Connection Pool Health](./lib/connectionPoolHealth.md) - Detailed health monitoring guide
+- [Performance Testing](./scripts/benchmarks/) - Performance testing utilities and examples
+- [Manual Testing](./manual-tests/) - Complex test scenarios and edge cases
+
+### Community & Support
+- [Issue Templates](./.github/ISSUE_TEMPLATE/) - Standardized issue reporting
+- [Contributing Guidelines](./CONTRIBUTING.md) - Development and contribution standards
+- [API Documentation](./docs/API_REFERENCE.md) - Complete API reference and examples
+- [Advanced Features](./docs/ADVANCED_FEATURES.md) - Error handling, performance testing, circuit breakers
+- [Enterprise Integration](./docs/ENTERPRISE_INTEGRATION.md) - CI/CD patterns and production deployment
+- [Migration Guide](./docs/MIGRATION_GUIDE.md) - Upgrade from older versions
+- [Troubleshooting](./docs/TROUBLESHOOTING.md) - Common issues and solutions
 
 ## 📄 License
 
