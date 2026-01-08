@@ -239,7 +239,7 @@ export const commonSchemas = {
   },
   
   logging: {
-    level: { type: 'string', default: 'info', validate: (val) => ['debug', 'info', 'warn', 'error'].includes(val) },
+    level: { type: 'string', default: 'info', validate: (val: any) => ['debug', 'info', 'warn', 'error'].includes(val) },
     file: { type: 'string' },
     maxFiles: { type: 'number', default: 10 }
   },
@@ -255,7 +255,22 @@ export const commonSchemas = {
 export const configUtils = {
   // Quick setup with common schemas
   setupWithCommonSchemas: () => {
-    ConfigurationManager.setSchema(commonSchemas);
+    // Flatten the nested schema structure
+    const flatSchema: Record<string, ConfigSchema> = {};
+    
+    const flattenSchema = (obj: any, prefix = '') => {
+      for (const key in obj) {
+        const fullKey = prefix ? `${prefix}.${key}` : key;
+        if (obj[key].type) {
+          flatSchema[fullKey] = obj[key];
+        } else {
+          flattenSchema(obj[key], fullKey);
+        }
+      }
+    };
+    
+    flattenSchema(commonSchemas);
+    ConfigurationManager.setSchema(flatSchema);
   },
 
   // Load from multiple sources
@@ -276,9 +291,13 @@ export const configUtils = {
     const schema = commonSchemas[category];
     const result: Configuration = {};
     
-    for (const key in schema) {
-      result[key] = ConfigurationManager.get(key, schema[key].default);
-    }
+    Object.keys(schema).forEach(key => {
+      const schemaItem = schema[key as keyof typeof schema] as ConfigSchema;
+      if (schemaItem && schemaItem.default !== undefined) {
+        const fullKey = `${category}.${key}`;
+        result[key] = ConfigurationManager.get(fullKey, schemaItem.default);
+      }
+    });
     
     return result;
   },
@@ -286,10 +305,12 @@ export const configUtils = {
   // Set category defaults
   setCategoryDefaults: (category: keyof typeof commonSchemas) => {
     const schema = commonSchemas[category];
-    for (const key in schema) {
-      if (schema[key].default !== undefined) {
-        ConfigurationManager.set(key, schema[key].default);
+    Object.keys(schema).forEach(key => {
+      const schemaItem = schema[key as keyof typeof schema] as ConfigSchema;
+      if (schemaItem && schemaItem.default !== undefined) {
+        const fullKey = `${category}.${key}`;
+        ConfigurationManager.set(fullKey, schemaItem.default);
       }
-    }
+    });
   }
 };

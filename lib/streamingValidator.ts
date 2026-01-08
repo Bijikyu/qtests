@@ -16,17 +16,20 @@ export {
   dangerousPatterns
 } from './validation/htmlSanitization.js';
 
-export {
-  safeString,
-  safeNumber,
-  safeBoolean,
-  safeArray,
-  safeObject,
-  shortString,
-  mediumString,
-  longString,
-  z
-} from './validation/basicSchemas.js';
+import { basicSchemas, z } from './validation/basicSchemas.js';
+
+// Re-export individual schemas from basicSchemas
+export const safeString = basicSchemas.safeString;
+export const safeNumber = basicSchemas.safeNumber;
+export const safeBoolean = basicSchemas.safeBoolean;
+export const safeArray = basicSchemas.safeArray;
+export const safeObject = basicSchemas.safeObject;
+export const shortString = basicSchemas.shortString;
+export const mediumString = basicSchemas.mediumString;
+export const longString = basicSchemas.longString;
+
+// Re-export zod
+export { z };
 
 export {
   ValidationConfig,
