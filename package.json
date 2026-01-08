@@ -59,7 +59,6 @@
     "axios": "^1.9.0",
     "bash-language-server": "^5.6.0",
     "chai": "^5.3.3",
-    "clinic": "^13.0.0",
     "dotenv": "^17.2.3",
     "fs-extra": "^11.3.3",
     "generic-pool": "^3.9.0",
