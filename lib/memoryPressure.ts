@@ -108,47 +108,67 @@ export class MemoryPressureMonitor extends EventEmitter {
     };
   }
 
-  /**
-   * Check memory pressure and emit events if thresholds are crossed
-   */
-  private checkMemoryPressure(): void {
-    const stats = this.getCurrentStats();
-    this.lastStats = stats;
+/**
+ * Check memory pressure and emit events if thresholds are crossed
+ * 
+ * This is the core monitoring function that:
+ * 1. Collects current memory statistics
+ * 2. Determines pressure level based on thresholds
+ * 3. Emits appropriate events for listeners
+ * 4. Applies automatic scaling if configured
+ */
+private checkMemoryPressure(): void {
+  // Get current memory statistics from the system
+  const stats = this.getCurrentStats();
+  this.lastStats = stats; // Store for historical reference
 
-    const level = this.getPressureLevel(stats.usage);
-    const threshold = this.getThresholdForLevel(level);
+  // Determine current pressure level based on usage ratios
+  const level = this.getPressureLevel(stats.usage);
+  const threshold = this.getThresholdForLevel(level);
 
-    if (level !== 'normal') {
-      const event: MemoryPressureEvent = {
-        level,
-        usage: stats.usage,
-        threshold,
-        timestamp: stats.timestamp,
-        recommendations: this.getRecommendations(level, stats)
-      };
+  // Only emit pressure events if we're above normal levels
+  if (level !== 'normal') {
+    // Create comprehensive event data for listeners
+    const event: MemoryPressureEvent = {
+      level,
+      usage: stats.usage,
+      threshold,
+      timestamp: stats.timestamp,
+      recommendations: this.getRecommendations(level, stats)
+    };
 
-      this.emit('pressure', event);
-      this.emit(`pressure:${level}`, event);
+    // Emit general pressure event for all listeners
+    this.emit('pressure', event);
+    // Emit level-specific event for targeted listeners
+    this.emit(`pressure:${level}`, event);
 
-      // Apply automatic scaling if enabled
-      if (this.config.enableAutoScaling) {
-        this.applyAutoScaling(level, stats);
-      }
+    // Apply automatic scaling if enabled in configuration
+    if (this.config.enableAutoScaling) {
+      this.applyAutoScaling(level, stats);
     }
-
-    // Emit regular stats
-    this.emit('stats', stats);
   }
 
-  /**
-   * Determine pressure level based on usage
-   */
-  private getPressureLevel(usage: number): MemoryPressureEvent['level'] | 'normal' {
-    if (usage >= this.config.criticalMemoryThreshold) return 'critical';
-    if (usage >= this.config.highMemoryThreshold) return 'high';
-    if (usage >= this.config.lowMemoryThreshold) return 'medium';
-    return 'normal';
-  }
+  // Always emit regular stats for monitoring dashboards
+  this.emit('stats', stats);
+}
+
+/**
+ * Determine pressure level based on usage
+ * 
+ * Uses threshold comparison to categorize memory pressure.
+ * The order is important - check highest threshold first
+ * to ensure proper categorization.
+ * 
+ * @param usage - Current memory usage ratio (0-1)
+ * @returns Pressure level classification
+ */
+private getPressureLevel(usage: number): MemoryPressureEvent['level'] | 'normal' {
+  // Check thresholds in descending order for accurate classification
+  if (usage >= this.config.criticalMemoryThreshold) return 'critical';
+  if (usage >= this.config.highMemoryThreshold) return 'high';
+  if (usage >= this.config.lowMemoryThreshold) return 'medium';
+  return 'normal'; // Below low threshold = normal operation
+}
 
   /**
    * Get threshold value for pressure level
@@ -197,23 +217,33 @@ export class MemoryPressureMonitor extends EventEmitter {
     return recommendations;
   }
 
-  /**
-   * Apply automatic scaling based on pressure level
-   */
-  private applyAutoScaling(level: MemoryPressureEvent['level'], stats: MemoryStats): void {
-    if (this.config.enableGarbageCollection && (level === 'high' || level === 'critical')) {
-      // Force garbage collection
-      if (global.gc) {
-        global.gc();
-      }
+/**
+ * Apply automatic scaling based on pressure level
+ * 
+ * Implements adaptive scaling strategies to mitigate memory pressure.
+ * Currently focuses on garbage collection, but can be extended
+ * with additional scaling mechanisms.
+ * 
+ * @param level - Current memory pressure level
+ * @param stats - Current memory statistics
+ */
+private applyAutoScaling(level: MemoryPressureEvent['level'], stats: MemoryStats): void {
+  // Only apply garbage collection for high/critical pressure levels
+  // to avoid performance impact from unnecessary GC calls
+  if (this.config.enableGarbageCollection && (level === 'high' || level === 'critical')) {
+    // Force garbage collection if available (requires --expose-gc flag)
+    if (global.gc) {
+      global.gc(); // Trigger immediate garbage collection
     }
-
-    this.emit('auto-scaling-applied', {
-      level,
-      action: 'garbage-collection',
-      stats
-    });
   }
+
+  // Notify listeners about the automatic scaling action taken
+  this.emit('auto-scaling-applied', {
+    level,
+    action: 'garbage-collection',
+    stats
+  });
+}
 
   /**
    * Get monitor configuration
