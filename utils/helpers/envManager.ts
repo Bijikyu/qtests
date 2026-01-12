@@ -6,6 +6,17 @@ export interface EnvBackup {
 }
 
 /**
+ * Handle snapshot-related errors with logging
+ * Logs the error context and rethrows for proper propagation
+ * @param err - The error to handle
+ * @throws Always throws the provided error after logging
+ */
+export function handleSnapshotError(err: unknown): never {
+  console.log(`snapshotEnv has run resulting in a final value of error`);
+  throw err;
+}
+
+/**
  * Backup current environment variables
  * @param keys - Optional array of specific keys to backup (defaults to all)
  * @returns Object containing backed up environment variables
@@ -20,6 +31,24 @@ export const backupEnvVars = (keys?: string[]): EnvBackup => {
   
   return backup;
 };
+
+/**
+ * Snapshot specific environment variables with logging
+ * Alternative API that requires explicit variable names
+ * @param vars - Array of environment variable names to snapshot
+ * @returns Object containing the snapshotted environment variables
+ */
+export function snapshotEnv(vars: string[]): Record<string, string | undefined> {
+  console.log(`snapshotEnv is running with ${vars}`);
+  try {
+    const snap: Record<string, string | undefined> = {};
+    vars.forEach(k => { snap[k] = process.env[k]; });
+    console.log(`snapshotEnv is returning ${JSON.stringify(snap)}`);
+    return snap;
+  } catch(err) {
+    handleSnapshotError(err);
+  }
+}
 
 /**
  * Restore environment variables from backup

@@ -1,5 +1,5 @@
 /** Environment Manager - Consolidated Environment Variable Utilities */
-import { backupEnvVars, restoreEnvVars, withSavedEnv, loadEnv, configureEnv } from '../helpers/envManager.js';
+import { backupEnvVars, restoreEnvVars, withSavedEnv, loadEnv, configureEnv, snapshotEnv, handleSnapshotError } from '../helpers/envManager.js';
 import{logStart,logReturn,setLogging}from'../../lib/logUtils.js';
 import{withErrorLogging}from'../../lib/errorHandling/index.js';
 import{nodeEnv}from'../../config/localVars.js';
@@ -16,4 +16,4 @@ export const setTestEnv=():boolean=>{logStart('setTestEnv','default values');ret
 export const saveEnv=():Record<string,string|undefined>=>{logStart('saveEnv');return withErrorLogging(()=>{const savedEnv=backupEnvVars();logReturn('saveEnv',`${Object.keys(savedEnv).length} env vars`);return savedEnv;},'saveEnv');};
 export const restoreEnv=(savedEnv:Record<string,string|undefined>):boolean=>{logStart('restoreEnv',savedEnv);return withErrorLogging(()=>{if(!savedEnv||typeof savedEnv!=='object'){console.log(`restoreEnv: invalid saved environment`);return false;}restoreEnvVars(savedEnv);logReturn('restoreEnv',true);return true;},'restoreEnv');};
 
-export { backupEnvVars, restoreEnvVars, withSavedEnv, loadEnv, configureEnv, defaultEnv };
+export { backupEnvVars, restoreEnvVars, withSavedEnv, loadEnv, configureEnv, defaultEnv, snapshotEnv, handleSnapshotError };

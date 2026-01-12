@@ -28,10 +28,12 @@
 // to run with predictable environment configurations without affecting
 // other tests or the actual system environment.
 export { 
-  defaultEnv,      // Get default environment values
-  setTestEnv,      // Set test-specific environment variables
-  saveEnv,         // Save current environment state
-  restoreEnv       // Restore previously saved environment state
+  defaultEnv,           // Get default environment values
+  setTestEnv,           // Set test-specific environment variables
+  saveEnv,              // Save current environment state
+  restoreEnv,           // Restore previously saved environment state
+  snapshotEnv,          // Snapshot specific environment variables with logging
+  handleSnapshotError   // Error handler for snapshot operations
 } from './testEnv/envManager.js';
 
 // Mock and spy creation utilities
