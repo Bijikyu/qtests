@@ -93,7 +93,7 @@
     "babel-jest": "^30.1.2",
     "commoncontext": "^1.0.3",
     "express-rate-limit": "^7.0.0",
-    "fileflows": "^1.0.3",
+    "fileflows": "^1.0.5",
     "loqatevars": "^1.0.6",
     "madge": "^8.0.0",
     "npmcontext": "^1.0.4",
