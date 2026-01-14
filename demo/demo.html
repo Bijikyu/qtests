@@ -710,7 +710,7 @@
 // Generated test for UserService
 import { describe, it, expect, beforeEach } from '@jest/globals';
 import { UserService } from '../src/services/UserService';
-import { stubMethod } from '@bijikyu/qtests/setup';
+import { stubMethod } from '@bijikyu/qtests';
 
 describe('UserService', () => {
   let userService: UserService;
@@ -878,7 +878,7 @@ describe('UserService', () => {
                 <h4>Stubbing Examples</h4>
                 <div class="code-block">
 // Method stubbing
-import { stubMethod, spyOnMethod } from '@bijikyu/qtests/setup';
+import { stubMethod, spyOnMethod } from '@bijikyu/qtests';
 
 // Simple method stub
 stubMethod(userService, 'fetchUser', jest.fn().mockReturnValue({
@@ -2407,7 +2407,7 @@ describe('User Routes', () => {
                         <label for="playground-code">Test Code</label>
                         <textarea id="playground-code" rows="15" placeholder="// Write your test code here
 import { describe, it, expect } from '@jest/globals';
-import { stubMethod, mockConsole } from '@bijikyu/qtests/setup';
+import { stubMethod, mockConsole } from '@bijikyu/qtests';
 
 describe('Sample Test', () => {
   it('should demonstrate stubbing', () => {
@@ -2929,7 +2929,7 @@ describe('Sample Test', () => {
 
 function loadExample() {
             const exampleCode = `import { describe, it, expect, beforeEach } from '@jest/globals';
-import { stubMethod, mockConsole, testEnv } from '@bijikyu/qtests/setup';
+import { stubMethod, mockConsole, testEnv } from '@bijikyu/qtests';
 
 describe('UserService Example', () => {
   let userService;
@@ -3031,7 +3031,7 @@ describe('UserService Example', () => {
             
             const templates = {
                 'basic-stubbing': `// Basic Method Stubbing
-import { stubMethod } from '@bijikyu/qtests/setup';
+import { stubMethod } from '@bijikyu/qtests';
 
 const calculator = {
   add: (a, b) => a + b,
@@ -3044,7 +3044,7 @@ stubMethod(calculator, 'add', jest.fn().mockReturnValue(100));
 console.log(calculator.add(5, 10)); // Returns 100, not 15`,
                 
                 'console-mocking': `// Console Mocking
-import { mockConsole } from '@bijikyu/qtests/setup';
+import { mockConsole } from '@bijikyu/qtests';
 
 // Mock console methods
 const consoleSpy = mockConsole();
@@ -3058,7 +3058,7 @@ expect(consoleSpy.log).toHaveBeenCalledWith('Test message');
 expect(consoleSpy.error).toHaveBeenCalledWith('Error message');`,
                 
                 'env-management': `// Environment Management
-import { testEnv } from '@bijikyu/qtests/setup';
+import { testEnv } from '@bijikyu/qtests';
 
 // Set test environment
 testEnv.setTestEnv({
@@ -3077,7 +3077,7 @@ process.env.NODE_ENV = 'production';
 testEnv.restoreEnv();`,
                 
                 'error-wrapping': `// Error Wrapping
-import { createAsyncErrorWrapper } from '@bijikyu/qtests/utils/errorHandling';
+import { createAsyncErrorWrapper } from '@bijikyu/qtests/lib/errorHandling';
 
 const riskyOperation = async (data) => {
   if (!data) throw new Error('No data provided');
@@ -3093,7 +3093,7 @@ const safeOperation = createAsyncErrorWrapper(riskyOperation, {
 await safeOperation(null); // Returns fallback instead of throwing`,
                 
                 'async-testing': `// Async Testing
-import { waitForCondition } from '@bijikyu/qtests/utils';
+import { waitForCondition } from '@bijikyu/qtests/lib/waitForCondition';
 
 describe('Async Operations', () => {
   it('should wait for condition', async () => {
@@ -3112,7 +3112,7 @@ describe('Async Operations', () => {
                 'react-testing': `// React Component Testing
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { stubMethod } from '@bijikyu/qtests/setup';
+import { stubMethod } from '@bijikyu/qtests';
 
 // Mock API service
 const apiService = {
@@ -4335,7 +4335,7 @@ test('renders user name', async () => {
             const types = includeTypes ? ': any' : '';
             
             return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { stubMethod, mockConsole } from '@bijikyu/qtests/setup';
+import { stubMethod, mockConsole } from '@bijikyu/qtests';
 
 describe('MVC Pattern Tests', () => {
   let controller${types};
@@ -4424,7 +4424,7 @@ describe('MVC Pattern Tests', () => {
             const types = includeTypes ? ': any' : '';
             
             return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { stubMethod } from '@bijikyu/qtests/setup';
+import { stubMethod } from '@bijikyu/qtests';
 
 describe('Repository Pattern Tests', () => {
   let repository${types};
@@ -4559,7 +4559,8 @@ function generateServiceLayerTemplate(framework, language, includeComments, incl
             const comment = includeComments ? '/**\n * Service Layer Test Template\n * Tests for business logic and service orchestration\n */\n' : '';
             
             return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { stubMethod, createAsyncErrorWrapper } from '@bijikyu/qtests/setup';
+import { stubMethod } from '@bijikyu/qtests';
+import { createAsyncErrorWrapper } from '@bijikyu/qtests/lib/errorHandling';
 
 describe('Service Layer Tests', () => {
   let userService${types};
@@ -4700,7 +4701,7 @@ describe('Service Layer Tests', () => {
             const comment = includeComments ? '/**\n * CQRS Pattern Test Template\n * Tests for Command Query Responsibility Segregation\n */\n' : '';
             
             return `${comment}import { describe, it, expect, beforeEach } from '@jest/globals';
-import { stubMethod } from '@bijikyu/qtests/setup';
+import { stubMethod } from '@bijikyu/qtests';
 
 describe('CQRS Pattern Tests', () => {
   let commandHandler${types};
@@ -4788,7 +4789,7 @@ describe('CQRS Pattern Tests', () => {
             const types = includeTypes ? ': any' : '';
             
             return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { stubMethod } from '@bijikyu/qtests/setup';
+import { stubMethod } from '@bijikyu/qtests';
 
 describe('CRUD Operations Tests', () => {
   let crudService${types};
@@ -5688,7 +5689,7 @@ describe('${routeName} Routes', () => {
             
             const templates = {
                 'basic-stubbing': `// Basic Method Stubbing
-import { stubMethod } from '@bijikyu/qtests/setup';
+import { stubMethod } from '@bijikyu/qtests';
 
 const calculator = {
   add: (a, b) => a + b,
@@ -5701,7 +5702,7 @@ stubMethod(calculator, 'add', jest.fn().mockReturnValue(100));
 console.log(calculator.add(5, 10)); // Returns 100, not 15`,
                 
                 'console-mocking': `// Console Mocking
-import { mockConsole } from '@bijikyu/qtests/setup';
+import { mockConsole } from '@bijikyu/qtests';
 
 // Mock console methods
 const consoleSpy = mockConsole();
@@ -5715,7 +5716,7 @@ expect(consoleSpy.log).toHaveBeenCalledWith('Test message');
 expect(consoleSpy.error).toHaveBeenCalledWith('Error message');`,
                 
                 'env-management': `// Environment Management
-import { testEnv } from '@bijikyu/qtests/setup';
+import { testEnv } from '@bijikyu/qtests';
 
 // Set test environment
 testEnv.setTestEnv({
@@ -5734,7 +5735,7 @@ process.env.NODE_ENV = 'production';
 testEnv.restoreEnv();`,
                 
                 'error-wrapping': `// Error Wrapping
-import { createAsyncErrorWrapper } from '@bijikyu/qtests/utils/errorHandling';
+import { createAsyncErrorWrapper } from '@bijikyu/qtests/lib/errorHandling';
 
 const riskyOperation = async (data) => {
   if (!data) throw new Error('No data provided');
@@ -5750,7 +5751,7 @@ const safeOperation = createAsyncErrorWrapper(riskyOperation, {
 await safeOperation(null); // Returns fallback instead of throwing`,
                 
                 'async-testing': `// Async Testing
-import { waitForCondition } from '@bijikyu/qtests/utils';
+import { waitForCondition } from '@bijikyu/qtests/lib/waitForCondition';
 
 describe('Async Operations', () => {
   it('should wait for condition', async () => {
@@ -5769,7 +5770,7 @@ describe('Async Operations', () => {
                 'react-testing': `// React Component Testing
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { stubMethod } from '@bijikyu/qtests/setup';
+import { stubMethod } from '@bijikyu/qtests';
 
 // Mock API service
 const apiService = {
@@ -5802,7 +5803,7 @@ test('renders user name', async () => {
 });`,
 
                 'rate-limiting': `// Rate Limiting Test
-import { createDistributedRateLimiter } from '@bijikyu/qtests/utils/rateLimiter';
+import { createDistributedRateLimiter } from '@bijikyu/qtests/lib/rateLimiter';
 
 describe('Rate Limiting', () => {
   let limiter;
@@ -5838,7 +5839,7 @@ describe('Rate Limiting', () => {
 });`,
 
                 'validation': `// Streaming Validation Test
-import { createStreamingValidator } from '@bijikyu/qtests/utils/streamingValidator';
+import { createStreamingValidator } from '@bijikyu/qtests/lib/streamingValidator';
 
 describe('Streaming Validation', () => {
   let validator;
@@ -5867,7 +5868,7 @@ describe('Streaming Validation', () => {
 });`,
 
                 'memory-testing': `// Memory Monitoring Test
-import { memoryMonitor, detectMemoryLeaks } from '@bijikyu/qtests/utils/memory';
+import { memoryMonitor, detectMemoryLeaks } from '@bijikyu/qtests/lib/memory';
 
 describe('Memory Monitoring', () => {
   it('should track memory usage', async () => {
