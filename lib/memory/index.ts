@@ -19,5 +19,9 @@ export * from './leakDetector.js';
 // Re-export memory monitoring utilities
 export * from './memoryMonitoring.js';
 
+// Re-export monitoring orchestration utilities
+export * from './monitoringOrchestration.js';
+
 // Also export aggressiveCleanup for backward compatibility
 export { aggressiveCleanup, memoryMonitor } from './memoryMonitoring.js';
+export { detectMemoryLeaks } from './monitoringOrchestration.js';

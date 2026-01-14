@@ -47,6 +47,21 @@ import {
   logError
 } from './placeholderWrappers.js';
 
+// Export named wrappers for direct import
+export {
+  createAsyncErrorWrapper,
+  createSyncErrorWrapper,
+  createRouteErrorWrapper,
+  transformMongoError,
+  createDatabaseErrorWrapper,
+  createApiErrorWrapper,
+  createFileErrorWrapper,
+  createBatchErrorWrapper,
+  createTimeoutErrorWrapper,
+  createStructuredError,
+  logError
+};
+
 // Export consolidated error handling object with safe error handling
 export const errorHandling = {
   createAsyncErrorWrapper,
