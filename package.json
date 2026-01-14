@@ -21,7 +21,10 @@
     "./setup.js": "./dist/setup.js",
     "./loader": "./loader.mjs",
     "./loader.mjs": "./loader.mjs",
+    "./lib/*": "./dist/lib/*.js",
     "./lib/routeTestUtils": "./dist/lib/routeTestUtils.js",
+    "./lib/errorHandling": "./dist/lib/errorHandling/index.js",
+    "./lib/memory": "./dist/lib/memory/index.js",
     "./utils/*": "./dist/utils/*.js",
     "./config/*": "./dist/config/*.js"
   },
