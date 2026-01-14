@@ -1,6 +1,6 @@
 {
   "name": "@bijikyu/qtests",
-  "version": "2.0.0",
+  "version": "2.5.0",
   "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
