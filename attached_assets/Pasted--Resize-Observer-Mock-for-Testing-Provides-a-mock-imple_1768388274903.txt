@@ -1,0 +1,90 @@
+/**
+ * Resize Observer Mock for Testing
+ * 
+ * Provides a mock implementation of ResizeObserver for test environments
+ * where the native API is not available.
+ */
+
+export function setupResizeObserver(globalScope = globalThis) {
+  if (typeof globalScope.ResizeObserver !== 'function') {
+    const mockResizeObserver = class MockResizeObserver {
+      constructor(callback) {
+        this.callback = callback;
+      }
+      observe() { return undefined; }
+      unobserve() { return undefined; }
+      disconnect() { return undefined; }
+      callback;
+    };
+    globalScope.ResizeObserver = mockResizeObserver;
+  }
+  return globalScope.ResizeObserver;
+}
+
+/**
+ * Intersection Observer Mock for Testing
+ * 
+ * Provides a mock implementation of IntersectionObserver for test environments
+ * where native API is not available.
+ */
+
+export function setupIntersectionObserver(globalScope = globalThis) {
+  const mockIntersectionObserver = class MockIntersectionObserver {
+    constructor(_callback, _options) {
+      this.root = null;
+      this.rootMargin = '';
+      this.thresholds = [];
+    }
+    observe() { return undefined; }
+    unobserve() { return undefined; }
+    disconnect() { return undefined; }
+    takeRecords() { return []; }
+    root;
+    rootMargin;
+    thresholds;
+  };
+  
+  globalScope.IntersectionObserver = mockIntersectionObserver;
+  return globalScope.IntersectionObserver;
+}
+
+/**
+ * Clipboard Mock for Testing
+ * 
+ * Provides a mock implementation of clipboard API for test environments
+ * where native API is not available.
+ */
+
+export function setupClipboard(globalScope = globalThis) {
+  const mockFactory = globalScope.jest?.fn ?? globalScope.vi?.fn ?? (() => () => undefined);
+  const clipboardWriteTextSpy = mockFactory(async () => undefined);
+  
+  if (!globalScope.navigator) {
+    globalScope.navigator = {};
+  }
+  globalScope.navigator.clipboard = { writeText: clipboardWriteTextSpy };
+  
+  return { clipboardWriteTextSpy };
+}
+
+/**
+ * MatchMedia Mock for Testing
+ * 
+ * Provides a mock implementation of window.matchMedia for test environments
+ * where native API is not available.
+ */
+
+export function setupMatchMedia(globalScope = globalThis) {
+  if (typeof globalScope.window !== 'undefined' && !globalScope.window.matchMedia) {
+    globalScope.window.matchMedia = query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: () => undefined,
+      removeListener: () => undefined,
+      addEventListener: () => undefined,
+      removeEventListener: () => undefined,
+      dispatchEvent: () => false,
+    });
+  }
+}
