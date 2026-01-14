@@ -32,7 +32,12 @@ import {
   createMockNodemailer,
   DEFAULT_MOCK_DATA,
   setupManualMocks,
-  clearAllMocks
+  clearAllMocks,
+  TestMockFactory,
+  factory,
+  createTestMocks,
+  setupTestEnvironment,
+  DEFAULT_TEST_CONFIG
 } from '../utils/testEnv.js';
 import { 
   setOfflineMode,
@@ -76,7 +81,12 @@ const testEnv = {
   createMockNodemailer,
   DEFAULT_MOCK_DATA,
   setupManualMocks,
-  clearAllMocks
+  clearAllMocks,
+  TestMockFactory,
+  factory,
+  createTestMocks,
+  setupTestEnvironment,
+  DEFAULT_TEST_CONFIG
 };
 
 // Create offlineMode object from individual functions

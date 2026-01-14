@@ -88,3 +88,20 @@ export {
   type MockOpenAIResult,
   type SetupManualMocksResult
 } from './serviceMocks.js';
+
+// =============================================================================
+// TEST MOCK FACTORY - ML/AI and Config Mocking
+// =============================================================================
+
+/**
+ * Test mock factory for ML/AI dependencies and configuration
+ * Provides singleton pattern for consistent mock state across tests
+ */
+export {
+  TestMockFactory,       // Class-based mock factory
+  factory,               // Singleton factory instance
+  createTestMocks,       // Convenience function to create all mocks
+  setupTestEnvironment,  // Quick setup for common use case
+  DEFAULT_TEST_CONFIG,   // Default test configuration constants
+  type TestConfig        // Type for test configuration
+} from './testMockFactory.js';

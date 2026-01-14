@@ -53,6 +53,12 @@ export {
   DEFAULT_MOCK_DATA,    // Default mock data for consistent testing
   setupManualMocks,     // Bulk ESM mock setup for all services
   clearAllMocks,        // Clear jest.clearAllMocks + any passed mocks
+  // Test mock factory for ML/AI dependencies
+  TestMockFactory,       // Class-based mock factory
+  factory,               // Singleton factory instance
+  createTestMocks,       // Convenience function to create all mocks
+  setupTestEnvironment,  // Quick setup for common use case
+  DEFAULT_TEST_CONFIG,   // Default test configuration constants
   // Type exports
   type MockWhoisResponse,
   type MockOpenAIResponse,
@@ -60,7 +66,8 @@ export {
   type MockNodemailerResult,
   type MockWhoisResult,
   type MockOpenAIResult,
-  type SetupManualMocksResult
+  type SetupManualMocksResult,
+  type TestConfig
 } from './testEnv/mockFactory.js';
 
 // Test initialization utilities
