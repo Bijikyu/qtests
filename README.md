@@ -6,7 +6,7 @@ A comprehensive Node.js testing framework with minimal production dependencies. 
 - ✅ ESM + TypeScript Jest harness: runner always loads `config/jest.config.mjs` and passes `--passWithNoTests` for stable CI
 - ✅ HTTP testing shim alignment: TS shim re-exports a working JS shim with chainable `.send()` and proper `req.body`
 - ✅ Safe Mongoose mocking: Jest `moduleNameMapper` maps `mongoose` to qtests' manual mock (no real DB access)
-- ✅ Performance optimized: Jest-like batch execution with 69% speed improvement
+- ✅ Performance optimized: Parallel batch execution utilizing multiple CPU cores
 - ✅ Enhanced test generation: Smarter filtering, React-aware scaffolds, and safe defaults
 
 ## 🚀 Quick Start
@@ -675,7 +675,7 @@ Notes:
   - Discovers files matching `.test|.spec|_test|_spec` with `.js|.ts|.jsx|.tsx`
   - Tries `npx jest` with fast flags; falls back to verbose; finally runs with `node` if needed
   - Runs tests in parallel batches (2x CPU cores, capped by file count)
-  - **Performance Optimized**: Jest-like batch execution achieving 69% speed improvement
+  - **Performance Optimized**: Parallel batch execution utilizing 2x CPU cores
 - Notes:
   - Automatically generated as `qtests-runner.mjs` by the test generator
   - Always passes `--config config/jest.config.mjs` and `--passWithNoTests`

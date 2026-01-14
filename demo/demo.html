@@ -543,7 +543,7 @@
 
                 <div class="card">
                     <h3><span class="icon">⚡</span> High-Performance Runner</h3>
-                    <p>Optimized test execution with Jest API integration and 69% speed improvement through batching.</p>
+                    <p>Optimized test execution with Jest API integration and parallel batch processing.</p>
                     <ul class="feature-list">
                         <li>✅ Parallel test processing</li>
                         <li>✅ Debug report generation</li>
@@ -608,8 +608,8 @@
 
             <div class="metrics">
                 <div class="metric">
-                    <div class="metric-value">69%</div>
-                    <div class="metric-label">Speed Improvement</div>
+                    <div class="metric-value">2x</div>
+                    <div class="metric-label">CPU Core Utilization</div>
                 </div>
                 <div class="metric">
                     <div class="metric-value">15+</div>
@@ -744,7 +744,7 @@ describe('UserService', () => {
         <div id="test-runner" class="tab-content">
             <h2>⚡ High-Performance Test Runner</h2>
             <div class="alert success">
-                Optimized test execution with Jest API integration, providing 69% speed improvement through intelligent batching and parallel processing.
+                Optimized test execution with Jest API integration, utilizing parallel batching across multiple CPU cores.
             </div>
 
             <div class="grid">
@@ -2731,7 +2731,7 @@ describe('Sample Test', () => {
                         <div style="color: #10b981;">✅ Tests completed!</div>
                         <div>📊 Results: ${passed} passed, ${failed} failed, ${skipped} skipped</div>
                         <div>⏱️  Duration: ${duration}ms</div>
-                        <div>🚀 Performance: 69% faster than standard Jest</div>
+                        <div>🚀 Performance: Parallel batch execution enabled</div>
                     `;
                     
                     status.textContent = failed > 0 ? 'Tests completed with failures' : 'All tests passed';
@@ -5492,7 +5492,7 @@ describe('CRUD Operations Tests', () => {
                 batchResults.innerHTML = `
                     <div style="color: #10b981;">✅ Benchmark Complete</div>
                     <div>📈 Best Performance: Batch size 8</div>
-                    <div>⚡ Speed Improvement: 69% vs sequential</div>
+                    <div>⚡ Mode: Parallel vs Sequential</div>
                     <div>🧠 Memory Efficiency: +45%</div>
                     <div>⏱️ Avg Test Time: 12ms (vs 38ms sequential)</div>
                 `;

@@ -61,7 +61,7 @@ The `lib/` directory contains the core qtests framework functionality, including
 - **React Test Exclusivity (Sept 2025)**: When proper React tests are emitted, skip adding generic existence tests.
 - **File Extension Strategy (Sept 2025)**: Prefer `.ts` output; only emit `.tsx` when generated tests include JSX.
 - **Local API Utils (Sept 2025)**: Scaffolds `generated-tests/utils/httpTest.ts` (re-exports) and `generated-tests/utils/httpTest.shim.js` (implementation). The shim is minimal, dependency‑free, supports `.send()`, and exposes `req.body`.
-- **Performance Optimized (Sept 2025)**: Jest-like batch execution architecture achieving 69% speed improvement
+- **Performance Optimized (Sept 2025)**: Parallel batch execution utilizing 2x CPU cores
  - **Express Router AST (Sept 2025)**: Robust AST-based Express route detection now supports:
    - `express.Router()` with custom variable names
    - Named imports and destructured require (e.g., `import { Router as R } from 'express'`; `const { Router } = require('express')`)
