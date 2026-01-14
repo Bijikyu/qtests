@@ -44,13 +44,13 @@ outputType = "console"
 name = "Demo Server"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "npx serve demo -l 5000"
-waitForPort = 5000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node demo/server/index.js"
+waitForPort = 5000
 
 [agent]
 expertMode = true

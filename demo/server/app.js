@@ -10,6 +10,7 @@ const helmet = require('helmet');
 const cors = require('cors');
 const winston = require('winston');
 const qerrors = require('qerrors');
+const path = require('path');
 
 // Configure Winston logger
 const logger = winston.createLogger({
@@ -89,6 +90,11 @@ app.use('/api', calculatorRouter);
 app.use('/api', statusRouter);
 app.use('/api', usersRouter);
 app.use('/', rootRouter);
+
+// Serve demo.html at root
+app.get('/', (_req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'demo.html'));
+});
 
 // Health check endpoints
 app.get('/health', (_req, res) => 
