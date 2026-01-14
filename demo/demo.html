@@ -1523,7 +1523,7 @@ LOG_LEVEL=debug"></textarea>
 // Example: Generated tests for GET /api/users/:id
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { createMockApp, supertest } from '@bijikyu/qtests/utils/httpTest';
-import { generateRouteTests } from '@bijikyu/qtests/lib/routeTestUtils';
+import { createRouteTests } from '@bijikyu/qtests/lib/routeTestUtils';
 
 describe('User Routes', () => {
   let app: any;
@@ -1671,7 +1671,7 @@ describe('User Routes', () => {
                         <label for="route-path">Route Path</label>
                         <input type="text" id="route-path" value="/api/users/:id" placeholder="/api/users/:id">
                     </div>
-                    <button class="btn" onclick="generateRouteTests()">Generate Route Tests</button>
+                    <button class="btn" onclick="createRouteTests()">Generate Route Tests</button>
                     <div id="route-test-results" class="terminal" style="margin-top: 10px; min-height: 100px;">
                         <div>Ready to generate route tests...</div>
                     </div>
@@ -5579,7 +5579,7 @@ describe('CRUD Operations Tests', () => {
         }
 
         // Route testing utilities
-        function generateRouteTests() {
+        function createRouteTests() {
             const method = document.getElementById('route-method').value;
             const path = document.getElementById('route-path').value;
             const results = document.getElementById('route-test-results');
@@ -5615,7 +5615,7 @@ describe('CRUD Operations Tests', () => {
             let testCode = `// Generated tests for ${method} ${path}
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { createMockApp, supertest } from '@bijikyu/qtests/utils/httpTest';
-import { generateRouteTests } from '@bijikyu/qtests/lib/routeTestUtils';
+import { createRouteTests } from '@bijikyu/qtests/lib/routeTestUtils';
 
 describe('${routeName} Routes', () => {
   let app: any;
@@ -5871,14 +5871,14 @@ describe('Streaming Validation', () => {
 import { memoryMonitor, detectMemoryLeaks } from '@bijikyu/qtests/lib/memory';
 
 describe('Memory Monitoring', () => {
-  it('should track memory usage', async () => {
-    const snapshot = await memoryMonitor.getSnapshot();
+  it('should track memory usage', () => {
+    const snapshot = memoryMonitor.takeSnapshot('test');
     
     expect(snapshot.heapUsed).toBeGreaterThan(0);
     expect(snapshot.heapTotal).toBeGreaterThan(snapshot.heapUsed);
   });
   
-  it('should detect memory leaks', async () => {
+  it('should detect memory leaks', () => {
     // Simulate potential memory leak
     const leaks = [];
     
@@ -5886,8 +5886,8 @@ describe('Memory Monitoring', () => {
       leaks.push(new Array(1000).fill('leak'));
     }
     
-    const leakReport = await detectMemoryLeaks();
-    expect(leakReport.leaksDetected).toBe(true);
+    const hasLeaks = detectMemoryLeaks();
+    expect(typeof hasLeaks).toBe('boolean');
   });
 });`,
 
@@ -5932,7 +5932,8 @@ describe('Email Testing', () => {
 });`,
 
                 'route-testing': `// Route Testing with Utilities
-import { generateRouteTests, createMockApp, supertest } from '@bijikyu/qtests/lib/routeTestUtils';
+import { createRouteTests } from '@bijikyu/qtests/lib/routeTestUtils';
+import { createMockApp, supertest } from '@bijikyu/qtests/utils/httpTest';
 
 describe('API Route Testing', () => {
   let app: any;
@@ -5955,7 +5956,7 @@ describe('API Route Testing', () => {
       errorResponse: { error: 'User not found' }
     };
 
-    const tests = generateRouteTests(routeConfig);
+    const tests = createRouteTests(routeConfig);
     
     // Test success case
     const response = await client
@@ -6038,7 +6039,7 @@ describe('waitForCondition', () => {
                 'rateLimiting': 'Rate Limiting - DistributedRateLimiter and InMemoryRateLimiter provide rate limiting functionality for testing API endpoints and preventing abuse.',
                 'emailTesting': 'Email Testing - sendEmail() utility provides mock email sending for testing email functionality without external SMTP servers.',
                 'httpTesting': 'HTTP Testing - createMockApp() and supertest() provide Express-like mocking and HTTP testing capabilities for API testing.',
-                'routeTesting': 'Route Testing - generateRouteTests() and route testing utilities eliminate duplication in HTTP route testing with parameterized test generation for common scenarios.',
+                'routeTesting': 'Route Testing - createRouteTests() and route testing utilities eliminate duplication in HTTP route testing with parameterized test generation for common scenarios.',
                 'waitForCondition': 'waitForCondition() - Async utility that waits for a predicate function to return true, with configurable timeout and interval. Perfect for testing async operations.',
                 'testIsolation': 'Test Isolation - backupEnvironment(), restoreEnvironment(), trackServer(), and closeAllServers() provide comprehensive test isolation utilities.',
                 'polyfills': 'Browser Polyfills - setupClipboard(), setupIntersectionObserver(), and other polyfills enable testing browser-specific APIs in Node.js environments.'
@@ -6105,7 +6106,7 @@ describe('waitForCondition', () => {
  */
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { createMockApp, supertest } from '@bijikyu/qtests/utils/httpTest';
-import { generateRouteTests } from '@bijikyu/qtests/lib/routeTestUtils';
+import { createRouteTests } from '@bijikyu/qtests/lib/routeTestUtils';
 
 describe('${routeName}', () => {
   let app: any;
