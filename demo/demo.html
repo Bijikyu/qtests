@@ -2650,8 +2650,8 @@ describe('Sample Test', () => {
             
             // Sanitize inputs to prevent XSS
             const sanitizedSourceDir = sourceDir.replace(/[<>&"']/g, '');
-            const sanitizedTestDir = testDir.replace(/[<>&"']/g '');
-            const sanitizedMode = mode.replace(/[<>&"']/g '');
+            const sanitizedTestDir = testDir.replace(/[<>&"']/g, '');
+            const sanitizedMode = mode.replace(/[<>&"']/g, '');
             
             preview.innerHTML = `
                 <div style="color: #4fc3f7;">$ qtests-generate --mode ${sanitizedMode} --src-dir ${sanitizedSourceDir} --test-dir ${sanitizedTestDir}</div>
@@ -3145,7 +3145,6 @@ test('renders user name', async () => {
                 playgroundCodeElement.value = code;
             }
         }
-        }
 
         function exploreFeature() {
             const select = document.getElementById('feature-select');
@@ -3409,7 +3408,7 @@ test('renders user name', async () => {
             try {
                 const startTime = Date.now();
                 
-                const options: RequestInit = {
+                const options = {
                     method,
                     headers: {
                         'Content-Type': 'application/json'
@@ -4772,7 +4771,11 @@ describe('CQRS Pattern Tests', () => {
           type: 'UserCreated',
           data: command,
           timestamp: expect.any(Number)
-});
+        });
+      }
+    }
+  });
+});`;
         }
 
         function generateCRUDTemplate(framework, language, includeComments, includeTypes) {

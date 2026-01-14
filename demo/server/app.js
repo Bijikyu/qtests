@@ -91,8 +91,11 @@ app.use('/api', statusRouter);
 app.use('/api', usersRouter);
 app.use('/', rootRouter);
 
-// Serve demo.html at root
+// Serve demo.html at root with no-cache headers
 app.get('/', (_req, res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.set('Pragma', 'no-cache');
+    res.set('Expires', '0');
     res.sendFile(path.join(__dirname, '..', 'demo.html'));
 });
 
