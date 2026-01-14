@@ -1,16 +1,7 @@
-/**
- * Enhanced Test Isolation Framework
- * 
- * Provides test isolation utilities with comprehensive resource management,
- * memory tracking, and performance monitoring.
- */
+// 🔗 Enhanced Test Isolation Framework
+// Prevents cross-test contamination with comprehensive resource management and memory tracking
 
-import { EventEmitter } from 'events';
-
-export interface IsolationState {
-  [key: string]: any;
-  stack: (() => void)[];
-}
+import { EventEmitter } from "events";
 
 export interface IsolationCleanup {
   (): Promise<void>;
@@ -32,42 +23,25 @@ export interface TestMetrics {
   errors: string[];
   endTime?: number;
   memoryAfter?: NodeJS.MemoryUsage;
-  duration?: number;
 }
 
 export class TestIsolationManager extends EventEmitter {
-  private state: IsolationState = { stack: [] };
   private cleanupTasks: IsolationCleanup[] = [];
   private allocatedResources: Map<string, ResourceTracker> = new Map();
   private currentTest: TestMetrics | null = null;
   private testHistory: TestMetrics[] = [];
   private maxHistoryLength = 20;
-  private cleanupTimeoutMs = 5000;
 
   constructor() {
     super();
   }
 
-  reset(): void {
-    while (this.state.stack.length > 0) {
-      const cleanup = this.state.stack.pop();
-      try {
-        if (cleanup) cleanup();
-      } catch (error) {
-        console.warn('Cleanup function failed:', error);
-      }
-    }
-    this.state = { stack: [] };
-  }
-
-  addCleanup(cleanup: () => void): void {
-    this.state.stack.push(cleanup);
-  }
-
+  // Add cleanup task with timeout protection
   addCleanupTask(cleanup: IsolationCleanup): void {
     this.cleanupTasks.push(cleanup);
   }
 
+  // Track allocated resources
   trackResource(type: string, id: string, cleanup: IsolationCleanup): void {
     const tracker: ResourceTracker = {
       type,
@@ -82,14 +56,11 @@ export class TestIsolationManager extends EventEmitter {
     }
   }
 
-  untrackResource(type: string, id: string): boolean {
-    return this.allocatedResources.delete(`${type}:${id}`);
-  }
-
+  // Start memory tracking for a test
   startMemoryTracking(testName?: string): void {
     const memoryBefore = process.memoryUsage();
     this.currentTest = {
-      testName: testName || 'test',
+      testName: testName || "test",
       startTime: Date.now(),
       memoryBefore,
       resourcesAllocated: 0,
@@ -98,31 +69,44 @@ export class TestIsolationManager extends EventEmitter {
     };
   }
 
+  // Memory measurement with logging
   measure(label: string): NodeJS.MemoryUsage {
     const usage = process.memoryUsage();
     const heapUsedMB = usage.heapUsed / 1024 / 1024;
-    console.log(`Memory [${label}]: ${heapUsedMB.toFixed(2)}MB`);
+    console.log(`📊 Memory [${label}]: ${heapUsedMB.toFixed(2)}MB`);
     return usage;
   }
 
+  /**
+   * Run all cleanup tasks with enhanced error handling and timeout protection
+   */
   async runCleanup(): Promise<void> {
     const errors: string[] = [];
     let cleanedCount = 0;
-    const timeoutMs = process.env.NODE_ENV === 'test' ? 1000 : this.cleanupTimeoutMs;
+    const timeoutMs = process.env.NODE_ENV === "test" ? 1000 : 5000;
+    const timeoutHandles: NodeJS.Timeout[] = [];
 
     try {
       const cleanupPromises = this.cleanupTasks.map(async (cleanup, index) => {
         const startTime = Date.now();
+        let timeoutHandle: NodeJS.Timeout | null = null;
 
         try {
           const cleanupPromise = cleanup();
           const timeoutPromise = new Promise<never>((_, reject) => {
-            setTimeout(() => {
-              reject(new Error(`Cleanup ${index} timeout after ${timeoutMs}ms`));
+            timeoutHandle = setTimeout(() => {
+              reject(
+                new Error(`Cleanup ${index} timeout after ${timeoutMs}ms`),
+              );
             }, timeoutMs);
           });
 
+          if (timeoutHandle) {
+            timeoutHandles.push(timeoutHandle);
+          }
+
           await Promise.race([cleanupPromise, timeoutPromise]);
+
           cleanedCount++;
           return { success: true, duration: Date.now() - startTime };
         } catch (error) {
@@ -134,40 +118,65 @@ export class TestIsolationManager extends EventEmitter {
       });
 
       await Promise.allSettled(cleanupPromises);
+
+      // Clear all timeout handles
+      timeoutHandles.forEach((handle) => {
+        if (handle) {
+          clearTimeout(handle);
+        }
+      });
+    } catch (error) {
+      // Ensure timeout handles are cleared even if Promise.allSettled fails
+      timeoutHandles.forEach((handle) => {
+        if (handle) {
+          clearTimeout(handle);
+        }
+      });
+      throw error;
     } finally {
+      // Always clear cleanup tasks and resources
       this.cleanupTasks = [];
       this.allocatedResources.clear();
 
+      // Update current test metrics
       if (this.currentTest) {
         this.currentTest.resourcesCleaned = cleanedCount;
         this.currentTest.errors.push(...errors);
       }
 
-      if ((global as any).gc) {
+      // Force garbage collection if available
+      if (global.gc) {
         try {
-          (global as any).gc();
+          global.gc();
         } catch (error) {
-          console.warn('Failed to force garbage collection:', error);
+          console.warn("Failed to force garbage collection:", error);
         }
       }
 
-      this.emit('cleanup-completed', {
+      // Emit cleanup completion event
+      this.emit("cleanup-completed", {
         cleanedCount,
         errorCount: errors.length,
         errors,
       });
 
       if (errors.length > 0) {
-        this.emit('cleanup-errors', errors);
+        this.emit("cleanup-errors", errors);
+      }
+
+      // Log cleanup completion
+      if (errors.length > 0) {
         console.warn(`Cleanup completed with ${errors.length} errors`);
+      } else {
+        console.log("✅ All cleanup tasks completed successfully");
       }
     }
   }
 
-  endMemoryTracking(): TestMetrics | null {
+  // End memory tracking for a test
+  endMemoryTracking(): TestMetrics {
     if (!this.currentTest) {
-      console.warn('No active test to end');
-      return null;
+      throw new Error("No active test to end");
     }
 
     const memoryAfter = process.memoryUsage();
@@ -175,109 +184,79 @@ export class TestIsolationManager extends EventEmitter {
 
     this.currentTest.endTime = Date.now();
     this.currentTest.memoryAfter = memoryAfter;
-    this.currentTest.duration = duration;
 
+    // Log performance warnings
     if (duration > 30000) {
       console.warn(
-        `Slow test detected: ${this.currentTest.testName} (${duration}ms)`
+        `⚠ Slow test detected: ${this.currentTest.testName} (${duration}ms)`,
       );
     }
 
     const memoryGrowthMB =
-      (memoryAfter.heapUsed - this.currentTest.memoryBefore.heapUsed) / 1024 / 1024;
+      (memoryAfter.heapUsed - this.currentTest.memoryBefore.heapUsed) /
+      1024 /
+      1024;
     if (memoryGrowthMB > 50) {
       console.warn(
-        `High memory growth in test: ${this.currentTest.testName} (+${memoryGrowthMB.toFixed(2)}MB)`
+        `⚠ High memory growth in test: ${this.currentTest.testName} (+${memoryGrowthMB.toFixed(2)}MB)`,
       );
     }
 
-    this.testHistory.push({ ...this.currentTest });
-    if (this.testHistory.length > this.maxHistoryLength) {
-      this.testHistory.shift();
-    }
+    // Log test completion
+    console.log(
+      `✅ Test completed: ${this.currentTest.testName} (${duration}ms, ${this.currentTest.resourcesAllocated} resources)`,
+    );
 
-    const result = this.currentTest;
-    this.currentTest = null;
-    return result;
+    return this.currentTest;
   }
 
+  // Get current test metrics
   getCurrentTest(): TestMetrics | null {
     return this.currentTest;
   }
 
+  // Get test history
   getTestHistory(): TestMetrics[] {
     return [...this.testHistory];
   }
 
+  // Clear test history
   clearHistory(): void {
     this.testHistory = [];
   }
-
-  getState(): IsolationState {
-    return { ...this.state };
-  }
-
-  setState(newState: Partial<IsolationState>): void {
-    this.state = { ...this.state, ...newState };
-  }
-
-  getResourceCount(): number {
-    return this.allocatedResources.size;
-  }
-
-  getResources(): ResourceTracker[] {
-    return Array.from(this.allocatedResources.values());
-  }
 }
 
+// Global instance for test isolation
 export const testIsolation = new TestIsolationManager();
 
+// Global memory tracker for performance monitoring
 export const memoryTracker = {
   startTracking(): void {
-    console.log('Memory tracking started');
+    console.log("🧠 Memory tracking started");
   },
   measure(label: string): NodeJS.MemoryUsage {
     const usage = process.memoryUsage();
     const heapUsedMB = usage.heapUsed / 1024 / 1024;
-    console.log(`Memory [${label}]: ${heapUsedMB.toFixed(2)}MB`);
+    console.log(`📊 Memory [${label}]: ${heapUsedMB.toFixed(2)}MB`);
     return usage;
   },
 };
 
+// Session cleanup utility
 export class SessionCleaner {
-  constructor(private sessionStore: { sessions: Set<string>; delete: (id: string) => Promise<void> }) {}
+  constructor(private sessionStore: any) {}
 
-  async cleanupSessions(sessionIds?: string[]): Promise<void> {
-    const sessionsToClean = sessionIds || Array.from(this.sessionStore.sessions);
-    const cleanupPromises = sessionsToClean.map((sessionId) =>
-      this.sessionStore
-        .delete(sessionId)
-        .catch((err: unknown) =>
-          console.warn(`Failed to cleanup session ${sessionId}:`, err)
-        )
+  async cleanupSessions(sessionIds: string[]): Promise<void> {
+    const cleanupPromises = Array.from(this.sessionStore.sessions).map(
+      (sessionId) =>
+        this.sessionStore
+          .delete(sessionId)
+          .catch((err: unknown) =>
+            console.warn(`Failed to cleanup session ${sessionId}:`, err),
+          ),
     );
 
     await Promise.allSettled(cleanupPromises);
+    console.log("✅ All sessions cleaned up");
   }
 }
-
-export const createTestIsolation = (): TestIsolationManager => {
-  return new TestIsolationManager();
-};
-
-export const withIsolation = async <T>(
-  fn: (manager: TestIsolationManager) => Promise<T>
-): Promise<T> => {
-  const manager = createTestIsolation();
-  manager.startMemoryTracking();
-
-  try {
-    return await fn(manager);
-  } finally {
-    await manager.runCleanup();
-    manager.endMemoryTracking();
-    manager.reset();
-  }
-};
-
-export default TestIsolationManager;
