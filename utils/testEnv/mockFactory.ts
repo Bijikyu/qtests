@@ -62,3 +62,26 @@ export {
   createAxiosMock,    // Create axios HTTP client mocks
   resetMocks           // Reset all created mocks to clean state
 } from './axiosMocks.js';
+
+// =============================================================================
+// SERVICE MOCKS - Third-party service mocking
+// =============================================================================
+
+/**
+ * Service mocking utilities for third-party dependencies
+ * These functions create mocks for services that qtests doesn't
+ * automatically stub, enabling isolated testing without external calls.
+ */
+export {
+  createMockWhois,      // Create whois-json module mocks
+  createMockOpenAI,     // Create OpenAI SDK mocks
+  createMockNodemailer, // Create nodemailer module mocks
+  DEFAULT_MOCK_DATA,    // Default mock data for consistent testing
+  // Type exports
+  type MockWhoisResponse,
+  type MockOpenAIResponse,
+  type MockNodemailerTransport,
+  type MockNodemailerResult,
+  type MockWhoisResult,
+  type MockOpenAIResult
+} from './serviceMocks.js';

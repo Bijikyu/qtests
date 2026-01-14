@@ -26,7 +26,11 @@ import {
   createQerrorsMock,
   createAxiosMock,
   resetMocks,
-  initSearchTest
+  initSearchTest,
+  createMockWhois,
+  createMockOpenAI,
+  createMockNodemailer,
+  DEFAULT_MOCK_DATA
 } from '../utils/testEnv.js';
 import { 
   setOfflineMode,
@@ -64,7 +68,11 @@ const testEnv = {
   createQerrorsMock,
   createAxiosMock,
   resetMocks,
-  initSearchTest
+  initSearchTest,
+  createMockWhois,
+  createMockOpenAI,
+  createMockNodemailer,
+  DEFAULT_MOCK_DATA
 };
 
 // Create offlineMode object from individual functions

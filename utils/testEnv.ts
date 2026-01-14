@@ -45,7 +45,19 @@ export {
   createScheduleMock, // Create scheduling-related mocks
   createQerrorsMock,   // Create qerrors library mocks
   createAxiosMock,    // Create HTTP client mocks
-  resetMocks          // Reset all created mocks to clean state
+  resetMocks,          // Reset all created mocks to clean state
+  // Service mocks for third-party dependencies
+  createMockWhois,      // Create whois-json module mocks
+  createMockOpenAI,     // Create OpenAI SDK mocks
+  createMockNodemailer, // Create nodemailer module mocks
+  DEFAULT_MOCK_DATA,    // Default mock data for consistent testing
+  // Type exports
+  type MockWhoisResponse,
+  type MockOpenAIResponse,
+  type MockNodemailerTransport,
+  type MockNodemailerResult,
+  type MockWhoisResult,
+  type MockOpenAIResult
 } from './testEnv/mockFactory.js';
 
 // Test initialization utilities
