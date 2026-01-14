@@ -2572,6 +2572,8 @@ describe('Sample Test', () => {
             const selectedTab = document.getElementById(tabName);
             if (selectedTab) {
                 selectedTab.classList.add('active');
+                // Scroll to the tab content
+                selectedTab.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
             
             // Add active class to clicked nav tab
