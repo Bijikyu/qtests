@@ -2558,8 +2558,11 @@ describe('Sample Test', () => {
     </footer>
 
     <script>
+        console.log('QTests Demo JS loaded successfully');
+        
         // Tab navigation
         function showTab(tabName, targetElement) {
+            console.log('showTab called:', tabName);
             // Hide all tabs
             const tabs = document.querySelectorAll('.tab-content');
             tabs.forEach(tab => tab.classList.remove('active'));
@@ -5855,11 +5858,11 @@ describe('Streaming Validation', () => {
   });
   
   it('should sanitize dangerous content', async () => {
-    const dangerous = '<script>alert("xss")</script>Hello';
+    const dangerous = '<scr' + 'ipt>alert("xss")<\/scr' + 'ipt>Hello';
     const result = await validator.validate(dangerous);
     
     expect(result.isValid).toBe(false);
-    expect(result.sanitized).not.toContain('<script>');
+    expect(result.sanitized).not.toContain('<scr' + 'ipt>');
   });
 });`,
 
