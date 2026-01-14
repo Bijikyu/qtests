@@ -1,0 +1,484 @@
+// 🔗 Thread-Safe Port Allocator for Test Environments
+// Prevents port conflicts during parallel test execution with enhanced race condition protection
+
+import * as fs from "fs";
+import * as path from "path";
+import { EventEmitter } from "events";
+
+// Simple error logging for test utilities
+function logTestError(error: Error, context: string, details?: any): void {
+  console.error(`[PortAllocator Error] ${context}:`, error, details);
+}
+
+interface PortAllocation {
+  port: number;
+  pid: number;
+  timestamp: number;
+  testFile?: string;
+}
+
+interface PortAllocatorOptions {
+  basePort?: number;
+  maxPort?: number;
+  cleanupIntervalMs?: number;
+  allocationTimeoutMs?: number;
+}
+
+export class PortAllocator extends EventEmitter {
+  private static instance: PortAllocator;
+  private readonly basePort: number;
+  private readonly maxPort: number;
+  private readonly allocationFile: string;
+  private readonly cleanupIntervalMs: number;
+  private readonly allocationTimeoutMs: number;
+  private allocatedPorts: Set<number> = new Set();
+  public cleanupTimer?: NodeJS.Timeout;
+  private cleanupInProgress = false;
+
+  private constructor(options: PortAllocatorOptions = {}) {
+    super();
+    this.basePort = options.basePort || 4005;
+    this.maxPort = options.maxPort || 4999;
+    this.cleanupIntervalMs = options.cleanupIntervalMs || 30000; // 30 seconds
+    this.allocationTimeoutMs = options.allocationTimeoutMs || 300000; // 5 minutes
+    this.allocationFile = path.join(
+      process.cwd(),
+      ".test-port-allocations.json",
+    );
+
+    this.startCleanupTimer();
+  }
+
+  static getInstance(options?: PortAllocatorOptions): PortAllocator {
+    if (!PortAllocator.instance) {
+      PortAllocator.instance = new PortAllocator(options);
+    }
+    return PortAllocator.instance;
+  }
+
+  /**
+   * Allocate a unique port for testing
+   * @param testFile Optional test file identifier for tracking
+   * @returns Allocated port number
+   */
+  async allocatePort(testFile?: string): Promise<number> {
+    if (this.cleanupInProgress) {
+      console.warn("Cleanup in progress, waiting before allocating port...");
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    await this.cleanupStaleAllocations();
+
+    const allocations = await this.loadAllocations();
+    const usedPorts = new Set(allocations.map((a) => a.port));
+
+    // Find first available port in range
+    for (let port = this.basePort; port <= this.maxPort; port++) {
+      if (!usedPorts.has(port) && !this.allocatedPorts.has(port)) {
+        // Verify port is actually available
+        if (await this.isPortAvailable(port)) {
+          this.allocatedPorts.add(port);
+
+          const allocation: PortAllocation = {
+            port,
+            pid: process.pid,
+            timestamp: Date.now(),
+            testFile,
+          };
+
+          allocations.push(allocation);
+          await this.saveAllocations(allocations);
+
+          this.emit("port-allocated", port, allocation);
+          return port;
+        }
+      }
+    }
+
+    throw new Error(
+      `No available ports in range ${this.basePort}-${this.maxPort}`,
+    );
+  }
+
+  /**
+   * Release a previously allocated port
+   * @param port Port number to release
+   */
+  async releasePort(port: number): Promise<void> {
+    this.allocatedPorts.delete(port);
+
+    const allocations = await this.loadAllocations();
+    const filtered = allocations.filter((a) => a.port !== port);
+    await this.saveAllocations(filtered);
+
+    this.emit("port-released", port);
+  }
+
+  /**
+   * Release all ports allocated by current process
+   */
+  async releaseAllPorts(): Promise<void> {
+    try {
+      const allocations = await this.loadAllocations();
+      const filtered = allocations.filter((a) => a.pid !== process.pid);
+      await this.saveAllocations(filtered);
+      this.allocatedPorts.clear();
+
+      this.emit("all-ports-released");
+    } catch (error) {
+      logTestError(error as Error, "release all ports", {
+        operation: "releaseAllPorts",
+        allocationFile: this.allocationFile,
+        errorType: "FilesystemError",
+      });
+    }
+  }
+
+  /**
+   * Check if a port is available for binding
+   * @param port Port number to check
+   * @returns True if port is available
+   */
+  private async isPortAvailable(port: number): Promise<boolean> {
+    return new Promise((resolve) => {
+      const net = require("net");
+      const server = net.createServer();
+
+      server.listen(port, () => {
+        server.once("close", () => resolve(true));
+        server.close();
+      });
+
+      server.on("error", () => resolve(false));
+    });
+  }
+
+  /**
+   * Load existing port allocations from file with race condition protection
+   */
+  private async loadAllocations(): Promise<PortAllocation[]> {
+    try {
+      try {
+        if (!fs.existsSync(this.allocationFile)) {
+          return [];
+        }
+      } catch (error) {
+        logTestError(error as Error, "allocation file check", {
+          operation: "loadAllocations",
+          allocationFile: this.allocationFile,
+          errorType: "FilesystemError",
+        });
+        return [];
+      }
+
+      // Add atomic file locking to prevent race conditions
+      const lockFile = this.allocationFile + ".lock";
+      const lockContent = `${process.pid}-${Date.now()}`;
+      let attempts = 0;
+      const maxAttempts = 50;
+
+      while (attempts < maxAttempts) {
+        try {
+          // Atomic exclusive file creation
+          fs.writeFileSync(lockFile, lockContent, { flag: "wx" });
+          break; // Successfully acquired lock
+        } catch (lockError: any) {
+          if (lockError.code === "EEXIST") {
+            // Check if lock is stale
+            try {
+              const existingLock = fs.readFileSync(lockFile, "utf8");
+              const [pid, timestamp] = existingLock.split("-");
+              const age = Date.now() - parseInt(timestamp);
+              if (age > 10000) {
+                // 10 second stale timeout
+                try {
+                  fs.unlinkSync(lockFile); // Remove stale lock
+                } catch (staleError) {
+                  logTestError(staleError as Error, "stale lock removal", {
+                    operation: "loadAllocations",
+                    lockFile,
+                    errorType: "FilesystemError",
+                  });
+                }
+                continue; // Try to acquire again
+              } else {
+                // Lock is still valid, wait and retry
+                attempts++;
+                await new Promise((resolve) => setTimeout(resolve, 100));
+                continue;
+              }
+            } catch (readError) {
+              logTestError(readError as Error, "lock file read", {
+                operation: "loadAllocations",
+                lockFile,
+                errorType: "FilesystemError",
+              });
+            }
+          } else {
+            // Lock file corrupted, try to remove and retry
+            try {
+              fs.unlinkSync(lockFile);
+            } catch {}
+            attempts++;
+            await new Promise((resolve) => setTimeout(resolve, 100));
+            continue;
+          }
+        }
+      }
+
+      if (attempts >= maxAttempts) {
+        console.warn("Port allocation file lock timeout, using empty state");
+        return [];
+      }
+
+      try {
+        const content = await fs.promises.readFile(this.allocationFile, "utf8");
+        let parsed;
+        try {
+          parsed = JSON.parse(content);
+        } catch (parseError) {
+          logTestError(parseError as Error, "allocation file JSON parse", {
+            operation: "loadAllocations",
+            allocationFile: this.allocationFile,
+            errorType: "JSONParseError",
+          });
+          return [];
+        }
+        return Array.isArray(parsed) ? parsed : [];
+      } finally {
+        try {
+          fs.unlinkSync(lockFile);
+        } catch (cleanupError) {
+          logTestError(cleanupError as Error, "lock file cleanup", {
+            operation: "loadAllocations",
+            lockFile,
+            errorType: "FilesystemError",
+          });
+        }
+      }
+    } catch (error) {
+      logTestError(error as Error, "load allocations main", {
+        operation: "loadAllocations",
+        allocationFile: this.allocationFile,
+        errorType: "FilesystemError",
+      });
+      return [];
+    }
+  }
+
+  /**
+   * Save port allocations to file with race condition protection
+   */
+  private async saveAllocations(allocations: PortAllocation[]): Promise<void> {
+    try {
+      // Add file locking to prevent race conditions
+      const lockFile = this.allocationFile + ".lock";
+      const maxWait = 5000; // 5 seconds max wait
+      const start = Date.now();
+
+      try {
+        while (fs.existsSync(lockFile) && Date.now() - start < maxWait) {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+        }
+
+        if (fs.existsSync(lockFile)) {
+          console.warn("Port allocation file lock timeout during save");
+          return;
+        }
+      } catch (lockCheckError) {
+        logTestError(lockCheckError as Error, "save lock check", {
+          operation: "saveAllocations",
+          lockFile,
+          errorType: "FilesystemError",
+        });
+        return;
+      }
+
+      try {
+        fs.writeFileSync(lockFile, "");
+        await fs.promises.writeFile(
+          this.allocationFile,
+          JSON.stringify(allocations, null, 2),
+          "utf8",
+        );
+      } finally {
+        try {
+          fs.unlinkSync(lockFile);
+        } catch (cleanupError) {
+          logTestError(cleanupError as Error, "save lock cleanup", {
+            operation: "saveAllocations",
+            lockFile,
+            errorType: "FilesystemError",
+          });
+        }
+      }
+    } catch (error) {
+      logTestError(error as Error, "save allocations main", {
+        operation: "saveAllocations",
+        allocationFile: this.allocationFile,
+        errorType: "FilesystemError",
+      });
+    }
+  }
+
+  /**
+   * Clean up stale allocations from dead processes
+   */
+  private async cleanupStaleAllocations(): Promise<void> {
+    const allocations = await this.loadAllocations();
+    const now = Date.now();
+    const alivePids = new Set<number>();
+
+    // Check which processes are still alive
+    for (const allocation of allocations) {
+      try {
+        // Kill signal 0 checks if process exists without killing it
+        process.kill(allocation.pid, 0);
+        // Verify process is actually responding and not our own process
+        if (process.pid !== allocation.pid) {
+          alivePids.add(allocation.pid);
+        }
+      } catch (error) {
+        // Process is dead or not accessible
+        if (error instanceof Error && (error as any).code !== "ESRCH") {
+          // Unexpected error, log but continue
+          logTestError(error as Error, "process check", {
+            operation: "cleanupStaleAllocations",
+            pid: allocation.pid,
+            errorType: "ProcessError",
+          });
+        }
+        continue;
+      }
+    }
+
+    // Filter out dead processes and expired allocations
+    const filtered = allocations.filter((allocation) => {
+      const isAlive = alivePids.has(allocation.pid);
+      const isExpired = now - allocation.timestamp > this.allocationTimeoutMs;
+      return isAlive && !isExpired;
+    });
+
+    if (filtered.length !== allocations.length) {
+      await this.saveAllocations(filtered);
+    }
+  }
+
+  /**
+   * Start periodic cleanup timer with environment awareness
+   */
+  private startCleanupTimer(): void {
+    // Don't start cleanup timer in test environment
+    if (process.env.NODE_ENV === "test") {
+      return;
+    }
+    this.cleanupTimer = setInterval(() => {
+      if (!this.cleanupInProgress) {
+        this.cleanupStaleAllocations().catch(console.error);
+      }
+    }, this.cleanupIntervalMs);
+  }
+
+  /**
+   * Stop cleanup timer and release all resources
+   */
+  async destroy(): Promise<void> {
+    this.cleanupInProgress = true;
+
+    // Stop timer BEFORE releasing ports to prevent races
+    if (this.cleanupTimer) {
+      clearInterval(this.cleanupTimer);
+      this.cleanupTimer = undefined;
+    }
+
+    await this.releaseAllPorts();
+
+    // Clean up allocation file
+    try {
+      if (fs.existsSync(this.allocationFile)) {
+        await fs.promises.unlink(this.allocationFile);
+      }
+    } catch (cleanupError) {
+      logTestError(cleanupError as Error, "destroy allocation file cleanup", {
+        operation: "destroy",
+        allocationFile: this.allocationFile,
+        errorType: "FilesystemError",
+      });
+    }
+
+    // Reset singleton to allow recreation
+    PortAllocator.instance = null as any;
+
+    this.emit("destroyed");
+  }
+}
+
+/**
+ * Convenience function to allocate a port
+ */
+export async function allocateTestPort(testFile?: string): Promise<number> {
+  const allocator = PortAllocator.getInstance();
+  return await allocator.allocatePort(testFile);
+}
+
+/**
+ * Convenience function to release a port
+ */
+export async function releaseTestPort(port: number): Promise<void> {
+  const allocator = PortAllocator.getInstance();
+  return await allocator.releasePort(port);
+}
+
+/**
+ * Manual cleanup function for tests
+ */
+export async function cleanupPortAllocator(): Promise<void> {
+  const allocator = PortAllocator.getInstance();
+  if (allocator.cleanupTimer) {
+    clearInterval(allocator.cleanupTimer);
+    allocator.cleanupTimer = undefined;
+  }
+  await allocator.destroy();
+}
+
+// Legacy compatibility
+export const portAllocator = PortAllocator.getInstance();
+
+// Process exit handlers with race condition protection
+let cleanupInProgress = false;
+
+function setupProcessHandlers() {
+  const cleanup = async () => {
+    if (cleanupInProgress) {
+      console.warn("Cleanup already in progress, skipping...");
+      return;
+    }
+
+    cleanupInProgress = true;
+    try {
+      const allocator = PortAllocator.getInstance();
+      if (allocator.cleanupTimer) {
+        clearInterval(allocator.cleanupTimer);
+        allocator.cleanupTimer = undefined;
+      }
+      await allocator.destroy();
+    } catch (error) {
+      console.error("Error during port allocator cleanup:", error);
+    } finally {
+      cleanupInProgress = false;
+    }
+  };
+
+  // Only setup handlers if not already in test environment
+  if (process.env.NODE_ENV !== "test") {
+    process.on("exit", cleanup);
+    process.on("SIGINT", () => cleanup().then(() => process.exit(0)));
+    process.on("SIGTERM", () => cleanup().then(() => process.exit(0)));
+    process.on("uncaughtException", () =>
+      cleanup().then(() => process.exit(1)),
+    );
+  }
+}
+
+// Setup handlers immediately
+setupProcessHandlers();

@@ -36,6 +36,15 @@ export {
   testAxios
 } from './integrationTestHelper.js';
 
+export {
+  PortAllocator,
+  allocatePort,
+  releasePort,
+  releaseAllPorts,
+  cleanupPortAllocator,
+  portAllocator
+} from './portAllocator.js';
+
 // Import for internal use
 import { EntityFactory } from './entityFactory.js';
 import { createHttpRequest as _createHttpRequest, createHttpResponse as _createHttpResponse } from './httpDataFactory.js';
