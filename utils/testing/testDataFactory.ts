@@ -25,6 +25,17 @@ export {
   createTestDataset
 } from './datasetFactory.js';
 
+export {
+  createTimedAxios,
+  makeRequest,
+  waitForServer,
+  waitForPort,
+  cleanupTestData,
+  initializeTestData,
+  getNextCounter,
+  testAxios
+} from './integrationTestHelper.js';
+
 // Import for internal use
 import { EntityFactory } from './entityFactory.js';
 import { createHttpRequest as _createHttpRequest, createHttpResponse as _createHttpResponse } from './httpDataFactory.js';
