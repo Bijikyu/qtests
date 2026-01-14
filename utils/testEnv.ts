@@ -51,13 +51,16 @@ export {
   createMockOpenAI,     // Create OpenAI SDK mocks
   createMockNodemailer, // Create nodemailer module mocks
   DEFAULT_MOCK_DATA,    // Default mock data for consistent testing
+  setupManualMocks,     // Bulk ESM mock setup for all services
+  clearAllMocks,        // Clear jest.clearAllMocks + any passed mocks
   // Type exports
   type MockWhoisResponse,
   type MockOpenAIResponse,
   type MockNodemailerTransport,
   type MockNodemailerResult,
   type MockWhoisResult,
-  type MockOpenAIResult
+  type MockOpenAIResult,
+  type SetupManualMocksResult
 } from './testEnv/mockFactory.js';
 
 // Test initialization utilities

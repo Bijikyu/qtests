@@ -156,3 +156,70 @@ export const DEFAULT_MOCK_DATA = {
     }
   }
 };
+
+// =============================================================================
+// SETUP UTILITIES - Bulk mock setup for ESM modules
+// =============================================================================
+
+export interface SetupManualMocksResult {
+  mockWhois: jest.Mock;
+  mockCreate: jest.Mock;
+  mockCreateTransport: jest.Mock;
+}
+
+/**
+ * Setup all manual mocks at once using jest.unstable_mockModule for ESM compatibility
+ * ESM-safe: in Jest ESM mode, static imports are evaluated before jest.mock()
+ * so we must use jest.unstable_mockModule and import targets after this is called.
+ * @returns Object containing all created mock functions
+ */
+export const setupManualMocks = async (): Promise<SetupManualMocksResult> => {
+  const { mockWhois } = createMockWhois();
+  const { mockCreate } = createMockOpenAI();
+  const { mockCreateTransport } = createMockNodemailer();
+  
+  jest.unstable_mockModule('whois-json', () => ({ default: mockWhois }));
+  jest.unstable_mockModule('openai', () => ({
+    default: class {
+      constructor() {}
+      chat = {
+        completions: {
+          create: mockCreate,
+        },
+      };
+    },
+  }));
+  jest.unstable_mockModule('nodemailer', () => ({
+    default: {
+      createTransport: mockCreateTransport,
+    },
+  }));
+  jest.unstable_mockModule('qerrors', () => ({
+    __esModule: true,
+    default: jest.fn(),
+  }));
+
+  return {
+    mockWhois,
+    mockCreate,
+    mockCreateTransport
+  };
+};
+
+// =============================================================================
+// CLEANUP UTILITIES - Efficient mock clearing
+// =============================================================================
+
+/**
+ * Clear all mocks efficiently - calls jest.clearAllMocks plus any passed mocks
+ * More generic than resetMocks, works with any jest.Mock instances
+ * @param mocks - Variable number of mock functions to clear
+ */
+export const clearAllMocks = (...mocks: jest.Mock[]): void => {
+  jest.clearAllMocks();
+  mocks.forEach(mock => {
+    if (mock && typeof mock.mockClear === 'function') {
+      mock.mockClear();
+    }
+  });
+};

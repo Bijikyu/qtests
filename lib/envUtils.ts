@@ -30,7 +30,9 @@ import {
   createMockWhois,
   createMockOpenAI,
   createMockNodemailer,
-  DEFAULT_MOCK_DATA
+  DEFAULT_MOCK_DATA,
+  setupManualMocks,
+  clearAllMocks
 } from '../utils/testEnv.js';
 import { 
   setOfflineMode,
@@ -72,7 +74,9 @@ const testEnv = {
   createMockWhois,
   createMockOpenAI,
   createMockNodemailer,
-  DEFAULT_MOCK_DATA
+  DEFAULT_MOCK_DATA,
+  setupManualMocks,
+  clearAllMocks
 };
 
 // Create offlineMode object from individual functions

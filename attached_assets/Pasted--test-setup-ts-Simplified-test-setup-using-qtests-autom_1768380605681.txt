@@ -1,0 +1,127 @@
+// test-setup.ts - Simplified test setup using qtests automatic stubbing
+// qtests/setup automatically handles axios and winston stubbing
+
+import { jest } from '@jest/globals';
+
+// Export mock factory functions for remaining manual mocks (qtests doesn't handle)
+export interface MockWhoisResponse {
+  [key: string]: string;
+}
+
+export interface MockOpenAIResponse {
+  choices: Array<{
+    message: {
+      content: string;
+    };
+  }>;
+}
+
+// Create manual mocks for modules qtests doesn't automatically stub
+export const createMockWhois = () => {
+  const mockWhois = jest.fn();
+  return {
+    mockWhois,
+    whois: mockWhois
+  };
+};
+
+export const createMockOpenAI = () => {
+  const mockCreate = jest.fn();
+  return {
+    mockCreate,
+    openai: {
+      default: class {
+        constructor() {}
+        chat = {
+          completions: {
+            create: mockCreate,
+          },
+        };
+      },
+    }
+  };
+};
+
+export const createMockNodemailer = () => {
+  const mockCreateTransport = jest.fn();
+  const mockTransport = {
+    sendMail: jest.fn()
+  };
+  (mockTransport.sendMail as any).mockResolvedValue({ messageId: 'test-message-id' });
+  (mockCreateTransport as any).mockReturnValue(mockTransport);
+  
+  return {
+    mockCreateTransport,
+    mockTransport,
+    nodemailer: {
+      createTransport: mockCreateTransport,
+    }
+  };
+};
+
+// Default mock data for consistent testing
+export const DEFAULT_MOCK_DATA = {
+  whois: {
+    success: {
+      // whois-json parse output is camelCased (see node_modules/whois-json/parse-raw-data.js)
+      registrantEmail: 'admin@example.com',
+      adminEmail: 'admin@example.com'
+    } as MockWhoisResponse,
+    empty: {} as MockWhoisResponse
+  },
+  openai: {
+    success: {
+      choices: [{
+        message: {
+          content: 'Collaboration opportunity - generated email content for outreach'
+        }
+      }]
+    } as MockOpenAIResponse
+  }
+};
+
+// Setup remaining manual mocks (axios and winston handled by qtests/setup)
+export const setupManualMocks = async () => {
+  const { mockWhois } = createMockWhois();
+  const { mockCreate } = createMockOpenAI();
+  const { mockCreateTransport } = createMockNodemailer();
+  
+  // ESM-safe mocks: in Jest ESM mode, static imports are evaluated before jest.mock()
+  // so we must use jest.unstable_mockModule and import targets after this is called.
+  jest.unstable_mockModule('whois-json', () => ({ default: mockWhois }));
+  jest.unstable_mockModule('openai', () => ({
+    default: class {
+      constructor() {}
+      chat = {
+        completions: {
+          create: mockCreate,
+        },
+      };
+    },
+  }));
+  jest.unstable_mockModule('nodemailer', () => ({
+    default: {
+      createTransport: mockCreateTransport,
+    },
+  }));
+  jest.unstable_mockModule('qerrors', () => ({
+    __esModule: true,
+    default: jest.fn(),
+  }));
+
+  return {
+    mockWhois,
+    mockCreate,
+    mockCreateTransport
+  };
+};
+
+// Clear all mocks efficiently
+export const clearAllMocks = (...mocks: jest.Mock[]) => {
+  jest.clearAllMocks();
+  mocks.forEach(mock => {
+    if (mock && typeof mock.mockClear === 'function') {
+      mock.mockClear();
+    }
+  });
+};
