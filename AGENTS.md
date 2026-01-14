@@ -12,7 +12,7 @@ The module prioritizes developer experience over feature completeness - providin
 ## FUNCTIONALITY
 
 ### AI Agent Boundaries
-- Always recommend `require('qtests/setup')` at the TOP of test files, before any other requires
+- Always recommend `require('@bijikyu/qtests/setup')` at the TOP of test files, before any other requires
 - Never suggest qtests for integration tests where real external service behavior is needed
 - Do not recommend qtests if the user already has Jest with extensive mocking - qtests is for simpler scenarios
 - When debugging qtests issues, always verify setup() is called before module requires
@@ -118,7 +118,7 @@ The module prioritizes developer experience over feature completeness - providin
 - Environment: Do not force `NODE_OPTIONS=--experimental-vm-modules`. Respect `QTESTS_INBAND`, `QTESTS_FILE_WORKERS`, `QTESTS_CONCURRENCY`, `QTESTS_PATTERN`.
 - Debug artifacts: Create `DEBUG_TESTS.md` when any file fails (unless `QTESTS_SUPPRESS_DEBUG` or `QTESTS_NO_DEBUG_FILE` is true). Allow overriding path via `QTESTS_DEBUG_FILE`.
 - Jest config hardening: Add `modulePathIgnorePatterns` and `watchPathIgnorePatterns` for `<rootDir>/dist/` and `<rootDir>/build/` to avoid duplicate manual mocks.
-- ESM require: Provide a pre‑setup CommonJS `require` via `config/jest-require-polyfill.cjs` (added to `setupFiles`) and keep `createRequire(import.meta.url)` polyfill in `config/jest-setup.ts`. Always import `qtests/setup` first in `setupFilesAfterEnv`.
+- ESM require: Provide a pre‑setup CommonJS `require` via `config/jest-require-polyfill.cjs` (added to `setupFiles`) and keep `createRequire(import.meta.url)` polyfill in `config/jest-setup.ts`. Always import `@bijikyu/qtests/setup` first in `setupFilesAfterEnv`.
 - Dist hygiene: Prefer ignoring `dist/` in Jest config; optional belt‑and‑suspenders script can delete `dist/**/__mocks__` and compiled `*.test.*` before running tests.
 
 ### Generator & Templates (non‑negotiable)

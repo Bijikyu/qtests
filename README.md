@@ -12,8 +12,10 @@ A comprehensive Node.js testing framework with minimal production dependencies. 
 ## 🚀 Quick Start
 
 ```bash
-npm install qtests --save-dev
+npm install @bijikyu/qtests --save-dev
 ```
+
+> **GitHub Packages**: this library is published as `@bijikyu/qtests` on `npm.pkg.github.com`. Configure the `@bijikyu` scope in your `.npmrc` (see [docs/PUBLISHING.md](docs/PUBLISHING.md)) before installing so npm can reach the registry.
 
 qtests passively scaffolds its runner at your project root after install (via npm postinstall). No extra steps required.
 
@@ -28,14 +30,14 @@ qtests passively scaffolds its runner at your project root after install (via np
 **TypeScript setup:**
 ```typescript
 // Enable automatic stubbing
-import './node_modules/qtests/setup.js';
+import './node_modules/@bijikyu/qtests/setup.js';
 
 // Your modules now use qtests stubs automatically
 import axios from 'axios'; // Uses qtests stub
 import winston from 'winston'; // Uses qtests stub
 
 // Import with full type safety
-import { stubMethod, mockConsole, testEnv, QtestsAPI } from 'qtests';
+import { stubMethod, mockConsole, testEnv, QtestsAPI } from '@bijikyu/qtests';
 
 // Use with TypeScript intellisense
 const restore = stubMethod(myObject, 'methodName', mockImplementation);
@@ -71,7 +73,7 @@ Defaults registered by setup:
 
 Usage:
 ```ts
-import qtests from 'qtests';
+import qtests from '@bijikyu/qtests';
 
 // Register a custom module mock
 qtests.mock.module('external-service', () => ({
@@ -94,7 +96,7 @@ Notes:
 ### Method Stubbing
 
 ```typescript
-import { stubMethod } from 'qtests';
+import { stubMethod } from '@bijikyu/qtests';
 
 const myObj = { greet: (name: string) => `Hello, ${name}!` };
 
@@ -110,7 +112,7 @@ console.log(myObj.greet('Brian')); // 'Hello, Brian!'
 ### Console Mocking
 
 ```typescript
-import { mockConsole } from 'qtests';
+import { mockConsole } from '@bijikyu/qtests';
 
 const spy = mockConsole('log');
 console.log('test message');
@@ -122,7 +124,7 @@ spy.mockRestore(); // Restore original console.log
 ### Environment Management
 
 ```typescript
-import { testEnv } from 'qtests';
+import { testEnv } from '@bijikyu/qtests';
 
 // Set test environment
 testEnv.setTestEnv(); // Sets NODE_ENV=test, DEBUG=qtests:*
@@ -196,7 +198,7 @@ npx qtests-ts-generate
 ### Programmatic Usage (TypeScript ESM)
 
 ```typescript
-import { TestGenerator } from 'qtests';
+import { TestGenerator } from '@bijikyu/qtests';
 
 const generator = new TestGenerator({
   SRC_DIR: 'src',
@@ -217,10 +219,10 @@ When you need to stub a niche dependency (beyond the built‑ins axios/winston) 
 
 ```ts
 // Always load setup first so axios/winston are stubbed globally
-import './node_modules/qtests/setup.js';
+import './node_modules/@bijikyu/qtests/setup.js';
 
 // Then register your ad‑hoc stub(s)
-import { registerModuleStub } from 'qtests/utils/customStubs.js';
+import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs.js';
 
 registerModuleStub('external-service-client', {
   ping: () => 'pong',
@@ -243,7 +245,7 @@ await client.get(); // { ok: true }
 ### Axios Stub
 
 ```typescript
-// Automatic when using qtests/setup
+// Automatic when using @bijikyu/qtests/setup
 import axios from 'axios';
 
 const response = await axios.get('/api');
@@ -255,7 +257,7 @@ await axios.post('/api', data); // Enhanced response format
 ### Winston Stub
 
 ```typescript
-// Automatic when using qtests/setup
+// Automatic when using @bijikyu/qtests/setup
 import winston from 'winston';
 
 const logger = winston.createLogger();
@@ -268,10 +270,10 @@ When you need to stub a niche dependency (beyond the built‑ins axios/winston) 
 
 ```ts
 // Always load setup first so axios/winston are stubbed globally
-import './node_modules/qtests/setup.js';
+import './node_modules/@bijikyu/qtests/setup.js';
 
 // Then register your ad‑hoc stub(s)
-import { registerModuleStub } from 'qtests/utils/customStubs.js';
+import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs.js';
 
 registerModuleStub('external-service-client', {
   ping: () => 'pong',
@@ -291,7 +293,7 @@ Notes:
 ## 🏃 Lightweight Test Runner
 
 ```typescript
-import { runTestSuite, createAssertions } from 'qtests';
+import { runTestSuite, createAssertions } from '@bijikyu/qtests';
 
 const assert = createAssertions();
 
@@ -316,7 +318,7 @@ runTestSuite('My Tests', tests);
 //   tests/generated-tests/utils/httpTest.ts (re-exports a JS shim)
 //   tests/generated-tests/utils/httpTest.shim.js (implementation with .send())
 // You can also import the same helpers directly from qtests if preferred.
-import { httpTest } from 'qtests/lib/envUtils.js';
+import { httpTest } from '@bijikyu/qtests/lib/envUtils.js';
 
 // Create mock Express app
 const app = httpTest.createMockApp();
@@ -335,7 +337,7 @@ const response = await httpTest.supertest(app)
 ## 📧 Email Testing
 
 ```typescript
-import { sendEmail } from 'qtests/lib/envUtils.js';
+import { sendEmail } from '@bijikyu/qtests/lib/envUtils.js';
 
 // Mock email sending
 const result = await sendEmail.send({
@@ -353,7 +355,7 @@ console.log(sendEmail.getHistory()); // Array of sent emails
 ### Error Handling Utilities
 
 ```typescript
-import { handleError, handleAsyncError } from 'qtests/lib/errorHandling.js';
+import { handleError, handleAsyncError } from '@bijikyu/qtests/lib/errorHandling.js';
 
 // Synchronous error handling with logging
 try {
@@ -377,32 +379,10 @@ if (result === null) {
 }
 ```
 
-### Performance Testing
-
-```typescript
-import { runPerformanceTest, measureMemoryUsage } from 'qtests/lib/performance.js';
-
-// Performance benchmark
-const results = await runPerformanceTest({
-  testFunction: () => processLargeDataset(data),
-  duration: 5000, // 5 seconds
-  samples: 100
-});
-
-console.log(`Average time: ${results.averageTime}ms`);
-console.log(`Operations per second: ${results.opsPerSecond}`);
-
-// Memory monitoring
-const memoryBefore = measureMemoryUsage();
-// ... run your code ...
-const memoryAfter = measureMemoryUsage();
-console.log(`Memory delta: ${memoryAfter.heapUsed - memoryBefore.heapUsed} bytes`);
-```
-
 ### Circuit Breaker Pattern
 
 ```typescript
-import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
+import { createCircuitBreaker } from '@bijikyu/qtests/lib/circuitBreaker.js';
 
 // Wrap external service calls with circuit breaker
 const serviceBreaker = createCircuitBreaker(
@@ -428,7 +408,7 @@ try {
 ### Connection Pool Health Monitoring
 
 ```typescript
-import { addHealthMonitoring, createHealthMonitoredPool } from 'qtests/lib/connectionPoolHealth.js';
+import { addHealthMonitoring, createHealthMonitoredPool } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
 
 // Add health monitoring to existing pool
 const pool = createDatabasePool();
@@ -454,7 +434,7 @@ monitor.startHealthMonitoring();
 ### Jest Configuration Factory
 
 ```typescript
-import { createJestConfig } from 'qtests/lib/jestConfigFactory.js';
+import { createJestConfig } from '@bijikyu/qtests/lib/jestConfigFactory.js';
 
 // Standardized Jest configurations
 const config = createJestConfig('typescript-esm', {
@@ -477,7 +457,7 @@ writeFileSync('jest.config.mjs', `export default ${JSON.stringify(config, null, 
 ### Offline Mode
 
 ```typescript
-import { offlineMode } from 'qtests';
+import { offlineMode } from '@bijikyu/qtests';
 
 // Enable offline mode
 offlineMode.setOfflineMode(true);
@@ -490,7 +470,7 @@ await axios.get('/api/data'); // Returns {} instead of real request
 ### Integration with Jest
 
 ```typescript
-import { testHelpers } from 'qtests';
+import { testHelpers } from '@bijikyu/qtests';
 
 test('console output', async () => {
   await testHelpers.withMockConsole('log', (spy) => {
@@ -529,8 +509,6 @@ test('console output', async () => {
 |--------|-------------|
 | `runTestSuite(name, tests)` | Execute test suite |
 | `createAssertions()` | Get assertion methods |
-| `runPerformanceTest(config)` | Execute performance benchmark |
-| `measureMemoryUsage()` | Get current memory usage |
 
 ### Error Handling & Performance
 
@@ -583,26 +561,25 @@ And ensure your `tsconfig.json` supports ES modules:
 
 ```typescript
 // Core utilities with full type safety
-import { stubMethod, mockConsole, testEnv, QtestsAPI } from 'qtests';
+import { stubMethod, mockConsole, testEnv, QtestsAPI } from '@bijikyu/qtests';
 
 // Test Generator (Note: Use compiled path for production)
-import { TestGenerator } from 'qtests/dist/lib/testGenerator.js';
+import { TestGenerator } from '@bijikyu/qtests/dist/lib/testGenerator.js';
 
 // Advanced utilities with specific paths
-import { httpTest, sendEmail } from 'qtests/lib/envUtils.js';
-import { handleError, handleAsyncError } from 'qtests/lib/errorHandling.js';
-import { runPerformanceTest } from 'qtests/lib/performance.js';
-import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
-import { addHealthMonitoring } from 'qtests/lib/connectionPoolHealth.js';
+import { httpTest, sendEmail } from '@bijikyu/qtests/lib/envUtils.js';
+import { handleError, handleAsyncError } from '@bijikyu/qtests/lib/errorHandling.js';
+import { createCircuitBreaker } from '@bijikyu/qtests/lib/circuitBreaker.js';
+import { addHealthMonitoring } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
 
 // Custom module stubs
-import { registerModuleStub } from 'qtests/utils/customStubs.js';
+import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs.js';
 
 // Jest configuration factory
-import { createJestConfig } from 'qtests/lib/jestConfigFactory.js';
+import { createJestConfig } from '@bijikyu/qtests/lib/jestConfigFactory.js';
 
 // Module stubs (still available)
-import { stubs } from 'qtests';
+import { stubs } from '@bijikyu/qtests';
 await stubs.axios.get('https://example.com');
 ```
 
@@ -615,7 +592,7 @@ import {
   getWindow, 
   matchMedia, 
   clipboard 
-} from 'qtests';
+} from '@bijikyu/qtests';
 
 // Set up browser environment
 initializePolyfills();
@@ -711,12 +688,12 @@ Notes:
 
 ```typescript
 // ✅ Correct
-import './node_modules/qtests/setup.js';
+import './node_modules/@bijikyu/qtests/setup.js';
 import myModule from './myModule.js';
 
 // ❌ Wrong  
 import myModule from './myModule.js';
-import './node_modules/qtests/setup.js';
+import './node_modules/@bijikyu/qtests/setup.js';
 ```
 
 ### 2. Clean Up After Tests
@@ -735,7 +712,7 @@ test('example', () => {
 
 ### 3. Use Environment Helpers
 ```typescript
-import { testHelpers } from 'qtests';
+import { testHelpers } from '@bijikyu/qtests';
 
 test('environment test', async () => {
   await testHelpers.withSavedEnv(async () => {
@@ -762,7 +739,7 @@ qtests supports multiple testing patterns depending on your needs:
 
 ```typescript
 // Unit test - test individual functions
-import './node_modules/qtests/setup.js';
+import './node_modules/@bijikyu/qtests/setup.js';
 import { calculateTotal } from './billing.js';
 
 test('calculates total with tax', () => {
@@ -788,26 +765,14 @@ describe('POST /api/billing/calculate', () => {
   });
 });
 
-// Performance test - benchmark critical operations
-import { runPerformanceTest } from 'qtests/lib/performance.js';
-
-test('performance: total calculation', async () => {
-  const results = await runPerformanceTest({
-    testFunction: () => calculateTotal(100, 0.1),
-    duration: 1000,
-    samples: 1000
-  });
-  
-  expect(results.averageTime).toBeLessThan(1); // Should be under 1ms
-});
 ```
 
 ### Test Environment Setup
 
 ```typescript
 // Global test setup (setupTests.ts)
-import './node_modules/qtests/setup.js';
-import { testEnv } from 'qtests';
+import './node_modules/@bijikyu/qtests/setup.js';
+import { testEnv } from '@bijikyu/qtests';
 
 // Set up test environment before all tests
 beforeAll(() => {
@@ -824,8 +789,8 @@ afterAll(() => {
 
 | Issue | Solution |
 |-------|----------|
-| Stubs not working (CommonJS) | Ensure `require('qtests/setup')` is called first |
-| Stubs not working (ES Modules) | Ensure `import './node_modules/qtests/setup.js'` is called first |
+| Stubs not working (CommonJS) | Ensure `require('@bijikyu/qtests/setup')` is called first |
+| Stubs not working (ES Modules) | Ensure `import './node_modules/@bijikyu/qtests/setup.js'` is called first |
 | TypeScript import errors | Add `"type": "module"` to package.json and update tsconfig.json |
 | ES Module syntax errors | Ensure `"module": "ES2020"` in tsconfig.json |
 | Console pollution | Use `mockConsole()` to capture output |
@@ -958,8 +923,8 @@ export default {
 
 ```typescript
 // tests/monitoring/setup.js
-import { addHealthMonitoring } from 'qtests/lib/connectionPoolHealth.js';
-import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
+import { addHealthMonitoring } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
+import { createCircuitBreaker } from '@bijikyu/qtests/lib/circuitBreaker.js';
 
 // Global health monitoring for test environments
 if (process.env.NODE_ENV === 'test') {

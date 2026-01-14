@@ -17,8 +17,8 @@
  * - HTTP mocks: For creating network request mocks
  * 
  * Usage patterns:
- * - Import specific utilities: import { createAxiosMock } from 'qtests/utils/testEnv/mockFactory'
- * - Import all utilities: import * as mockFactory from 'qtests/utils/testEnv/mockFactory'
+ * - Import specific utilities: import { createAxiosMock } from '@bijikyu/qtests/utils/testEnv/mockFactory'
+ * - Import all utilities: import * as mockFactory from '@bijikyu/qtests/utils/testEnv/mockFactory'
  */
 
 // =============================================================================

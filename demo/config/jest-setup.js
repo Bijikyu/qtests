@@ -1,4 +1,4 @@
-// Additional Jest setup after qtests/setup runs.
+// Additional Jest setup after @bijikyu/qtests/setup runs.
 // Keep a light createRequire shim even though setupFiles covers most cases.
 try {
   if (typeof globalThis.require !== 'function') {
@@ -6,7 +6,7 @@ try {
     globalThis.require = createRequire(__filename);
   }
 } catch (_e) {
-  // Safe no-op; qtests/setup should already have prepared environment hooks.
+  // Safe no-op; @bijikyu/qtests/setup should already have prepared environment hooks.
 }
 
 module.exports = {};

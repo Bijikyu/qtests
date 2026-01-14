@@ -1,9 +1,20 @@
 {
-  "name": "qtests",
+  "name": "@bijikyu/qtests",
   "version": "2.0.0",
   "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "type": "module",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Bijikyu/qtests.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Bijikyu/qtests/issues"
+  },
+  "homepage": "https://github.com/Bijikyu/qtests#readme",
   "exports": {
     ".": "./dist/index.js",
     "./setup": "./dist/setup.js",
@@ -50,7 +61,6 @@
     "side-effect-free"
   ],
   "author": "Q",
-  "license": "MIT",
   "dependencies": {
     "axios": "^1.9.0",
     "dotenv": "^17.2.3",
@@ -89,7 +99,6 @@
     "@types/secure-json-parse": "^1.0.5",
     "@types/sinon": "^21.0.0",
     "agentsqripts": "^1.1.0",
-    "arqitect": "^1.0.7",
     "babel-jest": "^30.1.2",
     "commoncontext": "^1.0.3",
     "express-rate-limit": "^7.0.0",
@@ -98,9 +107,6 @@
     "madge": "^8.0.0",
     "npmcontext": "^1.0.4",
     "opencode-ai": "^1.1.19",
-    "qtests": "^2.0.0",
-    "quantumagent": "^1.0.5",
-    "repomix": "^1.2.0",
     "ts-jest": "^29.4.1",
     "tsx": "^4.20.5",
     "typescript": "^5.6.3",

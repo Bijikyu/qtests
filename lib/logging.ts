@@ -493,7 +493,7 @@ export class LoggerFactory {
  * Global logger instance
  */
 export const logger = new Logger({
-  service: 'qtests',
+  service: '@bijikyu/qtests',
   level: LogLevel.INFO,
   format: LogFormat.JSON,
   enableConsole: true,

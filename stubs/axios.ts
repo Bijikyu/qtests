@@ -2,7 +2,7 @@
  * Axios HTTP Client Stub for Testing - Complete API Compliance
  * 
  * This module provides a complete, API-compliant replacement for the axios
- * HTTP client library. When tests require('axios') after qtests/setup, they
+ * HTTP client library. When tests require('axios') after @bijikyu/qtests/setup, they
  * get this stub instead of the real axios, preventing actual network requests
  * while maintaining full axios API compatibility.
  */

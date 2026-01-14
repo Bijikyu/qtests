@@ -112,7 +112,7 @@ export const createPathValidator = (
 const STUBS_BASE = (() => {
   try {
     const require = createRequire(path.resolve(process.cwd(), 'package.json'));
-    const entryPath = require.resolve('qtests');
+    const entryPath = require.resolve('@bijikyu/qtests');
     const packageRoot = path.resolve(path.dirname(entryPath), '..');
     const candidates = [
       path.join(packageRoot, 'dist', 'stubs'),

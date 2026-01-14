@@ -42,7 +42,7 @@ monorepo/
     "test:watch": "jest --watch --testPathPattern=packages/*/src"
   },
   "devDependencies": {
-    "qtests": "^2.0.0",
+    "@bijikyu/qtests": "^2.0.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.4.1",
     "@types/jest": "^30.0.0"
@@ -620,7 +620,7 @@ export const recordTestMetric = (testType: string, suite: string, duration: numb
 
 ```typescript
 // tests/monitoring/health-checks.ts
-import { addHealthMonitoring } from 'qtests/lib/connectionPoolHealth.js';
+import { addHealthMonitoring } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
 
 export class TestHealthMonitor {
   private monitors = new Map();
@@ -795,7 +795,7 @@ deployer.deploy().catch(console.error);
 
 ```typescript
 // tests/security/security-test-suite.ts
-import { runTestSuite } from 'qtests';
+import { runTestSuite } from '@bijikyu/qtests';
 import { testSecurityVulnerabilities } from '../utils/security-scanner.js';
 
 export const securityTestSuite = {

@@ -18,8 +18,8 @@
  * - Clear separation of concerns between utilities
  * 
  * Usage patterns:
- * - Import individual utilities: import { setTestEnv } from 'qtests/utils/testEnv'
- * - Import all utilities: import * as testEnv from 'qtests/utils/testEnv'
+ * - Import individual utilities: import { setTestEnv } from '@bijikyu/qtests/utils/testEnv'
+ * - Import all utilities: import * as testEnv from '@bijikyu/qtests/utils/testEnv'
  * - Use in test setup files for consistent environment management
  */
 

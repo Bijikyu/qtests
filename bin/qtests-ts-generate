@@ -161,9 +161,9 @@ DESCRIPTION:
   - Unit tests: Created alongside source files with .GeneratedTest.test.ts extension (legacy .GenerateTest supported)
   - API tests: Created in integration test directory with route-specific names
   - Jest configuration: Automatically creates jest.config.js and test setup files
-  - Always includes 'import qtests/setup' for proper stubbing
+  - Always includes 'import @bijikyu/qtests/setup' for proper stubbing
 
-For more information, visit: https://github.com/qtests/qtests
+For more information, visit: https://github.com/Bijikyu/qtests
 `);
 }
 

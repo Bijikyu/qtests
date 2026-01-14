@@ -63,6 +63,8 @@ export default {
   extensionsToTreatAsEsm: [".ts",".tsx"],
   transformIgnorePatterns: ['node_modules/(?!(?:qtests|qerrors|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul|@langchain|openai)/)'],
    moduleNameMapper: {
+    "^@bijikyu/qtests$": "<rootDir>/dist/index.js",
+    "^@bijikyu/qtests/(.*)$": "<rootDir>/dist/$1",
    // Essential mocks only - avoid broad patterns that interfere with node_modules
     "^mongoose$": "<rootDir>/__mocks__/mongoose.js",
     "^\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",

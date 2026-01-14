@@ -2,7 +2,7 @@
  * Winston Logging Library Stub for Testing - Complete API Compliance
  * 
  * This module provides a complete, API-compliant replacement for the winston
- * logging library. When tests require('winston') after qtests/setup, they
+ * logging library. When tests require('winston') after @bijikyu/qtests/setup, they
  * get this stub instead of real winston, preventing log output during test
  * execution while maintaining full winston API compatibility.
  */

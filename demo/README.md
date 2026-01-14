@@ -15,7 +15,7 @@ Commands
 - `npm run start:client` → Starts Vite dev server for the React client on `:5173`.
 
 Notes
-- Tests call `require('qtests/setup')` at the top to guarantee stubs activate before module imports.
+- Tests call `require('@bijikyu/qtests/setup')` at the top to guarantee stubs activate before module imports.
 - Jest `moduleNameMapper` maps `qtests/*` to the package’s built `dist/*` to avoid TS import issues when using a local `file:..` dependency.
 - The axios stub returns a plain truthy object by design in many codebases; this demo asserts runner activation and route behavior rather than response shape.
 - UI tests use jsdom via a per-file directive and Babel transform (`@babel/preset-env`, `@babel/preset-react`) to handle JSX.

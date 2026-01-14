@@ -115,7 +115,7 @@ try {
   if (exists(target)) return; // runner already present, be passive
 
   // Locate a valid template from this installed package
-  const moduleRoot = process.cwd(); // node_modules/qtests
+  const moduleRoot = process.cwd(); // node_modules/@bijikyu/qtests
   const candidates = [
     path.join(moduleRoot, 'lib', 'templates', 'qtests-runner.mjs.template'),
     path.join(moduleRoot, 'templates', 'qtests-runner.mjs.template')

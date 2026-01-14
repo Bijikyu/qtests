@@ -50,7 +50,7 @@ The `lib/` directory contains the core qtests framework functionality, including
 - Supports both heuristic and optional TypeScript AST analysis modes
 - Honors CLI/config filters: `SRC_DIR`, `include` globs, and `exclude` globs
 - Includes deterministic helpers for time and randomness in generated tests
-- Always imports `qtests/setup` first in generated tests
+- Always imports `@bijikyu/qtests/setup` first in generated tests
 - React-aware templates: JSX-free component smoke tests and hook probe component; no direct hook invocation
 - Provider wrappers: auto-wraps with `QueryClientProvider` (when `@tanstack/react-query` present) and `FormProvider` + `useForm()` (when `react-hook-form` detected)
 - Optional Router wrapper: when `--with-router` flag is set and file imports React Router, wraps renders with `MemoryRouter`
@@ -168,7 +168,7 @@ The `lib/` directory contains the core qtests framework functionality, including
   - Jest config now includes a `moduleNameMapper` for `mongoose` pointing to qtests' manual mock, preventing real DB access
 
 ## AI Agent Task Anchors
-- `🚩AI: ENTRY_POINT_FOR_GENERATED_TEST_IMPORTS` — qtests/setup import location
+- `🚩AI: ENTRY_POINT_FOR_GENERATED_TEST_IMPORTS` — @bijikyu/qtests/setup import location
 - `🚩AI: UNIT_TEMPLATE_SECTION` — per-export describe/it generation logic  
 - `🚩AI: INTEGRATION_TEMPLATE_SECTION` — createMockApp + supertest integration
 - `🚩AI: TYPE_INFERENCE_OPTION` — TypeScript AST analysis implementation

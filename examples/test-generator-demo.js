@@ -137,7 +137,7 @@ console.log('--- Example 5: Integration with qtests ---');
 
 console.log('Generated tests work seamlessly with qtests utilities:');
 console.log(`
-import { TestGenerator, stubMethod, mockConsole } from 'qtests';
+import { TestGenerator, stubMethod, mockConsole } from '@bijikyu/qtests';
 
 // Generate tests
 const generator = new TestGenerator();

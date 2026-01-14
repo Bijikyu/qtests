@@ -38,7 +38,7 @@ QTests includes a comprehensive security framework designed to protect against c
 
 #### Module ID Validation
 ```typescript
-import { validateModuleId } from 'qtests/security';
+import { validateModuleId } from '@bijikyu/qtests/security';
 
 const result = validateModuleId('user-service');
 if (!result.valid) {
@@ -48,7 +48,7 @@ if (!result.valid) {
 
 #### File Path Validation
 ```typescript
-import { validatePath } from 'qtests/security';
+import { validatePath } from '@bijikyu/qtests/security';
 
 const result = validatePath('/tmp/test-file.txt');
 if (!result.valid) {
@@ -58,7 +58,7 @@ if (!result.valid) {
 
 #### JSON Content Validation
 ```typescript
-import { validateJSON } from 'qtests/security';
+import { validateJSON } from '@bijikyu/qtests/security';
 
 const result = validateJSON('{"user": "admin"}');
 if (!result.valid) {
@@ -70,7 +70,7 @@ if (!result.valid) {
 
 #### Rate Limiting
 ```typescript
-import { securityMonitor } from 'qtests/security';
+import { securityMonitor } from '@bijikyu/qtests/security';
 
 const rateCheck = securityMonitor.checkRateLimit('api-endpoint', {
   windowMs: 60000,
@@ -84,7 +84,7 @@ if (!rateCheck.allowed) {
 
 #### Security Event Logging
 ```typescript
-import { securityMonitor, SecurityEventType, SecuritySeverity } from 'qtests/security';
+import { securityMonitor, SecurityEventType, SecuritySeverity } from '@bijikyu/qtests/security';
 
 securityMonitor.logEvent({
   type: SecurityEventType.COMMAND_INJECTION_ATTEMPT,
@@ -100,7 +100,7 @@ securityMonitor.logEvent({
 
 #### Generate Security Headers
 ```typescript
-import { getSecurityHeaders } from 'qtests/security';
+import { getSecurityHeaders } from '@bijikyu/qtests/security';
 
 const headers = getSecurityHeaders({
   'Content-Security-Policy': "default-src 'self'",
@@ -110,7 +110,7 @@ const headers = getSecurityHeaders({
 
 #### CORS Configuration
 ```typescript
-import { getCORSConfig } from 'qtests/security';
+import { getCORSConfig } from '@bijikyu/qtests/security';
 
 const corsConfig = getCORSConfig({
   origin: ['https://trusted-domain.com'],
@@ -123,7 +123,7 @@ const corsConfig = getCORSConfig({
 
 #### Automated Security Tests
 ```typescript
-import { runFullSecurityTest, generateSecurityTestReport } from 'qtests/security';
+import { runFullSecurityTest, generateSecurityTestReport } from '@bijikyu/qtests/security';
 
 const results = runFullSecurityTest();
 const report = generateSecurityTestReport(results);
@@ -132,7 +132,7 @@ console.log(report);
 
 #### Penetration Testing
 ```typescript
-import { penetrationTester } from 'qtests/security';
+import { penetrationTester } from '@bijikyu/qtests/security';
 
 const results = penetrationTester.runPenetrationTest({
   inputEndpoint: '/api/user-input',
@@ -239,7 +239,7 @@ export const securityConfig = {
 
 ### Metrics Dashboard
 ```typescript
-import { securityMonitor } from 'qtests/security';
+import { securityMonitor } from '@bijikyu/qtests/security';
 
 const metrics = securityMonitor.getSecurityMetrics();
 console.log('Security Metrics:', {
@@ -252,7 +252,7 @@ console.log('Security Metrics:', {
 
 ### Security Reporting
 ```typescript
-import { securityMonitor } from 'qtests/security';
+import { securityMonitor } from '@bijikyu/qtests/security';
 
 // Generate hourly security report
 const report = securityMonitor.generateReport();

@@ -9,7 +9,7 @@ The error handling system provides comprehensive error management with context p
 ### Core Error Handling Functions
 
 ```typescript
-import { handleError, handleAsyncError } from 'qtests/lib/errorHandling.js';
+import { handleError, handleAsyncError } from '@bijikyu/qtests/lib/errorHandling.js';
 
 // Basic error handling
 handleError(error, 'user-registration', {
@@ -41,56 +41,6 @@ const user = await handleAsyncError(
 | `fallbackMessage` | string | undefined | Custom error message |
 | `onRetry` | function | undefined | Callback on retry attempts |
 
-## ⚡ Performance Testing Framework
-
-Built-in performance testing capabilities for benchmarking, load testing, and regression detection.
-
-### Performance Testing
-
-```typescript
-import { runPerformanceTest, measureMemoryUsage } from 'qtests/lib/performance.js';
-
-// Basic performance benchmark
-const results = await runPerformanceTest({
-  testFunction: () => processData(largeDataset),
-  duration: 5000, // Test duration in ms
-  samples: 100,    // Number of samples to collect
-  warmupSamples: 10 // Warm-up samples
-});
-
-console.log({
-  averageTime: results.averageTime,
-  minTime: results.minTime,
-  maxTime: results.maxTime,
-  opsPerSecond: results.opsPerSecond,
-  percentiles: results.percentiles
-});
-
-// Memory usage measurement
-const before = measureMemoryUsage();
-await heavyOperation();
-const after = measureMemoryUsage();
-
-console.log(`Memory delta: ${after.heapUsed - before.heapUsed} bytes`);
-```
-
-### Load Testing
-
-```typescript
-import { runLoadTest } from 'qtests/lib/performance.js';
-
-const loadResults = await runLoadTest({
-  targetFunction: () => apiCall('/api/users'),
-  concurrentUsers: 50,
-  duration: 30000, // 30 seconds
-  rampUpTime: 5000  // 5 seconds ramp-up
-});
-
-console.log(`Total requests: ${loadResults.totalRequests}`);
-console.log(`Success rate: ${loadResults.successRate}%`);
-console.log(`Average response time: ${loadResults.averageResponseTime}ms`);
-```
-
 ## 🔗 Circuit Breaker Implementation
 
 Production-ready circuit breaker using Opossum library with enterprise features.
@@ -98,7 +48,7 @@ Production-ready circuit breaker using Opossum library with enterprise features.
 ### Circuit Breaker Setup
 
 ```typescript
-import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
+import { createCircuitBreaker } from '@bijikyu/qtests/lib/circuitBreaker.js';
 
 // Basic circuit breaker
 const breaker = createCircuitBreaker(
@@ -155,7 +105,7 @@ Advanced health monitoring for database connection pools with metrics and automa
 ### Health Monitoring Setup
 
 ```typescript
-import { addHealthMonitoring, createHealthMonitoredPool } from 'qtests/lib/connectionPoolHealth.js';
+import { addHealthMonitoring, createHealthMonitoredPool } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
 
 // Option 1: Add to existing pool
 const pool = createDatabasePool();
@@ -262,7 +212,7 @@ Standardized Jest configurations for different project types and scenarios.
 ### Using the Configuration Factory
 
 ```typescript
-import { createJestConfig } from 'qtests/lib/jestConfigFactory.js';
+import { createJestConfig } from '@bijikyu/qtests/lib/jestConfigFactory.js';
 
 // TypeScript ESM project
 const tsEsmConfig = createJestConfig('typescript-esm', {
@@ -346,7 +296,7 @@ Advanced module stubbing for complex scenarios and external dependencies.
 ### Registering Custom Stubs
 
 ```typescript
-import { registerModuleStub, unregisterModuleStub, clearAllModuleStubs } from 'qtests/utils/customStubs.js';
+import { registerModuleStub, unregisterModuleStub, clearAllModuleStubs } from '@bijikyu/qtests/utils/customStubs.js';
 
 // Register a simple stub
 registerModuleStub('external-api', {
@@ -446,12 +396,11 @@ const user = await userService.findById('1');
 
 ```typescript
 // tests/integration/user-service.test.ts
-import './node_modules/qtests/setup.js';
-import { addHealthMonitoring } from 'qtests/lib/connectionPoolHealth.js';
-import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
-import { handleError, handleAsyncError } from 'qtests/lib/errorHandling.js';
-import { runPerformanceTest } from 'qtests/lib/performance.js';
-import { registerModuleStub } from 'qtests/utils/customStubs.js';
+import './node_modules/@bijikyu/qtests/setup.js';
+import { addHealthMonitoring } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
+import { createCircuitBreaker } from '@bijikyu/qtests/lib/circuitBreaker.js';
+import { handleError, handleAsyncError } from '@bijikyu/qtests/lib/errorHandling.js';
+import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs.js';
 
 describe('User Service Integration', () => {
   let userService;
@@ -504,20 +453,6 @@ describe('User Service Integration', () => {
 
     expect(result).toBeTruthy();
     expect(result.name).toBe('John Doe');
-  });
-
-  test('user creation performance', async () => {
-    const performanceResults = await runPerformanceTest({
-      testFunction: () => userService.createUser({
-        name: 'Performance Test',
-        email: 'perf@test.com'
-      }),
-      duration: 2000,
-      samples: 100
-    });
-
-    expect(performanceResults.averageTime).toBeLessThan(100); // 100ms threshold
-    expect(performanceResults.opsPerSecond).toBeGreaterThan(10);
   });
 
   test('circuit breaker on service failure', async () => {

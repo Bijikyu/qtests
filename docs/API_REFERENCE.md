@@ -18,7 +18,7 @@ import {
   createMockApp,            // HTTP testing app creator (convenience export)
   runTestSuite,             // Test runner (convenience export)
   createAssertions           // Assertion creator (convenience export)
-} from 'qtests';
+} from '@bijikyu/qtests';
 ```
 
 ## 🔧 Core Utilities
@@ -27,14 +27,14 @@ import {
 Initialize qtests module stubbing and global configurations.
 
 ```typescript
-import { setup } from 'qtests';
+import { setup } from '@bijikyu/qtests';
 
 // Load qtests setup
 setup();
 ```
 
 **Effects**:
-- Registers default module stubs (axios, winston, mongoose)
+- Registers default module stubs for axios and winston while the module resolution hook provides a lightweight mongoose fallback
 - Sets up module resolution hooks
 - Initializes global test environment
 
@@ -42,7 +42,7 @@ setup();
 Object containing built-in module stubs.
 
 ```typescript
-import { stubs } from 'qtests';
+import { stubs } from '@bijikyu/qtests';
 
 // Access specific stub
 await stubs.axios.get('https://api.example.com');
@@ -56,7 +56,8 @@ await stubs.winston.info('Test message');
 **Available Stubs**:
 - `stubs.axios` - HTTP client stub
 - `stubs.winston` - Logger stub
-- `stubs.mongoose` - MongoDB ODM stub
+
+> Mongoose is still stubbed at require time via the registry, but it is not exposed through the `stubs` namespace.
 
 ## 🎭 Method Stubbing
 
@@ -65,7 +66,7 @@ await stubs.winston.info('Test message');
 Replace object methods with stub implementations.
 
 ```typescript
-import { stubMethod } from 'qtests';
+import { stubMethod } from '@bijikyu/qtests';
 
 const restore = stubMethod(obj, methodName, replacement);
 
@@ -108,7 +109,7 @@ const restore = stubMethod(obj, 'method', (value) => {
 Create a spy on existing method without replacing it.
 
 ```typescript
-import { spyOnMethod } from 'qtests';
+import { spyOnMethod } from '@bijikyu/qtests';
 
 const spy = spyOnMethod(obj, 'methodName');
 
@@ -123,7 +124,7 @@ console.log(spy.calls); // [{ args: ['test'], result: undefined }]
 Create Jest-compatible console spies.
 
 ```typescript
-import { mockConsole } from 'qtests';
+import { mockConsole } from '@bijikyu/qtests';
 
 const spy = mockConsole('log');
 console.log('test message');
@@ -162,7 +163,7 @@ spies.mockRestoreAll(); // Restore all
 Environment variable management utilities.
 
 ```typescript
-import { testEnv } from 'qtests';
+import { testEnv } from '@bijikyu/qtests';
 
 // Set standard test environment
 testEnv.setTestEnv();
@@ -191,7 +192,7 @@ testEnv.restoreEnv(saved);
 Execute function with automatic environment cleanup.
 
 ```typescript
-import { testHelpers } from 'qtests';
+import { testHelpers } from '@bijikyu/qtests';
 
 await testHelpers.withSavedEnv(async () => {
   process.env.TEMP_VAR = 'temporary';
@@ -207,7 +208,7 @@ await testHelpers.withSavedEnv(async () => {
 Control offline mode for external service stubbing.
 
 ```typescript
-import { offlineMode } from 'qtests';
+import { offlineMode } from '@bijikyu/qtests';
 
 // Enable offline mode
 offlineMode.setOfflineMode(true);
@@ -242,7 +243,7 @@ offlineMode.clearOfflineCache();
 Create Express-like app for HTTP testing.
 
 ```typescript
-import { createMockApp, supertest } from 'qtests';
+import { createMockApp, supertest } from '@bijikyu/qtests';
 
 const app = createMockApp();
 
@@ -304,7 +305,7 @@ expect(response.body).toMatchObject({
 Comprehensive error handling with logging and context.
 
 ```typescript
-import { handleError } from 'qtests/lib/errorHandling.js';
+import { handleError } from '@bijikyu/qtests/lib/errorHandling.js';
 
 handleError(error, context, options);
 
@@ -337,7 +338,7 @@ interface ErrorHandlingOptions {
 Async error handling with fallback values.
 
 ```typescript
-import { handleAsyncError } from 'qtests/lib/errorHandling.js';
+import { handleAsyncError } from '@bijikyu/qtests/lib/errorHandling.js';
 
 const result = await handleAsyncError(
   promise,
@@ -358,80 +359,6 @@ const user = await handleAsyncError(
 
 **Returns**: Promise resolving to either the promise result or fallback value.
 
-### Performance Testing
-
-#### runPerformanceTest()
-
-Execute performance benchmarks.
-
-```typescript
-import { runPerformanceTest } from 'qtests/lib/performance.js';
-
-const results = await runPerformanceTest(config);
-
-// Example:
-const results = await runPerformanceTest({
-  testFunction: () => processData(largeDataset),
-  duration: 5000,    // 5 seconds
-  samples: 100,       // Number of samples to collect
-  warmupSamples: 10   // Warm-up samples
-});
-
-console.log({
-  averageTime: results.averageTime,
-  minTime: results.minTime,
-  maxTime: results.maxTime,
-  opsPerSecond: results.opsPerSecond,
-  percentiles: results.percentiles
-});
-```
-
-**Configuration**:
-```typescript
-interface PerformanceConfig {
-  testFunction: () => any;           // Function to benchmark
-  duration?: number;                   // Test duration in ms (default: 5000)
-  samples?: number;                    // Number of samples (default: 100)
-  warmupSamples?: number;              // Warm-up samples (default: 10)
-  memoryTracking?: boolean;            // Track memory usage (default: true)
-}
-```
-
-**Results**:
-```typescript
-interface PerformanceResults {
-  averageTime: number;      // Average execution time
-  minTime: number;         // Minimum execution time
-  maxTime: number;         // Maximum execution time
-  opsPerSecond: number;     // Operations per second
-  percentiles: {           // Percentile breakdown
-    p50: number;
-    p90: number;
-    p95: number;
-    p99: number;
-  };
-  memoryUsage?: {         // If memory tracking enabled
-    before: NodeJS.MemoryUsage;
-    after: NodeJS.MemoryUsage;
-    delta: number;
-  };
-}
-```
-
-#### measureMemoryUsage()
-
-Get current memory usage snapshot.
-
-```typescript
-import { measureMemoryUsage } from 'qtests/lib/performance.js';
-
-const memoryBefore = measureMemoryUsage();
-await heavyOperation();
-const memoryAfter = measureMemoryUsage();
-
-console.log(`Memory delta: ${memoryAfter.heapUsed - memoryBefore.heapUsed} bytes`);
-```
-
 ### Circuit Breaker
 
 #### createCircuitBreaker()
@@ -439,7 +366,7 @@ console.log(`Memory delta: ${memoryAfter.heapUsed - memoryBefore.heapUsed} bytes
 Create circuit breaker for external service calls.
 
 ```typescript
-import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
+import { createCircuitBreaker } from '@bijikyu/qtests/lib/circuitBreaker.js';
 
 const breaker = createCircuitBreaker(
   functionToProtect,
@@ -500,7 +427,7 @@ interface CircuitBreakerOptions {
 Add health monitoring to connection pools.
 
 ```typescript
-import { addHealthMonitoring } from 'qtests/lib/connectionPoolHealth.js';
+import { addHealthMonitoring } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
 
 const monitor = addHealthMonitoring(pool, options);
 
@@ -566,7 +493,7 @@ interface HealthStatus {
 Create standardized Jest configurations.
 
 ```typescript
-import { createJestConfig } from 'qtests/lib/jestConfigFactory.js';
+import { createJestConfig } from '@bijikyu/qtests/lib/jestConfigFactory.js';
 
 const config = createJestConfig(preset, options);
 
@@ -592,7 +519,7 @@ export default config;
 #### TestGenerator Class
 
 ```typescript
-import { TestGenerator } from 'qtests/dist/lib/testGenerator.js';
+import { TestGenerator } from '@bijikyu/qtests/dist/lib/testGenerator.js';
 
 const generator = new TestGenerator(options);
 await generator.generateTestFiles(dryRun);
@@ -631,7 +558,7 @@ interface GenerationResult {
 Register custom module stubs at runtime.
 
 ```typescript
-import { registerModuleStub } from 'qtests/utils/customStubs.js';
+import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs.js';
 
 // Register simple stub
 registerModuleStub('external-service', {
@@ -678,7 +605,7 @@ import {
   matchMedia, 
   clipboard,
   polyfillOrchestrator 
-} from 'qtests';
+} from '@bijikyu/qtests';
 
 // Initialize browser environment
 initializePolyfills();
@@ -718,7 +645,7 @@ resetPolyfills();
 Execute test suites without external frameworks.
 
 ```typescript
-import { runTestSuite, createAssertions } from 'qtests';
+import { runTestSuite, createAssertions } from '@bijikyu/qtests';
 
 const assert = createAssertions();
 
@@ -791,7 +718,7 @@ import {
   experimentalFeatures,
   legacyMode,
   devVerboseLogging
-} from 'qtests';
+} from '@bijikyu/qtests';
 
 // Use in tests
 test('with custom timeout', async () => {

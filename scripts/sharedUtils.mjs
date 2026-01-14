@@ -492,8 +492,8 @@ export async function ensureRunnerAsync(root = process.cwd(), runnerFileName = '
   const candidates = [
     path.join(root, 'lib', 'templates', 'qtests-runner.mjs.template'),
     path.join(root, 'templates', 'qtests-runner.mjs.template'),
-    path.join(root, 'node_modules', 'qtests', 'lib', 'templates', 'qtests-runner.mjs.template'),
-    path.join(root, 'node_modules', 'qtests', 'templates', 'qtests-runner.mjs.template'),
+    path.join(root, 'node_modules', '@bijikyu/qtests', 'lib', 'templates', 'qtests-runner.mjs.template'),
+    path.join(root, 'node_modules', '@bijikyu/qtests', 'templates', 'qtests-runner.mjs.template'),
   ];
 
   // Validate template content for essential features
@@ -526,8 +526,8 @@ export function ensureRunner(root = process.cwd(), runnerFileName = 'qtests-runn
   const candidates = [
     path.join(root, 'lib', 'templates', 'qtests-runner.mjs.template'),
     path.join(root, 'templates', 'qtests-runner.mjs.template'),
-    path.join(root, 'node_modules', 'qtests', 'lib', 'templates', 'qtests-runner.mjs.template'),
-    path.join(root, 'node_modules', 'qtests', 'templates', 'qtests-runner.mjs.template'),
+    path.join(root, 'node_modules', '@bijikyu/qtests', 'lib', 'templates', 'qtests-runner.mjs.template'),
+    path.join(root, 'node_modules', '@bijikyu/qtests', 'templates', 'qtests-runner.mjs.template'),
   ];
 
   // Validate template content for essential features

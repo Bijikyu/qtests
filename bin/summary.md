@@ -37,11 +37,11 @@ qtests-generate --update-pkg-script       # Opt-in to update npm test script
 **Request/Response Flows**:
 - Input: CLI arguments and project source files
 - Processing: Creates TestGenerator instance with parsed options
-- Output: Generated `.GenerateTest.test.ts` files with qtests/setup integration tests
+- Output: Generated `.GenerateTest.test.ts` files with @bijikyu/qtests/setup integration tests
 
 ## Known Side Effects  
 - Creates Jest configuration file (jest.config.mjs) on non-dry runs
-- Creates Jest setup file (jest-setup.ts) on non-dry runs; imports `qtests/setup` first and adds DOM/browser stubs
+- Creates Jest setup file (jest-setup.ts) on non-dry runs; imports `@bijikyu/qtests/setup` first and adds DOM/browser stubs
 - Creates/overwrites qtests-runner.mjs (API‑only via runCLI) and configures Jest invocation with `--config config/jest.config.mjs` and `--passWithNoTests`
 - Scaffolds local HTTP test utils: `generated-tests/utils/httpTest.ts` (re-exports) and `generated-tests/utils/httpTest.shim.js` (implementation with `.send()`)
 - Adds `moduleNameMapper` for `mongoose` pointing to qtests' manual mock to avoid real DB access in integration tests

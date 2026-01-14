@@ -7,8 +7,8 @@ const config = {
   roots: ['<rootDir>'],
   testMatch: ['<rootDir>/tests/**/*.test.[jt]s?(x)'],
   setupFiles: ['<rootDir>/config/jest-require-polyfill.cjs'],
-  // Ensure qtests/setup runs first; then local setup.
-  setupFilesAfterEnv: ['qtests/setup', '<rootDir>/config/jest-setup.js'],
+  // Ensure @bijikyu/qtests/setup runs first; then local setup.
+  setupFilesAfterEnv: ['@bijikyu/qtests/setup', '<rootDir>/config/jest-setup.js'],
   modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
   watchPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
   testPathIgnorePatterns: ['<rootDir>/src/'],
@@ -31,7 +31,7 @@ const config = {
   ],
   // Map qtests source imports to the built dist to avoid TS resolution issues.
   moduleNameMapper: {
-    '^qtests/setup$': '<rootDir>/../dist/setup.js',
+    '^@bijikyu/qtests/setup$': '<rootDir>/../dist/setup.js',
     '^qtests/(.*)$': '<rootDir>/../dist/$1'
   },
   // The runner enforces coverage=false and cache=true; we leave them to the runner.

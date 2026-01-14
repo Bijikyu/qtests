@@ -710,7 +710,7 @@
 // Generated test for UserService
 import { describe, it, expect, beforeEach } from '@jest/globals';
 import { UserService } from '../src/services/UserService';
-import { stubMethod } from 'qtests/setup';
+import { stubMethod } from '@bijikyu/qtests/setup';
 
 describe('UserService', () => {
   let userService: UserService;
@@ -878,7 +878,7 @@ describe('UserService', () => {
                 <h4>Stubbing Examples</h4>
                 <div class="code-block">
 // Method stubbing
-import { stubMethod, spyOnMethod } from 'qtests/setup';
+import { stubMethod, spyOnMethod } from '@bijikyu/qtests/setup';
 
 // Simple method stub
 stubMethod(userService, 'fetchUser', jest.fn().mockReturnValue({
@@ -1053,7 +1053,7 @@ registerModuleStub('./externalService', {
                     </div>
                     <div class="input-group">
                         <label for="module-stub">Stub Path</label>
-                        <input type="text" id="module-stub" placeholder="qtests/stubs/axios">
+                        <input type="text" id="module-stub" placeholder="@bijikyu/qtests/stubs/axios">
                     </div>
                     <button class="btn" onclick="addModuleMapping()">Add Module Mapping</button>
                     <div id="module-mappings" style="margin-top: 15px;">
@@ -1076,9 +1076,9 @@ export default {
   
   // Module resolution
   moduleNameMapper: {
-    '^(axios)$': 'qtests/stubs/axios',
-    '^(winston)$': 'qtests/stubs/winston',
-    '^(mongoose)$': 'qtests/stubs/mongoose'
+    '^(axios)$': '@bijikyu/qtests/stubs/axios',
+    '^(winston)$': '@bijikyu/qtests/stubs/winston',
+    '^(mongoose)$': '@bijikyu/qtests/stubs/mongoose'
   },
   
   // Test setup
@@ -1522,8 +1522,8 @@ LOG_LEVEL=debug"></textarea>
                 <div class="code-block">
 // Example: Generated tests for GET /api/users/:id
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { createMockApp, supertest } from 'qtests/utils/httpTest';
-import { generateRouteTests } from 'qtests/lib/routeTestUtils';
+import { createMockApp, supertest } from '@bijikyu/qtests/utils/httpTest';
+import { generateRouteTests } from '@bijikyu/qtests/lib/routeTestUtils';
 
 describe('User Routes', () => {
   let app: any;
@@ -2407,7 +2407,7 @@ describe('User Routes', () => {
                         <label for="playground-code">Test Code</label>
                         <textarea id="playground-code" rows="15" placeholder="// Write your test code here
 import { describe, it, expect } from '@jest/globals';
-import { stubMethod, mockConsole } from 'qtests/setup';
+import { stubMethod, mockConsole } from '@bijikyu/qtests/setup';
 
 describe('Sample Test', () => {
   it('should demonstrate stubbing', () => {
@@ -2521,8 +2521,8 @@ describe('Sample Test', () => {
             <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0;">
                 <h3 style="color: var(--primary); margin-bottom: 15px;">🚀 Quick Links</h3>
                 <ul class="feature-list" style="padding: 0;">
-                    <li><a href="https://www.npmjs.com/package/qtests" target="_blank" style="color: var(--primary); text-decoration: none;">NPM Package</a></li>
-                    <li><a href="https://github.com/qtests/qtests" target="_blank" style="color: var(--primary); text-decoration: none;">GitHub Repository</a></li>
+                    <li><a href="https://www.npmjs.com/package/@bijikyu/qtests" target="_blank" style="color: var(--primary); text-decoration: none;">NPM Package</a></li>
+                    <li><a href="https://github.com/@bijikyu/qtests/@bijikyu/qtests" target="_blank" style="color: var(--primary); text-decoration: none;">GitHub Repository</a></li>
                     <li><a href="#playground" style="color: var(--primary); text-decoration: none;" onclick="showTab('playground', this)">Interactive Playground</a></li>
                     <li><a href="#configuration" style="color: var(--primary); text-decoration: none;" onclick="showTab('configuration', this)">Configuration</a></li>
                 </ul>
@@ -2532,7 +2532,7 @@ describe('Sample Test', () => {
                 <h3 style="color: var(--primary); margin-bottom: 15px;">🛠️ CLI Commands</h3>
                 <div class="code-block" style="font-size: 12px; margin: 0;">
                     <div># Install</div>
-                    <div>npm install qtests --save-dev</div>
+                    <div>npm install @bijikyu/qtests --save-dev</div>
                     <div style="margin-top: 10px;"># Generate tests</div>
                     <div>npx qtests-generate</div>
                     <div style="margin-top: 10px;"># Run tests</div>
@@ -2924,7 +2924,7 @@ describe('Sample Test', () => {
 
 function loadExample() {
             const exampleCode = `import { describe, it, expect, beforeEach } from '@jest/globals';
-import { stubMethod, mockConsole, testEnv } from 'qtests/setup';
+import { stubMethod, mockConsole, testEnv } from '@bijikyu/qtests/setup';
 
 describe('UserService Example', () => {
   let userService;
@@ -3026,7 +3026,7 @@ describe('UserService Example', () => {
             
             const templates = {
                 'basic-stubbing': `// Basic Method Stubbing
-import { stubMethod } from 'qtests/setup';
+import { stubMethod } from '@bijikyu/qtests/setup';
 
 const calculator = {
   add: (a, b) => a + b,
@@ -3039,7 +3039,7 @@ stubMethod(calculator, 'add', jest.fn().mockReturnValue(100));
 console.log(calculator.add(5, 10)); // Returns 100, not 15`,
                 
                 'console-mocking': `// Console Mocking
-import { mockConsole } from 'qtests/setup';
+import { mockConsole } from '@bijikyu/qtests/setup';
 
 // Mock console methods
 const consoleSpy = mockConsole();
@@ -3053,7 +3053,7 @@ expect(consoleSpy.log).toHaveBeenCalledWith('Test message');
 expect(consoleSpy.error).toHaveBeenCalledWith('Error message');`,
                 
                 'env-management': `// Environment Management
-import { testEnv } from 'qtests/setup';
+import { testEnv } from '@bijikyu/qtests/setup';
 
 // Set test environment
 testEnv.setTestEnv({
@@ -3072,7 +3072,7 @@ process.env.NODE_ENV = 'production';
 testEnv.restoreEnv();`,
                 
                 'error-wrapping': `// Error Wrapping
-import { createAsyncErrorWrapper } from 'qtests/utils/errorHandling';
+import { createAsyncErrorWrapper } from '@bijikyu/qtests/utils/errorHandling';
 
 const riskyOperation = async (data) => {
   if (!data) throw new Error('No data provided');
@@ -3088,7 +3088,7 @@ const safeOperation = createAsyncErrorWrapper(riskyOperation, {
 await safeOperation(null); // Returns fallback instead of throwing`,
                 
                 'async-testing': `// Async Testing
-import { waitForCondition } from 'qtests/utils';
+import { waitForCondition } from '@bijikyu/qtests/utils';
 
 describe('Async Operations', () => {
   it('should wait for condition', async () => {
@@ -3107,7 +3107,7 @@ describe('Async Operations', () => {
                 'react-testing': `// React Component Testing
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { stubMethod } from 'qtests/setup';
+import { stubMethod } from '@bijikyu/qtests/setup';
 
 // Mock API service
 const apiService = {
@@ -4331,7 +4331,7 @@ test('renders user name', async () => {
             const types = includeTypes ? ': any' : '';
             
             return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { stubMethod, mockConsole } from 'qtests/setup';
+import { stubMethod, mockConsole } from '@bijikyu/qtests/setup';
 
 describe('MVC Pattern Tests', () => {
   let controller${types};
@@ -4420,7 +4420,7 @@ describe('MVC Pattern Tests', () => {
             const types = includeTypes ? ': any' : '';
             
             return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { stubMethod } from 'qtests/setup';
+import { stubMethod } from '@bijikyu/qtests/setup';
 
 describe('Repository Pattern Tests', () => {
   let repository${types};
@@ -4555,7 +4555,7 @@ function generateServiceLayerTemplate(framework, language, includeComments, incl
             const comment = includeComments ? '/**\n * Service Layer Test Template\n * Tests for business logic and service orchestration\n */\n' : '';
             
             return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { stubMethod, createAsyncErrorWrapper } from 'qtests/setup';
+import { stubMethod, createAsyncErrorWrapper } from '@bijikyu/qtests/setup';
 
 describe('Service Layer Tests', () => {
   let userService${types};
@@ -4696,7 +4696,7 @@ describe('Service Layer Tests', () => {
             const comment = includeComments ? '/**\n * CQRS Pattern Test Template\n * Tests for Command Query Responsibility Segregation\n */\n' : '';
             
             return `${comment}import { describe, it, expect, beforeEach } from '@jest/globals';
-import { stubMethod } from 'qtests/setup';
+import { stubMethod } from '@bijikyu/qtests/setup';
 
 describe('CQRS Pattern Tests', () => {
   let commandHandler${types};
@@ -4780,7 +4780,7 @@ describe('CQRS Pattern Tests', () => {
             const types = includeTypes ? ': any' : '';
             
             return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { stubMethod } from 'qtests/setup';
+import { stubMethod } from '@bijikyu/qtests/setup';
 
 describe('CRUD Operations Tests', () => {
   let crudService${types};
@@ -5407,9 +5407,9 @@ describe('CRUD Operations Tests', () => {
                     preset: 'ts-jest/presets/default-esm',
                     setupFilesAfterEnv: ['<rootDir>/config/jest-setup.ts'],
                     moduleNameMapper: {
-                        'axios': 'qtests/stubs/axios',
-                        'winston': 'qtests/stubs/winston',
-                        'mongoose': 'qtests/stubs/mongoose'
+                        'axios': '@bijikyu/qtests/stubs/axios',
+                        'winston': '@bijikyu/qtests/stubs/winston',
+                        'mongoose': '@bijikyu/qtests/stubs/mongoose'
                     }
                 },
                 qtests: {
@@ -5605,8 +5605,8 @@ describe('CRUD Operations Tests', () => {
             
             let testCode = `// Generated tests for ${method} ${path}
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { createMockApp, supertest } from 'qtests/utils/httpTest';
-import { generateRouteTests } from 'qtests/lib/routeTestUtils';
+import { createMockApp, supertest } from '@bijikyu/qtests/utils/httpTest';
+import { generateRouteTests } from '@bijikyu/qtests/lib/routeTestUtils';
 
 describe('${routeName} Routes', () => {
   let app: any;
@@ -5680,7 +5680,7 @@ describe('${routeName} Routes', () => {
             
             const templates = {
                 'basic-stubbing': `// Basic Method Stubbing
-import { stubMethod } from 'qtests/setup';
+import { stubMethod } from '@bijikyu/qtests/setup';
 
 const calculator = {
   add: (a, b) => a + b,
@@ -5693,7 +5693,7 @@ stubMethod(calculator, 'add', jest.fn().mockReturnValue(100));
 console.log(calculator.add(5, 10)); // Returns 100, not 15`,
                 
                 'console-mocking': `// Console Mocking
-import { mockConsole } from 'qtests/setup';
+import { mockConsole } from '@bijikyu/qtests/setup';
 
 // Mock console methods
 const consoleSpy = mockConsole();
@@ -5707,7 +5707,7 @@ expect(consoleSpy.log).toHaveBeenCalledWith('Test message');
 expect(consoleSpy.error).toHaveBeenCalledWith('Error message');`,
                 
                 'env-management': `// Environment Management
-import { testEnv } from 'qtests/setup';
+import { testEnv } from '@bijikyu/qtests/setup';
 
 // Set test environment
 testEnv.setTestEnv({
@@ -5726,7 +5726,7 @@ process.env.NODE_ENV = 'production';
 testEnv.restoreEnv();`,
                 
                 'error-wrapping': `// Error Wrapping
-import { createAsyncErrorWrapper } from 'qtests/utils/errorHandling';
+import { createAsyncErrorWrapper } from '@bijikyu/qtests/utils/errorHandling';
 
 const riskyOperation = async (data) => {
   if (!data) throw new Error('No data provided');
@@ -5742,7 +5742,7 @@ const safeOperation = createAsyncErrorWrapper(riskyOperation, {
 await safeOperation(null); // Returns fallback instead of throwing`,
                 
                 'async-testing': `// Async Testing
-import { waitForCondition } from 'qtests/utils';
+import { waitForCondition } from '@bijikyu/qtests/utils';
 
 describe('Async Operations', () => {
   it('should wait for condition', async () => {
@@ -5761,7 +5761,7 @@ describe('Async Operations', () => {
                 'react-testing': `// React Component Testing
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { stubMethod } from 'qtests/setup';
+import { stubMethod } from '@bijikyu/qtests/setup';
 
 // Mock API service
 const apiService = {
@@ -5794,7 +5794,7 @@ test('renders user name', async () => {
 });`,
 
                 'rate-limiting': `// Rate Limiting Test
-import { createDistributedRateLimiter } from 'qtests/utils/rateLimiter';
+import { createDistributedRateLimiter } from '@bijikyu/qtests/utils/rateLimiter';
 
 describe('Rate Limiting', () => {
   let limiter;
@@ -5830,7 +5830,7 @@ describe('Rate Limiting', () => {
 });`,
 
                 'validation': `// Streaming Validation Test
-import { createStreamingValidator } from 'qtests/utils/streamingValidator';
+import { createStreamingValidator } from '@bijikyu/qtests/utils/streamingValidator';
 
 describe('Streaming Validation', () => {
   let validator;
@@ -5859,7 +5859,7 @@ describe('Streaming Validation', () => {
 });`,
 
                 'memory-testing': `// Memory Monitoring Test
-import { memoryMonitor, detectMemoryLeaks } from 'qtests/utils/memory';
+import { memoryMonitor, detectMemoryLeaks } from '@bijikyu/qtests/utils/memory';
 
 describe('Memory Monitoring', () => {
   it('should track memory usage', async () => {
@@ -5883,7 +5883,7 @@ describe('Memory Monitoring', () => {
 });`,
 
                 'email-testing': `// Email Testing
-import { sendEmail, getEmailHistory, clearEmailHistory } from 'qtests/utils/sendEmail';
+import { sendEmail, getEmailHistory, clearEmailHistory } from '@bijikyu/qtests/utils/sendEmail';
 
 describe('Email Testing', () => {
   beforeEach(() => {
@@ -5923,7 +5923,7 @@ describe('Email Testing', () => {
 });`,
 
                 'route-testing': `// Route Testing with Utilities
-import { generateRouteTests, createMockApp, supertest } from 'qtests/lib/routeTestUtils';
+import { generateRouteTests, createMockApp, supertest } from '@bijikyu/qtests/lib/routeTestUtils';
 
 describe('API Route Testing', () => {
   let app: any;
@@ -5969,7 +5969,7 @@ describe('API Route Testing', () => {
 });`,
 
                 'wait-condition': `// waitForCondition Testing
-import { waitForCondition } from 'qtests/lib/waitForCondition';
+import { waitForCondition } from '@bijikyu/qtests/lib/waitForCondition';
 
 describe('waitForCondition', () => {
   it('should wait for condition to become true', async () => {
@@ -6095,8 +6095,8 @@ describe('waitForCondition', () => {
  * Generated by QTests Route Testing Utilities
  */
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
-import { createMockApp, supertest } from 'qtests/utils/httpTest';
-import { generateRouteTests } from 'qtests/lib/routeTestUtils';
+import { createMockApp, supertest } from '@bijikyu/qtests/utils/httpTest';
+import { generateRouteTests } from '@bijikyu/qtests/lib/routeTestUtils';
 
 describe('${routeName}', () => {
   let app: any;

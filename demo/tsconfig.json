@@ -10,6 +10,6 @@
     "moduleResolution": "Node",
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["tests", "server", "config", "node_modules/qtests/**/*"]
+  "include": ["tests", "server", "config", "node_modules/@bijikyu/qtests/**/*"]
 }
 

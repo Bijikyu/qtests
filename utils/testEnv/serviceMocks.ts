@@ -12,8 +12,8 @@
  * - Easy customization for specific test cases
  * 
  * Usage patterns:
- * - Import specific factory: import { createMockOpenAI } from 'qtests/utils/testEnv/serviceMocks'
- * - Import default data: import { DEFAULT_MOCK_DATA } from 'qtests/utils/testEnv/serviceMocks'
+ * - Import specific factory: import { createMockOpenAI } from '@bijikyu/qtests/utils/testEnv/serviceMocks'
+ * - Import default data: import { DEFAULT_MOCK_DATA } from '@bijikyu/qtests/utils/testEnv/serviceMocks'
  */
 
 import { jest } from '@jest/globals';

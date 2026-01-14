@@ -8,8 +8,8 @@ This comprehensive guide addresses common issues, troubleshooting steps, and sol
 
 **Issue**: Cannot resolve qtests imports
 ```typescript
-// Error: Cannot find module 'qtests/lib/envUtils.js'
-import { httpTest } from 'qtests/lib/envUtils.js';
+// Error: Cannot find module '@bijikyu/qtests/lib/envUtils.js'
+import { httpTest } from '@bijikyu/qtests/lib/envUtils.js';
 ```
 
 **Solutions**:
@@ -21,10 +21,10 @@ npm run build  # If using qtests from source
 2. **Use Dist Path**: Import from compiled distribution
 ```typescript
 // Correct import from dist
-import { httpTest } from 'qtests/dist/lib/envUtils.js';
+import { httpTest } from '@bijikyu/qtests/dist/lib/envUtils.js';
 
 // Or use main exports
-import { httpTest } from 'qtests';
+import { httpTest } from '@bijikyu/qtests';
 ```
 
 3. **Verify package.json Exports**
@@ -41,7 +41,7 @@ import { httpTest } from 'qtests';
 
 **Issue**: TypeScript errors with qtests imports
 ```
-TS2307: Cannot find module 'qtests' or its corresponding type declarations.
+TS2307: Cannot find module '@bijikyu/qtests' or its corresponding type declarations.
 ```
 
 **Solutions**:
@@ -54,7 +54,7 @@ TS2307: Cannot find module 'qtests' or its corresponding type declarations.
     "allowSyntheticDefaultImports": true,
     "types": ["node", "jest"]
   },
-  "include": ["node_modules/qtests/dist/**/*.d.ts"]
+  "include": ["node_modules/@bijikyu/qtests/dist/**/*.d.ts"]
 }
 ```
 
@@ -65,7 +65,7 @@ npm install --save-dev @types/node @types/jest
 
 3. **Use Type Assertion** (temporary fix)
 ```typescript
-import qtests from 'qtests';
+import qtests from '@bijikyu/qtests';
 const { stubMethod } = qtests as any;
 ```
 
@@ -75,7 +75,7 @@ const { stubMethod } = qtests as any;
 
 **Issue**: Methods not being stubbed correctly
 ```typescript
-import './node_modules/qtests/setup.js';
+import './node_modules/@bijikyu/qtests/setup.js';
 import { myService } from './myService';
 
 const restore = stubMethod(myService, 'getData', () => 'stubbed');
@@ -86,12 +86,12 @@ console.log(myService.getData()); // Still calls original method
 1. **Import Order Check**
 ```typescript
 // ✅ Correct - setup first
-import './node_modules/qtests/setup.js';
+import './node_modules/@bijikyu/qtests/setup.js';
 import { myService } from './myService';
 
 // ❌ Wrong - import first
 import { myService } from './myService';
-import './node_modules/qtests/setup.js';
+import './node_modules/@bijikyu/qtests/setup.js';
 ```
 
 2. **Module Loading Issue**
@@ -124,7 +124,7 @@ test('test 2', () => {
 **Solutions**:
 1. **Use Test Environment Helpers**
 ```typescript
-import { testEnv } from 'qtests';
+import { testEnv } from '@bijikyu/qtests';
 
 beforeEach(() => {
   testEnv.saveEnv();
@@ -137,7 +137,7 @@ afterEach(() => {
 
 2. **Use withSavedEnv Wrapper**
 ```typescript
-import { testHelpers } from 'qtests';
+import { testHelpers } from '@bijikyu/qtests';
 
 test('isolated environment test', async () => {
   await testHelpers.withSavedEnv(async () => {
@@ -256,73 +256,6 @@ const app = createMockAppWithMiddleware();
 // App now includes body parsing
 ```
 
-## 🔄 Performance Testing Issues
-
-### Memory Leak Detection
-
-**Issue**: Performance tests showing increasing memory usage
-```typescript
-const results = await runPerformanceTest({
-  testFunction: () => processData(data),
-  duration: 10000
-});
-// Memory usage steadily increasing
-```
-
-**Solutions**:
-1. **Force Garbage Collection**
-```typescript
-const results = await runPerformanceTest({
-  testFunction: () => {
-    if (global.gc) global.gc(); // Force garbage collection if available
-    return processData(data);
-  },
-  duration: 10000
-});
-```
-
-2. **Monitor Memory Explicitly**
-```typescript
-const memoryBefore = process.memoryUsage();
-await processData(data);
-const memoryAfter = process.memoryUsage();
-
-const memoryDelta = memoryAfter.heapUsed - memoryBefore.heapUsed;
-if (memoryDelta > 1024 * 1024) { // 1MB
-  console.warn('High memory usage detected:', memoryDelta);
-}
-```
-
-### Timeout Issues
-
-**Issue**: Performance tests timing out
-```typescript
-const results = await runPerformanceTest({
-  testFunction: () => slowOperation(), // Takes 10+ seconds
-  duration: 5000 // Times out
-});
-```
-
-**Solutions**:
-1. **Increase Duration**
-```typescript
-const results = await runPerformanceTest({
-  testFunction: () => slowOperation(),
-  duration: 15000, // 15 seconds
-  samples: 50 // Reduce samples for slower operations
-});
-```
-
-2. **Reduce Sample Size**
-```typescript
-const results = await runPerformanceTest({
-  testFunction: () => slowOperation(),
-  duration: 5000,
-  samples: 10, // Fewer samples
-  warmupSamples: 2 // Fewer warmup samples
-});
-```
-
 ## 🔗 Circuit Breaker Issues
 
 ### Circuit Not Opening
@@ -433,14 +366,14 @@ module.exports = {
 ```javascript
 module.exports = {
   testEnvironment: 'jsdom',
-  setupFiles: ['<rootDir>/node_modules/qtests/setup.js'], // Load qtests first
+  setupFiles: ['<rootDir>/node_modules/@bijikyu/qtests/setup.js'], // Load qtests first
   setupFilesAfterEnv: ['<rootDir>/setupTests.js']
 };
 ```
 
 2. **Use qtests Jest Config Factory**
 ```javascript
-import { createJestConfig } from 'qtests/lib/jestConfigFactory.js';
+import { createJestConfig } from '@bijikyu/qtests/lib/jestConfigFactory.js';
 
 export default createJestConfig('react-typescript', {
   testEnvironment: 'jsdom',
@@ -453,7 +386,7 @@ export default createJestConfig('react-typescript', {
 **Issue**: Cannot resolve qtests in monorepo packages
 ```
 packages/frontend/src/App.test.ts:
-Cannot find module 'qtests' from 'frontend/src/App.test.ts'
+Cannot find module '@bijikyu/qtests' from 'frontend/src/App.test.ts'
 ```
 
 **Solutions**:
@@ -463,14 +396,14 @@ Cannot find module 'qtests' from 'frontend/src/App.test.ts'
 {
   "workspaces": ["packages/*"],
   "devDependencies": {
-    "qtests": "^2.0.0"
+    "@bijikyu/qtests": "^2.0.0"
   }
 }
 
 // Individual package.json
 {
   "devDependencies": {
-    "qtests": "workspace:*"
+    "@bijikyu/qtests": "workspace:*"
   }
 }
 ```
@@ -480,8 +413,8 @@ Cannot find module 'qtests' from 'frontend/src/App.test.ts'
 // jest.config.js
 module.exports = {
   moduleNameMapper: {
-    '^qtests$': '<rootDir>/node_modules/qtests/dist/index.js',
-    '^qtests/(.*)$': '<rootDir>/node_modules/qtests/dist/$1.js'
+    '^qtests$': '<rootDir>/node_modules/@bijikyu/qtests/dist/index.js',
+    '^qtests/(.*)$': '<rootDir>/node_modules/@bijikyu/qtests/dist/$1.js'
   }
 };
 ```
@@ -496,7 +429,7 @@ process.env.QTESTS_SILENT = 'false'; // Show all logs
 process.env.DEBUG = 'qtests:*'; // Node.js debug style
 
 // In tests
-import './node_modules/qtests/setup.js';
+import './node_modules/@bijikyu/qtests/setup.js';
 // Now you'll see detailed qtests logs
 ```
 
@@ -529,7 +462,7 @@ describe.each([
 
 ```typescript
 // Check mock states
-import { mockConsole } from 'qtests';
+import { mockConsole } from '@bijikyu/qtests';
 
 const consoleSpy = mockConsole('log');
 console.log('test message');
@@ -558,8 +491,8 @@ jest.clearAllMocks();
 2. **Minimal Reproduction**
    ```typescript
    // Create minimal test case
-   import './node_modules/qtests/setup.js';
-   import { stubMethod } from 'qtests';
+   import './node_modules/@bijikyu/qtests/setup.js';
+   import { stubMethod } from '@bijikyu/qtests';
    
    test('minimal case', () => {
      const obj = { method: () => 'original' };
@@ -578,7 +511,7 @@ jest.clearAllMocks();
 
 ### Community Resources
 
-- **GitHub Issues**: [github.com/your-repo/qtests/issues](https://github.com/your-repo/qtests/issues)
+- **GitHub Issues**: [github.com/your-repo/@bijikyu/qtests/issues](https://github.com/your-repo/@bijikyu/qtests/issues)
 - **Documentation**: [qtests.readthedocs.io](https://qtests.readthedocs.io)
 - **Discord Community**: [discord.gg/qtests](https://discord.gg/qtests)
 - **Stack Overflow**: Use tag `qtests`

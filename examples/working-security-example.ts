@@ -229,8 +229,8 @@ async function runSecurityDemo() {
     console.log('\n🎉 Security Framework Demonstration Complete!');
     
     console.log('\n📊 Next Steps:');
-    console.log('1. Install qtests: npm install qtests');
-    console.log('2. Import security modules: import { securityMonitor, validateInput } from "qtests/security"');
+    console.log('1. Install @bijikyu/qtests: npm install @bijikyu/qtests');
+    console.log('2. Import security modules: import { securityMonitor, validateInput } from "@bijikyu/qtests/security"');
     console.log('3. Configure security policies and validation rules');
     console.log('4. Implement security middleware in your applications');
     console.log('5. Set up security monitoring and alerting');
@@ -239,8 +239,8 @@ async function runSecurityDemo() {
     console.log('\n🎉 Security Framework Demonstration Complete!');
     
     console.log('\n📊 Integration Steps:');
-    console.log('1. Install qtests: npm install qtests');
-    console.log('2. Import security modules: import { securityMonitor, validateInput } from "qtests/security"');
+    console.log('1. Install @bijikyu/qtests: npm install @bijikyu/qtests');
+    console.log('2. Import security modules: import { securityMonitor, validateInput } from "@bijikyu/qtests/security"');
     console.log('3. Configure security policies and validation rules');
     console.log('4. Implement security middleware in your applications');
     console.log('5. Set up security monitoring and alerting');
