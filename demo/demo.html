@@ -497,7 +497,7 @@
             </h1>
             <p class="subtitle">Comprehensive testing utilities for Node.js applications</p>
             <div>
-                <span class="status success">v2.0.0</span>
+                <span class="status success">v2.5.0</span>
                 <span class="status info">MIT License</span>
                 <span class="status warning">Node.js 16+</span>
             </div>
@@ -892,11 +892,12 @@ const spy = spyOnMethod(console, 'log');
 console.log('Test message');
 expect(spy).toHaveBeenCalledWith('Test message');
 
-// Custom module stub
-registerModuleStub('./externalService', {
-  fetchData: jest.fn().mockResolvedValue({ data: 'mock' }),
-  processData: jest.fn()
-});
+// Custom module stub (import from utils)
+// import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs';
+// registerModuleStub('./externalService', {
+//   fetchData: jest.fn().mockResolvedValue({ data: 'mock' }),
+//   processData: jest.fn()
+// });
                 </div>
             </div>
 
@@ -2543,7 +2544,7 @@ describe('Sample Test', () => {
             <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0;">
                 <h3 style="color: var(--primary); margin-bottom: 15px;">📊 System Status</h3>
                 <div class="system-status" style="font-size: 12px; color: #6b7280;">
-                    Framework: QTests v2.0.0 | Environment: Browser | Response: 15ms
+                    Framework: QTests v2.5.0 | Environment: Browser | Response: 15ms
                 </div>
                 <div style="margin-top: 10px;">
                     <span class="status success">All Systems Operational</span>
@@ -3077,7 +3078,7 @@ process.env.NODE_ENV = 'production';
 testEnv.restoreEnv();`,
                 
                 'error-wrapping': `// Error Wrapping
-import { createAsyncErrorWrapper } from '@bijikyu/qtests/lib/errorHandling';
+import { createAsyncErrorWrapper } from '@bijikyu/qtests';
 
 const riskyOperation = async (data) => {
   if (!data) throw new Error('No data provided');
@@ -3093,7 +3094,7 @@ const safeOperation = createAsyncErrorWrapper(riskyOperation, {
 await safeOperation(null); // Returns fallback instead of throwing`,
                 
                 'async-testing': `// Async Testing
-import { waitForCondition } from '@bijikyu/qtests/lib/waitForCondition';
+import { waitForCondition } from '@bijikyu/qtests';
 
 describe('Async Operations', () => {
   it('should wait for condition', async () => {
@@ -4560,7 +4561,7 @@ function generateServiceLayerTemplate(framework, language, includeComments, incl
             
             return `${comment}import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { stubMethod } from '@bijikyu/qtests';
-import { createAsyncErrorWrapper } from '@bijikyu/qtests/lib/errorHandling';
+import { createAsyncErrorWrapper } from '@bijikyu/qtests';
 
 describe('Service Layer Tests', () => {
   let userService${types};
@@ -5344,7 +5345,7 @@ describe('CRUD Operations Tests', () => {
         function generateTestReport() {
             const reportData = {
                 timestamp: new Date().toISOString(),
-                framework: 'QTests v2.0.0',
+                framework: 'QTests v2.5.0',
                 tests: {
                     total: Math.floor(Math.random() * 100) + 50,
                     passed: Math.floor(Math.random() * 80) + 40,
@@ -5735,7 +5736,7 @@ process.env.NODE_ENV = 'production';
 testEnv.restoreEnv();`,
                 
                 'error-wrapping': `// Error Wrapping
-import { createAsyncErrorWrapper } from '@bijikyu/qtests/lib/errorHandling';
+import { createAsyncErrorWrapper } from '@bijikyu/qtests';
 
 const riskyOperation = async (data) => {
   if (!data) throw new Error('No data provided');
@@ -5751,7 +5752,7 @@ const safeOperation = createAsyncErrorWrapper(riskyOperation, {
 await safeOperation(null); // Returns fallback instead of throwing`,
                 
                 'async-testing': `// Async Testing
-import { waitForCondition } from '@bijikyu/qtests/lib/waitForCondition';
+import { waitForCondition } from '@bijikyu/qtests';
 
 describe('Async Operations', () => {
   it('should wait for condition', async () => {
@@ -5979,7 +5980,7 @@ describe('API Route Testing', () => {
 });`,
 
                 'wait-condition': `// waitForCondition Testing
-import { waitForCondition } from '@bijikyu/qtests/lib/waitForCondition';
+import { waitForCondition } from '@bijikyu/qtests';
 
 describe('waitForCondition', () => {
   it('should wait for condition to become true', async () => {
@@ -6430,7 +6431,7 @@ describe('${routeName}', () => {
         // System status dashboard
         function updateSystemStatus() {
             const statusData = {
-                framework: 'QTests v2.0.0',
+                framework: 'QTests v2.5.0',
                 nodeVersion: typeof process !== 'undefined' ? process.version : 'Browser',
                 environment: typeof window !== 'undefined' ? 'Browser' : 'Node.js',
                 features: {

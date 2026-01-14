@@ -20,5 +20,5 @@ export{mockConsole,createMockApp,runTestSuite,runTestSuites,createAssertions,wai
 export{nodeEnv,testMode,debugMode,runtimeNodeVersion,runtimePlatform,runtimeArch,devHotReload,devSourceMaps,devVerboseLogging,experimentalFeatures,experimentalParallelExecution,experimentalAdvancedMocking,legacyMode,legacyWarnings}from'./config/localVars.js';
 export{defaultTestTimeout,defaultRetryAttempts,defaultRetryDelay,maxConcurrentTests,testMemoryThreshold,jestTestTimeout,jestVerbose,jestCoverage,jestCache,jestPassWithNoTests,integrationTestTimeout,integrationTestRetryAttempts,integrationTestRetryDelay,integrationTestCleanupDelay,performanceTestDuration,performanceTestSamples,performanceTestThreshold}from'./config/localVars.js';
 export{defaultMockStatusCode,defaultMockResponse,defaultMockHeaders,axiosStubTimeout,consoleMockLevels,consoleCaptureAll,stubModules,stubModulePaths}from'./config/localVars.js';
-export const version='2.0.0';
+export const version='2.5.0';
 export const description='Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution';
