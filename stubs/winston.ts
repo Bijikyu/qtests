@@ -59,6 +59,8 @@ interface TransportStub {
   close?(): void;
 }
 
+type TransportConstructor = new (options?: any) => TransportStub;
+
 interface FormatStub {
   transform(info: LogEntry, options?: any): LogEntry;
 }
@@ -78,10 +80,10 @@ interface WinstonStub {
     metadata(fillEmpty?: any): FormatStub;
   };
   transports: {
-    Console(options?: any): TransportStub;
-    File(options?: any): TransportStub;
-    Http(options?: any): TransportStub;
-    Stream(options?: any): TransportStub;
+    Console: TransportConstructor;
+    File: TransportConstructor;
+    Http: TransportConstructor;
+    Stream: TransportConstructor;
   };
   addColors(colors: Record<string, string>): void;
   level: string;
@@ -508,10 +510,10 @@ const winstonStub: WinstonStub = {
    * Winston transport constructors
    */
   transports: {
-    Console: (options?: any) => new MockConsoleTransport(options),
-    File: (options?: any) => new MockFileTransport(options),
-    Http: (options?: any) => new MockHttpTransport(options),
-    Stream: (options?: any) => new MockStreamTransport(options)
+    Console: MockConsoleTransport,
+    File: MockFileTransport,
+    Http: MockHttpTransport,
+    Stream: MockStreamTransport
   },
 
   /**

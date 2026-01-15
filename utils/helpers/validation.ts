@@ -20,24 +20,25 @@
  */
 
 /**
- * Validates that a parameter is an object and not null
- * 
- * This function checks that the input is a non-null object. It specifically
- * rejects null values because typeof null === 'object' in JavaScript, which
- * can lead to unexpected behavior if not handled properly.
- * 
- * @param obj - Value to validate as object
- * @param paramName - Parameter name for error messages (used for debugging)
- * @throws Error if validation fails with descriptive message
- * 
- * @example
- * validateObject({ key: 'value' }, 'options'); // Passes
- * validateObject(null, 'options'); // Throws: Expected options to be an object but received null
- * validateObject('string', 'options'); // Throws: Expected options to be an object but received string
+ * Safely describes any runtime value for error messages without coercing Symbols
+ *
+ * @param value - Value to render in user-facing errors
+ * @returns A string label that avoids throwing while still exposing type information
  */
+const describeValue = (value: unknown): string => {
+  if (value === null) return 'null'; // Null is technically object but should read as literal null
+  if (value === undefined) return 'undefined'; // Keep undefined explicit for clarity
+  if (typeof value === 'symbol') return value.toString(); // Symbols must be stringified directly
+  try {
+    return String(value); // Normal case: fall back to String conversion for primitives
+  } catch {
+    return `${typeof value}`; // When conversion fails, surface the type name instead
+  }
+};
+
 export function validateObject(obj: any, paramName: string): void {
   if (typeof obj !== 'object' || obj === null) {
-    throw new Error(`Expected ${paramName} to be an object but received ${obj}`);
+    throw new Error(`Expected ${paramName} to be an object but received ${describeValue(obj)}`);
   }
 }
 

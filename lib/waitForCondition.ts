@@ -27,6 +27,14 @@
 
 import qerrors from './qerrorsFallback';
 
+const safeQerrors = (error: Error, message?: string, context?: any) => {
+  try {
+    qerrors(error, message, context);
+  } catch {
+    // Intentionally silence fallback rethrows so wait loops continue after logging
+  }
+};
+
 /**
  * Configuration options for waitForCondition function
  */
@@ -99,7 +107,7 @@ export async function waitForCondition(
     // Primary safety check: prevent infinite iteration loops
     if (iterations > maxIterations) {
       const timeoutError = new Error(`waitForCondition: max iterations exceeded (${maxIterations})`);
-      qerrors(timeoutError, 'waitForCondition: max iterations exceeded', { 
+      safeQerrors(timeoutError, 'waitForCondition: max iterations exceeded', { 
         timeoutMs, 
         intervalMs, 
         iterations,
@@ -112,7 +120,7 @@ export async function waitForCondition(
     const elapsed = Date.now() - start;
     if (elapsed > timeoutMs) {
       const timeoutError = new Error(`waitForCondition: timeout after ${timeoutMs}ms`);
-      qerrors(timeoutError, 'waitForCondition: timeout exceeded', { 
+      safeQerrors(timeoutError, 'waitForCondition: timeout exceeded', { 
         timeoutMs, 
         intervalMs, 
         elapsedMs: elapsed,
@@ -126,7 +134,7 @@ export async function waitForCondition(
     try {
       ok = await predicate();
     } catch (error: any) {
-      qerrors(error, 'waitForCondition: predicate execution failed', { 
+      safeQerrors(error, 'waitForCondition: predicate execution failed', { 
         timeoutMs, 
         intervalMs, 
         elapsedMs: elapsed 
@@ -151,7 +159,7 @@ export async function waitForCondition(
       });
     } catch (error: any) {
       // Fallback handling when setTimeout operations fail
-      qerrors(error, 'waitForCondition: setTimeout Promise failed', {
+      safeQerrors(error, 'waitForCondition: setTimeout Promise failed', {
         intervalMs,
         elapsedMs: Date.now() - start,
         operation: 'createDelayPromise'

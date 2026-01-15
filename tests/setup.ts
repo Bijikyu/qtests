@@ -1,3 +1,4 @@
+import '../setup';
 import { beforeAll, afterAll } from '@jest/globals';
 
 let server: any;

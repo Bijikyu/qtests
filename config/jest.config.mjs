@@ -62,7 +62,8 @@ export default {
 },
   extensionsToTreatAsEsm: [".ts",".tsx"],
   transformIgnorePatterns: ['node_modules/(?!(?:qtests|qerrors|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul|@langchain|openai)/)'],
-   moduleNameMapper: {
+  resolver: path.join(PROJECT_ROOT, 'config', 'ts-jest-resolver.cjs'),
+  moduleNameMapper: {
     "^@bijikyu/qtests$": "<rootDir>/dist/index.js",
     "^@bijikyu/qtests/(.*)$": "<rootDir>/dist/$1",
    // Essential mocks only - avoid broad patterns that interfere with node_modules
@@ -72,6 +73,5 @@ export default {
     // Custom stubs - only when explicitly needed
     "^external-service-client$": "<rootDir>/utils/jest-proxies/external-service-client.cjs",
     "^feature-x$": "<rootDir>/utils/jest-proxies/feature-x.cjs"
-
-    }
+  }
 };

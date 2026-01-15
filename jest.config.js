@@ -13,7 +13,7 @@ export default {
       useESM: true
     }
   },
-  moduleNameMapping: {
-    '^(\.{1,2}/.*)\.js$': '$1'
+  moduleNameMapper: {
+    '^(\\.{1,2}/.*)\\.js$': '$1.ts' // Map compiled .js imports back to TypeScript sources for ts-jest
   }
 };
