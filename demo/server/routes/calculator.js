@@ -1,39 +1,22 @@
 const express = require('express');
-const db = require('../db');
 const router = express.Router();
+
+let calculationHistory = [];
 
 router.get('/calculator/health', (req, res) => {
   res.json({ status: 'ok', service: 'calculator', timestamp: new Date().toISOString() });
 });
 
-router.get('/history', async (req, res) => {
-  try {
-    const result = await db.query(
-      'SELECT id, operation, operand_a, operand_b, result, created_at FROM calculation_history ORDER BY created_at DESC LIMIT 100'
-    );
-    const history = result.rows.map(row => ({
-      id: row.id,
-      operation: row.operation,
-      operands: [parseFloat(row.operand_a), parseFloat(row.operand_b)],
-      result: parseFloat(row.result),
-      timestamp: row.created_at.toISOString()
-    }));
-    res.json({ history, count: history.length });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to retrieve history' });
-  }
+router.get('/history', (req, res) => {
+  res.json({ history: calculationHistory, count: calculationHistory.length });
 });
 
-router.delete('/history', async (req, res) => {
-  try {
-    await db.query('DELETE FROM calculation_history');
-    res.json({ message: 'History cleared' });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to clear history' });
-  }
+router.delete('/history', (req, res) => {
+  calculationHistory = [];
+  res.json({ message: 'History cleared' });
 });
 
-router.post('/calculate', async (req, res) => {
+router.post('/calculate', (req, res) => {
   try {
     const { operation, operands } = req.body;
     if (!operation || !Array.isArray(operands) || operands.length !== 2) {
@@ -63,10 +46,8 @@ router.post('/calculate', async (req, res) => {
         return res.status(400).json({ error: 'Unknown operation' });
     }
     
-    await db.query(
-      'INSERT INTO calculation_history (operation, operand_a, operand_b, result) VALUES ($1, $2, $3, $4)',
-      [operation, a, b, result]
-    );
+    const calculation = { operation, operands: [a, b], result, timestamp: new Date().toISOString() };
+    calculationHistory.push(calculation);
     
     res.json({ result, operation, operands: [a, b] });
   } catch (error) {
@@ -74,7 +55,7 @@ router.post('/calculate', async (req, res) => {
   }
 });
 
-router.put('/calculate/:operation', async (req, res) => {
+router.put('/calculate/:operation', (req, res) => {
   try {
     const { operation } = req.params;
     const { a, b } = req.body;
@@ -105,10 +86,8 @@ router.put('/calculate/:operation', async (req, res) => {
         return res.status(400).json({ error: 'Unknown operation' });
     }
     
-    await db.query(
-      'INSERT INTO calculation_history (operation, operand_a, operand_b, result) VALUES ($1, $2, $3, $4)',
-      [operation, a, b, result]
-    );
+    const calculation = { operation, operands: [a, b], result, timestamp: new Date().toISOString() };
+    calculationHistory.push(calculation);
     
     res.json({ result, operation, operands: [a, b] });
   } catch (error) {
