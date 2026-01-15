@@ -11,6 +11,11 @@ import{runTestSuite,runTestSuites,createAssertions}from'./utils/runTestSuite.js'
 import{waitForCondition}from'./lib/waitForCondition.js';
 import{createAsyncErrorWrapper}from'./lib/errorHandling/index.js';
 
+export{AdvancedConnectionPool,createConnectionPool}from'./lib/connectionPool.js';
+export{CacheManager,createLocalCache,createDistributedCache,getFromCache,setInCache,deleteFromCache,clearCache,getCacheStats}from'./lib/cache.js';
+export{CleanupManager,globalCleanupManager,createCleanupManager}from'./lib/cleanupManager.js';
+export{CircuitBreaker,createCircuitBreaker,executeWithCircuitBreaker,getCircuitBreakerStats,resetCircuitBreaker,withCircuitBreaker,circuitBreakerRegistry,CircuitState}from'./lib/circuitBreaker.js';
+
 export const stubMethod=(obj:any,methodName:string,replacement:(...args:any[])=>any)=>enhancedStubMethod({obj,methodName,stubFn:replacement}).restore;
 export const spyOnMethod=(obj:any,methodName:string)=>sinonSpy(obj,methodName);
 

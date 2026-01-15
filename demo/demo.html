@@ -518,6 +518,12 @@
             <button class="nav-tab" onclick="showTab('real-world-scenarios', this)">🌍 Real-World</button>
             <button class="nav-tab" onclick="showTab('test-templates', this)">📋 Test Templates</button>
             <button class="nav-tab" onclick="showTab('debugging-tools', this)">🐛 Debugging Tools</button>
+            <button class="nav-tab" onclick="showTab('polyfills', this)">🌐 Polyfills</button>
+            <button class="nav-tab" onclick="showTab('file-system', this)">📁 File System</button>
+            <button class="nav-tab" onclick="showTab('circuit-breaker', this)">⚡ Circuit Breaker</button>
+            <button class="nav-tab" onclick="showTab('connection-pool', this)">🔗 Connection Pool</button>
+            <button class="nav-tab" onclick="showTab('cache-management', this)">💾 Cache</button>
+            <button class="nav-tab" onclick="showTab('cleanup-manager', this)">🧹 Cleanup Manager</button>
         </nav>
 
         <!-- Overview Tab -->
@@ -2506,6 +2512,610 @@ describe('Sample Test', () => {
     </div>
 
     <!-- Footer with additional information -->
+        <!-- Polyfills Tab -->
+        <div id="polyfills" class="tab-content">
+            <h2>🌐 Browser API Polyfills</h2>
+            <div class="alert info">
+                QTests provides browser API polyfills using <strong>happy-dom</strong> for lightweight, modern browser environment simulation in Node.js tests.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3><span class="icon">🪟</span> Window & Document</h3>
+                    <p>Full browser window and document simulation for DOM testing.</p>
+                    <div class="code-block">
+import { initializePolyfills, getWindow } from 'qtests';
+
+// Initialize polyfills
+await initializePolyfills();
+
+// Access browser APIs
+const window = getWindow();
+const doc = window.document;
+doc.body.innerHTML = '&lt;div id="app"&gt;&lt;/div&gt;';
+                    </div>
+                    <button class="btn" onclick="demoPolyfillWindow()">Demo Window API</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">📋</span> Clipboard API</h3>
+                    <p>Mock clipboard operations for testing copy/paste functionality.</p>
+                    <div class="code-block">
+import { clipboard } from 'qtests';
+
+// Write to clipboard
+await clipboard.writeText('Test content');
+
+// Read from clipboard
+const text = await clipboard.readText();
+console.log(text); // 'Test content'
+                    </div>
+                    <button class="btn" onclick="demoClipboard()">Demo Clipboard</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">📱</span> Media Queries</h3>
+                    <p>Test responsive designs with matchMedia support.</p>
+                    <div class="code-block">
+import { matchMedia } from 'qtests';
+
+// Test media queries
+const query = matchMedia('(min-width: 768px)');
+console.log(query.matches); // true/false
+                    </div>
+                    <button class="btn" onclick="demoMediaQuery()">Demo Media Query</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">🔄</span> Reset Polyfills</h3>
+                    <p>Reset polyfill state for test isolation.</p>
+                    <div class="code-block">
+import { resetPolyfills } from 'qtests';
+
+afterEach(() => {
+  // Clean up between tests
+  resetPolyfills();
+});
+                    </div>
+                    <button class="btn warning" onclick="demoResetPolyfills()">Demo Reset</button>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>Available Polyfill APIs</h4>
+                <ul class="feature-list">
+                    <li>✅ initializePolyfills() - Initialize happy-dom environment</li>
+                    <li>✅ getWindow() - Get current window instance</li>
+                    <li>✅ resetPolyfills() - Reset for test isolation</li>
+                    <li>✅ matchMedia(query) - Media query testing</li>
+                    <li>✅ clipboard.writeText/readText - Clipboard operations</li>
+                    <li>✅ polyfillOrchestrator - Advanced polyfill management</li>
+                </ul>
+            </div>
+            <div id="polyfill-results" class="terminal" style="min-height: 100px;"></div>
+        </div>
+
+        <!-- File System Tab -->
+        <div id="file-system" class="tab-content">
+            <h2>📁 File System Utilities</h2>
+            <div class="alert info">
+                Safe file system operations with built-in error handling, size limits, and path validation using <strong>fs-extra</strong>.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3><span class="icon">📖</span> Safe File Reading</h3>
+                    <p>Read files with automatic error handling and size limits (100MB max).</p>
+                    <div class="code-block">
+import { safeReadFile, safeReadFileBuffer } from 'qtests';
+
+// Read as UTF-8 text
+const content = await safeReadFile('./config.json');
+
+// Read as buffer (for binary files)
+const buffer = await safeReadFileBuffer('./image.png');
+                    </div>
+                    <div class="input-group">
+                        <label for="file-path-read">File Path</label>
+                        <input type="text" id="file-path-read" value="./package.json" placeholder="Enter file path">
+                    </div>
+                    <button class="btn" onclick="demoFileRead()">Read File</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">✍️</span> Safe File Writing</h3>
+                    <p>Write files with automatic directory creation and error handling.</p>
+                    <div class="code-block">
+import { safeWriteFile, ensureDir } from 'qtests';
+
+// Ensure directory exists
+await ensureDir('./output/logs');
+
+// Write file safely
+await safeWriteFile('./output/result.json', 
+  JSON.stringify(data, null, 2));
+                    </div>
+                    <div class="input-group">
+                        <label for="file-path-write">File Path</label>
+                        <input type="text" id="file-path-write" value="./test-output.txt" placeholder="Enter file path">
+                    </div>
+                    <div class="input-group">
+                        <label for="file-content">Content</label>
+                        <textarea id="file-content" placeholder="File content to write">Hello from QTests!</textarea>
+                    </div>
+                    <button class="btn success" onclick="demoFileWrite()">Write File</button>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>File System Features</h4>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">100MB</div>
+                        <div class="metric-label">Max File Size</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">Auto</div>
+                        <div class="metric-label">Dir Creation</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">Safe</div>
+                        <div class="metric-label">Path Validation</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">Async</div>
+                        <div class="metric-label">Non-blocking</div>
+                    </div>
+                </div>
+            </div>
+            <div id="file-results" class="terminal" style="min-height: 100px;"></div>
+        </div>
+
+        <!-- Circuit Breaker Tab -->
+        <div id="circuit-breaker" class="tab-content">
+            <h2>⚡ Circuit Breaker</h2>
+            <div class="alert info">
+                Protect your application from cascading failures with the <strong>opossum</strong>-based circuit breaker implementation.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3><span class="icon">🔌</span> Create Circuit Breaker</h3>
+                    <p>Configure failure thresholds, timeouts, and recovery behavior.</p>
+                    <div class="code-block">
+import { createCircuitBreaker, CircuitState } from 'qtests';
+
+const breaker = createCircuitBreaker({
+  failureThreshold: 5,
+  resetTimeout: 60000,
+  timeout: 10000,
+  onStateChange: (state) => {
+    console.log('Circuit state:', state);
+  }
+});
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">🛡️</span> Execute with Protection</h3>
+                    <p>Wrap async operations with circuit breaker protection.</p>
+                    <div class="code-block">
+import { executeWithCircuitBreaker } from 'qtests';
+
+const result = await executeWithCircuitBreaker(
+  async () => {
+    return await fetchExternalAPI();
+  },
+  { timeout: 5000, failureThreshold: 3 }
+);
+                    </div>
+                    <button class="btn" onclick="demoCircuitBreaker()">Demo Execution</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">📊</span> Monitor Stats</h3>
+                    <p>Track success rates, failure counts, and response times.</p>
+                    <div class="code-block">
+import { getCircuitBreakerStats } from 'qtests';
+
+const stats = getCircuitBreakerStats(breaker);
+console.log({
+  state: stats.state,
+  successRate: stats.successRate,
+  failureCount: stats.failureCount,
+  avgResponseTime: stats.averageResponseTime
+});
+                    </div>
+                    <button class="btn secondary" onclick="showCircuitStats()">View Stats</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">🔄</span> Circuit States</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px;">
+                        <span class="status success">CLOSED (Normal)</span>
+                        <span class="status warning">HALF-OPEN (Testing)</span>
+                        <span class="status error">OPEN (Failing)</span>
+                    </div>
+                    <p style="margin-top: 15px;">The circuit transitions through states based on failure counts and recovery attempts.</p>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>Circuit Breaker Simulation</h4>
+                <div id="circuit-visual" style="display: flex; align-items: center; gap: 20px; margin: 20px 0;">
+                    <div style="text-align: center;">
+                        <div id="circuit-indicator" style="width: 60px; height: 60px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; font-size: 24px; transition: all 0.3s;">✓</div>
+                        <div id="circuit-state-label" style="margin-top: 10px; font-weight: bold;">CLOSED</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div>Failure Count: <span id="failure-count">0</span>/5</div>
+                        <div class="progress-bar" style="margin-top: 10px;">
+                            <div id="failure-progress" class="progress-fill" style="width: 0%; background: var(--error);"></div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn" onclick="simulateSuccess()">Simulate Success</button>
+                <button class="btn error" onclick="simulateFailure()">Simulate Failure</button>
+                <button class="btn warning" onclick="resetCircuit()">Reset Circuit</button>
+            </div>
+            <div id="circuit-results" class="terminal" style="min-height: 100px;"></div>
+        </div>
+
+        <!-- Connection Pool Tab -->
+        <div id="connection-pool" class="tab-content">
+            <h2>🔗 Connection Pool Manager</h2>
+            <div class="alert info">
+                Efficient connection management using <strong>generic-pool</strong> with health monitoring, circuit breaker integration, and automatic recovery.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3><span class="icon">🏊</span> Create Connection Pool</h3>
+                    <p>Configure pool size, timeouts, and health monitoring.</p>
+                    <div class="code-block">
+import { AdvancedConnectionPool } from 'qtests';
+
+const pool = new AdvancedConnectionPool({
+  create: async () => new DatabaseConnection(),
+  destroy: async (conn) => conn.close(),
+  validate: async (conn) => conn.isAlive()
+}, {
+  maxConnections: 10,
+  acquireTimeout: 30000,
+  healthCheckInterval: 30000
+});
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">🔄</span> Acquire & Release</h3>
+                    <p>Get connections from the pool and release them when done.</p>
+                    <div class="code-block">
+// Acquire a connection
+const connection = await pool.acquire();
+
+try {
+  // Use the connection
+  await connection.query('SELECT * FROM users');
+} finally {
+  // Always release back to pool
+  await pool.release(connection);
+}
+                    </div>
+                    <button class="btn" onclick="demoPoolAcquire()">Demo Acquire</button>
+                    <button class="btn secondary" onclick="demoPoolRelease()">Demo Release</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">📈</span> Pool Statistics</h3>
+                    <p>Monitor pool health and performance metrics.</p>
+                    <div class="code-block">
+const stats = pool.getStats();
+console.log({
+  activeConnections: stats.activeConnections,
+  waitingRequests: stats.waitingRequests,
+  successRate: stats.successfulAcquisitions / 
+               stats.totalAcquisitions * 100
+});
+                    </div>
+                    <button class="btn" onclick="showPoolStats()">View Pool Stats</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">🛑</span> Graceful Shutdown</h3>
+                    <p>Properly close all connections and clean up resources.</p>
+                    <div class="code-block">
+// Graceful shutdown
+await pool.shutdown();
+
+// Pool events
+pool.on('connection-acquired', (info) => { });
+pool.on('connection-released', (info) => { });
+pool.on('error', (error) => { });
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>Pool Visualization</h4>
+                <div id="pool-visual" style="display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0;">
+                    <div id="pool-slots"></div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value" id="pool-active">0</div>
+                        <div class="metric-label">Active</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="pool-idle">10</div>
+                        <div class="metric-label">Idle</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="pool-waiting">0</div>
+                        <div class="metric-label">Waiting</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="pool-total">10</div>
+                        <div class="metric-label">Max Size</div>
+                    </div>
+                </div>
+            </div>
+            <div id="pool-results" class="terminal" style="min-height: 100px;"></div>
+        </div>
+
+        <!-- Cache Management Tab -->
+        <div id="cache-management" class="tab-content">
+            <h2>💾 Cache Management</h2>
+            <div class="alert info">
+                High-performance caching with local <strong>node-cache</strong> and distributed <strong>Redis</strong> support for optimal performance.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3><span class="icon">🗄️</span> Local Cache</h3>
+                    <p>In-memory caching with TTL support.</p>
+                    <div class="code-block">
+import { createLocalCache } from 'qtests';
+
+const cache = createLocalCache({
+  defaultTTL: 600,     // 10 minutes
+  maxSize: 1000,       // Max entries
+  checkperiod: 120     // Cleanup interval
+});
+
+cache.set('user:123', userData);
+const user = cache.get('user:123');
+                    </div>
+                    <button class="btn" onclick="demoCacheSet()">Set Cache</button>
+                    <button class="btn secondary" onclick="demoCacheGet()">Get Cache</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">🌐</span> Distributed Cache</h3>
+                    <p>Redis-backed caching with local fallback.</p>
+                    <div class="code-block">
+import { CacheManager } from 'qtests';
+
+const cache = new CacheManager({
+  enableDistributed: true,
+  keyPrefix: 'myapp:',
+  defaultTTL: 3600
+});
+
+await cache.set('session:abc', sessionData);
+const session = await cache.get('session:abc');
+                    </div>
+                    <button class="btn" onclick="demoDistributedCache()">Demo Distributed</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">📊</span> Cache Statistics</h3>
+                    <p>Monitor hit rates, memory usage, and performance.</p>
+                    <div class="code-block">
+const stats = cache.getStats();
+console.log({
+  hitRate: stats.local.hitRate,
+  missRate: stats.local.missRate,
+  totalItems: stats.local.totalItems,
+  distributed: stats.distributed.connected
+});
+                    </div>
+                    <button class="btn" onclick="showCacheStats()">View Stats</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">🧹</span> Cache Operations</h3>
+                    <p>Delete individual keys or clear entire cache.</p>
+                    <div class="code-block">
+// Delete specific key
+await cache.delete('user:123');
+
+// Clear all cache
+await cache.clear();
+
+// Graceful shutdown
+await cache.shutdown();
+                    </div>
+                    <button class="btn warning" onclick="demoCacheDelete()">Delete Key</button>
+                    <button class="btn error" onclick="demoCacheClear()">Clear All</button>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>Cache Demo</h4>
+                <div class="input-group">
+                    <label for="cache-key">Key</label>
+                    <input type="text" id="cache-key" value="demo:key" placeholder="Cache key">
+                </div>
+                <div class="input-group">
+                    <label for="cache-value">Value</label>
+                    <input type="text" id="cache-value" value="Hello, Cache!" placeholder="Cache value">
+                </div>
+                <div class="input-group">
+                    <label for="cache-ttl">TTL (seconds)</label>
+                    <input type="number" id="cache-ttl" value="300" placeholder="Time to live">
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value" id="cache-hits">0</div>
+                        <div class="metric-label">Hits</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="cache-misses">0</div>
+                        <div class="metric-label">Misses</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="cache-size">0</div>
+                        <div class="metric-label">Size</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="cache-hit-rate">0%</div>
+                        <div class="metric-label">Hit Rate</div>
+                    </div>
+                </div>
+            </div>
+            <div id="cache-results" class="terminal" style="min-height: 100px;"></div>
+        </div>
+
+        <!-- Cleanup Manager Tab -->
+        <div id="cleanup-manager" class="tab-content">
+            <h2>🧹 Cleanup Manager</h2>
+            <div class="alert info">
+                Centralized resource management for background tasks, intervals, and cleanup operations to prevent memory leaks.
+            </div>
+
+            <div class="grid">
+                <div class="card">
+                    <h3><span class="icon">📋</span> Register Cleanup Tasks</h3>
+                    <p>Register cleanup callbacks for proper resource disposal.</p>
+                    <div class="code-block">
+import { globalCleanupManager } from 'qtests';
+
+globalCleanupManager.registerTask(
+  'db-connection-cleanup',
+  'Database Connection Cleanup',
+  async () => {
+    await database.close();
+  },
+  { frequency: 60000, component: 'database' }
+);
+                    </div>
+                    <button class="btn" onclick="demoRegisterTask()">Register Task</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">▶️</span> Task Management</h3>
+                    <p>Enable, disable, and trigger cleanup tasks.</p>
+                    <div class="code-block">
+// Enable/disable task
+globalCleanupManager.enableTask('task-id');
+globalCleanupManager.disableTask('task-id');
+
+// Trigger immediate cleanup
+await globalCleanupManager.runTask('task-id');
+
+// Unregister task
+globalCleanupManager.unregisterTask('task-id');
+                    </div>
+                    <button class="btn" onclick="demoRunTask()">Run Task</button>
+                    <button class="btn warning" onclick="demoDisableTask()">Disable Task</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">📊</span> Cleanup Metrics</h3>
+                    <p>Monitor cleanup operations and resource usage.</p>
+                    <div class="code-block">
+const metrics = globalCleanupManager.getMetrics();
+console.log({
+  totalTasks: metrics.totalTasks,
+  activeTasks: metrics.activeTasks,
+  completedCleanups: metrics.completedCleanups,
+  failedCleanups: metrics.failedCleanups
+});
+                    </div>
+                    <button class="btn" onclick="showCleanupMetrics()">View Metrics</button>
+                </div>
+
+                <div class="card">
+                    <h3><span class="icon">🛑</span> Graceful Shutdown</h3>
+                    <p>Shutdown all tasks and run final cleanup.</p>
+                    <div class="code-block">
+// In your app shutdown handler
+process.on('SIGTERM', async () => {
+  await globalCleanupManager.shutdown();
+  process.exit(0);
+});
+
+// Or create custom manager
+import { createCleanupManager } from 'qtests';
+const manager = createCleanupManager({
+  defaultCleanupInterval: 60000,
+  enableMetrics: true
+});
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>Registered Tasks</h4>
+                <div id="cleanup-tasks" style="margin: 20px 0;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--light);">
+                                <th style="padding: 10px; text-align: left; border: 1px solid var(--border);">Task ID</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid var(--border);">Name</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid var(--border);">Component</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid var(--border);">Status</th>
+                                <th style="padding: 10px; text-align: left; border: 1px solid var(--border);">Last Run</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cleanup-task-list">
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid var(--border);">cache-cleanup</td>
+                                <td style="padding: 10px; border: 1px solid var(--border);">Cache Cleanup</td>
+                                <td style="padding: 10px; border: 1px solid var(--border);">cache</td>
+                                <td style="padding: 10px; border: 1px solid var(--border);"><span class="status success">Active</span></td>
+                                <td style="padding: 10px; border: 1px solid var(--border);">2 min ago</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid var(--border);">pool-health</td>
+                                <td style="padding: 10px; border: 1px solid var(--border);">Pool Health Check</td>
+                                <td style="padding: 10px; border: 1px solid var(--border);">connection-pool</td>
+                                <td style="padding: 10px; border: 1px solid var(--border);"><span class="status success">Active</span></td>
+                                <td style="padding: 10px; border: 1px solid var(--border);">30 sec ago</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 10px; border: 1px solid var(--border);">memory-monitor</td>
+                                <td style="padding: 10px; border: 1px solid var(--border);">Memory Monitor</td>
+                                <td style="padding: 10px; border: 1px solid var(--border);">system</td>
+                                <td style="padding: 10px; border: 1px solid var(--border);"><span class="status warning">Disabled</span></td>
+                                <td style="padding: 10px; border: 1px solid var(--border);">N/A</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value" id="cleanup-total">3</div>
+                        <div class="metric-label">Total Tasks</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="cleanup-active">2</div>
+                        <div class="metric-label">Active</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="cleanup-completed">15</div>
+                        <div class="metric-label">Completed</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value" id="cleanup-failed">0</div>
+                        <div class="metric-label">Failed</div>
+                    </div>
+                </div>
+            </div>
+            <div id="cleanup-results" class="terminal" style="min-height: 100px;"></div>
+        </div>
+
     <footer style="background: white; border-radius: 12px; padding: 30px; margin-top: 30px; box-shadow: var(--shadow-lg);">
         <div class="grid">
             <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0;">
@@ -6470,7 +7080,7 @@ describe('${routeName}', () => {
                 return;
             }
             
-            const tabs = ['overview', 'test-generation', 'test-runner', 'mocking', 'utilities', 'advanced-features', 'email-http-testing', 'route-testing', 'performance', 'configuration', 'playground', 'test-templates', 'debugging-tools', 'integration-flows', 'real-world-scenarios'];
+            const tabs = ['overview', 'test-generation', 'test-runner', 'mocking', 'utilities', 'advanced-features', 'email-http-testing', 'route-testing', 'performance', 'configuration', 'playground', 'test-templates', 'debugging-tools', 'integration-flows', 'real-world-scenarios', 'polyfills', 'file-system', 'circuit-breaker', 'connection-pool', 'cache-management', 'cleanup-manager'];
             const currentIndex = tabs.findIndex(tab => document.getElementById(tab).classList.contains('active'));
             
             switch(e.key) {
@@ -6556,6 +7166,409 @@ describe('${routeName}', () => {
             const modal = document.createElement('div');
             modal.innerHTML = shortcuts;
             document.body.appendChild(modal);
+        }
+
+        // ========================================
+        // Polyfills Tab Functions
+        // ========================================
+        function demoPolyfillWindow() {
+            const results = document.getElementById('polyfill-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ initializePolyfills()</span>
+<span style="color: #10b981;">✓ Happy-dom window initialized</span>
+<span style="color: #f3f4f6;">  URL: http://localhost:3000</span>
+<span style="color: #f3f4f6;">  Dimensions: 1024x768</span>
+<span style="color: #4fc3f7;">$ getWindow().document.body.innerHTML = '&lt;div id="app"&gt;Hello&lt;/div&gt;'</span>
+<span style="color: #10b981;">✓ DOM manipulation successful</span>
+<span style="color: #f3f4f6;">  document.getElementById('app').textContent = "Hello"</span>
+            `;
+        }
+
+        function demoClipboard() {
+            const results = document.getElementById('polyfill-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ clipboard.writeText('Test clipboard content')</span>
+<span style="color: #10b981;">✓ Written to clipboard</span>
+<span style="color: #4fc3f7;">$ clipboard.readText()</span>
+<span style="color: #f3f4f6;">  Result: "Test clipboard content"</span>
+<span style="color: #10b981;">✓ Clipboard operations working</span>
+            `;
+        }
+
+        function demoMediaQuery() {
+            const results = document.getElementById('polyfill-results');
+            const width = window.innerWidth;
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ matchMedia('(min-width: 768px)')</span>
+<span style="color: #f3f4f6;">  matches: ${width >= 768}</span>
+<span style="color: #f3f4f6;">  media: "(min-width: 768px)"</span>
+<span style="color: #4fc3f7;">$ matchMedia('(prefers-color-scheme: dark)')</span>
+<span style="color: #f3f4f6;">  matches: ${window.matchMedia('(prefers-color-scheme: dark)').matches}</span>
+<span style="color: #10b981;">✓ Media query detection working</span>
+            `;
+        }
+
+        function demoResetPolyfills() {
+            const results = document.getElementById('polyfill-results');
+            results.innerHTML = `
+<span style="color: #f59e0b;">$ resetPolyfills()</span>
+<span style="color: #10b981;">✓ Happy-dom instance aborted</span>
+<span style="color: #10b981;">✓ Global window reference cleared</span>
+<span style="color: #10b981;">✓ Ready for next test</span>
+            `;
+        }
+
+        // ========================================
+        // File System Tab Functions
+        // ========================================
+        function demoFileRead() {
+            const filePath = document.getElementById('file-path-read').value;
+            const results = document.getElementById('file-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ safeReadFile('${filePath}')</span>
+<span style="color: #f3f4f6;">  Validating path...</span>
+<span style="color: #f3f4f6;">  Checking file size...</span>
+<span style="color: #10b981;">✓ File read successfully (${Math.floor(Math.random() * 5000) + 500} bytes)</span>
+<span style="color: #f3f4f6;">{</span>
+<span style="color: #f3f4f6;">  "name": "qtests",</span>
+<span style="color: #f3f4f6;">  "version": "2.5.0",</span>
+<span style="color: #f3f4f6;">  "description": "Comprehensive testing framework"</span>
+<span style="color: #f3f4f6;">  ...</span>
+<span style="color: #f3f4f6;">}</span>
+            `;
+        }
+
+        function demoFileWrite() {
+            const filePath = document.getElementById('file-path-write').value;
+            const content = document.getElementById('file-content').value;
+            const results = document.getElementById('file-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ ensureDir('${filePath.split('/').slice(0, -1).join('/') || '.'}')</span>
+<span style="color: #10b981;">✓ Directory exists/created</span>
+<span style="color: #4fc3f7;">$ safeWriteFile('${filePath}', content)</span>
+<span style="color: #f3f4f6;">  Content length: ${content.length} characters</span>
+<span style="color: #10b981;">✓ File written successfully</span>
+            `;
+        }
+
+        // ========================================
+        // Circuit Breaker Tab Functions
+        // ========================================
+        let circuitFailures = 0;
+        let circuitState = 'CLOSED';
+
+        function demoCircuitBreaker() {
+            const results = document.getElementById('circuit-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ executeWithCircuitBreaker(async () => fetchAPI(), { timeout: 5000 })</span>
+<span style="color: #f3f4f6;">  Circuit state: ${circuitState}</span>
+<span style="color: #f3f4f6;">  Executing protected function...</span>
+<span style="color: #10b981;">✓ Execution successful (${Math.floor(Math.random() * 100) + 50}ms)</span>
+            `;
+        }
+
+        function showCircuitStats() {
+            const results = document.getElementById('circuit-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ getCircuitBreakerStats(breaker)</span>
+<span style="color: #f3f4f6;">{</span>
+<span style="color: #f3f4f6;">  "state": "${circuitState}",</span>
+<span style="color: #f3f4f6;">  "failureCount": ${circuitFailures},</span>
+<span style="color: #f3f4f6;">  "successCount": ${10 - circuitFailures},</span>
+<span style="color: #f3f4f6;">  "totalCalls": 10,</span>
+<span style="color: #f3f4f6;">  "successRate": ${((10 - circuitFailures) / 10 * 100).toFixed(1)}%,</span>
+<span style="color: #f3f4f6;">  "averageResponseTime": ${Math.floor(Math.random() * 50) + 30}ms</span>
+<span style="color: #f3f4f6;">}</span>
+            `;
+        }
+
+        function simulateSuccess() {
+            if (circuitState === 'OPEN') {
+                circuitState = 'HALF-OPEN';
+            } else if (circuitState === 'HALF-OPEN') {
+                circuitState = 'CLOSED';
+                circuitFailures = 0;
+            }
+            updateCircuitVisual();
+            const results = document.getElementById('circuit-results');
+            results.innerHTML = `<span style="color: #10b981;">✓ Success! Circuit state: ${circuitState}</span>`;
+        }
+
+        function simulateFailure() {
+            circuitFailures++;
+            if (circuitFailures >= 5) {
+                circuitState = 'OPEN';
+            }
+            updateCircuitVisual();
+            const results = document.getElementById('circuit-results');
+            results.innerHTML = `<span style="color: #ef4444;">✗ Failure! Failure count: ${circuitFailures}/5</span>`;
+        }
+
+        function resetCircuit() {
+            circuitFailures = 0;
+            circuitState = 'CLOSED';
+            updateCircuitVisual();
+            const results = document.getElementById('circuit-results');
+            results.innerHTML = `<span style="color: #10b981;">✓ Circuit reset to CLOSED state</span>`;
+        }
+
+        function updateCircuitVisual() {
+            const indicator = document.getElementById('circuit-indicator');
+            const label = document.getElementById('circuit-state-label');
+            const progress = document.getElementById('failure-progress');
+            const count = document.getElementById('failure-count');
+            
+            count.textContent = circuitFailures;
+            progress.style.width = (circuitFailures / 5 * 100) + '%';
+            label.textContent = circuitState;
+            
+            if (circuitState === 'CLOSED') {
+                indicator.style.background = 'var(--success)';
+                indicator.textContent = '✓';
+            } else if (circuitState === 'HALF-OPEN') {
+                indicator.style.background = 'var(--warning)';
+                indicator.textContent = '?';
+            } else {
+                indicator.style.background = 'var(--error)';
+                indicator.textContent = '✗';
+            }
+        }
+
+        // ========================================
+        // Connection Pool Tab Functions
+        // ========================================
+        let poolActive = 0;
+        let poolIdle = 10;
+
+        function demoPoolAcquire() {
+            if (poolIdle > 0) {
+                poolActive++;
+                poolIdle--;
+                updatePoolVisual();
+                const results = document.getElementById('pool-results');
+                results.innerHTML = `
+<span style="color: #4fc3f7;">$ pool.acquire()</span>
+<span style="color: #10b981;">✓ Connection acquired (${Math.floor(Math.random() * 20) + 5}ms)</span>
+<span style="color: #f3f4f6;">  Active: ${poolActive}, Idle: ${poolIdle}</span>
+                `;
+            } else {
+                const results = document.getElementById('pool-results');
+                results.innerHTML = `
+<span style="color: #ef4444;">✗ No idle connections available</span>
+<span style="color: #f59e0b;">  Request added to waiting queue</span>
+                `;
+            }
+        }
+
+        function demoPoolRelease() {
+            if (poolActive > 0) {
+                poolActive--;
+                poolIdle++;
+                updatePoolVisual();
+                const results = document.getElementById('pool-results');
+                results.innerHTML = `
+<span style="color: #4fc3f7;">$ pool.release(connection)</span>
+<span style="color: #10b981;">✓ Connection released back to pool</span>
+<span style="color: #f3f4f6;">  Active: ${poolActive}, Idle: ${poolIdle}</span>
+                `;
+            } else {
+                const results = document.getElementById('pool-results');
+                results.innerHTML = `
+<span style="color: #f59e0b;">⚠ No active connections to release</span>
+                `;
+            }
+        }
+
+        function showPoolStats() {
+            const results = document.getElementById('pool-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ pool.getStats()</span>
+<span style="color: #f3f4f6;">{</span>
+<span style="color: #f3f4f6;">  "activeConnections": ${poolActive},</span>
+<span style="color: #f3f4f6;">  "waitingRequests": 0,</span>
+<span style="color: #f3f4f6;">  "totalAcquisitions": ${poolActive + 5},</span>
+<span style="color: #f3f4f6;">  "successfulAcquisitions": ${poolActive + 5},</span>
+<span style="color: #f3f4f6;">  "failedAcquisitions": 0,</span>
+<span style="color: #f3f4f6;">  "avgAcquireTime": ${Math.floor(Math.random() * 15) + 8}ms</span>
+<span style="color: #f3f4f6;">}</span>
+            `;
+        }
+
+        function updatePoolVisual() {
+            document.getElementById('pool-active').textContent = poolActive;
+            document.getElementById('pool-idle').textContent = poolIdle;
+        }
+
+        // ========================================
+        // Cache Management Tab Functions
+        // ========================================
+        let cacheStore = {};
+        let cacheHits = 0;
+        let cacheMisses = 0;
+
+        function demoCacheSet() {
+            const key = document.getElementById('cache-key').value;
+            const value = document.getElementById('cache-value').value;
+            const ttl = document.getElementById('cache-ttl').value;
+            
+            cacheStore[key] = { value, ttl, timestamp: Date.now() };
+            updateCacheStats();
+            
+            const results = document.getElementById('cache-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ cache.set('${key}', '${value}', ${ttl})</span>
+<span style="color: #10b981;">✓ Value cached successfully</span>
+<span style="color: #f3f4f6;">  TTL: ${ttl} seconds</span>
+<span style="color: #f3f4f6;">  Expiry: ${new Date(Date.now() + ttl * 1000).toLocaleTimeString()}</span>
+            `;
+        }
+
+        function demoCacheGet() {
+            const key = document.getElementById('cache-key').value;
+            
+            if (cacheStore[key]) {
+                cacheHits++;
+                updateCacheStats();
+                const results = document.getElementById('cache-results');
+                results.innerHTML = `
+<span style="color: #4fc3f7;">$ cache.get('${key}')</span>
+<span style="color: #10b981;">✓ Cache HIT</span>
+<span style="color: #f3f4f6;">  Value: "${cacheStore[key].value}"</span>
+                `;
+            } else {
+                cacheMisses++;
+                updateCacheStats();
+                const results = document.getElementById('cache-results');
+                results.innerHTML = `
+<span style="color: #4fc3f7;">$ cache.get('${key}')</span>
+<span style="color: #f59e0b;">⚠ Cache MISS</span>
+<span style="color: #f3f4f6;">  Value: null</span>
+                `;
+            }
+        }
+
+        function demoDistributedCache() {
+            const results = document.getElementById('cache-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ new CacheManager({ enableDistributed: true })</span>
+<span style="color: #10b981;">✓ Distributed cache initialized</span>
+<span style="color: #f3f4f6;">  Local cache: node-cache</span>
+<span style="color: #f3f4f6;">  Distributed: Redis (connected)</span>
+<span style="color: #f3f4f6;">  Key prefix: "cache:"</span>
+<span style="color: #f3f4f6;">  Default TTL: 600s</span>
+            `;
+        }
+
+        function showCacheStats() {
+            const total = cacheHits + cacheMisses;
+            const hitRate = total > 0 ? (cacheHits / total * 100).toFixed(1) : 0;
+            const results = document.getElementById('cache-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ cache.getStats()</span>
+<span style="color: #f3f4f6;">{</span>
+<span style="color: #f3f4f6;">  "local": {</span>
+<span style="color: #f3f4f6;">    "totalItems": ${Object.keys(cacheStore).length},</span>
+<span style="color: #f3f4f6;">    "hitRate": ${hitRate}%,</span>
+<span style="color: #f3f4f6;">    "totalHits": ${cacheHits},</span>
+<span style="color: #f3f4f6;">    "totalMisses": ${cacheMisses}</span>
+<span style="color: #f3f4f6;">  },</span>
+<span style="color: #f3f4f6;">  "distributed": { "connected": true }</span>
+<span style="color: #f3f4f6;">}</span>
+            `;
+        }
+
+        function demoCacheDelete() {
+            const key = document.getElementById('cache-key').value;
+            if (cacheStore[key]) {
+                delete cacheStore[key];
+                updateCacheStats();
+                const results = document.getElementById('cache-results');
+                results.innerHTML = `
+<span style="color: #4fc3f7;">$ cache.delete('${key}')</span>
+<span style="color: #10b981;">✓ Key deleted from cache</span>
+                `;
+            } else {
+                const results = document.getElementById('cache-results');
+                results.innerHTML = `
+<span style="color: #4fc3f7;">$ cache.delete('${key}')</span>
+<span style="color: #f59e0b;">⚠ Key not found in cache</span>
+                `;
+            }
+        }
+
+        function demoCacheClear() {
+            cacheStore = {};
+            cacheHits = 0;
+            cacheMisses = 0;
+            updateCacheStats();
+            const results = document.getElementById('cache-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ cache.clear()</span>
+<span style="color: #10b981;">✓ All cache entries cleared</span>
+            `;
+        }
+
+        function updateCacheStats() {
+            const total = cacheHits + cacheMisses;
+            document.getElementById('cache-hits').textContent = cacheHits;
+            document.getElementById('cache-misses').textContent = cacheMisses;
+            document.getElementById('cache-size').textContent = Object.keys(cacheStore).length;
+            document.getElementById('cache-hit-rate').textContent = total > 0 ? (cacheHits / total * 100).toFixed(0) + '%' : '0%';
+        }
+
+        // ========================================
+        // Cleanup Manager Tab Functions
+        // ========================================
+        function demoRegisterTask() {
+            const results = document.getElementById('cleanup-results');
+            const taskId = 'task-' + Date.now();
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ globalCleanupManager.registerTask('${taskId}', 'Demo Task', cleanup, { frequency: 60000 })</span>
+<span style="color: #10b981;">✓ Task registered successfully</span>
+<span style="color: #f3f4f6;">  Task ID: ${taskId}</span>
+<span style="color: #f3f4f6;">  Frequency: 60000ms</span>
+<span style="color: #f3f4f6;">  Status: Active</span>
+            `;
+            document.getElementById('cleanup-total').textContent = 
+                parseInt(document.getElementById('cleanup-total').textContent) + 1;
+            document.getElementById('cleanup-active').textContent = 
+                parseInt(document.getElementById('cleanup-active').textContent) + 1;
+        }
+
+        function demoRunTask() {
+            const results = document.getElementById('cleanup-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ globalCleanupManager.runTask('cache-cleanup')</span>
+<span style="color: #f3f4f6;">  Running cleanup...</span>
+<span style="color: #10b981;">✓ Cleanup completed (${Math.floor(Math.random() * 50) + 10}ms)</span>
+<span style="color: #f3f4f6;">  Memory freed: ${Math.floor(Math.random() * 5) + 1}MB</span>
+            `;
+            document.getElementById('cleanup-completed').textContent = 
+                parseInt(document.getElementById('cleanup-completed').textContent) + 1;
+        }
+
+        function demoDisableTask() {
+            const results = document.getElementById('cleanup-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ globalCleanupManager.disableTask('memory-monitor')</span>
+<span style="color: #f59e0b;">⚠ Task disabled</span>
+<span style="color: #f3f4f6;">  The task will not run until re-enabled</span>
+            `;
+        }
+
+        function showCleanupMetrics() {
+            const results = document.getElementById('cleanup-results');
+            results.innerHTML = `
+<span style="color: #4fc3f7;">$ globalCleanupManager.getMetrics()</span>
+<span style="color: #f3f4f6;">{</span>
+<span style="color: #f3f4f6;">  "totalTasks": ${document.getElementById('cleanup-total').textContent},</span>
+<span style="color: #f3f4f6;">  "activeTasks": ${document.getElementById('cleanup-active').textContent},</span>
+<span style="color: #f3f4f6;">  "completedCleanups": ${document.getElementById('cleanup-completed').textContent},</span>
+<span style="color: #f3f4f6;">  "failedCleanups": ${document.getElementById('cleanup-failed').textContent},</span>
+<span style="color: #f3f4f6;">  "averageCleanupTime": ${Math.floor(Math.random() * 30) + 15}ms,</span>
+<span style="color: #f3f4f6;">  "memoryFreed": ${Math.floor(Math.random() * 50) + 10}MB</span>
+<span style="color: #f3f4f6;">}</span>
+            `;
         }
 
         // Initialize on load
