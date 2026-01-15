@@ -29,7 +29,7 @@
  * - Follows principle of least surprise
  */
 
-import qerrors from 'qerrors';
+// Note: qerrors is imported dynamically in setup() to avoid loading winston before mocks are installed
 
 /**
  * Initialize qtests framework with automatic stub resolution
@@ -79,15 +79,21 @@ async function setup(): Promise<void> {
     
     console.log(`setup has run resulting in module resolution modification`); // logging completion per requirements
   } catch (error: any) {
-    qerrors(error, 'setup.ts: module resolution setup failed', { 
-      setupModule: 'direct mockSystem import',
-      errorMessage: error.message,
-      errorType: error.constructor.name,
-      nodeVersion: process.version,
-      platform: process.platform,
-      cwd: process.cwd(),
-      timestamp: new Date().toISOString()
-    });
+    // Import qerrors dynamically to avoid loading it before mocks are installed
+    try {
+      const qerrors = (await import('qerrors')).default;
+      qerrors(error, 'setup.ts: module resolution setup failed', { 
+        setupModule: 'direct mockSystem import',
+        errorMessage: error.message,
+        errorType: error.constructor.name,
+        nodeVersion: process.version,
+        platform: process.platform,
+        cwd: process.cwd(),
+        timestamp: new Date().toISOString()
+      });
+    } catch {
+      // qerrors import failed, just log the error
+    }
     console.log(`setup error: ${error.message}`); // error logging per requirements
     throw error;
   }

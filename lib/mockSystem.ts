@@ -238,23 +238,138 @@ class MockRegistry {
 // Singleton registry used by qtests
 export const mockRegistry = new MockRegistry();
 
+// Helper to create a complete fallback winston stub with working transports
+function createFallbackWinstonStub() {
+  const noop = () => {};
+  
+  // Mock transport base class
+  class MockTransport {
+    name: string;
+    level?: string;
+    silent: boolean;
+    handleExceptions: boolean;
+    
+    constructor(options: any = {}) {
+      this.name = 'mock';
+      this.level = options.level || 'info';
+      this.silent = options.silent || false;
+      this.handleExceptions = options.handleExceptions || false;
+    }
+    
+    log(info: any, callback?: () => void) {
+      if (callback) callback();
+    }
+    
+    close() {}
+  }
+  
+  class MockConsoleTransport extends MockTransport {
+    constructor(options: any = {}) {
+      super(options);
+      this.name = 'console';
+    }
+  }
+  
+  class MockFileTransport extends MockTransport {
+    constructor(options: any = {}) {
+      super(options);
+      this.name = 'file';
+    }
+  }
+  
+  class MockHttpTransport extends MockTransport {
+    constructor(options: any = {}) {
+      super(options);
+      this.name = 'http';
+    }
+  }
+  
+  class MockStreamTransport extends MockTransport {
+    constructor(options: any = {}) {
+      super(options);
+      this.name = 'stream';
+    }
+  }
+  
+  // Mock format that returns info unchanged
+  const mockFormat = { transform: (info: any) => info };
+  
+  return {
+    createLogger: (options?: any) => ({
+      error: noop,
+      warn: noop,
+      info: noop,
+      http: noop,
+      verbose: noop,
+      debug: noop,
+      silly: noop,
+      log: noop,
+      add: function() { return this; },
+      remove: function() { return this; },
+      clear: function() { return this; },
+      close: noop,
+      child: function() { return this; },
+      profile: function() { return this; },
+      startTimer: () => ({ done: noop }),
+      query: (opts?: any, cb?: any) => { if (cb) cb(null, {}); return Promise.resolve({}); },
+      stream: () => ({ on: noop, pipe: noop, resume: noop, pause: noop })
+    }),
+    format: {
+      colorize: () => mockFormat,
+      combine: (...formats: any[]) => mockFormat,
+      label: () => mockFormat,
+      timestamp: () => mockFormat,
+      printf: () => mockFormat,
+      json: () => mockFormat,
+      simple: () => mockFormat,
+      splat: () => mockFormat,
+      padLevels: () => mockFormat,
+      metadata: () => mockFormat
+    },
+    transports: {
+      Console: MockConsoleTransport,
+      File: MockFileTransport,
+      Http: MockHttpTransport,
+      Stream: MockStreamTransport
+    },
+    addColors: noop,
+    level: 'info',
+    loggers: {
+      add: (id: string, opts?: any) => ({ error: noop, warn: noop, info: noop, debug: noop, verbose: noop, silly: noop, close: noop }),
+      get: (id: string) => ({ error: noop, warn: noop, info: noop, debug: noop, verbose: noop, silly: noop, close: noop }),
+      close: noop,
+      has: () => false
+    },
+    exceptions: {
+      handle: () => ({ catch: noop }),
+      unhandle: noop,
+      getHandlers: () => []
+    }
+  };
+}
+
 // Default stub registrations (axios, winston, mongoose)
 export function registerDefaultMocks(): void {
   // axios: return a minimal truthy object compatible with typical checks
   mockRegistry.register('axios', () => {
     let axiosStub;
     try { 
-      // Use centralized path validation
-      const axiosPath = VALIDATORS.stubFile('axios.ts');
-      axiosStub = nodeRequire(axiosPath).default; 
-    } catch (tsError) {
-      // TypeScript stub failed, try JavaScript
+      // Use centralized path validation - try .cjs (CommonJS) first for ESM-type packages
+      const axiosCjsPath = VALIDATORS.stubFile('axios.cjs');
+      axiosStub = nodeRequire(axiosCjsPath).default; 
+    } catch (cjsError) {
       try { 
-        const axiosJsPath = VALIDATORS.stubFile('axios.js');
-        axiosStub = nodeRequire(axiosJsPath).default; 
-      } catch (jsError) {
-        // Both stubs failed, use fallback
-        axiosStub = {};
+        // Try TypeScript file
+        const axiosPath = VALIDATORS.stubFile('axios.ts');
+        axiosStub = nodeRequire(axiosPath).default; 
+      } catch (tsError) {
+        try { 
+          const axiosJsPath = VALIDATORS.stubFile('axios.js');
+          axiosStub = nodeRequire(axiosJsPath).default; 
+        } catch (jsError) {
+          // All stubs failed, use fallback
+          axiosStub = {};
+        }
       }
     }
     return axiosStub || {};
@@ -263,20 +378,26 @@ export function registerDefaultMocks(): void {
   mockRegistry.register('winston', () => {
     let winstonStub;
     try { 
-      const winstonPath = VALIDATORS.stubFile('winston.ts');
-      winstonStub = nodeRequire(winstonPath).default; 
-    } catch (tsError) {
+      // Try .cjs (CommonJS) first for ESM-type packages
+      const winstonCjsPath = VALIDATORS.stubFile('winston.cjs');
+      winstonStub = nodeRequire(winstonCjsPath).default; 
+    } catch (cjsError) {
       try { 
-        const winstonJsPath = VALIDATORS.stubFile('winston.js');
-        winstonStub = nodeRequire(winstonJsPath).default; 
-      } catch (jsError) {
-        winstonStub = { createLogger: () => ({ error() {}, warn() {}, info() {}, debug() {}, verbose() {}, silly() {} }), format: {}, transports: {} };
+        const winstonPath = VALIDATORS.stubFile('winston.ts');
+        winstonStub = nodeRequire(winstonPath).default; 
+      } catch (tsError) {
+        try { 
+          const winstonJsPath = VALIDATORS.stubFile('winston.js');
+          winstonStub = nodeRequire(winstonJsPath).default; 
+        } catch (jsError) {
+          winstonStub = createFallbackWinstonStub();
+        }
       }
     }
-    return winstonStub || { createLogger: () => ({ error() {}, warn() {}, info() {}, debug() {}, verbose() {}, silly() {} }), format: {}, transports: {} };
+    return winstonStub || createFallbackWinstonStub();
   });
   // mongoose: if projects still import it in unit tests, hand back a tiny proxy
-	mockRegistry.register('mongoose', () => {
+        mockRegistry.register('mongoose', () => {
     // Prefer local manual mock if present in client repo via Jest mapping; otherwise a safe object
     try { 
       const mongoosePath = VALIDATORS.mockFile('mongoose.js');

@@ -52,9 +52,22 @@
  * - Add the require statement and property to this exports object
  * - The stub becomes available as stubs.[module-name]
  */
-// Import stub modules using ES module syntax
-import axios from '../stubs/axios.js'; // http client library stub
-import winston from '../stubs/winston.js'; // logging library stub
+// Import stub modules
+// Use require() for CommonJS modules (.cjs) for compatibility in ESM-type packages
+import { createRequire } from 'module';
+import { fileURLToPath } from 'url';
+import path from 'path';
+
+// Get __dirname equivalent in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Create require function for importing CJS modules
+const require = createRequire(import.meta.url);
+
+// Load stubs using require (they are CommonJS modules)
+const axios = require('../stubs/axios.cjs').default;
+const winston = require('../stubs/winston.cjs').default;
 
 // Export stub library registry using ES module syntax
 const stubs = {

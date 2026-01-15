@@ -10,8 +10,20 @@
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
-import qerrorsModule from 'qerrors';
-const { qerrors } = qerrorsModule;
+
+// Use local qerrors fallback to avoid loading winston before mock hooks are installed
+// The npm qerrors package imports winston at the top level which breaks test mocking
+const qerrors = (error, message, context) => {
+  const timestamp = new Date().toISOString();
+  const errorInfo = {
+    timestamp,
+    message: message || error.message,
+    stack: error.stack,
+    context: context || {},
+    level: 'ERROR'
+  };
+  console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+};
 
 // Path validation utilities for security
 function validatePath(inputPath, allowedBase = process.cwd()) {

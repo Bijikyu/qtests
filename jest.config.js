@@ -3,6 +3,7 @@ export default {
   preset: 'ts-jest/presets/default-esm',
   extensionsToTreatAsEsm: ['.ts'],
   testEnvironment: 'node',
+  setupFiles: ['./tests/mockSetup.ts'], // Install mocks before any imports
   setupFilesAfterEnv: ['./tests/setup.ts'],
   moduleFileExtensions: ['ts', 'js', 'json'],
   roots: ['<rootDir>/tests/integration'],
@@ -14,6 +15,8 @@ export default {
     }
   },
   moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1.ts' // Map compiled .js imports back to TypeScript sources for ts-jest
+    '^(\\.{1,2}/.*)\\.js$': '$1.ts', // Map compiled .js imports back to TypeScript sources for ts-jest
+    '^qerrors$': '<rootDir>/lib/qerrorsFallback.ts', // Use local fallback to avoid winston loading before mock hooks
+    '^winston$': '<rootDir>/stubs/winston.ts' // Use mock winston to prevent real winston from loading
   }
 };
