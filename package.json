@@ -94,7 +94,6 @@
   "devDependencies": {
     "@babel/core": "^7.28.3",
     "@babel/preset-env": "^7.28.3",
-    "@bijikyu/sup": "1.1.1",
     "@openai/codex": "^0.53.0",
     "@types/express": "^5.0.6",
     "@types/fs-extra": "^11.0.4",
@@ -114,8 +113,7 @@
     "opencode-ai": "^1.1.19",
     "ts-jest": "^29.4.1",
     "tsx": "^4.20.5",
-    "typescript": "^5.6.3",
-    "unqommented": "^1.1.0"
+    "typescript": "^5.6.3"
   },
   "files": [
     "bin",
