@@ -65,6 +65,7 @@
   ],
   "author": "Q",
   "dependencies": {
+    "@bijikyu/qerrors": "3.0.1",
     "axios": "^1.9.0",
     "dotenv": "^17.2.3",
     "express": "^4.18.0",
@@ -82,7 +83,6 @@
     "p-retry": "^7.1.1",
     "p-timeout": "^7.0.1",
     "pg": "^8.17.1",
-    "qerrors": "^1.2.7",
     "rate-limiter-flexible": "^5.0.5",
     "redis": "^4.6.0",
     "secure-json-parse": "^4.1.0",
@@ -94,7 +94,7 @@
   "devDependencies": {
     "@babel/core": "^7.28.3",
     "@babel/preset-env": "^7.28.3",
-    "@bijikyu/csup": "^1.0.2",
+    "@bijikyu/sup": "1.1.1",
     "@openai/codex": "^0.53.0",
     "@types/express": "^5.0.6",
     "@types/fs-extra": "^11.0.4",
