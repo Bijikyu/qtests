@@ -35,7 +35,7 @@
   },
   "scripts": {
     "prepare": "node scripts/ensure-runner.mjs",
-    "postinstall": "node scripts/postinstall-scaffold.mjs",
+    "postinstall": "node scripts/patch-node-modules.mjs && node scripts/postinstall-scaffold.mjs",
     "pretest": "node scripts/clean-dist.mjs && node scripts/ensure-runner.mjs",
     "test": "node qtests-runner.mjs",
     "ci:verify": "node scripts/ci-verify-runner.mjs",

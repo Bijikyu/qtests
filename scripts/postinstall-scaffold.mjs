@@ -48,14 +48,6 @@ function exists(p){
 
 function ensureQerrorsAlias(moduleRoot){
   try{
-    // Ensure a resolvable "qerrors" package name even when only the scoped dependency is installed.
-    const resolvedPkg = require.resolve('@bijikyu/qerrors/package.json',{ paths:[moduleRoot] });
-    const qerrorsRoot = path.dirname(resolvedPkg);
-    const fallbackTargets = [
-      path.join(moduleRoot,'dist','lib','qerrorsFallback.js'),
-      path.join(moduleRoot,'lib','qerrorsFallback.js')
-    ];
-    const chosenTarget = fallbackTargets.find(candidate=>exists(candidate)) || qerrorsRoot;
     const aliasDir = path.join(moduleRoot,'node_modules','qerrors');
     const aliasPkg = path.join(aliasDir,'package.json');
     const aliasIndex = path.join(aliasDir,'index.js');
@@ -63,13 +55,37 @@ function ensureQerrorsAlias(moduleRoot){
     if(!exists(aliasPkg)){
       fs.writeFileSync(aliasPkg,JSON.stringify({ name:'qerrors', private:true, main:'index.js', version:'0.0.0-qtests-alias' },null,2),'utf8');
     }
-    const targetPath = JSON.stringify(chosenTarget);
     const existingShim = exists(aliasIndex)?fs.readFileSync(aliasIndex,'utf8'):null;
-    if(!existingShim || !existingShim.includes(chosenTarget)){
-      const shim = `// Auto-generated alias to ensure bare 'qerrors' imports resolve\n`+
-        `const mod = require(${targetPath});\n`+
-        `module.exports = mod.default || mod;\n`;
-      fs.writeFileSync(aliasIndex,shim,'utf8');
+    if(!existingShim || !existingShim.includes('@bijikyu/qerrors')){
+      const fallbackPath = [
+        path.join(moduleRoot,'dist','lib','qerrorsFallback.js'),
+        path.join(moduleRoot,'lib','qerrorsFallback.js')
+      ].find(candidate=>exists(candidate));
+      const lines = [
+        '// Auto-generated alias to ensure bare \'qerrors\' imports resolve to @bijikyu/qerrors',
+        'let mod;',
+        'try {',
+        '  mod = require("@bijikyu/qerrors");',
+        '} catch {',
+      ];
+      if(fallbackPath){
+        lines.push('  try {');
+        lines.push(`    mod = require(${JSON.stringify(fallbackPath)});`);
+        lines.push('    mod = mod.default || mod;');
+        lines.push('  } catch {');
+        lines.push('    mod = (error, message, context) => {');
+        lines.push('      console.error(\'[QERRORS]\', JSON.stringify({ message: message || error.message, context: context || {} }));');
+        lines.push('    };');
+        lines.push('  }');
+      } else {
+        lines.push('  mod = (error, message, context) => {');
+        lines.push('    console.error(\'[QERRORS]\', JSON.stringify({ message: message || error.message, context: context || {} }));');
+        lines.push('  };');
+      }
+      lines.push('}');
+      lines.push('module.exports = mod;');
+      lines.push('');
+      fs.writeFileSync(aliasIndex, lines.join('\n'), 'utf8');
     }
   }catch(error){
     qerrors(error,'postinstall-scaffold: qerrors alias creation failed',{
