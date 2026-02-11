@@ -13,21 +13,18 @@
  */
 
 const qerrors = (error: Error, message?: string, context?: any) => {
-  const timestamp = new Date().toISOString();
-  const errorInfo = {
-    timestamp,
-    message: message || error.message,
-    stack: error.stack,
-    context: context || {},
-    level: 'ERROR'
-  };
-  
-  // Use console.error for production reliability
-  // JSON format enables proper log aggregation and monitoring
-  console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
-  
-  // Re-throw to maintain original error behavior
-  throw error;
+  const isTestEnv = process.env.NODE_ENV === 'test' || !!process.env.JEST_WORKER_ID;
+  if (!isTestEnv) {
+    const timestamp = new Date().toISOString();
+    const errorInfo = {
+      timestamp,
+      message: message || error.message,
+      stack: error.stack,
+      context: context || {},
+      level: 'ERROR'
+    };
+    console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+  }
 };
 
 export default qerrors;

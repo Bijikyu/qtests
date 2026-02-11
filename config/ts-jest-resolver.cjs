@@ -1,5 +1,9 @@
 const path = require('path');
 
+// Allow-list of dependencies that legitimately ship TypeScript sources without compiled .js twins.
+// We permit a fallback for these to keep Jest resolution reliable without altering third-party code.
+const allowedNodeModuleFallbacks = ['@bijikyu/qerrors', 'qerrors'];
+
 /**
  * Custom resolver that tries a TypeScript fallback when a .js module is missing.
  * Resolving only happens for files authored inside the project root so we don't
@@ -18,12 +22,21 @@ module.exports = function tsFallbackResolver(request, options) {
     const isInsideProject =
       basedir.startsWith(rootDir) &&
       !basedir.split(path.sep).includes('node_modules');
+    const isAllowedNodeModule = allowedNodeModuleFallbacks.some((pkg) => {
+      const normalizedPkg = pkg.replace('/', path.sep);
+      const nodeModulesPath = path.join('node_modules', normalizedPkg);
+      return (
+        basedir.includes(nodeModulesPath) ||
+        request.startsWith(pkg)
+      );
+    });
 
-    if (!isInsideProject) {
+    if (!isInsideProject && !isAllowedNodeModule) {
       throw error;
     }
 
-    const tsRequest = `${request.slice(0, -3)}.ts`; // swap the extension to TypeScript
-    return options.defaultResolver(tsRequest, options);
+    const tsRequest = `${request.slice(0, -3)}.ts`; // swap the extension to TypeScript for fallback resolution
+    const resolverOptions = isAllowedNodeModule ? { ...options, basedir } : options; // keep lookup anchored to the dependency path
+    return options.defaultResolver(tsRequest, resolverOptions);
   }
 };

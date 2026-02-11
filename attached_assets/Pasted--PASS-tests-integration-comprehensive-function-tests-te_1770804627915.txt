@@ -1,0 +1,759 @@
+ PASS  tests/integration/comprehensive-function-tests.test.ts
+  ● Console
+
+    console.log
+      [dotenv@17.2.3] injecting env (4) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+    console.log
+      qtests: Global module resolution patching activated
+
+      at Object.log (dist/setup.js:40:13)
+
+    console.log
+      qtests: Stub registry contains: axios, winston, mongoose
+
+      at Object.log (dist/setup.js:41:13)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:18.696Z",
+        "message": "stubMethod",
+        "stack": "Error: Expected stubMethod object to be an object but received null\n    at validateObject (/home/runner/workspace/utils/helpers/validation.ts:41:11)\n    at /home/runner/workspace/utils/stubMethod.ts:90:19\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:168:20\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:169:10)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/comprehensive-function-tests.test.ts:168:20
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/comprehensive-function-tests.test.ts:169:10)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:18.712Z",
+        "message": "stubMethod",
+        "stack": "Error: Expected stubMethod object to be an object but received string\n    at validateObject (/home/runner/workspace/utils/helpers/validation.ts:41:11)\n    at /home/runner/workspace/utils/stubMethod.ts:90:19\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:170:20\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:171:10)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/comprehensive-function-tests.test.ts:170:20
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/comprehensive-function-tests.test.ts:171:10)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:18.714Z",
+        "message": "stubMethod",
+        "stack": "Error: Expected stubMethod methodName to be a string but got number\n    at validateString (/home/runner/workspace/utils/helpers/validation.ts:85:11)\n    at /home/runner/workspace/utils/stubMethod.ts:91:19\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:176:20\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:177:10)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/comprehensive-function-tests.test.ts:176:20
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/comprehensive-function-tests.test.ts:177:10)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:18.716Z",
+        "message": "stubMethod",
+        "stack": "Error: stubMethod methodName must be a non-empty string, received \n    at /home/runner/workspace/utils/stubMethod.ts:93:13\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:182:20\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:183:10)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/comprehensive-function-tests.test.ts:182:20
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/comprehensive-function-tests.test.ts:183:10)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:18.717Z",
+        "message": "stubMethod",
+        "stack": "Error: stubMethod methodName must be a non-empty string, received    \n    at /home/runner/workspace/utils/stubMethod.ts:93:13\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:188:20\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:189:10)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/comprehensive-function-tests.test.ts:188:20
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/comprehensive-function-tests.test.ts:189:10)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:18.719Z",
+        "message": "stubMethod",
+        "stack": "Error: stubMethod could not find nonExistent on provided object\n    at /home/runner/workspace/utils/stubMethod.ts:96:13\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:194:20\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:195:10)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/comprehensive-function-tests.test.ts:194:20
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/comprehensive-function-tests.test.ts:195:10)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:18.721Z",
+        "message": "stubMethod",
+        "stack": "Error: stubMethod notAFunction exists but is not a function on provided object\n    at /home/runner/workspace/utils/stubMethod.ts:99:13\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:200:20\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:201:10)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/comprehensive-function-tests.test.ts:200:20
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/comprehensive-function-tests.test.ts:201:10)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:18.722Z",
+        "message": "stubMethod",
+        "stack": "Error: stubMethod stubFn must be a Function\n    at /home/runner/workspace/utils/stubMethod.ts:102:13\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:206:20\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:207:10)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/comprehensive-function-tests.test.ts:206:20
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/comprehensive-function-tests.test.ts:207:10)
+
+    console.log
+      Mock server respondWith called: GET /api { status: 200 }
+
+      at Object.respondWith (utils/stubMethod.ts:65:13)
+
+    console.log
+      Mock server restored
+
+      at Object.restore (utils/stubMethod.ts:68:13)
+
+    console.log
+      Mock XHR open called: GET /api
+
+      at Object.open (utils/stubMethod.ts:74:13)
+
+    console.log
+      Mock XHR send called: data
+
+      at Object.send (utils/stubMethod.ts:77:13)
+
+    console.log
+      Mock XHR setRequestHeader called: Content-Type application/json
+
+      at Object.setRequestHeader (utils/stubMethod.ts:80:13)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:18.869Z",
+        "message": "waitForCondition: timeout exceeded",
+        "stack": "Error: waitForCondition: timeout after 100ms\n    at waitForCondition (/home/runner/workspace/lib/waitForCondition.ts:122:28)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:319:5)",
+        "context": {
+          "timeoutMs": 100,
+          "intervalMs": 10,
+          "elapsedMs": 101,
+          "iterations": 12
+        },
+        "level": "ERROR"
+      }
+
+      25 |   // Use console.error for production reliability
+      26 |   // JSON format enables proper log aggregation and monitoring
+    > 27 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      28 |   
+      29 |   // Re-throw to maintain original error behavior
+      30 |   throw error;
+
+      at qerrors (lib/qerrorsFallback.ts:27:11)
+      at safeQerrors (lib/waitForCondition.ts:32:12)
+      at waitForCondition (lib/waitForCondition.ts:123:7)
+      at Object.<anonymous> (tests/integration/comprehensive-function-tests.test.ts:319:5)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:18.892Z",
+        "message": "waitForCondition: predicate execution failed",
+        "stack": "Error: Simulated error\n    at faultyPredicate (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:337:30)\n    at waitForCondition (/home/runner/workspace/lib/waitForCondition.ts:135:18)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:340:18)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {
+          "timeoutMs": 2000,
+          "intervalMs": 10,
+          "elapsedMs": 0
+        },
+        "level": "ERROR"
+      }
+
+      25 |   // Use console.error for production reliability
+      26 |   // JSON format enables proper log aggregation and monitoring
+    > 27 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      28 |   
+      29 |   // Re-throw to maintain original error behavior
+      30 |   throw error;
+
+      at qerrors (lib/qerrorsFallback.ts:27:11)
+      at safeQerrors (lib/waitForCondition.ts:32:12)
+      at waitForCondition (lib/waitForCondition.ts:137:7)
+      at Object.<anonymous> (tests/integration/comprehensive-function-tests.test.ts:340:18)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:18.903Z",
+        "message": "waitForCondition: predicate execution failed",
+        "stack": "Error: Simulated error\n    at faultyPredicate (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:337:30)\n    at waitForCondition (/home/runner/workspace/lib/waitForCondition.ts:135:18)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:340:5)",
+        "context": {
+          "timeoutMs": 2000,
+          "intervalMs": 10,
+          "elapsedMs": 11
+        },
+        "level": "ERROR"
+      }
+
+      25 |   // Use console.error for production reliability
+      26 |   // JSON format enables proper log aggregation and monitoring
+    > 27 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      28 |   
+      29 |   // Re-throw to maintain original error behavior
+      30 |   throw error;
+
+      at qerrors (lib/qerrorsFallback.ts:27:11)
+      at safeQerrors (lib/waitForCondition.ts:32:12)
+      at waitForCondition (lib/waitForCondition.ts:137:7)
+      at Object.<anonymous> (tests/integration/comprehensive-function-tests.test.ts:340:5)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:18.966Z",
+        "message": "waitForCondition: timeout exceeded",
+        "stack": "Error: waitForCondition: timeout after 50ms\n    at waitForCondition (/home/runner/workspace/lib/waitForCondition.ts:122:28)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts:346:7)",
+        "context": {
+          "timeoutMs": 50,
+          "intervalMs": 10,
+          "elapsedMs": 51,
+          "iterations": 7
+        },
+        "level": "ERROR"
+      }
+
+      25 |   // Use console.error for production reliability
+      26 |   // JSON format enables proper log aggregation and monitoring
+    > 27 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      28 |   
+      29 |   // Re-throw to maintain original error behavior
+      30 |   throw error;
+
+      at qerrors (lib/qerrorsFallback.ts:27:11)
+      at safeQerrors (lib/waitForCondition.ts:32:12)
+      at waitForCondition (lib/waitForCondition.ts:123:7)
+      at Object.<anonymous> (tests/integration/comprehensive-function-tests.test.ts:346:7)
+
+    console.log
+      [dotenv@17.2.3] injecting env (0) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+    console.info
+      [INFO] Memory pressure level changed {
+        from: null,
+        to: 'CRITICAL',
+        memory: {
+          raw: {
+            rss: 399458304,
+            heapTotal: 248250368,
+            heapUsed: 221812456,
+            external: 6530679,
+            arrayBuffers: 4309819
+          },
+          heapUsedMB: 212,
+          heapTotalMB: 237,
+          heapUsageRatio: 0.8935030299733534,
+          pressureLevel: 'CRITICAL',
+          timestamp: 1770804559068
+        }
+      }
+
+      at safeLogInfo (node_modules/@bijikyu/qerrors/lib/shared/safeLogging.ts:38:11)
+
+ PASS  tests/integration/core-function-tests.test.ts
+  ● Console
+
+    console.log
+      [dotenv@17.2.3] injecting env (4) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+
+      at _log (node_modules/dotenv/lib/main.js:142:11)
+
+    console.log
+      qtests: Global module resolution patching activated
+
+      at Object.log (dist/setup.js:40:13)
+
+    console.log
+      qtests: Stub registry contains: axios, winston, mongoose
+
+      at Object.log (dist/setup.js:41:13)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.386Z",
+        "message": "stubMethod",
+        "stack": "Error: Expected stubMethod object to be an object but received null\n    at validateObject (/home/runner/workspace/utils/helpers/validation.ts:41:11)\n    at /home/runner/workspace/utils/stubMethod.ts:90:19\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/core-function-tests.test.ts:386:22\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:387:12)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/core-function-tests.test.ts:386:22
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:387:12)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.398Z",
+        "message": "stubMethod",
+        "stack": "Error: Expected stubMethod object to be an object but received undefined\n    at validateObject (/home/runner/workspace/utils/helpers/validation.ts:41:11)\n    at /home/runner/workspace/utils/stubMethod.ts:90:19\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/core-function-tests.test.ts:391:22\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:392:12)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/core-function-tests.test.ts:391:22
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:392:12)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.401Z",
+        "message": "stubMethod",
+        "stack": "Error: Expected stubMethod object to be an object but received string\n    at validateObject (/home/runner/workspace/utils/helpers/validation.ts:41:11)\n    at /home/runner/workspace/utils/stubMethod.ts:90:19\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/core-function-tests.test.ts:396:22\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:397:12)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/core-function-tests.test.ts:396:22
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:397:12)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.402Z",
+        "message": "stubMethod",
+        "stack": "Error: Expected stubMethod methodName to be a string but got number\n    at validateString (/home/runner/workspace/utils/helpers/validation.ts:85:11)\n    at /home/runner/workspace/utils/stubMethod.ts:91:19\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/core-function-tests.test.ts:402:22\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:403:12)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/core-function-tests.test.ts:402:22
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:403:12)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.404Z",
+        "message": "stubMethod",
+        "stack": "Error: stubMethod methodName must be a non-empty string, received \n    at /home/runner/workspace/utils/stubMethod.ts:93:13\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/core-function-tests.test.ts:408:22\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:409:12)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/core-function-tests.test.ts:408:22
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:409:12)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.405Z",
+        "message": "stubMethod",
+        "stack": "Error: stubMethod methodName must be a non-empty string, received    \n    at /home/runner/workspace/utils/stubMethod.ts:93:13\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/core-function-tests.test.ts:414:22\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:415:12)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/core-function-tests.test.ts:414:22
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:415:12)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.406Z",
+        "message": "stubMethod",
+        "stack": "Error: stubMethod could not find nonExistent on provided object\n    at /home/runner/workspace/utils/stubMethod.ts:96:13\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/core-function-tests.test.ts:420:22\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:421:12)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/core-function-tests.test.ts:420:22
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:421:12)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.408Z",
+        "message": "stubMethod",
+        "stack": "Error: stubMethod notAFunction exists but is not a function on provided object\n    at /home/runner/workspace/utils/stubMethod.ts:99:13\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/core-function-tests.test.ts:426:22\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:427:12)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/core-function-tests.test.ts:426:22
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:427:12)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.409Z",
+        "message": "stubMethod",
+        "stack": "Error: stubMethod stubFn must be a Function\n    at /home/runner/workspace/utils/stubMethod.ts:102:13\n    at withErrorLogging (/home/runner/workspace/lib/errorHandling/errorLogging.ts:31:12)\n    at stubMethod (/home/runner/workspace/utils/stubMethod.ts:88:43)\n    at /home/runner/workspace/tests/integration/core-function-tests.test.ts:432:22\n    at Object.<anonymous> (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)\n    at Object.throwingMatcher [as toThrow] (/home/runner/workspace/node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:433:12)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {}
+      }
+
+      16 |   };
+      17 |   
+    > 18 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      19 |   
+      20 |   throw error;
+      21 | };
+
+      at qerrorsFallback (lib/errorHandling/errorLogging.ts:18:11)
+      at withErrorLogging (lib/errorHandling/errorLogging.ts:33:5)
+      at stubMethod (utils/stubMethod.ts:88:43)
+      at tests/integration/core-function-tests.test.ts:432:22
+      at Object.<anonymous> (node_modules/@jest/expect/node_modules/expect/build/toThrowMatchers.js:74:11)
+      at Object.throwingMatcher [as toThrow] (node_modules/@jest/expect/node_modules/expect/build/index.js:320:21)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:433:12)
+
+    console.log
+      Mock server respondWith called: GET /api/users { status: 200 }
+
+      at Object.respondWith (utils/stubMethod.ts:65:13)
+
+    console.log
+      Mock server restored
+
+      at Object.restore (utils/stubMethod.ts:68:13)
+
+    console.log
+      Mock XHR open called: GET /api
+
+      at Object.open (utils/stubMethod.ts:74:13)
+
+    console.log
+      Mock XHR open called: POST /api
+
+      at Object.open (utils/stubMethod.ts:74:13)
+
+    console.log
+      Mock XHR open called: DELETE /api
+
+      at Object.open (utils/stubMethod.ts:74:13)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.688Z",
+        "message": "waitForCondition: timeout exceeded",
+        "stack": "Error: waitForCondition: timeout after 100ms\n    at waitForCondition (/home/runner/workspace/lib/waitForCondition.ts:122:28)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:624:7)",
+        "context": {
+          "timeoutMs": 100,
+          "intervalMs": 10,
+          "elapsedMs": 101,
+          "iterations": 11
+        },
+        "level": "ERROR"
+      }
+
+      25 |   // Use console.error for production reliability
+      26 |   // JSON format enables proper log aggregation and monitoring
+    > 27 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      28 |   
+      29 |   // Re-throw to maintain original error behavior
+      30 |   throw error;
+
+      at qerrors (lib/qerrorsFallback.ts:27:11)
+      at safeQerrors (lib/waitForCondition.ts:32:12)
+      at waitForCondition (lib/waitForCondition.ts:123:7)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:624:7)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.689Z",
+        "message": "waitForCondition: predicate execution failed",
+        "stack": "Error: Simulated error\n    at faultyPredicate (/home/runner/workspace/tests/integration/core-function-tests.test.ts:632:32)\n    at waitForCondition (/home/runner/workspace/lib/waitForCondition.ts:135:18)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:635:20)\n    at Promise.then.completed (/home/runner/workspace/node_modules/jest-circus/build/utils.js:298:28)\n    at new Promise (<anonymous>)\n    at callAsyncCircusFn (/home/runner/workspace/node_modules/jest-circus/build/utils.js:231:10)\n    at _callCircusTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:316:40)\n    at _runTest (/home/runner/workspace/node_modules/jest-circus/build/run.js:252:3)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:126:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at _runTestsForDescribeBlock (/home/runner/workspace/node_modules/jest-circus/build/run.js:121:9)\n    at run (/home/runner/workspace/node_modules/jest-circus/build/run.js:71:3)\n    at runAndTransformResultsToJestFormat (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)\n    at jestAdapter (/home/runner/workspace/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)\n    at runTestInternal (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:367:16)\n    at runTest (/home/runner/workspace/node_modules/jest-runner/build/runTest.js:444:34)",
+        "context": {
+          "timeoutMs": 2000,
+          "intervalMs": 10,
+          "elapsedMs": 0
+        },
+        "level": "ERROR"
+      }
+
+      25 |   // Use console.error for production reliability
+      26 |   // JSON format enables proper log aggregation and monitoring
+    > 27 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      28 |   
+      29 |   // Re-throw to maintain original error behavior
+      30 |   throw error;
+
+      at qerrors (lib/qerrorsFallback.ts:27:11)
+      at safeQerrors (lib/waitForCondition.ts:32:12)
+      at waitForCondition (lib/waitForCondition.ts:137:7)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:635:20)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.700Z",
+        "message": "waitForCondition: predicate execution failed",
+        "stack": "Error: Simulated error\n    at faultyPredicate (/home/runner/workspace/tests/integration/core-function-tests.test.ts:632:32)\n    at waitForCondition (/home/runner/workspace/lib/waitForCondition.ts:135:18)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:635:7)",
+        "context": {
+          "timeoutMs": 2000,
+          "intervalMs": 10,
+          "elapsedMs": 11
+        },
+        "level": "ERROR"
+      }
+
+      25 |   // Use console.error for production reliability
+      26 |   // JSON format enables proper log aggregation and monitoring
+    > 27 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      28 |   
+      29 |   // Re-throw to maintain original error behavior
+      30 |   throw error;
+
+      at qerrors (lib/qerrorsFallback.ts:27:11)
+      at safeQerrors (lib/waitForCondition.ts:32:12)
+      at waitForCondition (lib/waitForCondition.ts:137:7)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:635:7)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.862Z",
+        "message": "waitForCondition: timeout exceeded",
+        "stack": "Error: waitForCondition: timeout after 150ms\n    at waitForCondition (/home/runner/workspace/lib/waitForCondition.ts:122:28)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:640:7)",
+        "context": {
+          "timeoutMs": 150,
+          "intervalMs": 10,
+          "elapsedMs": 151,
+          "iterations": 16
+        },
+        "level": "ERROR"
+      }
+
+      25 |   // Use console.error for production reliability
+      26 |   // JSON format enables proper log aggregation and monitoring
+    > 27 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      28 |   
+      29 |   // Re-throw to maintain original error behavior
+      30 |   throw error;
+
+      at qerrors (lib/qerrorsFallback.ts:27:11)
+      at safeQerrors (lib/waitForCondition.ts:32:12)
+      at waitForCondition (lib/waitForCondition.ts:123:7)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:640:7)
+
+    console.error
+      [QERRORS] {
+        "timestamp": "2026-02-11T10:09:19.914Z",
+        "message": "waitForCondition: timeout exceeded",
+        "stack": "Error: waitForCondition: timeout after 50ms\n    at waitForCondition (/home/runner/workspace/lib/waitForCondition.ts:122:28)\n    at Object.<anonymous> (/home/runner/workspace/tests/integration/core-function-tests.test.ts:649:9)",
+        "context": {
+          "timeoutMs": 50,
+          "intervalMs": 10,
+          "elapsedMs": 51,
+          "iterations": 7
+        },
+        "level": "ERROR"
+      }
+
+      25 |   // Use console.error for production reliability
+      26 |   // JSON format enables proper log aggregation and monitoring
+    > 27 |   console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
+         |           ^
+      28 |   
+      29 |   // Re-throw to maintain original error behavior
+      30 |   throw error;
+
+      at qerrors (lib/qerrorsFallback.ts:27:11)
+      at safeQerrors (lib/waitForCondition.ts:32:12)
+      at waitForCondition (lib/waitForCondition.ts:123:7)
+      at Object.<anonymous> (tests/integration/core-function-tests.test.ts:649:9)

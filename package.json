@@ -35,7 +35,7 @@
   },
   "scripts": {
     "prepare": "node scripts/ensure-runner.mjs",
-    "postinstall": "node scripts/patch-node-modules.mjs && node scripts/postinstall-scaffold.mjs",
+    "postinstall": "node scripts/postinstall-scaffold.mjs",
     "pretest": "node scripts/clean-dist.mjs && node scripts/ensure-runner.mjs",
     "test": "node qtests-runner.mjs",
     "ci:verify": "node scripts/ci-verify-runner.mjs",
@@ -94,8 +94,8 @@
   "devDependencies": {
     "@babel/core": "^7.28.3",
     "@babel/preset-env": "^7.28.3",
-    "@bijikyu/agentsqripts": "2.0.0",
-    "@bijikyu/fileflows": "2.0.2",
+    "@bijikyu/agentsqripts": "2.0.2",
+    "@bijikyu/fileflows": "2.0.6",
     "@openai/codex": "^0.53.0",
     "@types/express": "^5.0.6",
     "@types/fs-extra": "^11.0.4",
