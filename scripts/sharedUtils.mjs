@@ -7,7 +7,15 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import qerrors from 'qerrors';
+let qerrors;
+try {
+  const mod = await import('@bijikyu/qerrors');
+  qerrors = mod.default || mod;
+} catch {
+  qerrors = (error, message, context) => {
+    console.error('[QERRORS]', JSON.stringify({ message: message || error.message, context: context || {} }));
+  };
+}
 
 /**
  * Get the current directory (ESM compatible)

@@ -4,7 +4,21 @@
 // Safety: Only writes when the runner is missing. Validates template variants before writing.
 import fs from 'fs';
 import path from 'path';
-import qerrors from 'qerrors';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+let qerrors;
+try {
+  qerrors = (await import('@bijikyu/qerrors')).default || (await import('@bijikyu/qerrors'));
+} catch {
+  try {
+    const mod = require('@bijikyu/qerrors');
+    qerrors = mod.default || mod;
+  } catch {
+    qerrors = (error, message, context) => {
+      console.error('[QERRORS]', JSON.stringify({ message: message || error.message, context: context || {} }));
+    };
+  }
+}
 
 function isTruthy(v){ if(!v) return false; const s=String(v).trim().toLowerCase(); return s==='1'||s==='true'||s==='yes'; }
 
