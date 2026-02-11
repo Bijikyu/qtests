@@ -46,6 +46,39 @@ function exists(p){
   } 
 }
 
+function ensureQerrorsAlias(moduleRoot){
+  try{
+    // Ensure a resolvable "qerrors" package name even when only the scoped dependency is installed.
+    const resolvedPkg = require.resolve('@bijikyu/qerrors/package.json',{ paths:[moduleRoot] });
+    const qerrorsRoot = path.dirname(resolvedPkg);
+    const fallbackTargets = [
+      path.join(moduleRoot,'dist','lib','qerrorsFallback.js'),
+      path.join(moduleRoot,'lib','qerrorsFallback.js')
+    ];
+    const chosenTarget = fallbackTargets.find(candidate=>exists(candidate)) || qerrorsRoot;
+    const aliasDir = path.join(moduleRoot,'node_modules','qerrors');
+    const aliasPkg = path.join(aliasDir,'package.json');
+    const aliasIndex = path.join(aliasDir,'index.js');
+    if(!exists(aliasDir)) fs.mkdirSync(aliasDir,{ recursive:true });
+    if(!exists(aliasPkg)){
+      fs.writeFileSync(aliasPkg,JSON.stringify({ name:'qerrors', private:true, main:'index.js', version:'0.0.0-qtests-alias' },null,2),'utf8');
+    }
+    const targetPath = JSON.stringify(chosenTarget);
+    const existingShim = exists(aliasIndex)?fs.readFileSync(aliasIndex,'utf8'):null;
+    if(!existingShim || !existingShim.includes(chosenTarget)){
+      const shim = `// Auto-generated alias to ensure bare 'qerrors' imports resolve\n`+
+        `const mod = require(${targetPath});\n`+
+        `module.exports = mod.default || mod;\n`;
+      fs.writeFileSync(aliasIndex,shim,'utf8');
+    }
+  }catch(error){
+    qerrors(error,'postinstall-scaffold: qerrors alias creation failed',{
+      moduleRoot,
+      hasResolver: typeof require.resolve === 'function'
+    });
+  }
+}
+
 function isValidTemplate(content){
   try {
     // More robust validation to prevent template bypass
@@ -72,6 +105,8 @@ function isValidTemplate(content){
 }
 
 (function main(){
+  const moduleRoot = process.cwd(); // Resolve qerrors alias immediately for local and installed usage
+  ensureQerrorsAlias(moduleRoot);
   // Respect CI environments wanting silence; but still act passively.
   const quiet = isTruthy(process.env.QTESTS_SILENT);
 
@@ -129,7 +164,7 @@ try {
   if (exists(target)) return; // runner already present, be passive
 
   // Locate a valid template from this installed package
-  const moduleRoot = process.cwd(); // node_modules/@bijikyu/qtests
+  // moduleRoot already resolved above
   const candidates = [
     path.join(moduleRoot, 'lib', 'templates', 'qtests-runner.mjs.template'),
     path.join(moduleRoot, 'templates', 'qtests-runner.mjs.template')

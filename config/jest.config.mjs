@@ -61,7 +61,7 @@ export default {
   ]
 },
   extensionsToTreatAsEsm: [".ts",".tsx"],
-  transformIgnorePatterns: ['node_modules/(?!(?:qtests|qerrors|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul|@langchain|openai)/)'],
+  transformIgnorePatterns: ['node_modules/(?!(?:qtests|qerrors|@bijikyu|p-limit|yocto-queue|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul|@langchain|openai)/)'],
   resolver: path.join(PROJECT_ROOT, 'config', 'ts-jest-resolver.cjs'),
   moduleNameMapper: {
     "^@bijikyu/qtests$": "<rootDir>/dist/index.js",
