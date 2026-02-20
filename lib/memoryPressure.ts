@@ -7,6 +7,7 @@
  */
 
 import { EventEmitter } from 'events';
+import * as os from 'os';
 
 export interface MemoryPressureConfig {
   checkInterval?: number;           // How often to check memory (ms)
@@ -96,7 +97,7 @@ export class MemoryPressureMonitor extends EventEmitter {
    */
   getCurrentStats(): MemoryStats {
     const usage = process.memoryUsage();
-    const total = require('os').totalmem();
+    const total = os.totalmem();
     const used = usage.heapUsed;
     const usageRatio = used / total;
 

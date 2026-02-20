@@ -3,7 +3,7 @@
  * Provides HTML escaping and dangerous pattern detection
  */
 
-import qerrors from 'qerrors';
+import qerrors from '../qerrorsFallback.js';
 
 // Comprehensive list of potentially dangerous HTML/JavaScript patterns
 // These patterns are commonly used in XSS attacks and should be removed from user input

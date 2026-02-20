@@ -5,7 +5,7 @@
 
 import { performance } from 'perf_hooks';
 import { MemorySnapshot, MemoryDelta } from './memoryTypes.js';
-import qerrors from 'qerrors';
+import qerrors from '../qerrorsFallback.js';
 
 export class MemorySnapshotManager {
   private snapshots: MemorySnapshot[] = [];

@@ -4,20 +4,25 @@
  */
 
 import { createRequire } from 'module';
-import qerrors from 'qerrors';
+import qerrors from '../qerrorsFallback.js';
+
+// Node ESM: `require` is not global; use a scoped require so `require.cache` is available.
+const require = createRequire(import.meta.url);
 
 export const clearModuleCache = (): number => {
   try {
-    const moduleKeys = Object.keys(require.cache);
+    const cache = (require as any).cache || {};
+    const moduleKeys = Object.keys(cache);
     let cleared = 0;
 
     moduleKeys.forEach(key => {
-      if (key.includes('.test.') ||
-          key.includes('.spec.') ||
-          key.includes('GeneratedTest') ||
-          key.includes('/tests/') ||
-          key.includes('testHelpers')) {
-        delete require.cache[key];
+      const normalizedKey = String(key).replace(/\\/g, '/'); // Windows-safe
+      if (normalizedKey.includes('.test.') ||
+          normalizedKey.includes('.spec.') ||
+          normalizedKey.includes('GeneratedTest') ||
+          normalizedKey.includes('/tests/') ||
+          normalizedKey.includes('testHelpers')) {
+        delete cache[key];
         cleared++;
       }
     });

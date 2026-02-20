@@ -79,20 +79,21 @@ async function setup(): Promise<void> {
     
     console.log(`setup has run resulting in module resolution modification`); // logging completion per requirements
   } catch (error: any) {
-    // Import qerrors dynamically to avoid loading it before mocks are installed
+    // Use local qerrors fallback to avoid pulling in heavy logging deps before stubs are installed.
     try {
-      const qerrors = (await import('qerrors')).default;
+      const mod = await import('./qerrorsFallback.js');
+      const qerrors = mod.default || mod;
       qerrors(error, 'setup.ts: module resolution setup failed', { 
         setupModule: 'direct mockSystem import',
         errorMessage: error.message,
-        errorType: error.constructor.name,
+        errorType: error.constructor?.name || 'Error',
         nodeVersion: process.version,
         platform: process.platform,
         cwd: process.cwd(),
         timestamp: new Date().toISOString()
       });
     } catch {
-      // qerrors import failed, just log the error
+      // Fallback import failed; proceed to throw the original error.
     }
     console.log(`setup error: ${error.message}`); // error logging per requirements
     throw error;

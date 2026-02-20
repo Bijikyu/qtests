@@ -8,16 +8,16 @@
 import { JEST_WORKER_ID, QTESTS_PARALLEL_MODE } from '../../config/localVars.js';
 
 // Type definitions
-interface QueryObject {
+export interface QueryObject {
   [key: string]: any;
 }
 
-interface DeleteResult {
+export interface DeleteResult {
   deletedCount: number;
   acknowledged: boolean;
 }
 
-interface UpdateResult {
+export interface UpdateResult {
   matchedCount: number;
   modifiedCount: number;
   acknowledged: boolean;

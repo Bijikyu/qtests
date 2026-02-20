@@ -1,5 +1,5 @@
 /** Assertion Helper Utilities for Common Testing Patterns - TypeScript Implementation */
-import{logStart,logReturn}from'../../lib/logUtils.js';import qerrors from'qerrors';import{validateArray,validateObject}from'../helpers/validation.js';
+import{logStart,logReturn}from'../../lib/logUtils.js';import qerrors from'../../lib/qerrorsFallback.js';import{validateArray,validateObject}from'../helpers/validation.js';
 interface DatabaseEntity{_id?:any;id?:any;createdAt?:Date;updatedAt?:Date;[key:string]:any;}
 interface ApiResponse{status:number;body?:any;data?:any;headers?:Record<string,string>;}
 interface EmailExpectation{to?:string;subject?:string;body?:string;[key:string]:any;}

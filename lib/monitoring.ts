@@ -6,6 +6,7 @@
  */
 
 import { EventEmitter } from 'events';
+import * as os from 'os';
 import { CircuitBreakerStats, circuitBreakerRegistry } from './circuitBreaker.js';
 import { getEnvVar } from '../utils/helpers/envManager.js';
 
@@ -242,7 +243,7 @@ export class MonitoringSystem extends EventEmitter {
     
     // Memory metrics
     const memUsage = process.memoryUsage();
-    const totalMem = require('os').totalmem();
+    const totalMem = os.totalmem();
     const memory = {
       used: memUsage.heapUsed,
       total: totalMem,
@@ -423,21 +424,6 @@ export class MonitoringSystem extends EventEmitter {
     } else {
       console.warn('Webhook alert skipped - fetch not available');
     }
-    
-    const payload = {
-      alert,
-      timestamp: new Date().toISOString(),
-      service: 'qtests-monitoring'
-    };
-    
-    await fetch(config.url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...config.headers
-      },
-      body: JSON.stringify(payload)
-    });
   }
 
   private getLatestMetrics(): SystemMetrics | undefined {

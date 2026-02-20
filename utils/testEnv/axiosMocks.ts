@@ -49,7 +49,7 @@ export function resetMocks(
   scheduleMock?: Function & MockSpy, 
   qerrorsMock?: Function & MockSpy
 ): boolean {
-  return require('../../lib/errorHandling/index.js').withErrorLogging(() => {
+  return withErrorLogging(() => {
     if (mock && mock.reset) {
       mock.reset();
     }

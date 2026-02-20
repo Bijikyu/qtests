@@ -6,7 +6,7 @@
  * extraction, and common error response patterns.
  */
 
-import qerrors from 'qerrors';
+import qerrors from '../qerrorsFallback.js';
 
 // Standard error context types
 export interface ErrorContext {

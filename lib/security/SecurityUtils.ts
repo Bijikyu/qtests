@@ -6,6 +6,8 @@
  */
 
 import crypto from 'crypto';
+import * as fs from 'fs';
+import * as path from 'path';
 import { parse as secureParse } from 'secure-json-parse';
 
 /**
@@ -50,9 +52,9 @@ export class SecurityUtils {
 
       // Check if path is within allowed directories
       if (allowedDirs.length > 0) {
-        const resolvedPath = require('path').resolve(normalizedPath);
+        const resolvedPath = path.resolve(normalizedPath);
         const isAllowed = allowedDirs.some(allowedDir => 
-          resolvedPath.startsWith(require('path').resolve(allowedDir))
+          resolvedPath.startsWith(path.resolve(allowedDir))
         );
         
         if (!isAllowed) {
@@ -310,7 +312,7 @@ static validateJSON(jsonString: string, context: string = 'unknown'): { valid: b
         return;
       }
 
-      require('fs').unlink(safePath, (error: any) => {
+      fs.unlink(safePath, (error: any) => {
         if (error) {
           resolve({ success: false, error: `Deletion failed: ${String(error)}` });
         } else {

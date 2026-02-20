@@ -2,6 +2,7 @@
 // Purpose: Passively scaffold qtests-runner.mjs into the CLIENT project root after install.
 // Behavior: Uses npm's INIT_CWD to locate the original cwd (client root). Quietly no-ops if unavailable.
 // Safety: Only writes when the runner is missing. Validates template variants before writing.
+// SECURITY: Never modifies client package.json or deletes client files at install time.
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
@@ -46,55 +47,6 @@ function exists(p){
   } 
 }
 
-function ensureQerrorsAlias(moduleRoot){
-  try{
-    const aliasDir = path.join(moduleRoot,'node_modules','qerrors');
-    const aliasPkg = path.join(aliasDir,'package.json');
-    const aliasIndex = path.join(aliasDir,'index.js');
-    if(!exists(aliasDir)) fs.mkdirSync(aliasDir,{ recursive:true });
-    if(!exists(aliasPkg)){
-      fs.writeFileSync(aliasPkg,JSON.stringify({ name:'qerrors', private:true, main:'index.js', version:'0.0.0-qtests-alias' },null,2),'utf8');
-    }
-    const existingShim = exists(aliasIndex)?fs.readFileSync(aliasIndex,'utf8'):null;
-    if(!existingShim || !existingShim.includes('@bijikyu/qerrors')){
-      const fallbackPath = [
-        path.join(moduleRoot,'dist','lib','qerrorsFallback.js'),
-        path.join(moduleRoot,'lib','qerrorsFallback.js')
-      ].find(candidate=>exists(candidate));
-      const lines = [
-        '// Auto-generated alias to ensure bare \'qerrors\' imports resolve to @bijikyu/qerrors',
-        'let mod;',
-        'try {',
-        '  mod = require("@bijikyu/qerrors");',
-        '} catch {',
-      ];
-      if(fallbackPath){
-        lines.push('  try {');
-        lines.push(`    mod = require(${JSON.stringify(fallbackPath)});`);
-        lines.push('    mod = mod.default || mod;');
-        lines.push('  } catch {');
-        lines.push('    mod = (error, message, context) => {');
-        lines.push('      console.error(\'[QERRORS]\', JSON.stringify({ message: message || error.message, context: context || {} }));');
-        lines.push('    };');
-        lines.push('  }');
-      } else {
-        lines.push('  mod = (error, message, context) => {');
-        lines.push('    console.error(\'[QERRORS]\', JSON.stringify({ message: message || error.message, context: context || {} }));');
-        lines.push('  };');
-      }
-      lines.push('}');
-      lines.push('module.exports = mod;');
-      lines.push('');
-      fs.writeFileSync(aliasIndex, lines.join('\n'), 'utf8');
-    }
-  }catch(error){
-    qerrors(error,'postinstall-scaffold: qerrors alias creation failed',{
-      moduleRoot,
-      hasResolver: typeof require.resolve === 'function'
-    });
-  }
-}
-
 function isValidTemplate(content){
   try {
     // More robust validation to prevent template bypass
@@ -121,8 +73,7 @@ function isValidTemplate(content){
 }
 
 (function main(){
-  const moduleRoot = process.cwd(); // Resolve qerrors alias immediately for local and installed usage
-  ensureQerrorsAlias(moduleRoot);
+  const moduleRoot = process.cwd();
   // Respect CI environments wanting silence; but still act passively.
   const quiet = isTruthy(process.env.QTESTS_SILENT);
 
@@ -134,49 +85,6 @@ function isValidTemplate(content){
   if (clientRoot.includes(`${path.sep}node_modules${path.sep}`)) return;
 
   const target = path.join(clientRoot, 'qtests-runner.mjs');
-  // Passive correction: update client package.json test script if it incorrectly points to qtests-runner.js
-try {
-    const pkgPath = path.join(clientRoot, 'package.json');
-    const pkg = JSON.parse(read(pkgPath) || '{}');
-    if (pkg && pkg.scripts && typeof pkg.scripts.test === 'string') {
-      if (/node\s+qtests-runner\.js\b/.test(pkg.scripts.test) || !/node\s+qtests-runner\.mjs\b/.test(pkg.scripts.test)) {
-        pkg.scripts.test = 'node qtests-runner.mjs';
-        // Ensure pretest includes ensure-runner and clean-dist for stability
-        const pre = String(pkg.scripts.pretest || '');
-        const ensureCmd = 'node scripts/ensure-runner.mjs';
-        const cleanCmd = 'node scripts/clean-dist.mjs';
-        const parts = [];
-        if (!pre.includes('scripts/clean-dist.mjs')) parts.push(cleanCmd);
-        if (!pre.includes('scripts/ensure-runner.mjs')) parts.push(ensureCmd);
-        pkg.scripts.pretest = parts.length ? (parts.join(' && ') + (pre ? ' && ' + pre : '')) : pre;
-        try { 
-          fs.writeFileSync(pkgPath, JSON.stringify(pkg, null, 2), 'utf8'); 
-          if (!quiet) console.log('qtests: normalized test script to use qtests-runner.mjs'); 
-        } catch (writeError) {
-          qerrors(writeError, 'postinstall-scaffold: package.json write failed', {
-            pkgPath,
-            operation: 'writeFileSync'
-          });
-        }
-      }
-    }
-    // Remove stray legacy runner if present
-    const legacy = path.join(clientRoot, 'qtests-runner.js');
-    try { 
-      if (exists(legacy)) fs.rmSync(legacy, { force: true }); 
-    } catch (removeError) {
-      qerrors(removeError, 'postinstall-scaffold: legacy runner removal failed', {
-        legacyPath: legacy,
-        operation: 'rmSync'
-      });
-    }
-  } catch (error) {
-    qerrors(error, 'postinstall-scaffold: package processing failed', {
-      clientRoot,
-      pkgPath,
-      errorType: error.constructor?.name || 'unknown'
-    });
-  }
   if (exists(target)) return; // runner already present, be passive
 
   // Locate a valid template from this installed package

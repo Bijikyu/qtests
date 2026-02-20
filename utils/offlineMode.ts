@@ -24,8 +24,10 @@
  */
 
 import { CODEX, OFFLINE_MODE, NODE_ENV } from '../config/localVars.js';
-import qerrors from 'qerrors';
-import path from 'path';
+import qerrors from '../lib/qerrorsFallback.js';
+
+// Stable, cross-platform stub URL (Windows-safe for `import()`).
+const AXIOS_STUB_URL = new URL('../stubs/axios.js', import.meta.url);
 
 /**
  * Interface representing the current environment state
@@ -114,25 +116,9 @@ async function getAxiosModule(): Promise<any> {
     if (isOfflineFlag) {
       // Load stub axios in offline mode
       try {
-        const axiosPath = require.resolve('../stubs/axios.js');
-        const resolvedPath = path.normalize(path.resolve(axiosPath));
-        const expectedDir = path.normalize(path.resolve(process.cwd(), 'stubs'));
-        
-        // Security validation: ensure path is within expected directory
-        if (!resolvedPath.startsWith(expectedDir + path.sep) && resolvedPath !== expectedDir) {
-          throw new Error('Invalid stub module path - outside expected directory');
-        }
-        
-        // Additional security: check for directory traversal attempts
-        const relativePath = path.relative(expectedDir, resolvedPath);
-        if (relativePath.startsWith('..') || relativePath.includes(path.sep + '..')) {
-          throw new Error('Invalid stub module path - directory traversal detected');
-        }
-        
-        // Import the stub module
-        const module = await import(axiosPath);
-        cachedAxios = module.default || module;
-        
+        // Import the shipped stub module (do not depend on process.cwd()).
+        const module = await import(AXIOS_STUB_URL.href);
+        cachedAxios = (module as any).default || module;
       } catch (error) {
         qerrors(
           error instanceof Error ? error : new Error(String(error)),
@@ -160,18 +146,8 @@ async function getAxiosModule(): Promise<any> {
         
         try {
           // Attempt to load stub as fallback
-          const fallbackAxiosPath = require.resolve('../stubs/axios.js');
-          const fallbackResolvedPath = path.normalize(path.resolve(fallbackAxiosPath));
-          const fallbackExpectedDir = path.normalize(path.resolve(process.cwd(), 'stubs'));
-          
-          // Security validation for fallback path
-          if (!fallbackResolvedPath.startsWith(fallbackExpectedDir + path.sep) && fallbackResolvedPath !== fallbackExpectedDir) {
-            throw new Error('Invalid fallback stub path - outside expected directory');
-          }
-          
-          const stubAxios = await import('../stubs/axios.js');
-          cachedAxios = stubAxios.default || stubAxios;
-          
+          const stubAxios = await import(AXIOS_STUB_URL.href);
+          cachedAxios = (stubAxios as any).default || stubAxios;
         } catch (fallbackError) {
           // Ultimate fallback: minimal axios-like object
           const fallbackErrorObj = fallbackError instanceof Error ? fallbackError : new Error(String(fallbackError));

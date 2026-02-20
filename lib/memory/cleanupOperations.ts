@@ -3,12 +3,12 @@
  * Utilities for memory cleanup and garbage collection
  */
 
-import { forceGC } from './garbageCollection';
-import { checkpointMemory } from './monitoringOrchestration';
+import { forceGC } from './garbageCollection.js';
+import { checkpointMemory } from './monitoringOrchestration.js';
 import { handleMemoryError } from '../utils/errorHandling.js';
 
-import { clearGlobalRefs } from './globalCleanup';
-import { clearModuleCache } from './moduleCleanup';
+import { clearGlobalRefs } from './globalCleanup.js';
+import { clearModuleCache } from './moduleCleanup.js';
 import { performGarbageCollection, performMemoryCleanup } from '../utils/memoryManagement.js';
 
 export const cleanupWithMemoryTracking = async (): Promise<void> => {

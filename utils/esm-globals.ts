@@ -10,7 +10,7 @@
  * work in both production and test environments.
  * 
  * Jest Compatibility:
- * - Uses eval() to hide import.meta from Jest's static analysis
+ * - Avoids top-level import.meta usage; uses guarded import.meta access in a try/catch
  * - Provides fallback paths for Jest environment detection
  * - Avoids top-level import.meta usage that can cause Jest failures
  */
@@ -25,7 +25,7 @@ const isJestEnvironment = typeof jest !== 'undefined' || NODE_ENV === 'test';
 
 /**
  * Get the current module's filename (ESM equivalent of __filename)
- * Uses eval to hide import.meta from Jest's static analysis
+ * Uses guarded import.meta access to avoid Jest/static-analysis pitfalls
  * @returns Absolute path to the current module file
  */
 export function getThisFilename() {

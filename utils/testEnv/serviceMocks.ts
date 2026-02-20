@@ -15,12 +15,25 @@
  * - Import specific factory: import { createMockOpenAI } from '@bijikyu/qtests/utils/testEnv/serviceMocks'
  * - Import default data: import { DEFAULT_MOCK_DATA } from '@bijikyu/qtests/utils/testEnv/serviceMocks'
  */
-
-import { jest } from '@jest/globals';
+function getJestRef(): any {
+  const j = (globalThis as any).jest;
+  if (!j) {
+    throw new Error('serviceMocks: Jest global not found (this utility must run inside Jest with injectGlobals enabled)');
+  }
+  return j;
+}
 
 // =============================================================================
 // MOCK INTERFACES - Type definitions for mock responses
 // =============================================================================
+
+// Minimal mock function shape (avoids a hard dependency on the global `jest` namespace types).
+export type JestMockLike = {
+  (...args: any[]): any;
+  mockClear?: () => void;
+  mockResolvedValue?: (value: any) => any;
+  mockReturnValue?: (value: any) => any;
+};
 
 export interface MockWhoisResponse {
   [key: string]: string;
@@ -35,29 +48,29 @@ export interface MockOpenAIResponse {
 }
 
 export interface MockNodemailerTransport {
-  sendMail: jest.Mock;
+  sendMail: JestMockLike;
 }
 
 export interface MockNodemailerResult {
-  mockCreateTransport: jest.Mock;
+  mockCreateTransport: JestMockLike;
   mockTransport: MockNodemailerTransport;
   nodemailer: {
-    createTransport: jest.Mock;
+    createTransport: JestMockLike;
   };
 }
 
 export interface MockWhoisResult {
-  mockWhois: jest.Mock;
-  whois: jest.Mock;
+  mockWhois: JestMockLike;
+  whois: JestMockLike;
 }
 
 export interface MockOpenAIResult {
-  mockCreate: jest.Mock;
+  mockCreate: JestMockLike;
   openai: {
     default: new () => {
       chat: {
         completions: {
-          create: jest.Mock;
+          create: JestMockLike;
         };
       };
     };
@@ -73,7 +86,8 @@ export interface MockOpenAIResult {
  * @returns Object containing the mock function and module structure
  */
 export const createMockWhois = (): MockWhoisResult => {
-  const mockWhois = jest.fn();
+  const jestRef = getJestRef();
+  const mockWhois = jestRef.fn();
   return {
     mockWhois,
     whois: mockWhois
@@ -85,7 +99,8 @@ export const createMockWhois = (): MockWhoisResult => {
  * @returns Object containing the mock create function and SDK structure
  */
 export const createMockOpenAI = (): MockOpenAIResult => {
-  const mockCreate = jest.fn();
+  const jestRef = getJestRef();
+  const mockCreate = jestRef.fn();
   return {
     mockCreate,
     openai: {
@@ -106,9 +121,10 @@ export const createMockOpenAI = (): MockOpenAIResult => {
  * @returns Object containing mock transport and createTransport function
  */
 export const createMockNodemailer = (): MockNodemailerResult => {
-  const mockCreateTransport = jest.fn();
+  const jestRef = getJestRef();
+  const mockCreateTransport = jestRef.fn();
   const mockTransport: MockNodemailerTransport = {
-    sendMail: jest.fn()
+    sendMail: jestRef.fn()
   };
   (mockTransport.sendMail as any).mockResolvedValue({ messageId: 'test-message-id' });
   (mockCreateTransport as any).mockReturnValue(mockTransport);
@@ -162,9 +178,9 @@ export const DEFAULT_MOCK_DATA = {
 // =============================================================================
 
 export interface SetupManualMocksResult {
-  mockWhois: jest.Mock;
-  mockCreate: jest.Mock;
-  mockCreateTransport: jest.Mock;
+  mockWhois: JestMockLike;
+  mockCreate: JestMockLike;
+  mockCreateTransport: JestMockLike;
 }
 
 /**
@@ -174,12 +190,13 @@ export interface SetupManualMocksResult {
  * @returns Object containing all created mock functions
  */
 export const setupManualMocks = async (): Promise<SetupManualMocksResult> => {
+  const jestRef = getJestRef();
   const { mockWhois } = createMockWhois();
   const { mockCreate } = createMockOpenAI();
   const { mockCreateTransport } = createMockNodemailer();
   
-  jest.unstable_mockModule('whois-json', () => ({ default: mockWhois }));
-  jest.unstable_mockModule('openai', () => ({
+  jestRef.unstable_mockModule('whois-json', () => ({ default: mockWhois }));
+  jestRef.unstable_mockModule('openai', () => ({
     default: class {
       constructor() {}
       chat = {
@@ -189,14 +206,14 @@ export const setupManualMocks = async (): Promise<SetupManualMocksResult> => {
       };
     },
   }));
-  jest.unstable_mockModule('nodemailer', () => ({
+  jestRef.unstable_mockModule('nodemailer', () => ({
     default: {
       createTransport: mockCreateTransport,
     },
   }));
-  jest.unstable_mockModule('qerrors', () => ({
+  jestRef.unstable_mockModule('@bijikyu/qerrors', () => ({
     __esModule: true,
-    default: jest.fn(),
+    default: jestRef.fn(),
   }));
 
   return {
@@ -215,8 +232,9 @@ export const setupManualMocks = async (): Promise<SetupManualMocksResult> => {
  * More generic than resetMocks, works with any jest.Mock instances
  * @param mocks - Variable number of mock functions to clear
  */
-export const clearAllMocks = (...mocks: jest.Mock[]): void => {
-  jest.clearAllMocks();
+export const clearAllMocks = (...mocks: JestMockLike[]): void => {
+  const jestRef = getJestRef();
+  jestRef.clearAllMocks();
   mocks.forEach(mock => {
     if (mock && typeof mock.mockClear === 'function') {
       mock.mockClear();

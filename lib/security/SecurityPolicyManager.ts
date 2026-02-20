@@ -6,7 +6,7 @@
  * components of qtests testing framework.
  */
 
-import qerrors from 'qerrors';
+import qerrors from '../qerrorsFallback.js';
 
 /**
  * Security headers configuration

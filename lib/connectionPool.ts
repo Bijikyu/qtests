@@ -5,7 +5,7 @@ export interface ConnectionPoolOptions{maxConnections?:number;acquireTimeout?:nu
 export interface PoolStats{totalAcquisitions:number;successfulAcquisitions:number;failedAcquisitions:number;totalAcquireTime:number;connectionsCreated:number;connectionsDestroyed:number;activeConnections:number;waitingRequests:number;}
 export interface Factory<T>{create():Promise<T>;destroy(connection:T):Promise<void>;validate?(connection:T):Promise<boolean>;}
 
-export class AdvancedConnectionPool extends EventEmitter{private pool:any;private isShutdown=false;private circuitState=CircuitState.CLOSED;private failureCount=0;private lastFailureTime=0;private healthCheckInterval?:NodeJS.Timeout;private autoTransitionId?:NodeJS.Timeout;private config:ConnectionPoolOptions;private stats:PoolStats={totalAcquisitions:0,successfulAcquisitions:0,failedAcquisitions:0,totalAcquireTime:0,connectionsCreated:0,connectionsDestroyed:0,activeConnections:0,waitingRequests:0};constructor(private factory:Factory<any>,private options:ConnectionPoolOptions={}){super();this.config={maxConnections:10,acquireTimeout:30000,healthCheckInterval:30000,maxRetries:3,retryDelay:1000,...options};this.initializePool(factory);this.startHealthMonitoring();}
+export class AdvancedConnectionPool extends EventEmitter{private pool:any;private poolInit:Promise<void>;private isShutdown=false;private circuitState=CircuitState.CLOSED;private failureCount=0;private lastFailureTime=0;private healthCheckInterval?:NodeJS.Timeout;private autoTransitionId?:NodeJS.Timeout;private config:ConnectionPoolOptions;private stats:PoolStats={totalAcquisitions:0,successfulAcquisitions:0,failedAcquisitions:0,totalAcquireTime:0,connectionsCreated:0,connectionsDestroyed:0,activeConnections:0,waitingRequests:0};constructor(private factory:Factory<any>,private options:ConnectionPoolOptions={}){super();this.config={maxConnections:10,acquireTimeout:30000,healthCheckInterval:30000,maxRetries:3,retryDelay:1000,...options};this.poolInit=this.initializePool(factory);this.startHealthMonitoring();}
 
   private async initializePool(factory: Factory<any>): Promise<void> {
     try {
@@ -34,13 +34,8 @@ export class AdvancedConnectionPool extends EventEmitter{private pool:any;privat
     const startTime = Date.now();
     
     try {
-      if (!this.pool) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        if (!this.pool) {
-          throw new Error('Pool not initialized');
-        }
-      }
-      
+      await this.poolInit;
+      if (!this.pool) throw new Error('Pool not initialized');
       const connection = await this.pool.acquire();
       
       // Update stats
@@ -90,11 +85,9 @@ export class AdvancedConnectionPool extends EventEmitter{private pool:any;privat
       clearTimeout(this.autoTransitionId);
     }
 
-    // Close all connections
-    if (this.pool) {
-      await this.pool.drain();
-      await this.pool.clear();
-    }
+    // Ensure async init cannot race shutdown and leave a live pool behind.
+    try { await this.poolInit; } catch { /* ignore init failure */ }
+    if (this.pool) { await this.pool.drain(); await this.pool.clear(); }
     
     this.emit('shutdown');
   }

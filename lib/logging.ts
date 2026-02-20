@@ -8,6 +8,7 @@
 import winston from 'winston';
 import { EventEmitter } from 'events';
 import { randomBytes } from 'crypto';
+import * as os from 'os';
 
 export enum LogLevel {
   TRACE = 0,
@@ -439,7 +440,7 @@ export class Logger extends EventEmitter {
   }
 
   private getHostInfo(): string {
-    return process.env.HOSTNAME || require('os').hostname() || 'unknown';
+    return process.env.HOSTNAME || os.hostname() || 'unknown';
   }
 
   private createMockSpan(operationName: string): TracingSpan {

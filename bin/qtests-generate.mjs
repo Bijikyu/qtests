@@ -1,11 +1,68 @@
 #!/usr/bin/env node
+// qtests Runner/Config Scaffolder (client-facing)
+// Design goals:
+// - Safe by default: only writes missing files unless --force is set
+// - No prompts: suitable for non-interactive environments
+// - Windows-safe paths
+// - No reliance on local "qerrors" alias packages
 
-import fs from 'fs/promises';
-import fsSync from 'fs';
+import fs from 'fs';
+import fsp from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import qerrors from 'qerrors';
+import { createRequire } from 'module';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const MODULE_ROOT = path.resolve(__dirname, '..');
+
+function isTruthy(v) {
+  if (!v) return false;
+  const s = String(v).trim().toLowerCase();
+  return s === '1' || s === 'true' || s === 'yes';
+}
+
+const qerrors = await (async () => {
+  try {
+    const mod = await import('@bijikyu/qerrors');
+    return (mod && (mod.default || mod)) || ((error, message, context) => console.error('[QERRORS]', message, error, context || {}));
+  } catch {
+    return (error, message, context) => console.error('[QERRORS]', message || (error && error.message) || String(error), context || {});
+  }
+})();
+
+function showHelp() {
+  // Keep output short; avoid long marketing text in CLI.
+  process.stdout.write(
+    [
+      'qtests scaffolder',
+      '',
+      'USAGE:',
+      '  qtests-generate [--dry-run] [--force] [--update-pkg-script] [--auto-install]',
+      '',
+      'OPTIONS:',
+      '  --dry-run            Print planned writes without modifying files',
+      '  --force              Overwrite existing scaffolded files',
+      '  --update-pkg-script   Set package.json scripts.test to "node qtests-runner.mjs"',
+      '  --auto-install        If ts-jest/typescript are missing, install them as devDependencies',
+      '  -h, --help            Show help',
+      '  -v, --version         Show @bijikyu/qtests version',
+      ''
+    ].join('\n')
+  );
+}
+
+async function showVersion() {
+  const pkgPath = path.join(MODULE_ROOT, 'package.json');
+  try {
+    const raw = await fsp.readFile(pkgPath, 'utf8');
+    const pkg = JSON.parse(raw);
+    process.stdout.write(`@bijikyu/qtests v${pkg.version}\n`);
+  } catch (error) {
+    qerrors(error, 'qtests-generate: failed to read module version', { pkgPath });
+    process.stdout.write('@bijikyu/qtests\n');
+  }
+}
 
 function parseArgs(argv) {
   const args = argv.slice(2);
@@ -13,88 +70,48 @@ function parseArgs(argv) {
     dryRun: false,
     force: false,
     updatePackageScript: false,
-    yes: false,
-    noInteractive: false,
     autoInstall: false
   };
 
-  for (let i = 0; i < args.length; i++) {
+  for (let i = 0; i < args.length; i += 1) {
     const arg = args[i];
     switch (arg) {
-      case '--dry-run': options.dryRun = true; break;
-      case '--force': options.force = true; break;
-      case '--update-pkg-script': options.updatePackageScript = true; break;
-      case '--yes':
-      case '-y': options.yes = true; options.noInteractive = true; break;
-      case '--no-interactive': options.noInteractive = true; break;
-      case '--auto-install': options.autoInstall = true; break;
+      case '--dry-run':
+        options.dryRun = true;
+        break;
+      case '--force':
+        options.force = true;
+        break;
+      case '--update-pkg-script':
+        options.updatePackageScript = true;
+        break;
+      case '--auto-install':
+        options.autoInstall = true;
+        break;
       case '--help':
-      case '-h': showHelp(); process.exit(0); break;
+      case '-h':
+        options.help = true;
+        break;
       case '--version':
-      case '-v': showVersion(); process.exit(0); break;
+      case '-v':
+        options.version = true;
+        break;
       default:
-        if (arg.startsWith('-')) {
-          console.error(`Unknown option: ${arg}`);
-          process.exit(1);
+        if (String(arg || '').startsWith('-')) {
+          throw new Error(`Unknown option: ${arg}`);
         }
     }
   }
+
   return options;
 }
 
-function showHelp() {
-  console.log(`
-qtests Runner Scaffolder (Node ESM)
-
-USAGE:
-  qtests-generate [OPTIONS]
-
-OPTIONS:
-      --dry-run         Show planned scaffolding without writing
-      --force           Allow overwriting generated files
-      --update-pkg-script  Update package.json test script to use Jest with project config
-
-  -h, --help           Show this help message
-  -v, --version        Show version information
-
-EXAMPLES:
-  qtests-generate                           # Scaffold qtests runner and config files
-  qtests-generate --dry-run                # Preview what would be created
-  qtests-generate --force                  # Overwrite existing runner and config files
-  `);
-}
-
-function showVersion() {
-  try {
-    const packageJsonPath = path.join(process.cwd(), 'node_modules', '@bijikyu/qtests', 'package.json');
-    const content = fsSync.readFileSync(packageJsonPath, 'utf8');
-    const pkg = JSON.parse(content);
-    console.log(`qtests v${pkg.version}`);
-  } catch (error) {
-    qerrors(error, 'showVersion: reading qtests package.json', { 
-      packageJsonPath,
-      cwd: process.cwd() 
-    });
-    try {
-      const content = fsSync.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8');
-      const pkg = JSON.parse(content);
-      console.log(`qtests v${pkg.version ?? 'unknown'}`);
-    } catch (fallbackError) {
-      qerrors(fallbackError, 'showVersion: reading project package.json', { 
-        projectPackagePath: path.join(process.cwd(), 'package.json'),
-        cwd: process.cwd() 
-      });
-      console.log('@bijikyu/qtests');
-    }
-  }
-}
-
 async function exists(p) {
-  try { 
-    await fs.access(p);
+  try {
+    await fsp.access(p);
     return true;
-  } catch (error) {
-    return false; 
+  } catch {
+    return false;
   }
 }
 
@@ -104,19 +121,36 @@ async function resolveClientRoot() {
   return process.cwd();
 }
 
+function validateRunnerTemplate(content) {
+  if (!content || typeof content !== 'string') return false;
+  const lineCount = content.split('\n').length;
+  if (lineCount < 50) return false;
+  return /runCLI/.test(content) && /API Mode/.test(content) && /class TestRunner/.test(content);
+}
 
+async function readRunnerTemplate() {
+  const candidates = [
+    path.join(MODULE_ROOT, 'lib', 'templates', 'qtests-runner.mjs.template'),
+    path.join(MODULE_ROOT, 'templates', 'qtests-runner.mjs.template')
+  ];
 
-class RunnerScaffolder {
-  config;
-
-  constructor(options) {
-    this.config = { ...options };
+  for (const p of candidates) {
+    try {
+      const raw = await fsp.readFile(p, 'utf8');
+      if (validateRunnerTemplate(raw)) return raw;
+    } catch {
+      // continue
+    }
   }
+  return null;
+}
 
-getJestConfig() {
-  return `// jest.config.mjs - qtests Integration Test Configuration
-// Generated by qtests runner scaffolder
-
+function getJestConfigTemplate({ enableTsJest }) {
+  // Keep this template dependency-minimal:
+  // - If ts-jest/typescript exist, configure ts-jest for TS ESM
+  // - Otherwise, generate a JS-only config (TS tests won't run until deps are installed)
+  const setupAfterEnv = enableTsJest ? 'jest-setup.ts' : 'jest-setup.cjs';
+  return `// config/jest.config.mjs - generated by qtests
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -125,345 +159,313 @@ const __dirname = path.dirname(__filename);
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 
 export default {
-  preset: 'ts-jest/presets/default-esm',
   rootDir: PROJECT_ROOT,
   testEnvironment: 'node',
   setupFiles: [path.join(PROJECT_ROOT, 'config', 'jest-require-polyfill.cjs')],
-  setupFilesAfterEnv: [path.join(PROJECT_ROOT, 'config', 'jest-setup.ts')],
-  testMatch: [
-    '**/integration/**/*.test.ts',
-    '**/integration/**/*.test.js',
-    '**/integration/**/*.test.jsx',
-    '**/integration/**/*.test.tsx'
-  ],
-  testPathIgnorePatterns: [
-    '/node_modules/',
-    '/dist/',
-    '/build/',
-    '/__mocks__/',
-    '/manual-tests/',
-    '/generated-tests/'
-  ],
+  setupFilesAfterEnv: [path.join(PROJECT_ROOT, 'config', '${setupAfterEnv}')],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/', '/build/', '/__mocks__/'],
   modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
   watchPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
-  transform: {
-    '^\\\\.+\\\\.(ts|tsx)$': ['ts-jest', { useESM: true }],
-    '^\\\\.+\\\\.(js|jsx)$': ['babel-jest', {
-      presets: [['@babel/preset-env', { targets: { node: 'current' } }]]
-    }]
-  },
-  transformIgnorePatterns: ['node_modules/(?!(qtests)/)'],
+  ${enableTsJest ? "preset: 'ts-jest/presets/default-esm'," : ''}
+  ${enableTsJest ? "extensionsToTreatAsEsm: ['.ts', '.tsx']," : ''}
+  ${enableTsJest ? `transform: {\n    '^.+\\\\.(ts|tsx)$': ['ts-jest', { useESM: true }]\n  },` : ''}
   moduleNameMapper: {
-    '^qtests/(.*)$': '<rootDir>/node_modules/@bijikyu/qtests/$1',
-    '^(\\\\.{1,2}/.*)\\\\.js$': '$1',
-    'mongoose$': '<rootDir>/__mocks__/mongoose.js',
-    '^.+\\\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/fileMock.js',
-    '^.+\\\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$': '<rootDir>/__mocks__/fileMock.js'
+    '^(\\\\.{1,2}/.*)\\\\.js$': '$1'
   }
-  `;
-
-  }
-
-getJestSetup() {
-  return `// jest-setup.ts - qtests Integration Test Setup
-// Generated by qtests runner scaffolder
-
-import '@bijikyu/qtests/setup';
-import { jest as jestFromGlobals } from '@jest/globals';
-
-// NODE_ENV is set in localVars.ts for consistency
-
-const J = (typeof jestFromGlobals !== 'undefined' && jestFromGlobals)
-  ? jestFromGlobals
-  : (globalThis as any).jest;
-if (!(globalThis as any).jest && J) {
-  (globalThis as any).jest = J as any;
+};
+`;
 }
 
-try {
-  if (!(globalThis as any).require && typeof require === 'function') {
-    (globalThis as any).require = require as any;
-  }
-} catch (error) {
-      qerrors(error, 'getRequirePolyfill: global require setup failed', {
-        operation: 'globalRequireSetup'
-      });
-    }
+function getJestSetupTemplateTs() {
+  return `// config/jest-setup.ts - generated by qtests
+// IMPORTANT: Always load qtests setup FIRST so module stubs are in place before user imports.
+import '@bijikyu/qtests/setup';
+import stubs from '@bijikyu/qtests/lib/stubs.js';
+import { jest as jestFromGlobals } from '@jest/globals';
+
+const J = (globalThis && globalThis.jest) ? globalThis.jest : jestFromGlobals;
+if (!globalThis.jest && J) {
+  globalThis.jest = J;
+}
+
+// Jest does not use Node's Module._load for test module resolution, so we must register Jest mocks explicitly.
+const j = globalThis.jest || J;
+if (j && typeof j.mock === 'function') {
+  const axiosStub = (stubs && stubs.axios) ? stubs.axios : {};
+  const winstonStub = (stubs && stubs.winston) ? stubs.winston : {};
+  j.mock('axios', () => axiosStub);
+  j.mock('winston', () => winstonStub);
+}
 
 beforeAll(() => {
-  const j = (globalThis as any).jest || J;
-  if (j && typeof j.setTimeout === 'function') {
-    j.setTimeout(10000);
-  }
+  const j = globalThis.jest || J;
+  if (j && typeof j.setTimeout === 'function') j.setTimeout(10000);
 });
 
 afterEach(() => {
-  const j = (globalThis as any).jest || J;
-  if (j && typeof j.clearAllMocks === 'function') {
-    j.clearAllMocks();
-  }
+  const j = globalThis.jest || J;
+  if (j && typeof j.clearAllMocks === 'function') j.clearAllMocks();
 });
 `;
 }
 
-getRequirePolyfill() {
-  return `// jest-require-polyfill.cjs - CommonJS require polyfill for ESM tests
-// Generated by qtests runner scaffolder
+function getJestSetupTemplateCjs() {
+  // Intentionally CommonJS so it works in JS-only projects (no ts-jest/typescript).
+  return `// config/jest-setup.cjs - generated by qtests
+// IMPORTANT: Always load qtests setup FIRST so module stubs are in place before user imports.
+require('@bijikyu/qtests/setup');
 
-try {
-  if (typeof global.require === 'undefined') {
-    const { createRequire } = require('module');
-    let req;
-    try {
-      req = createRequire(process.cwd() + '/package.json');
-    } catch {
-      req = createRequire(__filename);
-    }
-    Object.defineProperty(global, 'require', {
-      value: req,
-      writable: false,
-      configurable: true,
-      enumerable: false
-    });
-    } catch (error) {
-      qerrors(error, 'getJestConfig: template generation failed', { 
-        operation: 'templateLiteral'
-      });
-    }
-  `;
-}
-
-async scaffoldRunner() {
-  const projectRoot = await resolveClientRoot();
-  
-  await this.writeRunner(projectRoot);
-  await this.writeJestConfig(projectRoot);
-  await this.writeJestSetup(projectRoot);
-  await this.writeRequirePolyfill(projectRoot);
-  
-  console.log('✅ qtests runner and configuration files scaffolded successfully');
-}
-
-async writeRunner(projectRoot) {
-  const runnerPath = path.join(projectRoot, 'qtests-runner.mjs');
-  const content = this.getRunnerTemplate();
-  
-  if (!this.config.dryRun) {
-    try {
-      await fs.writeFile(runnerPath, content, 'utf8');
-      await fs.chmod(runnerPath, '755');
-      console.log('✅ Created qtests-runner.mjs');
-    } catch (error) {
-      qerrors(error, 'writeRunner: file creation failed', { 
-        runnerPath, 
-        contentLength: content.length,
-        operation: 'writeAndChmod'
-      });
-      console.error('❌ Failed to create qtests-runner.mjs:', error.message);
-      process.exit(1);
-    }
-  } else {
-    console.log('🔍 Would create qtests-runner.mjs');
-  }
-}
-
-getRunnerTemplate() {
-  return `#!/usr/bin/env node
-
-import { runCLI } from 'jest';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const PROJECT_ROOT = path.resolve(__dirname, '..');
-
-async function main() {
+const path = require('path');
+const qtestsRoot = path.dirname(require.resolve('@bijikyu/qtests/setup.cjs'));
+const axiosStub = (() => {
   try {
-    const config = {
-      rootDir: PROJECT_ROOT,
-      testMatch: [
-        '**/integration/**/*.test.ts',
-        '**/integration/**/*.test.js',
-        '**/integration/**/*.test.jsx',
-        '**/integration/**/*.test.tsx'
-      ],
-      testPathIgnorePatterns: [
-        '/node_modules/',
-        '/dist/',
-        '/build/',
-        '/__mocks__/',
-        '/manual-tests/',
-        '/generated-tests/'
-      ],
-      modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
-      watchPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
-      verbose: false,
-      cache: true,
-      coverage: false,
-      passWithNoTests: true
-    };
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mod = require(path.join(qtestsRoot, 'dist', 'stubs', 'axios.cjs'));
+    return (mod && (mod.default || mod)) || {};
+  } catch {
+    return {};
+  }
+})();
+const winstonStub = (() => {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const mod = require(path.join(qtestsRoot, 'dist', 'stubs', 'winston.cjs'));
+    return (mod && (mod.default || mod)) || {};
+  } catch {
+    return {};
+  }
+})();
 
-    const results = await runCLI(config, [PROJECT_ROOT]);
-
-    if (results.numFailedTests > 0) {
-      process.exit(1);
-    }
-    
-    process.exit(0);
-  } catch (error) {
-    qerrors(error, 'generatedRunner.main: test execution failed', {
-      errorType: error?.constructor?.name || 'unknown'
-    });
-    console.error('❌ Test runner failed:', error);
-    process.exit(1);
+let J = (globalThis && globalThis.jest) ? globalThis.jest : undefined;
+if (!J) {
+  try {
+    // Jest ESM users often need to import from @jest/globals; expose it globally for convenience.
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const { jest: jestFromGlobals } = require('@jest/globals');
+    J = jestFromGlobals;
+  } catch {
+    // best-effort only
   }
 }
+if (!globalThis.jest && J) {
+  globalThis.jest = J;
+}
 
-main();
+// Jest does not use Node's Module._load for test module resolution, so we must register Jest mocks explicitly.
+const j = globalThis.jest || J;
+if (j && typeof j.mock === 'function') {
+  j.mock('axios', () => axiosStub);
+  j.mock('winston', () => winstonStub);
+}
+
+beforeAll(() => {
+  const j = globalThis.jest || J;
+  if (j && typeof j.setTimeout === 'function') j.setTimeout(10000);
+});
+
+afterEach(() => {
+  const j = globalThis.jest || J;
+  if (j && typeof j.clearAllMocks === 'function') j.clearAllMocks();
+});
 `;
 }
 
-async writeJestConfig(projectRoot) {
-  const configDir = path.join(projectRoot, 'config');
-  const configPath = path.join(configDir, 'jest.config.mjs');
-  
-  if (!this.config.dryRun) {
-    try {
-      const configDirExists = await exists(configDir);
-      if (!configDirExists) {
-        await fs.mkdir(configDir, { recursive: true });
-      }
-      
-      const configPathExists = await exists(configPath);
-      if (!configPathExists || this.config.force) {
-        const configContent = this.getJestConfig();
-        await fs.writeFile(configPath, configContent, 'utf8');
-        console.log('✅ Created config/jest.config.mjs');
-      } else {
-        console.log('ℹ️ config/jest.config.mjs already exists');
-      }
-    } catch (error) {
-      qerrors(error, 'writeJestConfig: config file creation failed', { 
-        configPath, 
-        configDir,
-        operation: 'mkdirAndWrite'
-      });
-      console.error('❌ Failed to create jest.config.mjs:', error.message);
-      process.exit(1);
-    }
-  } else {
-    console.log('🔍 Would create config/jest.config.mjs');
-  }
+function getRequirePolyfillTemplate() {
+  // This intentionally has no dependency on qerrors/qtests internals.
+  return `/**\n * config/jest-require-polyfill.cjs - generated by qtests\n * Ensures a global \`require\` exists in ESM tests.\n */\n\ntry {\n  if (typeof global.require === 'undefined') {\n    // eslint-disable-next-line @typescript-eslint/no-var-requires\n    const { createRequire } = require('module');\n    let req;\n    try {\n      req = createRequire(process.cwd() + '/package.json');\n    } catch {\n      req = createRequire(__filename);\n    }\n    Object.defineProperty(global, 'require', {\n      value: req,\n      writable: false,\n      configurable: true,\n      enumerable: false\n    });\n  }\n} catch {\n  // best-effort only\n}\n`;
 }
 
-async writeJestSetup(projectRoot) {
-  const configDir = path.join(projectRoot, 'config');
-  const setupPath = path.join(configDir, 'jest-setup.ts');
-  
-  if (!this.config.dryRun) {
-    const configDirExists = await exists(configDir);
-    if (!configDirExists) {
-      await fs.mkdir(configDir, { recursive: true });
-    }
-    
-    const setupPathExists = await exists(setupPath);
-    if (!setupPathExists || this.config.force) {
-      await fs.writeFile(setupPath, this.getJestSetup(), 'utf8');
-      console.log('✅ Created config/jest-setup.ts');
-    } else {
-      console.log('ℹ️ config/jest-setup.ts already exists');
-    }
-  } else {
-    console.log('🔍 Would create config/jest-setup.ts');
-  }
+async function writeFileAtomic(targetPath, content) {
+  const dir = path.dirname(targetPath);
+  await fsp.mkdir(dir, { recursive: true });
+  const tmp = `${targetPath}.tmp.${process.pid}.${Date.now()}`;
+  await fsp.writeFile(tmp, content, 'utf8');
+  await fsp.rename(tmp, targetPath);
 }
 
-async writeRequirePolyfill(projectRoot) {
-  const configDir = path.join(projectRoot, 'config');
-  const polyfillPath = path.join(configDir, 'jest-require-polyfill.cjs');
-  
-  if (!this.config.dryRun) {
-    const configDirExists = await exists(configDir);
-    if (!configDirExists) {
-      await fs.mkdir(configDir, { recursive: true });
-    }
-    
-    const polyfillPathExists = await exists(polyfillPath);
-    if (!polyfillPathExists || this.config.force) {
-      await fs.writeFile(polyfillPath, this.getRequirePolyfill(), 'utf8');
-      console.log('✅ Created config/jest-require-polyfill.cjs');
-    } else {
-      console.log('ℹ️ config/jest-require-polyfill.cjs already exists');
-    }
-  } else {
-    console.log('🔍 Would create config/jest-require-polyfill.cjs');
+async function scaffoldFile({ label, targetPath, content, dryRun, force }) {
+  const already = await exists(targetPath);
+  if (already && !force) {
+    process.stdout.write(`qtests: keep ${label} (already exists)\n`);
+    return;
   }
+  if (dryRun) {
+    process.stdout.write(`qtests: would write ${label} -> ${targetPath}\n`);
+    return;
+  }
+  await writeFileAtomic(targetPath, content);
+  process.stdout.write(`qtests: wrote ${label} -> ${targetPath}\n`);
 }
 
-async updatePackageScript(projectRoot) {
-  if (!this.config.updatePackageScript) return;
-  
-  const pkgPath = path.join(projectRoot, 'package.json');
-  if (!(await exists(pkgPath))) return;
-  
+function canResolveFromClient(clientRoot, id) {
   try {
-    const content = await fs.readFile(pkgPath, 'utf8');
-    const pkg = JSON.parse(content);
-    pkg.scripts = pkg.scripts || {};
-    
-    const testScript = 'node qtests-runner.mjs';
-    if (pkg.scripts.test === testScript) {
-      console.log('ℹ️ package.json test script already set correctly');
-      return;
-    }
-    
-    pkg.scripts.test = testScript;
-    
-    await fs.writeFile(pkgPath, JSON.stringify(pkg, null, 2), 'utf8');
-    console.log('✅ Updated package.json test script');
-  } catch (error) {
-    qerrors(error, 'updatePackageScript: parsing or writing package.json', { projectRoot, pkgPath });
-    console.log('⚠️  Failed to update package.json:', error.message);
+    const requireFromClient = createRequire(path.join(clientRoot, 'package.json'));
+    requireFromClient.resolve(id);
+    return true;
+  } catch {
+    return false;
   }
 }
+
+async function maybeAutoInstallTsJest(clientRoot, options) {
+  const hasTsJest = canResolveFromClient(clientRoot, 'ts-jest');
+  const hasTypescript = canResolveFromClient(clientRoot, 'typescript');
+  if (hasTsJest && hasTypescript) return { hasTsJest: true, hasTypescript: true };
+
+  if (!options.autoInstall) {
+    return { hasTsJest, hasTypescript };
+  }
+
+  if (options.dryRun) {
+    process.stdout.write('qtests: would install dev deps: ts-jest typescript\n');
+    return { hasTsJest: true, hasTypescript: true };
+  }
+
+  try {
+    const requireFromClient = createRequire(path.join(clientRoot, 'package.json'));
+    const npmBin = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+    // Intentionally use spawnSync with shell=false for safety.
+    const { spawnSync } = requireFromClient('child_process');
+    const res = spawnSync(npmBin, ['install', '--save-dev', 'ts-jest', 'typescript'], {
+      cwd: clientRoot,
+      stdio: 'inherit',
+      shell: false
+    });
+    if (res.status !== 0) {
+      throw new Error(`npm install failed with status ${res.status}`);
+    }
+  } catch (error) {
+    qerrors(error, 'qtests-generate: auto-install failed', { clientRoot });
+    throw error;
+  }
+
+  return { hasTsJest: true, hasTypescript: true };
+}
+
+async function updatePackageScript(clientRoot, options) {
+  if (!options.updatePackageScript) return;
+  const pkgPath = path.join(clientRoot, 'package.json');
+  if (!await exists(pkgPath)) return;
+
+  let pkg;
+  try {
+    const raw = await fsp.readFile(pkgPath, 'utf8');
+    pkg = JSON.parse(raw);
+  } catch (error) {
+    qerrors(error, 'qtests-generate: failed to read package.json', { pkgPath });
+    return;
+  }
+
+  pkg.scripts = (pkg && pkg.scripts && typeof pkg.scripts === 'object') ? pkg.scripts : {};
+  const desired = 'node qtests-runner.mjs';
+  if (pkg.scripts.test === desired) {
+    process.stdout.write('qtests: package.json scripts.test already set\n');
+    return;
+  }
+
+  if (options.dryRun) {
+    process.stdout.write(`qtests: would set package.json scripts.test -> ${desired}\n`);
+    return;
+  }
+
+  pkg.scripts.test = desired;
+  try {
+    await fsp.writeFile(pkgPath, JSON.stringify(pkg, null, 2) + '\n', 'utf8');
+    process.stdout.write('qtests: updated package.json scripts.test\n');
+  } catch (error) {
+    qerrors(error, 'qtests-generate: failed to write package.json', { pkgPath });
+  }
 }
 
 async function main() {
+  let options;
   try {
-    console.log('🔧 qtests Runner Scaffolder (Node ESM)\n');
-    const options = parseArgs(process.argv);
-    console.log('Configuration:');
-    console.log(`  Dry run: ${options.dryRun ? 'yes' : 'no'}`);
-    console.log(`  Force overwrite: ${options.force ? 'yes' : 'no'}`);
-    console.log(`  Update package.json script: ${options.updatePackageScript ? 'yes' : 'no'}`);
-
-    const { RunnerScaffolder } = await import('../lib/runnerScaffolder.js');
-    const scaffolder = new RunnerScaffolder(options);
-
-    if (options.dryRun) {
-      console.log('🔍 Dry run - showing planned scaffolding...\n');
-      await scaffolder.scaffoldRunner();
-    } else {
-      await scaffolder.scaffoldRunner();
-      await scaffolder.updatePackageScript(await resolveClientRoot());
-    }
-
-    console.log('\n💡 Next steps:');
-    console.log('  • Run tests: npm test');
-    console.log('  • Jest config created at config/jest.config.mjs (customize as needed)');
-    console.log('  • Runner created at qtests-runner.mjs (API-only execution)');
+    options = parseArgs(process.argv);
   } catch (error) {
-    qerrors(error, 'main: scaffolding runner', { options });
-    console.error('❌ Error scaffolding runner:', error && (error.stack || error.message) || String(error));
+    process.stderr.write(String(error && error.message || error) + '\n');
     process.exit(1);
   }
+
+  if (options.help) {
+    showHelp();
+    return;
+  }
+  if (options.version) {
+    await showVersion();
+    return;
+  }
+
+  const clientRoot = await resolveClientRoot();
+  if (clientRoot.includes(`${path.sep}node_modules${path.sep}`)) {
+    process.stderr.write('qtests: refusing to scaffold inside node_modules\n');
+    process.exit(1);
+  }
+
+  process.stdout.write('qtests: scaffolding...\n');
+  process.stdout.write(`qtests: clientRoot=${clientRoot}\n`);
+
+  const runnerTemplate = await readRunnerTemplate();
+  if (!runnerTemplate) {
+    process.stderr.write('qtests: unable to locate a valid runner template in the installed package\n');
+    process.exit(1);
+  }
+
+  const runnerTarget = path.join(clientRoot, 'qtests-runner.mjs');
+  await scaffoldFile({
+    label: 'qtests-runner.mjs',
+    targetPath: runnerTarget,
+    content: runnerTemplate,
+    dryRun: options.dryRun,
+    force: options.force
+  });
+
+  const configDir = path.join(clientRoot, 'config');
+  const polyfillTarget = path.join(configDir, 'jest-require-polyfill.cjs');
+  const jestConfigTarget = path.join(configDir, 'jest.config.mjs');
+
+  const deps = await maybeAutoInstallTsJest(clientRoot, options);
+  const enableTsJest = deps.hasTsJest && deps.hasTypescript;
+  if (!enableTsJest && !options.autoInstall) {
+    process.stdout.write('qtests: note: ts-jest/typescript not detected; generated Jest config will be JS-only.\n');
+    process.stdout.write('qtests: for TypeScript tests, install dev deps: ts-jest typescript (or re-run with --auto-install).\n');
+  }
+
+  const jestSetupFilename = enableTsJest ? 'jest-setup.ts' : 'jest-setup.cjs';
+  const jestSetupTarget = path.join(configDir, jestSetupFilename);
+  const jestSetupLabel = `config/${jestSetupFilename}`;
+  const jestSetupContent = enableTsJest ? getJestSetupTemplateTs() : getJestSetupTemplateCjs();
+
+  await scaffoldFile({
+    label: 'config/jest-require-polyfill.cjs',
+    targetPath: polyfillTarget,
+    content: getRequirePolyfillTemplate(),
+    dryRun: options.dryRun,
+    force: options.force
+  });
+
+  await scaffoldFile({
+    label: jestSetupLabel,
+    targetPath: jestSetupTarget,
+    content: jestSetupContent,
+    dryRun: options.dryRun,
+    force: options.force
+  });
+
+  await scaffoldFile({
+    label: 'config/jest.config.mjs',
+    targetPath: jestConfigTarget,
+    content: getJestConfigTemplate({ enableTsJest }),
+    dryRun: options.dryRun,
+    force: options.force
+  });
+
+  await updatePackageScript(clientRoot, options);
+  process.stdout.write('qtests: done\n');
 }
 
-main().catch(err => {
-  qerrors(err, 'main: unexpected error in top-level catch');
-  console.error('❌ Unexpected error:', err && (err.stack || err.message) || String(err));
+main().catch((error) => {
+  qerrors(error, 'qtests-generate: unhandled error', { cwd: process.cwd() });
+  process.stderr.write(String(error && (error.stack || error.message) || error) + '\n');
   process.exit(1);
 });

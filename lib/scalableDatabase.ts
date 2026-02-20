@@ -1,5 +1,6 @@
 /** Scalable Database Utilities */
 import{EventEmitter}from'events';
+import* as os from'os';
 export interface DatabaseConfig{host:string;port?:number;database:string;username?:string;password?:string;maxConnections?:number;minConnections?:number;acquireTimeout?:number;idleTimeout?:number;queryTimeout?:number;enableQueryCache?:boolean;cacheMaxSize?:number;cacheTtlMs?:number;}
 export interface QueryOptions{timeout?:number;cache?:boolean;cacheKey?:string;retries?:number;limit?:number;offset?:number;batchSize?:number;}
 export interface QueryResult<T=any>{rows:T[];rowCount:number;duration:number;cached:boolean;hasMore?:boolean;nextOffset?:number;totalRows?:number;}
@@ -749,8 +750,8 @@ private startCacheCleanup(): void {
   private getMemoryPressure(): number {
     try {
       const memUsage = process.memoryUsage();
-      const totalMem = require('os').totalmem();
-      const usedMem = totalMem - require('os').freemem();
+      const totalMem = os.totalmem();
+      const usedMem = totalMem - os.freemem();
       return Math.min(1, usedMem / totalMem);
     } catch {
       return 0.5; // Default to medium pressure on error

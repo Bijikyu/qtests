@@ -25,7 +25,7 @@
  * - Minimum delay enforcement to prevent CPU spinning
  */
 
-import qerrors from './qerrorsFallback';
+import qerrors from './qerrorsFallback.js';
 
 const safeQerrors = (error: Error, message?: string, context?: any) => {
   try {

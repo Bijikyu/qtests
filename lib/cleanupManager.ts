@@ -68,8 +68,6 @@ export class CleanupManager extends EventEmitter {
       lastCleanupTime: 0,
       memoryFreed: 0
     };
-    
-    this.startHealthChecks();
   }
 
   /**
@@ -88,6 +86,9 @@ export class CleanupManager extends EventEmitter {
     if (this.isShutdown) {
       throw new Error('Cleanup manager is shutdown');
     }
+
+    // Avoid creating background intervals on import; start health checks only when the manager is used.
+    this.ensureHealthChecksStarted();
     
     if (this.tasks.has(id)) {
       this.unregisterTask(id); // Clean up existing task
@@ -156,6 +157,12 @@ export class CleanupManager extends EventEmitter {
     
     // Remove from tasks
     this.tasks.delete(id);
+
+    // Stop health checks when there are no tasks left to monitor (prevents keeping the process alive).
+    if (this.tasks.size === 0 && this.healthCheckInterval) {
+      clearInterval(this.healthCheckInterval);
+      this.healthCheckInterval = undefined;
+    }
     
     // Update metrics
     this.metrics.totalTasks--;
@@ -393,6 +400,11 @@ export class CleanupManager extends EventEmitter {
   /**
    * Start health check monitoring
    */
+  private ensureHealthChecksStarted(): void {
+    if (this.healthCheckInterval) return;
+    this.startHealthChecks();
+  }
+
   private startHealthChecks(): void {
     this.healthCheckInterval = setInterval(() => {
       this.performHealthCheck();

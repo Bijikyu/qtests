@@ -5,7 +5,7 @@ import{withErrorLogging}from'../../lib/errorHandling/index.js';
 import{nodeEnv}from'../../config/localVars.js';
 
 nodeEnv!=='test'&&setLogging(false);
-interface DefaultEnv{GOOGLE_API_KEY:string;GOOGLE_CX:string;OPENAI_TOKEN:string;}
+export interface DefaultEnv{GOOGLE_API_KEY:string;GOOGLE_CX:string;OPENAI_TOKEN:string;}
 const getEnvConfig=():DefaultEnv=>{const googleApiKey=process.env.GOOGLE_API_KEY||'',googleCx=process.env.GOOGLE_CX||'',openaiToken=process.env.OPENAI_TOKEN||'';return{GOOGLE_API_KEY:googleApiKey,GOOGLE_CX:googleCx,OPENAI_TOKEN:openaiToken};};
 const defaultEnv:DefaultEnv=getEnvConfig();
 const validateEnvKey=(key:string):boolean=>/^[A-Z_][A-Z0-9_]*$/.test(key);

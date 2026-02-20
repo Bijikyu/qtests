@@ -4,8 +4,8 @@
  */
 
 import { z } from 'zod';
-import { sanitizeString } from './htmlSanitization.js';
-import qerrors from 'qerrors';
+import { sanitizeString, hasDangerousPatterns as hasDangerousPatternsImpl } from './htmlSanitization.js';
+import qerrors from '../qerrorsFallback.js';
 
 export interface ValidationConfig {
   maxStringLength?: number;
@@ -137,8 +137,7 @@ export class StreamingStringValidator {
   }
 
   hasDangerousPatterns(input: string): boolean {
-    const { hasDangerousPatterns } = require('./htmlSanitization.js');
-    return hasDangerousPatterns(input);
+    return hasDangerousPatternsImpl(input);
   }
 
   getConfig(): ValidationConfig {

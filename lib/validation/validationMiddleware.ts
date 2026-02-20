@@ -4,7 +4,7 @@
  */
 
 import { createStreamingValidator, ValidationConfig } from './streamingValidator.js';
-import qerrors from 'qerrors';
+import qerrors from '../qerrorsFallback.js';
 
 export function streamingValidationMiddleware(config: ValidationConfig = {}) {
   const validator = createStreamingValidator(config);

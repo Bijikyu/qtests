@@ -1,13 +1,12 @@
 # qtests
 
-A comprehensive Node.js testing framework with minimal production dependencies. Provides intelligent integration test generation, method stubbing, console mocking, error handling, performance testing, and drop-in replacements for popular modules. **Now with ES Module and TypeScript support!**
+A Node.js testing utility focused on fast, isolated unit tests: method stubbing, console mocking, environment management, and drop-in stubs for common modules (axios, winston). Includes a Jest runner/config scaffolder. **ES Module and TypeScript support included.**
 
 🎉 **Latest Updates (September 2025)**:
 - ✅ ESM + TypeScript Jest harness: runner always loads `config/jest.config.mjs` and passes `--passWithNoTests` for stable CI
 - ✅ HTTP testing shim alignment: TS shim re-exports a working JS shim with chainable `.send()` and proper `req.body`
 - ✅ Safe Mongoose mocking: Jest `moduleNameMapper` maps `mongoose` to qtests' manual mock (no real DB access)
 - ✅ Performance optimized: Parallel batch execution utilizing multiple CPU cores
-- ✅ Enhanced test generation: Smarter filtering, React-aware scaffolds, and safe defaults
 
 ## 🚀 Quick Start
 
@@ -17,31 +16,23 @@ npm install @bijikyu/qtests --save-dev
 
 > **GitHub Packages**: this library is published as `@bijikyu/qtests` on `npm.pkg.github.com`. Configure the `@bijikyu` scope in your `.npmrc` (see [docs/PUBLISHING.md](docs/PUBLISHING.md)) before installing so npm can reach the registry.
 
-qtests passively scaffolds its runner at your project root after install (via npm postinstall). No extra steps required.
+qtests can scaffold its Jest runner/config into your project root via `npx qtests-generate` (non-destructive by default). The runner expects Jest to be installed in your project (as a devDependency).
 
-**Configure your project for ES modules** by adding to `package.json`:
-```json
-{
-  "type": "module",
-  "main": "index.ts"
-}
-```
-
-**TypeScript setup:**
+**Setup:** (Jest: loaded globally via `config/jest-setup.ts`/`config/jest-setup.cjs` when you use `npx qtests-generate`; otherwise, put this at the top of each test file before other imports.)
 ```typescript
-// Enable automatic stubbing
-import './node_modules/@bijikyu/qtests/setup.js';
-
-// Your modules now use qtests stubs automatically
-import axios from 'axios'; // Uses qtests stub
-import winston from 'winston'; // Uses qtests stub
+// Enable automatic stubbing (CJS + ESM)
+import '@bijikyu/qtests/setup';
+// CommonJS:
+// require('@bijikyu/qtests/setup');
 
 // Import with full type safety
-import { stubMethod, mockConsole, testEnv, QtestsAPI } from '@bijikyu/qtests';
+import { stubMethod, mockConsole, testEnv } from '@bijikyu/qtests';
 
 // Use with TypeScript intellisense
 const restore = stubMethod(myObject, 'methodName', mockImplementation);
 ```
+
+> **Module format note:** `@bijikyu/qtests` (the main API) is ESM-only. In CommonJS tests, use `await import('@bijikyu/qtests')` to access helpers like `stubMethod`. The setup entrypoint supports both `import '@bijikyu/qtests/setup'` and `require('@bijikyu/qtests/setup')`.
 
 ## ✨ Key Features
 
@@ -88,8 +79,8 @@ qtests.mock.module('external-service', () => ({
 Notes:
 - Activation is runtime‑safe: a single require hook returns registered mocks; previously loaded CJS modules are best‑effort evicted from `require.cache`.
 - ESM projects can optionally use the loader for earliest interception:
-  - `node --loader=qtests/loader.mjs your-app.mjs`
-- setup still runs first in Jest via `config/jest-setup.ts` so defaults are active before imports.
+  - `node --loader=@bijikyu/qtests/loader.mjs your-app.mjs`
+- setup still runs first in Jest via `config/jest-setup.ts` (TS) or `config/jest-setup.cjs` (JS-only) so defaults are active before imports.
 
 ## 📖 Core Usage
 
@@ -144,73 +135,33 @@ testEnv.restoreEnv(saved); // TEST_VAR removed, original state restored
 - Debugging: creates `DEBUG_TESTS.md` on failures; override with `QTESTS_DEBUG_FILE=path` or suppress with `QTESTS_SUPPRESS_DEBUG=1`.
 
 Runner availability and generator behavior:
-- Postinstall scaffolding automatically creates `qtests-runner.mjs` at the project root (INIT_CWD) when missing.
-- `npx qtests-generate` ALWAYS (re)writes `qtests-runner.mjs` at the client root to keep the runner current.
-- Scaffolds `config/jest.config.mjs` (ignores `dist/`, `build/`) and `config/jest-require-polyfill.cjs` (ensures `require(...)` is available in ESM tests).
-- Scaffolds `qtests-runner.mjs` (API‑only runner).
-- Ensures helper scripts exist: `scripts/clean-dist.mjs` and `scripts/ensure-runner.mjs`.
-- Updates `package.json` scripts to:
-  - `pretest`: `node scripts/clean-dist.mjs && node scripts/ensure-runner.mjs`
-  - `test`: `node qtests-runner.mjs`
+- Run `npx qtests-generate` once to scaffold `qtests-runner.mjs` and Jest config files if missing:
+  - `config/jest.config.mjs` (ignores `dist/`, `build/`)
+  - `config/jest-require-polyfill.cjs` (ensures `require(...)` is available in ESM tests)
+  - `config/jest-setup.ts` (TS) or `config/jest-setup.cjs` (JS-only); both load `@bijikyu/qtests/setup` first and register Jest mocks for `axios`/`winston`
+- Use `--force` to overwrite existing scaffolded files.
+- Use `--update-pkg-script` to set `package.json` `scripts.test` to `node qtests-runner.mjs`.
+- Use `--auto-install` to install `ts-jest` + `typescript` as devDependencies if missing.
 
-Stale runner protection:
-- `scripts/ensure-runner.mjs` silently replaces stale runners (e.g., spawn/parallel-mode or missing API‑only invariants) with the validated template.
+## 🔧 Runner/Config Scaffolding
 
-Migration (from spawn‑based runners):
-- Run `npx qtests-generate` once to update the runner and scripts.
-- Ensure package.json contains the `pretest` and `test` commands above.
-- Remove any custom `tsx`/spawn‑based test commands.
-
-CI verification:
-- `npm run ci:verify` validates runner policy, script wiring, dist hygiene, and Jest config.
-
-## 🤖 Automatic Test Generation
-
-### CLI Usage (TypeScript ESM)
+### CLI Usage
 
 ```bash
-# Generate tests for entire project
+# Scaffold runner + Jest config (non-destructive)
 npx qtests-generate
 
-# Custom source directory
-npx qtests-generate --src lib
+# Preview planned writes
+npx qtests-generate --dry-run
 
-# Custom source and test directories
-npx qtests-generate --src app --test-dir tests/integration
+# Overwrite existing scaffolded files
+npx qtests-generate --force
 
-# Only integration tests, preview without writing
-npx qtests-generate --integration --dry-run
+# Update package.json scripts.test to use the runner
+npx qtests-generate --update-pkg-script
 
-# Restrict to TypeScript files and skip existing tests
-npx qtests-generate --include "**/*.ts" --exclude "**/*.test.ts"
-
-# Use AST mode (requires typescript) and allow overwrites of generated tests
-npx qtests-generate --mode ast --force
-
-# Force React mode and add router wrapper
-npx qtests-generate --react --with-router
-
-# Backward-compatible alias
-# (if your environment still references the old name)
-npx qtests-ts-generate
-```
-
-### Programmatic Usage (TypeScript ESM)
-
-```typescript
-import { TestGenerator } from '@bijikyu/qtests';
-
-const generator = new TestGenerator({
-  SRC_DIR: 'src',
-  TEST_DIR: 'tests/integration',
-  include: ['**/*.ts'],
-  exclude: ['**/*.test.ts'],
-  mode: 'heuristic', // or 'ast' (requires `typescript`), falls back gracefully
-});
-
-await generator.generateTestFiles(false); // pass true for dry-run
-const results = generator.getResults();
-console.log(`Generated ${results.length} test files`);
+# Install ts-jest + typescript if missing
+npx qtests-generate --auto-install
 ```
 
 ### Custom Module Stubs (Advanced)
@@ -219,10 +170,10 @@ When you need to stub a niche dependency (beyond the built‑ins axios/winston) 
 
 ```ts
 // Always load setup first so axios/winston are stubbed globally
-import './node_modules/@bijikyu/qtests/setup.js';
+import '@bijikyu/qtests/setup';
 
 // Then register your ad‑hoc stub(s)
-import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs.js';
+import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs';
 
 registerModuleStub('external-service-client', {
   ping: () => 'pong',
@@ -234,19 +185,14 @@ const client = require('external-service-client');
 await client.get(); // { ok: true }
 ```
 
-**Smart Discovery Features:**
-- Walks entire project directory structure
-- Supports feature-first projects (tests alongside source files)
-- Detects existing tests to avoid duplicates
-- Handles multiple project structures (traditional, monorepo, mixed)
-
 ## 🔌 Module Stubs
 
 ### Axios Stub
 
 ```typescript
-// Automatic when using @bijikyu/qtests/setup
-import axios from 'axios';
+// Automatic when using @bijikyu/qtests/setup (for require()-based resolution)
+import '@bijikyu/qtests/setup';
+const axios = require('axios');
 
 const response = await axios.get('/api');
 // Returns: { data: {}, status: 200, statusText: 'OK', headers: {}, config: {} }
@@ -257,8 +203,9 @@ await axios.post('/api', data); // Enhanced response format
 ### Winston Stub
 
 ```typescript
-// Automatic when using @bijikyu/qtests/setup
-import winston from 'winston';
+// Automatic when using @bijikyu/qtests/setup (for require()-based resolution)
+import '@bijikyu/qtests/setup';
+const winston = require('winston');
 
 const logger = winston.createLogger();
 logger.info('This produces no output'); // Silent
@@ -270,10 +217,10 @@ When you need to stub a niche dependency (beyond the built‑ins axios/winston) 
 
 ```ts
 // Always load setup first so axios/winston are stubbed globally
-import './node_modules/@bijikyu/qtests/setup.js';
+import '@bijikyu/qtests/setup';
 
 // Then register your ad‑hoc stub(s)
-import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs.js';
+import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs';
 
 registerModuleStub('external-service-client', {
   ping: () => 'pong',
@@ -494,14 +441,11 @@ test('console output', async () => {
 | `handleError(error, context, options)` | Comprehensive error handling |
 | `handleAsyncError(promise, context, options)` | Async error handling with fallback |
 
-### Test Generation
+### Scaffolding CLI
 
-| Method | Description |
-|--------|-------------|
-| `new TestGenerator(options)` | Create test generator instance |
-| `generator.generateTestFiles(dryRun?)` | Generate missing tests (dryRun optional) |
-| `generator.getResults()` | Get list of generated files |
-| CLI: `npx qtests-generate` | Command-line test generation (alias: `qtests-ts-generate`) |
+| Tool | Description |
+|------|-------------|
+| CLI: `npx qtests-generate` | Scaffold `qtests-runner.mjs` + Jest config (`config/jest.config.mjs`, `config/jest-setup.ts` or `config/jest-setup.cjs`, `config/jest-require-polyfill.cjs`) |
 
 ### Test Runner
 
@@ -531,16 +475,7 @@ test('console output', async () => {
 
 ## 🔷 TypeScript Configuration
 
-To use qtests with ES modules and TypeScript, update your `package.json`:
-
-```json
-{
-  "type": "module",
-  "main": "index.ts"
-}
-```
-
-And ensure your `tsconfig.json` supports ES modules:
+To run ESM tests, set `"type": "module"` in your project `package.json` (or use `.mjs`), and ensure your `tsconfig.json` supports Node ESM (NodeNext recommended):
 
 ```json
 {
@@ -561,22 +496,10 @@ And ensure your `tsconfig.json` supports ES modules:
 
 ```typescript
 // Core utilities with full type safety
-import { stubMethod, mockConsole, testEnv, QtestsAPI } from '@bijikyu/qtests';
+import qtests, { stubMethod, mockConsole, testEnv, mock } from '@bijikyu/qtests';
 
-// Test Generator (Note: Use compiled path for production)
-import { TestGenerator } from '@bijikyu/qtests/dist/lib/testGenerator.js';
-
-// Advanced utilities with specific paths
-import { httpTest, sendEmail } from '@bijikyu/qtests/lib/envUtils.js';
-import { handleError, handleAsyncError } from '@bijikyu/qtests/lib/errorHandling.js';
-import { createCircuitBreaker } from '@bijikyu/qtests/lib/circuitBreaker.js';
-import { addHealthMonitoring } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
-
-// Custom module stubs
-import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs.js';
-
-// Jest configuration factory
-import { createJestConfig } from '@bijikyu/qtests/lib/jestConfigFactory.js';
+// Custom module stubs (no ".js" suffix in subpath imports)
+import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs';
 
 // Module stubs (still available)
 import { stubs } from '@bijikyu/qtests';
@@ -606,94 +529,59 @@ clipboard.writeText('test text');
 
 ## 🎯 Testing Philosophy
 
-**Integration-First Approach**: qtests focuses on integration and E2E testing rather than unit testing. This provides better confidence in system interactions and reduces maintenance overhead.
+**Fast Unit Tests**: qtests is designed for fast, isolated unit tests that would otherwise hit external services (HTTP, logs). Avoid it for true integration tests where real external service behavior is required.
 
 ## 🎯 Best Practices
 
 ## 🧰 CLI Reference
 
-### qtests-generate (Primary CLI) 
-- Usage: `qtests-generate [options]`
-- Purpose: Scans source files and generates missing tests.
-- Note: `qtests-ts-generate` is maintained as a backward-compatible alias but `qtests-generate` is the preferred command
+### qtests-generate (Scaffolder)
+- Usage: `qtests-generate [--dry-run] [--force] [--update-pkg-script] [--auto-install]`
+- Alias: `qtests-ts-generate`
+- Purpose: Scaffolds `qtests-runner.mjs` and Jest config files into the client project (INIT_CWD).
 - Options:
-  - `-s, --src <dir>`: Source directory root to scan. Default: `.`
-  - `-t, --test-dir <dir>`: Directory for integration/API tests. Default: `tests/generated-tests`
-  - `--mode <heuristic|ast>`: Analysis mode. `ast` attempts TypeScript-based analysis if `typescript` is installed; falls back otherwise. Default: `heuristic`
-  - `--integration`: Generate only integration/API tests
-  - `--include <glob>`: Include only matching files (repeatable)
-  - `--exclude <glob>`: Exclude matching files (repeatable)
-  - `--dry-run`: Preview actions; no files written or package.json updates
-- `--force`: Overwrite generated test files (filenames containing `.GeneratedTest` or legacy `.GenerateTest`)
-  - `--react`: Force React mode (use jsdom, React templates)
-  - `--with-router`: Wrap React tests with MemoryRouter when React Router is detected
-  - `--react-components`: Opt-in to generating tests for React components
-  - `--no-react-components`: Skip generating tests for React components (default)
+  - `--dry-run`: Print planned writes without modifying files
+  - `--force`: Overwrite existing scaffolded files
+  - `--update-pkg-script`: Set `package.json` `scripts.test` to `node qtests-runner.mjs`
+  - `--auto-install`: Install `ts-jest` + `typescript` as devDependencies if missing
   - `-h, --help`: Show help
   - `-v, --version`: Show version
 
 Examples:
-- `qtests-generate` — scan current directory with defaults
-- `qtests-generate --src lib` — scan `lib` only
-- `qtests-generate --integration --dry-run` — preview integration tests only
-- `qtests-generate --include "**/*.ts" --exclude "**/*.test.ts"` — filter files
-- `qtests-generate --mode ast --force` — AST mode and overwrite generated tests
+- `qtests-generate`
+- `qtests-generate --dry-run`
+- `qtests-generate --force`
+- `qtests-generate --update-pkg-script`
+- `qtests-generate --auto-install`
 
 Notes:
-- On real runs (no `--dry-run`), the generator writes `config/jest.config.mjs`, `config/jest-setup.ts`, and creates `qtests-runner.mjs`.
-- The generated runner includes `--config config/jest.config.mjs` and `--passWithNoTests`.
-- The generated Jest config includes a `moduleNameMapper` for `mongoose` pointing to qtests' manual mock, preventing real DB access in unit tests.
-- Update of `package.json` test script is now opt-in via `--update-pkg-script`.
-- In `--dry-run`, none of the above files are written.
-- Enhanced file filtering automatically skips demo/, examples/, config/, and test utility directories.
-
-#### React/Hook Templates and Providers
-
-- Components: By default, component test generation is disabled to reduce noise. Opt-in with `--react-components`.
-  When enabled, components get a smoke render via `React.createElement(Component, {})`, asserting container exists only.
-- Hooks: Uses a probe component to mount the hook; avoids invalid direct calls.
-- Providers: If `@tanstack/react-query` is imported, renders inside `QueryClientProvider`. If `react-hook-form` is detected (or `useFormContext`/`FormProvider` is referenced), wraps with `FormProvider` using `useForm()`.
-- Optional Router: With `--with-router` and when source imports `react-router(-dom)`, wraps with `MemoryRouter`.
-- Required-props fallback: If a component appears to require props (TS inline types or propTypes.isRequired), generator falls back to a safe existence test instead of rendering.
-- Non-React modules: Emits safe existence checks or a module-load smoke test.
-- Skipped directories: `__mocks__`, `__tests__`, `tests`, `test`, `generated-tests`, `manual-tests`, `node_modules`, `dist`, `build`, `.git`.
-- API tests: Local `tests/generated-tests/utils/httpTest.ts` is scaffolded to re-export `httpTest.shim.js`, a minimal, dependency‑free HTTP test shim. Imports like `../utils/httpTest` resolve without extra project config. The shim supports `.send()` and exposes `req.body` to handlers.
-
-#### File Extension Strategy & JSX
-- Tests are emitted JSX-free using `React.createElement`, so unit/API tests default to `.ts`.
-- `.tsx` is only chosen when the generated test includes JSX (rare; currently templates avoid JSX).
-
-#### Safety + Sanity Filters
-- Export filtering removes reserved/falsy/non-identifiers (e.g., `default`, `function`, `undefined`).
-- If no safe export remains, the generator emits a module smoke test instead of bogus per-export tests.
-- When valid React component/hook tests are emitted, the generator does not append generic “is defined” blocks.
+- This CLI scaffolds runner/config files; it does not generate tests.
 
 ### qtests runner
 - Usage: `qtests-ts-runner`
 - Purpose: Discovers and runs tests in the project with a Jest-first strategy.
 - Behavior:
   - Discovers files matching `.test|.spec|_test|_spec` with `.js|.ts|.jsx|.tsx`
-  - Tries `npx jest` with fast flags; falls back to verbose; finally runs with `node` if needed
-  - Runs tests in parallel batches (2x CPU cores, capped by file count)
-  - **Performance Optimized**: Parallel batch execution utilizing 2x CPU cores
+  - Runs Jest via the programmatic API (`runCLI`) (no child processes, no `tsx`)
+  - Runs tests in parallel batches (controlled by `QTESTS_INBAND`, `QTESTS_FILE_WORKERS`, `QTESTS_CONCURRENCY`)
 - Notes:
-  - Automatically generated as `qtests-runner.mjs` by the test generator
+  - `qtests-runner.mjs` is scaffolded into the client project by `qtests-generate` (or install-time scaffolding)
   - Always passes `--config config/jest.config.mjs` and `--passWithNoTests`
   - Honors `QTESTS_SUPPRESS_DEBUG=1|true` to skip creating `DEBUG_TESTS.md`
   - Honors `QTESTS_DEBUG_FILE` to set a custom debug report path/name
   - Records Jest argv to `runner-jest-args.json` to aid debugging
-  - Works with TypeScript ESM projects via `ts-jest` (scaffolded by the generator)
+  - If `ts-jest` + `typescript` are installed, the scaffolded Jest config enables TypeScript ESM transforms
 
 ### 1. Always Load Setup First
 
 ```typescript
 // ✅ Correct
-import './node_modules/@bijikyu/qtests/setup.js';
+import '@bijikyu/qtests/setup';
 import myModule from './myModule.js';
 
 // ❌ Wrong  
 import myModule from './myModule.js';
-import './node_modules/@bijikyu/qtests/setup.js';
+import '@bijikyu/qtests/setup';
 ```
 
 ### 2. Clean Up After Tests
@@ -739,7 +627,7 @@ qtests supports multiple testing patterns depending on your needs:
 
 ```typescript
 // Unit test - test individual functions
-import './node_modules/@bijikyu/qtests/setup.js';
+import '@bijikyu/qtests/setup';
 import { calculateTotal } from './billing.js';
 
 test('calculates total with tax', () => {
@@ -771,7 +659,7 @@ describe('POST /api/billing/calculate', () => {
 
 ```typescript
 // Global test setup (setupTests.ts)
-import './node_modules/@bijikyu/qtests/setup.js';
+import '@bijikyu/qtests/setup';
 import { testEnv } from '@bijikyu/qtests';
 
 // Set up test environment before all tests
@@ -790,15 +678,14 @@ afterAll(() => {
 | Issue | Solution |
 |-------|----------|
 | Stubs not working (CommonJS) | Ensure `require('@bijikyu/qtests/setup')` is called first |
-| Stubs not working (ES Modules) | Ensure `import './node_modules/@bijikyu/qtests/setup.js'` is called first |
+| Stubs not working (ES Modules) | Ensure `import '@bijikyu/qtests/setup'` is called first |
 | TypeScript import errors | Add `"type": "module"` to package.json and update tsconfig.json |
 | ES Module syntax errors | Ensure `"module": "ES2020"` in tsconfig.json |
 | Console pollution | Use `mockConsole()` to capture output |
 | Environment leaks | Use `testHelpers.withSavedEnv()` for isolation |
-| Module not found for advanced features | Use specific import paths: `qtests/lib/errorHandling.js`, `qtests/lib/performance.js` |
+| Module not found for advanced features | Use qtests subpath exports without a `.js` suffix (e.g. `@bijikyu/qtests/lib/errorHandling`) |
 | CLI not found | Use `npx qtests-generate` (alias: `qtests-ts-generate`) or install globally |
-| File extension errors | Use `.js` extensions in ES module imports |
-| Test generation creates tests for config files | Enhanced filtering now automatically skips demo/, examples/, config/, and test directories |
+| File extension errors | For qtests subpath imports, omit the `.js` suffix (e.g. `@bijikyu/qtests/utils/customStubs`) |
 | generateKey returns empty string | Fixed in latest version - now correctly returns test keys like "test-api-key-user" |
 | Circuit breaker not opening | Check error threshold settings and ensure proper error handling |
 | Health monitoring not working | Ensure `pool.start()` is called before adding health monitoring |

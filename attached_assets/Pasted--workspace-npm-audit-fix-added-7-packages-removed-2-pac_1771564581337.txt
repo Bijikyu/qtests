@@ -1,0 +1,141 @@
+~/workspace$ npm audit fix
+
+added 7 packages, removed 2 packages, changed 35 packages, and audited 1208 packages in 9s
+
+191 packages are looking for funding
+  run `npm fund` for details
+
+# npm audit report
+
+minimatch  <10.2.1
+Severity: high
+minimatch has a ReDoS via repeated wildcards with non-matching literal in pattern - https://github.com/advisories/GHSA-3ppc-4f35-3m26
+No fix available
+node_modules/@typescript-eslint/typescript-estree/node_modules/minimatch
+node_modules/minimatch
+  @typescript-eslint/typescript-estree  >=6.16.0
+  Depends on vulnerable versions of minimatch
+  node_modules/@typescript-eslint/typescript-estree
+    detective-typescript  >=12.0.0
+    Depends on vulnerable versions of @typescript-eslint/typescript-estree
+    node_modules/detective-typescript
+      detective-vue2  >=1.0.2
+      Depends on vulnerable versions of detective-typescript
+      node_modules/detective-vue2
+        precinct  >=12.0.0
+        Depends on vulnerable versions of detective-typescript
+        Depends on vulnerable versions of detective-vue2
+        node_modules/precinct
+          dependency-tree  >=11.0.0
+          Depends on vulnerable versions of precinct
+          node_modules/dependency-tree
+            @bijikyu/fileflows  *
+            Depends on vulnerable versions of dependency-tree
+            node_modules/@bijikyu/fileflows
+            madge  >=8.0.0
+            Depends on vulnerable versions of dependency-tree
+            node_modules/madge
+  glob  3.0.0 - 10.5.0
+  Depends on vulnerable versions of minimatch
+  node_modules/glob
+    @jest/reporters  *
+    Depends on vulnerable versions of @jest/transform
+    Depends on vulnerable versions of glob
+    node_modules/@jest/reporters
+      @jest/core  *
+      Depends on vulnerable versions of @jest/reporters
+      Depends on vulnerable versions of @jest/transform
+      Depends on vulnerable versions of jest-config
+      Depends on vulnerable versions of jest-resolve-dependencies
+      Depends on vulnerable versions of jest-runner
+      Depends on vulnerable versions of jest-runtime
+      Depends on vulnerable versions of jest-snapshot
+      node_modules/@jest/core
+        jest  >=19.1.0-alpha.eed82034
+        Depends on vulnerable versions of @jest/core
+        Depends on vulnerable versions of jest-cli
+        node_modules/jest
+          ts-jest  >=25.10.0-alpha.1
+          Depends on vulnerable versions of @jest/transform
+          Depends on vulnerable versions of babel-jest
+          Depends on vulnerable versions of jest
+          node_modules/ts-jest
+        jest-cli  >=19.1.0-alpha.eed82034
+        Depends on vulnerable versions of @jest/core
+        Depends on vulnerable versions of create-jest
+        Depends on vulnerable versions of jest-config
+        node_modules/jest-cli
+    jest-config  >=19.1.0-alpha.eed82034
+    Depends on vulnerable versions of babel-jest
+    Depends on vulnerable versions of glob
+    Depends on vulnerable versions of jest-circus
+    Depends on vulnerable versions of jest-runner
+    node_modules/jest-config
+      create-jest  >=29.7.0
+      Depends on vulnerable versions of jest-config
+      node_modules/create-jest
+    jest-runtime  >=24.0.0-alpha.0
+    Depends on vulnerable versions of @jest/globals
+    Depends on vulnerable versions of @jest/transform
+    Depends on vulnerable versions of glob
+    Depends on vulnerable versions of jest-snapshot
+    node_modules/jest-runtime
+      jest-circus  >=25.2.4
+      Depends on vulnerable versions of @jest/expect
+      Depends on vulnerable versions of jest-runtime
+      Depends on vulnerable versions of jest-snapshot
+      node_modules/jest-circus
+      jest-runner  >=24.0.0-alpha.0
+      Depends on vulnerable versions of @jest/transform
+      Depends on vulnerable versions of jest-runtime
+      node_modules/jest-runner
+    test-exclude  4.2.2 || >=5.0.0
+    Depends on vulnerable versions of glob
+    Depends on vulnerable versions of minimatch
+    node_modules/test-exclude
+      babel-plugin-istanbul  >=5.0.1
+      Depends on vulnerable versions of test-exclude
+      node_modules/@jest/core/node_modules/babel-plugin-istanbul
+      node_modules/@jest/reporters/node_modules/babel-plugin-istanbul
+      node_modules/babel-plugin-istanbul
+      node_modules/jest-config/node_modules/babel-plugin-istanbul
+      node_modules/jest-runner/node_modules/babel-plugin-istanbul
+      node_modules/jest-runtime/node_modules/babel-plugin-istanbul
+      node_modules/jest-snapshot/node_modules/babel-plugin-istanbul
+        @jest/transform  *
+        Depends on vulnerable versions of babel-plugin-istanbul
+        node_modules/@jest/core/node_modules/@jest/transform
+        node_modules/@jest/reporters/node_modules/@jest/transform
+        node_modules/@jest/transform
+        node_modules/jest-config/node_modules/@jest/transform
+        node_modules/jest-runner/node_modules/@jest/transform
+        node_modules/jest-runtime/node_modules/@jest/transform
+        node_modules/jest-snapshot/node_modules/@jest/transform
+          babel-jest  >=24.0.0-alpha.0
+          Depends on vulnerable versions of @jest/transform
+          Depends on vulnerable versions of babel-plugin-istanbul
+          node_modules/babel-jest
+          node_modules/jest-config/node_modules/babel-jest
+          jest-snapshot  >=27.0.0-next.0
+          Depends on vulnerable versions of @jest/transform
+          node_modules/jest-snapshot
+            @jest/expect  *
+            Depends on vulnerable versions of jest-snapshot
+            node_modules/@jest/expect
+              @jest/globals  >=28.0.0-alpha.0
+              Depends on vulnerable versions of @jest/expect
+              node_modules/@jest/globals
+            jest-resolve-dependencies  >=27.0.0-next.0
+            Depends on vulnerable versions of jest-snapshot
+            node_modules/jest-resolve-dependencies
+
+27 high severity vulnerabilities
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues possible (including breaking changes), run:
+  npm audit fix --force
+
+Some issues need review, and may require choosing
+a different dependency.

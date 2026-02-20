@@ -3,8 +3,12 @@
  * Responsible for creating MSW-based mock servers
  */
 
+import { createRequire } from 'module';
 import { MockResponse } from './mockTypes.js';
-import qerrors from 'qerrors';
+import qerrors from '../qerrorsFallback.js';
+
+// Node ESM: `require` is not global; create a scoped require for CJS-compatible dependencies.
+const require = createRequire(import.meta.url);
 
 /**
  * Create a mock server with custom response patterns

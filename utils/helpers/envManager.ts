@@ -153,7 +153,9 @@ export const configureEnv = (
  * This function matches the pattern used across config files
  */
 export const initializeDotenv = (): void => {
-  dotenv.config();
+  // Library default: keep dotenv quiet to avoid polluting consumer stdout on import.
+  // Users can opt back in via `DOTENV_CONFIG_QUIET=false` or by calling dotenv directly.
+  dotenv.config({ quiet: true });
 };
 
 /**

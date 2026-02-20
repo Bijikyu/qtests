@@ -1,7 +1,7 @@
 /** Rate Limiting Implementation using rate-limiter-flexible */
 import{RateLimiterRedis,RateLimiterMemory,RateLimiterAbstract}from'rate-limiter-flexible';
 import{redisUrl,redisCloudUrl}from'../config/localVars.js';
-import qerrors from'qerrors';
+import qerrors from'./qerrorsFallback.js';
 
 export interface RateLimitConfig{windowMs:number;maxRequests:number;keyGenerator?:(req:any)=>string;points?:number;duration?:number;}
 export interface RateLimitResult{allowed:boolean;remaining:number;resetTime:number;retryAfter?:number;}

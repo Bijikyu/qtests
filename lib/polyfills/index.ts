@@ -10,8 +10,6 @@
  * - Better performance and maintenance than individual polyfills
  */
 
-import 'happy-dom';
-
 /**
  * Global happy-dom window instance for browser API simulation
  */

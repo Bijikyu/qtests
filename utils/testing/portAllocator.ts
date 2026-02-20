@@ -5,8 +5,9 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
+import * as net from 'net';
 import { EventEmitter } from 'events';
-import qerrors from 'qerrors';
+import qerrors from '../../lib/qerrorsFallback.js';
 
 interface PortAllocation {
   port: number;
@@ -112,7 +113,6 @@ export class PortAllocator extends EventEmitter {
 
   private async isPortAvailable(port: number): Promise<boolean> {
     return new Promise((resolve) => {
-      const net = require('net');
       const server = net.createServer();
 
       server.listen(port, () => {

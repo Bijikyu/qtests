@@ -12,7 +12,13 @@
  * - Singleton pattern prevents duplicate mock creation
  */
 
-import { jest } from '@jest/globals';
+function getJestRef(): any {
+  const j = (globalThis as any).jest;
+  if (!j) {
+    throw new Error('TestMockFactory: Jest global not found (this utility must run inside Jest with injectGlobals enabled)');
+  }
+  return j;
+}
 
 /**
  * Default test configuration for common test scenarios
@@ -68,7 +74,8 @@ export class TestMockFactory {
    * @param config - Configuration object to use as mock
    */
   mockConfig(config: TestConfig): void {
-    jest.doMock('../../config/localVars.js', () => config);
+    const jestRef = getJestRef();
+    jestRef.doMock('../../config/localVars.js', () => config);
   }
 
   /**
@@ -76,16 +83,17 @@ export class TestMockFactory {
    * Provides mock implementations for face detection and recognition
    */
   mockFaceApi(): void {
-    jest.doMock('@vladmandic/face-api', () => {
+    const jestRef = getJestRef();
+    jestRef.doMock('@vladmandic/face-api', () => {
       const mockFaceApi = {
-        detectAllFaces: jest.fn(() => Promise.resolve([])),
-        detectSingleFace: jest.fn(() => Promise.resolve(null)),
-        createCanvas: jest.fn(() => ({})),
-        fetchImage: jest.fn(() => Promise.resolve({})),
+        detectAllFaces: jestRef.fn(() => Promise.resolve([])),
+        detectSingleFace: jestRef.fn(() => Promise.resolve(null)),
+        createCanvas: jestRef.fn(() => ({})),
+        fetchImage: jestRef.fn(() => Promise.resolve({})),
         nets: {
-          ssdMobilenetv1: { loadFromUri: jest.fn(() => Promise.resolve({})) },
-          faceLandmark68Net: { loadFromUri: jest.fn(() => Promise.resolve({})) },
-          faceRecognitionNet: { loadFromUri: jest.fn(() => Promise.resolve({})) }
+          ssdMobilenetv1: { loadFromUri: jestRef.fn(() => Promise.resolve({})) },
+          faceLandmark68Net: { loadFromUri: jestRef.fn(() => Promise.resolve({})) },
+          faceRecognitionNet: { loadFromUri: jestRef.fn(() => Promise.resolve({})) }
         }
       };
 
@@ -98,12 +106,13 @@ export class TestMockFactory {
    * Provides mock implementations for TensorFlow operations
    */
   mockTensorFlow(): void {
-    jest.doMock('@tensorflow/tfjs-node', () => {
+    const jestRef = getJestRef();
+    jestRef.doMock('@tensorflow/tfjs-node', () => {
       const mockTensorFlow = {
         node: {
-          bindEnvironment: jest.fn(),
-          enableProdMode: jest.fn(),
-          disposeVariables: jest.fn()
+          bindEnvironment: jestRef.fn(),
+          enableProdMode: jestRef.fn(),
+          disposeVariables: jestRef.fn()
         }
       };
 
@@ -115,8 +124,9 @@ export class TestMockFactory {
    * Reset all mocks for clean test environment
    */
   resetMocks(): void {
-    jest.resetModules();
-    jest.clearAllMocks();
+    const jestRef = getJestRef();
+    jestRef.resetModules();
+    jestRef.clearAllMocks();
     this.mocksCreated = false;
   }
 
@@ -125,7 +135,9 @@ export class TestMockFactory {
    * @returns Mock Face API instance
    */
   getMockFaceApi(): any {
-    return require('@vladmandic/face-api');
+    // Use Jest's module registry so this returns the mocked module (not the real dependency).
+    const jestRef = getJestRef();
+    return (jestRef as any).requireMock ? (jestRef as any).requireMock('@vladmandic/face-api') : undefined;
   }
 
   /**
@@ -133,7 +145,9 @@ export class TestMockFactory {
    * @returns Mock TensorFlow instance
    */
   getMockTensorFlow(): any {
-    return require('@tensorflow/tfjs-node');
+    // Use Jest's module registry so this returns the mocked module (not the real dependency).
+    const jestRef = getJestRef();
+    return (jestRef as any).requireMock ? (jestRef as any).requireMock('@tensorflow/tfjs-node') : undefined;
   }
 
   /**
@@ -141,7 +155,9 @@ export class TestMockFactory {
    * @returns Mock configuration instance
    */
   getMockConfig(): any {
-    return require('../../config/localVars.js');
+    // Use Jest's module registry so this returns the mocked config.
+    const jestRef = getJestRef();
+    return (jestRef as any).requireMock ? (jestRef as any).requireMock('../../config/localVars.js') : undefined;
   }
 
   /**

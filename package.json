@@ -7,9 +7,13 @@
   },
   "type": "module",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Bijikyu/qtests.git"
+    "url": "git+https://github.com/Bijikyu/qtests.git"
   },
   "bugs": {
     "url": "https://github.com/Bijikyu/qtests/issues"
@@ -17,29 +21,36 @@
   "homepage": "https://github.com/Bijikyu/qtests#readme",
   "exports": {
     ".": "./dist/index.js",
-    "./setup": "./dist/setup.js",
+    "./setup": {
+      "import": "./dist/setup.js",
+      "require": "./setup.cjs",
+      "default": "./dist/setup.js"
+    },
     "./setup.js": "./dist/setup.js",
+    "./setup.cjs": "./setup.cjs",
     "./loader": "./loader.mjs",
     "./loader.mjs": "./loader.mjs",
+    "./lib/*.js": "./dist/lib/*.js",
     "./lib/*": "./dist/lib/*.js",
     "./lib/routeTestUtils": "./dist/lib/routeTestUtils.js",
     "./lib/errorHandling": "./dist/lib/errorHandling/index.js",
     "./lib/memory": "./dist/lib/memory/index.js",
+    "./utils/*.js": "./dist/utils/*.js",
     "./utils/*": "./dist/utils/*.js",
+    "./config/*.js": "./dist/config/*.js",
     "./config/*": "./dist/config/*.js"
   },
   "bin": {
-    "qtests-ts-runner": "./bin/qtests-ts-runner",
-    "qtests-ts-generate": "./bin/qtests-generate.mjs",
-    "qtests-generate": "./bin/qtests-generate.mjs"
+    "qtests-ts-runner": "bin/qtests-ts-runner",
+    "qtests-ts-generate": "bin/qtests-generate.mjs",
+    "qtests-generate": "bin/qtests-generate.mjs"
   },
   "scripts": {
     "prepare": "node scripts/ensure-runner.mjs",
-    "postinstall": "node scripts/postinstall-scaffold.mjs",
     "pretest": "node scripts/clean-dist.mjs && node scripts/ensure-runner.mjs",
     "test": "node qtests-runner.mjs",
     "ci:verify": "node scripts/ci-verify-runner.mjs",
-    "build": "tsc -p tsconfig.json",
+    "build": "node scripts/clean-build.mjs && tsc -p tsconfig.json && node scripts/copy-stubs.mjs",
     "prepublishOnly": "npm run build",
     "test:scalability": "node scripts/benchmarks/memory-benchmark.js",
     "test:scalability:memory": "node scripts/benchmarks/memory-benchmark.js",
@@ -64,8 +75,13 @@
     "side-effect-free"
   ],
   "author": "Q",
+  "license": "MIT",
   "dependencies": {
     "@bijikyu/qerrors": "3.0.1",
+    "@types/fs-extra": "^11.0.4",
+    "@types/opossum": "^8.1.9",
+    "@types/sinon": "^21.0.0",
+    "@types/sinonjs__fake-timers": "^8.1.5",
     "axios": "^1.9.0",
     "dotenv": "^17.2.3",
     "express": "^4.18.0",
@@ -74,7 +90,6 @@
     "happy-dom": "^20.1.0",
     "helmet": "^8.1.0",
     "ioredis": "^5.8.2",
-    "jest": "^29.7.0",
     "joi": "^18.0.2",
     "msw": "^2.12.7",
     "node-cache": "^5.1.2",
@@ -86,10 +101,17 @@
     "rate-limiter-flexible": "^5.0.5",
     "redis": "^4.6.0",
     "secure-json-parse": "^4.1.0",
-    "serve": "^14.2.5",
     "sinon": "^21.0.0",
     "winston": "^3.17.0",
     "zod": "^3.25.76"
+  },
+  "peerDependencies": {
+    "jest": ">=29.0.0"
+  },
+  "peerDependenciesMeta": {
+    "jest": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@babel/core": "^7.28.3",
@@ -98,15 +120,13 @@
     "@bijikyu/fileflows": "2.0.6",
     "@openai/codex": "^0.53.0",
     "@types/express": "^5.0.6",
-    "@types/fs-extra": "^11.0.4",
     "@types/jest": "^30.0.0",
     "@types/joi": "^17.2.2",
-    "@types/opossum": "^8.1.9",
     "@types/secure-json-parse": "^1.0.5",
-    "@types/sinon": "^21.0.0",
     "babel-jest": "^30.1.2",
     "commoncontext": "^1.0.3",
     "express-rate-limit": "^7.0.0",
+    "jest": "^29.7.0",
     "loqatevars": "^1.0.6",
     "madge": "^8.0.0",
     "npmcontext": "^1.0.4",
@@ -121,8 +141,8 @@
     "lib/templates",
     "templates",
     "scripts",
+    "setup.cjs",
     "qtests-runner.mjs",
-    "qtests-runner.mjs.template",
     "README.md",
     "LICENSE"
   ]

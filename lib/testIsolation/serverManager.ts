@@ -3,7 +3,7 @@
  */
 
 declare const global: any;
-import qerrors from 'qerrors';
+import qerrors from '../qerrorsFallback.js';
 
 interface IsolationState {
   originalEnv: Record<string, string | undefined>;

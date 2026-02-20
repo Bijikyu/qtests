@@ -4,7 +4,6 @@
  */
 
 declare const global: any;
-import qerrors from 'qerrors';
 
 interface CleanupMetrics {
   totalRefs: number;

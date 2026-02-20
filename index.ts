@@ -1,6 +1,7 @@
 /** qtests - Main Entry Point */
 import{setup}from'./lib/setup.js';import stubs from'./lib/stubs.js';
 import{testEnv,offlineMode,testHelpers}from'./lib/envUtils.js';
+import{mockAPI}from'./lib/mockSystem.js';
 import{initializePolyfills,resetPolyfills,getWindow,matchMedia,clipboard,polyfillOrchestrator}from'./lib/polyfills/index.js';
 import{safeReadFile,safeReadFileBuffer}from'./lib/fileSystem/fileReading.js';import{safeWriteFile,ensureDir}from'./lib/fileSystem/fileWriting.js';
 
@@ -18,6 +19,7 @@ export{CircuitBreaker,createCircuitBreaker,executeWithCircuitBreaker,getCircuitB
 
 export const stubMethod=(obj:any,methodName:string,replacement:(...args:any[])=>any)=>enhancedStubMethod({obj,methodName,stubFn:replacement}).restore;
 export const spyOnMethod=(obj:any,methodName:string)=>sinonSpy(obj,methodName);
+export const mock=mockAPI;
 
 export{setup,stubs,testEnv,offlineMode,testHelpers,initializePolyfills,resetPolyfills,getWindow,matchMedia,clipboard,polyfillOrchestrator,safeReadFile,safeReadFileBuffer,safeWriteFile,ensureDir};
 export{mockConsole,createMockApp,runTestSuite,runTestSuites,createAssertions,waitForCondition,createAsyncErrorWrapper};
@@ -25,5 +27,8 @@ export{mockConsole,createMockApp,runTestSuite,runTestSuites,createAssertions,wai
 export{nodeEnv,testMode,debugMode,runtimeNodeVersion,runtimePlatform,runtimeArch,devHotReload,devSourceMaps,devVerboseLogging,experimentalFeatures,experimentalParallelExecution,experimentalAdvancedMocking,legacyMode,legacyWarnings}from'./config/localVars.js';
 export{defaultTestTimeout,defaultRetryAttempts,defaultRetryDelay,maxConcurrentTests,testMemoryThreshold,jestTestTimeout,jestVerbose,jestCoverage,jestCache,jestPassWithNoTests,integrationTestTimeout,integrationTestRetryAttempts,integrationTestRetryDelay,integrationTestCleanupDelay,performanceTestDuration,performanceTestSamples,performanceTestThreshold}from'./config/localVars.js';
 export{defaultMockStatusCode,defaultMockResponse,defaultMockHeaders,axiosStubTimeout,consoleMockLevels,consoleCaptureAll,stubModules,stubModulePaths}from'./config/localVars.js';
-export const version='2.5.0';
+export const version='2.6.2';
 export const description='Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution';
+
+const qtests={setup,stubs,testEnv,offlineMode,testHelpers,initializePolyfills,resetPolyfills,getWindow,matchMedia,clipboard,polyfillOrchestrator,safeReadFile,safeReadFileBuffer,safeWriteFile,ensureDir,stubMethod,spyOnMethod,mock:mockAPI,mockConsole,createMockApp,runTestSuite,runTestSuites,createAssertions,waitForCondition,createAsyncErrorWrapper,version,description};
+export default qtests;

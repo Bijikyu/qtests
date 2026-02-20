@@ -8,7 +8,7 @@ import { LegacyAxiosMock } from './legacyAxiosImplementation.js';
 import { UserConfigurableAxiosMock } from './userConfigurableAxiosMock.js';
 import { ModernMSWMock } from './modernMSWMock.js';
 import { AdvancedMSWMock, createAdvancedMSWMock, createModernUserConfigurableMock } from './advancedMSWMock.js';
-import qerrors from 'qerrors';
+import qerrors from '../qerrorsFallback.js';
 
 /**
  * Main HTTP client mock factory

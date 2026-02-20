@@ -10,7 +10,7 @@
  */
 
 import fs from 'fs-extra';
-import qerrors from 'qerrors';
+import qerrors from '../qerrorsFallback.js';
 
 /**
  * Ensures a directory exists, creating it if necessary (async version)

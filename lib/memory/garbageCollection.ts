@@ -3,6 +3,8 @@
  * Optimized garbage collection with memory pressure monitoring
  */
 
+import * as os from 'os';
+
 interface GlobalWithGC {
   gc?: () => void;
   memoryUsage?: () => NodeJS.MemoryUsage;
@@ -75,7 +77,7 @@ export const forceGC = async (aggressive = false): Promise<GCMetrics> => {
  */
 export const isUnderMemoryPressure = (): boolean => {
   const usage = global.memoryUsage ? global.memoryUsage() : process.memoryUsage();
-  const totalMemory = require('os').totalmem();
+  const totalMemory = os.totalmem();
   const memoryUsageRatio = usage.heapUsed / totalMemory;
   
   // Consider memory pressure if using more than 70% of system memory
