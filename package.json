@@ -1,6 +1,6 @@
 {
   "name": "@bijikyu/qtests",
-  "version": "2.6.2",
+  "version": "3.0.0",
   "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
@@ -127,7 +127,6 @@
     "commoncontext": "^1.0.3",
     "express-rate-limit": "^7.0.0",
     "jest": "^30.2.0",
-    "loqatevars": "^1.0.6",
     "madge": "^8.0.0",
     "npmcontext": "^1.0.4",
     "opencode-ai": "^1.1.19",

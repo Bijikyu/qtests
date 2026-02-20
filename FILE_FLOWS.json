@@ -1,10 +1,10 @@
 {
   "schemaVersion": "2.0",
-  "generatedAt": "2026-02-11T10:21:10.468Z",
-  "analysisId": "ae535bb5-860f-4012-ac0d-8589f6b17c24",
+  "generatedAt": "2026-02-20T05:45:53.783Z",
+  "analysisId": "c64d61f2-e052-4507-9de4-bd50439ecc60",
   "stats": {
-    "flowCount": 195,
-    "fileCount": 351
+    "flowCount": 189,
+    "fileCount": 352
   },
   "flows": [
     {
@@ -12,7 +12,7 @@
       "name": "jest-setup-1",
       "flowType": "primary",
       "summary": {
-        "fileCount": 36,
+        "fileCount": 49,
         "entryFile": "config/localVars.js",
         "entryRoleScore": 7,
         "dominantDirectories": [
@@ -21,15 +21,15 @@
             "fileCount": 9
           },
           {
-            "directory": "utils",
+            "directory": "lib/fileSystem",
             "fileCount": 6
           },
           {
-            "directory": "lib/fileSystem",
-            "fileCount": 5
+            "directory": "utils",
+            "fileCount": 6
           }
         ],
-        "internalDependencyCount": 4,
+        "internalDependencyCount": 3,
         "externalDependencyCount": 0
       },
       "files": [
@@ -170,6 +170,9 @@
           ],
           "exports": [
             "BaseMockModel",
+            "DeleteResult",
+            "QueryObject",
+            "UpdateResult",
             "mockCollections"
           ],
           "functions": [
@@ -193,6 +196,7 @@
             "../helpers/envManager.js"
           ],
           "exports": [
+            "DefaultEnv",
             "backupEnvVars",
             "configureEnv",
             "defaultEnv",
@@ -212,32 +216,6 @@
             "saveEnv",
             "setTestEnv",
             "validateEnvKey"
-          ],
-          "dependencies": [
-            "config/localVars.js"
-          ]
-        },
-        {
-          "path": "utils/testEnv/testMockFactory.ts",
-          "type": "Test File",
-          "roleScore": 0,
-          "imports": [
-            "../../config/localVars.js",
-            "@jest/globals",
-            "@tensorflow/tfjs-node",
-            "@vladmandic/face-api"
-          ],
-          "exports": [
-            "DEFAULT_TEST_CONFIG",
-            "TestConfig",
-            "TestMockFactory",
-            "createTestMocks",
-            "factory",
-            "setupTestEnvironment"
-          ],
-          "functions": [
-            "createTestMocks",
-            "setupTestEnvironment"
           ],
           "dependencies": [
             "config/localVars.js"
@@ -265,33 +243,16 @@
           "type": "Configuration",
           "roleScore": 7,
           "imports": [
-            "../utils/testing/jestSetupHelper",
+            "../utils/testing/jestSetupHelper.js",
             "./localVars.js",
             "@bijikyu/qtests/setup",
-            "@jest/globals",
-            "qerrors"
+            "@jest/globals"
           ],
           "exports": [
             "setupComplete"
           ],
           "dependencies": [
-            "utils/testing/jestSetupHelper.ts",
             "config/localVars.js"
-          ]
-        },
-        {
-          "path": "utils/testing/jestSetupHelper.ts",
-          "type": "Test File",
-          "roleScore": 4,
-          "exports": [
-            "clearJestMocks",
-            "configureJestGlobals",
-            "getJestRef"
-          ],
-          "functions": [
-            "clearJestMocks",
-            "configureJestGlobals",
-            "getJestRef"
           ]
         },
         {
@@ -300,9 +261,9 @@
           "roleScore": 0,
           "imports": [
             "../config/localVars.js",
+            "./qerrorsFallback.js",
             "ioredis",
             "node-cache",
-            "qerrors",
             "secure-json-parse"
           ],
           "exports": [
@@ -331,67 +292,6 @@
           ],
           "apiCalls": [
             "undefined.get"
-          ],
-          "dependencies": [
-            "config/localVars.js"
-          ]
-        },
-        {
-          "path": "lib/rateLimiter.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "../config/localVars.js",
-            "qerrors",
-            "rate-limiter-flexible"
-          ],
-          "exports": [
-            "DistributedRateLimiter",
-            "InMemoryRateLimiter",
-            "RateLimitConfig",
-            "RateLimitResult",
-            "RateLimitStats",
-            "RateLimiterAbstract",
-            "RateLimiterMemory",
-            "RateLimiterRedis",
-            "checkRateLimit",
-            "createDistributedRateLimiter",
-            "createInMemoryRateLimiter",
-            "default",
-            "getDistributedRateLimiter",
-            "getInMemoryRateLimiter",
-            "getRateLimitStats",
-            "resetRateLimitKey"
-          ],
-          "functions": [
-            "checkRateLimit",
-            "createDistributedRateLimiter",
-            "createInMemoryRateLimiter",
-            "getDistributedRateLimiter",
-            "getInMemoryRateLimiter",
-            "getRateLimitStats",
-            "resetRateLimitKey"
-          ],
-          "apiCalls": [
-            "limiter.delete"
-          ],
-          "dependencies": [
-            "config/localVars.js"
-          ]
-        },
-        {
-          "path": "lib/runnerScaffolder.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "../config/localVars.js",
-            "./fileSystem/index.js",
-            "./qerrorsFallback.js",
-            "fs",
-            "path"
-          ],
-          "exports": [
-            "RunnerScaffolder"
           ],
           "dependencies": [
             "config/localVars.js",
@@ -544,6 +444,31 @@
           ]
         },
         {
+          "path": "lib/fileSystem/fileWriting.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js",
+            "fs-extra"
+          ],
+          "exports": [
+            "ensureDir",
+            "ensureDirSync",
+            "fs",
+            "safeWriteFile",
+            "safeWriteFileSync"
+          ],
+          "functions": [
+            "ensureDir",
+            "ensureDirSync",
+            "safeWriteFile",
+            "safeWriteFileSync"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
           "path": "lib/fileSystem/managementUtils.ts",
           "type": "Code File",
           "roleScore": 4,
@@ -582,6 +507,32 @@
             "safeStats",
             "withFileErrorHandling",
             "withFileErrorHandlingSync"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "lib/httpMock/clientFactories.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js",
+            "./advancedMSWMock.js",
+            "./legacyAxiosImplementation.js",
+            "./mockTypes.js",
+            "./modernMSWMock.js",
+            "./userConfigurableAxiosMock.js"
+          ],
+          "exports": [
+            "createMockHttpClient",
+            "createSimpleMockClient",
+            "createUserConfigurableMock"
+          ],
+          "functions": [
+            "createMockHttpClient",
+            "createSimpleMockClient",
+            "createUserConfigurableMock"
           ],
           "dependencies": [
             "lib/qerrorsFallback.js"
@@ -627,6 +578,30 @@
           ]
         },
         {
+          "path": "lib/httpMock/serverFactories.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js",
+            "./mockTypes.js",
+            "module",
+            "msw",
+            "msw/node"
+          ],
+          "exports": [
+            "createCustomMockServer"
+          ],
+          "functions": [
+            "createCustomMockServer"
+          ],
+          "apiCalls": [
+            "http.undefined"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
           "path": "lib/httpMock/userConfigurableAxiosMock.ts",
           "type": "Code File",
           "roleScore": 7,
@@ -641,6 +616,66 @@
           ],
           "apiCalls": [
             "undefined.get"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "lib/memory/moduleCleanup.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js",
+            "module"
+          ],
+          "exports": [
+            "clearModuleCache"
+          ],
+          "functions": [
+            "clearModuleCache"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "lib/memory/snapshotManager.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js",
+            "./memoryTypes.js",
+            "perf_hooks"
+          ],
+          "exports": [
+            "MemorySnapshotManager"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "lib/security/SecurityPolicyManager.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js"
+          ],
+          "exports": [
+            "CORSConfig",
+            "CSPConfig",
+            "SecurityHeaders",
+            "SecurityPolicyManager",
+            "getCORSConfig",
+            "getCSP",
+            "getSecurityHeaders",
+            "securityPolicyManager"
+          ],
+          "functions": [
+            "getCORSConfig",
+            "getCSP",
+            "getSecurityHeaders"
           ],
           "dependencies": [
             "lib/qerrorsFallback.js"
@@ -674,6 +709,103 @@
             "createReferrerPolicyMiddleware",
             "createXContentTypeOptionsMiddleware",
             "createXFrameOptionsMiddleware"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "lib/testIsolation/databaseManager.ts",
+          "type": "Test File",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js"
+          ],
+          "exports": [
+            "closeAllDbConnections",
+            "trackDbConnection"
+          ],
+          "functions": [
+            "closeAllDbConnections",
+            "getIsolationState",
+            "trackDbConnection"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "lib/testIsolation/environmentManager.ts",
+          "type": "Test File",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js"
+          ],
+          "exports": [
+            "backupEnvironment",
+            "restoreEnvironment"
+          ],
+          "functions": [
+            "backupEnvironment",
+            "getIsolationState",
+            "restoreEnvironment"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "lib/testIsolation/serverManager.ts",
+          "type": "Test File",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js"
+          ],
+          "exports": [
+            "closeAllServers",
+            "trackServer"
+          ],
+          "functions": [
+            "closeAllServers",
+            "getIsolationState",
+            "trackServer"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "lib/utils/errorHandling.ts",
+          "type": "Utility",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js"
+          ],
+          "exports": [
+            "ErrorContext",
+            "ErrorHandlingOptions",
+            "createErrorResponse",
+            "getErrorMessage",
+            "getErrorType",
+            "handleAsyncError",
+            "handleError",
+            "handleMemoryError",
+            "handlePerformanceError",
+            "handleSecurityError",
+            "handleValidationError",
+            "retryWithBackoff"
+          ],
+          "functions": [
+            "createErrorResponse",
+            "getErrorMessage",
+            "getErrorType",
+            "handleAsyncError",
+            "handleError",
+            "handleMemoryError",
+            "handlePerformanceError",
+            "handleSecurityError",
+            "handleValidationError",
+            "retryWithBackoff"
           ],
           "dependencies": [
             "lib/qerrorsFallback.js"
@@ -722,6 +854,58 @@
           ]
         },
         {
+          "path": "lib/validation/htmlSanitization.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js"
+          ],
+          "exports": [
+            "dangerousPatterns",
+            "escapeHtml",
+            "hasDangerousPatterns",
+            "sanitizeString"
+          ],
+          "functions": [
+            "escapeHtml",
+            "hasDangerousPatterns",
+            "sanitizeString"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "lib/validation/streamingValidator.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js",
+            "./htmlSanitization.js",
+            "zod"
+          ],
+          "exports": [
+            "StreamingStringValidator",
+            "ValidationConfig",
+            "ValidationResult",
+            "createStreamingValidator",
+            "default",
+            "defaultValidator",
+            "relaxedValidator",
+            "strictValidator"
+          ],
+          "functions": [
+            "createStreamingValidator"
+          ],
+          "apiCalls": [
+            "undefined.delete",
+            "undefined.get"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
           "path": "lib/validation/validationLogic.ts",
           "type": "Code File",
           "roleScore": 0,
@@ -752,6 +936,75 @@
           ]
         },
         {
+          "path": "lib/validation/validationMiddleware.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "../qerrorsFallback.js",
+            "./streamingValidator.js"
+          ],
+          "exports": [
+            "streamingValidationMiddleware"
+          ],
+          "functions": [
+            "streamingValidationMiddleware"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "utils/testing/assertionHelper.ts",
+          "type": "Test File",
+          "roleScore": 4,
+          "imports": [
+            "../../lib/logUtils.js",
+            "../../lib/qerrorsFallback.js",
+            "../helpers/validation.js"
+          ],
+          "exports": [
+            "AssertionHelper"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "utils/testing/portAllocator.ts",
+          "type": "Test File",
+          "roleScore": 0,
+          "imports": [
+            "../../lib/qerrorsFallback.js",
+            "events",
+            "fs",
+            "net",
+            "path"
+          ],
+          "exports": [
+            "PortAllocator",
+            "allocatePort",
+            "cleanupPortAllocator",
+            "default",
+            "portAllocator",
+            "releaseAllPorts",
+            "releasePort"
+          ],
+          "functions": [
+            "allocatePort",
+            "cleanup",
+            "cleanupPortAllocator",
+            "releaseAllPorts",
+            "releasePort",
+            "setupProcessHandlers"
+          ],
+          "apiCalls": [
+            "undefined.delete"
+          ],
+          "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
           "path": "lib/advancedMemoryLeakDetector.ts",
           "type": "Code File",
           "roleScore": 0,
@@ -768,11 +1021,74 @@
           ]
         },
         {
+          "path": "lib/rateLimiter.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "../config/localVars.js",
+            "./qerrorsFallback.js",
+            "rate-limiter-flexible"
+          ],
+          "exports": [
+            "DistributedRateLimiter",
+            "InMemoryRateLimiter",
+            "RateLimitConfig",
+            "RateLimitResult",
+            "RateLimitStats",
+            "RateLimiterAbstract",
+            "RateLimiterMemory",
+            "RateLimiterRedis",
+            "checkRateLimit",
+            "createDistributedRateLimiter",
+            "createInMemoryRateLimiter",
+            "default",
+            "getDistributedRateLimiter",
+            "getInMemoryRateLimiter",
+            "getRateLimitStats",
+            "resetRateLimitKey"
+          ],
+          "functions": [
+            "checkRateLimit",
+            "createDistributedRateLimiter",
+            "createInMemoryRateLimiter",
+            "getDistributedRateLimiter",
+            "getInMemoryRateLimiter",
+            "getRateLimitStats",
+            "resetRateLimitKey"
+          ],
+          "apiCalls": [
+            "limiter.delete"
+          ],
+          "dependencies": [
+            "config/localVars.js",
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "lib/runnerScaffolder.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "../config/localVars.js",
+            "./fileSystem/index.js",
+            "./qerrorsFallback.js",
+            "fs",
+            "path"
+          ],
+          "exports": [
+            "RunnerScaffolder"
+          ],
+          "dependencies": [
+            "config/localVars.js",
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
           "path": "lib/waitForCondition.ts",
           "type": "Code File",
           "roleScore": 0,
           "imports": [
-            "./qerrorsFallback"
+            "./qerrorsFallback.js"
           ],
           "exports": [
             "WaitForConditionOptions",
@@ -808,6 +1124,37 @@
             "getMemoryUsage"
           ],
           "dependencies": [
+            "lib/qerrorsFallback.js"
+          ]
+        },
+        {
+          "path": "utils/offlineMode.ts",
+          "type": "Utility",
+          "roleScore": 0,
+          "imports": [
+            "../config/localVars.js",
+            "../lib/qerrorsFallback.js"
+          ],
+          "exports": [
+            "clearOfflineCache",
+            "createEnvironmentAdapters",
+            "getAxiosModule",
+            "getEnvironmentState",
+            "getQerrors",
+            "isOfflineMode",
+            "setOfflineMode"
+          ],
+          "functions": [
+            "clearOfflineCache",
+            "createEnvironmentAdapters",
+            "getAxiosModule",
+            "getEnvironmentState",
+            "getQerrors",
+            "isOfflineMode",
+            "setOfflineMode"
+          ],
+          "dependencies": [
+            "config/localVars.js",
             "lib/qerrorsFallback.js"
           ]
         },
@@ -1056,37 +1403,6 @@
           "dependencies": [
             "config/localVars.js"
           ]
-        },
-        {
-          "path": "utils/offlineMode.ts",
-          "type": "Utility",
-          "roleScore": 0,
-          "imports": [
-            "../config/localVars.js",
-            "path",
-            "qerrors"
-          ],
-          "exports": [
-            "clearOfflineCache",
-            "createEnvironmentAdapters",
-            "getAxiosModule",
-            "getEnvironmentState",
-            "getQerrors",
-            "isOfflineMode",
-            "setOfflineMode"
-          ],
-          "functions": [
-            "clearOfflineCache",
-            "createEnvironmentAdapters",
-            "getAxiosModule",
-            "getEnvironmentState",
-            "getQerrors",
-            "isOfflineMode",
-            "setOfflineMode"
-          ],
-          "dependencies": [
-            "config/localVars.js"
-          ]
         }
       ]
     },
@@ -1123,10 +1439,10 @@
             "publishConfig",
             "type",
             "main",
+            "types",
+            "engines",
             "repository",
-            "bugs",
-            "homepage",
-            "exports"
+            "bugs"
           ]
         },
         {
@@ -1173,6 +1489,7 @@
             "./lib/errorHandling/index.js",
             "./lib/fileSystem/fileReading.js",
             "./lib/fileSystem/fileWriting.js",
+            "./lib/mockSystem.js",
             "./lib/polyfills/index.js",
             "./lib/setup.js",
             "./lib/stubs.js",
@@ -1203,6 +1520,7 @@
             "createLocalCache",
             "createMockApp",
             "debugMode",
+            "default",
             "defaultMockHeaders",
             "defaultMockResponse",
             "defaultMockStatusCode",
@@ -1238,6 +1556,7 @@
             "legacyWarnings",
             "matchMedia",
             "maxConcurrentTests",
+            "mock",
             "mockConsole",
             "nodeEnv",
             "offlineMode",
@@ -2276,134 +2595,7 @@
     },
     {
       "id": 8,
-      "name": "cleanupOperations-8",
-      "flowType": "primary",
-      "summary": {
-        "fileCount": 5,
-        "entryFile": "lib/memory/monitoringOrchestration.ts",
-        "entryRoleScore": 0,
-        "dominantDirectories": [
-          {
-            "directory": "lib/memory",
-            "fileCount": 5
-          }
-        ],
-        "internalDependencyCount": 4,
-        "externalDependencyCount": 0,
-        "crossFlow": {
-          "importsFrom": [
-            "Similarity-errorTypes"
-          ]
-        }
-      },
-      "files": [
-        {
-          "path": "lib/memory/monitoringOrchestration.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "./leakDetector.js",
-            "./snapshotManager.js"
-          ],
-          "exports": [
-            "MemoryLeakDetector",
-            "MemorySnapshotManager",
-            "checkpointMemory",
-            "detectMemoryLeaks",
-            "endMemoryMonitoring",
-            "memoryMonitor",
-            "startMemoryMonitoring"
-          ],
-          "functions": [
-            "checkpointMemory",
-            "detectMemoryLeaks",
-            "endMemoryMonitoring",
-            "startMemoryMonitoring"
-          ]
-        },
-        {
-          "path": "lib/memory/cleanupOperations.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "../utils/errorHandling.js",
-            "../utils/memoryManagement.js",
-            "./garbageCollection",
-            "./globalCleanup",
-            "./moduleCleanup",
-            "./monitoringOrchestration"
-          ],
-          "exports": [
-            "aggressiveCleanup",
-            "cleanupWithMemoryTracking"
-          ],
-          "functions": [
-            "aggressiveCleanup",
-            "cleanupWithMemoryTracking"
-          ],
-          "dependencies": [
-            "lib/utils/errorHandling.js",
-            "lib/memory/garbageCollection.ts",
-            "lib/memory/globalCleanup.ts",
-            "lib/memory/moduleCleanup.ts",
-            "lib/memory/monitoringOrchestration.ts"
-          ]
-        },
-        {
-          "path": "lib/memory/moduleCleanup.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "module",
-            "qerrors"
-          ],
-          "exports": [
-            "clearModuleCache"
-          ],
-          "functions": [
-            "clearModuleCache"
-          ]
-        },
-        {
-          "path": "lib/memory/globalCleanup.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "qerrors"
-          ],
-          "exports": [
-            "clearGlobalRefs",
-            "quickCleanup"
-          ],
-          "functions": [
-            "cleanupAndResolve",
-            "cleanupSingleRef",
-            "clearGlobalRefs",
-            "quickCleanup"
-          ]
-        },
-        {
-          "path": "lib/memory/garbageCollection.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "exports": [
-            "forceGC",
-            "getGCMetrics",
-            "isUnderMemoryPressure",
-            "smartGC"
-          ],
-          "functions": [
-            "forceGC",
-            "getGCMetrics",
-            "isUnderMemoryPressure",
-            "smartGC"
-          ]
-        }
-      ]
-    },
-    {
-      "id": 9,
-      "name": "index-9",
+      "name": "index-8",
       "flowType": "primary",
       "summary": {
         "fileCount": 9,
@@ -2594,8 +2786,8 @@
       ]
     },
     {
-      "id": 10,
-      "name": "apiRoutes-10",
+      "id": 9,
+      "name": "apiRoutes-9",
       "flowType": "primary",
       "summary": {
         "fileCount": 2,
@@ -2680,8 +2872,8 @@
       ]
     },
     {
-      "id": 11,
-      "name": "main-11",
+      "id": 10,
+      "name": "main-10",
       "flowType": "primary",
       "summary": {
         "fileCount": 2,
@@ -2746,7 +2938,7 @@
       ]
     },
     {
-      "id": 12,
+      "id": 11,
       "name": "Similarity-demo",
       "flowType": "similarity",
       "summary": {
@@ -2778,7 +2970,7 @@
       ]
     },
     {
-      "id": 13,
+      "id": 12,
       "name": "Similarity-init",
       "flowType": "similarity",
       "summary": {
@@ -2806,7 +2998,7 @@
       ]
     },
     {
-      "id": 14,
+      "id": 13,
       "name": "Similarity-axios",
       "flowType": "similarity",
       "summary": {
@@ -2863,7 +3055,7 @@
       ]
     },
     {
-      "id": 15,
+      "id": 14,
       "name": "Similarity-stubs",
       "flowType": "similarity",
       "summary": {
@@ -2898,7 +3090,7 @@
       ]
     },
     {
-      "id": 16,
+      "id": 15,
       "name": "Similarity-setup",
       "flowType": "similarity",
       "summary": {
@@ -2929,7 +3121,7 @@
       ]
     },
     {
-      "id": 17,
+      "id": 16,
       "name": "Similarity-utils-stubbing-types",
       "flowType": "similarity",
       "summary": {
@@ -2965,7 +3157,7 @@
       ]
     },
     {
-      "id": 18,
+      "id": 17,
       "name": "Similarity-lib-validation-index",
       "flowType": "similarity",
       "summary": {
@@ -3045,9 +3237,6 @@
           "path": "lib/polyfills/index.ts",
           "type": "Code File",
           "roleScore": 10,
-          "imports": [
-            "happy-dom"
-          ],
           "exports": [
             "ClipboardAPI",
             "IntersectionObserver",
@@ -3154,7 +3343,7 @@
       ]
     },
     {
-      "id": 19,
+      "id": 18,
       "name": "Similarity-demo-client-index",
       "flowType": "similarity",
       "summary": {
@@ -3186,7 +3375,7 @@
       ]
     },
     {
-      "id": 20,
+      "id": 19,
       "name": "Similarity-replit",
       "flowType": "similarity",
       "summary": {
@@ -3218,7 +3407,7 @@
       ]
     },
     {
-      "id": 21,
+      "id": 20,
       "name": "Similarity-README",
       "flowType": "similarity",
       "summary": {
@@ -3248,7 +3437,7 @@
           "type": "Documentation",
           "roleScore": 0,
           "docSummary": [
-            "A comprehensive Node.js testing framework with minimal production dependencies. Provides intelligent integration test generation, method stubbing, console mocking, error handling, performance testing, and drop-in replacements for popular modules. **Now with ES Module and TypeScript support!**",
+            "A Node.js testing utility focused on fast, isolated unit tests: method stubbing, console mocking, environment management, and drop-in stubs for common modules (axios, winston). Includes a Jest runner/config scaffolder. **ES Module and TypeScript support included.**",
             "🎉 **Latest Updates (September 2025)**:",
             "- ✅ ESM + TypeScript Jest harness: runner always loads `config/jest.config.mjs` and passes `--passWithNoTests` for stable CI",
             "- ✅ HTTP testing shim alignment: TS shim re-exports a working JS shim with chainable `.send()` and proper `req.body`",
@@ -3264,18 +3453,13 @@
             "Console Mocking",
             "Environment Management",
             "🧪 Unified Test Runner (API‑Only)",
-            "🤖 Automatic Test Generation",
-            "CLI Usage (TypeScript ESM)",
-            "Generate tests for entire project",
-            "Custom source directory",
-            "Custom source and test directories",
-            "Only integration tests, preview without writing",
-            "Restrict to TypeScript files and skip existing tests",
-            "Use AST mode (requires typescript) and allow overwrites of generated tests",
-            "Force React mode and add router wrapper",
-            "Backward-compatible alias",
-            "(if your environment still references the old name)",
-            "Programmatic Usage (TypeScript ESM)",
+            "🔧 Runner/Config Scaffolding",
+            "CLI Usage",
+            "Scaffold runner + Jest config (non-destructive)",
+            "Preview planned writes",
+            "Overwrite existing scaffolded files",
+            "Update package.json scripts.test to use the runner",
+            "Install ts-jest + typescript if missing",
             "Custom Module Stubs (Advanced)",
             "🔌 Module Stubs",
             "Axios Stub",
@@ -3293,7 +3477,7 @@
             "Integration with Jest",
             "📚 API Reference",
             "Core Methods",
-            "Test Generation",
+            "Scaffolding CLI",
             "Test Runner",
             "Error Handling & Performance",
             "Advanced Utilities",
@@ -3303,10 +3487,7 @@
             "🎯 Testing Philosophy",
             "🎯 Best Practices",
             "🧰 CLI Reference",
-            "qtests-generate (Primary CLI)",
-            "React/Hook Templates and Providers",
-            "File Extension Strategy & JSX",
-            "Safety + Sanity Filters",
+            "qtests-generate (Scaffolder)",
             "qtests runner",
             "1. Always Load Setup First",
             "2. Clean Up After Tests",
@@ -3359,7 +3540,7 @@
       ]
     },
     {
-      "id": 22,
+      "id": 21,
       "name": "Similarity-AGENTS",
       "flowType": "similarity",
       "summary": {
@@ -3428,7 +3609,7 @@
       ]
     },
     {
-      "id": 23,
+      "id": 22,
       "name": "Similarity-verify",
       "flowType": "similarity",
       "summary": {
@@ -3472,7 +3653,7 @@
       ]
     },
     {
-      "id": 24,
+      "id": 23,
       "name": "Similarity-spying",
       "flowType": "similarity",
       "summary": {
@@ -3509,11 +3690,11 @@
       ]
     },
     {
-      "id": 25,
+      "id": 24,
       "name": "Similarity-testEnv",
       "flowType": "similarity",
       "summary": {
-        "fileCount": 4,
+        "fileCount": 5,
         "entryFile": "utils/testHelpers.ts",
         "entryRoleScore": 4,
         "dominantDirectories": [
@@ -3523,7 +3704,7 @@
           },
           {
             "directory": "utils/testEnv",
-            "fileCount": 1
+            "fileCount": 2
           }
         ],
         "internalDependencyCount": 0,
@@ -3615,6 +3796,24 @@
           ]
         },
         {
+          "path": "utils/testEnv/testMockFactory.ts",
+          "type": "Test File",
+          "roleScore": 0,
+          "exports": [
+            "DEFAULT_TEST_CONFIG",
+            "TestConfig",
+            "TestMockFactory",
+            "createTestMocks",
+            "factory",
+            "setupTestEnvironment"
+          ],
+          "functions": [
+            "createTestMocks",
+            "getJestRef",
+            "setupTestEnvironment"
+          ]
+        },
+        {
           "path": "utils/testEnv/testInitializer.ts",
           "type": "Test File",
           "roleScore": 0,
@@ -3635,7 +3834,7 @@
       ]
     },
     {
-      "id": 26,
+      "id": 25,
       "name": "Similarity-summary",
       "flowType": "similarity",
       "summary": {
@@ -3761,7 +3960,7 @@
       ]
     },
     {
-      "id": 27,
+      "id": 26,
       "name": "Similarity-winston",
       "flowType": "similarity",
       "summary": {
@@ -3841,7 +4040,7 @@
       ]
     },
     {
-      "id": 28,
+      "id": 27,
       "name": "Similarity-logging",
       "flowType": "similarity",
       "summary": {
@@ -3865,6 +4064,7 @@
           "imports": [
             "crypto",
             "events",
+            "os",
             "winston"
           ],
           "exports": [
@@ -3929,7 +4129,7 @@
       ]
     },
     {
-      "id": 29,
+      "id": 28,
       "name": "Similarity-package",
       "flowType": "similarity",
       "summary": {
@@ -3992,7 +4192,7 @@
       ]
     },
     {
-      "id": 30,
+      "id": 29,
       "name": "Similarity-SUMMARY",
       "flowType": "similarity",
       "summary": {
@@ -4032,7 +4232,7 @@
       ]
     },
     {
-      "id": 31,
+      "id": 30,
       "name": "Similarity-tsconfig",
       "flowType": "similarity",
       "summary": {
@@ -4101,7 +4301,7 @@
       ]
     },
     {
-      "id": 32,
+      "id": 31,
       "name": "Similarity-opencode",
       "flowType": "similarity",
       "summary": {
@@ -4131,7 +4331,7 @@
       ]
     },
     {
-      "id": 33,
+      "id": 32,
       "name": "Similarity-SECURITY",
       "flowType": "similarity",
       "summary": {
@@ -4259,7 +4459,7 @@
       ]
     },
     {
-      "id": 34,
+      "id": 33,
       "name": "Similarity-httpTest",
       "flowType": "similarity",
       "summary": {
@@ -4309,7 +4509,7 @@
       ]
     },
     {
-      "id": 35,
+      "id": 34,
       "name": "Similarity-loadTest",
       "flowType": "similarity",
       "summary": {
@@ -4354,7 +4554,7 @@
       ]
     },
     {
-      "id": 36,
+      "id": 35,
       "name": "Similarity-envUtils",
       "flowType": "similarity",
       "summary": {
@@ -4389,7 +4589,7 @@
       ]
     },
     {
-      "id": 37,
+      "id": 36,
       "name": "Similarity-mongoose",
       "flowType": "similarity",
       "summary": {
@@ -4418,7 +4618,7 @@
       ]
     },
     {
-      "id": 38,
+      "id": 37,
       "name": "Similarity-fileMock",
       "flowType": "similarity",
       "summary": {
@@ -4443,7 +4643,7 @@
       ]
     },
     {
-      "id": 39,
+      "id": 38,
       "name": "Similarity-sendEmail",
       "flowType": "similarity",
       "summary": {
@@ -4490,7 +4690,7 @@
       ]
     },
     {
-      "id": 40,
+      "id": 39,
       "name": "Similarity-broadcast",
       "flowType": "similarity",
       "summary": {
@@ -4518,7 +4718,7 @@
       ]
     },
     {
-      "id": 41,
+      "id": 40,
       "name": "Similarity-testUtils",
       "flowType": "similarity",
       "summary": {
@@ -4593,7 +4793,7 @@
       ]
     },
     {
-      "id": 42,
+      "id": 41,
       "name": "Similarity-httpUtils",
       "flowType": "similarity",
       "summary": {
@@ -4628,7 +4828,7 @@
       ]
     },
     {
-      "id": 43,
+      "id": 42,
       "name": "Similarity-dataUtils",
       "flowType": "similarity",
       "summary": {
@@ -4661,7 +4861,7 @@
       ]
     },
     {
-      "id": 44,
+      "id": 43,
       "name": "Similarity-coreUtils",
       "flowType": "similarity",
       "summary": {
@@ -4693,7 +4893,7 @@
       ]
     },
     {
-      "id": 45,
+      "id": 44,
       "name": "Similarity-styleMock",
       "flowType": "similarity",
       "summary": {
@@ -4718,7 +4918,7 @@
       ]
     },
     {
-      "id": 46,
+      "id": 45,
       "name": "Similarity-qerrors-d",
       "flowType": "similarity",
       "summary": {
@@ -4752,7 +4952,7 @@
       ]
     },
     {
-      "id": 47,
+      "id": 46,
       "name": "Similarity-mockUtils",
       "flowType": "similarity",
       "summary": {
@@ -4806,7 +5006,7 @@
       ]
     },
     {
-      "id": 48,
+      "id": 47,
       "name": "Similarity-dataTypes",
       "flowType": "similarity",
       "summary": {
@@ -4860,7 +5060,7 @@
       ]
     },
     {
-      "id": 49,
+      "id": 48,
       "name": "Similarity-utilities",
       "flowType": "similarity",
       "summary": {
@@ -4898,7 +5098,7 @@
       ]
     },
     {
-      "id": 50,
+      "id": 49,
       "name": "Similarity-timeUtils",
       "flowType": "similarity",
       "summary": {
@@ -4939,7 +5139,7 @@
       ]
     },
     {
-      "id": 51,
+      "id": 50,
       "name": "Similarity-jsonUtils",
       "flowType": "similarity",
       "summary": {
@@ -5014,7 +5214,7 @@
       ]
     },
     {
-      "id": 52,
+      "id": 51,
       "name": "Similarity-mockTypes",
       "flowType": "similarity",
       "summary": {
@@ -5048,7 +5248,7 @@
       ]
     },
     {
-      "id": 53,
+      "id": 52,
       "name": "Similarity-stubMethod",
       "flowType": "similarity",
       "summary": {
@@ -5110,7 +5310,7 @@
       ]
     },
     {
-      "id": 54,
+      "id": 53,
       "name": "Similarity-mockModels",
       "flowType": "similarity",
       "summary": {
@@ -5185,7 +5385,7 @@
       ]
     },
     {
-      "id": 55,
+      "id": 54,
       "name": "Similarity-index-test",
       "flowType": "similarity",
       "summary": {
@@ -5238,7 +5438,7 @@
       ]
     },
     {
-      "id": 56,
+      "id": 55,
       "name": "Similarity-kill-agent",
       "flowType": "similarity",
       "summary": {
@@ -5275,16 +5475,20 @@
       ]
     },
     {
-      "id": 57,
+      "id": 56,
       "name": "Similarity-monitoring",
       "flowType": "similarity",
       "summary": {
-        "fileCount": 1,
+        "fileCount": 2,
         "entryFile": "lib/monitoring.ts",
         "entryRoleScore": 0,
         "dominantDirectories": [
           {
             "directory": "lib",
+            "fileCount": 1
+          },
+          {
+            "directory": "lib/memory",
             "fileCount": 1
           }
         ],
@@ -5299,7 +5503,8 @@
           "imports": [
             "../utils/helpers/envManager.js",
             "./circuitBreaker.js",
-            "events"
+            "events",
+            "os"
           ],
           "exports": [
             "Alert",
@@ -5315,11 +5520,35 @@
           "apiCalls": [
             "fetch.call"
           ]
+        },
+        {
+          "path": "lib/memory/monitoringOrchestration.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "./leakDetector.js",
+            "./snapshotManager.js"
+          ],
+          "exports": [
+            "MemoryLeakDetector",
+            "MemorySnapshotManager",
+            "checkpointMemory",
+            "detectMemoryLeaks",
+            "endMemoryMonitoring",
+            "memoryMonitor",
+            "startMemoryMonitoring"
+          ],
+          "functions": [
+            "checkpointMemory",
+            "detectMemoryLeaks",
+            "endMemoryMonitoring",
+            "startMemoryMonitoring"
+          ]
         }
       ]
     },
     {
-      "id": 58,
+      "id": 57,
       "name": "Similarity-PUBLISHING",
       "flowType": "similarity",
       "summary": {
@@ -5358,7 +5587,7 @@
       ]
     },
     {
-      "id": 59,
+      "id": 58,
       "name": "Similarity-axiosMocks",
       "flowType": "similarity",
       "summary": {
@@ -5396,7 +5625,7 @@
       ]
     },
     {
-      "id": 60,
+      "id": 59,
       "name": "Similarity-validation",
       "flowType": "similarity",
       "summary": {
@@ -5434,7 +5663,7 @@
       ]
     },
     {
-      "id": 61,
+      "id": 60,
       "name": "Similarity-envManager",
       "flowType": "similarity",
       "summary": {
@@ -5486,7 +5715,7 @@
       ]
     },
     {
-      "id": 62,
+      "id": 61,
       "name": "Similarity-jestMocker",
       "flowType": "similarity",
       "summary": {
@@ -5526,7 +5755,7 @@
       ]
     },
     {
-      "id": 63,
+      "id": 62,
       "name": "Similarity-asyncUtils",
       "flowType": "similarity",
       "summary": {
@@ -5592,7 +5821,7 @@
       ]
     },
     {
-      "id": 64,
+      "id": 63,
       "name": "Similarity-jestWorker",
       "flowType": "similarity",
       "summary": {
@@ -5625,7 +5854,7 @@
       ]
     },
     {
-      "id": 65,
+      "id": 64,
       "name": "Similarity-decorators",
       "flowType": "similarity",
       "summary": {
@@ -5687,11 +5916,11 @@
       ]
     },
     {
-      "id": 66,
+      "id": 65,
       "name": "Similarity-errorTypes",
       "flowType": "similarity",
       "summary": {
-        "fileCount": 6,
+        "fileCount": 5,
         "entryFile": "lib/errorHandling/errorTypes.ts",
         "entryRoleScore": 0,
         "dominantDirectories": [
@@ -5701,20 +5930,20 @@
           },
           {
             "directory": "lib/utils",
-            "fileCount": 2
+            "fileCount": 1
           }
         ],
         "internalDependencyCount": 0,
         "externalDependencyCount": 0,
         "crossFlow": {
           "importedBy": [
-            "cleanupOperations-8",
             "Similarity-timingUtils",
             "Similarity-leakDetector",
             "Similarity-commonPatterns",
             "Similarity-memoryManagement",
             "Similarity-validationSchemas",
             "Similarity-httpMockFramework",
+            "Similarity-cleanupOperations",
             "Similarity-errorHandling-test",
             "Similarity-fileSystemFramework"
           ]
@@ -5754,40 +5983,6 @@
             "safeExecute",
             "withAsyncErrorLogging",
             "withErrorLogging"
-          ]
-        },
-        {
-          "path": "lib/utils/errorHandling.ts",
-          "type": "Utility",
-          "roleScore": 0,
-          "imports": [
-            "qerrors"
-          ],
-          "exports": [
-            "ErrorContext",
-            "ErrorHandlingOptions",
-            "createErrorResponse",
-            "getErrorMessage",
-            "getErrorType",
-            "handleAsyncError",
-            "handleError",
-            "handleMemoryError",
-            "handlePerformanceError",
-            "handleSecurityError",
-            "handleValidationError",
-            "retryWithBackoff"
-          ],
-          "functions": [
-            "createErrorResponse",
-            "getErrorMessage",
-            "getErrorType",
-            "handleAsyncError",
-            "handleError",
-            "handleMemoryError",
-            "handlePerformanceError",
-            "handleSecurityError",
-            "handleValidationError",
-            "retryWithBackoff"
           ]
         },
         {
@@ -5840,7 +6035,7 @@
       ]
     },
     {
-      "id": 67,
+      "id": 66,
       "name": "Similarity-jest-setup",
       "flowType": "similarity",
       "summary": {
@@ -5898,7 +6093,7 @@
       ]
     },
     {
-      "id": 68,
+      "id": 67,
       "name": "Similarity-spawn-agent",
       "flowType": "similarity",
       "summary": {
@@ -5928,7 +6123,7 @@
       ]
     },
     {
-      "id": 69,
+      "id": 68,
       "name": "Similarity-list-agents",
       "flowType": "similarity",
       "summary": {
@@ -5957,7 +6152,7 @@
       ]
     },
     {
-      "id": 70,
+      "id": 69,
       "name": "Similarity-scalableApi",
       "flowType": "similarity",
       "summary": {
@@ -6006,7 +6201,8 @@
           "type": "Code File",
           "roleScore": 0,
           "imports": [
-            "events"
+            "events",
+            "os"
           ],
           "exports": [
             "DatabaseConfig",
@@ -6028,7 +6224,7 @@
       ]
     },
     {
-      "id": 71,
+      "id": 70,
       "name": "Similarity-spyAttacher",
       "flowType": "similarity",
       "summary": {
@@ -6064,7 +6260,7 @@
       ]
     },
     {
-      "id": 72,
+      "id": 71,
       "name": "Similarity-mockFactory",
       "flowType": "similarity",
       "summary": {
@@ -6116,7 +6312,7 @@
       ]
     },
     {
-      "id": 73,
+      "id": 72,
       "name": "Similarity-apiLogModel",
       "flowType": "similarity",
       "summary": {
@@ -6160,7 +6356,7 @@
       ]
     },
     {
-      "id": 74,
+      "id": 73,
       "name": "Similarity-stringUtils",
       "flowType": "similarity",
       "summary": {
@@ -6197,7 +6393,7 @@
       ]
     },
     {
-      "id": 75,
+      "id": 74,
       "name": "Similarity-qerrorsStub",
       "flowType": "similarity",
       "summary": {
@@ -6228,7 +6424,7 @@
       ]
     },
     {
-      "id": 76,
+      "id": 75,
       "name": "Similarity-emailSender",
       "flowType": "similarity",
       "summary": {
@@ -6341,7 +6537,7 @@
       ]
     },
     {
-      "id": 77,
+      "id": 76,
       "name": "Similarity-esm-globals",
       "flowType": "similarity",
       "summary": {
@@ -6380,7 +6576,7 @@
       ]
     },
     {
-      "id": 78,
+      "id": 77,
       "name": "Similarity-timingUtils",
       "flowType": "similarity",
       "summary": {
@@ -6470,7 +6666,7 @@
       ]
     },
     {
-      "id": 79,
+      "id": 78,
       "name": "Similarity-mockManager",
       "flowType": "similarity",
       "summary": {
@@ -6506,7 +6702,7 @@
       ]
     },
     {
-      "id": 80,
+      "id": 79,
       "name": "Similarity-memoryTypes",
       "flowType": "similarity",
       "summary": {
@@ -6551,7 +6747,7 @@
       ]
     },
     {
-      "id": 81,
+      "id": 80,
       "name": "Similarity-coreWrapper",
       "flowType": "similarity",
       "summary": {
@@ -6587,49 +6783,7 @@
       ]
     },
     {
-      "id": 82,
-      "name": "Similarity-fileWriting",
-      "flowType": "similarity",
-      "summary": {
-        "fileCount": 1,
-        "entryFile": "lib/fileSystem/fileWriting.ts",
-        "entryRoleScore": 0,
-        "dominantDirectories": [
-          {
-            "directory": "lib/fileSystem",
-            "fileCount": 1
-          }
-        ],
-        "internalDependencyCount": 0,
-        "externalDependencyCount": 0
-      },
-      "files": [
-        {
-          "path": "lib/fileSystem/fileWriting.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "fs-extra",
-            "qerrors"
-          ],
-          "exports": [
-            "ensureDir",
-            "ensureDirSync",
-            "fs",
-            "safeWriteFile",
-            "safeWriteFileSync"
-          ],
-          "functions": [
-            "ensureDir",
-            "ensureDirSync",
-            "safeWriteFile",
-            "safeWriteFileSync"
-          ]
-        }
-      ]
-    },
-    {
-      "id": 83,
+      "id": 81,
       "name": "Similarity-vite-config",
       "flowType": "similarity",
       "summary": {
@@ -6661,7 +6815,7 @@
       ]
     },
     {
-      "id": 84,
+      "id": 82,
       "name": "Similarity-runTestSuite",
       "flowType": "similarity",
       "summary": {
@@ -6696,7 +6850,7 @@
       ]
     },
     {
-      "id": 85,
+      "id": 83,
       "name": "Similarity-qtestsConfig",
       "flowType": "similarity",
       "summary": {
@@ -6735,7 +6889,7 @@
       ]
     },
     {
-      "id": 86,
+      "id": 84,
       "name": "Similarity-serviceMocks",
       "flowType": "similarity",
       "summary": {
@@ -6756,11 +6910,9 @@
           "path": "utils/testEnv/serviceMocks.ts",
           "type": "Test File",
           "roleScore": 0,
-          "imports": [
-            "@jest/globals"
-          ],
           "exports": [
             "DEFAULT_MOCK_DATA",
+            "JestMockLike",
             "MockNodemailerResult",
             "MockNodemailerTransport",
             "MockOpenAIResponse",
@@ -6779,13 +6931,14 @@
             "createMockNodemailer",
             "createMockOpenAI",
             "createMockWhois",
+            "getJestRef",
             "setupManualMocks"
           ]
         }
       ]
     },
     {
-      "id": 87,
+      "id": 85,
       "name": "Similarity-verification",
       "flowType": "similarity",
       "summary": {
@@ -6823,7 +6976,7 @@
       ]
     },
     {
-      "id": 88,
+      "id": 86,
       "name": "Similarity-mockCreation",
       "flowType": "similarity",
       "summary": {
@@ -6855,7 +7008,7 @@
       ]
     },
     {
-      "id": 89,
+      "id": 87,
       "name": "Similarity-modelFactory",
       "flowType": "similarity",
       "summary": {
@@ -6900,7 +7053,7 @@
       ]
     },
     {
-      "id": 90,
+      "id": 88,
       "name": "Similarity-mockResponse",
       "flowType": "similarity",
       "summary": {
@@ -6942,7 +7095,7 @@
       ]
     },
     {
-      "id": 91,
+      "id": 89,
       "name": "Similarity-promiseUtils",
       "flowType": "similarity",
       "summary": {
@@ -6977,7 +7130,7 @@
       ]
     },
     {
-      "id": 92,
+      "id": 90,
       "name": "Similarity-keyGenerator",
       "flowType": "similarity",
       "summary": {
@@ -7011,7 +7164,7 @@
       ]
     },
     {
-      "id": 93,
+      "id": 91,
       "name": "Similarity-consoleUtils",
       "flowType": "similarity",
       "summary": {
@@ -7060,7 +7213,7 @@
       ]
     },
     {
-      "id": 94,
+      "id": 92,
       "name": "Similarity-basicSchemas",
       "flowType": "similarity",
       "summary": {
@@ -7094,7 +7247,7 @@
       ]
     },
     {
-      "id": 95,
+      "id": 93,
       "name": "Similarity-leakDetector",
       "flowType": "similarity",
       "summary": {
@@ -7135,7 +7288,7 @@
       ]
     },
     {
-      "id": 96,
+      "id": 94,
       "name": "Similarity-readingUtils",
       "flowType": "similarity",
       "summary": {
@@ -7172,7 +7325,7 @@
       ]
     },
     {
-      "id": 97,
+      "id": 95,
       "name": "Similarity-send-to-agent",
       "flowType": "similarity",
       "summary": {
@@ -7200,7 +7353,7 @@
       ]
     },
     {
-      "id": 98,
+      "id": 96,
       "name": "Similarity-API-REFERENCE",
       "flowType": "similarity",
       "summary": {
@@ -7274,59 +7427,7 @@
       ]
     },
     {
-      "id": 99,
-      "name": "Similarity-portAllocator",
-      "flowType": "similarity",
-      "summary": {
-        "fileCount": 1,
-        "entryFile": "utils/testing/portAllocator.ts",
-        "entryRoleScore": 0,
-        "dominantDirectories": [
-          {
-            "directory": "utils/testing",
-            "fileCount": 1
-          }
-        ],
-        "internalDependencyCount": 0,
-        "externalDependencyCount": 0
-      },
-      "files": [
-        {
-          "path": "utils/testing/portAllocator.ts",
-          "type": "Test File",
-          "roleScore": 0,
-          "imports": [
-            "events",
-            "fs",
-            "net",
-            "path",
-            "qerrors"
-          ],
-          "exports": [
-            "PortAllocator",
-            "allocatePort",
-            "cleanupPortAllocator",
-            "default",
-            "portAllocator",
-            "releaseAllPorts",
-            "releasePort"
-          ],
-          "functions": [
-            "allocatePort",
-            "cleanup",
-            "cleanupPortAllocator",
-            "releaseAllPorts",
-            "releasePort",
-            "setupProcessHandlers"
-          ],
-          "apiCalls": [
-            "undefined.delete"
-          ]
-        }
-      ]
-    },
-    {
-      "id": 100,
+      "id": 97,
       "name": "Similarity-functionMocks",
       "flowType": "similarity",
       "summary": {
@@ -7362,7 +7463,7 @@
       ]
     },
     {
-      "id": 101,
+      "id": 98,
       "name": "Similarity-safeExecution",
       "flowType": "similarity",
       "summary": {
@@ -7397,44 +7498,7 @@
       ]
     },
     {
-      "id": 102,
-      "name": "Similarity-serverManager",
-      "flowType": "similarity",
-      "summary": {
-        "fileCount": 1,
-        "entryFile": "lib/testIsolation/serverManager.ts",
-        "entryRoleScore": 0,
-        "dominantDirectories": [
-          {
-            "directory": "lib/testIsolation",
-            "fileCount": 1
-          }
-        ],
-        "internalDependencyCount": 0,
-        "externalDependencyCount": 0
-      },
-      "files": [
-        {
-          "path": "lib/testIsolation/serverManager.ts",
-          "type": "Test File",
-          "roleScore": 0,
-          "imports": [
-            "qerrors"
-          ],
-          "exports": [
-            "closeAllServers",
-            "trackServer"
-          ],
-          "functions": [
-            "closeAllServers",
-            "getIsolationState",
-            "trackServer"
-          ]
-        }
-      ]
-    },
-    {
-      "id": 103,
+      "id": 99,
       "name": "Similarity-pathValidator",
       "flowType": "similarity",
       "summary": {
@@ -7492,17 +7556,17 @@
       ]
     },
     {
-      "id": 104,
+      "id": 100,
       "name": "Similarity-SecurityUtils",
       "flowType": "similarity",
       "summary": {
-        "fileCount": 3,
+        "fileCount": 2,
         "entryFile": "lib/security/SecurityUtils.ts",
         "entryRoleScore": 4,
         "dominantDirectories": [
           {
             "directory": "lib/security",
-            "fileCount": 3
+            "fileCount": 2
           }
         ],
         "internalDependencyCount": 0,
@@ -7515,6 +7579,8 @@
           "roleScore": 4,
           "imports": [
             "crypto",
+            "fs",
+            "path",
             "secure-json-parse"
           ],
           "exports": [
@@ -7562,34 +7628,46 @@
             "undefined.delete",
             "undefined.get"
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": 101,
+      "name": "Similarity-globalCleanup",
+      "flowType": "similarity",
+      "summary": {
+        "fileCount": 1,
+        "entryFile": "lib/memory/globalCleanup.ts",
+        "entryRoleScore": 0,
+        "dominantDirectories": [
+          {
+            "directory": "lib/memory",
+            "fileCount": 1
+          }
+        ],
+        "internalDependencyCount": 0,
+        "externalDependencyCount": 0
+      },
+      "files": [
         {
-          "path": "lib/security/SecurityPolicyManager.ts",
+          "path": "lib/memory/globalCleanup.ts",
           "type": "Code File",
           "roleScore": 0,
-          "imports": [
-            "qerrors"
-          ],
           "exports": [
-            "CORSConfig",
-            "CSPConfig",
-            "SecurityHeaders",
-            "SecurityPolicyManager",
-            "getCORSConfig",
-            "getCSP",
-            "getSecurityHeaders",
-            "securityPolicyManager"
+            "clearGlobalRefs",
+            "quickCleanup"
           ],
           "functions": [
-            "getCORSConfig",
-            "getCSP",
-            "getSecurityHeaders"
+            "cleanupAndResolve",
+            "cleanupSingleRef",
+            "clearGlobalRefs",
+            "quickCleanup"
           ]
         }
       ]
     },
     {
-      "id": 105,
+      "id": 102,
       "name": "Similarity-winstonLogger",
       "flowType": "similarity",
       "summary": {
@@ -7639,7 +7717,7 @@
       ]
     },
     {
-      "id": 106,
+      "id": 103,
       "name": "Similarity-basicWrappers",
       "flowType": "similarity",
       "summary": {
@@ -7686,7 +7764,7 @@
       ]
     },
     {
-      "id": 107,
+      "id": 104,
       "name": "Similarity-modernMSWMock",
       "flowType": "similarity",
       "summary": {
@@ -7727,7 +7805,7 @@
       ]
     },
     {
-      "id": 108,
+      "id": 105,
       "name": "Similarity-routeTestUtils",
       "flowType": "similarity",
       "summary": {
@@ -7794,7 +7872,7 @@
       ]
     },
     {
-      "id": 109,
+      "id": 106,
       "name": "Similarity-memoryPressure",
       "flowType": "similarity",
       "summary": {
@@ -7816,7 +7894,8 @@
           "type": "Code File",
           "roleScore": 0,
           "imports": [
-            "events"
+            "events",
+            "os"
           ],
           "exports": [
             "MemoryPressureConfig",
@@ -7830,7 +7909,7 @@
       ]
     },
     {
-      "id": 110,
+      "id": 107,
       "name": "Similarity-connectionPool",
       "flowType": "similarity",
       "summary": {
@@ -7908,7 +7987,7 @@
       ]
     },
     {
-      "id": 111,
+      "id": 108,
       "name": "Similarity-cleanupManager",
       "flowType": "similarity",
       "summary": {
@@ -7953,7 +8032,7 @@
       ]
     },
     {
-      "id": 112,
+      "id": 109,
       "name": "Similarity-circuitBreaker",
       "flowType": "similarity",
       "summary": {
@@ -8008,7 +8087,7 @@
       ]
     },
     {
-      "id": 113,
+      "id": 110,
       "name": "Similarity-networkMocking",
       "flowType": "similarity",
       "summary": {
@@ -8045,7 +8124,7 @@
       ]
     },
     {
-      "id": 114,
+      "id": 111,
       "name": "Similarity-responseMocker",
       "flowType": "similarity",
       "summary": {
@@ -8081,7 +8160,7 @@
       ]
     },
     {
-      "id": 115,
+      "id": 112,
       "name": "Similarity-moduleReloader",
       "flowType": "similarity",
       "summary": {
@@ -8121,7 +8200,7 @@
       ]
     },
     {
-      "id": 116,
+      "id": 113,
       "name": "Similarity-functionLogger",
       "flowType": "similarity",
       "summary": {
@@ -8157,7 +8236,7 @@
       ]
     },
     {
-      "id": 117,
+      "id": 114,
       "name": "Similarity-safeOperations",
       "flowType": "similarity",
       "summary": {
@@ -8200,7 +8279,7 @@
       ]
     },
     {
-      "id": 118,
+      "id": 115,
       "name": "Similarity-fallbackMocker",
       "flowType": "similarity",
       "summary": {
@@ -8240,7 +8319,7 @@
       ]
     },
     {
-      "id": 119,
+      "id": 116,
       "name": "Similarity-streamingUtils",
       "flowType": "similarity",
       "summary": {
@@ -8306,7 +8385,7 @@
       ]
     },
     {
-      "id": 120,
+      "id": 117,
       "name": "Similarity-commonPatterns",
       "flowType": "similarity",
       "summary": {
@@ -8355,7 +8434,7 @@
       ]
     },
     {
-      "id": 121,
+      "id": 118,
       "name": "Similarity-wrapperFactory",
       "flowType": "similarity",
       "summary": {
@@ -8393,7 +8472,7 @@
       ]
     },
     {
-      "id": 122,
+      "id": 119,
       "name": "Similarity-qerrorsFallback",
       "flowType": "similarity",
       "summary": {
@@ -8424,7 +8503,7 @@
       ]
     },
     {
-      "id": 123,
+      "id": 120,
       "name": "Similarity-TROUBLESHOOTING",
       "flowType": "similarity",
       "summary": {
@@ -8491,7 +8570,7 @@
       ]
     },
     {
-      "id": 124,
+      "id": 121,
       "name": "Similarity-testDataFactory",
       "flowType": "similarity",
       "summary": {
@@ -8553,7 +8632,42 @@
       ]
     },
     {
-      "id": 125,
+      "id": 122,
+      "name": "Similarity-jestSetupHelper",
+      "flowType": "similarity",
+      "summary": {
+        "fileCount": 1,
+        "entryFile": "utils/testing/jestSetupHelper.ts",
+        "entryRoleScore": 4,
+        "dominantDirectories": [
+          {
+            "directory": "utils/testing",
+            "fileCount": 1
+          }
+        ],
+        "internalDependencyCount": 0,
+        "externalDependencyCount": 0
+      },
+      "files": [
+        {
+          "path": "utils/testing/jestSetupHelper.ts",
+          "type": "Test File",
+          "roleScore": 4,
+          "exports": [
+            "clearJestMocks",
+            "configureJestGlobals",
+            "getJestRef"
+          ],
+          "functions": [
+            "clearJestMocks",
+            "configureJestGlobals",
+            "getJestRef"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 123,
       "name": "Similarity-httpDataFactory",
       "flowType": "similarity",
       "summary": {
@@ -8589,40 +8703,7 @@
       ]
     },
     {
-      "id": 126,
-      "name": "Similarity-assertionHelper",
-      "flowType": "similarity",
-      "summary": {
-        "fileCount": 1,
-        "entryFile": "utils/testing/assertionHelper.ts",
-        "entryRoleScore": 4,
-        "dominantDirectories": [
-          {
-            "directory": "utils/testing",
-            "fileCount": 1
-          }
-        ],
-        "internalDependencyCount": 0,
-        "externalDependencyCount": 0
-      },
-      "files": [
-        {
-          "path": "utils/testing/assertionHelper.ts",
-          "type": "Test File",
-          "roleScore": 4,
-          "imports": [
-            "../../lib/logUtils.js",
-            "../helpers/validation.js",
-            "qerrors"
-          ],
-          "exports": [
-            "AssertionHelper"
-          ]
-        }
-      ]
-    },
-    {
-      "id": 127,
+      "id": 124,
       "name": "Similarity-timerManagement",
       "flowType": "similarity",
       "summary": {
@@ -8662,7 +8743,7 @@
       ]
     },
     {
-      "id": 128,
+      "id": 125,
       "name": "Similarity-arrayProcessing",
       "flowType": "similarity",
       "summary": {
@@ -8699,7 +8780,7 @@
       ]
     },
     {
-      "id": 129,
+      "id": 126,
       "name": "Similarity-runner-cli-test",
       "flowType": "similarity",
       "summary": {
@@ -8735,17 +8816,17 @@
       ]
     },
     {
-      "id": 130,
+      "id": 127,
       "name": "Similarity-validationTypes",
       "flowType": "similarity",
       "summary": {
-        "fileCount": 3,
+        "fileCount": 2,
         "entryFile": "lib/validation/validationTypes.ts",
         "entryRoleScore": 0,
         "dominantDirectories": [
           {
             "directory": "lib/validation",
-            "fileCount": 3
+            "fileCount": 2
           }
         ],
         "internalDependencyCount": 0,
@@ -8786,136 +8867,11 @@
             "createSecureObjectSchema",
             "createSecureStringSchema"
           ]
-        },
-        {
-          "path": "lib/validation/validationMiddleware.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "./streamingValidator.js",
-            "qerrors"
-          ],
-          "exports": [
-            "streamingValidationMiddleware"
-          ],
-          "functions": [
-            "streamingValidationMiddleware"
-          ]
         }
       ]
     },
     {
-      "id": 131,
-      "name": "Similarity-databaseManager",
-      "flowType": "similarity",
-      "summary": {
-        "fileCount": 1,
-        "entryFile": "lib/testIsolation/databaseManager.ts",
-        "entryRoleScore": 0,
-        "dominantDirectories": [
-          {
-            "directory": "lib/testIsolation",
-            "fileCount": 1
-          }
-        ],
-        "internalDependencyCount": 0,
-        "externalDependencyCount": 0
-      },
-      "files": [
-        {
-          "path": "lib/testIsolation/databaseManager.ts",
-          "type": "Test File",
-          "roleScore": 0,
-          "imports": [
-            "qerrors"
-          ],
-          "exports": [
-            "closeAllDbConnections",
-            "trackDbConnection"
-          ],
-          "functions": [
-            "closeAllDbConnections",
-            "getIsolationState",
-            "trackDbConnection"
-          ]
-        }
-      ]
-    },
-    {
-      "id": 132,
-      "name": "Similarity-snapshotManager",
-      "flowType": "similarity",
-      "summary": {
-        "fileCount": 1,
-        "entryFile": "lib/memory/snapshotManager.ts",
-        "entryRoleScore": 0,
-        "dominantDirectories": [
-          {
-            "directory": "lib/memory",
-            "fileCount": 1
-          }
-        ],
-        "internalDependencyCount": 0,
-        "externalDependencyCount": 0
-      },
-      "files": [
-        {
-          "path": "lib/memory/snapshotManager.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "./memoryTypes.js",
-            "perf_hooks",
-            "qerrors"
-          ],
-          "exports": [
-            "MemorySnapshotManager"
-          ]
-        }
-      ]
-    },
-    {
-      "id": 133,
-      "name": "Similarity-serverFactories",
-      "flowType": "similarity",
-      "summary": {
-        "fileCount": 1,
-        "entryFile": "lib/httpMock/serverFactories.ts",
-        "entryRoleScore": 0,
-        "dominantDirectories": [
-          {
-            "directory": "lib/httpMock",
-            "fileCount": 1
-          }
-        ],
-        "internalDependencyCount": 0,
-        "externalDependencyCount": 0
-      },
-      "files": [
-        {
-          "path": "lib/httpMock/serverFactories.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "./mockTypes.js",
-            "msw",
-            "msw/node",
-            "qerrors"
-          ],
-          "exports": [
-            "createCustomMockServer"
-          ],
-          "functions": [
-            "createCustomMockServer"
-          ],
-          "apiCalls": [
-            "http.undefined"
-          ]
-        }
-      ]
-    },
-    {
-      "id": 134,
+      "id": 128,
       "name": "Similarity-enhancedMSWMock",
       "flowType": "similarity",
       "summary": {
@@ -8947,50 +8903,7 @@
       ]
     },
     {
-      "id": 135,
-      "name": "Similarity-clientFactories",
-      "flowType": "similarity",
-      "summary": {
-        "fileCount": 1,
-        "entryFile": "lib/httpMock/clientFactories.ts",
-        "entryRoleScore": 0,
-        "dominantDirectories": [
-          {
-            "directory": "lib/httpMock",
-            "fileCount": 1
-          }
-        ],
-        "internalDependencyCount": 0,
-        "externalDependencyCount": 0
-      },
-      "files": [
-        {
-          "path": "lib/httpMock/clientFactories.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "./advancedMSWMock.js",
-            "./legacyAxiosImplementation.js",
-            "./mockTypes.js",
-            "./modernMSWMock.js",
-            "./userConfigurableAxiosMock.js",
-            "qerrors"
-          ],
-          "exports": [
-            "createMockHttpClient",
-            "createSimpleMockClient",
-            "createUserConfigurableMock"
-          ],
-          "functions": [
-            "createMockHttpClient",
-            "createSimpleMockClient",
-            "createUserConfigurableMock"
-          ]
-        }
-      ]
-    },
-    {
-      "id": 136,
+      "id": 129,
       "name": "Similarity-advancedMSWMock",
       "flowType": "similarity",
       "summary": {
@@ -9027,7 +8940,7 @@
       ]
     },
     {
-      "id": 137,
+      "id": 130,
       "name": "Similarity-runner-jest-args",
       "flowType": "similarity",
       "summary": {
@@ -9135,7 +9048,7 @@
       ]
     },
     {
-      "id": 138,
+      "id": 131,
       "name": "Similarity-integration-test",
       "flowType": "similarity",
       "summary": {
@@ -9185,7 +9098,7 @@
       ]
     },
     {
-      "id": 139,
+      "id": 132,
       "name": "Similarity-fileSystemConfig",
       "flowType": "similarity",
       "summary": {
@@ -9223,7 +9136,7 @@
       ]
     },
     {
-      "id": 140,
+      "id": 133,
       "name": "Similarity-memory-benchmark",
       "flowType": "similarity",
       "summary": {
@@ -9261,46 +9174,7 @@
       ]
     },
     {
-      "id": 141,
-      "name": "Similarity-htmlSanitization",
-      "flowType": "similarity",
-      "summary": {
-        "fileCount": 1,
-        "entryFile": "lib/validation/htmlSanitization.ts",
-        "entryRoleScore": 0,
-        "dominantDirectories": [
-          {
-            "directory": "lib/validation",
-            "fileCount": 1
-          }
-        ],
-        "internalDependencyCount": 0,
-        "externalDependencyCount": 0
-      },
-      "files": [
-        {
-          "path": "lib/validation/htmlSanitization.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "qerrors"
-          ],
-          "exports": [
-            "dangerousPatterns",
-            "escapeHtml",
-            "hasDangerousPatterns",
-            "sanitizeString"
-          ],
-          "functions": [
-            "escapeHtml",
-            "hasDangerousPatterns",
-            "sanitizeString"
-          ]
-        }
-      ]
-    },
-    {
-      "id": 142,
+      "id": 134,
       "name": "Similarity-memoryManagement",
       "flowType": "similarity",
       "summary": {
@@ -9361,7 +9235,7 @@
       ]
     },
     {
-      "id": 143,
+      "id": 135,
       "name": "Similarity-concurrencyUtils",
       "flowType": "similarity",
       "summary": {
@@ -9464,7 +9338,7 @@
       ]
     },
     {
-      "id": 144,
+      "id": 136,
       "name": "Similarity-advancedWrappers",
       "flowType": "similarity",
       "summary": {
@@ -9528,7 +9402,7 @@
       ]
     },
     {
-      "id": 145,
+      "id": 137,
       "name": "Similarity-fallbackHandlers",
       "flowType": "similarity",
       "summary": {
@@ -9561,7 +9435,7 @@
       ]
     },
     {
-      "id": 146,
+      "id": 138,
       "name": "Similarity-simple-index-test",
       "flowType": "similarity",
       "summary": {
@@ -9619,7 +9493,7 @@
       ]
     },
     {
-      "id": 147,
+      "id": 139,
       "name": "Similarity-jestConfigFactory",
       "flowType": "similarity",
       "summary": {
@@ -9671,7 +9545,7 @@
       ]
     },
     {
-      "id": 148,
+      "id": 140,
       "name": "Similarity-ADVANCED-FEATURES",
       "flowType": "similarity",
       "summary": {
@@ -9727,7 +9601,44 @@
       ]
     },
     {
-      "id": 149,
+      "id": 141,
+      "name": "Similarity-generate-cli-test",
+      "flowType": "similarity",
+      "summary": {
+        "fileCount": 1,
+        "entryFile": "tests/integration/generate-cli.test.js",
+        "entryRoleScore": 0,
+        "dominantDirectories": [
+          {
+            "directory": "tests/integration",
+            "fileCount": 1
+          }
+        ],
+        "internalDependencyCount": 0,
+        "externalDependencyCount": 0
+      },
+      "files": [
+        {
+          "path": "tests/integration/generate-cli.test.js",
+          "type": "Test File",
+          "roleScore": 0,
+          "imports": [
+            "child_process",
+            "fs",
+            "os",
+            "path"
+          ],
+          "functions": [
+            "makeIsolatedTempDir",
+            "makeRepoTempDir",
+            "runGenerate",
+            "writeJson"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 142,
       "name": "Similarity-validationSchemas",
       "flowType": "similarity",
       "summary": {
@@ -9774,7 +9685,7 @@
       ]
     },
     {
-      "id": 150,
+      "id": 143,
       "name": "Similarity-importExportUtils",
       "flowType": "similarity",
       "summary": {
@@ -9820,7 +9731,7 @@
       ]
     },
     {
-      "id": 151,
+      "id": 144,
       "name": "Similarity-httpMockFramework",
       "flowType": "similarity",
       "summary": {
@@ -9886,7 +9797,7 @@
       ]
     },
     {
-      "id": 152,
+      "id": 145,
       "name": "Similarity-clipboardPolyfill",
       "flowType": "similarity",
       "summary": {
@@ -9918,7 +9829,96 @@
       ]
     },
     {
-      "id": 153,
+      "id": 146,
+      "name": "Similarity-garbageCollection",
+      "flowType": "similarity",
+      "summary": {
+        "fileCount": 1,
+        "entryFile": "lib/memory/garbageCollection.ts",
+        "entryRoleScore": 0,
+        "dominantDirectories": [
+          {
+            "directory": "lib/memory",
+            "fileCount": 1
+          }
+        ],
+        "internalDependencyCount": 0,
+        "externalDependencyCount": 0
+      },
+      "files": [
+        {
+          "path": "lib/memory/garbageCollection.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "os"
+          ],
+          "exports": [
+            "forceGC",
+            "getGCMetrics",
+            "isUnderMemoryPressure",
+            "smartGC"
+          ],
+          "functions": [
+            "forceGC",
+            "getGCMetrics",
+            "isUnderMemoryPressure",
+            "smartGC"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 147,
+      "name": "Similarity-cleanupOperations",
+      "flowType": "similarity",
+      "summary": {
+        "fileCount": 1,
+        "entryFile": "lib/memory/cleanupOperations.ts",
+        "entryRoleScore": 0,
+        "dominantDirectories": [
+          {
+            "directory": "lib/memory",
+            "fileCount": 1
+          }
+        ],
+        "internalDependencyCount": 0,
+        "externalDependencyCount": 0,
+        "crossFlow": {
+          "importsFrom": [
+            "Similarity-errorTypes"
+          ]
+        }
+      },
+      "files": [
+        {
+          "path": "lib/memory/cleanupOperations.ts",
+          "type": "Code File",
+          "roleScore": 0,
+          "imports": [
+            "../utils/errorHandling.js",
+            "../utils/memoryManagement.js",
+            "./garbageCollection.js",
+            "./globalCleanup.js",
+            "./moduleCleanup.js",
+            "./monitoringOrchestration.js"
+          ],
+          "exports": [
+            "aggressiveCleanup",
+            "cleanupWithMemoryTracking"
+          ],
+          "functions": [
+            "aggressiveCleanup",
+            "cleanupWithMemoryTracking"
+          ],
+          "dependencies": [
+            "lib/utils/errorHandling.js"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 148,
       "name": "Similarity-timerManager-test",
       "flowType": "similarity",
       "summary": {
@@ -9947,20 +9947,16 @@
       ]
     },
     {
-      "id": 154,
+      "id": 149,
       "name": "Similarity-streamingValidator",
       "flowType": "similarity",
       "summary": {
-        "fileCount": 2,
+        "fileCount": 1,
         "entryFile": "lib/streamingValidator.ts",
         "entryRoleScore": 0,
         "dominantDirectories": [
           {
             "directory": "lib",
-            "fileCount": 1
-          },
-          {
-            "directory": "lib/validation",
             "fileCount": 1
           }
         ],
@@ -9999,38 +9995,11 @@
             "strictValidator",
             "z"
           ]
-        },
-        {
-          "path": "lib/validation/streamingValidator.ts",
-          "type": "Code File",
-          "roleScore": 0,
-          "imports": [
-            "./htmlSanitization.js",
-            "qerrors",
-            "zod"
-          ],
-          "exports": [
-            "StreamingStringValidator",
-            "ValidationConfig",
-            "ValidationResult",
-            "createStreamingValidator",
-            "default",
-            "defaultValidator",
-            "relaxedValidator",
-            "strictValidator"
-          ],
-          "functions": [
-            "createStreamingValidator"
-          ],
-          "apiCalls": [
-            "undefined.delete",
-            "undefined.get"
-          ]
         }
       ]
     },
     {
-      "id": 155,
+      "id": 150,
       "name": "Similarity-performanceMonitor",
       "flowType": "similarity",
       "summary": {
@@ -10065,7 +10034,7 @@
       ]
     },
     {
-      "id": 156,
+      "id": 151,
       "name": "Similarity-secure-express-app",
       "flowType": "similarity",
       "summary": {
@@ -10090,7 +10059,7 @@
       ]
     },
     {
-      "id": 157,
+      "id": 152,
       "name": "Similarity-api-endpoints-test",
       "flowType": "similarity",
       "summary": {
@@ -10161,44 +10130,7 @@
       ]
     },
     {
-      "id": 158,
-      "name": "Similarity-environmentManager",
-      "flowType": "similarity",
-      "summary": {
-        "fileCount": 1,
-        "entryFile": "lib/testIsolation/environmentManager.ts",
-        "entryRoleScore": 0,
-        "dominantDirectories": [
-          {
-            "directory": "lib/testIsolation",
-            "fileCount": 1
-          }
-        ],
-        "internalDependencyCount": 0,
-        "externalDependencyCount": 0
-      },
-      "files": [
-        {
-          "path": "lib/testIsolation/environmentManager.ts",
-          "type": "Test File",
-          "roleScore": 0,
-          "imports": [
-            "qerrors"
-          ],
-          "exports": [
-            "backupEnvironment",
-            "restoreEnvironment"
-          ],
-          "functions": [
-            "backupEnvironment",
-            "getIsolationState",
-            "restoreEnvironment"
-          ]
-        }
-      ]
-    },
-    {
-      "id": 159,
+      "id": 153,
       "name": "Similarity-mediaQueryPolyfill",
       "flowType": "similarity",
       "summary": {
@@ -10230,7 +10162,7 @@
       ]
     },
     {
-      "id": 160,
+      "id": 154,
       "name": "Similarity-testDiscoveryCache",
       "flowType": "similarity",
       "summary": {
@@ -10268,7 +10200,7 @@
       ]
     },
     {
-      "id": 161,
+      "id": 155,
       "name": "Similarity-simpleErrorLogging",
       "flowType": "similarity",
       "summary": {
@@ -10302,7 +10234,7 @@
       ]
     },
     {
-      "id": 162,
+      "id": 156,
       "name": "Similarity-errorHandling-test",
       "flowType": "similarity",
       "summary": {
@@ -10340,7 +10272,7 @@
       ]
     },
     {
-      "id": 163,
+      "id": 157,
       "name": "Similarity-test-utilities-test",
       "flowType": "similarity",
       "summary": {
@@ -10384,7 +10316,7 @@
       ]
     },
     {
-      "id": 164,
+      "id": 158,
       "name": "Similarity-config-local-vars-d",
       "flowType": "similarity",
       "summary": {
@@ -10463,7 +10395,7 @@
       ]
     },
     {
-      "id": 165,
+      "id": 159,
       "name": "Similarity-fileSystemFramework",
       "flowType": "similarity",
       "summary": {
@@ -10515,7 +10447,7 @@
       ]
     },
     {
-      "id": 166,
+      "id": 160,
       "name": "Similarity-convenienceWrappers",
       "flowType": "similarity",
       "summary": {
@@ -10552,7 +10484,7 @@
       ]
     },
     {
-      "id": 167,
+      "id": 161,
       "name": "Similarity-placeholderWrappers",
       "flowType": "similarity",
       "summary": {
@@ -10606,7 +10538,7 @@
       ]
     },
     {
-      "id": 168,
+      "id": 162,
       "name": "Similarity-security-test-runner",
       "flowType": "similarity",
       "summary": {
@@ -10655,7 +10587,7 @@
       ]
     },
     {
-      "id": 169,
+      "id": 163,
       "name": "Similarity-rateLimiter-flexible",
       "flowType": "similarity",
       "summary": {
@@ -10697,7 +10629,7 @@
       ]
     },
     {
-      "id": 170,
+      "id": 164,
       "name": "Similarity-polyfillOrchestrator",
       "flowType": "similarity",
       "summary": {
@@ -10734,7 +10666,7 @@
       ]
     },
     {
-      "id": 171,
+      "id": 165,
       "name": "Similarity-performanceTestHelper",
       "flowType": "similarity",
       "summary": {
@@ -10765,7 +10697,7 @@
       ]
     },
     {
-      "id": 172,
+      "id": 166,
       "name": "Similarity-integrationTestHelper",
       "flowType": "similarity",
       "summary": {
@@ -10820,7 +10752,7 @@
       ]
     },
     {
-      "id": 173,
+      "id": 167,
       "name": "Similarity-resolveStubPaths-test",
       "flowType": "similarity",
       "summary": {
@@ -10851,7 +10783,7 @@
       ]
     },
     {
-      "id": 174,
+      "id": 168,
       "name": "Similarity-isolationOrchestrator",
       "flowType": "similarity",
       "summary": {
@@ -10894,7 +10826,7 @@
       ]
     },
     {
-      "id": 175,
+      "id": 169,
       "name": "Similarity-ENTERPRISE-INTEGRATION",
       "flowType": "similarity",
       "summary": {
@@ -10962,7 +10894,7 @@
       ]
     },
     {
-      "id": 176,
+      "id": 170,
       "name": "Similarity-testIsolationFramework",
       "flowType": "similarity",
       "summary": {
@@ -11019,7 +10951,7 @@
       ]
     },
     {
-      "id": 177,
+      "id": 171,
       "name": "Similarity-performanceBenchmarker",
       "flowType": "similarity",
       "summary": {
@@ -11068,7 +11000,7 @@
       ]
     },
     {
-      "id": 178,
+      "id": 172,
       "name": "Similarity-resizeObserverPolyfill",
       "flowType": "similarity",
       "summary": {
@@ -11100,7 +11032,7 @@
       ]
     },
     {
-      "id": 179,
+      "id": 173,
       "name": "Similarity-simple-security-example",
       "flowType": "similarity",
       "summary": {
@@ -11171,7 +11103,7 @@
       ]
     },
     {
-      "id": 180,
+      "id": 174,
       "name": "Similarity-scalability-high-impact",
       "flowType": "similarity",
       "summary": {
@@ -11196,7 +11128,7 @@
       ]
     },
     {
-      "id": 181,
+      "id": 175,
       "name": "Similarity-qerrors-resolution-test",
       "flowType": "similarity",
       "summary": {
@@ -11225,7 +11157,7 @@
       ]
     },
     {
-      "id": 182,
+      "id": 176,
       "name": "Similarity-performance-testing-test",
       "flowType": "similarity",
       "summary": {
@@ -11270,7 +11202,7 @@
       ]
     },
     {
-      "id": 183,
+      "id": 177,
       "name": "Similarity-concurrency-testing-test",
       "flowType": "similarity",
       "summary": {
@@ -11313,7 +11245,7 @@
       ]
     },
     {
-      "id": 184,
+      "id": 178,
       "name": "Similarity-advanced-edge-cases-test",
       "flowType": "similarity",
       "summary": {
@@ -11364,7 +11296,7 @@
       ]
     },
     {
-      "id": 185,
+      "id": 179,
       "name": "Similarity-demonstrate-improvements",
       "flowType": "similarity",
       "summary": {
@@ -11389,7 +11321,7 @@
       ]
     },
     {
-      "id": 186,
+      "id": 180,
       "name": "Similarity-working-security-example",
       "flowType": "similarity",
       "summary": {
@@ -11452,7 +11384,7 @@
       ]
     },
     {
-      "id": 187,
+      "id": 181,
       "name": "Similarity-minimal-security-example",
       "flowType": "similarity",
       "summary": {
@@ -11486,7 +11418,7 @@
       ]
     },
     {
-      "id": 188,
+      "id": 182,
       "name": "Similarity-core-function-tests-test",
       "flowType": "similarity",
       "summary": {
@@ -11523,7 +11455,7 @@
       ]
     },
     {
-      "id": 189,
+      "id": 183,
       "name": "Similarity-streamingValidationLogic",
       "flowType": "similarity",
       "summary": {
@@ -11558,7 +11490,7 @@
       ]
     },
     {
-      "id": 190,
+      "id": 184,
       "name": "Similarity-legacyStreamingValidator",
       "flowType": "similarity",
       "summary": {
@@ -11592,7 +11524,7 @@
       ]
     },
     {
-      "id": 191,
+      "id": 185,
       "name": "Similarity-demo--server--app--get-test",
       "flowType": "similarity",
       "summary": {
@@ -11628,7 +11560,7 @@
       ]
     },
     {
-      "id": 192,
+      "id": 186,
       "name": "Similarity-intersectionObserverPolyfill",
       "flowType": "similarity",
       "summary": {
@@ -11660,7 +11592,7 @@
       ]
     },
     {
-      "id": 193,
+      "id": 187,
       "name": "Similarity-security-integration-example",
       "flowType": "similarity",
       "summary": {
@@ -11705,7 +11637,7 @@
       ]
     },
     {
-      "id": 194,
+      "id": 188,
       "name": "Similarity-simple-scalability-test-clean",
       "flowType": "similarity",
       "summary": {
@@ -11737,7 +11669,7 @@
       ]
     },
     {
-      "id": 195,
+      "id": 189,
       "name": "Similarity-comprehensive-function-tests-test",
       "flowType": "similarity",
       "summary": {
