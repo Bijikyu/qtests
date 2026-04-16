@@ -105,33 +105,38 @@ export class PenetrationTester {
   };
 
   /**
-   * Test XSS vulnerabilities
+   * Test XSS vulnerabilities.
+   * @param input - A string template containing {{payload}} where each XSS payload will be
+   *   substituted, OR a callback function that receives the raw payload and returns the
+   *   processed/sanitized output to be checked.
+   * @param sanitize - When using string template mode, run the built-in sanitizer before checking.
    */
-  testXSS(input: string, sanitize: boolean = true): SecurityTestResult {
+  testXSS(input: string | ((payload: string) => string), sanitize: boolean = true): SecurityTestResult {
     const startTime = Date.now();
     const vulnerabilities: string[] = [];
     const recommendations: string[] = [];
 
-    // Test XSS payloads
     for (const payload of this.payloads.xss) {
-      let testInput = input.replace('{{payload}}', payload);
-      
-      if (sanitize) {
-        const result = securityValidator.sanitize(testInput, {
-          removeHtml: true,
-          removeScriptTags: true,
-          escapeHtml: true
-        });
-        testInput = result;
+      let testInput: string;
+
+      if (typeof input === 'function') {
+        testInput = input(payload);
+      } else {
+        testInput = input.replace('{{payload}}', payload);
+        if (sanitize) {
+          testInput = securityValidator.sanitize(testInput, {
+            removeHtml: true,
+            removeScriptTags: true,
+            escapeHtml: true
+          });
+        }
       }
 
-      // Check if payload is still active
       if (testInput.includes('<script') || testInput.includes('javascript:') || testInput.includes('onerror=')) {
         vulnerabilities.push(`XSS payload not sanitized: ${payload}`);
       }
     }
 
-    // Add recommendations
     if (vulnerabilities.length > 0) {
       recommendations.push('Implement proper HTML sanitization');
       recommendations.push('Use Content Security Policy headers');
@@ -149,28 +154,44 @@ export class PenetrationTester {
   }
 
   /**
-   * Test SQL injection vulnerabilities
+   * Test SQL injection vulnerabilities.
+   * @param query - A string template containing {{param}} where each SQL payload will be
+   *   substituted, OR a callback function that receives the raw payload and returns the
+   *   processed output to be checked.
+   * @param parametrize - When using string template mode, suppress keyword detection (simulates
+   *   parameterized queries). Set to false to detect unparameterized vulnerabilities.
    */
-  testSQLInjection(query: string, parametrize: boolean = true): SecurityTestResult {
+  testSQLInjection(query: string | ((payload: string) => string), parametrize: boolean = true): SecurityTestResult {
     const startTime = Date.now();
     const vulnerabilities: string[] = [];
     const recommendations: string[] = [];
 
-    // Test SQL injection payloads
+    const sqlKeywords = ['DROP', 'UNION', 'SELECT', 'UPDATE', 'DELETE', 'INSERT', 'WHERE', 'OR'];
+
     for (const payload of this.payloads.sqlInjection) {
-      let testQuery = query.replace('{{param}}', payload);
-      
-      // Check for SQL keywords in the final query
-      const sqlKeywords = ['DROP', 'UNION', 'SELECT', 'UPDATE', 'DELETE', 'INSERT', 'WHERE', 'OR'];
-      for (const keyword of sqlKeywords) {
-        if (testQuery.toUpperCase().includes(keyword) && !parametrize) {
-          vulnerabilities.push(`SQL injection payload detected: ${payload}`);
-          break;
+      let testQuery: string;
+
+      if (typeof query === 'function') {
+        testQuery = query(payload);
+        for (const keyword of sqlKeywords) {
+          if (testQuery.toUpperCase().includes(keyword)) {
+            vulnerabilities.push(`SQL injection payload not filtered: ${payload}`);
+            break;
+          }
+        }
+      } else {
+        testQuery = query.replace('{{param}}', payload);
+        if (!parametrize) {
+          for (const keyword of sqlKeywords) {
+            if (testQuery.toUpperCase().includes(keyword)) {
+              vulnerabilities.push(`SQL injection payload detected: ${payload}`);
+              break;
+            }
+          }
         }
       }
     }
 
-    // Add recommendations
     if (vulnerabilities.length > 0) {
       recommendations.push('Use parameterized queries');
       recommendations.push('Implement input validation');
@@ -188,33 +209,38 @@ export class PenetrationTester {
   }
 
   /**
-   * Test path traversal vulnerabilities
+   * Test path traversal vulnerabilities.
+   * @param path - A string template containing {{path}} where each traversal payload will be
+   *   substituted, OR a callback function that receives the raw payload and returns the
+   *   processed output to be checked.
+   * @param validate - When using string template mode, run the built-in path validator first.
    */
-  testPathTraversal(path: string, validate: boolean = true): SecurityTestResult {
+  testPathTraversal(path: string | ((payload: string) => string), validate: boolean = true): SecurityTestResult {
     const startTime = Date.now();
     const vulnerabilities: string[] = [];
     const recommendations: string[] = [];
 
-    // Test path traversal payloads
     for (const payload of this.payloads.pathTraversal) {
-      let testPath = path.replace('{{path}}', payload);
-      
-      if (validate) {
-        const result = securityValidator.validatePath(testPath);
-        if (!result.valid) {
-          // Good - validation caught the issue
-          continue;
+      let testPath: string;
+
+      if (typeof path === 'function') {
+        testPath = path(payload);
+      } else {
+        testPath = path.replace('{{path}}', payload);
+        if (validate) {
+          const result = securityValidator.validatePath(testPath);
+          if (!result.valid) {
+            continue;
+          }
+          testPath = result.sanitized || testPath;
         }
-        testPath = result.sanitized || testPath;
       }
 
-      // Check if traversal is still possible
       if (testPath.includes('../') || testPath.includes('..\\')) {
         vulnerabilities.push(`Path traversal not prevented: ${payload}`);
       }
     }
 
-    // Add recommendations
     if (vulnerabilities.length > 0) {
       recommendations.push('Validate and normalize all file paths');
       recommendations.push('Use chroot or file system sandboxing');
@@ -232,32 +258,37 @@ export class PenetrationTester {
   }
 
   /**
-   * Test command injection vulnerabilities
+   * Test command injection vulnerabilities.
+   * @param command - A string template containing {{arg}} where each injection payload will be
+   *   substituted, OR a callback function that receives the raw payload and returns the
+   *   processed output to be checked.
+   * @param validate - When using string template mode, run the built-in command validator first.
    */
-  testCommandInjection(command: string, validate: boolean = true): SecurityTestResult {
+  testCommandInjection(command: string | ((payload: string) => string), validate: boolean = true): SecurityTestResult {
     const startTime = Date.now();
     const vulnerabilities: string[] = [];
     const recommendations: string[] = [];
 
-    // Test command injection payloads
     for (const payload of this.payloads.commandInjection) {
-      let testCommand = command.replace('{{arg}}', payload);
-      
-      if (validate) {
-        const result = securityValidator.validateCommand(testCommand.split(' ')[0]);
-        if (!result.valid) {
-          // Good - validation caught the issue
-          continue;
+      let testCommand: string;
+
+      if (typeof command === 'function') {
+        testCommand = command(payload);
+      } else {
+        testCommand = command.replace('{{arg}}', payload);
+        if (validate) {
+          const result = securityValidator.validateCommand(testCommand.split(' ')[0]);
+          if (!result.valid) {
+            continue;
+          }
         }
       }
 
-      // Check for dangerous characters
       if (/[;&|`$(){}\[\]]/.test(testCommand)) {
         vulnerabilities.push(`Command injection not prevented: ${payload}`);
       }
     }
 
-    // Add recommendations
     if (vulnerabilities.length > 0) {
       recommendations.push('Use command allowlisting');
       recommendations.push('Never concatenate user input with commands');

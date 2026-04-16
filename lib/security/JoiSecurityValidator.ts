@@ -141,13 +141,13 @@ export class JoiSecurityValidator {
         'string.max': 'Email must be no more than 254 characters long'
       }));
 
-    // URL validation
+    // URL validation - restricts to http/https to block javascript: and other dangerous protocols
     this.schemas.set('url', Joi.string()
-      .uri()
+      .uri({ scheme: ['http', 'https'] })
       .max(2048)
       .messages({
         'string.base': 'URL must be a string',
-        'string.uri': 'URL must be a valid URI',
+        'string.uri': 'URL must be a valid URI with http or https scheme',
         'string.max': 'URL must be no more than 2048 characters long'
       }));
 
@@ -157,9 +157,11 @@ export class JoiSecurityValidator {
       .custom((value, helpers) => {
         // Check for common injection patterns
         const dangerousPatterns = [
-          /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, // XSS
-          /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)/gi, // SQL injection
-          /[;&|`$(){}\[\]]/g, // Command injection
+          /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, // XSS script tags
+          /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT|HAVING|FROM|WHERE)\b)/gi, // SQL DDL/DML keywords
+          /('|")\s*--/g, // SQL comment after quote (e.g. admin'--)
+          /\b(OR|AND)\b\s+.{0,20}=\s*.{0,20}/gi, // Boolean injection (OR 1=1, AND 'a'='a')
+          /[;&|`$(){}\[\]]/g, // Command injection characters
           /__proto__|constructor|prototype/gi // Prototype pollution
         ];
 
@@ -175,6 +177,9 @@ export class JoiSecurityValidator {
         'string.max': 'Input must be no more than 10,000 characters long',
         'custom.dangerousPattern': 'Input contains potentially dangerous content'
       }));
+
+    // 'string' is an alias for userInput - ensures validateInput(value, 'string') runs security checks
+    this.schemas.set('string', this.schemas.get('userInput')!);
 
     // Number validation
     this.schemas.set('number', Joi.number()
@@ -274,8 +279,8 @@ export class JoiSecurityValidator {
       }
     }
 
-    // Apply sanitization if needed
-    if (result.valid && typeof input === 'string') {
+    // Always sanitize string input so the sanitized field never contains raw attack strings
+    if (typeof input === 'string') {
       result.sanitized = this.sanitize(input, {
         removeHtml: true,
         removeScriptTags: true,

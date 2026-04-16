@@ -165,14 +165,12 @@ export class SecurityValidator {
    * Enhanced with Joi for improved security while maintaining compatibility
    */
   validate(input: any, ruleName?: string, customRules?: ValidationRule[]): ValidationResult {
-    // First try Joi validation for common cases
-    const joiResult = joiSecurityValidator.validate(input, ruleName);
-    
-    // If we have a matching Joi schema and it passes, return that result
-    if (joiResult.valid && ruleName && joiSecurityValidator.getSchemas().includes(ruleName)) {
-      return joiResult;
+    // If Joi has a schema for this rule, use it unconditionally (pass or fail)
+    const joiHasSchema = ruleName && joiSecurityValidator.getSchemas().includes(ruleName);
+    if (joiHasSchema && !customRules) {
+      return joiSecurityValidator.validate(input, ruleName);
     }
-    
+
     // Fall back to legacy validation for custom rules or when Joi doesn't have the rule
     const rules = customRules || this.defaultRules.get(ruleName || '') || [];
     const result: ValidationResult = {
