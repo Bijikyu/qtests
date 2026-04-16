@@ -117,8 +117,28 @@ describe('Fix 3 — PenetrationTester accepts callback functions', () => {
     expect(() => pt.testPathTraversal((payload) => payload)).not.toThrow();
   });
 
+  test('testPathTraversal callback detects unfiltered traversal payloads', () => {
+    const result = pt.testPathTraversal((payload) => payload);
+    expect(result.vulnerabilities.length).toBeGreaterThan(0);
+  });
+
+  test('testPathTraversal callback passes when handler always returns a safe path', () => {
+    const result = pt.testPathTraversal(() => '/safe/allowed/file.txt');
+    expect(result.passed).toBe(true);
+  });
+
   test('testCommandInjection does not throw when passed a callback', () => {
     expect(() => pt.testCommandInjection((payload) => payload)).not.toThrow();
+  });
+
+  test('testCommandInjection callback detects unfiltered injection payloads', () => {
+    const result = pt.testCommandInjection((payload) => payload);
+    expect(result.vulnerabilities.length).toBeGreaterThan(0);
+  });
+
+  test('testCommandInjection callback passes when handler always returns a safe command', () => {
+    const result = pt.testCommandInjection(() => 'npm');
+    expect(result.passed).toBe(true);
   });
 
   test('testXSS still works with string template', () => {
