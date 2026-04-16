@@ -50,6 +50,15 @@ export class JoiSecurityValidator {
       .min(1)
       .max(255)
       .pattern(/^[a-zA-Z0-9@/._-]+$/)
+      .custom((value, helpers) => {
+        if (value.startsWith('/') || value.startsWith('\\')) {
+          return helpers.error('custom.absolutePath');
+        }
+        if (value.includes('../') || value.includes('..\\')) {
+          return helpers.error('custom.pathTraversal');
+        }
+        return value;
+      }, 'Module ID security validation')
       .required()
       .messages({
         'string.base': 'Module ID must be a string',
@@ -57,7 +66,9 @@ export class JoiSecurityValidator {
         'string.min': 'Module ID must be at least 1 character long',
         'string.max': 'Module ID must be no more than 255 characters long',
         'string.pattern.base': 'Module ID contains invalid characters',
-        'any.required': 'Module ID is required'
+        'any.required': 'Module ID is required',
+        'custom.absolutePath': 'Module ID must not be an absolute path',
+        'custom.pathTraversal': 'Path traversal detected in module ID'
       }));
 
     // File path validation - prevents path traversal attacks
@@ -65,12 +76,17 @@ export class JoiSecurityValidator {
       .min(1)
       .max(4096)
       .custom((value, helpers) => {
-        // Additional path validation for security
+        // Reject null bytes
         if (value.includes('\0')) {
           return helpers.error('custom.nullBytes');
         }
+        // Reject relative traversal sequences
         if (value.includes('../') || value.includes('..\\')) {
           return helpers.error('custom.pathTraversal');
+        }
+        // Reject absolute paths — callers should pass relative paths only
+        if (value.startsWith('/') || value.startsWith('\\') || /^[A-Za-z]:[/\\]/.test(value)) {
+          return helpers.error('custom.absolutePath');
         }
         return value;
       }, 'Path validation')
@@ -79,7 +95,8 @@ export class JoiSecurityValidator {
         'string.empty': 'File path cannot be empty',
         'string.max': 'File path must be no more than 4096 characters long',
         'custom.nullBytes': 'Null bytes not allowed in paths',
-        'custom.pathTraversal': 'Path traversal detected'
+        'custom.pathTraversal': 'Path traversal detected',
+        'custom.absolutePath': 'Absolute paths are not permitted'
       }));
 
     // Command validation - allows only safe commands
@@ -496,6 +513,13 @@ export function validateEmail(email: string): ValidationResult {
  */
 export function validateURL(url: string): ValidationResult {
   return joiSecurityValidator.validateURL(url);
+}
+
+/**
+ * Convenience function for command validation using Joi
+ */
+export function validateCommand(command: string): ValidationResult {
+  return joiSecurityValidator.validateCommand(command);
 }
 
 /**

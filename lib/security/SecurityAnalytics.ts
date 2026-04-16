@@ -34,6 +34,21 @@ export class SecurityAnalytics {
    */
   analyzeEvent(event: any): void {
     this.analytics.totalRequests++;
+
+    if (event.blocked) {
+      this.analytics.blockedRequests++;
+    }
+
+    // Accumulate threat score based on severity
+    const severityScore: Record<string, number> = {
+      low: 1,
+      medium: 3,
+      high: 7,
+      critical: 15
+    };
+    const severity = (event.severity || '').toLowerCase();
+    this.analytics.threatScore += severityScore[severity] ?? 1;
+
     this.updateRiskAssessment();
     securityMonitor.logEvent({
       type: SecurityEventType.ANOMALOUS_PATTERN,

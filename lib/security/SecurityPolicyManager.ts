@@ -145,13 +145,11 @@ export class SecurityPolicyManager {
   validateSecurityHeaders(headers: SecurityHeaders): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
 
-    // Check for required headers in production
-    if (process.env.NODE_ENV === 'production') {
-      const requiredHeaders = ['X-Content-Type-Options', 'X-Frame-Options', 'X-XSS-Protection'];
-      for (const header of requiredHeaders) {
-        if (!headers[header as keyof SecurityHeaders]) {
-          errors.push(`Missing required security header: ${header}`);
-        }
+    // Required headers regardless of environment
+    const requiredHeaders = ['X-Content-Type-Options', 'X-Frame-Options', 'X-XSS-Protection'];
+    for (const header of requiredHeaders) {
+      if (!headers[header as keyof SecurityHeaders]) {
+        errors.push(`Missing required security header: ${header}`);
       }
     }
 

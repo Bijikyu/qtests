@@ -49,6 +49,7 @@ export interface SecurityEvent {
  */
 export interface RateLimitResult {
   allowed: boolean;
+  remaining: number;
   retryAfter?: number;
   reason?: string;
 }
@@ -140,7 +141,7 @@ checkRateLimit(identifier: string, options: {
   maxRequests?: number;
 } = {}): RateLimitResult {
   if (this.isDestroyed) {
-    return { allowed: false, reason: 'SecurityMonitor destroyed' };
+    return { allowed: false, remaining: 0, reason: 'SecurityMonitor destroyed' };
   }
 
   const windowMs = options.windowMs || 60000; // 1 minute default
@@ -178,12 +179,13 @@ checkRateLimit(identifier: string, options: {
 
     return {
       allowed: false,
+      remaining: 0,
       retryAfter: rateLimitData.resetTime - now,
       reason: 'Rate limit exceeded'
     };
   }
 
-  return { allowed: true };
+  return { allowed: true, remaining: Math.max(0, maxRequests - rateLimitData.count) };
 }
 
   /**

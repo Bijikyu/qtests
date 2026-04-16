@@ -464,6 +464,7 @@ export {
   validateJSON as validateJSONJoi,
   validateModuleId as validateModuleIdJoi,
   validatePath as validatePathJoi,
+  validateCommand,
   validateEmail,
   validateURL,
   validateUserInput
