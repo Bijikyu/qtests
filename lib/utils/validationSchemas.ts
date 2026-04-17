@@ -43,7 +43,7 @@ export const basicSchemas = {
   // Numeric types
   port: z.number().int().min(0).max(65535),
   percentage: z.number().min(0).max(100),
-  positiveInt: z.number().int().min(0),
+  positiveInt: z.number().int().min(1),
   nonNegativeInt: z.number().int().min(0),
   
   // Time-related
@@ -124,7 +124,7 @@ export const objectSchemas = {
   testConfig: z.object({
     testName: basicSchemas.identifier,
     timeout: basicSchemas.timeout.default(5000),
-    retries: basicSchemas.positiveInt.default(0),
+    retries: basicSchemas.nonNegativeInt.default(0),
     parallel: z.boolean().default(false),
     verbose: z.boolean().default(false)
   }),

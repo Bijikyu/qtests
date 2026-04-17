@@ -261,7 +261,7 @@ export const strings = {
    * Convert to kebab-case
    */
   kebabCase: (str: string): string => {
-    return str.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+    return str.replace(/[A-Z]/g, (letter, offset) => `${offset ? '-' : ''}${letter.toLowerCase()}`);
   },
 
   /**
