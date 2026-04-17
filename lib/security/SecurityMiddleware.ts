@@ -185,11 +185,11 @@ export class SecurityMiddleware {
         }
       }
 
-      // Validate query parameters
+      // Validate query parameters — use 'userInput' rule which checks for injection/XSS
       if (this.options.validationOptions.query && req.query) {
         for (const [key, value] of Object.entries(req.query)) {
           if (typeof value === 'string') {
-            const queryResult = securityValidator.validate(value, 'query_param');
+            const queryResult = securityValidator.validate(value, 'userInput');
             if (!queryResult.valid) {
               errors.push(`Query param '${key}': ${queryResult.errors.join(', ')}`);
             } else {
@@ -200,11 +200,11 @@ export class SecurityMiddleware {
         }
       }
 
-      // Validate path parameters
+      // Validate path parameters — use 'userInput' rule which checks for injection/XSS
       if (this.options.validationOptions.params && req.params) {
         for (const [key, value] of Object.entries(req.params)) {
           if (typeof value === 'string') {
-            const paramResult = securityValidator.validate(value, 'path_param');
+            const paramResult = securityValidator.validate(value, 'userInput');
             if (!paramResult.valid) {
               errors.push(`Path param '${key}': ${paramResult.errors.join(', ')}`);
             } else {
