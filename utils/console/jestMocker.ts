@@ -72,7 +72,6 @@ export function tryCreateJestSpy(
       jestSpy.mockImplementation(() => {});
     }
 
-    console.log(`mockConsole is returning Jest spy for ${method}`);
     return jestSpy as JestSpy;
   }, 'tryCreateJestSpy');
 }

@@ -85,12 +85,13 @@ The `lib/security/` directory contains only testing-mission components:
 SecurityMonitor, SecurityMiddleware, SecurityAnalytics, SecurityAnalyticsTypes, SecurityPolicyManager, SecurityUtils, securityHeaders.
 
 ## Test count progression
-278 → 317 → 346 → 369 → 420 → 465 → 366* → 393** → 413***
+278 → 317 → 346 → 369 → 420 → 465 → 366* → 393** → 413*** → 430**** → 444***** → 498******
 
 *366 after removing runtime infra tests (securityMiddleware.test.js, securityUtils.test.js, SecurityAnalytics tests, SecurityMonitor/SecurityPolicyManager-dependent tests). All 366 pass.
 **393 after dogfooding circuitBreaker + runTestSuite (fixed 3 bugs: getCurrentState always CLOSED, isDisabled inverted, async test fns not awaited).
 ***413 after dogfooding rateLimiter (fixed: RateLimiterAbstract imported as runtime value but is type-only in rate-limiter-flexible — caused module load crash).
 ****430 after dogfooding connectionPool + loadTest (fixed 3 bugs: connectionsCreated/Destroyed never incremented; maxConnections/acquireTimeout never passed to generic-pool; loadTest import started a background setInterval preventing clean process exit).
 *****444 after dogfooding createMockApp (fixed: .use() middleware method missing — any middleware registration threw "app.use is not a function"; added full middleware dispatch chain with next() and error catching).
+******498 after dogfooding routeTestUtils + mockConsole (fixed 5 bugs: executeRequest hardcoded .expect(200) ignoring successStatus; mockAllConsole was a no-op returning empty objects; withMockConsole polluted calls with 2 phantom init entries; debug console.log inside jestMocker fired AFTER spy installation polluting spy call count; withMockConsole didn't restore on throw — missing try/finally; isMocked used fragile .toString().includes("mock") heuristic replaced with Set registry).
 
 You have authority to implement this according to best practices. You may make a plan and follow through it's steps if that helps keep you on task, but do not ask me for guidance, clarifying questions, or check in with me. I only expect to first hear from you when you are done with this task completely.

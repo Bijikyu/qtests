@@ -345,23 +345,24 @@ function createErrorRouteApp(config: RouteTestConfig): any {
  */
 async function executeRequest(config: RouteTestConfig, app: any): Promise<TestResult> {
   const request = supertest(app);
+  const successStatus = config.successStatus || 200;
   let response;
 
   switch (config.method) {
     case 'GET':
-      response = await request.get(config.path).expect(200).end();
+      response = await request.get(config.path).expect(successStatus).end();
       break;
     case 'POST':
-      response = await request.post(config.path).expect(200).end();
+      response = await request.post(config.path).expect(successStatus).end();
       break;
     case 'PUT':
-      response = await request.put(config.path).expect(200).end();
+      response = await request.put(config.path).expect(successStatus).end();
       break;
     case 'DELETE':
-      response = await request.delete(config.path).expect(200).end();
+      response = await request.delete(config.path).expect(successStatus).end();
       break;
     case 'PATCH':
-      response = await request.patch(config.path).expect(200).end();
+      response = await request.patch(config.path).expect(successStatus).end();
       break;
     default:
       throw new Error(`Unsupported method: ${config.method}`);
