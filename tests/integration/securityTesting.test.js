@@ -1,27 +1,9 @@
 /**
- * SecurityTestingFramework / SecurityAnalytics Regression Tests — Round 5
+ * SecurityTestingFramework Regression Tests
  *
- * Bugs found by dogfooding:
- *
- * 1. SecurityValidator.sanitize() — javascript: URI not stripped by removeScriptTags
- *    testXSS() in string-template mode claimed payloads were sanitized but
- *    `javascript:alert("xss")` passed through unchanged, causing the built-in
- *    XSS check to correctly flag it as a vulnerability. Fix: strip javascript:
- *    and vbscript: URI schemes when removeScriptTags is set.
- *
- * 2. SecurityRegressionTester rate-limit test — wrong options for assertion calls
- *    The setup call used { windowMs: 100, maxRequests: 2 } but the assertion calls
- *    used no options → defaults → maxRequests: 100 → result3 was never blocked.
- *    Fix: use consistent { windowMs: 60000, maxRequests: 3 } on all calls.
- *
- * 3. SecurityRegressionTester rate-limit test — shared global state between runs
- *    The static identifier 'test-rate-limit' accumulated counts on the global
- *    securityMonitor across multiple runAllTests() invocations. Fix: use a
- *    per-invocation unique identifier (Date.now() suffix).
- *
- * 4. JoiSecurityValidator jsonContent schema — NoSQL injection operators not detected
- *    {"$where":"..."}, {"$gt":""}, etc. passed validateJSON() unchallenged.
- *    Fix: added recursive operator scan for MongoDB $ operators before returning.
+ * Regression-locks the security TESTING utilities:
+ * PenetrationTester, SecurityRegressionTester, and the Joi-based
+ * validateJSON NoSQL injection detection.
  */
 
 const {
@@ -32,14 +14,10 @@ const {
 } = require('../../dist/lib/security/SecurityTestingFramework.js');
 
 const {
-  SecurityAnalytics,
-} = require('../../dist/lib/security/SecurityAnalytics.js');
-
-const {
   JoiSecurityValidator,
 } = require('../../dist/lib/security/JoiSecurityValidator.js');
 
-// ─── Fix 1: sanitize() strips javascript: URIs ───────────────────────────────
+// ─── Fix: sanitize() strips javascript: URIs ─────────────────────────────────
 
 describe('Fix — SecurityValidator.sanitize strips javascript: URIs', () => {
   test('testXSS string-template mode with sanitize=true passes for all built-in payloads', () => {
@@ -67,38 +45,7 @@ describe('Fix — SecurityValidator.sanitize strips javascript: URIs', () => {
   });
 });
 
-// ─── Fix 2 & 3: rate-limit test uses correct options and unique identifier ────
-
-describe('Fix — SecurityRegressionTester rate-limit test works on repeated calls', () => {
-  test('runAllTests() rate-limiting-test passes on first call', () => {
-    const srt = new SecurityRegressionTester();
-    const results = srt.runAllTests();
-    const rl = results[4]; // rate-limiting-test is index 4
-    expect(rl.passed).toBe(true);
-    expect(rl.vulnerabilities).toHaveLength(0);
-  });
-
-  test('runAllTests() rate-limiting-test passes on second consecutive call', () => {
-    const srt = new SecurityRegressionTester();
-    srt.runAllTests(); // first call — burns through one identifier
-    const results = srt.runAllTests(); // second call — must use a fresh identifier
-    const rl = results[4];
-    expect(rl.passed).toBe(true);
-    expect(rl.vulnerabilities).toHaveLength(0);
-  });
-
-  test('runAllTests() rate-limiting-test passes on third consecutive call', () => {
-    const srt = new SecurityRegressionTester();
-    srt.runAllTests();
-    srt.runAllTests();
-    const results = srt.runAllTests();
-    const rl = results[4];
-    expect(rl.passed).toBe(true);
-    expect(rl.vulnerabilities).toHaveLength(0);
-  });
-});
-
-// ─── Fix 4: jsonContent schema rejects NoSQL injection operators ──────────────
+// ─── Fix: validateJSON rejects NoSQL injection operators ─────────────────────
 
 describe('Fix — validateJSON rejects NoSQL injection operators', () => {
   let validator;
@@ -245,11 +192,6 @@ describe('SecurityRegressionTester — all built-in tests pass', () => {
     expect(results[2].passed).toBe(true);
   });
 
-  test('security-headers-check passes', () => {
-    const results = srt.runAllTests();
-    expect(results[3].passed).toBe(true);
-  });
-
   test('runTestsByCategory returns results for known category', () => {
     const results = srt.runTestsByCategory('input_validation');
     expect(Array.isArray(results)).toBe(true);
@@ -280,72 +222,5 @@ describe('runFullSecurityTest and generateSecurityTestReport', () => {
     const report = generateSecurityTestReport();
     expect(typeof report).toBe('string');
     expect(report.length).toBeGreaterThan(0);
-  });
-});
-
-// ─── SecurityAnalytics ────────────────────────────────────────────────────────
-
-describe('SecurityAnalytics', () => {
-  let sa;
-  beforeEach(() => { sa = new SecurityAnalytics(); });
-  afterEach(() => { sa.destroy(); });
-
-  test('analyzeEvent increments totalRequests', () => {
-    sa.analyzeEvent({ type: 'injection_attack', severity: 'high', blocked: false });
-    expect(sa.getAnalyticsSummary().totalRequests).toBe(1);
-  });
-
-  test('analyzeEvent increments blockedRequests only for blocked events', () => {
-    sa.analyzeEvent({ type: 'x', severity: 'low', blocked: true });
-    sa.analyzeEvent({ type: 'x', severity: 'low', blocked: false });
-    const s = sa.getAnalyticsSummary();
-    expect(s.blockedRequests).toBe(1);
-    expect(s.totalRequests).toBe(2);
-  });
-
-  test('analyzeEvent accumulates threatScore correctly (high=7, critical=15, low=1, medium=3)', () => {
-    sa.analyzeEvent({ type: 'x', severity: 'high', blocked: false });    // +7
-    sa.analyzeEvent({ type: 'x', severity: 'critical', blocked: false }); // +15
-    sa.analyzeEvent({ type: 'x', severity: 'low', blocked: false });      // +1
-    sa.analyzeEvent({ type: 'x', severity: 'medium', blocked: false });   // +3
-    expect(sa.getAnalyticsSummary().threatScore).toBe(26);
-  });
-
-  test('getRiskLevel starts at low', () => {
-    expect(sa.getRiskLevel()).toBe('low');
-  });
-
-  test('getRiskLevel escalates to at least medium when blocked rate > 10%', () => {
-    sa.analyzeEvent({ type: 'x', severity: 'low', blocked: true });
-    sa.analyzeEvent({ type: 'x', severity: 'low', blocked: true });
-    sa.analyzeEvent({ type: 'x', severity: 'low', blocked: false });
-    expect(['medium', 'high', 'critical']).toContain(sa.getRiskLevel());
-  });
-
-  test('getRiskLevel escalates to high when threatScore > 50', () => {
-    for (let i = 0; i < 4; i++) {
-      sa.analyzeEvent({ type: 'x', severity: 'critical', blocked: false }); // 4×15=60
-    }
-    expect(sa.getRiskLevel()).toBe('high');
-  });
-
-  test('getAnalyticsSummary includes blockedRate', () => {
-    sa.analyzeEvent({ type: 'x', severity: 'low', blocked: true });
-    sa.analyzeEvent({ type: 'x', severity: 'low', blocked: false });
-    expect(sa.getAnalyticsSummary().blockedRate).toBe(0.5);
-  });
-
-  test('generateReport returns object with riskAssessment', () => {
-    sa.analyzeEvent({ type: 'x', severity: 'medium', blocked: true });
-    const r = sa.generateReport();
-    expect(r).toHaveProperty('riskAssessment');
-    expect(r).toHaveProperty('analytics');
-  });
-
-  test('logIncident does not throw', () => {
-    expect(() => sa.logIncident({
-      type: 'injection_attack', severity: 'high', source: 'test',
-      details: { input: 'bad' }, blocked: true, remediation: 'block'
-    })).not.toThrow();
   });
 });

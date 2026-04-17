@@ -6,9 +6,7 @@
  * the qtests testing framework.
  */
 
-import { securityMonitor, SecurityEventType, SecuritySeverity } from './SecurityMonitor.js';
 import { securityValidator, ValidationResult } from './SecurityValidator.js';
-import { securityPolicyManager, SecurityHeaders } from './SecurityPolicyManager.js';
 
 /**
  * Security test case interface
@@ -439,68 +437,6 @@ export class SecurityRegressionTester {
           details: `Tested ${maliciousJSON.length} malicious JSON strings`,
           vulnerabilities,
           recommendations: vulnerabilities.length > 0 ? ['Strengthen JSON validation'] : [],
-          executionTime: 0
-        };
-      }
-    },
-
-    {
-      name: 'security-headers-check',
-      description: 'Test security headers are properly configured',
-      category: 'configuration',
-      severity: 'medium',
-      test: () => {
-        const headers = securityPolicyManager.generateSecurityHeaders();
-        const validation = securityPolicyManager.validateSecurityHeaders(headers);
-
-        return {
-          passed: validation.valid,
-          description: 'Security headers configuration test',
-          details: `Validated ${Object.keys(headers).length} security headers`,
-          vulnerabilities: validation.errors,
-          recommendations: validation.errors.length > 0 ? ['Fix missing security headers'] : [],
-          executionTime: 0
-        };
-      }
-    },
-
-    {
-      name: 'rate-limiting-test',
-      description: 'Test rate limiting prevents abuse',
-      category: 'authentication',
-      severity: 'medium',
-      test: () => {
-        // Use a unique identifier per invocation so repeated runAllTests() calls
-        // do not accumulate state in the global securityMonitor singleton.
-        const identifier = `test-rate-limit-${Date.now()}`;
-        const opts = { windowMs: 60000, maxRequests: 3 };
-        
-        // Consume the first slot (window initialised here)
-        securityMonitor.checkRateLimit(identifier, opts);
-        
-        // Make requests up to limit — all must use the same options
-        const result1 = securityMonitor.checkRateLimit(identifier, opts);
-        const result2 = securityMonitor.checkRateLimit(identifier, opts);
-        const result3 = securityMonitor.checkRateLimit(identifier, opts); // Should be blocked
-
-        const vulnerabilities: string[] = [];
-        
-        if (!result1.allowed) {
-          vulnerabilities.push('First request should be allowed');
-        }
-        if (!result2.allowed) {
-          vulnerabilities.push('Second request should be allowed');
-        }
-        if (result3.allowed) {
-          vulnerabilities.push('Third request should be blocked (rate limit exceeded)');
-        }
-
-        return {
-          passed: vulnerabilities.length === 0,
-          description: 'Rate limiting test',
-          details: 'Tested rate limiting functionality',
-          vulnerabilities,
-          recommendations: vulnerabilities.length > 0 ? ['Fix rate limiting implementation'] : [],
           executionTime: 0
         };
       }

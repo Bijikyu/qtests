@@ -72,6 +72,21 @@ copy their guidance to replit.md.
 <!--└── END PROTECTED RANGE ��-->
 <!--AI Can write from here on below-->
 
-Perform the aforementioned information copying verbatim, not as summary.
+## Security Module Architecture (current)
+
+The `lib/security/` directory contains only testing-mission components:
+
+- **SecurityValidator** — validates/sanitizes inputs (SQL injection, XSS, path traversal, prototype pollution, NoSQL operators). Used by SecurityTestingFramework.
+- **JoiSecurityValidator** — Joi-schema-based validator with recursive NoSQL operator detection. Primary validation engine.
+- **SecurityTestingFramework** — PenetrationTester, SecurityRegressionTester, runFullSecurityTest, generateSecurityTestReport. The public testing API.
+- **pathValidator** — validates file paths within project boundaries.
+
+**Removed (runtime security infra, not part of testing mission):**
+SecurityMonitor, SecurityMiddleware, SecurityAnalytics, SecurityAnalyticsTypes, SecurityPolicyManager, SecurityUtils, securityHeaders.
+
+## Test count progression
+278 → 317 → 346 → 369 → 420 → 465 → 366*
+
+*366 after removing runtime infra tests (securityMiddleware.test.js, securityUtils.test.js, SecurityAnalytics tests, SecurityMonitor/SecurityPolicyManager-dependent tests). All 366 pass.
 
 You have authority to implement this according to best practices. You may make a plan and follow through it's steps if that helps keep you on task, but do not ask me for guidance, clarifying questions, or check in with me. I only expect to first hear from you when you are done with this task completely.

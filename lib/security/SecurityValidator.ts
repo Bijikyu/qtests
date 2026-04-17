@@ -6,7 +6,6 @@
  * for enterprise-grade validation while maintaining backward compatibility.
  */
 
-import { securityMonitor, SecurityEventType, SecuritySeverity } from './SecurityMonitor.js';
 import { joiSecurityValidator } from './JoiSecurityValidator.js';
 import { parse as secureParse } from 'secure-json-parse';
 
@@ -206,22 +205,6 @@ export class SecurityValidator {
 
     result.sanitized = sanitizedValue;
 
-    // Log security events if flags detected
-    if (result.securityFlags.length > 0) {
-      securityMonitor.logEvent({
-        type: SecurityEventType.INJECTION_ATTACK,
-        severity: SecuritySeverity.MEDIUM,
-        source: 'security_validator',
-        details: { 
-          input: typeof input === 'string' ? input.substring(0, 100) : String(input),
-          ruleName,
-          securityFlags: result.securityFlags,
-          errors: result.errors
-        },
-        blocked: !result.valid,
-        remediation: 'Input validation failed due to security concerns'
-      });
-    }
 
     return result;
   }

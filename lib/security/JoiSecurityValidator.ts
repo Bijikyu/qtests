@@ -6,7 +6,6 @@
  */
 
 import Joi from 'joi';
-import { securityMonitor, SecurityEventType, SecuritySeverity } from './SecurityMonitor.js';
 
 /**
  * Validation result interface compatible with legacy SecurityValidator
@@ -257,15 +256,6 @@ export class JoiSecurityValidator {
         securityFlags: []
       };
       
-      securityMonitor.logEvent({
-        type: SecurityEventType.SECURITY_VIOLATION,
-        severity: SecuritySeverity.LOW,
-        source: 'joi_security_validator',
-        details: { ruleName, input: typeof input === 'string' ? input.substring(0, 100) : String(input) },
-        blocked: false,
-        remediation: 'Invalid validation rule specified'
-      });
-      
       return result;
     }
 
@@ -295,21 +285,6 @@ export class JoiSecurityValidator {
 
       if (securityErrors.length > 0) {
         result.securityFlags = securityErrors.map(detail => `Security flag: ${detail.type}`);
-        
-        // Log security events
-        securityMonitor.logEvent({
-          type: SecurityEventType.INJECTION_ATTACK,
-          severity: SecuritySeverity.MEDIUM,
-          source: 'joi_security_validator',
-          details: { 
-            input: typeof input === 'string' ? input.substring(0, 100) : String(input),
-            ruleName,
-            securityFlags: result.securityFlags,
-            errors: result.errors
-          },
-          blocked: !result.valid,
-          remediation: 'Input validation failed due to security concerns'
-        });
       }
     }
 
