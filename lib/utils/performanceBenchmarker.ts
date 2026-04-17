@@ -47,14 +47,10 @@ export interface BenchmarkSuite {
 
 class PerformanceBenchmarker {
   private results: BenchmarkResult[] = [];
-  private monitor: PerformanceMonitor;
 
   constructor() {
-    this.monitor = new PerformanceMonitor({
-      samplingInterval: 100,
-      historySize: 100,
-      adaptiveSampling: false
-    });
+    // Monitor is created lazily per runBenchmark() call to avoid
+    // starting a persistent setInterval at module load time.
   }
 
   /**
@@ -83,7 +79,12 @@ class PerformanceBenchmarker {
     const times: number[] = [];
     const warnings: string[] = [];
 
-    this.monitor.startMonitoring();
+    const monitor = new PerformanceMonitor({
+      samplingInterval: 100,
+      historySize: 100,
+      adaptiveSampling: false
+    });
+    monitor.startMonitoring();
 
     // Main benchmark phase
     for (let i = 0; i < iterations; i++) {
@@ -105,7 +106,7 @@ class PerformanceBenchmarker {
       }
     }
 
-    this.monitor.stopMonitoring();
+    monitor.stopMonitoring();
     const memoryAfter = process.memoryUsage();
 
     // Calculate statistics

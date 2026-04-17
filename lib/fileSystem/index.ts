@@ -24,19 +24,9 @@ import {
   withFileErrorHandling
 } from './errorHandling.js';
 
-import * as fs from 'fs-extra';
+import { safeWriteFile } from './fileWriting.js';
 
-// Add safeWriteFile using fs-extra directly
-export async function safeWriteFile(filePath: string, content: string | Buffer, encoding: BufferEncoding = 'utf8'): Promise<boolean> {
-  try {
-    await fs.ensureFile(filePath);
-    await fs.writeFile(filePath, content, encoding);
-    return true;
-  } catch (error) {
-    console.error('File write failed:', error);
-    return false;
-  }
-}
+export { safeWriteFile };
 
 // Resolve naming conflicts by providing prefixed versions
 export const ensureDir = managementEnsureDir;
