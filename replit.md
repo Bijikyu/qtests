@@ -91,5 +91,6 @@ SecurityMonitor, SecurityMiddleware, SecurityAnalytics, SecurityAnalyticsTypes, 
 **393 after dogfooding circuitBreaker + runTestSuite (fixed 3 bugs: getCurrentState always CLOSED, isDisabled inverted, async test fns not awaited).
 ***413 after dogfooding rateLimiter (fixed: RateLimiterAbstract imported as runtime value but is type-only in rate-limiter-flexible — caused module load crash).
 ****430 after dogfooding connectionPool + loadTest (fixed 3 bugs: connectionsCreated/Destroyed never incremented; maxConnections/acquireTimeout never passed to generic-pool; loadTest import started a background setInterval preventing clean process exit).
+*****444 after dogfooding createMockApp (fixed: .use() middleware method missing — any middleware registration threw "app.use is not a function"; added full middleware dispatch chain with next() and error catching).
 
 You have authority to implement this according to best practices. You may make a plan and follow through it's steps if that helps keep you on task, but do not ask me for guidance, clarifying questions, or check in with me. I only expect to first hear from you when you are done with this task completely.

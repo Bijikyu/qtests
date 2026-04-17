@@ -33,12 +33,17 @@ interface MockHandler {
   (req: MockRequest, res: MockResponse): void;
 }
 
+interface MiddlewareHandler {
+  (req: MockRequest, res: MockResponse, next: () => void): void;
+}
+
 interface MockApp extends MockHandler {
   get: (path: string, handler: MockHandler) => MockApp;
   post: (path: string, handler: MockHandler) => MockApp;
   put: (path: string, handler: MockHandler) => MockApp;
   patch: (path: string, handler: MockHandler) => MockApp;
   delete: (path: string, handler: MockHandler) => MockApp;
+  use: (handler: MiddlewareHandler) => MockApp;
 }
 
 interface SupertestResponse {
@@ -65,9 +70,24 @@ interface SupertestClient {
 
 export function createMockApp(): MockApp {
   const routes = new Map<string, MockHandler>();
+  const middleware: MiddlewareHandler[] = [];
   const add = (method: string, path: string, handler: MockHandler) => { 
     routes.set(method.toUpperCase() + ' ' + path, handler); 
   };
+
+  function dispatch(req: MockRequest, res: MockResponse, middlewareIndex: number, finalHandler: () => void): void {
+    if (middlewareIndex < middleware.length) {
+      try {
+        middleware[middlewareIndex](req, res, () => dispatch(req, res, middlewareIndex + 1, finalHandler));
+      } catch (err: any) {
+        res.statusCode = 500;
+        res.setHeader('content-type', 'application/json');
+        res.end(JSON.stringify({ error: 'Internal Error', message: String((err && err.message) || err) }));
+      }
+    } else {
+      finalHandler();
+    }
+  }
 
   function app(req: MockRequest, res: MockResponse): void {
     // Strip query string from URL for route matching
@@ -76,24 +96,27 @@ export function createMockApp(): MockApp {
     const key = String(req?.method || '').toUpperCase() + ' ' + pathWithoutQuery;
     const handler = routes.get(key);
 
-    if (!handler) {
-      res.statusCode = 404;
-      res.setHeader('content-type', 'application/json');
-      res.end(JSON.stringify({ error: 'Not Found' }));
-      return;
-    }
+    const finalHandler = () => {
+      if (!handler) {
+        res.statusCode = 404;
+        res.setHeader('content-type', 'application/json');
+        res.end(JSON.stringify({ error: 'Not Found' }));
+        return;
+      }
+      try {
+        res.statusCode = 200; // default
+        handler(req, res);
+      } catch (err: any) {
+        res.statusCode = 500;
+        res.setHeader('content-type', 'application/json');
+        res.end(JSON.stringify({ 
+          error: 'Internal Error', 
+          message: String((err && err.message) || err) 
+        }));
+      }
+    };
 
-    try {
-      res.statusCode = 200; // default
-      handler(req, res);
-    } catch (err: any) {
-      res.statusCode = 500;
-      res.setHeader('content-type', 'application/json');
-      res.end(JSON.stringify({ 
-        error: 'Internal Error', 
-        message: String((err && err.message) || err) 
-      }));
-    }
+    dispatch(req, res, 0, finalHandler);
   }
 
   app.get = (path: string, handler: MockHandler) => (add('GET', path, handler), app);
@@ -101,6 +124,7 @@ export function createMockApp(): MockApp {
   app.put = (path: string, handler: MockHandler) => (add('PUT', path, handler), app);
   app.patch = (path: string, handler: MockHandler) => (add('PATCH', path, handler), app);
   app.delete = (path: string, handler: MockHandler) => (add('DELETE', path, handler), app);
+  app.use = (handler: MiddlewareHandler) => (middleware.push(handler), app);
 
   return app;
 }
