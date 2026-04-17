@@ -6,7 +6,6 @@
  */
 
 import { EventEmitter } from 'events';
-import { monitoringSystem } from './monitoring.js';
 
 export interface LoadTestConfig {
   name: string;
@@ -267,9 +266,6 @@ export class LoadTestRunner extends EventEmitter {
           user.lastActivity = Date.now();
           requestCount++;
 
-          // Update monitoring
-          monitoringSystem.recordRequest(responseTime, result.success);
-
         } catch (error) {
           user.errors++;
           requestCount++;
@@ -279,8 +275,6 @@ export class LoadTestRunner extends EventEmitter {
             success: false,
             error: (error as Error).message
           });
-
-          monitoringSystem.recordRequest(0, false);
         }
 
         // Think time

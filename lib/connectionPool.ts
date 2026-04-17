@@ -11,7 +11,23 @@ export class AdvancedConnectionPool extends EventEmitter{private pool:any;privat
     try {
       // Use proper async import with await
       const genericPool = await import('generic-pool');
-      this.pool = genericPool.createPool(factory);
+      // Wrap factory so we can track connectionsCreated / connectionsDestroyed
+      const wrappedFactory = {
+        create: async () => {
+          const conn = await factory.create();
+          this.stats.connectionsCreated++;
+          return conn;
+        },
+        destroy: async (conn: any) => {
+          await factory.destroy(conn);
+          this.stats.connectionsDestroyed++;
+        },
+        ...(factory.validate ? { validate: factory.validate.bind(factory) } : {})
+      };
+      this.pool = genericPool.createPool(wrappedFactory, {
+        max: this.config.maxConnections ?? 10,
+        acquireTimeoutMillis: this.config.acquireTimeout ?? 30000,
+      });
     } catch (error) {
       console.error('Failed to initialize generic-pool:', error);
       throw error;
