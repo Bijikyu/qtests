@@ -531,23 +531,26 @@ export class FileSystemOperations {
 }
 
 // Convenience functions for backward compatibility
+// All methods must be bound to FileSystemOperations so that static `this`
+// references (e.g. this.DEFAULT_MAX_SIZE) resolve correctly when called as
+// plain function references rather than as class method calls.
 export const fileSystemUtils = {
-  readFile: FileSystemOperations.readFile,
-  writeFile: FileSystemOperations.writeFile,
-  appendFile: FileSystemOperations.appendFile,
-  deleteFile: FileSystemOperations.deleteFile,
-  ensureDirectory: FileSystemOperations.ensureDirectory,
-  getFileStats: FileSystemOperations.getFileStats,
-  copyFile: FileSystemOperations.copyFile,
-  moveFile: FileSystemOperations.moveFile,
-  listDirectory: FileSystemOperations.listDirectory,
-  cleanupTemp: FileSystemOperations.cleanupTemp
+  readFile: FileSystemOperations.readFile.bind(FileSystemOperations),
+  writeFile: FileSystemOperations.writeFile.bind(FileSystemOperations),
+  appendFile: FileSystemOperations.appendFile.bind(FileSystemOperations),
+  deleteFile: FileSystemOperations.deleteFile.bind(FileSystemOperations),
+  ensureDirectory: FileSystemOperations.ensureDirectory.bind(FileSystemOperations),
+  getFileStats: FileSystemOperations.getFileStats.bind(FileSystemOperations),
+  copyFile: FileSystemOperations.copyFile.bind(FileSystemOperations),
+  moveFile: FileSystemOperations.moveFile.bind(FileSystemOperations),
+  listDirectory: FileSystemOperations.listDirectory.bind(FileSystemOperations),
+  cleanupTemp: FileSystemOperations.cleanupTemp.bind(FileSystemOperations)
 };
 
 // Legacy function aliases for migration
-export const safeReadFile = FileSystemOperations.readFile;
-export const safeWriteFile = FileSystemOperations.writeFile;
-export const ensureDir = FileSystemOperations.ensureDirectory;
+export const safeReadFile = FileSystemOperations.readFile.bind(FileSystemOperations);
+export const safeWriteFile = FileSystemOperations.writeFile.bind(FileSystemOperations);
+export const ensureDir = FileSystemOperations.ensureDirectory.bind(FileSystemOperations);
 export const ensureDirSync = () => {
   console.warn('ensureDirSync is deprecated - use ensureDirectory for better scalability');
   return false;
