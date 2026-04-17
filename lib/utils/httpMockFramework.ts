@@ -126,6 +126,37 @@ export abstract class BaseHttpMock implements MockHttpClient {
     }
   }
 
+  /**
+   * Convert a result from handleRequest() to an axios-style MockResponse.
+   *
+   * handleRequest() is shared by two callers:
+   *  1. MSW server handlers — MSW expects a Response/HttpResponse object.
+   *  2. Direct HTTP method calls (get/post/…) — callers expect axios-style
+   *     { status, data, headers, … }.
+   *
+   * When a preset response or the default response path is taken, handleRequest
+   * returns createResponse() which wraps the data in an MSW HttpResponse.  That
+   * object has .status on its prototype but no .data, so JSON.stringify gives {}.
+   * This helper unwraps it back into a plain axios-compatible object so every
+   * direct mock.get/post/… call returns usable data.
+   */
+  protected async toAxiosStyle(result: any, fallbackData: any = {}): Promise<MockResponse> {
+    if (!result) {
+      return createAxiosStyleResponse(fallbackData ?? this.defaultResponse, this.defaultStatus);
+    }
+    // MSW HttpResponse (a Response subclass) has a json() method and a numeric status.
+    // Custom handler functions that return a plain axios-style object do NOT have json().
+    if (typeof (result as any).json === 'function' && typeof (result as any).status === 'number') {
+      try {
+        const data = await (result as Response).json();
+        return createAxiosStyleResponse(data, (result as Response).status);
+      } catch {
+        return createAxiosStyleResponse(this.defaultResponse, (result as Response).status || this.defaultStatus);
+      }
+    }
+    return result as MockResponse;
+  }
+
   protected async executeWithErrorHandling<T>(
     operation: () => Promise<T>,
     context: string
@@ -150,7 +181,7 @@ export abstract class BaseHttpMock implements MockHttpClient {
     return this.executeWithErrorHandling(
       () => this.handleRequest('GET', { url, method: 'GET', config }),
       'httpMock.get'
-    ).then(result => result || createAxiosStyleResponse(this.defaultResponse, this.defaultStatus));
+    ).then(result => this.toAxiosStyle(result, this.defaultResponse));
   }
 
   async post(url: string, data: any = {}, config: any = {}): Promise<MockResponse> {
@@ -158,7 +189,7 @@ export abstract class BaseHttpMock implements MockHttpClient {
     return this.executeWithErrorHandling(
       () => this.handleRequest('POST', { url, method: 'POST', data, config }),
       'httpMock.post'
-    ).then(result => result || createAxiosStyleResponse(data, this.defaultStatus));
+    ).then(result => this.toAxiosStyle(result, data));
   }
 
   async put(url: string, data: any = {}, config: any = {}): Promise<MockResponse> {
@@ -166,7 +197,7 @@ export abstract class BaseHttpMock implements MockHttpClient {
     return this.executeWithErrorHandling(
       () => this.handleRequest('PUT', { url, method: 'PUT', data, config }),
       'httpMock.put'
-    ).then(result => result || createAxiosStyleResponse(data, this.defaultStatus));
+    ).then(result => this.toAxiosStyle(result, data));
   }
 
   async patch(url: string, data: any = {}, config: any = {}): Promise<MockResponse> {
@@ -174,7 +205,7 @@ export abstract class BaseHttpMock implements MockHttpClient {
     return this.executeWithErrorHandling(
       () => this.handleRequest('PATCH', { url, method: 'PATCH', data, config }),
       'httpMock.patch'
-    ).then(result => result || createAxiosStyleResponse(data, this.defaultStatus));
+    ).then(result => this.toAxiosStyle(result, data));
   }
 
   async delete(url: string, config: any = {}): Promise<MockResponse> {
@@ -182,7 +213,7 @@ export abstract class BaseHttpMock implements MockHttpClient {
     return this.executeWithErrorHandling(
       () => this.handleRequest('DELETE', { url, method: 'DELETE', config }),
       'httpMock.delete'
-    ).then(result => result || createAxiosStyleResponse({}, this.defaultStatus));
+    ).then(result => this.toAxiosStyle(result, {}));
   }
 
   async request(config: any): Promise<MockResponse> {
@@ -193,7 +224,7 @@ export abstract class BaseHttpMock implements MockHttpClient {
     return this.executeWithErrorHandling(
       () => this.handleRequest(method, { url, method, data, config }),
       'httpMock.request'
-    ).then(result => result || createAxiosStyleResponse(data, this.defaultStatus));
+    ).then(result => this.toAxiosStyle(result, data));
   }
 
   // Lifecycle methods
@@ -272,9 +303,16 @@ export class MSWMock extends BaseHttpMock {
       return customHandler(request);
     }
 
-    // Check preset responses
+    // Check preset responses (Map form — set via constructor presetResponses option)
     if (this.config.presetResponses?.has(url)) {
       return this.createResponse(this.config.presetResponses.get(url));
+    }
+
+    // Also check presetData (object form — passed via createUserConfigurableMock's presetData
+    // option which ends up in this.config but is NOT auto-converted to a presetResponses Map)
+    const presetDataObj = this.config.presetData as Record<string, any> | undefined;
+    if (presetDataObj && Object.prototype.hasOwnProperty.call(presetDataObj, url)) {
+      return this.createResponse(presetDataObj[url]);
     }
 
     return this.createResponse(this.defaultResponse);
