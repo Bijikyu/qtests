@@ -50,7 +50,9 @@ export class AdvancedMemoryLeakDetector extends EventEmitter {
   
   constructor() {
     super();
-    this.startMonitoring();
+    if (!process.env.JEST_WORKER_ID && process.env.NODE_ENV !== 'test') {
+      this.startMonitoring();
+    }
   }
 
   /**
