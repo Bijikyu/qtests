@@ -23,11 +23,24 @@
  * - Conditional imports based on offline mode state
  */
 
+import { createRequire } from 'module';
 import { CODEX, OFFLINE_MODE, NODE_ENV } from '../config/localVars.js';
 import qerrors from '../lib/qerrorsFallback.js';
 
-// Stable, cross-platform stub URL (Windows-safe for `import()`).
-const AXIOS_STUB_URL = new URL('../stubs/axios.js', import.meta.url);
+// Runtime-safe require: works in CJS (Jest) and native ESM.
+// In CJS the global require resolves relative to this file; in ESM we fall back
+// to createRequire so dynamic `import()` is not needed for CJS paths.
+const _cjsRequire = typeof require !== 'undefined'
+  ? require
+  : createRequire(process.cwd() + '/index.cjs');
+
+// Helper that loads the axios stub in any module environment.
+async function importAxiosStub(): Promise<any> {
+  if (typeof require !== 'undefined') {
+    return _cjsRequire('../stubs/axios.cjs');
+  }
+  return import('../stubs/axios.js');
+}
 
 /**
  * Interface representing the current environment state
@@ -117,7 +130,7 @@ async function getAxiosModule(): Promise<any> {
       // Load stub axios in offline mode
       try {
         // Import the shipped stub module (do not depend on process.cwd()).
-        const module = await import(AXIOS_STUB_URL.href);
+        const module = await importAxiosStub();
         cachedAxios = (module as any).default || module;
       } catch (error) {
         qerrors(
@@ -146,7 +159,7 @@ async function getAxiosModule(): Promise<any> {
         
         try {
           // Attempt to load stub as fallback
-          const stubAxios = await import(AXIOS_STUB_URL.href);
+          const stubAxios = await importAxiosStub();
           cachedAxios = (stubAxios as any).default || stubAxios;
         } catch (fallbackError) {
           // Ultimate fallback: minimal axios-like object

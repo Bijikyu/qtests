@@ -15,36 +15,39 @@ export const defaultValidationConfig: ValidationConfig = {
   enableStreaming: true,
 };
 
-export function createSecureStringSchema(config: ValidationConfig = defaultValidationConfig): ZodSchema<string> {
+export function createSecureStringSchema(config: ValidationConfig = {}): ZodSchema<string> {
+  const merged = { ...defaultValidationConfig, ...config } as Required<ValidationConfig>;
   return z.string()
-    .max(config.maxStringLength, `String exceeds maximum length of ${config.maxStringLength}`)
+    .max(merged.maxStringLength, `String exceeds maximum length of ${merged.maxStringLength}`)
     .refine(
-      (str: string) => !config.dangerousPatterns.some(pattern => pattern.test(str)),
+      (str: string) => !merged.dangerousPatterns.some(pattern => pattern.test(str)),
       { message: 'String contains potentially dangerous content' }
     );
 }
 
-export function createQueryStringSchema(config: ValidationConfig = defaultValidationConfig): ZodSchema<string> {
+export function createQueryStringSchema(config: ValidationConfig = {}): ZodSchema<string> {
+  const merged = { ...defaultValidationConfig, ...config } as Required<ValidationConfig>;
   return z.string()
-    .max(config.maxQueryStringLength, `Query string exceeds maximum length of ${config.maxQueryStringLength}`)
+    .max(merged.maxQueryStringLength, `Query string exceeds maximum length of ${merged.maxQueryStringLength}`)
     .refine(
-      (str: string) => !config.dangerousPatterns.some(pattern => pattern.test(str)),
+      (str: string) => !merged.dangerousPatterns.some(pattern => pattern.test(str)),
       { message: 'Query string contains potentially dangerous content' }
     );
 }
 
 export function createSecureObjectSchema<T extends z.ZodRawShape>(
   shape: T,
-  config: ValidationConfig = defaultValidationConfig
+  config: ValidationConfig = {}
 ): ZodSchema<z.infer<z.ZodObject<T>>> {
+  const merged = { ...defaultValidationConfig, ...config } as Required<ValidationConfig>;
   const secureShape: Record<string, ZodSchema> = {};
   
   for (const [key, schema] of Object.entries(shape)) {
     if (schema instanceof z.ZodString) {
       secureShape[key] = schema
-        .max(config.maxStringLength, `Field ${key} exceeds maximum length`)
+        .max(merged.maxStringLength, `Field ${key} exceeds maximum length`)
         .refine(
-          (str: string) => !config.dangerousPatterns.some(pattern => pattern.test(str)),
+          (str: string) => !merged.dangerousPatterns.some(pattern => pattern.test(str)),
           { message: `Field ${key} contains potentially dangerous content` }
         );
     } else {

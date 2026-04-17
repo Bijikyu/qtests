@@ -30,7 +30,7 @@ function resetCircuitBreaker(key: string) {
 export async function validateWithZod<T>(
   data: unknown,
   schema: ZodSchema<T>,
-  config: ValidationConfig
+  config: ValidationConfig = {}
 ): Promise<ValidationResult> {
   const startTime = Date.now();
   
@@ -55,8 +55,9 @@ export async function validateWithZod<T>(
   
   // Add timeout protection for validation operations
   const timeoutMs = config.timeout || 30000; // 30 second default timeout
+  let timeoutId: ReturnType<typeof setTimeout>;
   const timeoutPromise = new Promise<never>((_, reject) => {
-    setTimeout(() => {
+    timeoutId = setTimeout(() => {
       reject(new Error(`Validation timeout after ${timeoutMs}ms`));
     }, timeoutMs);
   });
@@ -64,7 +65,7 @@ export async function validateWithZod<T>(
   const validationPromise = (async () => {
     try {
       // Add circuit breaker pattern for streaming validation
-      if (config.enableStreaming && typeof data === 'string' && data.length > config.maxChunkSize) {
+      if (config.enableStreaming && typeof data === 'string' && data.length > (config.maxChunkSize ?? Infinity)) {
         const streamingFailureKey = `streaming_validation_failure_${schema.constructor.name}`;
         const circuitState = getCircuitBreakerState(streamingFailureKey);
         
@@ -168,8 +169,11 @@ export async function validateWithZod<T>(
   })();
 
   try {
-    return await Promise.race([validationPromise, timeoutPromise]);
+    const result = await Promise.race([validationPromise, timeoutPromise]);
+    clearTimeout(timeoutId!);
+    return result;
   } catch (error) {
+    clearTimeout(timeoutId!);
     if (error instanceof Error && error.message.includes('timeout')) {
       return {
         isValid: false,

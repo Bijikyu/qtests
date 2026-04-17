@@ -34,7 +34,7 @@ export async function validateStreamingString<T>(
   const chunks: string[] = [];
   // Calculate optimal chunk size with safety limits
   // Use configured chunk size but cap at 1MB to prevent memory issues
-  const chunkSize = Math.max(1, Math.min(config.maxChunkSize, 1000000));
+  const chunkSize = Math.max(1, Math.min(config.maxChunkSize ?? 1024 * 1024, 1000000));
   const maxChunks = 50; // Limit parallel chunks to prevent CPU overload
   
   // Split data into chunks for parallel processing with chunk limit

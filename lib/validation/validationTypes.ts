@@ -1,15 +1,15 @@
 import { z, ZodSchema, ZodError } from 'zod';
 
 export interface ValidationConfig {
-  maxChunkSize: number;
-  maxStringLength: number;
-  maxQueryStringLength: number;
-  maxConcurrentChunks: number;
-  dangerousPatterns: RegExp[];
-  enableStreaming: boolean;
+  maxChunkSize?: number;
+  maxStringLength?: number;
+  maxQueryStringLength?: number;
+  maxConcurrentChunks?: number;
+  dangerousPatterns?: RegExp[];
+  enableStreaming?: boolean;
   enableCaching?: boolean;
   timeout?: number;
-  requireFullValidation?: boolean; // Skip expensive final validation by default
+  requireFullValidation?: boolean;
 }
 
 export interface ValidationResult {

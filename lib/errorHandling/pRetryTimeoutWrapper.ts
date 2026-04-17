@@ -9,9 +9,35 @@
  * - Better retry strategies and timeout handling
  */
 
-import pRetry, { AbortError } from 'p-retry';
-import pTimeout from 'p-timeout';
 import qerrors from '../qerrorsFallback.js';
+
+// Lazy dynamic imports — p-retry and p-timeout are pure-ESM packages.
+// Static require() of pure-ESM packages fails in CJS environments (e.g. Jest
+// running compiled dist/ files).  Dynamically importing on first use avoids
+// the parse-time crash while keeping full functionality at runtime.
+let _pRetryModule: typeof import('p-retry') | undefined;
+let _pTimeoutModule: typeof import('p-timeout') | undefined;
+
+async function getPRetry(): Promise<typeof import('p-retry')['default']> {
+  if (!_pRetryModule) {
+    _pRetryModule = await import('p-retry');
+  }
+  return _pRetryModule.default;
+}
+
+async function getAbortError(): Promise<typeof import('p-retry')['AbortError']> {
+  if (!_pRetryModule) {
+    _pRetryModule = await import('p-retry');
+  }
+  return _pRetryModule.AbortError;
+}
+
+async function getPTimeout(): Promise<typeof import('p-timeout')['default']> {
+  if (!_pTimeoutModule) {
+    _pTimeoutModule = await import('p-timeout');
+  }
+  return _pTimeoutModule.default;
+}
 
 export interface RetryOptions {
   retries?: number;
@@ -73,6 +99,7 @@ export class EnhancedErrorHandler {
     };
 
     try {
+      const pRetry = await getPRetry();
       return await pRetry(fn, retryOptions);
     } catch (error) {
       if (this.options.enableLogging) {
@@ -97,6 +124,7 @@ export class EnhancedErrorHandler {
     const timeoutMessage = this.options.message || `Operation timed out after ${timeoutMs}ms`;
 
     try {
+      const pTimeout = await getPTimeout();
       return await pTimeout(fn(), {
         milliseconds: timeoutMs,
         message: timeoutMessage,
@@ -277,7 +305,7 @@ export async function withTimeout<T>(
   return handler.executeWithTimeout(fn);
 }
 
-// Export p-retry and p-timeout for direct usage
-export { pRetry, pTimeout, AbortError };
+// Async accessors for p-retry and p-timeout (pure-ESM packages)
+export { getPRetry as pRetry, getPTimeout as pTimeout, getAbortError as AbortError };
 
 export default EnhancedErrorHandler;

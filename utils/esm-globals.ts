@@ -33,13 +33,15 @@ export function getThisFilename() {
     // In Jest, provide a reasonable fallback path
     return path.resolve(process.cwd(), 'utils/esm-globals.ts');
   }
-  // Safe approach: use try-catch with direct import.meta access
+  // Use (0, eval) to hide import.meta from Jest's/CJS static parser —
+  // same pattern as moduleReloader.ts. Caught if running in a CJS context.
   try {
-    if (typeof import.meta !== 'undefined' && import.meta.url) {
-      return fileURLToPath(import.meta.url);
+    const metaUrl = (0, eval)('import.meta.url');
+    if (metaUrl) {
+      return fileURLToPath(metaUrl);
     }
   } catch (error) {
-    // Fallback if import.meta is not available
+    // Fallback if import.meta is not available (CJS environment)
   }
   // Final fallback to current working directory
   return path.resolve(process.cwd(), 'utils/esm-globals.ts');
