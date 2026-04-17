@@ -124,7 +124,7 @@ export function getCircuitBreakerStats(breaker: any): CircuitBreakerStats {
     averageResponseTime: 0, // opossum doesn't track this
     lastFailureTime: undefined,
     lastSuccessTime: undefined,
-    isDisabled: currentState === CircuitState.CLOSED,
+    isDisabled: currentState === CircuitState.OPEN,
     adaptiveTimeout: undefined
   };
 }
@@ -135,10 +135,9 @@ export function getCircuitBreakerStats(breaker: any): CircuitBreakerStats {
  * @returns Current circuit state
  */
 function getCurrentState(breaker: any): CircuitState {
-  const stats = breaker.stats;
-  if (stats.state === 'open') {
+  if (breaker.opened === true) {
     return CircuitState.OPEN;
-  } else if (stats.state === 'half-open') {
+  } else if (breaker.halfOpen === true) {
     return CircuitState.HALF_OPEN;
   } else {
     return CircuitState.CLOSED;
