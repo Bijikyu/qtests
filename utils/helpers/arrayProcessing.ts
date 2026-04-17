@@ -29,8 +29,12 @@ export function processArrayWithValidation<T>(
   
   const successes: T[] = [];
   const failures: Array<{ item: T; error: string; index: number }> = [];
-  
-  items.forEach((item, index) => {
+
+  // Use a for loop so `break` can truly stop iteration when stopOnFirstError
+  // is set.  A `return` inside forEach only exits that callback invocation —
+  // it does NOT break the outer loop — so forEach cannot honour stopOnFirstError.
+  for (let index = 0; index < items.length; index++) {
+    const item = items[index];
     try {
       const result = validator(item, index);
       
@@ -44,7 +48,7 @@ export function processArrayWithValidation<T>(
         });
         
         if (options.stopOnFirstError) {
-          return;
+          break;
         }
       }
     } catch (error) {
@@ -55,10 +59,10 @@ export function processArrayWithValidation<T>(
       });
       
       if (options.stopOnFirstError) {
-        return;
+        break;
       }
     }
-  });
+  }
   
   return {
     successes,

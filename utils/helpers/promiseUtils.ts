@@ -54,16 +54,22 @@ export function promiseWithTimeout<T>(
   timeoutMs: number, 
   timeoutError?: string
 ): Promise<T> {
-  // Create a timeout promise that rejects after the specified duration
+  // Store the handle so it can be cleared after the race settles.
+  // Without this, the timer fires after the original promise wins, triggering
+  // an unhandled rejection on timeoutPromise and holding the event loop open.
+  let timeoutHandle: ReturnType<typeof setTimeout>;
+
   const timeoutPromise = new Promise<never>((_, reject) => {
-    setTimeout(() => {
+    timeoutHandle = setTimeout(() => {
       reject(new Error(timeoutError || `Operation timed out after ${timeoutMs}ms`));
     }, timeoutMs);
   });
 
-  // Race the original promise against the timeout promise
-  // The first one to resolve/reject wins
-  return Promise.race([promise, timeoutPromise]);
+  // Race the original promise against the timeout promise.
+  // Clear the timer once either side settles so the event loop can drain.
+  return Promise.race([promise, timeoutPromise]).finally(() => {
+    clearTimeout(timeoutHandle!);
+  });
 }
 
 /**
