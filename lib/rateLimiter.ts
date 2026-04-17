@@ -1,5 +1,6 @@
 /** Rate Limiting Implementation using rate-limiter-flexible */
-import{RateLimiterRedis,RateLimiterMemory,RateLimiterAbstract}from'rate-limiter-flexible';
+import{RateLimiterRedis,RateLimiterMemory}from'rate-limiter-flexible';
+import type{RateLimiterAbstract}from'rate-limiter-flexible';
 import{redisUrl,redisCloudUrl}from'../config/localVars.js';
 import qerrors from'./qerrorsFallback.js';
 
@@ -24,4 +25,4 @@ export class DistributedRateLimiter{private limiter:RateLimiterAbstract;private 
 
 export class InMemoryRateLimiter{private limiter:RateLimiterMemory;private config:RateLimitConfig;constructor(config:RateLimitConfig){this.config=config;this.limiter=createInMemoryRateLimiter(config);}async isAllowed(req:any):Promise<RateLimitResult>{return checkRateLimit(this.limiter,req,this.config);}async resetKey(key:string):Promise<void>{return resetRateLimitKey(this.limiter,key);}getStats():RateLimitStats{return getRateLimitStats(this.limiter);}get rateLimiter():RateLimiterMemory{return this.limiter;}}
 
-export{RateLimiterRedis,RateLimiterMemory,RateLimiterAbstract};export default{createDistributedRateLimiter,createInMemoryRateLimiter,checkRateLimit,resetRateLimitKey,getRateLimitStats,getDistributedRateLimiter,getInMemoryRateLimiter,DistributedRateLimiter,InMemoryRateLimiter,RateLimiterRedis,RateLimiterMemory,RateLimiterAbstract};
+export{RateLimiterRedis,RateLimiterMemory};export type{RateLimiterAbstract};export default{createDistributedRateLimiter,createInMemoryRateLimiter,checkRateLimit,resetRateLimitKey,getRateLimitStats,getDistributedRateLimiter,getInMemoryRateLimiter,DistributedRateLimiter,InMemoryRateLimiter,RateLimiterRedis,RateLimiterMemory};
