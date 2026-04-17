@@ -6,12 +6,20 @@
 import { createRequire } from 'module';
 import qerrors from '../qerrorsFallback.js';
 
-// Node ESM: `require` is not global; use a scoped require so `require.cache` is available.
-const require = createRequire(import.meta.url);
+// CJS-and-ESM-compatible require: in CommonJS (the typical compiled-TypeScript
+// case, including Jest), `require` is already a global so we use it directly.
+// In native ESM environments `require` is absent, so we fall back to
+// createRequire anchored to the process working directory.
+// Using `import.meta.url` here would compile to a literal `import.meta.url`
+// in the CJS output and crash with "Cannot use 'import.meta' outside a module".
+const _require: NodeJS.Require =
+  typeof require !== 'undefined'
+    ? require
+    : createRequire(process.cwd() + '/index.cjs');
 
 export const clearModuleCache = (): number => {
   try {
-    const cache = (require as any).cache || {};
+    const cache = (_require as any).cache || {};
     const moduleKeys = Object.keys(cache);
     let cleared = 0;
 
