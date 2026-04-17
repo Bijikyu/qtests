@@ -307,7 +307,7 @@ static validateJSON(jsonString: string, context: string = 'unknown'): { valid: b
 
       const safePath = validation.safePath!;
       
-      if (safePath === '/' || safePath.includes(process.cwd())) {
+      if (safePath === '/' || (path.isAbsolute(safePath) && !safePath.startsWith(process.cwd()))) {
         resolve({ success: false, error: 'Unsafe deletion path' });
         return;
       }
