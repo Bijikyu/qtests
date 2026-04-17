@@ -50,6 +50,7 @@ export class ScalableDatabaseClient extends EventEmitter {
   private fieldUsageStats = new Map<string, { selectCount: number; whereCount: number; joinCount: number; orderByCount: number }>();
   private readonly maxIndexSuggestions = 100; // Prevent unbounded growth
   private readonly indexAnalysisInterval = 300000; // Analyze every 5 minutes
+  private indexAnalysisIntervalId?: NodeJS.Timeout;
   
   // Metrics tracking
   private metrics: DatabaseMetrics = {
@@ -87,8 +88,10 @@ export class ScalableDatabaseClient extends EventEmitter {
     this.maxQueueSize = Math.min(this.config.maxConnections * 2, 50); // Stricter queue limit
     
     this.initializeConnectionPool();
-    this.startCacheCleanup();
-    this.startIndexAnalysis();
+    if (!process.env.JEST_WORKER_ID && process.env.NODE_ENV !== 'test') {
+      this.startCacheCleanup();
+      this.startIndexAnalysis();
+    }
   }
 
   /**
@@ -954,7 +957,7 @@ private startCacheCleanup(): void {
    * Start periodic index analysis
    */
   private startIndexAnalysis(): void {
-    setInterval(() => {
+    this.indexAnalysisIntervalId = setInterval(() => {
       this.performIndexAnalysis();
     }, this.indexAnalysisInterval);
   }
@@ -1120,6 +1123,12 @@ async close(): Promise<void> {
   if (this.cleanupInterval) {
     clearInterval(this.cleanupInterval);
     this.cleanupInterval = undefined;
+  }
+
+  // Clear index analysis interval
+  if (this.indexAnalysisIntervalId) {
+    clearInterval(this.indexAnalysisIntervalId);
+    this.indexAnalysisIntervalId = undefined;
   }
 
   // Reject all waiting requests

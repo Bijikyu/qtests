@@ -416,7 +416,7 @@ export class Logger extends EventEmitter {
       logData.error = entry.error;
     }
 
-    this.winston.log(logData.level, logData.message, logData);
+    this.winston.log(logData);
   }
 
   private getWinstonLevel(level: LogLevel): string {
