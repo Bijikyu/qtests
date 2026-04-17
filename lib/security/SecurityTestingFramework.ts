@@ -470,15 +470,18 @@ export class SecurityRegressionTester {
       category: 'authentication',
       severity: 'medium',
       test: () => {
-        const identifier = 'test-rate-limit';
+        // Use a unique identifier per invocation so repeated runAllTests() calls
+        // do not accumulate state in the global securityMonitor singleton.
+        const identifier = `test-rate-limit-${Date.now()}`;
+        const opts = { windowMs: 60000, maxRequests: 3 };
         
-        // Clear any existing rate limits
-        securityMonitor.checkRateLimit(identifier, { windowMs: 100, maxRequests: 2 });
+        // Consume the first slot (window initialised here)
+        securityMonitor.checkRateLimit(identifier, opts);
         
-        // Make requests up to limit
-        const result1 = securityMonitor.checkRateLimit(identifier);
-        const result2 = securityMonitor.checkRateLimit(identifier);
-        const result3 = securityMonitor.checkRateLimit(identifier); // Should be blocked
+        // Make requests up to limit — all must use the same options
+        const result1 = securityMonitor.checkRateLimit(identifier, opts);
+        const result2 = securityMonitor.checkRateLimit(identifier, opts);
+        const result3 = securityMonitor.checkRateLimit(identifier, opts); // Should be blocked
 
         const vulnerabilities: string[] = [];
         

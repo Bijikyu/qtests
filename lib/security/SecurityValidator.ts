@@ -339,6 +339,9 @@ export class SecurityValidator {
     // Specifically remove script content
     if (options.removeScriptTags) {
       sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+      // Also strip javascript: and vbscript: URI schemes — standard XSS vectors in href/src attributes
+      sanitized = sanitized.replace(/javascript\s*:/gi, '');
+      sanitized = sanitized.replace(/vbscript\s*:/gi, '');
     }
 
     // Escape HTML entities

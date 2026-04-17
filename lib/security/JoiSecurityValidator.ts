@@ -135,6 +135,21 @@ export class JoiSecurityValidator {
                 parsed.hasOwnProperty('prototype')) {
               return helpers.error('custom.prototypePollution');
             }
+            // Check for NoSQL injection operators (MongoDB $where, $gt, $ne, etc.)
+            const nosqlOperators = ['$where', '$gt', '$lt', '$gte', '$lte', '$ne', '$in', '$nin', '$or', '$and', '$nor', '$not', '$exists', '$type', '$expr', '$regex'];
+            const checkForOperators = (obj: any, depth = 0): boolean => {
+              if (depth > 10) return false;
+              for (const key of Object.keys(obj)) {
+                if (nosqlOperators.includes(key)) return true;
+                if (obj[key] && typeof obj[key] === 'object') {
+                  if (checkForOperators(obj[key], depth + 1)) return true;
+                }
+              }
+              return false;
+            };
+            if (checkForOperators(parsed)) {
+              return helpers.error('custom.nosqlInjection');
+            }
           }
           return value;
         } catch (error) {
@@ -145,7 +160,8 @@ export class JoiSecurityValidator {
         'string.base': 'JSON content must be a string',
         'string.max': 'JSON content must be no more than 1MB',
         'custom.invalidJSON': 'Invalid JSON format',
-        'custom.prototypePollution': 'Prototype pollution attempt detected'
+        'custom.prototypePollution': 'Prototype pollution attempt detected',
+        'custom.nosqlInjection': 'NoSQL injection operator detected in JSON'
       }));
 
     // Email validation
@@ -272,6 +288,7 @@ export class JoiSecurityValidator {
       const securityErrors = error.details.filter(detail => 
         detail.type === 'custom.pathTraversal' ||
         detail.type === 'custom.prototypePollution' ||
+        detail.type === 'custom.nosqlInjection' ||
         detail.type === 'custom.dangerousPattern' ||
         detail.type === 'custom.nullBytes'
       );
