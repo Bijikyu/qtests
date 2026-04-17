@@ -71,20 +71,32 @@ export {
 // Legacy compatibility exports
 export function createAxiosMock(presetData: any = {}) {
   console.log('[DEPRECATED] Using legacy axios mock. Consider migrating to createMockHttpClient.');
-  
+  const j = (globalThis as any).jest;
+  const makeMock = (resolvedValue: any) => {
+    if (j && typeof j.fn === 'function') return j.fn().mockResolvedValue(resolvedValue);
+    const fn: any = (..._args: any[]) => Promise.resolve(resolvedValue);
+    fn.mock = { calls: [] };
+    fn.mockResolvedValue = (v: any) => { fn._v = v; return fn; };
+    return fn;
+  };
+  const makeUtil = () => {
+    if (j && typeof j.fn === 'function') return j.fn();
+    const fn: any = (..._args: any[]) => {};
+    fn.mock = { calls: [] };
+    return fn;
+  };
   const mockAxios = {
-    get: jest.fn().mockResolvedValue({ data: presetData }),
-    post: jest.fn().mockResolvedValue({ data: presetData }),
-    put: jest.fn().mockResolvedValue({ data: presetData }),
-    delete: jest.fn().mockResolvedValue({ data: presetData }),
-    patch: jest.fn().mockResolvedValue({ data: presetData }),
+    get: makeMock({ data: presetData }),
+    post: makeMock({ data: presetData }),
+    put: makeMock({ data: presetData }),
+    delete: makeMock({ data: presetData }),
+    patch: makeMock({ data: presetData }),
     defaults: { headers: { common: {} } },
     interceptors: {
-      request: { use: jest.fn(), eject: jest.fn() },
-      response: { use: jest.fn(), eject: jest.fn() },
+      request: { use: makeUtil(), eject: makeUtil() },
+      response: { use: makeUtil(), eject: makeUtil() },
     },
   };
-  
   return mockAxios;
 }
 

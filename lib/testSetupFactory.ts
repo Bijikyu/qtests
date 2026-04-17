@@ -4,7 +4,7 @@
  * Provides standardized test environment configuration
  */
 
-import { jest as jestFromGlobals } from '@jest/globals';
+import type { jest as jestFromGlobals } from '@jest/globals';
 import { NODE_ENV } from '../config/localVars.js';
 
 // ==================== SETUP INTERFACES ====================
@@ -70,9 +70,7 @@ function setTestEnvironment(): void {
 function configureJestGlobal(): void {
   if (!setupState.jestGlobalConfigured) {
     // Resolve jest reference safely and expose globally for tests using jest.*
-    const J = (typeof jestFromGlobals !== 'undefined' && jestFromGlobals)
-      ? jestFromGlobals
-      : (globalThis as any).jest;
+    const J = (globalThis as any).jest;
     
     if (!(globalThis as any).jest && J) {
       (globalThis as any).jest = J as any;
@@ -103,7 +101,7 @@ function provideRequirePolyfill(): void {
  * Configure default jest timeout
  */
 function configureJestTimeout(timeout: number = 10000): void {
-  const j = (globalThis as any).jest || jestFromGlobals;
+  const j = (globalThis as any).jest;
   if (j && typeof j.setTimeout === 'function') {
     j.setTimeout(timeout);
   }
@@ -114,7 +112,7 @@ function configureJestTimeout(timeout: number = 10000): void {
  */
 function configureMockCleanup(_shouldConfigure: boolean = true): void {
   if (!setupState.mockCleanupConfigured) {
-    const j = (globalThis as any).jest || jestFromGlobals;
+    const j = (globalThis as any).jest;
     if (j && typeof j.clearAllMocks === 'function') {
       // This will be called in afterEach
       setupState.mockCleanupConfigured = true;
@@ -197,7 +195,7 @@ export function createJestSetup(options: TestSetupOptions = {}): void {
     if (shouldConfigureCleanup) {
       configureMockCleanup(shouldConfigureCleanup);
       afterEach(() => {
-        const j = (globalThis as any).jest || jestFromGlobals;
+        const j = (globalThis as any).jest;
         if (j && typeof j.clearAllMocks === 'function') {
           j.clearAllMocks();
         }

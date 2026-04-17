@@ -8,7 +8,8 @@ import { MockResponse } from './mockTypes.js';
 import qerrors from '../qerrorsFallback.js';
 
 // Node ESM: `require` is not global; create a scoped require for CJS-compatible dependencies.
-const require = createRequire(import.meta.url);
+// Use process.cwd() + package.json as the base (avoids import.meta.url so this compiles in CJS mode too)
+const _require: NodeRequire = (globalThis as any).require || createRequire(process.cwd() + '/package.json');
 
 /**
  * Create a mock server with custom response patterns
@@ -20,8 +21,8 @@ export function createCustomMockServer(responsePatterns: Array<{
   response: MockResponse;
 }>): { server: any; cleanup: () => void } {
   try {
-    const { setupServer } = require('msw/node');
-    const { http } = require('msw');
+    const { setupServer } = _require('msw/node');
+    const { http } = _require('msw');
     
     const handlers = responsePatterns.map(pattern => ({
       request: {

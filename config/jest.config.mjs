@@ -61,7 +61,7 @@ export default {
   ]
 },
   extensionsToTreatAsEsm: [".ts",".tsx"],
-  transformIgnorePatterns: ['node_modules/(?!(?:qtests|qerrors|@bijikyu|p-limit|yocto-queue|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul|@langchain|openai)/)'],
+  transformIgnorePatterns: ['node_modules/(?!(?:qtests|qerrors|@bijikyu|p-limit|yocto-queue|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul|@langchain|openai|msw|until-async|@mswjs)/)'],
   resolver: path.join(PROJECT_ROOT, 'config', 'ts-jest-resolver.cjs'),
   moduleNameMapper: {
     "^@bijikyu/qtests$": "<rootDir>/dist/index.js",
@@ -72,6 +72,9 @@ export default {
     "^\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/__mocks__/fileMock.js",
     // Custom stubs - only when explicitly needed
     "^external-service-client$": "<rootDir>/utils/jest-proxies/external-service-client.cjs",
-    "^feature-x$": "<rootDir>/utils/jest-proxies/feature-x.cjs"
+    "^feature-x$": "<rootDir>/utils/jest-proxies/feature-x.cjs",
+    // Stub ESM-only httpMock modules (use import.meta.url / msw ESM which break CJS require)
+    "^.*/dist/lib/httpMock/serverFactories\\.js$": "<rootDir>/__mocks__/httpMock-serverFactories.js",
+    "^.*/dist/lib/httpMock/modernMSWMock\\.js$": "<rootDir>/__mocks__/httpMock-modernMSWMock.js"
   }
 };

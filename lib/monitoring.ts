@@ -213,6 +213,8 @@ export class MonitoringSystem extends EventEmitter {
   }
 
   private startMonitoring(): void {
+    const isTestEnv = process.env.NODE_ENV === 'test' || !!process.env.JEST_WORKER_ID;
+    if (isTestEnv) return;
     this.metricsInterval = setInterval(async () => {
       await this.collectMetrics();
     }, this.config.metricsInterval);

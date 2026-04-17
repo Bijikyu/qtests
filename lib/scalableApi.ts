@@ -513,6 +513,26 @@ export class ScalableApiClient extends EventEmitter {
       circuitBreakerActivations: 0
     };
   }
+
+  get<T = any>(url: string, config?: Partial<ApiRequestConfig>): Promise<ApiResponse<T>> {
+    return this.request<T>({ ...config, url, method: 'GET' });
+  }
+
+  post<T = any>(url: string, body?: any, config?: Partial<ApiRequestConfig>): Promise<ApiResponse<T>> {
+    return this.request<T>({ ...config, url, method: 'POST', body });
+  }
+
+  put<T = any>(url: string, body?: any, config?: Partial<ApiRequestConfig>): Promise<ApiResponse<T>> {
+    return this.request<T>({ ...config, url, method: 'PUT', body });
+  }
+
+  delete<T = any>(url: string, config?: Partial<ApiRequestConfig>): Promise<ApiResponse<T>> {
+    return this.request<T>({ ...config, url, method: 'DELETE' });
+  }
+
+  patch<T = any>(url: string, body?: any, config?: Partial<ApiRequestConfig>): Promise<ApiResponse<T>> {
+    return this.request<T>({ ...config, url, method: 'PATCH', body });
+  }
 }
 
 /**
