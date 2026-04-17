@@ -50,6 +50,9 @@ export function createFallbackMock(
     }
   };
 
+  // Log BEFORE replacing to prevent phantom call pollution when method is 'log'
+  console.log(`mockConsole is returning fallback mock for ${method}`);
+
   // Replace the method
   (console as any)[method] = mockedMethod;
 
@@ -63,7 +66,6 @@ export function createFallbackMock(
     }
   };
 
-  console.log(`mockConsole is returning fallback mock for ${method}`);
   return mockObject;
 }
 

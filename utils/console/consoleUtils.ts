@@ -81,22 +81,53 @@ export const mockAllConsole = (options: ConsoleMockOptions = {}): Record<Console
   return mocks;
 };
 
-export const withAllMockedConsole = <T>(fn: (spies: Record<ConsoleMethod, MockSpy>) => T, _options: ConsoleMockOptions = {}): T => {
+export const withAllMockedConsole = <T>(fn: (spies: Record<ConsoleMethod, MockSpy>) => T, options: ConsoleMockOptions = {}): T => {
+  const { silent = true, implementation } = options;
   const spies = {} as Record<ConsoleMethod, MockSpy>;
-  const restores: Array<() => void> = [];
+  const originals: Partial<Record<ConsoleMethod, any>> = {};
+
+  for (const method of CONSOLE_METHODS) {
+    const originalMethod = (console as any)[method];
+    originals[method] = originalMethod;
+    const calls: any[][] = [];
+
+    const spy: MockSpy = {
+      mock: { calls },
+      mockImplementation: (impl: (...args: any[]) => any) => {
+        (console as any)[method] = (...args: any[]) => {
+          calls.push(args);
+          return impl(...args);
+        };
+      },
+      mockRestore: () => {
+        (console as any)[method] = originalMethod;
+        calls.length = 0;
+        unregisterMocked(method);
+      },
+      mockClear: () => { calls.length = 0; },
+      mockReset: () => {
+        calls.length = 0;
+        (console as any)[method] = implementation || (silent ? () => {} : originalMethod);
+      }
+    };
+
+    (console as any)[method] = (...args: any[]) => {
+      calls.push(args);
+      if (implementation) return implementation(...args);
+      else if (!silent && originalMethod) return originalMethod.apply(console, args);
+    };
+
+    registerMocked(method);
+    spies[method] = spy;
+  }
+
   try {
-    for (const method of CONSOLE_METHODS) {
-      let currentSpy: MockSpy | null = null;
-      withMockConsole(method, (mockSpy) => {
-        spies[method] = mockSpy;
-        currentSpy = mockSpy;
-        return null as any;
-      });
-      if (currentSpy) restores.push(() => (currentSpy as MockSpy).mockRestore());
-    }
     return fn(spies);
   } finally {
-    restores.forEach(restore => restore());
+    for (const method of CONSOLE_METHODS) {
+      (console as any)[method] = originals[method];
+      unregisterMocked(method);
+    }
   }
 };
 

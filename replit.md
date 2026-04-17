@@ -1,3 +1,10 @@
+# qtests dogfooding progress
+Tests: 1018 (31 suites, all green). Rounds 22-32 complete.
+Round 22 (email pipeline): clean. Round 23 (stubbing internals): clean.
+Round 24 (console mocking): 2 bugs fixed —
+  - withAllMockedConsole rewrote lifecycle (mocks were restored before fn ran)
+  - createFallbackMock log moved before replacement (phantom call pollution when method='log')
+Rounds 25-32 (testEnv cluster, testing helpers, fileSystem, memory, errorHandling, logging, polyfills): all clean.
 <!--AI Can write above this line-->
 <!--┌── �� PROTECTED: DO NOT EDIT (READ ONLY) BELOW THIS LINE-->
 Reference Patch
