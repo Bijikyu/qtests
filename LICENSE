@@ -1,16 +1,30 @@
-MIT License
-
+qtests Dual License
 Copyright (c) 2026 Bijikyu
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+This software is available under two license tiers. You must comply with the
+terms of the tier that applies to your situation.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+================================================================================
+TIER 1 — INDIVIDUAL DEVELOPER LICENSE (Free)
+================================================================================
+
+This license applies to you if ALL of the following are true:
+
+  1. You are a single individual using this software for your own projects.
+  2. You are not using this software on behalf of, or for the benefit of, any
+     company, organisation, or legal entity other than yourself.
+  3. Your use is not part of a product or service sold to third parties that
+     generates commercial revenue attributable to this software.
+  4. No more than one person (you) accesses or uses this software in any single
+     project or codebase.
+
+Under this tier, permission is granted, free of charge, to use, copy, modify,
+and distribute this software and its documentation for the purposes described
+above, subject to the following conditions:
+
+  - This license notice must be retained in all copies or substantial portions
+    of the software.
+  - You may not sublicense this software under any other terms.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -20,3 +34,49 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
+================================================================================
+TIER 2 — COMMERCIAL / TEAM / ENTERPRISE LICENSE (Paid)
+================================================================================
+
+This license applies to you if ANY of the following are true:
+
+  1. You are using this software on behalf of, or for the benefit of, a company,
+     organisation, or any legal entity (regardless of size or revenue).
+  2. Two or more individuals access or use this software within the same project,
+     codebase, or organisation.
+  3. You are incorporating this software into a product or service that is sold,
+     licensed, or otherwise provided to third parties for commercial gain.
+  4. You are using this software in a continuous integration, staging, or
+     production environment owned or operated by a company or organisation.
+
+Use under this tier requires a valid, paid Commercial License Agreement obtained
+directly from Bijikyu. Without such an agreement you may not use, copy, modify,
+distribute, or incorporate this software under this tier.
+
+To obtain a Commercial License, contact: https://github.com/Bijikyu/qtests
+
+The specific rights, restrictions, and pricing of Commercial Licenses are
+defined in the separate Commercial License Agreement issued to each licensee.
+Unauthorised commercial use constitutes copyright infringement.
+
+================================================================================
+OPEN SOURCE EXCEPTION
+================================================================================
+
+Projects that are both:
+  (a) publicly available under an OSI-approved open source license, AND
+  (b) not primarily funded by or operated for the benefit of a for-profit entity
+
+may use this software under the terms of Tier 1 regardless of the number of
+contributors, provided the project itself does not generate commercial revenue
+attributable to this software.
+
+================================================================================
+GENERAL TERMS
+================================================================================
+
+If you are uncertain which tier applies to your situation, you should obtain a
+Commercial License or contact Bijikyu for clarification before use.
+
+Nothing in this license grants you any trademark rights in the name "qtests"
+or "Bijikyu". All rights not expressly granted here are reserved.
