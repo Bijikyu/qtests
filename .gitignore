@@ -29,6 +29,7 @@ lib/utils/streamingUtils.js
 # Runner debug artifacts (generated at runtime, not tracked)
 runner-jest-args.json
 DEBUG_TESTS.md
+qtests-results.json
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
