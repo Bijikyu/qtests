@@ -2,6 +2,7 @@
 import fs from'fs';
 import path from'path';
 import{fileURLToPath}from'url';
+import{writeSummaryFile as _writeSummaryFileHelper}from'./writeSummaryFile.js';
 const __filename=fileURLToPath(import.meta.url);
 const __dirname=path.dirname(__filename);
 
@@ -202,19 +203,7 @@ class SecurityTestRunner{
   }
 
   writeSummaryFile(){
-    const regression=this.results.find(r=>r.type==='regression_tests');
-    const penetration=this.results.find(r=>r.type==='penetration_tests');
-    const configuration=this.results.find(r=>r.type==='configuration_validation');
-    const summary={
-      regression:regression?{passed:regression.summary.passed,total:regression.summary.total}:null,
-      penetration:penetration?{passed:penetration.summary.passed,total:penetration.summary.total}:null,
-      configuration:configuration?{passed:configuration.summary.passed,total:configuration.summary.total}:null,
-    };
-    try{
-      fs.writeFileSync(path.resolve(process.cwd(),'security-summary.json'),JSON.stringify(summary),'utf8');
-    }catch{
-      // best-effort: runner continues even if summary file cannot be written
-    }
+    _writeSummaryFileHelper(this.results);
   }
 }
 

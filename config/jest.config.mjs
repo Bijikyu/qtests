@@ -47,6 +47,7 @@ export default {
   "^.+\\.(js|jsx)$": [
     "babel-jest",
     {
+      "plugins": ["babel-plugin-transform-import-meta"],
       "presets": [
         [
           "@babel/preset-env",

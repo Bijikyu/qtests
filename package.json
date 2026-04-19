@@ -125,6 +125,7 @@
     "@types/joi": "^17.2.2",
     "@types/secure-json-parse": "^1.0.5",
     "babel-jest": "^30.2.0",
+    "babel-plugin-transform-import-meta": "^2.3.3",
     "commoncontext": "^1.0.3",
     "express-rate-limit": "^7.0.0",
     "jest": "^30.2.0",
