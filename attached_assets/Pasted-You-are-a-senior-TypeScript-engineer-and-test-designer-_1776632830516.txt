@@ -1,0 +1,151 @@
+You are a senior TypeScript engineer and test designer.
+
+Your task:
+Given:
+- my original feature prompt(s), and
+- the current implementation code,
+
+produce:
+
+1) eval.json — a small, high-signal eval file that encodes INTENDED behavior (from the feature prompts), not just current implementation.
+2) smoke.ts — a lightweight smoke test runner that calls the main functions/endpoints with typical inputs and checks basic shape.
+
+=====================
+INPUT
+=====================
+[FEATURE PROMPTS START]
+{{PASTE_ORIGINAL_FEATURE_PROMPTS_HERE}}
+[FEATURE PROMPTS END]
+
+[CODE START]
+{{PASTE_RELEVANT_CODE_HERE}}
+[CODE END]
+
+=====================
+RULES
+=====================
+
+- The FEATURE PROMPTS are the source of truth for intended behavior.
+- If FEATURE PROMPTS and CODE conflict:
+  - Prefer FEATURE PROMPTS.
+  - Briefly describe the conflict in the eval.json "notes" field.
+- Use CODE only to:
+  - find public functions/services/endpoints,
+  - infer parameter and return shapes,
+  - infer realistic success, failure, and edge scenarios.
+- Focus on stable external contracts and invariants, not internal implementation details.
+
+=====================
+OUTPUT #1: eval.json
+=====================
+
+You MUST produce a valid JSON file with this exact shape:
+
+{
+  "feature": "string",
+  "notes": "string",
+  "cases": [
+    {
+      "name": "string",
+      "kind": "success" | "failure" | "edge",
+      "description": "string",
+      "input": { },
+      "expected": {
+        "example": { },
+        "mustHaveKeys": [ ],
+        "mustEqual": { },
+        "mustContain": [ ]
+      }
+    }
+  ]
+}
+
+Requirements:
+
+- Keep it small but high-signal:
+  - 2–3 "success" cases (typical usage),
+  - 1–2 "failure" cases (invalid input, invalid state),
+  - 1–2 "edge" cases (empty, boundary, extreme but valid).
+- Use realistic but simple values.
+- Use:
+  - "mustHaveKeys" for fields that MUST be present,
+  - "mustEqual" for strict invariants that MUST match exactly,
+  - "mustContain" for substrings/items that MUST appear in arrays/strings.
+- Avoid over-constraining naturally variable fields (IDs, timestamps, ordering that doesn’t matter).
+- If the feature has multiple logical operations (e.g. create, update, list, delete), cover each with at least one success case.
+- Put any prompt–code conflict explanation into "notes" as a short human-readable string.
+
+=====================
+OUTPUT #2: smoke.ts
+=====================
+
+You MUST generate a very lightweight TypeScript smoke test file named "smoke.ts".
+
+Behavior:
+
+- Import the main public function(s) / service(s) / endpoint(s) for this feature from the provided code.
+- For each main function/endpoint:
+  - Build 1–2 typical inputs based on the "success" and "edge" cases in eval.json.
+  - Call the function/endpoint (use async/await if it returns a Promise).
+  - Assert:
+    - the call does not throw,
+    - the result is an object with the required keys from the corresponding eval.json case's "mustHaveKeys".
+
+- On any failure:
+  - Log a clear error message with context.
+  - Exit the process with code 1.
+
+- On success:
+  - Log a clear success message per function.
+  - At the end, log "All smoke checks passed." and exit with code 0.
+
+Use a pattern like this, adapted to the real functions and keys:
+
+// smoke.ts
+import { someServiceFn } from "./path/to/service";
+
+function assertHasKeys(obj: any, keys: string[], context: string) {
+  if (obj == null || typeof obj !== "object") {
+    throw new Error(`${context}: expected object, got ${typeof obj}`);
+  }
+  for (const key of keys) {
+    if (!(key in obj)) {
+      throw new Error(`${context}: missing key "${key}"`);
+    }
+  }
+}
+
+async function run() {
+  try {
+    const result = await someServiceFn({ /* typical input from eval.json */ });
+    assertHasKeys(result, ["id", "status"], "someServiceFn");
+    console.log("someServiceFn smoke check passed");
+  } catch (err) {
+    console.error("Smoke test FAILED:", err);
+    process.exit(1);
+  }
+
+  console.log("All smoke checks passed.");
+  process.exit(0);
+}
+
+run().catch(err => {
+  console.error("Smoke runner crashed:", err);
+  process.exit(1);
+});
+
+You MUST:
+- Use the actual function names and import paths discovered from the code.
+- Derive example inputs from the eval.json "input" objects.
+- Derive required keys from the eval.json "mustHaveKeys" arrays.
+
+=====================
+FINAL RESPONSE FORMAT
+=====================
+
+When you respond, you MUST output EXACTLY TWO code blocks, in this order:
+
+1) A ```json``` code block containing ONLY the eval.json content (valid JSON, following the schema above).
+2) A ```ts``` code block containing ONLY the smoke.ts content (valid TypeScript).
+
+Do NOT include any explanation or text outside those two code blocks.

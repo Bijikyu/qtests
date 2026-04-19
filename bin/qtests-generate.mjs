@@ -378,35 +378,185 @@ async function updatePackageScript(clientRoot, options) {
   }
 }
 
-function printAgentPrompt(options) {
+const SOURCE_DIRS = ['src', 'lib', 'bin', 'scripts', 'utils'];
+const SOURCE_EXTS = new Set(['.ts', '.tsx', '.js', '.mjs', '.cjs']);
+const EXCLUDE_DIRS = new Set(['node_modules', 'dist', 'build', '.git', 'config', 'coverage', '.cache']);
+
+function isTestOrDeclFile(name) {
+  return /\.(test|spec)\.[a-z]+$/.test(name) || name.endsWith('.d.ts');
+}
+
+async function walkDir(dir, results) {
+  let entries;
+  try {
+    entries = await fsp.readdir(dir, { withFileTypes: true });
+  } catch {
+    return;
+  }
+  for (const entry of entries) {
+    if (entry.isDirectory()) {
+      const skip = EXCLUDE_DIRS.has(entry.name) || entry.name.startsWith('.') || entry.name.startsWith('_');
+      if (!skip) await walkDir(path.join(dir, entry.name), results);
+    } else if (entry.isFile()) {
+      const ext = path.extname(entry.name);
+      if (SOURCE_EXTS.has(ext) && !isTestOrDeclFile(entry.name)) {
+        results.push(path.join(dir, entry.name));
+      }
+    }
+  }
+}
+
+async function discoverSourceFiles(clientRoot) {
+  const all = [];
+  for (const dirName of SOURCE_DIRS) {
+    const dirPath = path.join(clientRoot, dirName);
+    if (await exists(dirPath)) await walkDir(dirPath, all);
+  }
+  return all;
+}
+
+function getUnitStubContent(sourceBasename) {
+  return [
+    `import 'qtests/setup';`,
+    `import * as Module from './${sourceBasename}';`,
+    `// TODO: replace the wildcard import with the specific exports you need.`,
+    ``,
+    `describe('${sourceBasename}', () => {`,
+    `  it.todo('add meaningful tests — happy path, edge cases, and errors');`,
+    `});`,
+    ``
+  ].join('\n');
+}
+
+function getIntegrationStubContent(sourceBasename, importPath, useTs) {
+  const moduleDecl = useTs ? '  let module: any;' : '  let module;';
+  return [
+    `import { describe, it, beforeAll } from '@jest/globals';`,
+    `// No qtests/setup — real dependencies execute here.`,
+    ``,
+    `describe('${sourceBasename} — integration', () => {`,
+    moduleDecl,
+    ``,
+    `  beforeAll(async () => {`,
+    `    module = await import('${importPath}');`,
+    `  });`,
+    ``,
+    `  it.todo('test the critical workflow — happy path');`,
+    `  it.todo('test a key failure path');`,
+    `});`,
+    ``
+  ].join('\n');
+}
+
+async function scaffoldTestStubs(clientRoot, options, enableTsJest) {
+  const sourceFiles = await discoverSourceFiles(clientRoot);
+  if (sourceFiles.length === 0) return { unitStubs: [], integrationStubs: [] };
+
+  process.stdout.write(`qtests: discovered ${sourceFiles.length} source file(s) — generating stubs\n`);
+
+  const unitStubs = [];
+  const integrationStubs = [];
+
+  for (const srcAbs of sourceFiles) {
+    const srcExt = path.extname(srcAbs);
+    const srcBase = path.basename(srcAbs, srcExt);
+    const useTs = srcExt === '.ts' || srcExt === '.tsx' || enableTsJest;
+    const testExt = useTs ? '.test.ts' : '.test.js';
+
+    // Unit stub: alongside the source file
+    const unitStubAbs = path.join(path.dirname(srcAbs), srcBase + testExt);
+    const unitStubRel = path.relative(clientRoot, unitStubAbs).replace(/\\/g, '/');
+    await scaffoldFile({
+      label: unitStubRel,
+      targetPath: unitStubAbs,
+      content: getUnitStubContent(srcBase),
+      dryRun: options.dryRun,
+      force: options.force
+    });
+    unitStubs.push(unitStubRel);
+
+    // Integration stub: mirrored under tests/integration/
+    const srcRelDir = path.relative(clientRoot, path.dirname(srcAbs));
+    const intStubAbs = path.join(clientRoot, 'tests', 'integration', srcRelDir, srcBase + testExt);
+    const intStubRel = path.relative(clientRoot, intStubAbs).replace(/\\/g, '/');
+    const intStubDir = path.dirname(intStubAbs);
+    const relToSrc = path.relative(intStubDir, srcAbs).replace(/\\/g, '/').replace(/\.[^.]+$/, '');
+    const intImport = relToSrc.startsWith('.') ? relToSrc : './' + relToSrc;
+    await scaffoldFile({
+      label: intStubRel,
+      targetPath: intStubAbs,
+      content: getIntegrationStubContent(srcBase, intImport, useTs),
+      dryRun: options.dryRun,
+      force: options.force
+    });
+    integrationStubs.push(intStubRel);
+  }
+
+  return { unitStubs, integrationStubs };
+}
+
+function printAgentPrompt(options, stubs) {
   if (options.dryRun) return;
   if (process.env.QTESTS_SILENT === '1') return;
   if (process.env.QTESTS_SUPPRESS_PROMPT === '1') return;
 
+  const unitStubs = (stubs && stubs.unitStubs) || [];
+  const integrationStubs = (stubs && stubs.integrationStubs) || [];
+
+  // Box inner width = 53 chars (between │ characters)
+  const W = 53;
+  const top = 'qtests:   ┌' + '─'.repeat(W) + '┐\n';
+  const bot = 'qtests:   └' + '─'.repeat(W) + '┘\n';
+
+  function boxLine(text) {
+    const safe = text.length > W ? text.slice(0, W - 1) + '…' : text;
+    return 'qtests:   │' + safe.padEnd(W) + '│\n';
+  }
+
+  function fileLines(files) {
+    if (files.length === 0) return [boxLine('  (no source files discovered)')];
+    const MAX = 5;
+    const shown = files.slice(0, MAX);
+    const out = shown.map(f => {
+      const display = f.length > W - 4 ? '…' + f.slice(-(W - 5)) : f;
+      return boxLine('  ' + display);
+    });
+    if (files.length > MAX) out.push(boxLine(`  …and ${files.length - MAX} more`));
+    return out;
+  }
+
   const sep = 'qtests: ' + '─'.repeat(60) + '\n';
+  const blank = boxLine('');
+
   const lines = [
     sep,
-    'qtests: NEXT STEP — turn the scaffolding into real tests\n',
+    'qtests: NEXT STEP — flesh out your generated test stubs\n',
     'qtests:\n',
     'qtests: Paste the prompt below into an AI agent (Copilot, Cursor,\n',
     'qtests: Claude, ChatGPT, etc.) to write project-specific tests:\n',
     'qtests:\n',
-    'qtests:   ┌─────────────────────────────────────────────────────┐\n',
-    'qtests:   │ I just scaffolded a Jest environment with qtests.   │\n',
-    'qtests:   │ Config is in config/jest.config.mjs and             │\n',
-    'qtests:   │ config/jest-setup.ts (or jest-setup.cjs).           │\n',
-    'qtests:   │                                                     │\n',
-    'qtests:   │ For each source file in this project, please:       │\n',
-    'qtests:   │                                                     │\n',
-    'qtests:   │ 1. Read the file and understand what it does.       │\n',
-    'qtests:   │ 2. Write a *.test.ts (or *.test.js) file that:     │\n',
-    'qtests:   │    - Tests real logic, not just "runs without error" │\n',
-    'qtests:   │    - Covers happy path, edge cases, and errors      │\n',
-    'qtests:   │    - Adds `import \'qtests/setup\';` at the top so  │\n',
-    'qtests:   │      HTTP, filesystem, and time calls are stubbed   │\n',
-    'qtests:   │    - Uses descriptive describe() / it() blocks      │\n',
-    'qtests:   │ 3. Start with the most critical files first.        │\n',
-    'qtests:   └─────────────────────────────────────────────────────┘\n',
+    top,
+    boxLine(' ── UNIT TESTS ──────────────────────────────────────'),
+    ...fileLines(unitStubs),
+    blank,
+    boxLine(' For each stub:'),
+    boxLine('  • Read the matching source file'),
+    boxLine('  • Replace it.todo with real assertions'),
+    boxLine('  • Cover happy path, edge cases, and errors'),
+    boxLine('  • qtests/setup is already imported — HTTP, fs,'),
+    boxLine('    and timers are auto-stubbed'),
+    blank,
+    boxLine(' ── INTEGRATION TESTS ───────────────────────────────'),
+    ...fileLines(integrationStubs),
+    blank,
+    boxLine(' Focus on CRITICAL WORKFLOWS only (not every fn):'),
+    boxLine('  • Auth/authz, data mutations, payment flows'),
+    boxLine('  • 1–3 tests per workflow: happy path + failure'),
+    boxLine('  • Start any server once in beforeAll, not per-test'),
+    boxLine('  • Mock external HTTP; keep your own data layer real'),
+    boxLine('  • Assert status codes, fields, state changes —'),
+    boxLine('    not timestamps or auto-generated IDs'),
+    bot,
     'qtests:\n',
     'qtests: Suppress this message: QTESTS_SUPPRESS_PROMPT=1 npx qtests-generate\n',
     sep
@@ -500,7 +650,8 @@ async function main() {
   });
 
   await updatePackageScript(clientRoot, options);
-  printAgentPrompt(options);
+  const stubs = await scaffoldTestStubs(clientRoot, options, enableTsJest);
+  printAgentPrompt(options, stubs);
   process.stdout.write('qtests: done\n');
 }
 
