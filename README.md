@@ -2,11 +2,13 @@
 
 A Node.js testing utility focused on fast, isolated unit tests: method stubbing, console mocking, environment management, and drop-in stubs for common modules (axios, winston). Includes a Jest runner/config scaffolder. **ES Module and TypeScript support included.**
 
-🎉 **Latest Updates (September 2025)**:
+🎉 **Latest Updates (v3.0.0 — April 2026)**:
 - ✅ ESM + TypeScript Jest harness: runner always loads `config/jest.config.mjs` and passes `--passWithNoTests` for stable CI
 - ✅ HTTP testing shim alignment: TS shim re-exports a working JS shim with chainable `.send()` and proper `req.body`
 - ✅ Safe Mongoose mocking: Jest `moduleNameMapper` maps `mongoose` to qtests' manual mock (no real DB access)
 - ✅ Performance optimized: Parallel batch execution utilizing multiple CPU cores
+- ✅ Security helpers extracted into a shared, testable module with full TypeScript types
+- ✅ Structured run-results file emitted after every test run for CI artifact ingestion
 
 ## 🚀 Quick Start
 
@@ -710,7 +712,7 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
           
       - name: Install dependencies
         run: npm ci
@@ -740,7 +742,7 @@ pipeline {
     }
     stage('Generate Tests') {
       steps {
-        sh 'npx qtests-generate --force --integration'
+        sh 'npx qtests-generate --force'
       }
     }
     stage('Test') {
@@ -841,15 +843,12 @@ if (process.env.NODE_ENV === 'test') {
 ### Advanced Features
 - [Connection Pool Health](./lib/connectionPoolHealth.md) - Detailed health monitoring guide
 - [Performance Testing](./scripts/benchmarks/) - Performance testing utilities and examples
-- [Manual Testing](./manual-tests/) - Complex test scenarios and edge cases
 
 ### Community & Support
 - [Issue Templates](./.github/ISSUE_TEMPLATE/) - Standardized issue reporting
-- [Contributing Guidelines](./CONTRIBUTING.md) - Development and contribution standards
 - [API Documentation](./docs/API_REFERENCE.md) - Complete API reference and examples
 - [Advanced Features](./docs/ADVANCED_FEATURES.md) - Error handling, performance testing, circuit breakers
 - [Enterprise Integration](./docs/ENTERPRISE_INTEGRATION.md) - CI/CD patterns and production deployment
-- [Migration Guide](./docs/MIGRATION_GUIDE.md) - Upgrade from older versions
 - [Troubleshooting](./docs/TROUBLESHOOTING.md) - Common issues and solutions
 
 ## 📄 License
