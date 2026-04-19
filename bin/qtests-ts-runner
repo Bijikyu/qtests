@@ -195,7 +195,10 @@ async function main() {
         }
       } catch (error) {
         qerrors(error, 'qtests-ts-runner: failed to write results file', { resultsPath });
-        console.warn(`${colors.yellow}⚠  Could not write results file: ${resultsPath}${colors.reset}`);
+        const rel = path.relative(projectRoot, resultsPath);
+        const displayPath = (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel))
+          ? resultsPath : rel;
+        console.warn(`${colors.yellow}⚠  Could not write results file: ${displayPath}${colors.reset}`);
       }
     }
     process.exit(0);
@@ -276,7 +279,10 @@ async function main() {
       }
     } catch (error) {
       qerrors(error, 'qtests-ts-runner: failed to write results file', { resultsPath });
-      console.warn(`${colors.yellow}⚠  Could not write results file: ${resultsPath}${colors.reset}`);
+      const rel = path.relative(projectRoot, resultsPath);
+      const displayPath = (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel))
+        ? resultsPath : rel;
+      console.warn(`${colors.yellow}⚠  Could not write results file: ${displayPath}${colors.reset}`);
     }
   }
 

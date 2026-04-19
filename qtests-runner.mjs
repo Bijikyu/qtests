@@ -475,7 +475,10 @@ class TestRunner {
       }
     } catch (error) {
       qerrors(error, 'qtests-runner: failed to write results file', { resultsPath });
-      console.warn(`${colors.yellow}⚠  Could not write results file: ${resultsPath}${colors.reset}`);
+      const rel = path.relative(process.cwd(), resultsPath);
+      const displayPath = (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel))
+        ? resultsPath : rel;
+      console.warn(`${colors.yellow}⚠  Could not write results file: ${displayPath}${colors.reset}`);
     }
   }
 
