@@ -9,7 +9,8 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 let qerrors;
 try {
-  qerrors = (await import('qerrors')).default || (await import('qerrors'));
+  const mod = await import('qerrors');
+  qerrors = mod.default?.default || mod.default || mod;
 } catch {
   try {
     const mod = require('qerrors');

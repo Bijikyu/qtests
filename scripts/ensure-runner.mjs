@@ -7,7 +7,7 @@ try {
 } catch {
   try {
     const mod = await import('qerrors');
-    qerrors = mod.default || mod;
+    qerrors = mod.default?.default || mod.default || mod;
   } catch {
     qerrors = (error, message, context) => {
       console.error('[QERRORS]', JSON.stringify({ message: message || error.message, context: context || {} }));
