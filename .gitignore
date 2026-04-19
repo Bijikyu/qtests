@@ -10,6 +10,12 @@ lerna-debug.log*
 # Security test report (generated artifact, not tracked)
 security-report.md
 
+# Compiled artefacts that must not accumulate in TS-only source directories.
+# The TypeScript pipeline emits to dist/; any .js/.d.ts here is stale/accidental.
+lib/security/*.js
+lib/security/*.d.ts
+lib/security/*.d.ts.map
+
 # Runner debug artifacts (generated at runtime, not tracked)
 runner-jest-args.json
 DEBUG_TESTS.md
