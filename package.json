@@ -1,7 +1,7 @@
 {
   "name": "qtests",
   "version": "4.0.0",
-  "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
+  "description": "Node.js testing framework with method stubbing, console mocking, environment management, ESM and TypeScript support, circuit breaker utilities, security validation, and auto test generation",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
@@ -65,15 +65,20 @@
     "testing",
     "stub",
     "mock",
-    "winston",
-    "axios",
-    "utils",
     "test-framework",
+    "esm",
+    "typescript",
     "console-mock",
     "environment-management",
+    "circuit-breaker",
+    "http-testing",
+    "auto-test-generation",
+    "security-testing",
     "jest-compatible",
     "offline-testing",
-    "side-effect-free"
+    "side-effect-free",
+    "axios",
+    "winston"
   ],
   "author": "Q",
   "license": "SEE LICENSE IN LICENSE",
