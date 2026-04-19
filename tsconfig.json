@@ -12,7 +12,9 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "strict": true,
-    "noEmitOnError": false
+    "noEmitOnError": false,
+    "allowJs": true,
+    "checkJs": false
   },
   "include": [
     "index.ts",
@@ -21,7 +23,8 @@
     "utils/**/*.ts",
     "stubs/**/*.ts",
     "config/**/*.ts",
-    "@types/**/*.ts"
+    "@types/**/*.ts",
+    "scripts/writeSummaryFile.js"
   ],
   "exclude": [
     "node_modules",

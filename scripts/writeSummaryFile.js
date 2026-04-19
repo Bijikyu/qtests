@@ -1,15 +1,10 @@
+// @ts-check
 import fs from 'fs';
 import path from 'path';
 
 /**
- * @typedef {{ passed: number, total: number }} SecurityCategoryInfo
- * Pass/total counts for one security test category.
- */
-
-/**
- * @typedef {{ regression: SecurityCategoryInfo | null, penetration: SecurityCategoryInfo | null, configuration: SecurityCategoryInfo | null }} SecuritySummary
- * Shape of the security-summary.json file — mirrors the SecuritySummary
- * interface in lib/security/types.ts.
+ * @typedef {import('../lib/security/types.js').SecurityCategoryInfo} SecurityCategoryInfo
+ * @typedef {import('../lib/security/types.js').SecuritySummary} SecuritySummary
  */
 
 /**
