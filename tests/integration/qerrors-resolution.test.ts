@@ -4,7 +4,9 @@ import { describe, expect, it } from '@jest/globals';
 describe('qerrors module resolution', () => {
   it('loads qerrors and exposes a callable default export', async () => {
     const mod = await import('qerrors');
-    const qerrors = (mod as any).default || mod;
+    // qerrors is CJS: dynamic ESM import wraps module.exports as .default,
+    // and module.exports itself has a .default property holding the function.
+    const qerrors = (mod as any).default?.default || (mod as any).default || mod;
 
     expect(typeof qerrors).toBe('function');
   });
