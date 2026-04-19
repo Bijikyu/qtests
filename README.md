@@ -2,12 +2,12 @@
 
 A Node.js testing utility focused on fast, isolated unit tests: method stubbing, console mocking, environment management, and drop-in stubs for common modules (axios, winston). Includes a Jest runner/config scaffolder. **ES Module and TypeScript support included.**
 
-**Latest Updates (v3.0.0 — April 2026)**:
-- ESM + TypeScript Jest harness: runner always loads `config/jest.config.mjs` and passes `--passWithNoTests` for stable CI
-- HTTP testing shim alignment: TS shim re-exports a working JS shim with chainable `.send()` and proper `req.body`
-- Safe Mongoose mocking: Jest `moduleNameMapper` maps `mongoose` to qtests' manual mock (no real DB access)
-- Performance optimized: Parallel batch execution utilizing multiple CPU cores
-- Security helpers extracted into a shared, testable module with full TypeScript types
+**Latest Updates (v4.0.0 — April 2026)**:
+- Security testing module: `SecurityValidator`, `JoiSecurityValidator`, and `PenetrationTester` with full TypeScript types
+- Circuit breaker API: `createCircuitBreaker(options)`, `executeWithCircuitBreaker(fn, options)`, `getCircuitBreakerStats()`, `resetCircuitBreaker()`, `CircuitState` enum
+- File system utilities: `safeExists` and `safeDelete` for safe file operations in tests
+- Mocking improvements: `restoreAll()` and `verifyCallCount()` for cleaner test teardown
+- Dual commercial licensing: free for individual developers, paid tiers for teams and companies
 - Structured run-results file emitted after every test run for CI artifact ingestion
 
 ## Quick Start
@@ -61,7 +61,7 @@ const restore = stubMethod(myObject, 'methodName', mockImplementation);
 - **Method Stubbing** - Temporarily replace object methods with automatic restoration
 - **Console Mocking** - Jest-compatible console spies with fallback for vanilla Node.js
 - **Environment Management** - Safe backup and restore of environment variables
-- **Module Stubs** - Drop-in replacements for axios, winston, and other dependencies
+- **Module Stubs** - Drop-in replacements for axios and winston
 - **Offline Mode** - Automatic stub resolution when external services are unavailable
 - **Lightweight Test Runner** - Minimal dependency test execution engine
 - **HTTP Testing** - Integration testing utilities (supertest alternative)
@@ -81,7 +81,6 @@ qtests exposes a small, extensible mocking API that works at runtime without rew
 Defaults registered by setup:
 - `axios` → qtests stub (truthy, no network)
 - `winston` → qtests stub (no-op logger with format/transports)
-- `mongoose` → project `__mocks__/mongoose.js` if present, or a minimal safe object
 
 Usage:
 ```ts
@@ -351,27 +350,23 @@ if (result === null) {
 ### Circuit Breaker Pattern
 
 ```typescript
-import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
+import { createCircuitBreaker, executeWithCircuitBreaker, CircuitState } from 'qtests';
 
-// Wrap external service calls with circuit breaker
-const serviceBreaker = createCircuitBreaker(
-  async (data) => externalService.process(data),
-  {
-    timeout: 5000,
-    errorThresholdPercentage: 50,
-    resetTimeout: 30000
+// Create a reusable breaker configured with thresholds
+const breaker = createCircuitBreaker({
+  failureThreshold: 5,
+  resetTimeout: 60000,
+  timeout: 10000,
+  onStateChange: (state: CircuitState) => {
+    console.log('Circuit state changed:', state);
   }
+});
+
+// Or wrap a one-off call without creating a named breaker
+const result = await executeWithCircuitBreaker(
+  async () => externalService.process(userData),
+  { timeout: 5000, failureThreshold: 3 }
 );
-
-// Use like normal function
-try {
-  const result = await serviceBreaker.fire(userData);
-  console.log('Service responded:', result);
-} catch (error) {
-  if (error.code === 'EOPENBREAKER') {
-    console.log('Circuit is open - using fallback');
-  }
-}
 ```
 
 ### Connection Pool Health Monitoring
@@ -482,7 +477,10 @@ test('console output', async () => {
 |--------|-------------|
 | `handleError(error, context, options?)` | Handle and log errors with context |
 | `handleAsyncError(promise, context, options?)` | Async error handling with fallback |
-| `createCircuitBreaker(fn, options)` | Create circuit breaker wrapper |
+| `createCircuitBreaker(options)` | Create a circuit breaker instance |
+| `executeWithCircuitBreaker(fn, options)` | Wrap a one-off call with circuit breaker protection |
+| `getCircuitBreakerStats(breaker)` | Get failure count, state, and success rate |
+| `resetCircuitBreaker(breaker)` | Reset breaker to CLOSED state |
 | `addHealthMonitoring(pool, options)` | Add health monitoring to pools |
 | `createJestConfig(type, options)` | Generate standardized Jest config |
 
@@ -553,8 +551,6 @@ clipboard.writeText('test text');
 
 **Fast Unit Tests**: qtests is designed for fast, isolated unit tests that would otherwise hit external services (HTTP, logs). Avoid it for true integration tests where real external service behavior is required.
 
-## Best Practices
-
 ## CLI Reference
 
 ### qtests-generate (Scaffolder)
@@ -594,6 +590,8 @@ Notes:
   - Honors `QTESTS_SKIP_SECURITY=1|true` to skip the security test suite (useful for fast local iteration)
   - Records Jest argv to `runner-jest-args.json` to aid debugging
   - If `ts-jest` + `typescript` are installed, the scaffolded Jest config enables TypeScript ESM transforms
+
+## Best Practices
 
 ### 1. Always Load Setup First
 
@@ -871,7 +869,9 @@ if (process.env.NODE_ENV === 'test') {
 
 ## License
 
-MIT License - see LICENSE file for details.
+Dual license — see [LICENSE](./LICENSE) and [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md) for details.
+
+Free for individual developers. Teams and companies require a paid Commercial License (Startup $99/yr, Team $499/yr, Business $1,999/yr). Open source projects may qualify for the free tier — see the Open Source Exception in LICENSE.
 
 ## Contributing
 
