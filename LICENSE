@@ -53,11 +53,14 @@ Use under this tier requires a valid, paid Commercial License Agreement obtained
 directly from Bijikyu. Without such an agreement you may not use, copy, modify,
 distribute, or incorporate this software under this tier.
 
-To obtain a Commercial License, contact: https://github.com/Bijikyu/qtests
+The standard terms, entitlements, and pricing for Commercial Licenses are
+published in COMMERCIAL_LICENSE.md in this repository. Self-serve tiers
+(Startup $99/yr, Team $499/yr, Business $1,999/yr) and Enterprise quotes
+are arranged through: https://github.com/Bijikyu/qtests
 
-The specific rights, restrictions, and pricing of Commercial Licenses are
-defined in the separate Commercial License Agreement issued to each licensee.
-Unauthorised commercial use constitutes copyright infringement.
+A negotiated Commercial License Agreement may modify those standard terms
+in writing for a specific licensee. Unauthorised commercial use constitutes
+copyright infringement.
 
 ================================================================================
 OPEN SOURCE EXCEPTION
