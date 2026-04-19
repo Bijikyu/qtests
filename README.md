@@ -18,6 +18,27 @@ npm install @bijikyu/qtests --save-dev
 
 > **GitHub Packages**: this library is published as `@bijikyu/qtests` on `npm.pkg.github.com`. Configure the `@bijikyu` scope in your `.npmrc` (see [docs/PUBLISHING.md](docs/PUBLISHING.md)) before installing so npm can reach the registry.
 
+### Generate tests for your project
+
+Point qtests at your source code and it will discover your files and write integration tests for you:
+
+```bash
+npx qtests-generate
+```
+
+This scans your project, generates `.GenerateTest.test.ts` files for any source files that lack integration tests, and scaffolds the Jest runner and config. Run it once to get started, or re-run it as your codebase grows to fill in missing coverage.
+
+```bash
+# Preview what would be generated without writing any files
+npx qtests-generate --dry-run
+
+# Scan a specific source directory
+npx qtests-generate --src lib
+
+# Regenerate and overwrite existing generated tests
+npx qtests-generate --force
+```
+
 qtests can scaffold its Jest runner/config into your project root via `npx qtests-generate` (non-destructive by default). The runner expects Jest to be installed in your project (as a devDependency).
 
 **Setup:** (Jest: loaded globally via `config/jest-setup.ts`/`config/jest-setup.cjs` when you use `npx qtests-generate`; otherwise, put this at the top of each test file before other imports.)
