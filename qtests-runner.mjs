@@ -468,7 +468,9 @@ class TestRunner {
     try {
       fs.writeFileSync(resultsPath, JSON.stringify(runResult, null, 2), 'utf8');
       if (!this.isEnvTruthy('QTESTS_SILENT')) {
-        console.log(`${colors.dim}📄 Results: ${resultsPath}${colors.reset}`);
+        const rel = path.relative(process.cwd(), resultsPath);
+        const displayPath = rel.startsWith('..') ? resultsPath : rel;
+        console.log(`${colors.dim}📄 Results: ${displayPath}${colors.reset}`);
       }
     } catch (error) {
       qerrors(error, 'qtests-runner: failed to write results file', { resultsPath });

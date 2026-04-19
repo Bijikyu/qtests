@@ -188,7 +188,9 @@ async function main() {
           securitySummary: null
         }, null, 2), 'utf8');
         if (!silent) {
-          console.log(`${colors.dim}📄 Results: ${resultsPath}${colors.reset}`);
+          const rel = path.relative(projectRoot, resultsPath);
+          const displayPath = rel.startsWith('..') ? resultsPath : rel;
+          console.log(`${colors.dim}📄 Results: ${displayPath}${colors.reset}`);
         }
       } catch (error) {
         qerrors(error, 'qtests-ts-runner: failed to write results file', { resultsPath });
@@ -266,7 +268,9 @@ async function main() {
     try {
       fs.writeFileSync(resultsPath, JSON.stringify(runResult, null, 2), 'utf8');
       if (!silent) {
-        console.log(`${colors.dim}📄 Results: ${resultsPath}${colors.reset}`);
+        const rel = path.relative(projectRoot, resultsPath);
+        const displayPath = rel.startsWith('..') ? resultsPath : rel;
+        console.log(`${colors.dim}📄 Results: ${displayPath}${colors.reset}`);
       }
     } catch (error) {
       qerrors(error, 'qtests-ts-runner: failed to write results file', { resultsPath });
