@@ -2,7 +2,7 @@
 import fs from'fs';
 import path from'path';
 import{fileURLToPath}from'url';
-import{writeSummaryFile as _writeSummaryFileHelper}from'./writeSummaryFile.js';
+import{writeSummaryFile as _writeSummaryFileHelper}from'../dist/scripts/writeSummaryFile.js';
 const __filename=fileURLToPath(import.meta.url);
 const __dirname=path.dirname(__filename);
 
