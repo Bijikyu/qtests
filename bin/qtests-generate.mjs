@@ -378,7 +378,7 @@ async function updatePackageScript(clientRoot, options) {
   }
 }
 
-const SOURCE_DIRS = ['src', 'lib', 'bin', 'scripts', 'utils'];
+const SOURCE_DIRS = ['src', 'lib', 'bin', 'scripts', 'utils', 'pages', 'app', 'routes', 'controllers', 'packages', 'api'];
 const SOURCE_EXTS = new Set(['.ts', '.tsx', '.js', '.mjs', '.cjs']);
 const EXCLUDE_DIRS = new Set(['node_modules', 'dist', 'build', '.git', 'config', 'coverage', '.cache']);
 
