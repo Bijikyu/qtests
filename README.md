@@ -133,6 +133,7 @@ testEnv.restoreEnv(saved); // TEST_VAR removed, original state restored
 - Honors: `QTESTS_INBAND=1` (serial) and `QTESTS_FILE_WORKERS=<n>` (max workers).
 - Always uses project config and `passWithNoTests`, with `cache=true` and `coverage=false`.
 - Debugging: creates `DEBUG_TESTS.md` on failures; override with `QTESTS_DEBUG_FILE=path` or suppress with `QTESTS_SUPPRESS_DEBUG=1`.
+- Security tests run automatically after Jest. Skip them for fast local iteration with `QTESTS_SKIP_SECURITY=true npm test`.
 
 Runner availability and generator behavior:
 - Run `npx qtests-generate` once to scaffold `qtests-runner.mjs` and Jest config files if missing:
@@ -569,6 +570,7 @@ Notes:
   - Always passes `--config config/jest.config.mjs` and `--passWithNoTests`
   - Honors `QTESTS_SUPPRESS_DEBUG=1|true` to skip creating `DEBUG_TESTS.md`
   - Honors `QTESTS_DEBUG_FILE` to set a custom debug report path/name
+  - Honors `QTESTS_SKIP_SECURITY=1|true` to skip the security test suite (useful for fast local iteration)
   - Records Jest argv to `runner-jest-args.json` to aid debugging
   - If `ts-jest` + `typescript` are installed, the scaffolded Jest config enables TypeScript ESM transforms
 
