@@ -189,7 +189,8 @@ async function main() {
         }, null, 2), 'utf8');
         if (!silent) {
           const rel = path.relative(projectRoot, resultsPath);
-          const displayPath = rel.startsWith('..') ? resultsPath : rel;
+          const displayPath = (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel))
+            ? resultsPath : rel;
           console.log(`${colors.dim}📄 Results: ${displayPath}${colors.reset}`);
         }
       } catch (error) {
@@ -269,7 +270,8 @@ async function main() {
       fs.writeFileSync(resultsPath, JSON.stringify(runResult, null, 2), 'utf8');
       if (!silent) {
         const rel = path.relative(projectRoot, resultsPath);
-        const displayPath = rel.startsWith('..') ? resultsPath : rel;
+        const displayPath = (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel))
+          ? resultsPath : rel;
         console.log(`${colors.dim}📄 Results: ${displayPath}${colors.reset}`);
       }
     } catch (error) {

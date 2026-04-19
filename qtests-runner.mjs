@@ -469,7 +469,8 @@ class TestRunner {
       fs.writeFileSync(resultsPath, JSON.stringify(runResult, null, 2), 'utf8');
       if (!this.isEnvTruthy('QTESTS_SILENT')) {
         const rel = path.relative(process.cwd(), resultsPath);
-        const displayPath = rel.startsWith('..') ? resultsPath : rel;
+        const displayPath = (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel))
+          ? resultsPath : rel;
         console.log(`${colors.dim}📄 Results: ${displayPath}${colors.reset}`);
       }
     } catch (error) {
