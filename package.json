@@ -78,6 +78,7 @@
   "license": "MIT",
   "dependencies": {
     "@bijikyu/qerrors": "3.0.1",
+    "@langchain/core": "^1.1.40",
     "@types/fs-extra": "^11.0.4",
     "@types/opossum": "^8.1.9",
     "@types/sinon": "^21.0.0",
