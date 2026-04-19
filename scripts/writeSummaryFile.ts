@@ -9,12 +9,13 @@
 import fs from 'fs';
 import path from 'path';
 
-import type { SecuritySummary } from '../lib/security/types.js';
+import type { SecurityCategoryInfo, SecuritySummary } from '../lib/security/types.js';
 
 /** A single category result object returned by the security test runner. */
 export interface SecurityResult {
   type: 'regression_tests' | 'penetration_tests' | 'configuration_validation';
-  summary: { passed: number; total: number };
+  /** Pass/total counts — same shape as SecurityCategoryInfo in lib/security/types.ts. */
+  summary: SecurityCategoryInfo;
 }
 
 /**

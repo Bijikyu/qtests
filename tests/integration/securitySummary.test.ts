@@ -15,9 +15,9 @@ import fs from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
 import { formatSecurityCategory, readSecuritySummary } from '../../lib/security/summaryHelpers.js';
-// writeSummaryFile.js has no import.meta.url, so Jest can import it directly
+// writeSummaryFile is now TypeScript compiled to dist — import the compiled output
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { writeSummaryFile } = require('../../scripts/writeSummaryFile.js');
+const { writeSummaryFile } = require('../../dist/scripts/writeSummaryFile.js');
 
 const PROJECT_ROOT = process.cwd();
 const RUNNER_PATH = path.join(PROJECT_ROOT, 'qtests-runner.mjs');
