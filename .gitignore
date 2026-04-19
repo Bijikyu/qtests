@@ -7,8 +7,9 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
-# Security test report (generated artifact, not tracked)
+# Security test artifacts (generated at runtime, not tracked)
 security-report.md
+security-summary.json
 
 # Compiled artefacts that must not accumulate in TS-only source directories.
 # The TypeScript pipeline emits to dist/; any .js/.d.ts here is stale/accidental.

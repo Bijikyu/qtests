@@ -514,6 +514,8 @@ class TestRunner {
       console.error(`${colors.dim}  To disable security tests set QTESTS_SKIP_SECURITY=true${colors.reset}`);
       return { skipped: false, failed: true, categories: null };
     }
+    // Remove any stale summary from a previous run so we never display stale data.
+    try { fs.unlinkSync(path.join(process.cwd(), 'security-summary.json')); } catch { /* absent is fine */ }
     console.log(`\n${colors.bold}${colors.blue}═══════════════════════════════════════${colors.reset}`);
     console.log(`${colors.bold}${colors.blue}         SECURITY TEST SUITE${colors.reset}`);
     console.log(`${colors.bold}${colors.blue}═══════════════════════════════════════${colors.reset}\n`);
