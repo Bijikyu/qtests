@@ -12,7 +12,11 @@
  * - Maintains same API as qerrors for compatibility
  */
 
-const qerrors = (error: Error, message?: string, context?: any) => {
+const qerrors = (
+  error: Error,
+  message?: string,
+  context?: Record<string, unknown>,
+): void => {
   const isTestEnv = process.env.NODE_ENV === 'test' || !!process.env.JEST_WORKER_ID;
   if (!isTestEnv) {
     const timestamp = new Date().toISOString();
@@ -20,8 +24,8 @@ const qerrors = (error: Error, message?: string, context?: any) => {
       timestamp,
       message: message || error.message,
       stack: error.stack,
-      context: context || {},
-      level: 'ERROR'
+      context: context ?? {},
+      level: 'ERROR',
     };
     console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
   }

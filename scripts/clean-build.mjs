@@ -47,12 +47,13 @@ for (const dir of sourceOnlyDirs) {
   }
 }
 
-// 3. Remove stale compiled artefacts from mixed TypeScript+JS directories.
-//    These directories contain intentional .js-only source files alongside .ts files.
-//    A .js file is stale only when a .ts file with the same basename also exists —
-//    meaning the .js was an old pre-compiled artefact, now superseded by the TS source.
-//    Intentional .js-only files (no .ts counterpart) are left untouched.
+// 3. Remove stale compiled artefacts from directories that are TypeScript-only or
+//    mixed TypeScript+JS. A .js file is stale only when a .ts file with the same
+//    basename also exists — meaning the .js was an old pre-compiled artefact, now
+//    superseded by the TS source. Intentional .js-only files (no .ts counterpart)
+//    are left untouched.
 const mixedDirs = [
+  path.join(root, 'lib'),
   path.join(root, 'lib', 'utils'),
 ];
 
