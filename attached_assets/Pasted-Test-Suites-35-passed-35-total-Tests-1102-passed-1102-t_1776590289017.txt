@@ -1,0 +1,53 @@
+Test Suites: 35 passed, 35 total
+Tests:       1102 passed, 1102 total
+Snapshots:   0 total
+Time:        13.278 s, estimated 14 s
+Ran all test suites within paths "/home/runner/workspace/lib/security/__tests__/pathValidator.test.ts", "/home/runner/workspace/lib/utils/__tests__/errorHandling.test.ts", "/home/runner/workspace/lib/utils/__tests__/timerManager.test.ts", "/home/runner/workspace/lib/utils/__tests__/timingUtils.test.ts", "/home/runner/workspace/tests/advanced-edge-cases.test.js", "/home/runner/workspace/tests/concurrency-testing.test.js", "/home/runner/workspace/tests/index.test.js", "/home/runner/workspace/tests/integration/agentFactory.test.ts", "/home/runner/workspace/tests/integration/api-endpoints.test.js", "/home/runner/workspace/tests/integration/circuitBreakerAndRunTestSuite.test.js", "/home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts", "/home/runner/workspace/tests/integration/connectionPoolAndLoadTest.test.js", "/home/runner/workspace/tests/integration/core-function-tests.test.ts", "/home/runner/workspace/tests/integration/createMockApp.test.js", "/home/runner/workspace/tests/integration/demo__server__app__get.test.js", "/home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js", "/home/runner/workspace/tests/integration/frontend-backend-compatibility.test.js", "/home/runner/workspace/tests/integration/generate-cli.test.js", "/home/runner/workspace/tests/integration/httpClient.test.ts", "/home/runner/workspace/tests/integration/mockConsole.test.js", "/home/runner/workspace/tests/integration/qerrors-resolution.test.ts", "/home/runner/workspace/tests/integration/rateLimiter.test.js", "/home/runner/workspace/tests/integration/resolveStubPaths.test.ts", "/home/runner/workspace/tests/integration/round11-bugs.test.ts", "/home/runner/workspace/tests/integration/round12-bugs.test.ts", "/home/runner/workspace/tests/integration/round13-bugs.test.ts", "/home/runner/workspace/tests/integration/round14-bugs.test.ts", "/home/runner/workspace/tests/integration/round15-bugs.test.ts", "/home/runner/workspace/tests/integration/round16-bugs.test.ts", "/home/runner/workspace/tests/integration/round17-bugs.test.ts", "/home/runner/workspace/tests/integration/round18-bugs.test.ts", "/home/runner/workspace/tests/integration/round19-bugs.test.ts", "/home/runner/workspace/tests/integration/round20-bugs.test.ts", "/home/runner/workspace/tests/integration/round21-bugs.test.ts", "/home/runner/workspace/tests/integration/round24-bugs.test.ts", "/home/runner/workspace/tests/integration/routeTestUtils.test.js", "/home/runner/workspace/tests/integration/runner-cli.test.js", "/home/runner/workspace/tests/integration/runner-results-file.test.js", "/home/runner/workspace/tests/integration/securitySuite2.test.js", "/home/runner/workspace/tests/integration/securitySummary.test.ts", "/home/runner/workspace/tests/integration/securityTesting.test.js", "/home/runner/workspace/tests/integration/securityValidator.test.js", "/home/runner/workspace/tests/integration-testing.test.js", "/home/runner/workspace/tests/performance-testing.test.js", "/home/runner/workspace/tests/simple-index.test.js", "/home/runner/workspace/tests/test-utilities.test.js".
+✓ /home/runner/workspace/tests/integration/runner-results-file.test.js (4244ms)
+✓ /home/runner/workspace/tests/integration/runner-cli.test.js (1268ms)
+✓ /home/runner/workspace/tests/integration/core-function-tests.test.ts (763ms)
+✓ /home/runner/workspace/tests/integration/generate-cli.test.js (688ms)
+✓ /home/runner/workspace/tests/integration/securitySummary.test.ts (544ms)
+✓ /home/runner/workspace/tests/integration/comprehensive-function-tests.test.ts (499ms)
+✓ /home/runner/workspace/tests/integration/connectionPoolAndLoadTest.test.js (416ms)
+✓ /home/runner/workspace/tests/integration/round19-bugs.test.ts (369ms)
+✓ /home/runner/workspace/tests/integration/round20-bugs.test.ts (361ms)
+✓ /home/runner/workspace/tests/integration/round17-bugs.test.ts (371ms)
+✓ /home/runner/workspace/tests/integration/round14-bugs.test.ts (232ms)
+✓ /home/runner/workspace/tests/integration/round21-bugs.test.ts (224ms)
+✓ /home/runner/workspace/tests/integration/round18-bugs.test.ts (175ms)
+✓ /home/runner/workspace/tests/integration/securityValidator.test.js (155ms)
+✓ /home/runner/workspace/tests/integration/round11-bugs.test.ts (179ms)
+✓ /home/runner/workspace/tests/integration/round16-bugs.test.ts (149ms)
+✓ /home/runner/workspace/tests/integration/securityTesting.test.js (173ms)
+✓ /home/runner/workspace/tests/integration/round13-bugs.test.ts (149ms)
+✓ /home/runner/workspace/tests/integration/circuitBreakerAndRunTestSuite.test.js (149ms)
+✓ /home/runner/workspace/tests/integration/securitySuite2.test.js (139ms)
+✓ /home/runner/workspace/tests/integration/round15-bugs.test.ts (139ms)
+✓ /home/runner/workspace/tests/integration/round12-bugs.test.ts (157ms)
+✓ /home/runner/workspace/tests/integration/api-endpoints.test.js (124ms)
+✓ /home/runner/workspace/tests/integration/httpClient.test.ts (127ms)
+✓ /home/runner/workspace/tests/integration/agentFactory.test.ts (112ms)
+✓ /home/runner/workspace/tests/integration/routeTestUtils.test.js (115ms)
+✓ /home/runner/workspace/tests/integration/round24-bugs.test.ts (96ms)
+✓ /home/runner/workspace/tests/integration/rateLimiter.test.js (99ms)
+✓ /home/runner/workspace/tests/integration/mockConsole.test.js (104ms)
+✓ /home/runner/workspace/tests/integration/createMockApp.test.js (85ms)
+✓ /home/runner/workspace/tests/integration/resolveStubPaths.test.ts (70ms)
+✓ /home/runner/workspace/tests/integration/demo__server__routes__hello__get.test.js (67ms)
+✓ /home/runner/workspace/tests/integration/qerrors-resolution.test.ts (69ms)
+✓ /home/runner/workspace/tests/integration/frontend-backend-compatibility.test.js (72ms)
+✓ /home/runner/workspace/tests/integration/demo__server__app__get.test.js (66ms)
+📄 Results: qtests-results.json
+
+═══════════════════════════════════════
+           TEST SUMMARY
+═══════════════════════════════════════
+ALL TESTS PASSED
+
+✓ Passed: 35
+✗ Failed: 0
+📁 Files: 35
+⏱  Duration: 15735ms
+
+═══════════════════════════════════════
