@@ -3,7 +3,7 @@
 // Directly use axios for demo purposes since we don't need advanced HTTP client setup
 const axios = require('axios');
 const winston = require('winston');
-const qerrors = require('qerrors');
+const qerrors = require('@bijikyu/qerrors');
 
 /**
  * fetchHello
