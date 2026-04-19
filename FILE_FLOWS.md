@@ -1397,8 +1397,8 @@
 
 ## [138] `docs/PUBLISHING.md`
 **Type:** Documentation
-**Headings:** Publishing to GitHub Packages, Client setup, Release workflow, Manual release (optional), Post-publish checks
-**Summary:** `qtests` is now published as `@bijikyu/qtests` through GitHub Packages. The scoped name plus the `publishConfig.registry` entry in `package.json` make sure `npm publish` targets `https://npm.pkg.github.com/` automatically. Follow the steps below to consume or release the package., 1. Add the `@bijikyu` scope to your `.npmrc` so npm knows where to find the package:, ```ini, @bijikyu:registry=https://npm.pkg.github.com, always-auth=true
+**Headings:** Publishing to npm, Installing the package, Release workflow, Manual release (optional), Post-publish checks
+**Summary:** `qtests` is published as `@bijikyu/qtests` on the public npm registry. The `publishConfig` entry in `package.json` targets `https://registry.npmjs.org/` with public access automatically. Install with `npm install @bijikyu/qtests --save-dev` — no `.npmrc` scope configuration required.
 
 ---
 

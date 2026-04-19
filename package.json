@@ -3,7 +3,8 @@
   "version": "3.0.0",
   "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "type": "module",
   "main": "dist/index.js",

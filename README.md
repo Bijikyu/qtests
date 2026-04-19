@@ -16,8 +16,6 @@ A Node.js testing utility focused on fast, isolated unit tests: method stubbing,
 npm install @bijikyu/qtests --save-dev
 ```
 
-> **GitHub Packages**: this library is published as `@bijikyu/qtests` on `npm.pkg.github.com`. Configure the `@bijikyu` scope in your `.npmrc` (see [docs/PUBLISHING.md](docs/PUBLISHING.md)) before installing so npm can reach the registry.
-
 ### Generate tests for your project
 
 Point qtests at your source code and it will discover your files and write integration tests for you:
