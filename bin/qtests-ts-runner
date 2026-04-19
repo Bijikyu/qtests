@@ -168,9 +168,30 @@ async function main() {
   const pattern = process.env.QTESTS_PATTERN;
   if (pattern) files = applyPatternFilter(files, pattern);
 
+  const runTimestamp = new Date().toISOString();
+  const runStartMs = Date.now();
+
   const ordered = [...manualFiles, ...files];
   if (ordered.length === 0) {
     if (!silent) console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
+    if (!isEnvTruthy('QTESTS_NO_RESULTS_FILE')) {
+      const resultsPath = (process.env.QTESTS_RESULTS_FILE && String(process.env.QTESTS_RESULTS_FILE).trim())
+        || path.join(projectRoot, 'qtests-results.json');
+      try {
+        fs.writeFileSync(resultsPath, JSON.stringify({
+          schemaVersion: 1,
+          timestamp: runTimestamp,
+          totalDurationMs: Date.now() - runStartMs,
+          passedFiles: 0,
+          failedFiles: 0,
+          files: [],
+          securitySummary: null
+        }, null, 2), 'utf8');
+      } catch (error) {
+        qerrors(error, 'qtests-ts-runner: failed to write results file', { resultsPath });
+        console.warn(`${colors.yellow}⚠  Could not write results file: ${resultsPath}${colors.reset}`);
+      }
+    }
     process.exit(0);
   }
 
@@ -219,6 +240,34 @@ async function main() {
   }
 
   await generateDebugFile(perFileResults.filter((r) => !r.success));
+
+  const writeResults = !isEnvTruthy('QTESTS_NO_RESULTS_FILE');
+  if (writeResults) {
+    const totalDurationMs = Date.now() - runStartMs;
+    const runResult = {
+      schemaVersion: 1,
+      timestamp: runTimestamp,
+      totalDurationMs,
+      passedFiles,
+      failedFiles,
+      files: perFileResults.map((r) => ({
+        path: r.file,
+        success: r.success,
+        durationMs: r.durationMs,
+        failureMessage: r.failureMessage || ''
+      })),
+      securitySummary: null
+    };
+    const resultsPath = (process.env.QTESTS_RESULTS_FILE && String(process.env.QTESTS_RESULTS_FILE).trim())
+      || path.join(projectRoot, 'qtests-results.json');
+    try {
+      fs.writeFileSync(resultsPath, JSON.stringify(runResult, null, 2), 'utf8');
+    } catch (error) {
+      qerrors(error, 'qtests-ts-runner: failed to write results file', { resultsPath });
+      console.warn(`${colors.yellow}⚠  Could not write results file: ${resultsPath}${colors.reset}`);
+    }
+  }
+
   process.exit(failedFiles > 0 ? 1 : 0);
 }
 

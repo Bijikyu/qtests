@@ -336,6 +336,7 @@ class TestRunner {
       }
     }
 
+    await this.writeResultsFile(securityResult);
     await this.cleanup();
     
     // Wait for all microtasks to complete with proper timeout
@@ -441,6 +442,37 @@ class TestRunner {
     }
   }
 
+  // Write structured qtests-results.json after every run
+  async writeResultsFile(securityResult) {
+    if (this.isEnvTruthy('QTESTS_NO_RESULTS_FILE')) return;
+    const totalDurationMs = Date.now() - this.startTime;
+    const securitySummary = (securityResult && !securityResult.skipped && !securityResult.failed && securityResult.categories)
+      ? securityResult.categories
+      : null;
+    const runResult = {
+      schemaVersion: 1,
+      timestamp: new Date(this.startTime).toISOString(),
+      totalDurationMs,
+      passedFiles: this.passedTests,
+      failedFiles: this.failedTests,
+      files: (this.testResults || []).map((r) => ({
+        path: r.file,
+        success: r.success,
+        durationMs: r.duration || 0,
+        failureMessage: r.output || ''
+      })),
+      securitySummary
+    };
+    const resultsPath = (process.env.QTESTS_RESULTS_FILE && String(process.env.QTESTS_RESULTS_FILE).trim())
+      || path.join(process.cwd(), 'qtests-results.json');
+    try {
+      fs.writeFileSync(resultsPath, JSON.stringify(runResult, null, 2), 'utf8');
+    } catch (error) {
+      qerrors(error, 'qtests-runner: failed to write results file', { resultsPath });
+      console.warn(`${colors.yellow}⚠  Could not write results file: ${resultsPath}${colors.reset}`);
+    }
+  }
+
   // Print comprehensive summary, with an optional security summary line
   printSummary(securityResult) {
     const duration = Date.now() - this.startTime;
@@ -533,6 +565,7 @@ class TestRunner {
       }
       const securityResult = await this.runSecuritySuite();
       this.printSummary(securityResult);
+      await this.writeResultsFile(securityResult);
       process.exit(securityResult.failed ? 1 : 0);
     }
     if (!this.isEnvTruthy('QTESTS_SILENT')) {
