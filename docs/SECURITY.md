@@ -2,7 +2,7 @@
 
 ## Overview
 
-qtests v3.0.0 maintains enterprise-grade security posture with comprehensive defense-in-depth security measures to protect against common attack vectors in testing frameworks.
+qtests v4.0.0 maintains enterprise-grade security posture with comprehensive defense-in-depth security measures to protect against common attack vectors in testing frameworks.
 
 ## 🛡️ Security Features
 

@@ -31,7 +31,7 @@ Publishing is handled by `.github/workflows/publish.yml`. A release is triggered
 - **Build assets** – executes `npm run build` before publishing.
 - **Publish** – runs `npm publish`, letting the `publishConfig` entry push the package to the public npm registry with public access.
 
-The workflow requires an `NPM_TOKEN` secret (an npm automation token with publish rights to the `@bijikyu` scope) to be set in the repository's GitHub Actions secrets.
+The workflow requires an `NPM_TOKEN` secret (an npm automation token with publish rights to the `qtests` package) to be set in the repository's GitHub Actions secrets.
 
 ## Manual release (optional)
 

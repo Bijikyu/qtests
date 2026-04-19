@@ -42,7 +42,7 @@ monorepo/
     "test:watch": "jest --watch --testPathPattern=packages/*/src"
   },
   "devDependencies": {
-    "qtests": "^2.0.0",
+    "qtests": "^4.0.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.4.1",
     "@types/jest": "^30.0.0"
@@ -65,7 +65,7 @@ on:
     branches: [main, develop]
 
 env:
-  NODE_VERSION: '18'
+  NODE_VERSION: '20'
   CACHE_VERSION: v1
 
 jobs:
@@ -85,7 +85,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [16, 18, 20]
+        node-version: [18, 20]
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js
@@ -231,7 +231,7 @@ jobs:
 pipeline {
     agent any
     environment {
-        NODE_VERSION = '18'
+        NODE_VERSION = '20'
         DOCKER_REGISTRY = 'your-registry.com'
         APP_NAME = 'enterprise-app'
     }
@@ -486,7 +486,7 @@ export const getConfig = (type: keyof typeof testConfigs) => {
 
 ```dockerfile
 # Dockerfile.test
-FROM node:18-alpine
+FROM node:20-alpine
 
 WORKDIR /app
 

@@ -34,7 +34,7 @@ setup();
 ```
 
 **Effects**:
-- Registers default module stubs for axios and winston while the module resolution hook provides a lightweight mongoose fallback
+- Registers default module stubs for axios and winston
 - Sets up module resolution hooks
 - Initializes global test environment
 
@@ -56,8 +56,6 @@ await stubs.winston.info('Test message');
 **Available Stubs**:
 - `stubs.axios` - HTTP client stub
 - `stubs.winston` - Logger stub
-
-> Mongoose is still stubbed at require time via the registry, but it is not exposed through the `stubs` namespace.
 
 ## 🎭 Method Stubbing
 
@@ -363,62 +361,63 @@ const user = await handleAsyncError(
 
 #### createCircuitBreaker()
 
-Create circuit breaker for external service calls.
+Create a circuit breaker instance configured with failure thresholds and timeouts.
 
 ```typescript
-import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
+import { createCircuitBreaker, executeWithCircuitBreaker, CircuitState } from 'qtests';
 
-const breaker = createCircuitBreaker(
-  functionToProtect,
-  options
-);
-
-// Example:
-const breaker = createCircuitBreaker(
-  async (data) => externalService.process(data),
-  {
-    timeout: 5000,
-    errorThresholdPercentage: 50,
-    resetTimeout: 30000,
-    monitoring: {
-      log: console.info,
-      metrics: true
-    }
+// Create a reusable breaker
+const breaker = createCircuitBreaker({
+  failureThreshold: 5,
+  resetTimeout: 60000,
+  timeout: 10000,
+  onStateChange: (state: CircuitState) => {
+    console.log('Circuit state changed:', state);
   }
-);
-
-try {
-  const result = await breaker.fire(userData);
-  console.log('Success:', result);
-} catch (error) {
-  if (error.code === 'EOPENBREAKER') {
-    console.log('Circuit is open - using fallback');
-    return fallbackResponse;
-  }
-  throw error;
-}
+});
 ```
 
-**Options**:
+#### executeWithCircuitBreaker()
+
+Wrap a one-off async operation with circuit breaker protection.
+
+```typescript
+import { executeWithCircuitBreaker } from 'qtests';
+
+const result = await executeWithCircuitBreaker(
+  async () => fetchExternalAPI(),
+  { timeout: 5000, failureThreshold: 3 }
+);
+```
+
+#### getCircuitBreakerStats()
+
+Retrieve metrics from a running breaker.
+
+```typescript
+import { getCircuitBreakerStats, resetCircuitBreaker } from 'qtests';
+
+const stats = getCircuitBreakerStats(breaker);
+console.log(stats.state, stats.failureCount, stats.successRate);
+
+// Reset breaker to CLOSED state
+resetCircuitBreaker(breaker);
+```
+
+**Options** (`CircuitBreakerOptions`):
 ```typescript
 interface CircuitBreakerOptions {
-  timeout?: number;                    // Timeout in ms (default: 5000)
-  errorThresholdPercentage?: number;      // Error threshold % (default: 50)
-  resetTimeout?: number;               // Reset timeout in ms (default: 30000)
-  minimumThroughput?: number;          // Min calls before opening (default: 10)
-  monitoring?: {
-    log?: (message: string) => void;
-    metrics?: boolean;                  // Enable metrics collection
-  };
+  failureThreshold?: number;   // Failures before OPEN (default: 5)
+  resetTimeout?: number;       // ms before moving to HALF_OPEN (default: 60000)
+  timeout?: number;            // Per-call timeout in ms (default: 10000)
+  onStateChange?: (state: CircuitState) => void;
 }
 ```
 
-**Events**:
-- `open` - Circuit opened
-- `close` - Circuit closed
-- `halfOpen` - Circuit half-open (testing)
-- `fallback` - Fallback used
-- `timeout` - Call timed out
+**States** (`CircuitState`):
+- `CLOSED` — normal operation
+- `OPEN` — blocking calls after threshold exceeded
+- `HALF_OPEN` — testing recovery with limited calls
 
 ### Connection Pool Health Monitoring
 

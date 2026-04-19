@@ -203,7 +203,7 @@ app.get('/users', (req, res) => {
   res.end(JSON.stringify({ users: [] }));
 });
 
-const response = await httpTest.supertest(app)
+const response = await supertest(app)
   .get('/users')
   .expect(200); // Fails: Cannot read property 'status' of undefined
 ```
@@ -396,7 +396,7 @@ Cannot find module 'qtests' from 'frontend/src/App.test.ts'
 {
   "workspaces": ["packages/*"],
   "devDependencies": {
-    "qtests": "^2.0.0"
+    "qtests": "^4.0.0"
   }
 }
 
@@ -511,7 +511,7 @@ jest.clearAllMocks();
 
 ### Community Resources
 
-- **GitHub Issues**: [github.com/your-repo/qtests/issues](https://github.com/your-repo/qtests/issues)
+- **GitHub Issues**: [github.com/Bijikyu/qtests/issues](https://github.com/Bijikyu/qtests/issues)
 - **Documentation**: [qtests.readthedocs.io](https://qtests.readthedocs.io)
 - **Discord Community**: [discord.gg/qtests](https://discord.gg/qtests)
 - **Stack Overflow**: Use tag `qtests`
