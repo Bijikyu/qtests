@@ -324,10 +324,9 @@ class TestRunner {
       console.error(msg);
       this.failedTests++;
     }
-    this.printSummary();
-
-    const securityFailed = await this.runSecuritySuite();
-    const failedCount = this.failedTests + (securityFailed ? 1 : 0);
+    const securityResult = await this.runSecuritySuite();
+    this.printSummary(securityResult);
+    const failedCount = this.failedTests + (securityResult.failed ? 1 : 0);
     if (failedCount > 0) {
       try {
         await this.generateDebugFile();
@@ -441,8 +440,16 @@ class TestRunner {
     }
   }
 
-  // Print comprehensive summary
-  printSummary() {
+  // Format a per-category security count: "3/3 regression ✓"
+  formatSecurityCategory(label, info) {
+    if (!info) return null;
+    const ok = info.passed === info.total;
+    const mark = ok ? `${colors.green}✓${colors.reset}` : `${colors.red}✗${colors.reset}`;
+    return `${info.passed}/${info.total} ${label} ${mark}`;
+  }
+
+  // Print comprehensive summary, with an optional security summary line
+  printSummary(securityResult) {
     const duration = Date.now() - this.startTime;
     const totalFiles = this.testResults.length;
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
@@ -460,16 +467,44 @@ class TestRunner {
       console.log(`\n${colors.red}Failed test files:${colors.reset}`);
       this.testResults.filter(r => !r.success).forEach(r => console.log(`  ${colors.red}•${colors.reset} ${r.file}`));
     }
+    // Security summary line
+    if (securityResult) {
+      if (securityResult.skipped) {
+        console.log(`${colors.yellow}🔒 Security: skipped (QTESTS_SKIP_SECURITY)${colors.reset}`);
+      } else {
+        const cats = securityResult.categories;
+        const parts = [
+          this.formatSecurityCategory('regression', cats && cats.regression),
+          this.formatSecurityCategory('pentest', cats && cats.penetration),
+          this.formatSecurityCategory('config', cats && cats.configuration),
+        ].filter(Boolean);
+        const secColor = securityResult.failed ? colors.red : colors.green;
+        const secLabel = parts.length > 0 ? parts.join(', ') : (securityResult.failed ? 'FAILED' : 'passed');
+        console.log(`${secColor}🔒 Security:${colors.reset} ${secLabel}`);
+      }
+    }
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
   }
 
-  // Spawn the security test runner as a child process and return whether it failed
+  // Read the per-category summary written by the security runner, if available.
+  readSecuritySummary() {
+    try {
+      const summaryPath = path.join(process.cwd(), 'security-summary.json');
+      const raw = fs.readFileSync(summaryPath, 'utf8');
+      return JSON.parse(raw);
+    } catch {
+      return null;
+    }
+  }
+
+  // Spawn the security test runner as a child process.
+  // Returns { skipped, failed, categories } for use in printSummary().
   async runSecuritySuite() {
     if (this.isEnvTruthy('QTESTS_SKIP_SECURITY')) {
       if (!this.isEnvTruthy('QTESTS_SILENT')) {
         console.log(`\n${colors.yellow}⚠  Security tests skipped (QTESTS_SKIP_SECURITY=true)${colors.reset}`);
       }
-      return false;
+      return { skipped: true, failed: false, categories: null };
     }
     const { spawn } = await import('child_process');
     const runnerPath = path.join(process.cwd(), 'scripts', 'security-test-runner.js');
@@ -477,12 +512,12 @@ class TestRunner {
       console.error(`${colors.red}✗ Security runner not found at ${runnerPath}${colors.reset}`);
       console.error(`${colors.red}  Security coverage cannot be verified. Failing the test run.${colors.reset}`);
       console.error(`${colors.dim}  To disable security tests set QTESTS_SKIP_SECURITY=true${colors.reset}`);
-      return true;
+      return { skipped: false, failed: true, categories: null };
     }
     console.log(`\n${colors.bold}${colors.blue}═══════════════════════════════════════${colors.reset}`);
     console.log(`${colors.bold}${colors.blue}         SECURITY TEST SUITE${colors.reset}`);
     console.log(`${colors.bold}${colors.blue}═══════════════════════════════════════${colors.reset}\n`);
-    return new Promise((resolve) => {
+    const failed = await new Promise((resolve) => {
       const child = spawn(process.execPath, [runnerPath], {
         stdio: 'inherit',
         env: { ...process.env, NODE_ENV: process.env.NODE_ENV || 'test' }
@@ -496,6 +531,8 @@ class TestRunner {
         resolve(true);
       });
     });
+    const categories = failed ? null : this.readSecuritySummary();
+    return { skipped: false, failed, categories };
   }
 
   // Main runner method - API-only execution via jest.runCLI
@@ -510,8 +547,9 @@ class TestRunner {
         console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
         console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
       }
-      const securityFailed = await this.runSecuritySuite();
-      process.exit(securityFailed ? 1 : 0);
+      const securityResult = await this.runSecuritySuite();
+      this.printSummary(securityResult);
+      process.exit(securityResult.failed ? 1 : 0);
     }
     if (!this.isEnvTruthy('QTESTS_SILENT')) {
       console.log(`${colors.blue}Found ${files.length} test file(s):${colors.reset}`);

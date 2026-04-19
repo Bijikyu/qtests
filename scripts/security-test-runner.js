@@ -28,6 +28,7 @@ class SecurityTestRunner{
       if(this.config.generateMetrics){await this.generateSecurityMetrics();}
       await this.generateSecurityReport();
       this.checkForFailures();
+      this.writeSummaryFile();
       console.log('');
       console.log('✅ Security testing completed successfully');
     }catch(error){
@@ -197,6 +198,22 @@ class SecurityTestRunner{
       console.log(`   - Failed Tests: ${totalFailed}`);
       console.log(`   - Coverage: ${successRate.toFixed(1)}% (required: ${this.config.coverageThreshold}%)`);
       process.exit(1);
+    }
+  }
+
+  writeSummaryFile(){
+    const regression=this.results.find(r=>r.type==='regression_tests');
+    const penetration=this.results.find(r=>r.type==='penetration_tests');
+    const configuration=this.results.find(r=>r.type==='configuration_validation');
+    const summary={
+      regression:regression?{passed:regression.summary.passed,total:regression.summary.total}:null,
+      penetration:penetration?{passed:penetration.summary.passed,total:penetration.summary.total}:null,
+      configuration:configuration?{passed:configuration.summary.passed,total:configuration.summary.total}:null,
+    };
+    try{
+      fs.writeFileSync(path.resolve(process.cwd(),'security-summary.json'),JSON.stringify(summary),'utf8');
+    }catch{
+      // best-effort: runner continues even if summary file cannot be written
     }
   }
 }
