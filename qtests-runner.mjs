@@ -39,8 +39,8 @@ class TestRunner {
     this.failedTests = 0;
     this.testResults = [];
     this.startTime = Date.now();
-    // Lazily-initialized reference to Jest's runCLI (API-only execution)
     this._runCLI = null;
+    this.securityStats = null;
   }
   // Resolve a binary path from PATH, preferring earlier entries explicitly.
   resolveBin(binName) {
@@ -131,7 +131,7 @@ class TestRunner {
       passedFiles,
       failedFiles,
       files: fileResults,
-      securitySummary: null
+      securitySummary: this.securityStats || null
     };
     try {
       fs.writeFileSync(resultsPath, JSON.stringify(data, null, 2), 'utf8');
@@ -221,6 +221,7 @@ class TestRunner {
       } catch { /* best effort only */ }
 
       const { results } = await this._runCLI(argv, [process.cwd()]);
+      const secStats = { suites: 0, suitesPass: 0, suitesFail: 0, testsPass: 0, testsFail: 0 };
       for (const tr of (results.testResults || [])) {
         const file = tr.testFilePath || 'unknown';
         const success = (tr.numFailingTests || 0) === 0 && !tr.failureMessage;
@@ -230,7 +231,14 @@ class TestRunner {
         if (rec.success) this.passedTests++; else this.failedTests++;
         this.testResults.push(rec);
         this.printTestResult(rec);
+        if (/security/i.test(file)) {
+          secStats.suites++;
+          if (success) secStats.suitesPass++; else secStats.suitesFail++;
+          secStats.testsPass += tr.numPassingTests || 0;
+          secStats.testsFail += tr.numFailingTests || 0;
+        }
       }
+      if (secStats.suites > 0) this.securityStats = secStats;
     } catch (err) {
       const msg = (err && (err.stack || err.message)) || 'Jest API run error';
       console.error(msg);
@@ -318,6 +326,15 @@ class TestRunner {
     if (this.failedTests > 0) {
       console.log(`\n${colors.red}Failed test files:${colors.reset}`);
       this.testResults.filter(r => !r.success).forEach(r => console.log(`  ${colors.red}•${colors.reset} ${r.file}`));
+    }
+    if (this.securityStats) {
+      const s = this.securityStats;
+      const allOk = s.suitesFail === 0 && s.testsFail === 0;
+      const icon = allOk ? `${colors.green}✓${colors.reset}` : `${colors.red}✗${colors.reset}`;
+      const suiteLabel = `${s.suitesPass}/${s.suites} suite${s.suites !== 1 ? 's' : ''}`;
+      const testLabel = `${s.testsPass} test${s.testsPass !== 1 ? 's' : ''}`;
+      const failNote = s.testsFail > 0 ? ` ${colors.red}(${s.testsFail} failed)${colors.reset}` : '';
+      console.log(`${colors.dim}🔒 Security:${colors.reset} ${icon} ${suiteLabel}, ${testLabel} passed${failNote}`);
     }
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
   }
