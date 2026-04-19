@@ -1,10 +1,34 @@
 import fs from 'fs';
 import path from 'path';
 
+/**
+ * @typedef {{ passed: number, total: number }} SecurityCategoryInfo
+ * Pass/total counts for one security test category.
+ */
+
+/**
+ * @typedef {{ regression: SecurityCategoryInfo | null, penetration: SecurityCategoryInfo | null, configuration: SecurityCategoryInfo | null }} SecuritySummary
+ * Shape of the security-summary.json file — mirrors the SecuritySummary
+ * interface in lib/security/types.ts.
+ */
+
+/**
+ * @typedef {{ type: string, summary: { passed: number, total: number } }} SecurityResult
+ * A single category result object returned by the security test runner.
+ */
+
+/**
+ * Serialize per-category security results to `security-summary.json` in the
+ * current working directory.
+ *
+ * @param {SecurityResult[]} results - Category result objects from the runner.
+ * @returns {void}
+ */
 export function writeSummaryFile(results) {
   const regression = results.find(r => r.type === 'regression_tests');
   const penetration = results.find(r => r.type === 'penetration_tests');
   const configuration = results.find(r => r.type === 'configuration_validation');
+  /** @type {SecuritySummary} */
   const summary = {
     regression: regression ? { passed: regression.summary.passed, total: regression.summary.total } : null,
     penetration: penetration ? { passed: penetration.summary.passed, total: penetration.summary.total } : null,

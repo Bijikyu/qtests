@@ -9,18 +9,16 @@
 import fs from 'fs';
 import path from 'path';
 
+import type { SecurityCategoryInfo, SecuritySummary } from './types.js';
+
+export type { SecurityCategoryInfo, SecuritySummary };
+
 /** ANSI escape codes — same palette as qtests-runner.mjs. */
 const colors = {
   green: '\u001b[32m',
   red:   '\u001b[31m',
   reset: '\u001b[0m',
 };
-
-/** Numeric pass / total for one security category. */
-export interface SecurityCategoryInfo {
-  passed: number;
-  total: number;
-}
 
 /**
  * Format a per-category security count for the TEST SUMMARY banner.
@@ -52,10 +50,10 @@ export function formatSecurityCategory(
  */
 export function readSecuritySummary(
   summaryPath: string = path.join(process.cwd(), 'security-summary.json'),
-): Record<string, SecurityCategoryInfo | null> | null {
+): SecuritySummary | null {
   try {
     const raw = fs.readFileSync(summaryPath, 'utf8');
-    return JSON.parse(raw) as Record<string, SecurityCategoryInfo | null>;
+    return JSON.parse(raw) as SecuritySummary;
   } catch {
     return null;
   }
