@@ -429,7 +429,7 @@ function getUnitStubContent(sourceBasename) {
 }
 
 function getIntegrationStubContent(sourceBasename, importPath, useTs) {
-  const moduleDecl = useTs ? '  let module: any;' : '  let module;';
+  const moduleDecl = '  let module;';
   return [
     `import { describe, it, beforeAll } from '@jest/globals';`,
     `// No qtests/setup — real dependencies execute here.`,
