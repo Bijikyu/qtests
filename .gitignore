@@ -17,9 +17,11 @@ lib/security/*.d.ts
 lib/security/*.d.ts.map
 
 # Stale pre-compiled JS files in lib/utils/ that shadow their .ts counterparts.
-# agentFactory.js and httpClient.js are intentional JS-only sources and are NOT listed here.
+# All six files now have .ts sources; the .js versions must not be re-committed.
+lib/utils/agentFactory.js
 lib/utils/concurrencyUtils.js
 lib/utils/errorHandling.js
+lib/utils/httpClient.js
 lib/utils/jsonUtils.js
 lib/utils/streamingUtils.js
 
