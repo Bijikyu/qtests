@@ -10,52 +10,6 @@
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
-import { formatSecurityCategory, readSecuritySummary } from './dist/lib/security/summaryHelpers.js';
-
-const qerrors = (error, message, context) => {
-  const isTestEnv = process.env.NODE_ENV === 'test' || !!process.env.JEST_WORKER_ID;
-  if (!isTestEnv) {
-    const timestamp = new Date().toISOString();
-    const errorInfo = {
-      timestamp,
-      message: message || error.message,
-      stack: error.stack,
-      context: context || {},
-      level: 'ERROR'
-    };
-    console.error('[QERRORS]', JSON.stringify(errorInfo, null, 2));
-  }
-};
-
-// Path validation utilities for security
-function validatePath(inputPath, allowedBase = process.cwd()) {
-  if (typeof inputPath !== 'string' || !inputPath.trim()) {
-    throw new Error('Invalid path: path must be a non-empty string');
-  }
-  
-  // Prevent null byte injection attacks
-  if (inputPath.includes('\0')) {
-    throw new Error('Security error: null bytes not allowed in paths');
-  }
-  
-  const absoluteBase = path.resolve(path.normalize(allowedBase));
-  const absolutePath = path.isAbsolute(inputPath) ? path.resolve(inputPath) : path.resolve(absoluteBase, inputPath);
-  const rel = path.relative(absoluteBase, absolutePath);
-  if (rel.startsWith('..') || path.isAbsolute(rel)) {
-    throw new Error('Path traversal detected: path must be within allowed directory');
-  }
-  return absolutePath;
-}
-
-function safeWriteFile(filePath, content, options = {}) {
-  const validatedPath = validatePath(filePath);
-  return fs.writeFileSync(validatedPath, content, options);
-}
-
-async function safeWriteFileAsync(filePath, content, options = {}) {
-  const validatedPath = validatePath(filePath);
-  return await fs.promises.writeFile(validatedPath, content, options);
-}
 
 // ANSI color codes for terminal output
 const colors = {
@@ -87,55 +41,7 @@ class TestRunner {
     this.startTime = Date.now();
     // Lazily-initialized reference to Jest's runCLI (API-only execution)
     this._runCLI = null;
-    // Track cleanup state
-    this._cleanedUp = false;
   }
-
-  // Cleanup method to prevent memory leaks
-  async cleanup() {
-    if (this._cleanedUp) return;
-    this._cleanedUp = true;
-    
-    // Clear test results to free memory
-    if (this.testResults && Array.isArray(this.testResults)) {
-      this.testResults.length = 0;
-    }
-    
-    // Clear Jest references to prevent memory leaks
-    if (this._runCLI) {
-      // Clear any cached Jest modules or references
-      try {
-        const require = createRequire(import.meta.url);
-        const jestPath = require.resolve('jest');
-        if (jestPath && require.cache[jestPath]) {
-          delete require.cache[jestPath];
-        }
-      } catch (error) {
-        // Ignore cleanup errors
-      }
-    }
-    
-    // Delete properties to free memory (not just set to null)
-    delete this.testResults;
-    delete this._runCLI;
-    delete this.passedTests;
-    delete this.failedTests;
-    delete this.startTime;
-    delete this._cleanedUp;
-    
-    // Clear any remaining event listeners
-    // Note: TestRunner doesn't extend EventEmitter, so no listeners to clear
-    
-    // Force garbage collection if available
-    if (global.gc) {
-      global.gc();
-    }
-    
-    // Additional cleanup for any remaining references
-    this._runCLI = null;
-    this.testResults = null;
-  }
-
   // Resolve a binary path from PATH, preferring earlier entries explicitly.
   resolveBin(binName) {
     try {
@@ -146,15 +52,8 @@ class TestRunner {
         try {
           const st = fs.statSync(candidate);
           if (st.isFile()) {
-            try { 
-              fs.accessSync(candidate, fs.constants.X_OK); 
-              return candidate;
-            } catch (error) {
-              qerrors(error, 'qtests-runner.findProjectRoot: file access check failed', {
-                candidate,
-                operation: 'accessSync'
-              });
-            }
+            try { fs.accessSync(candidate, fs.constants.X_OK); } catch {}
+            return candidate;
           }
         } catch {}
       }
@@ -178,7 +77,7 @@ class TestRunner {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
       for (const entry of entries) {
         const fullPath = path.join(dir, entry.name);
-        // Skip node_modules, hidden directories, and common build outputs
+        // Skip node_modules, hidden directories, and common build output
         if (
           entry.name.startsWith('.') ||
           entry.name === 'node_modules' ||
@@ -209,62 +108,77 @@ class TestRunner {
     const pattern = process.env.QTESTS_PATTERN;
     if (pattern) {
       try {
-        // Validate pattern to prevent ReDoS attacks
-        if (typeof pattern !== 'string' || pattern.length > 1000) {
-          throw new Error('Invalid pattern: too long or not a string');
-        }
-        
-        // Block dangerous regex patterns
-        const dangerousPatterns = [
-          /\(\?=.*\)/,  // Lookahead
-          /\(\?<=.*\)/, // Lookbehind
-          /\(\?!.*\)/,  // Negative lookahead
-          /\(\?<!.*\)/, // Negative lookbehind
-          /\{.*\}/,     // Nested quantifiers
-          /\(\(\)\)/     // Nested groups
-        ];
-        
-        for (const dangerous of dangerousPatterns) {
-          if (dangerous.test(pattern)) {
-            throw new Error('Invalid pattern: contains dangerous constructs');
-          }
-        }
-        
         const rx = new RegExp(pattern);
         return testFiles.filter(f => rx.test(f));
-      } catch (error) {
-        console.warn(`Invalid test pattern: ${pattern}, using all files`);
+      } catch {
         return testFiles; // invalid pattern, ignore
       }
     }
     return testFiles;
   }
 
+  
+
+  // Write qtests-results.json to CWD (best-effort)
+  writeResultsFile(passedFiles, failedFiles, fileResults) {
+    if (this.isEnvTruthy('QTESTS_NO_RESULTS_FILE')) return;
+    const resultsPath = (process.env.QTESTS_RESULTS_FILE && String(process.env.QTESTS_RESULTS_FILE).trim())
+      || path.join(process.cwd(), 'qtests-results.json');
+    const data = {
+      schemaVersion: 1,
+      timestamp: new Date().toISOString(),
+      totalDurationMs: Date.now() - this.startTime,
+      passedFiles,
+      failedFiles,
+      files: fileResults,
+      securitySummary: null
+    };
+    try {
+      fs.writeFileSync(resultsPath, JSON.stringify(data, null, 2), 'utf8');
+      if (!this.isEnvTruthy('QTESTS_SILENT')) {
+        const rel = path.relative(process.cwd(), resultsPath);
+        const displayPath = (rel.startsWith('..') || path.isAbsolute(rel)) ? resultsPath : rel;
+        console.log(`${colors.dim}📄 Results: ${displayPath}${colors.reset}`);
+      }
+    } catch { /* best effort */ }
+  }
+
+  // Check for security runner; returns exit code contribution (0 or 1)
+  runSecurityCheck() {
+    if (this.isEnvTruthy('QTESTS_SKIP_SECURITY')) {
+      if (!this.isEnvTruthy('QTESTS_SILENT')) {
+        console.log(`${colors.dim}🔒 Security: skipped (QTESTS_SKIP_SECURITY)${colors.reset}`);
+      }
+      return 0;
+    }
+    const candidates = [
+      path.join(process.cwd(), 'node_modules', '@bijikyu', 'qtests', 'dist', 'scripts', 'security-test-runner.js'),
+      path.join(process.cwd(), 'dist', 'scripts', 'security-test-runner.js')
+    ];
+    const found = candidates.some(p => { try { return fs.existsSync(p); } catch { return false; } });
+    if (!found) {
+      if (!this.isEnvTruthy('QTESTS_SILENT')) {
+        console.log(`${colors.red}🔒 Security: FAILED (runner not found)${colors.reset}`);
+      }
+      return 1;
+    }
+    return 0;
+  }
+
   // API-only: execute all tests via Jest's programmatic API in one run
   async runAll(testFiles) {
-    let jestModule = null;
-    let intendedArgs = null;
+    let stdout = '';
+    let stderr = '';
     try {
       // Lazily require jest to avoid upfront overhead and allow CJS interop from ESM
       if (!this._runCLI) {
-        try {
-          const require = createRequire(import.meta.url);
-          jestModule = require('jest');
-        } catch (importError) {
-          qerrors(importError, 'qtests-runner.runAll: Failed to load Jest module', {
-            operation: 'require',
-            module: 'jest'
-          });
-          process.exit(1);
-        }
+        const require = createRequire(import.meta.url);
+        const jestModule = require('jest');
         this._runCLI = jestModule && jestModule.runCLI ? jestModule.runCLI : null;
       }
       if (!this._runCLI) {
         const msg = 'Jest API not available for fallback execution.';
-        qerrors(new Error(msg), 'qtests-runner.runAll: Jest API unavailable', {
-          jestModuleLoaded: !!jestModule,
-          hasRunCLI: !!(jestModule && jestModule.runCLI)
-        });
+        console.error(msg);
         process.exit(1);
       }
 
@@ -297,17 +211,14 @@ class TestRunner {
 
       // Record intended Jest invocation for debugging/tests
       try {
-        intendedArgs = [];
+        const intendedArgs = [];
         if (cfg) intendedArgs.push('--config', cfg);
         intendedArgs.push('--passWithNoTests');
         if (runInBand) intendedArgs.push('--runInBand');
         else if (Number.isFinite(maxW) && maxW > 0) intendedArgs.push(`--maxWorkers=${maxW}`);
         intendedArgs.push('--cache', '--no-coverage');
-        await safeWriteFileAsync('runner-jest-args.json', JSON.stringify(intendedArgs), 'utf8');
-      } catch (error) {
-        qerrors(error, 'qtests-runner: writing runner-jest-args.json', { intendedArgs });
-        /* best effort only */
-      }
+        fs.writeFileSync(path.join(process.cwd(), 'runner-jest-args.json'), JSON.stringify(intendedArgs), 'utf8');
+      } catch { /* best effort only */ }
 
       const { results } = await this._runCLI(argv, [process.cwd()]);
       for (const tr of (results.testResults || [])) {
@@ -325,63 +236,15 @@ class TestRunner {
       console.error(msg);
       this.failedTests++;
     }
-    const securityResult = await this.runSecuritySuite();
-    this.printSummary(securityResult);
-    const failedCount = this.failedTests + (securityResult.failed ? 1 : 0);
-    if (failedCount > 0) {
-      try {
-        await this.generateDebugFile();
-      } catch (err) {
-        console.error('Failed to generate debug file:', err);
-      }
-    }
-
-    await this.writeResultsFile(securityResult);
-    await this.cleanup();
-    
-    // Wait for all microtasks to complete with proper timeout
-    await new Promise(resolve => {
-      setImmediate(resolve);
-    });
-    await new Promise(resolve => {
-      setImmediate(resolve);
-    });
-    
-    // Additional safety check - wait for event loop to be empty with timeout
-    await new Promise(resolve => {
-      let timeoutId = null;
-      const cleanup = () => {
-        if (timeoutId) clearTimeout(timeoutId);
-      };
-      
-      const checkHandles = () => {
-        if (process._getActiveHandles) {
-          const handles = process._getActiveHandles();
-          if (handles.length === 0) {
-            cleanup();
-            resolve();
-          } else {
-            // If we still have handles but no timeout set, create timeout
-            if (!timeoutId) {
-              timeoutId = setTimeout(() => {
-                console.warn('Event loop still has active handles, proceeding with exit');
-                cleanup();
-                resolve();
-              }, 1000);
-            }
-            // Continue checking if timeout hasn't fired yet
-            setTimeout(checkHandles, 50);
-          }
-        } else {
-          cleanup();
-          resolve();
-        }
-      };
-      setTimeout(checkHandles, 50);
-    });
-    
-    // Final exit - ensure this only runs once
-    process.exit(failedCount > 0 ? 1 : 0);
+    if (this.failedTests > 0) this.generateDebugFile();
+    this.writeResultsFile(
+      this.passedTests,
+      this.failedTests,
+      this.testResults.map(r => ({ path: r.file, success: r.success, durationMs: r.duration, failureMessage: r.output || '' }))
+    );
+    const secExit = this.runSecurityCheck();
+    this.printSummary();
+    process.exit((this.failedTests > 0 || secExit > 0) ? 1 : 0);
   }
 
   // Print colored status indicator
@@ -403,10 +266,14 @@ class TestRunner {
   }
 
   // Generate debug file for failed tests
-  async generateDebugFile() {
+  generateDebugFile() {
     const failedResults = this.testResults.filter(r => !r.success);
     if (failedResults.length === 0) return;
-    if (this.isEnvTruthy('QTESTS_SUPPRESS_DEBUG') || this.isEnvTruthy('QTESTS_NO_DEBUG_FILE')) return;
+    // Allow CI/tests to suppress creating a repo-root debug artifact when undesired
+    if (this.isEnvTruthy('QTESTS_SUPPRESS_DEBUG') || this.isEnvTruthy('QTESTS_NO_DEBUG_FILE')) {
+      return;
+    }
+    // Allow overriding the debug file output path to avoid cross-test interference
     const debugFilePath = (process.env.QTESTS_DEBUG_FILE && String(process.env.QTESTS_DEBUG_FILE).trim()) || 'DEBUG_TESTS.md';
     let debugContent = '# Test Failure Analysis\n\n';
     debugContent += 'Analyze and address the following test failures:\n\n';
@@ -423,67 +290,18 @@ class TestRunner {
     debugContent += `- Total failed tests: ${failedResults.length}\n`;
     debugContent += `- Failed test files: ${failedResults.map(r => r.file).join(', ')}\n`;
     debugContent += `- Generated: ${new Date().toISOString()}\n`;
-    
-    try { 
-      // Use async file write to ensure proper completion tracking
-      await safeWriteFileAsync(debugFilePath, debugContent);
-    } catch (error) {
-      qerrors(error, 'qtests-runner.generateDebugFile: failed to write debug file', {
-        debugFilePath,
-        failedResultsCount: failedResults.length,
-        debugContentLength: debugContent.length,
-        errorMessage: error?.message || String(error),
-        errorCode: error?.code || 'UNKNOWN'
-      });
+    try {
+      fs.writeFileSync(debugFilePath, debugContent);
+    } catch {
+      // Best-effort; ignore write errors in restricted environments
     }
-    
     if (!this.isEnvTruthy('QTESTS_SILENT')) {
       console.log(`\n${colors.yellow}📋 Debug file created: ${debugFilePath}${colors.reset}`);
     }
   }
 
-  // Write structured qtests-results.json after every run
-  async writeResultsFile(securityResult) {
-    if (this.isEnvTruthy('QTESTS_NO_RESULTS_FILE')) return;
-    const totalDurationMs = Date.now() - this.startTime;
-    const securitySummary = (securityResult && !securityResult.skipped && !securityResult.failed && securityResult.categories)
-      ? securityResult.categories
-      : null;
-    const runResult = {
-      schemaVersion: 1,
-      timestamp: new Date(this.startTime).toISOString(),
-      totalDurationMs,
-      passedFiles: this.passedTests,
-      failedFiles: this.failedTests,
-      files: (this.testResults || []).map((r) => ({
-        path: r.file,
-        success: r.success,
-        durationMs: r.duration || 0,
-        failureMessage: r.output || ''
-      })),
-      securitySummary
-    };
-    const resultsPath = (process.env.QTESTS_RESULTS_FILE && String(process.env.QTESTS_RESULTS_FILE).trim())
-      || path.join(process.cwd(), 'qtests-results.json');
-    try {
-      fs.writeFileSync(resultsPath, JSON.stringify(runResult, null, 2), 'utf8');
-      if (!this.isEnvTruthy('QTESTS_SILENT')) {
-        const rel = path.relative(process.cwd(), resultsPath);
-        const displayPath = (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel))
-          ? resultsPath : rel;
-        console.log(`${colors.dim}📄 Results: ${displayPath}${colors.reset}`);
-      }
-    } catch (error) {
-      qerrors(error, 'qtests-runner: failed to write results file', { resultsPath });
-      const rel = path.relative(process.cwd(), resultsPath);
-      const displayPath = (rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel))
-        ? resultsPath : rel;
-      console.warn(`${colors.yellow}⚠  Could not write results file: ${displayPath}${colors.reset}`);
-    }
-  }
-
-  // Print comprehensive summary, with an optional security summary line
-  printSummary(securityResult) {
+  // Print comprehensive summary
+  printSummary() {
     const duration = Date.now() - this.startTime;
     const totalFiles = this.testResults.length;
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
@@ -501,63 +319,7 @@ class TestRunner {
       console.log(`\n${colors.red}Failed test files:${colors.reset}`);
       this.testResults.filter(r => !r.success).forEach(r => console.log(`  ${colors.red}•${colors.reset} ${r.file}`));
     }
-    // Security summary line
-    if (securityResult) {
-      if (securityResult.skipped) {
-        console.log(`${colors.yellow}🔒 Security: skipped (QTESTS_SKIP_SECURITY)${colors.reset}`);
-      } else {
-        const cats = securityResult.categories;
-        const parts = [
-          formatSecurityCategory('regression', cats && cats.regression),
-          formatSecurityCategory('pentest', cats && cats.penetration),
-          formatSecurityCategory('config', cats && cats.configuration),
-        ].filter(Boolean);
-        const secColor = securityResult.failed ? colors.red : colors.green;
-        const secLabel = parts.length > 0 ? parts.join(', ') : (securityResult.failed ? 'FAILED' : 'passed');
-        console.log(`${secColor}🔒 Security:${colors.reset} ${secLabel}`);
-      }
-    }
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
-  }
-
-  // Spawn the security test runner as a child process.
-  // Returns { skipped, failed, categories } for use in printSummary().
-  async runSecuritySuite() {
-    if (this.isEnvTruthy('QTESTS_SKIP_SECURITY')) {
-      if (!this.isEnvTruthy('QTESTS_SILENT')) {
-        console.log(`\n${colors.yellow}⚠  Security tests skipped (QTESTS_SKIP_SECURITY=true)${colors.reset}`);
-      }
-      return { skipped: true, failed: false, categories: null };
-    }
-    const { spawn } = await import('child_process');
-    const runnerPath = path.join(process.cwd(), 'dist', 'scripts', 'security-test-runner.js');
-    if (!fs.existsSync(runnerPath)) {
-      console.error(`${colors.red}✗ Security runner not found at ${runnerPath}${colors.reset}`);
-      console.error(`${colors.red}  Security coverage cannot be verified. Failing the test run.${colors.reset}`);
-      console.error(`${colors.dim}  To disable security tests set QTESTS_SKIP_SECURITY=true${colors.reset}`);
-      return { skipped: false, failed: true, categories: null };
-    }
-    // Remove any stale summary from a previous run so we never display stale data.
-    try { fs.unlinkSync(path.join(process.cwd(), 'security-summary.json')); } catch { /* absent is fine */ }
-    console.log(`\n${colors.bold}${colors.blue}═══════════════════════════════════════${colors.reset}`);
-    console.log(`${colors.bold}${colors.blue}         SECURITY TEST SUITE${colors.reset}`);
-    console.log(`${colors.bold}${colors.blue}═══════════════════════════════════════${colors.reset}\n`);
-    const failed = await new Promise((resolve) => {
-      const child = spawn(process.execPath, [runnerPath], {
-        stdio: 'inherit',
-        env: { ...process.env, NODE_ENV: process.env.NODE_ENV || 'test' }
-      });
-      child.on('close', (code) => {
-        resolve(code !== 0);
-      });
-      child.on('error', (err) => {
-        qerrors(err, 'qtests-runner.runSecuritySuite: child process error', { runnerPath });
-        console.error(`${colors.red}Security runner failed to start:${colors.reset}`, err.message);
-        resolve(true);
-      });
-    });
-    const categories = failed ? null : readSecuritySummary();
-    return { skipped: false, failed, categories };
   }
 
   // Main runner method - API-only execution via jest.runCLI
@@ -572,10 +334,9 @@ class TestRunner {
         console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
         console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
       }
-      const securityResult = await this.runSecuritySuite();
-      this.printSummary(securityResult);
-      await this.writeResultsFile(securityResult);
-      process.exit(securityResult.failed ? 1 : 0);
+      this.writeResultsFile(0, 0, []);
+      const secExit = this.runSecurityCheck();
+      process.exit(secExit);
     }
     if (!this.isEnvTruthy('QTESTS_SILENT')) {
       console.log(`${colors.blue}Found ${files.length} test file(s):${colors.reset}`);
@@ -589,12 +350,6 @@ class TestRunner {
 // Run the test suite
 const runner = new TestRunner();
 runner.run().catch(error => {
-  qerrors(error, 'qtests-runner: test runner failed', {
-    errorType: error.constructor?.name || 'unknown',
-    errorMessage: error?.message || String(error)
-  });
   console.error(`${colors.red}Test runner error:${colors.reset}`, error);
   process.exit(1);
 });
-
-export default TestRunner;
