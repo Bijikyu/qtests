@@ -441,8 +441,7 @@ function getIntegrationStubContent(sourceBasename, importPath, useTs) {
     `    module = await import('${importPath}');`,
     `  });`,
     ``,
-    `  it.todo('test the critical workflow — happy path');`,
-    `  it.todo('test a key failure path');`,
+    `  it.todo('add integration tests — focus on critical workflows, not every function');`,
     `});`,
     ``
   ].join('\n');
