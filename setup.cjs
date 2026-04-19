@@ -5,11 +5,11 @@
  *
  * Why this exists:
  * - The package is ESM-first ("type": "module"), but many test suites are still CommonJS.
- * - Consumers expect `require('@bijikyu/qtests/setup')` to synchronously install the require-hook.
+ * - Consumers expect `require('qtests/setup')` to synchronously install the require-hook.
  *
  * Scope:
  * - This entrypoint installs ONLY the require-hook for built-in stubs (axios/winston/mongoose).
- * - ESM import interception still requires the optional loader (`@bijikyu/qtests/loader`).
+ * - ESM import interception still requires the optional loader (`qtests/loader`).
  */
 
 const fs = require('fs');

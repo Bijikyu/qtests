@@ -9,7 +9,7 @@ The error handling system provides comprehensive error management with context p
 ### Core Error Handling Functions
 
 ```typescript
-import { handleError, handleAsyncError } from '@bijikyu/qtests/lib/errorHandling.js';
+import { handleError, handleAsyncError } from 'qtests/lib/errorHandling.js';
 
 // Basic error handling
 handleError(error, 'user-registration', {
@@ -48,7 +48,7 @@ Production-ready circuit breaker using Opossum library with enterprise features.
 ### Circuit Breaker Setup
 
 ```typescript
-import { createCircuitBreaker } from '@bijikyu/qtests/lib/circuitBreaker.js';
+import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
 
 // Basic circuit breaker
 const breaker = createCircuitBreaker(
@@ -105,7 +105,7 @@ Advanced health monitoring for database connection pools with metrics and automa
 ### Health Monitoring Setup
 
 ```typescript
-import { addHealthMonitoring, createHealthMonitoredPool } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
+import { addHealthMonitoring, createHealthMonitoredPool } from 'qtests/lib/connectionPoolHealth.js';
 
 // Option 1: Add to existing pool
 const pool = createDatabasePool();
@@ -212,7 +212,7 @@ Standardized Jest configurations for different project types and scenarios.
 ### Using the Configuration Factory
 
 ```typescript
-import { createJestConfig } from '@bijikyu/qtests/lib/jestConfigFactory.js';
+import { createJestConfig } from 'qtests/lib/jestConfigFactory.js';
 
 // TypeScript ESM project
 const tsEsmConfig = createJestConfig('typescript-esm', {
@@ -296,7 +296,7 @@ Advanced module stubbing for complex scenarios and external dependencies.
 ### Registering Custom Stubs
 
 ```typescript
-import { registerModuleStub, unregisterModuleStub, clearAllModuleStubs } from '@bijikyu/qtests/utils/customStubs.js';
+import { registerModuleStub, unregisterModuleStub, clearAllModuleStubs } from 'qtests/utils/customStubs.js';
 
 // Register a simple stub
 registerModuleStub('external-api', {
@@ -396,11 +396,11 @@ const user = await userService.findById('1');
 
 ```typescript
 // tests/integration/user-service.test.ts
-import './node_modules/@bijikyu/qtests/setup.js';
-import { addHealthMonitoring } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
-import { createCircuitBreaker } from '@bijikyu/qtests/lib/circuitBreaker.js';
-import { handleError, handleAsyncError } from '@bijikyu/qtests/lib/errorHandling.js';
-import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs.js';
+import './node_modules/qtests/setup.js';
+import { addHealthMonitoring } from 'qtests/lib/connectionPoolHealth.js';
+import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
+import { handleError, handleAsyncError } from 'qtests/lib/errorHandling.js';
+import { registerModuleStub } from 'qtests/utils/customStubs.js';
 
 describe('User Service Integration', () => {
   let userService;

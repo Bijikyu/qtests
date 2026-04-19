@@ -65,8 +65,8 @@ export default {
   transformIgnorePatterns: ['node_modules/(?!(?:qtests|qerrors|@bijikyu|p-limit|yocto-queue|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul|@langchain|openai|msw|until-async|@mswjs)/)'],
   resolver: path.join(PROJECT_ROOT, 'config', 'ts-jest-resolver.cjs'),
   moduleNameMapper: {
-    "^@bijikyu/qtests$": "<rootDir>/dist/index.js",
-    "^@bijikyu/qtests/(.*)$": "<rootDir>/dist/$1",
+    "^qtests$": "<rootDir>/dist/index.js",
+    "^qtests/(.*)$": "<rootDir>/dist/$1",
    // Essential mocks only - avoid broad patterns that interfere with node_modules
     "^mongoose$": "<rootDir>/__mocks__/mongoose.js",
     "^\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",

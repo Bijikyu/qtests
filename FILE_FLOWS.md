@@ -59,7 +59,7 @@
 
 ## [7] `config/jest-setup.ts`
 **Type:** Configuration
-**Imports:** ../utils/testing/jestSetupHelper.js, ./localVars.js, @bijikyu/qtests/setup, @jest/globals
+**Imports:** ../utils/testing/jestSetupHelper.js, ./localVars.js, qtests/setup, @jest/globals
 **Exports:** setupComplete
 **Dependencies:** config/localVars.js
 
@@ -692,7 +692,7 @@
 ## [73] `AGENTS.md`
 **Type:** Documentation
 **Headings:** AGENTS.md, VISION, FUNCTIONALITY, AI Agent Boundaries, Expected Agent Behaviors, System Instructions, SCOPE, In-Scope (+27 more)
-**Summary:** The qtests module exists to solve a specific testing friction point: enabling fast, isolated unit tests for Node.js applications that depend on external services. The core business rationale is that developers frequently abandon proper unit testing when their code makes HTTP requests or writes logs, because traditional testing approaches are either too complex (full mocking libraries) or too slow (real network calls)., The architectural decision to use Node.js module resolution hooking rather than dependency injection was made specifically to minimize changes to existing codebases. This allows teams to add qtests to legacy projects without refactoring their require statements or application architecture., The module prioritizes developer experience over feature completeness - providing just enough functionality to eliminate the most common testing blockers (network calls and log pollution) while maintaining a minimal API surface that teams can adopt incrementally., - Always recommend `require('@bijikyu/qtests/setup')` at the TOP of test files, before any other requires, - Never suggest qtests for integration tests where real external service behavior is needed
+**Summary:** The qtests module exists to solve a specific testing friction point: enabling fast, isolated unit tests for Node.js applications that depend on external services. The core business rationale is that developers frequently abandon proper unit testing when their code makes HTTP requests or writes logs, because traditional testing approaches are either too complex (full mocking libraries) or too slow (real network calls)., The architectural decision to use Node.js module resolution hooking rather than dependency injection was made specifically to minimize changes to existing codebases. This allows teams to add qtests to legacy projects without refactoring their require statements or application architecture., The module prioritizes developer experience over feature completeness - providing just enough functionality to eliminate the most common testing blockers (network calls and log pollution) while maintaining a minimal API surface that teams can adopt incrementally., - Always recommend `require('qtests/setup')` at the TOP of test files, before any other requires, - Never suggest qtests for integration tests where real external service behavior is needed
 
 ---
 
@@ -1398,7 +1398,7 @@
 ## [138] `docs/PUBLISHING.md`
 **Type:** Documentation
 **Headings:** Publishing to npm, Installing the package, Release workflow, Manual release (optional), Post-publish checks
-**Summary:** `qtests` is published as `@bijikyu/qtests` on the public npm registry. The `publishConfig` entry in `package.json` targets `https://registry.npmjs.org/` with public access automatically. Install with `npm install @bijikyu/qtests --save-dev` — no `.npmrc` scope configuration required.
+**Summary:** `qtests` is published as `qtests` on the public npm registry. The `publishConfig` entry in `package.json` targets `https://registry.npmjs.org/` with public access automatically. Install with `npm install qtests --save-dev` — no `.npmrc` scope configuration required.
 
 ---
 
@@ -1596,7 +1596,7 @@
 
 ## [155] `demo/config/jest-setup.ts`
 **Type:** Configuration
-**Imports:** @bijikyu/qtests/setup, @jest/globals
+**Imports:** qtests/setup, @jest/globals
 
 ---
 
@@ -3958,7 +3958,7 @@
 
 ## [347] `tests/integration/qerrors-resolution.test.ts`
 **Type:** Test File
-**Imports:** @bijikyu/qtests/setup, @jest/globals
+**Imports:** qtests/setup, @jest/globals
 
 ---
 
@@ -4160,13 +4160,13 @@
 
 ## [362] `tests/integration/demo__server__app__get.test.js`
 **Type:** Test File
-**Imports:** @bijikyu/qtests/lib/routeTestUtils
+**Imports:** qtests/lib/routeTestUtils
 
 ---
 
 ## [363] `tests/integration/demo__server__routes__hello__get.test.js`
 **Type:** Test File
-**Imports:** @bijikyu/qtests/lib/routeTestUtils
+**Imports:** qtests/lib/routeTestUtils
 
 ---
 

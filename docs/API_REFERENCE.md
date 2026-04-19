@@ -18,7 +18,7 @@ import {
   createMockApp,            // HTTP testing app creator (convenience export)
   runTestSuite,             // Test runner (convenience export)
   createAssertions           // Assertion creator (convenience export)
-} from '@bijikyu/qtests';
+} from 'qtests';
 ```
 
 ## 🔧 Core Utilities
@@ -27,7 +27,7 @@ import {
 Initialize qtests module stubbing and global configurations.
 
 ```typescript
-import { setup } from '@bijikyu/qtests';
+import { setup } from 'qtests';
 
 // Load qtests setup
 setup();
@@ -42,7 +42,7 @@ setup();
 Object containing built-in module stubs.
 
 ```typescript
-import { stubs } from '@bijikyu/qtests';
+import { stubs } from 'qtests';
 
 // Access specific stub
 await stubs.axios.get('https://api.example.com');
@@ -66,7 +66,7 @@ await stubs.winston.info('Test message');
 Replace object methods with stub implementations.
 
 ```typescript
-import { stubMethod } from '@bijikyu/qtests';
+import { stubMethod } from 'qtests';
 
 const restore = stubMethod(obj, methodName, replacement);
 
@@ -109,7 +109,7 @@ const restore = stubMethod(obj, 'method', (value) => {
 Create a spy on existing method without replacing it.
 
 ```typescript
-import { spyOnMethod } from '@bijikyu/qtests';
+import { spyOnMethod } from 'qtests';
 
 const spy = spyOnMethod(obj, 'methodName');
 
@@ -124,7 +124,7 @@ console.log(spy.calls); // [{ args: ['test'], result: undefined }]
 Create Jest-compatible console spies.
 
 ```typescript
-import { mockConsole } from '@bijikyu/qtests';
+import { mockConsole } from 'qtests';
 
 const spy = mockConsole('log');
 console.log('test message');
@@ -163,7 +163,7 @@ spies.mockRestoreAll(); // Restore all
 Environment variable management utilities.
 
 ```typescript
-import { testEnv } from '@bijikyu/qtests';
+import { testEnv } from 'qtests';
 
 // Set standard test environment
 testEnv.setTestEnv();
@@ -192,7 +192,7 @@ testEnv.restoreEnv(saved);
 Execute function with automatic environment cleanup.
 
 ```typescript
-import { testHelpers } from '@bijikyu/qtests';
+import { testHelpers } from 'qtests';
 
 await testHelpers.withSavedEnv(async () => {
   process.env.TEMP_VAR = 'temporary';
@@ -208,7 +208,7 @@ await testHelpers.withSavedEnv(async () => {
 Control offline mode for external service stubbing.
 
 ```typescript
-import { offlineMode } from '@bijikyu/qtests';
+import { offlineMode } from 'qtests';
 
 // Enable offline mode
 offlineMode.setOfflineMode(true);
@@ -243,7 +243,7 @@ offlineMode.clearOfflineCache();
 Create Express-like app for HTTP testing.
 
 ```typescript
-import { createMockApp, supertest } from '@bijikyu/qtests';
+import { createMockApp, supertest } from 'qtests';
 
 const app = createMockApp();
 
@@ -305,7 +305,7 @@ expect(response.body).toMatchObject({
 Comprehensive error handling with logging and context.
 
 ```typescript
-import { handleError } from '@bijikyu/qtests/lib/errorHandling.js';
+import { handleError } from 'qtests/lib/errorHandling.js';
 
 handleError(error, context, options);
 
@@ -338,7 +338,7 @@ interface ErrorHandlingOptions {
 Async error handling with fallback values.
 
 ```typescript
-import { handleAsyncError } from '@bijikyu/qtests/lib/errorHandling.js';
+import { handleAsyncError } from 'qtests/lib/errorHandling.js';
 
 const result = await handleAsyncError(
   promise,
@@ -366,7 +366,7 @@ const user = await handleAsyncError(
 Create circuit breaker for external service calls.
 
 ```typescript
-import { createCircuitBreaker } from '@bijikyu/qtests/lib/circuitBreaker.js';
+import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
 
 const breaker = createCircuitBreaker(
   functionToProtect,
@@ -427,7 +427,7 @@ interface CircuitBreakerOptions {
 Add health monitoring to connection pools.
 
 ```typescript
-import { addHealthMonitoring } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
+import { addHealthMonitoring } from 'qtests/lib/connectionPoolHealth.js';
 
 const monitor = addHealthMonitoring(pool, options);
 
@@ -493,7 +493,7 @@ interface HealthStatus {
 Create standardized Jest configurations.
 
 ```typescript
-import { createJestConfig } from '@bijikyu/qtests/lib/jestConfigFactory.js';
+import { createJestConfig } from 'qtests/lib/jestConfigFactory.js';
 
 const config = createJestConfig(preset, options);
 
@@ -519,7 +519,7 @@ export default config;
 #### TestGenerator Class
 
 ```typescript
-import { TestGenerator } from '@bijikyu/qtests/dist/lib/testGenerator.js';
+import { TestGenerator } from 'qtests/dist/lib/testGenerator.js';
 
 const generator = new TestGenerator(options);
 await generator.generateTestFiles(dryRun);
@@ -558,7 +558,7 @@ interface GenerationResult {
 Register custom module stubs at runtime.
 
 ```typescript
-import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs.js';
+import { registerModuleStub } from 'qtests/utils/customStubs.js';
 
 // Register simple stub
 registerModuleStub('external-service', {
@@ -605,7 +605,7 @@ import {
   matchMedia, 
   clipboard,
   polyfillOrchestrator 
-} from '@bijikyu/qtests';
+} from 'qtests';
 
 // Initialize browser environment
 initializePolyfills();
@@ -645,7 +645,7 @@ resetPolyfills();
 Execute test suites without external frameworks.
 
 ```typescript
-import { runTestSuite, createAssertions } from '@bijikyu/qtests';
+import { runTestSuite, createAssertions } from 'qtests';
 
 const assert = createAssertions();
 
@@ -718,7 +718,7 @@ import {
   experimentalFeatures,
   legacyMode,
   devVerboseLogging
-} from '@bijikyu/qtests';
+} from 'qtests';
 
 // Use in tests
 test('with custom timeout', async () => {

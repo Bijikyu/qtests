@@ -1,4 +1,4 @@
-import '@bijikyu/qtests/setup'; // Ensure qtests hooks are in place before any module resolution for stubs
+import 'qtests/setup'; // Ensure qtests hooks are in place before any module resolution for stubs
 import { describe, expect, it } from '@jest/globals';
 
 describe('qerrors module resolution', () => {

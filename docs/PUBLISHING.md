@@ -1,17 +1,17 @@
 # Publishing to npm
 
-`qtests` is published as `@bijikyu/qtests` on the public npm registry. The scoped name and the `publishConfig` entry in `package.json` ensure `npm publish` targets `https://registry.npmjs.org/` automatically with public access.
+`qtests` is published on the public npm registry. The `publishConfig` entry in `package.json` ensures `npm publish` targets `https://registry.npmjs.org/` automatically.
 
 ## Installing the package
 
 No registry configuration is needed. Install directly with npm, yarn, or pnpm:
 
 ```bash
-npm install @bijikyu/qtests --save-dev
+npm install qtests --save-dev
 # or
-yarn add -D @bijikyu/qtests
+yarn add -D qtests
 # or
-pnpm add -D @bijikyu/qtests
+pnpm add -D qtests
 ```
 
 The runner and generator scripts stay the same after installation:
@@ -43,7 +43,7 @@ If you need to publish locally instead of through the workflow:
 
 ## Post-publish checks
 
-- Verify the new version at `https://www.npmjs.com/package/@bijikyu/qtests`.
-- Use `npm view @bijikyu/qtests dist-tags` or `npm info @bijikyu/qtests` to inspect the published metadata.
+- Verify the new version at `https://www.npmjs.com/package/qtests`.
+- Use `npm view qtests dist-tags` or `npm info qtests` to inspect the published metadata.
 
 For more context about installation and CI wiring, see [README](../README.md) and [`docs/ENTERPRISE_INTEGRATION.md`](ENTERPRISE_INTEGRATION.md).

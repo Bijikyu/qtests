@@ -51,7 +51,7 @@ test('qtests-generate produces JS-only setup (.cjs) when ts-jest/typescript are 
     expect(jestConfig.includes('jest-setup.cjs')).toBe(true);
 
     const setupCjs = fs.readFileSync(jestSetupCjsPath, 'utf8');
-    expect(setupCjs.includes("require('@bijikyu/qtests/setup')")).toBe(true);
+    expect(setupCjs.includes("require('qtests/setup')")).toBe(true);
     expect(setupCjs.includes("j.mock('axios'")).toBe(true);
     expect(setupCjs.includes("j.mock('winston'")).toBe(true);
     // Ensure it's not an ESM "import ..." statement (comments may contain the word "import").

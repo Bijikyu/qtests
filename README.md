@@ -13,7 +13,7 @@ A Node.js testing utility focused on fast, isolated unit tests: method stubbing,
 ## Quick Start
 
 ```bash
-npm install @bijikyu/qtests --save-dev
+npm install qtests --save-dev
 ```
 
 ### Generate tests for your project
@@ -42,18 +42,18 @@ qtests can scaffold its Jest runner/config into your project root via `npx qtest
 **Setup:** (Jest: loaded globally via `config/jest-setup.ts`/`config/jest-setup.cjs` when you use `npx qtests-generate`; otherwise, put this at the top of each test file before other imports.)
 ```typescript
 // Enable automatic stubbing (CJS + ESM)
-import '@bijikyu/qtests/setup';
+import 'qtests/setup';
 // CommonJS:
-// require('@bijikyu/qtests/setup');
+// require('qtests/setup');
 
 // Import with full type safety
-import { stubMethod, mockConsole, testEnv } from '@bijikyu/qtests';
+import { stubMethod, mockConsole, testEnv } from 'qtests';
 
 // Use with TypeScript intellisense
 const restore = stubMethod(myObject, 'methodName', mockImplementation);
 ```
 
-> **Module format note:** `@bijikyu/qtests` (the main API) is ESM-only. In CommonJS tests, use `await import('@bijikyu/qtests')` to access helpers like `stubMethod`. The setup entrypoint supports both `import '@bijikyu/qtests/setup'` and `require('@bijikyu/qtests/setup')`.
+> **Module format note:** `qtests` (the main API) is ESM-only. In CommonJS tests, use `await import('qtests')` to access helpers like `stubMethod`. The setup entrypoint supports both `import 'qtests/setup'` and `require('qtests/setup')`.
 
 ## Key Features
 
@@ -85,7 +85,7 @@ Defaults registered by setup:
 
 Usage:
 ```ts
-import qtests from '@bijikyu/qtests';
+import qtests from 'qtests';
 
 // Register a custom module mock
 qtests.mock.module('external-service', () => ({
@@ -100,7 +100,7 @@ qtests.mock.module('external-service', () => ({
 Notes:
 - Activation is runtime-safe: a single require hook returns registered mocks; previously loaded CJS modules are best-effort evicted from `require.cache`.
 - ESM projects can optionally use the loader for earliest interception:
-  - `node --loader=@bijikyu/qtests/loader.mjs your-app.mjs`
+  - `node --loader=qtests/loader.mjs your-app.mjs`
 - setup still runs first in Jest via `config/jest-setup.ts` (TS) or `config/jest-setup.cjs` (JS-only) so defaults are active before imports.
 
 ## Core Usage
@@ -108,7 +108,7 @@ Notes:
 ### Method Stubbing
 
 ```typescript
-import { stubMethod } from '@bijikyu/qtests';
+import { stubMethod } from 'qtests';
 
 const myObj = { greet: (name: string) => `Hello, ${name}!` };
 
@@ -124,7 +124,7 @@ console.log(myObj.greet('Brian')); // 'Hello, Brian!'
 ### Console Mocking
 
 ```typescript
-import { mockConsole } from '@bijikyu/qtests';
+import { mockConsole } from 'qtests';
 
 const spy = mockConsole('log');
 console.log('test message');
@@ -136,7 +136,7 @@ spy.mockRestore(); // Restore original console.log
 ### Environment Management
 
 ```typescript
-import { testEnv } from '@bijikyu/qtests';
+import { testEnv } from 'qtests';
 
 // Set test environment
 testEnv.setTestEnv(); // Sets NODE_ENV=test, DEBUG=qtests:*
@@ -160,7 +160,7 @@ Runner availability and generator behavior:
 - Run `npx qtests-generate` once to scaffold `qtests-runner.mjs` and Jest config files if missing:
   - `config/jest.config.mjs` (ignores `dist/`, `build/`)
   - `config/jest-require-polyfill.cjs` (ensures `require(...)` is available in ESM tests)
-  - `config/jest-setup.ts` (TS) or `config/jest-setup.cjs` (JS-only); both load `@bijikyu/qtests/setup` first and register Jest mocks for `axios`/`winston`
+  - `config/jest-setup.ts` (TS) or `config/jest-setup.cjs` (JS-only); both load `qtests/setup` first and register Jest mocks for `axios`/`winston`
 - Use `--force` to overwrite existing scaffolded files.
 - Use `--update-pkg-script` to set `package.json` `scripts.test` to `node qtests-runner.mjs`.
 - Use `--auto-install` to install `ts-jest` + `typescript` as devDependencies if missing.
@@ -192,10 +192,10 @@ When you need to stub a niche dependency (beyond the built-ins axios/winston) wi
 
 ```ts
 // Always load setup first so axios/winston are stubbed globally
-import '@bijikyu/qtests/setup';
+import 'qtests/setup';
 
 // Then register your ad-hoc stub(s)
-import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs';
+import { registerModuleStub } from 'qtests/utils/customStubs';
 
 registerModuleStub('external-service-client', {
   ping: () => 'pong',
@@ -212,8 +212,8 @@ await client.get(); // { ok: true }
 ### Axios Stub
 
 ```typescript
-// Automatic when using @bijikyu/qtests/setup (for require()-based resolution)
-import '@bijikyu/qtests/setup';
+// Automatic when using qtests/setup (for require()-based resolution)
+import 'qtests/setup';
 const axios = require('axios');
 
 const response = await axios.get('/api');
@@ -225,8 +225,8 @@ await axios.post('/api', data); // Enhanced response format
 ### Winston Stub
 
 ```typescript
-// Automatic when using @bijikyu/qtests/setup (for require()-based resolution)
-import '@bijikyu/qtests/setup';
+// Automatic when using qtests/setup (for require()-based resolution)
+import 'qtests/setup';
 const winston = require('winston');
 
 const logger = winston.createLogger();
@@ -239,10 +239,10 @@ When you need to stub a niche dependency (beyond the built-ins axios/winston) wi
 
 ```ts
 // Always load setup first so axios/winston are stubbed globally
-import '@bijikyu/qtests/setup';
+import 'qtests/setup';
 
 // Then register your ad-hoc stub(s)
-import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs';
+import { registerModuleStub } from 'qtests/utils/customStubs';
 
 registerModuleStub('external-service-client', {
   ping: () => 'pong',
@@ -262,7 +262,7 @@ Notes:
 ## Lightweight Test Runner
 
 ```typescript
-import { runTestSuite, createAssertions } from '@bijikyu/qtests';
+import { runTestSuite, createAssertions } from 'qtests';
 
 const assert = createAssertions();
 
@@ -287,7 +287,7 @@ runTestSuite('My Tests', tests);
 //   tests/generated-tests/utils/httpTest.ts (re-exports a JS shim)
 //   tests/generated-tests/utils/httpTest.shim.js (implementation with .send())
 // You can also import the same helpers directly from qtests if preferred.
-import { httpTest } from '@bijikyu/qtests/lib/envUtils.js';
+import { httpTest } from 'qtests/lib/envUtils.js';
 
 // Create mock Express app
 const app = httpTest.createMockApp();
@@ -306,7 +306,7 @@ const response = await httpTest.supertest(app)
 ## Email Testing
 
 ```typescript
-import { sendEmail } from '@bijikyu/qtests/lib/envUtils.js';
+import { sendEmail } from 'qtests/lib/envUtils.js';
 
 // Mock email sending
 const result = await sendEmail.send({
@@ -324,7 +324,7 @@ console.log(sendEmail.getHistory()); // Array of sent emails
 ### Error Handling Utilities
 
 ```typescript
-import { handleError, handleAsyncError } from '@bijikyu/qtests/lib/errorHandling.js';
+import { handleError, handleAsyncError } from 'qtests/lib/errorHandling.js';
 
 // Synchronous error handling with logging
 try {
@@ -351,7 +351,7 @@ if (result === null) {
 ### Circuit Breaker Pattern
 
 ```typescript
-import { createCircuitBreaker } from '@bijikyu/qtests/lib/circuitBreaker.js';
+import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
 
 // Wrap external service calls with circuit breaker
 const serviceBreaker = createCircuitBreaker(
@@ -377,7 +377,7 @@ try {
 ### Connection Pool Health Monitoring
 
 ```typescript
-import { addHealthMonitoring, createHealthMonitoredPool } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
+import { addHealthMonitoring, createHealthMonitoredPool } from 'qtests/lib/connectionPoolHealth.js';
 
 // Add health monitoring to existing pool
 const pool = createDatabasePool();
@@ -403,7 +403,7 @@ monitor.startHealthMonitoring();
 ### Jest Configuration Factory
 
 ```typescript
-import { createJestConfig } from '@bijikyu/qtests/lib/jestConfigFactory.js';
+import { createJestConfig } from 'qtests/lib/jestConfigFactory.js';
 
 // Standardized Jest configurations
 const config = createJestConfig('typescript-esm', {
@@ -426,7 +426,7 @@ writeFileSync('jest.config.mjs', `export default ${JSON.stringify(config, null, 
 ### Offline Mode
 
 ```typescript
-import { offlineMode } from '@bijikyu/qtests';
+import { offlineMode } from 'qtests';
 
 // Enable offline mode
 offlineMode.setOfflineMode(true);
@@ -439,7 +439,7 @@ await axios.get('/api/data'); // Returns {} instead of real request
 ### Integration with Jest
 
 ```typescript
-import { testHelpers } from '@bijikyu/qtests';
+import { testHelpers } from 'qtests';
 
 test('console output', async () => {
   await testHelpers.withMockConsole('log', (spy) => {
@@ -518,13 +518,13 @@ To run ESM tests, set `"type": "module"` in your project `package.json` (or use 
 
 ```typescript
 // Core utilities with full type safety
-import qtests, { stubMethod, mockConsole, testEnv, mock } from '@bijikyu/qtests';
+import qtests, { stubMethod, mockConsole, testEnv, mock } from 'qtests';
 
 // Custom module stubs (no ".js" suffix in subpath imports)
-import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs';
+import { registerModuleStub } from 'qtests/utils/customStubs';
 
 // Module stubs (still available)
-import { stubs } from '@bijikyu/qtests';
+import { stubs } from 'qtests';
 await stubs.axios.get('https://example.com');
 ```
 
@@ -537,7 +537,7 @@ import {
   getWindow, 
   matchMedia, 
   clipboard 
-} from '@bijikyu/qtests';
+} from 'qtests';
 
 // Set up browser environment
 initializePolyfills();
@@ -599,12 +599,12 @@ Notes:
 
 ```typescript
 // Correct
-import '@bijikyu/qtests/setup';
+import 'qtests/setup';
 import myModule from './myModule.js';
 
 // Wrong
 import myModule from './myModule.js';
-import '@bijikyu/qtests/setup';
+import 'qtests/setup';
 ```
 
 ### 2. Clean Up After Tests
@@ -623,7 +623,7 @@ test('example', () => {
 
 ### 3. Use Environment Helpers
 ```typescript
-import { testHelpers } from '@bijikyu/qtests';
+import { testHelpers } from 'qtests';
 
 test('environment test', async () => {
   await testHelpers.withSavedEnv(async () => {
@@ -650,7 +650,7 @@ qtests supports multiple testing patterns depending on your needs:
 
 ```typescript
 // Unit test - test individual functions
-import '@bijikyu/qtests/setup';
+import 'qtests/setup';
 import { calculateTotal } from './billing.js';
 
 test('calculates total with tax', () => {
@@ -681,8 +681,8 @@ describe('POST /api/billing/calculate', () => {
 
 ```typescript
 // Global test setup (setupTests.ts)
-import '@bijikyu/qtests/setup';
-import { testEnv } from '@bijikyu/qtests';
+import 'qtests/setup';
+import { testEnv } from 'qtests';
 
 // Set up test environment before all tests
 beforeAll(() => {
@@ -699,15 +699,15 @@ afterAll(() => {
 
 | Issue | Solution |
 |-------|----------|
-| Stubs not working (CommonJS) | Ensure `require('@bijikyu/qtests/setup')` is called first |
-| Stubs not working (ES Modules) | Ensure `import '@bijikyu/qtests/setup'` is called first |
+| Stubs not working (CommonJS) | Ensure `require('qtests/setup')` is called first |
+| Stubs not working (ES Modules) | Ensure `import 'qtests/setup'` is called first |
 | TypeScript import errors | Add `"type": "module"` to package.json and update tsconfig.json |
 | ES Module syntax errors | Ensure `"module": "ES2020"` in tsconfig.json |
 | Console pollution | Use `mockConsole()` to capture output |
 | Environment leaks | Use `testHelpers.withSavedEnv()` for isolation |
-| Module not found for advanced features | Use qtests subpath exports without a `.js` suffix (e.g. `@bijikyu/qtests/lib/errorHandling`) |
+| Module not found for advanced features | Use qtests subpath exports without a `.js` suffix (e.g. `qtests/lib/errorHandling`) |
 | CLI not found | Use `npx qtests-generate` (alias: `qtests-ts-generate`) or install globally |
-| File extension errors | For qtests subpath imports, omit the `.js` suffix (e.g. `@bijikyu/qtests/utils/customStubs`) |
+| File extension errors | For qtests subpath imports, omit the `.js` suffix (e.g. `qtests/utils/customStubs`) |
 | generateKey returns empty string | Fixed in latest version - now correctly returns test keys like "test-api-key-user" |
 | Circuit breaker not opening | Check error threshold settings and ensure proper error handling |
 | Health monitoring not working | Ensure `pool.start()` is called before adding health monitoring |
@@ -832,8 +832,8 @@ export default {
 
 ```typescript
 // tests/monitoring/setup.js
-import { addHealthMonitoring } from '@bijikyu/qtests/lib/connectionPoolHealth.js';
-import { createCircuitBreaker } from '@bijikyu/qtests/lib/circuitBreaker.js';
+import { addHealthMonitoring } from 'qtests/lib/connectionPoolHealth.js';
+import { createCircuitBreaker } from 'qtests/lib/circuitBreaker.js';
 
 // Global health monitoring for test environments
 if (process.env.NODE_ENV === 'test') {
