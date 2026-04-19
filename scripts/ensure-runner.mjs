@@ -1,5 +1,5 @@
 // Ensures qtests-runner.mjs exists at project root by copying a valid shipped template.
-import { ensureRunner } from './sharedUtils.mjs';
+import { ensureRunnerAsync } from './sharedUtils.mjs';
 let qerrors;
 try {
   const mod = await import('../dist/lib/qerrorsFallback.js');
@@ -16,7 +16,7 @@ try {
 }
 
 try {
-  ensureRunner();
+  await ensureRunnerAsync();
 } catch (error) {
   qerrors(error, 'ensure-runner: failed to ensure runner file', { 
     cwd: process.cwd(),
