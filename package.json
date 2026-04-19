@@ -104,7 +104,7 @@
     "p-retry": "^7.1.1",
     "p-timeout": "^7.0.1",
     "pg": "^8.17.1",
-    "qerrors": "^1.2.7",
+    "qerrors": "^1.2.4",
     "rate-limiter-flexible": "^5.0.5",
     "redis": "^4.6.0",
     "secure-json-parse": "^4.1.0",
