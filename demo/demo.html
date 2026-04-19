@@ -772,7 +772,7 @@
 
                 <div class="card">
                     <h3><span class="icon">🎭</span> Intelligent Mocking</h3>
-                    <p>Runtime module replacement with built-in stubs for axios, winston, mongoose and custom modules.</p>
+                    <p>Runtime module replacement with built-in stubs for axios and winston, plus offline mode and custom module support.</p>
                     <ul class="feature-list">
                         <li>✅ Automatic module resolution</li>
                         <li>✅ Built-in service stubs</li>
@@ -1061,10 +1061,6 @@ describe('UserService', () => {
                             <strong>winston</strong> - Logging framework stub
                         </li>
                         <li>
-                            <input type="checkbox" class="checkbox" id="stub-mongoose">
-                            <strong>mongoose</strong> - MongoDB ODM stub
-                        </li>
-                        <li>
                             <input type="checkbox" class="checkbox" id="stub-console" checked>
                             <strong>console</strong> - Console output capture
                         </li>
@@ -1094,26 +1090,29 @@ describe('UserService', () => {
             <div class="demo-section">
                 <h4>Stubbing Examples</h4>
                 <div class="code-block">
-// Method stubbing
+// Method stubbing & spy utilities
 import { stubMethod, spyOnMethod } from 'qtests';
+import { restoreAll, verifyCallCount } from 'qtests/utils/stubMethod';
 
-// Simple method stub
-stubMethod(userService, 'fetchUser', jest.fn().mockReturnValue({
-  id: 1,
-  name: 'John Doe',
-  email: 'john@example.com'
-}));
+// Simple method stub — returns restore function
+const restore = stubMethod(userService, 'fetchUser',
+  jest.fn().mockReturnValue({ id: 1, name: 'John Doe' }));
 
 // Method spying
 const spy = spyOnMethod(console, 'log');
 console.log('Test message');
 expect(spy).toHaveBeenCalledWith('Test message');
 
-// Custom module stub (import from utils)
+// Verify call counts
+verifyCallCount(spy, 1); // asserts called exactly once
+
+// Restore all stubs/spies at once (use in afterEach)
+afterEach(() => restoreAll());
+
+// Custom module stub
 // import { registerModuleStub } from 'qtests/utils/customStubs';
 // registerModuleStub('./externalService', {
-//   fetchData: jest.fn().mockResolvedValue({ data: 'mock' }),
-//   processData: jest.fn()
+//   fetchData: jest.fn().mockResolvedValue({ data: 'mock' })
 // });
                 </div>
             </div>
@@ -1295,8 +1294,7 @@ export default {
   // Module resolution
   moduleNameMapper: {
     '^(axios)$': 'qtests/stubs/axios',
-    '^(winston)$': 'qtests/stubs/winston',
-    '^(mongoose)$': 'qtests/stubs/mongoose'
+    '^(winston)$': 'qtests/stubs/winston'
   },
   
   // Test setup
@@ -1501,6 +1499,26 @@ LOG_LEVEL=debug"></textarea>
                 </div>
                 <button class="btn" onclick="setupPolyfills()">Setup Selected Polyfills</button>
                 <button class="btn secondary" onclick="testPolyfills()">Test Polyfills</button>
+            </div>
+
+            <div class="demo-section">
+                <h4>Security Testing</h4>
+                <p style="margin-bottom: 14px;">The <code>lib/security</code> module provides path validation, input sanitization, and penetration-test helpers.</p>
+                <div class="code-block">
+import { SecurityValidator } from 'qtests/lib/security';
+import { JoiSecurityValidator } from 'qtests/lib/security';
+import { PenetrationTester } from 'qtests/lib/security';
+
+// Validate a file path against directory traversal
+SecurityValidator.validatePath('./uploads/file.txt', '/app/uploads');
+
+// Validate request data with Joi-based schema
+await JoiSecurityValidator.validate(requestBody, schema);
+
+// Run a full security scan (path traversal, XSS, injection)
+const report = await PenetrationTester.runFullSecurityTest(app);
+console.log(report.passed, report.vulnerabilities);
+                </div>
             </div>
         </div>
 
@@ -2859,26 +2877,43 @@ await safeWriteFile('./output/result.json',
                 </div>
             </div>
 
-            <div class="demo-section">
-                <h4>File System Features</h4>
-                <div class="metrics">
-                    <div class="metric">
-                        <div class="metric-value">100MB</div>
-                        <div class="metric-label">Max File Size</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-value">Auto</div>
-                        <div class="metric-label">Dir Creation</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-value">Safe</div>
-                        <div class="metric-label">Path Validation</div>
-                    </div>
-                    <div class="metric">
-                        <div class="metric-value">Async</div>
-                        <div class="metric-label">Non-blocking</div>
+            <div class="grid" style="margin-top: 16px;">
+                <div class="card">
+                    <h3><span class="icon">🔍</span> Existence Check</h3>
+                    <p>Check whether a file or directory exists without throwing on missing paths.</p>
+                    <div class="code-block">
+import { safeExists } from 'qtests';
+
+const exists = await safeExists('./config.json');
+if (!exists) {
+  console.log('Config not found, using defaults');
+}
                     </div>
                 </div>
+
+                <div class="card">
+                    <h3><span class="icon">🗑️</span> Safe Deletion</h3>
+                    <p>Delete files or directories with error handling — no throw if already absent.</p>
+                    <div class="code-block">
+import { safeDelete } from 'qtests';
+
+// Removes file or directory tree
+await safeDelete('./test-output/');
+await safeDelete('./temp.json');
+                    </div>
+                </div>
+            </div>
+
+            <div class="demo-section">
+                <h4>File System API</h4>
+                <ul class="feature-list">
+                    <li>✅ safeReadFile(path) — UTF-8 text, 100MB limit</li>
+                    <li>✅ safeReadFileBuffer(path) — binary buffer read</li>
+                    <li>✅ safeWriteFile(path, content) — auto-creates parent dirs</li>
+                    <li>✅ ensureDir(path) — mkdir -p equivalent</li>
+                    <li>✅ safeExists(path) — non-throwing existence check</li>
+                    <li>✅ safeDelete(path) — non-throwing file/dir removal</li>
+                </ul>
             </div>
             <div id="file-results" class="terminal" style="min-height: 100px;"></div>
         </div>
@@ -3580,7 +3615,7 @@ const manager = createCleanupManager({
             const stubs = [];
             if (document.getElementById('stub-axios').checked) stubs.push('axios');
             if (document.getElementById('stub-winston').checked) stubs.push('winston');
-            if (document.getElementById('stub-mongoose').checked) stubs.push('mongoose');
+            // mongoose stub not available; only axios and winston are built-in
             if (document.getElementById('stub-console').checked) stubs.push('console');
             
             alert(`Applied stubs for: ${stubs.join(', ')}`);
@@ -6239,8 +6274,7 @@ describe('CRUD Operations Tests', () => {
                     setupFilesAfterEnv: ['<rootDir>/config/jest-setup.ts'],
                     moduleNameMapper: {
                         'axios': 'qtests/stubs/axios',
-                        'winston': 'qtests/stubs/winston',
-                        'mongoose': 'qtests/stubs/mongoose'
+                        'winston': 'qtests/stubs/winston'
                     }
                 },
                 qtests: {
