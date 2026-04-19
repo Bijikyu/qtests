@@ -378,6 +378,45 @@ async function updatePackageScript(clientRoot, options) {
   }
 }
 
+function printAgentPrompt(options) {
+  if (options.dryRun) return;
+  if (process.env.QTESTS_SILENT === '1') return;
+  if (process.env.QTESTS_SUPPRESS_PROMPT === '1') return;
+
+  const sep = 'qtests: ' + '─'.repeat(60) + '\n';
+  const lines = [
+    sep,
+    'qtests: NEXT STEP — turn the scaffolding into real tests\n',
+    'qtests:\n',
+    'qtests: Paste the prompt below into an AI agent (Copilot, Cursor,\n',
+    'qtests: Claude, ChatGPT, etc.) to write project-specific tests:\n',
+    'qtests:\n',
+    'qtests:   ┌─────────────────────────────────────────────────────┐\n',
+    'qtests:   │ I just scaffolded a Jest environment with qtests.   │\n',
+    'qtests:   │ Config is in config/jest.config.mjs and             │\n',
+    'qtests:   │ config/jest-setup.ts (or jest-setup.cjs).           │\n',
+    'qtests:   │                                                     │\n',
+    'qtests:   │ For each source file in this project, please:       │\n',
+    'qtests:   │                                                     │\n',
+    'qtests:   │ 1. Read the file and understand what it does.       │\n',
+    'qtests:   │ 2. Write a *.test.ts (or *.test.js) file that:     │\n',
+    'qtests:   │    - Tests real logic, not just "runs without error" │\n',
+    'qtests:   │    - Covers happy path, edge cases, and errors      │\n',
+    'qtests:   │    - Adds `import \'qtests/setup\';` at the top so  │\n',
+    'qtests:   │      HTTP, filesystem, and time calls are stubbed   │\n',
+    'qtests:   │    - Uses descriptive describe() / it() blocks      │\n',
+    'qtests:   │ 3. Start with the most critical files first.        │\n',
+    'qtests:   └─────────────────────────────────────────────────────┘\n',
+    'qtests:\n',
+    'qtests: Suppress this message: QTESTS_SUPPRESS_PROMPT=1 npx qtests-generate\n',
+    sep
+  ];
+
+  for (const line of lines) {
+    process.stdout.write(line);
+  }
+}
+
 async function main() {
   let options;
   try {
@@ -461,6 +500,7 @@ async function main() {
   });
 
   await updatePackageScript(clientRoot, options);
+  printAgentPrompt(options);
   process.stdout.write('qtests: done\n');
 }
 

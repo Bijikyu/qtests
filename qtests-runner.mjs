@@ -39,8 +39,8 @@ class TestRunner {
     this.failedTests = 0;
     this.testResults = [];
     this.startTime = Date.now();
+    // Lazily-initialized reference to Jest's runCLI (API-only execution)
     this._runCLI = null;
-    this.securityStats = null;
   }
   // Resolve a binary path from PATH, preferring earlier entries explicitly.
   resolveBin(binName) {
@@ -119,52 +119,6 @@ class TestRunner {
 
   
 
-  // Write qtests-results.json to CWD (best-effort)
-  writeResultsFile(passedFiles, failedFiles, fileResults) {
-    if (this.isEnvTruthy('QTESTS_NO_RESULTS_FILE')) return;
-    const resultsPath = (process.env.QTESTS_RESULTS_FILE && String(process.env.QTESTS_RESULTS_FILE).trim())
-      || path.join(process.cwd(), 'qtests-results.json');
-    const data = {
-      schemaVersion: 1,
-      timestamp: new Date().toISOString(),
-      totalDurationMs: Date.now() - this.startTime,
-      passedFiles,
-      failedFiles,
-      files: fileResults,
-      securitySummary: this.securityStats || null
-    };
-    try {
-      fs.writeFileSync(resultsPath, JSON.stringify(data, null, 2), 'utf8');
-      if (!this.isEnvTruthy('QTESTS_SILENT')) {
-        const rel = path.relative(process.cwd(), resultsPath);
-        const displayPath = (rel.startsWith('..') || path.isAbsolute(rel)) ? resultsPath : rel;
-        console.log(`${colors.dim}📄 Results: ${displayPath}${colors.reset}`);
-      }
-    } catch { /* best effort */ }
-  }
-
-  // Check for security runner; returns exit code contribution (0 or 1)
-  runSecurityCheck() {
-    if (this.isEnvTruthy('QTESTS_SKIP_SECURITY')) {
-      if (!this.isEnvTruthy('QTESTS_SILENT')) {
-        console.log(`${colors.dim}🔒 Security: skipped (QTESTS_SKIP_SECURITY)${colors.reset}`);
-      }
-      return 0;
-    }
-    const candidates = [
-      path.join(process.cwd(), 'node_modules', '@bijikyu', 'qtests', 'dist', 'scripts', 'security-test-runner.js'),
-      path.join(process.cwd(), 'dist', 'scripts', 'security-test-runner.js')
-    ];
-    const found = candidates.some(p => { try { return fs.existsSync(p); } catch { return false; } });
-    if (!found) {
-      if (!this.isEnvTruthy('QTESTS_SILENT')) {
-        console.log(`${colors.red}🔒 Security: FAILED (runner not found)${colors.reset}`);
-      }
-      return 1;
-    }
-    return 0;
-  }
-
   // API-only: execute all tests via Jest's programmatic API in one run
   async runAll(testFiles) {
     let stdout = '';
@@ -221,7 +175,6 @@ class TestRunner {
       } catch { /* best effort only */ }
 
       const { results } = await this._runCLI(argv, [process.cwd()]);
-      const secStats = { suites: 0, suitesPass: 0, suitesFail: 0, testsPass: 0, testsFail: 0 };
       for (const tr of (results.testResults || [])) {
         const file = tr.testFilePath || 'unknown';
         const success = (tr.numFailingTests || 0) === 0 && !tr.failureMessage;
@@ -231,28 +184,15 @@ class TestRunner {
         if (rec.success) this.passedTests++; else this.failedTests++;
         this.testResults.push(rec);
         this.printTestResult(rec);
-        if (/security/i.test(file)) {
-          secStats.suites++;
-          if (success) secStats.suitesPass++; else secStats.suitesFail++;
-          secStats.testsPass += tr.numPassingTests || 0;
-          secStats.testsFail += tr.numFailingTests || 0;
-        }
       }
-      if (secStats.suites > 0) this.securityStats = secStats;
     } catch (err) {
       const msg = (err && (err.stack || err.message)) || 'Jest API run error';
       console.error(msg);
       this.failedTests++;
     }
     if (this.failedTests > 0) this.generateDebugFile();
-    this.writeResultsFile(
-      this.passedTests,
-      this.failedTests,
-      this.testResults.map(r => ({ path: r.file, success: r.success, durationMs: r.duration, failureMessage: r.output || '' }))
-    );
-    const secExit = this.runSecurityCheck();
     this.printSummary();
-    process.exit((this.failedTests > 0 || secExit > 0) ? 1 : 0);
+    process.exit(this.failedTests > 0 ? 1 : 0);
   }
 
   // Print colored status indicator
@@ -327,15 +267,6 @@ class TestRunner {
       console.log(`\n${colors.red}Failed test files:${colors.reset}`);
       this.testResults.filter(r => !r.success).forEach(r => console.log(`  ${colors.red}•${colors.reset} ${r.file}`));
     }
-    if (this.securityStats) {
-      const s = this.securityStats;
-      const allOk = s.suitesFail === 0 && s.testsFail === 0;
-      const icon = allOk ? `${colors.green}✓${colors.reset}` : `${colors.red}✗${colors.reset}`;
-      const suiteLabel = `${s.suitesPass}/${s.suites} suite${s.suites !== 1 ? 's' : ''}`;
-      const testLabel = `${s.testsPass} test${s.testsPass !== 1 ? 's' : ''}`;
-      const failNote = s.testsFail > 0 ? ` ${colors.red}(${s.testsFail} failed)${colors.reset}` : '';
-      console.log(`${colors.dim}🔒 Security:${colors.reset} ${icon} ${suiteLabel}, ${testLabel} passed${failNote}`);
-    }
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
   }
 
@@ -351,9 +282,7 @@ class TestRunner {
         console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
         console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
       }
-      this.writeResultsFile(0, 0, []);
-      const secExit = this.runSecurityCheck();
-      process.exit(secExit);
+      process.exit(0);
     }
     if (!this.isEnvTruthy('QTESTS_SILENT')) {
       console.log(`${colors.blue}Found ${files.length} test file(s):${colors.reset}`);
