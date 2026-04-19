@@ -6,7 +6,7 @@ try {
   qerrors = mod.default || mod;
 } catch {
   try {
-    const mod = await import('@bijikyu/qerrors');
+    const mod = await import('qerrors');
     qerrors = mod.default || mod;
   } catch {
     qerrors = (error, message, context) => {

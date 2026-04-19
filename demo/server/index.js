@@ -1,7 +1,7 @@
 // Server entrypoint that binds the Express app to a port.
 // Not used by tests directly; kept for completeness and local manual checks.
 const app = require('./app');
-const qerrors = require('@bijikyu/qerrors');
+const qerrors = require('qerrors');
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 5000;
 

@@ -211,7 +211,7 @@ export const setupManualMocks = async (): Promise<SetupManualMocksResult> => {
       createTransport: mockCreateTransport,
     },
   }));
-  jestRef.unstable_mockModule('@bijikyu/qerrors', () => ({
+  jestRef.unstable_mockModule('qerrors', () => ({
     __esModule: true,
     default: jestRef.fn(),
   }));

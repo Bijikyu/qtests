@@ -16,6 +16,18 @@ A comprehensive Node.js toolkit covering the full testing lifecycle and producti
 npm install qtests --save-dev
 ```
 
+### Environment variables
+
+qtests uses [qerrors](https://www.npmjs.com/package/qerrors) for AI-powered error analysis and debugging suggestions. Set one of the following in your environment (or a `.env` file) before running tests:
+
+```bash
+OPENAI_API_KEY=sk-...      # OpenAI GPT models
+# or
+GEMINI_API_KEY=...         # Google Gemini models
+```
+
+qerrors degrades gracefully if neither key is set — errors are still logged, but without AI-generated suggestions. For local development you can omit both and everything will still work.
+
 ### Generate tests for your project
 
 Point qtests at your source code and it will discover your files and write integration tests for you:

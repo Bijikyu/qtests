@@ -9,7 +9,7 @@ const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
 const winston = require('winston');
-const qerrors = require('@bijikyu/qerrors');
+const qerrors = require('qerrors');
 const path = require('path');
 
 // Configure Winston logger

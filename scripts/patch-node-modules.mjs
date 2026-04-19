@@ -35,42 +35,6 @@ function writeFileIfNeeded(relPath, content) {
 
 let patchCount = 0;
 
-const qerrorsAlias = `// Auto-generated alias to ensure bare 'qerrors' imports resolve to @bijikyu/qerrors
-let mod;
-try {
-  mod = require("@bijikyu/qerrors");
-} catch {
-  try {
-    mod = require(require("path").join(process.cwd(), "dist/lib/qerrorsFallback.js"));
-    mod = mod.default || mod;
-  } catch {
-    mod = (error, message, context) => {
-      console.error('[QERRORS]', JSON.stringify({ message: message || error.message, context: context || {} }));
-    };
-  }
-}
-module.exports = mod;
-`;
-if (writeFileIfNeeded('node_modules/qerrors/index.js', qerrorsAlias)) {
-  patchCount++;
-}
-const qerrorsAliasPkg = JSON.stringify({
-  name: "qerrors",
-  private: true,
-  main: "index.js",
-  version: "0.0.0-qtests-alias"
-}, null, 2) + '\n';
-writeFileIfNeeded('node_modules/qerrors/package.json', qerrorsAliasPkg);
-
-if (patchFile('node_modules/@bijikyu/qerrors/index.js', [
-  [
-    "module.exports.verboseLog = (message) => console.log(`[VERBOSE] ${message}`);",
-    "module.exports.verboseLog = (message) => console.log(`[VERBOSE] ${message}`);\n\n// Export qerrors as named export for ESM interop\nmodule.exports.qerrors = qerrors;"
-  ]
-])) {
-  patchCount++;
-}
-
 const qgenutilsPkgPath = path.join(root, 'node_modules/@bijikyu/qgenutils/package.json');
 if (fs.existsSync(qgenutilsPkgPath)) {
   try {

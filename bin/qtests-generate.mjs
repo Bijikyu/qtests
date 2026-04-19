@@ -24,7 +24,7 @@ function isTruthy(v) {
 
 const qerrors = await (async () => {
   try {
-    const mod = await import('@bijikyu/qerrors');
+    const mod = await import('qerrors');
     return (mod && (mod.default || mod)) || ((error, message, context) => console.error('[QERRORS]', message, error, context || {}));
   } catch {
     return (error, message, context) => console.error('[QERRORS]', message || (error && error.message) || String(error), context || {});
