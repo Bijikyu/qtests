@@ -16,6 +16,13 @@ lib/security/*.js
 lib/security/*.d.ts
 lib/security/*.d.ts.map
 
+# Stale pre-compiled JS files in lib/utils/ that shadow their .ts counterparts.
+# agentFactory.js and httpClient.js are intentional JS-only sources and are NOT listed here.
+lib/utils/concurrencyUtils.js
+lib/utils/errorHandling.js
+lib/utils/jsonUtils.js
+lib/utils/streamingUtils.js
+
 # Runner debug artifacts (generated at runtime, not tracked)
 runner-jest-args.json
 DEBUG_TESTS.md
