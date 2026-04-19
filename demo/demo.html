@@ -35,7 +35,7 @@
         }
 
         body {
-            font-family: 'Share Tech Mono', 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-family: 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
             background-color: var(--dark);
             background-image:
                 linear-gradient(rgba(0,212,255,0.025) 1px, transparent 1px),
@@ -131,7 +131,7 @@
 
         h3 { letter-spacing: 1px; font-family: 'Rajdhani', monospace; font-weight: 600; }
         h4 { letter-spacing: 1px; }
-        p { line-height: 1.6; font-size: 13px; color: var(--text-muted); }
+        p { line-height: 1.7; font-size: 14px; color: var(--text-muted); }
 
         .logo {
             width: 50px;
@@ -707,7 +707,7 @@
             </h1>
             <p class="subtitle">// comprehensive testing utilities for node.js applications</p>
             <div>
-                <span class="status success">v3.0.0</span>
+                <span class="status success">v4.0.0</span>
                 <span class="status info">Node.js 20+</span>
                 <span class="status warning">TypeScript</span>
                 <span class="status info">ESM</span>
@@ -3365,7 +3365,7 @@ const manager = createCleanupManager({
             <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0;">
                 <h3 style="color: var(--primary); margin-bottom: 15px;">📊 System Status</h3>
                 <div class="system-status" style="font-size: 12px; color: #6b7280;">
-                    Framework: qtests v3.0.0 | Environment: Browser | Response: 15ms
+                    Framework: qtests v4.0.0 | Environment: Browser | Response: 15ms
                 </div>
                 <div style="margin-top: 10px;">
                     <span class="status success">All Systems Operational</span>
@@ -6166,7 +6166,7 @@ describe('CRUD Operations Tests', () => {
         function generateTestReport() {
             const reportData = {
                 timestamp: new Date().toISOString(),
-                framework: 'qtests v3.0.0',
+                framework: 'qtests v4.0.0',
                 tests: {
                     total: Math.floor(Math.random() * 100) + 50,
                     passed: Math.floor(Math.random() * 80) + 40,
@@ -7252,7 +7252,7 @@ describe('${routeName}', () => {
         // System status dashboard
         function updateSystemStatus() {
             const statusData = {
-                framework: 'qtests v3.0.0',
+                framework: 'qtests v4.0.0',
                 nodeVersion: typeof process !== 'undefined' ? process.version : 'Browser',
                 environment: typeof window !== 'undefined' ? 'Browser' : 'Node.js',
                 features: {
@@ -7443,7 +7443,7 @@ describe('${routeName}', () => {
 <span style="color: #10b981;">✓ File read successfully (${Math.floor(Math.random() * 5000) + 500} bytes)</span>
 <span style="color: #f3f4f6;">{</span>
 <span style="color: #f3f4f6;">  "name": "qtests",</span>
-<span style="color: #f3f4f6;">  "version": "3.0.0",</span>
+<span style="color: #f3f4f6;">  "version": "4.0.0",</span>
 <span style="color: #f3f4f6;">  "description": "Comprehensive testing framework"</span>
 <span style="color: #f3f4f6;">  ...</span>
 <span style="color: #f3f4f6;">}</span>

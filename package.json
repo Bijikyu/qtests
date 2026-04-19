@@ -1,6 +1,6 @@
 {
   "name": "qtests",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Comprehensive Node.js testing framework with method stubbing, console mocking, environment management, and automatic stub resolution for axios, winston, and other modules",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
