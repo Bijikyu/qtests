@@ -25,8 +25,6 @@ const sourceOnlyDirs = [
   path.join(root, 'lib', 'security'),
 ];
 
-const staleExts = new Set(['.js', '.d.ts', '.d.ts.map']);
-
 for (const dir of sourceOnlyDirs) {
   let entries;
   try {

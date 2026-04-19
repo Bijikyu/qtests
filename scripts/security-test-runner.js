@@ -7,10 +7,8 @@ const __dirname=path.dirname(__filename);
 
 async function resolveSecurityImport(relativeFromScripts){
   const distPath=path.resolve(__dirname,relativeFromScripts.replace('../lib/','../dist/lib/'));
-  const libPath=path.resolve(__dirname,relativeFromScripts);
-  const targetPath=fs.existsSync(distPath)?distPath:fs.existsSync(libPath)?libPath:null;
-  if(!targetPath){throw new Error(`Security module not found. Run 'npm run build' first.\n  Checked: ${distPath}\n  Checked: ${libPath}`);}
-  return import(targetPath);
+  if(!fs.existsSync(distPath)){throw new Error(`Security module not found. Run 'npm run build' first.\n  Checked: ${distPath}`);}
+  return import(distPath);
 }
 
 const DEFAULT_CONFIG={outputPath:'./security-report.md',failOnVulnerabilities:true,includePenetrationTests:true,generateMetrics:true,coverageThreshold:95};
