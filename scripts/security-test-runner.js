@@ -2,11 +2,18 @@
 import fs from'fs';
 import path from'path';
 import{fileURLToPath}from'url';
-import qerrors from'qerrors';
-
 const __filename=fileURLToPath(import.meta.url);
 const __dirname=path.dirname(__filename);
-const DEFAULT_CONFIG={outputPath:'./security-report.md',failOnVulnerabilities:true,includePenetrationTests:false,generateMetrics:true,coverageThreshold:95};
+
+async function resolveSecurityImport(relativeFromScripts){
+  const distPath=path.resolve(__dirname,relativeFromScripts.replace('../lib/','../dist/lib/'));
+  const libPath=path.resolve(__dirname,relativeFromScripts);
+  const targetPath=fs.existsSync(distPath)?distPath:fs.existsSync(libPath)?libPath:null;
+  if(!targetPath){throw new Error(`Security module not found. Run 'npm run build' first.\n  Checked: ${distPath}\n  Checked: ${libPath}`);}
+  return import(targetPath);
+}
+
+const DEFAULT_CONFIG={outputPath:'./security-report.md',failOnVulnerabilities:true,includePenetrationTests:true,generateMetrics:true,coverageThreshold:95};
 
 class SecurityTestRunner{
   constructor(config={}){this.config={...DEFAULT_CONFIG,...config};this.results=[];this.startTime=0;}
@@ -44,7 +51,7 @@ class SecurityTestRunner{
   
   async runRegressionTests(){
     console.log('🧪 Running security regression tests...');
-    const{runFullSecurityTest}=await import('../lib/security/SecurityTestingFramework.js');
+    const{runFullSecurityTest}=await resolveSecurityImport('../lib/security/SecurityTestingFramework.js');
     const results=runFullSecurityTest();
     this.results.push({type:'regression_tests',timestamp:new Date().toISOString(),results,summary:{total:results.length,passed:results.filter(r=>r.passed).length,failed:results.filter(r=>r.passed===false).length,vulnerabilities:results.reduce((sum,r)=>sum+r.vulnerabilities.length,0)}});
     console.log(`   ✓ Ran ${results.length} regression tests`);
@@ -54,8 +61,9 @@ class SecurityTestRunner{
   
   async runPenetrationTests(){
     console.log('🎯 Running penetration tests...');
-    const{penetrationTester}=await import('../lib/security/SecurityTestingFramework.js');
-    const penetrationResults=[penetrationTester.testXSS('{{payload}}'),penetrationTester.testSQLInjection('SELECT * FROM users WHERE id = "{{param}}"'),penetrationTester.testPathTraversal('/files/{{path}}'),penetrationTester.testCommandInjection('ls {{arg}}')];
+    const{penetrationTester}=await resolveSecurityImport('../lib/security/SecurityTestingFramework.js');
+    const projectRoot=process.cwd();
+    const penetrationResults=[penetrationTester.testXSS('{{payload}}'),penetrationTester.testSQLInjection('SELECT * FROM users WHERE id = "{{param}}"'),penetrationTester.testPathTraversal(projectRoot+'/{{path}}'),penetrationTester.testCommandInjection('ls {{arg}}')];
     this.results.push({type:'penetration_tests',timestamp:new Date().toISOString(),results:penetrationResults,summary:{total:penetrationResults.length,passed:penetrationResults.filter(r=>r.passed).length,failed:penetrationResults.filter(r=>r.passed===false).length,vulnerabilities:penetrationResults.reduce((sum,r)=>sum+r.vulnerabilities.length,0)}});
     console.log(`   ✓ Ran ${penetrationResults.length} penetration tests`);
     console.log(`   ✓ Passed: ${penetrationResults.filter(r=>r.passed).length}`);
@@ -65,16 +73,14 @@ class SecurityTestRunner{
   async validateSecurityConfigurations(){
     console.log('⚙️ Validating security configurations...');
     const validationResults=[];
-    const{securityPolicyManager,securityValidator,securityMonitor}=await import('../lib/security/index.js');
-    const headers=securityPolicyManager.generateSecurityHeaders();
-    const headerValidation=securityPolicyManager.validateSecurityHeaders(headers);
-    validationResults.push({type:'security_headers',passed:headerValidation.valid,details:headerValidation.errors,headers:Object.keys(headers).length});
+    const{securityValidator}=await resolveSecurityImport('../lib/security/index.js');
     const ruleSets=securityValidator.getRuleSets();
-    validationResults.push({type:'validation_rules',passed:ruleSets.length>0,details:ruleSets,ruleCount:ruleSets.length});
-    securityMonitor.checkRateLimit('test-validation',{windowMs:1000,maxRequests:1});
-    const metrics=securityMonitor.getSecurityMetrics();
-    validationResults.push({type:'security_monitoring',passed:metrics.totalEvents>=0,details:metrics,eventsCount:metrics.totalEvents});
-    this.results.push({type:'configuration_validation',timestamp:new Date().toISOString(),results:validationResults,summary:{total:validationResults.length,passed:validationResults.filter(r=>r.passed).length,failed:validationResults.filter(r=>r.passed===false).length}});
+    validationResults.push({description:'Validation rule sets loaded',passed:ruleSets.length>0,details:`Found ${ruleSets.length} rule set(s)`,vulnerabilities:[],recommendations:ruleSets.length===0?['Add validation rule sets to SecurityValidator']:[]});
+    const pathCheck=securityValidator.validatePath('../../../etc/passwd');
+    validationResults.push({description:'Path traversal blocked by validator',passed:pathCheck.valid===false,details:`Traversal path correctly rejected: ${!pathCheck.valid}`,vulnerabilities:pathCheck.valid?['Path validator accepted a traversal payload']:[]  ,recommendations:pathCheck.valid?['Strengthen path validation logic']:[]});
+    const moduleCheck=securityValidator.validateModuleId('safe-module-name');
+    validationResults.push({description:'Safe module ID accepted by validator',passed:moduleCheck.valid===true,details:`Module ID validation result: ${moduleCheck.valid}`,vulnerabilities:moduleCheck.valid?[]:['Validator rejected a valid module ID'],recommendations:moduleCheck.valid?[]:['Review module ID validation rules']});
+    this.results.push({type:'configuration_validation',timestamp:new Date().toISOString(),results:validationResults,summary:{total:validationResults.length,passed:validationResults.filter(r=>r.passed).length,failed:validationResults.filter(r=>r.passed===false).length,vulnerabilities:validationResults.reduce((sum,r)=>sum+(Array.isArray(r.vulnerabilities)?r.vulnerabilities.length:0),0)}});
     console.log(`   ✓ Validated ${validationResults.length} security configurations`);
     console.log(`   ✓ Passed: ${validationResults.filter(r=>r.passed).length}`);
     console.log(`   ✓ Failed: ${validationResults.filter(r=>r.passed===false).length}`);
@@ -82,12 +88,16 @@ class SecurityTestRunner{
   
   async generateSecurityMetrics(){
     console.log('📈 Generating security metrics...');
-    const{securityMonitor}=await import('../lib/security/index.js');
-    const metrics=securityMonitor.getSecurityMetrics();
+    const allResults=this.results;
+    const totalTests=allResults.reduce((sum,r)=>sum+(r.summary?.total||0),0);
+    const totalPassed=allResults.reduce((sum,r)=>sum+(r.summary?.passed||0),0);
+    const totalVulnerabilities=allResults.reduce((sum,r)=>sum+(r.summary?.vulnerabilities||0),0);
+    const metrics={totalTests,totalPassed,totalFailed:totalTests-totalPassed,totalVulnerabilities,passRate:totalTests>0?((totalPassed/totalTests)*100).toFixed(1):'0.0',executionTime:Date.now()-this.startTime};
     this.results.push({type:'security_metrics',timestamp:new Date().toISOString(),metrics,executionTime:Date.now()-this.startTime});
     console.log(`   ✓ Generated security metrics`);
-    console.log(`   ✓ Total events: ${metrics.totalEvents}`);
-    console.log(`   ✓ Active rate limits: ${metrics.rateLimitStats.activeLimits}`);
+    console.log(`   ✓ Total tests: ${metrics.totalTests}`);
+    console.log(`   ✓ Pass rate: ${metrics.passRate}%`);
+    console.log(`   ✓ Total vulnerabilities: ${metrics.totalVulnerabilities}`);
   }
   
   async generateSecurityReport(){
@@ -112,7 +122,7 @@ class SecurityTestRunner{
     const reportPart1=['# QTests Security Test Report','',`**Generated:** ${now}`,`**Execution Time:** ${executionTime}ms`,`**Coverage Threshold:** ${this.config.coverageThreshold}%`,`**Actual Coverage:** ${successRate}% ${coverageStatus}`,'','## Executive Summary','',`This security test suite ran **${totalTests}** tests with a **${successRate}%** pass rate. `,`**${totalVulnerabilities}** vulnerabilities were identified across all test categories.`,'','### Test Results Overview','', '| Category | Total | Passed | Failed | Vulnerabilities |', '|----------|-------|--------|--------|----------------|'];
     const tableRows=this.results.map(result=>{const summary=result.summary||{};const category=result.type.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase());return `| ${category} | ${summary.total||0} | ${summary.passed||0} | ${summary.failed||0} | ${summary.vulnerabilities||0} |`;});
     const criticalSection=['','### Critical Issues','', totalVulnerabilities>0?`❌ **${totalVulnerabilities}** vulnerabilities detected. Immediate attention required.`:'✅ No critical vulnerabilities detected.'];
-    const detailSection=['','## Detailed Results','', ...this.results.map(result=>this.generateCategorySection(result))];
+    const detailSection=['','## Detailed Results','', ...this.results.flatMap(result=>this.generateCategorySection(result))];
     const recommendSection=['','## Security Recommendations','',this.generateRecommendations()];
     const configSection=['','## Configuration','', '### Test Configuration','```json',JSON.stringify(this.config,null,2),'```','', '### Security Metrics','', '```json',JSON.stringify(this.results.find(r=>r.type==='security_metrics')?.metrics||{},null,2),'```'];
     return[...reportPart1,...tableRows,...criticalSection,...detailSection,...recommendSection,...configSection,'','---','', '*This report was generated automatically by QTests Security Test Runner.*'].join('\n');

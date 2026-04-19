@@ -326,7 +326,8 @@ class TestRunner {
     }
     this.printSummary();
 
-    const failedCount = this.failedTests;
+    const securityFailed = await this.runSecuritySuite();
+    const failedCount = this.failedTests + (securityFailed ? 1 : 0);
     if (failedCount > 0) {
       try {
         await this.generateDebugFile();
@@ -462,6 +463,41 @@ class TestRunner {
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
   }
 
+  // Spawn the security test runner as a child process and return whether it failed
+  async runSecuritySuite() {
+    if (this.isEnvTruthy('QTESTS_SKIP_SECURITY')) {
+      if (!this.isEnvTruthy('QTESTS_SILENT')) {
+        console.log(`\n${colors.yellow}⚠  Security tests skipped (QTESTS_SKIP_SECURITY=true)${colors.reset}`);
+      }
+      return false;
+    }
+    const { spawn } = await import('child_process');
+    const runnerPath = path.join(process.cwd(), 'scripts', 'security-test-runner.js');
+    if (!fs.existsSync(runnerPath)) {
+      console.error(`${colors.red}✗ Security runner not found at ${runnerPath}${colors.reset}`);
+      console.error(`${colors.red}  Security coverage cannot be verified. Failing the test run.${colors.reset}`);
+      console.error(`${colors.dim}  To disable security tests set QTESTS_SKIP_SECURITY=true${colors.reset}`);
+      return true;
+    }
+    console.log(`\n${colors.bold}${colors.blue}═══════════════════════════════════════${colors.reset}`);
+    console.log(`${colors.bold}${colors.blue}         SECURITY TEST SUITE${colors.reset}`);
+    console.log(`${colors.bold}${colors.blue}═══════════════════════════════════════${colors.reset}\n`);
+    return new Promise((resolve) => {
+      const child = spawn(process.execPath, [runnerPath], {
+        stdio: 'inherit',
+        env: { ...process.env, NODE_ENV: process.env.NODE_ENV || 'test' }
+      });
+      child.on('close', (code) => {
+        resolve(code !== 0);
+      });
+      child.on('error', (err) => {
+        qerrors(err, 'qtests-runner.runSecuritySuite: child process error', { runnerPath });
+        console.error(`${colors.red}Security runner failed to start:${colors.reset}`, err.message);
+        resolve(true);
+      });
+    });
+  }
+
   // Main runner method - API-only execution via jest.runCLI
   async run() {
     if (!this.isEnvTruthy('QTESTS_SILENT')) {
@@ -474,7 +510,8 @@ class TestRunner {
         console.log(`${colors.yellow}⚠  No test files found${colors.reset}`);
         console.log(`${colors.dim}Looked for files matching: ${TEST_PATTERNS.map(p => p.toString()).join(', ')}${colors.reset}`);
       }
-      process.exit(0);
+      const securityFailed = await this.runSecuritySuite();
+      process.exit(securityFailed ? 1 : 0);
     }
     if (!this.isEnvTruthy('QTESTS_SILENT')) {
       console.log(`${colors.blue}Found ${files.length} test file(s):${colors.reset}`);
