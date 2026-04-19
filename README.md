@@ -2,15 +2,15 @@
 
 A Node.js testing utility focused on fast, isolated unit tests: method stubbing, console mocking, environment management, and drop-in stubs for common modules (axios, winston). Includes a Jest runner/config scaffolder. **ES Module and TypeScript support included.**
 
-🎉 **Latest Updates (v3.0.0 — April 2026)**:
-- ✅ ESM + TypeScript Jest harness: runner always loads `config/jest.config.mjs` and passes `--passWithNoTests` for stable CI
-- ✅ HTTP testing shim alignment: TS shim re-exports a working JS shim with chainable `.send()` and proper `req.body`
-- ✅ Safe Mongoose mocking: Jest `moduleNameMapper` maps `mongoose` to qtests' manual mock (no real DB access)
-- ✅ Performance optimized: Parallel batch execution utilizing multiple CPU cores
-- ✅ Security helpers extracted into a shared, testable module with full TypeScript types
-- ✅ Structured run-results file emitted after every test run for CI artifact ingestion
+**Latest Updates (v3.0.0 — April 2026)**:
+- ESM + TypeScript Jest harness: runner always loads `config/jest.config.mjs` and passes `--passWithNoTests` for stable CI
+- HTTP testing shim alignment: TS shim re-exports a working JS shim with chainable `.send()` and proper `req.body`
+- Safe Mongoose mocking: Jest `moduleNameMapper` maps `mongoose` to qtests' manual mock (no real DB access)
+- Performance optimized: Parallel batch execution utilizing multiple CPU cores
+- Security helpers extracted into a shared, testable module with full TypeScript types
+- Structured run-results file emitted after every test run for CI artifact ingestion
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 npm install @bijikyu/qtests --save-dev
@@ -36,32 +36,32 @@ const restore = stubMethod(myObject, 'methodName', mockImplementation);
 
 > **Module format note:** `@bijikyu/qtests` (the main API) is ESM-only. In CommonJS tests, use `await import('@bijikyu/qtests')` to access helpers like `stubMethod`. The setup entrypoint supports both `import '@bijikyu/qtests/setup'` and `require('@bijikyu/qtests/setup')`.
 
-## ✨ Key Features
+## Key Features
 
-- **🤖 Intelligent Integration Test Generation** - Automatically discovers and generates missing integration tests
-- **🎭 Method Stubbing** - Temporarily replace object methods with automatic restoration
-- **📺 Console Mocking** - Jest-compatible console spies with fallback for vanilla Node.js
-- **🌍 Environment Management** - Safe backup and restore of environment variables
-- **📦 Module Stubs** - Drop-in replacements for axios, winston, and other dependencies
-- **🔌 Offline Mode** - Automatic stub resolution when external services are unavailable
-- **🏃 Lightweight Test Runner** - Minimal dependency test execution engine
-- **🌐 HTTP Testing** - Integration testing utilities (supertest alternative)
-- **📧 Email Mocking** - Email testing without external mail services
-- **🔧 Error Handling** - Comprehensive error handling and logging utilities
-- **⚡ Performance Testing** - Built-in performance and scalability testing
-- **🔗 Circuit Breaker** - Opossum-based circuit breaker for production reliability
-- **📊 Health Monitoring** - Connection pool health monitoring and metrics
-- **🆕 ES Module Support** - Full compatibility with modern ES Module syntax
-- **🔷 TypeScript Support** - Complete type definitions and intellisense
-- **⚡ Minimal Dependencies** - Only essential production dependencies
+- **Intelligent Integration Test Generation** - Automatically discovers and generates missing integration tests
+- **Method Stubbing** - Temporarily replace object methods with automatic restoration
+- **Console Mocking** - Jest-compatible console spies with fallback for vanilla Node.js
+- **Environment Management** - Safe backup and restore of environment variables
+- **Module Stubs** - Drop-in replacements for axios, winston, and other dependencies
+- **Offline Mode** - Automatic stub resolution when external services are unavailable
+- **Lightweight Test Runner** - Minimal dependency test execution engine
+- **HTTP Testing** - Integration testing utilities (supertest alternative)
+- **Email Mocking** - Email testing without external mail services
+- **Error Handling** - Comprehensive error handling and logging utilities
+- **Performance Testing** - Built-in performance and scalability testing
+- **Circuit Breaker** - Opossum-based circuit breaker for production reliability
+- **Health Monitoring** - Connection pool health monitoring and metrics
+- **ES Module Support** - Full compatibility with modern ES Module syntax
+- **TypeScript Support** - Complete type definitions and intellisense
+- **Minimal Dependencies** - Only essential production dependencies
 
-## 🧩 Mock API (Runtime‑Safe)
+## Mock API (Runtime-Safe)
 
 qtests exposes a small, extensible mocking API that works at runtime without rewriting paths or adding heavy frameworks.
 
 Defaults registered by setup:
 - `axios` → qtests stub (truthy, no network)
-- `winston` → qtests stub (no‑op logger with format/transports)
+- `winston` → qtests stub (no-op logger with format/transports)
 - `mongoose` → project `__mocks__/mongoose.js` if present, or a minimal safe object
 
 Usage:
@@ -79,12 +79,12 @@ qtests.mock.module('external-service', () => ({
 ```
 
 Notes:
-- Activation is runtime‑safe: a single require hook returns registered mocks; previously loaded CJS modules are best‑effort evicted from `require.cache`.
+- Activation is runtime-safe: a single require hook returns registered mocks; previously loaded CJS modules are best-effort evicted from `require.cache`.
 - ESM projects can optionally use the loader for earliest interception:
   - `node --loader=@bijikyu/qtests/loader.mjs your-app.mjs`
 - setup still runs first in Jest via `config/jest-setup.ts` (TS) or `config/jest-setup.cjs` (JS-only) so defaults are active before imports.
 
-## 📖 Core Usage
+## Core Usage
 
 ### Method Stubbing
 
@@ -128,7 +128,7 @@ process.env.TEST_VAR = 'modified';
 testEnv.restoreEnv(saved); // TEST_VAR removed, original state restored
 ```
 
-## 🧪 Unified Test Runner (API‑Only)
+## Unified Test Runner (API-Only)
 
 - One command for everyone: `npm test`.
 - One runner: `qtests-runner.mjs` runs Jest via the programmatic API `runCLI` (no child processes, no `tsx`).
@@ -146,7 +146,7 @@ Runner availability and generator behavior:
 - Use `--update-pkg-script` to set `package.json` `scripts.test` to `node qtests-runner.mjs`.
 - Use `--auto-install` to install `ts-jest` + `typescript` as devDependencies if missing.
 
-## 🔧 Runner/Config Scaffolding
+## Runner/Config Scaffolding
 
 ### CLI Usage
 
@@ -169,13 +169,13 @@ npx qtests-generate --auto-install
 
 ### Custom Module Stubs (Advanced)
 
-When you need to stub a niche dependency (beyond the built‑ins axios/winston) without changing qtests itself, register a custom stub in tests:
+When you need to stub a niche dependency (beyond the built-ins axios/winston) without changing qtests itself, register a custom stub in tests:
 
 ```ts
 // Always load setup first so axios/winston are stubbed globally
 import '@bijikyu/qtests/setup';
 
-// Then register your ad‑hoc stub(s)
+// Then register your ad-hoc stub(s)
 import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs';
 
 registerModuleStub('external-service-client', {
@@ -183,12 +183,12 @@ registerModuleStub('external-service-client', {
   get: async () => ({ ok: true })
 });
 
-// Now this resolves to your in‑memory stub even if the module is not installed
+// Now this resolves to your in-memory stub even if the module is not installed
 const client = require('external-service-client');
 await client.get(); // { ok: true }
 ```
 
-## 🔌 Module Stubs
+## Module Stubs
 
 ### Axios Stub
 
@@ -214,15 +214,15 @@ const logger = winston.createLogger();
 logger.info('This produces no output'); // Silent
 ```
 
-### Custom Module Stubs (Ad‑Hoc)
+### Custom Module Stubs (Ad-Hoc)
 
-When you need to stub a niche dependency (beyond the built‑ins axios/winston) without changing qtests itself, register a custom stub in tests:
+When you need to stub a niche dependency (beyond the built-ins axios/winston) without changing qtests itself, register a custom stub in tests:
 
 ```ts
 // Always load setup first so axios/winston are stubbed globally
 import '@bijikyu/qtests/setup';
 
-// Then register your ad‑hoc stub(s)
+// Then register your ad-hoc stub(s)
 import { registerModuleStub } from '@bijikyu/qtests/utils/customStubs';
 
 registerModuleStub('external-service-client', {
@@ -230,7 +230,7 @@ registerModuleStub('external-service-client', {
   get: async () => ({ ok: true })
 });
 
-// Now this resolves to your in‑memory stub even if the module is not installed
+// Now this resolves to your in-memory stub even if the module is not installed
 const client = require('external-service-client');
 await client.get(); // { ok: true }
 ```
@@ -240,7 +240,7 @@ Notes:
 - Use `unregisterModuleStub(id)` and `clearAllModuleStubs()` for cleanup in afterEach.
 - Honors `QTESTS_SILENT=1|true` to reduce noise in CI logs.
 
-## 🏃 Lightweight Test Runner
+## Lightweight Test Runner
 
 ```typescript
 import { runTestSuite, createAssertions } from '@bijikyu/qtests';
@@ -261,7 +261,7 @@ const tests = {
 runTestSuite('My Tests', tests);
 ```
 
-## 🌐 HTTP Testing
+## HTTP Testing
 
 ```typescript
 // For generated API tests, a local shim is scaffolded at:
@@ -284,7 +284,7 @@ const response = await httpTest.supertest(app)
   .end();
 ```
 
-## 📧 Email Testing
+## Email Testing
 
 ```typescript
 import { sendEmail } from '@bijikyu/qtests/lib/envUtils.js';
@@ -300,7 +300,7 @@ console.log(result.success); // true
 console.log(sendEmail.getHistory()); // Array of sent emails
 ```
 
-## 🛠️ Advanced Features
+## Advanced Features
 
 ### Error Handling Utilities
 
@@ -430,7 +430,7 @@ test('console output', async () => {
 });
 ```
 
-## 📚 API Reference
+## API Reference
 
 ### Core Methods
 
@@ -476,7 +476,7 @@ test('console output', async () => {
 | `initializePolyfills()` | Initialize browser polyfills |
 | `polyfillOrchestrator()` | Manage polyfill lifecycle |
 
-## 🔷 TypeScript Configuration
+## TypeScript Configuration
 
 To run ESM tests, set `"type": "module"` in your project `package.json` (or use `.mjs`), and ensure your `tsconfig.json` supports Node ESM (NodeNext recommended):
 
@@ -530,13 +530,13 @@ const mediaQuery = matchMedia('(max-width: 768px)');
 clipboard.writeText('test text');
 ```
 
-## 🎯 Testing Philosophy
+## Testing Philosophy
 
 **Fast Unit Tests**: qtests is designed for fast, isolated unit tests that would otherwise hit external services (HTTP, logs). Avoid it for true integration tests where real external service behavior is required.
 
-## 🎯 Best Practices
+## Best Practices
 
-## 🧰 CLI Reference
+## CLI Reference
 
 ### qtests-generate (Scaffolder)
 - Usage: `qtests-generate [--dry-run] [--force] [--update-pkg-script] [--auto-install]`
@@ -579,11 +579,11 @@ Notes:
 ### 1. Always Load Setup First
 
 ```typescript
-// ✅ Correct
+// Correct
 import '@bijikyu/qtests/setup';
 import myModule from './myModule.js';
 
-// ❌ Wrong  
+// Wrong
 import myModule from './myModule.js';
 import '@bijikyu/qtests/setup';
 ```
@@ -614,7 +614,7 @@ test('environment test', async () => {
 });
 ```
 
-## 🧪 Testing Patterns & Organization
+## Testing Patterns & Organization
 
 ### Test File Types
 qtests supports multiple testing patterns depending on your needs:
@@ -656,7 +656,6 @@ describe('POST /api/billing/calculate', () => {
     expect(response.body.total).toBe(80);
   });
 });
-
 ```
 
 ### Test Environment Setup
@@ -677,7 +676,7 @@ afterAll(() => {
 });
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
@@ -696,7 +695,7 @@ afterAll(() => {
 | Performance tests timing out | Increase timeout in Jest config or reduce test duration |
 | Custom module stubs not loading | Call `registerModuleStub()` before importing the target module |
 
-## 🏢 Enterprise Integration
+## Enterprise Integration
 
 ### CI/CD Pipeline Integration
 
@@ -833,7 +832,7 @@ if (process.env.NODE_ENV === 'test') {
 }
 ```
 
-## 📚 Additional Resources
+## Additional Resources
 
 ### Configuration Examples
 - [Jest Configuration Factory](./lib/jestConfigFactory.ts) - Standardized configs for different project types
@@ -851,10 +850,10 @@ if (process.env.NODE_ENV === 'test') {
 - [Enterprise Integration](./docs/ENTERPRISE_INTEGRATION.md) - CI/CD patterns and production deployment
 - [Troubleshooting](./docs/TROUBLESHOOTING.md) - Common issues and solutions
 
-## 📄 License
+## License
 
 MIT License - see LICENSE file for details.
 
-## 🤝 Contributing
+## Contributing
 
-Contributions welcome! Please see our contributing guidelines and feel free to submit issues and pull requests.
+Contributions welcome! Please feel free to submit issues and pull requests.
