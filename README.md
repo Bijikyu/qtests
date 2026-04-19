@@ -1,6 +1,6 @@
 # qtests
 
-A Node.js testing utility focused on fast, isolated unit tests: method stubbing, console mocking, environment management, and drop-in stubs for common modules (axios, winston). Includes a Jest runner/config scaffolder. **ES Module and TypeScript support included.**
+A comprehensive Node.js toolkit covering the full testing lifecycle and production reliability in a single dependency. Stub methods, mock modules and HTTP, test security and performance, generate integration tests automatically, and ship circuit breakers, caching, and rate limiting — all with first-class **ES Module and TypeScript** support.
 
 **Latest Updates (v4.0.0 — April 2026)**:
 - Security testing module: `SecurityValidator`, `JoiSecurityValidator`, and `PenetrationTester` with full TypeScript types
@@ -55,24 +55,34 @@ const restore = stubMethod(myObject, 'methodName', mockImplementation);
 
 > **Module format note:** `qtests` (the main API) is ESM-only. In CommonJS tests, use `await import('qtests')` to access helpers like `stubMethod`. The setup entrypoint supports both `import 'qtests/setup'` and `require('qtests/setup')`.
 
-## Key Features
+## Features
 
-- **Intelligent Integration Test Generation** - Automatically discovers and generates missing integration tests
-- **Method Stubbing** - Temporarily replace object methods with automatic restoration
-- **Console Mocking** - Jest-compatible console spies with fallback for vanilla Node.js
-- **Environment Management** - Safe backup and restore of environment variables
-- **Module Stubs** - Drop-in replacements for axios and winston
-- **Offline Mode** - Automatic stub resolution when external services are unavailable
-- **Lightweight Test Runner** - Minimal dependency test execution engine
-- **HTTP Testing** - Integration testing utilities (supertest alternative)
-- **Email Mocking** - Email testing without external mail services
-- **Error Handling** - Comprehensive error handling and logging utilities
-- **Performance Testing** - Built-in performance and scalability testing
-- **Circuit Breaker** - Opossum-based circuit breaker for production reliability
-- **Health Monitoring** - Connection pool health monitoring and metrics
-- **ES Module Support** - Full compatibility with modern ES Module syntax
-- **TypeScript Support** - Complete type definitions and intellisense
-- **Minimal Dependencies** - Only essential production dependencies
+### Testing
+- **Auto Test Generation** — scans your source and writes missing integration tests (`npx qtests-generate`)
+- **Method Stubbing** — replace any object method and restore it automatically (`stubMethod`, `spyOnMethod`)
+- **Console Mocking** — capture and assert on console output with Jest-compatible spies
+- **Module Stubs** — drop-in replacements for axios and winston; register custom stubs for any module
+- **HTTP Testing** — mock Express apps, chainable supertest-style requests, route test utilities
+- **Email Mocking** — send and inspect emails in tests without an external mail service
+- **Browser Polyfills** — `window`, `matchMedia`, `clipboard`, and happy-dom for component testing in Node
+- **Test Environment** — safe backup and restore of `process.env`; offline mode; test isolation helpers
+- **Security Testing** — `SecurityValidator` and `JoiSecurityValidator` for input validation, XSS, path traversal, and HTML sanitisation; `PenetrationTester` for automated attack-vector probing
+- **Performance & Load Testing** — built-in load runner, performance monitor, memory leak detector, memory pressure simulation
+- **Validation** — schema-based input validation (Joi/Zod), streaming validation, HTML sanitisation middleware
+
+### Production Reliability
+- **Circuit Breaker** — `createCircuitBreaker`, `executeWithCircuitBreaker`, state machine with `CircuitState` enum
+- **Connection Pooling** — `AdvancedConnectionPool` with health monitoring and metrics
+- **Caching** — `CacheManager`, local in-process cache, distributed cache adapters
+- **Rate Limiting** — token-bucket and flexible rate limiters ready for Express middleware
+- **Logging** — structured Winston-based logging, decorators, convenience wrappers
+
+### Developer Experience
+- **Jest Scaffolding** — `npx qtests-generate` writes runner, `jest.config.mjs`, and setup files non-destructively
+- **Jest Config Factory** — `createJestConfig` for standardised TypeScript-ESM, React, and monorepo configs
+- **Error Handling** — `handleError`, `handleAsyncError`, typed fallbacks, and async wrappers
+- **File System** — `safeReadFile`, `safeWriteFile`, `safeExists`, `safeDelete`, `ensureDir`
+- **ESM + TypeScript** — full ES Module loader hook, complete type definitions, intellisense throughout
 
 ## Mock API (Runtime-Safe)
 
@@ -547,9 +557,11 @@ const mediaQuery = matchMedia('(max-width: 768px)');
 clipboard.writeText('test text');
 ```
 
-## Testing Philosophy
+## Philosophy
 
-**Fast Unit Tests**: qtests is designed for fast, isolated unit tests that would otherwise hit external services (HTTP, logs). Avoid it for true integration tests where real external service behavior is required.
+qtests is built around one idea: a team should be able to add a single dependency and cover the entire testing lifecycle without assembling a patchwork of separate libraries. That means unit tests with stubs and mocks, integration tests against real HTTP routes, security probing, performance benchmarking, and browser-environment component tests — all in one package.
+
+The production reliability utilities (circuit breaker, connection pooling, caching, rate limiting) are included because testing those patterns well requires realistic implementations, not hollow mocks. Shipping them in qtests means you can test your resilience logic against the same code you run in production.
 
 ## CLI Reference
 
