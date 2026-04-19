@@ -10,6 +10,7 @@
 import fs from 'fs';
 import path from 'path';
 import { createRequire } from 'module';
+import { formatSecurityCategory, readSecuritySummary } from './dist/lib/security/summaryHelpers.js';
 
 const qerrors = (error, message, context) => {
   const isTestEnv = process.env.NODE_ENV === 'test' || !!process.env.JEST_WORKER_ID;
@@ -440,14 +441,6 @@ class TestRunner {
     }
   }
 
-  // Format a per-category security count: "3/3 regression ✓"
-  formatSecurityCategory(label, info) {
-    if (!info) return null;
-    const ok = info.passed === info.total;
-    const mark = ok ? `${colors.green}✓${colors.reset}` : `${colors.red}✗${colors.reset}`;
-    return `${info.passed}/${info.total} ${label} ${mark}`;
-  }
-
   // Print comprehensive summary, with an optional security summary line
   printSummary(securityResult) {
     const duration = Date.now() - this.startTime;
@@ -474,9 +467,9 @@ class TestRunner {
       } else {
         const cats = securityResult.categories;
         const parts = [
-          this.formatSecurityCategory('regression', cats && cats.regression),
-          this.formatSecurityCategory('pentest', cats && cats.penetration),
-          this.formatSecurityCategory('config', cats && cats.configuration),
+          formatSecurityCategory('regression', cats && cats.regression),
+          formatSecurityCategory('pentest', cats && cats.penetration),
+          formatSecurityCategory('config', cats && cats.configuration),
         ].filter(Boolean);
         const secColor = securityResult.failed ? colors.red : colors.green;
         const secLabel = parts.length > 0 ? parts.join(', ') : (securityResult.failed ? 'FAILED' : 'passed');
@@ -484,17 +477,6 @@ class TestRunner {
       }
     }
     console.log(`\n${colors.bold}═══════════════════════════════════════${colors.reset}`);
-  }
-
-  // Read the per-category summary written by the security runner, if available.
-  readSecuritySummary() {
-    try {
-      const summaryPath = path.join(process.cwd(), 'security-summary.json');
-      const raw = fs.readFileSync(summaryPath, 'utf8');
-      return JSON.parse(raw);
-    } catch {
-      return null;
-    }
   }
 
   // Spawn the security test runner as a child process.
@@ -533,7 +515,7 @@ class TestRunner {
         resolve(true);
       });
     });
-    const categories = failed ? null : this.readSecuritySummary();
+    const categories = failed ? null : readSecuritySummary();
     return { skipped: false, failed, categories };
   }
 

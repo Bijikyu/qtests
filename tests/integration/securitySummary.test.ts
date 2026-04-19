@@ -2,19 +2,19 @@
  * Tests for the security-summary display feature added in Task #8.
  *
  * Covers:
- *  - SecurityTestRunner.writeSummaryFile() — spy-based, verifies exact JSON written
- *  - TestRunner.printSummary() — security line for skip / fail / pass paths
- *  - TestRunner.formatSecurityCategory() — ✓/✗ marks, pass/fail counts, null input
- *  - TestRunner.readSecuritySummary() — returns null for absent file and corrupt JSON
+ *  - writeSummaryFile()          — spy-based (scripts/writeSummaryFile.js)
+ *  - formatSecurityCategory()    — direct unit tests (lib/security/summaryHelpers.ts)
+ *  - readSecuritySummary()       — direct unit tests with fs.readFileSync spy
+ *  - TestRunner.printSummary()   — subprocess tests (class lives in qtests-runner.mjs)
  *
- * Spy-based unit tests (jest.spyOn) cover writeSummaryFile().
- * Subprocess tests cover the TestRunner methods whose class lives in qtests-runner.mjs,
- * an .mjs file that the Jest transform pipeline cannot transform directly.
+ * formatSecurityCategory and readSecuritySummary are now imported directly from the
+ * shared TypeScript module, replacing the slow subprocess tests used before Task #15.
  */
 
 import fs from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
+import { formatSecurityCategory, readSecuritySummary } from '../../lib/security/summaryHelpers.js';
 // writeSummaryFile.js has no import.meta.url, so Jest can import it directly
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { writeSummaryFile } = require('../../scripts/writeSummaryFile.js');
@@ -34,11 +34,6 @@ function makeTempDir(): string {
   return fs.mkdtempSync(path.join(base, 'sec-summary-'));
 }
 
-function writeFile(filePath: string, content: string): void {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, content, 'utf8');
-}
-
 function runRunner(
   cwd: string,
   extraEnv: Record<string, string> = {},
@@ -54,23 +49,12 @@ function runRunner(
   return { out: stripAnsi(raw), status: result.status };
 }
 
-// ESM-compatible fake security runner that writes a known summary then exits 0.
-function fakePassingRunner(summary: Record<string, unknown>): string {
-  return [
-    'import fs from "fs";',
-    'import path from "path";',
-    `const summary = ${JSON.stringify(summary)};`,
-    'fs.writeFileSync(path.join(process.cwd(), "security-summary.json"), JSON.stringify(summary), "utf8");',
-    'process.exit(0);',
-  ].join('\n');
-}
-
 // ── writeSummaryFile() — spy-based unit tests ────────────────────────────────
 
 describe('writeSummaryFile() — spy-based', () => {
   const RESULTS = [
-    { type: 'regression_tests',       summary: { passed: 3, total: 3 } },
-    { type: 'penetration_tests',      summary: { passed: 4, total: 4 } },
+    { type: 'regression_tests',        summary: { passed: 3, total: 3 } },
+    { type: 'penetration_tests',       summary: { passed: 4, total: 4 } },
     { type: 'configuration_validation', summary: { passed: 3, total: 3 } },
   ];
 
@@ -113,7 +97,7 @@ describe('writeSummaryFile() — spy-based', () => {
   });
 
   test('missing result type produces null entry in JSON', () => {
-    writeSummaryFile([RESULTS[0]]);   // only regression present
+    writeSummaryFile([RESULTS[0]]);
 
     const [, calledData] = writeSpy.mock.calls[0] as [string, string, ...unknown[]];
     const parsed = JSON.parse(calledData);
@@ -128,7 +112,7 @@ describe('writeSummaryFile() — spy-based', () => {
   });
 });
 
-// ── SecurityTestRunner.writeSummaryFile() — real file (integration) ───────────
+// ── SecurityTestRunner.writeSummaryFile() — real subprocess (integration) ────
 
 describe('SecurityTestRunner.writeSummaryFile() — real security runner subprocess', () => {
   beforeEach(() => {
@@ -162,7 +146,93 @@ describe('SecurityTestRunner.writeSummaryFile() — real security runner subproc
   });
 });
 
-// ── printSummary() — QTESTS_SKIP_SECURITY path ───────────────────────────────
+// ── formatSecurityCategory() — direct unit tests ─────────────────────────────
+
+describe('formatSecurityCategory()', () => {
+  test('returns null for null info', () => {
+    expect(formatSecurityCategory('regression', null)).toBeNull();
+  });
+
+  test('returns null for undefined info', () => {
+    expect(formatSecurityCategory('regression', undefined)).toBeNull();
+  });
+
+  test('includes passed/total counts in returned string', () => {
+    const result = formatSecurityCategory('regression', { passed: 3, total: 3 });
+    expect(result).toContain('3/3');
+    expect(result).toContain('regression');
+  });
+
+  test('includes ✓ mark when passed === total', () => {
+    const result = stripAnsi(formatSecurityCategory('regression', { passed: 3, total: 3 })!);
+    expect(result).toBe('3/3 regression ✓');
+  });
+
+  test('includes ✗ mark when passed < total', () => {
+    const result = stripAnsi(formatSecurityCategory('regression', { passed: 2, total: 3 })!);
+    expect(result).toBe('2/3 regression ✗');
+  });
+
+  test('works for any label (pentest, config, etc.)', () => {
+    expect(stripAnsi(formatSecurityCategory('pentest', { passed: 4, total: 4 })!))
+      .toBe('4/4 pentest ✓');
+    expect(stripAnsi(formatSecurityCategory('config', { passed: 3, total: 3 })!))
+      .toBe('3/3 config ✓');
+  });
+
+  test('edge case: 0/0 counts — all passed (no tests)', () => {
+    const result = stripAnsi(formatSecurityCategory('regression', { passed: 0, total: 0 })!);
+    expect(result).toBe('0/0 regression ✓');
+  });
+});
+
+// ── readSecuritySummary() — direct unit tests with fs spy ────────────────────
+
+describe('readSecuritySummary()', () => {
+  let readSpy: jest.SpyInstance;
+
+  afterEach(() => {
+    readSpy?.mockRestore();
+  });
+
+  test('returns parsed JSON when file is readable', () => {
+    const payload = { regression: { passed: 3, total: 3 }, penetration: null, configuration: null };
+    readSpy = jest.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify(payload) as never);
+    const result = readSecuritySummary('/fake/security-summary.json');
+    expect(result).toEqual(payload);
+  });
+
+  test('returns null when file is absent (readFileSync throws ENOENT)', () => {
+    readSpy = jest.spyOn(fs, 'readFileSync').mockImplementation(() => {
+      throw Object.assign(new Error('ENOENT'), { code: 'ENOENT' });
+    });
+    expect(readSecuritySummary('/fake/security-summary.json')).toBeNull();
+  });
+
+  test('returns null when file content is not valid JSON', () => {
+    readSpy = jest.spyOn(fs, 'readFileSync').mockReturnValue('not-valid-json' as never);
+    expect(readSecuritySummary('/fake/security-summary.json')).toBeNull();
+  });
+
+  test('uses process.cwd()/security-summary.json as default path', () => {
+    readSpy = jest.spyOn(fs, 'readFileSync').mockReturnValue('{}' as never);
+    readSecuritySummary();
+    expect(readSpy).toHaveBeenCalledWith(
+      path.join(process.cwd(), 'security-summary.json'),
+      'utf8',
+    );
+  });
+
+  test('uses provided summaryPath argument', () => {
+    readSpy = jest.spyOn(fs, 'readFileSync').mockReturnValue('{}' as never);
+    readSecuritySummary('/custom/path/summary.json');
+    expect(readSpy).toHaveBeenCalledWith('/custom/path/summary.json', 'utf8');
+  });
+});
+
+// ── printSummary() subprocess tests — QTESTS_SKIP_SECURITY path ──────────────
+// (printSummary is still a method on TestRunner in qtests-runner.mjs; integration
+// tests remain the only practical way to verify its output.)
 
 describe('TestRunner printSummary() — QTESTS_SKIP_SECURITY path', () => {
   let tmpDir: string;
@@ -181,7 +251,7 @@ describe('TestRunner printSummary() — QTESTS_SKIP_SECURITY path', () => {
   });
 });
 
-// ── printSummary() — security runner not found ───────────────────────────────
+// ── printSummary() subprocess tests — security runner not found ───────────────
 
 describe('TestRunner printSummary() — security runner not found', () => {
   let tmpDir: string;
@@ -198,107 +268,5 @@ describe('TestRunner printSummary() — security runner not found', () => {
   test('exits 1 when security runner is missing', () => {
     const { status } = runRunner(tmpDir);
     expect(status).toBe(1);
-  });
-});
-
-// ── printSummary() + formatSecurityCategory() — all-pass path ────────────────
-
-describe('TestRunner printSummary() + formatSecurityCategory() — security passes', () => {
-  let tmpDir: string;
-
-  beforeEach(() => { tmpDir = makeTempDir(); });
-  afterEach(() => { fs.rmSync(tmpDir, { recursive: true, force: true }); });
-
-  const PASSING = {
-    regression: { passed: 3, total: 3 },
-    penetration: { passed: 4, total: 4 },
-    configuration: { passed: 3, total: 3 },
-  };
-
-  test('TEST SUMMARY shows per-category counts for all three categories', () => {
-    writeFile(path.join(tmpDir, 'scripts', 'security-test-runner.js'), fakePassingRunner(PASSING));
-    const { out } = runRunner(tmpDir);
-    expect(out).toContain('3/3 regression');
-    expect(out).toContain('4/4 pentest');
-    expect(out).toContain('3/3 config');
-  });
-
-  test('formatSecurityCategory shows ✓ when passed === total', () => {
-    writeFile(path.join(tmpDir, 'scripts', 'security-test-runner.js'), fakePassingRunner(PASSING));
-    const { out } = runRunner(tmpDir);
-    expect(out).toMatch(/3\/3 regression ✓/);
-    expect(out).toMatch(/4\/4 pentest ✓/);
-    expect(out).toMatch(/3\/3 config ✓/);
-  });
-
-  test('exits 0 when security passes', () => {
-    writeFile(path.join(tmpDir, 'scripts', 'security-test-runner.js'), fakePassingRunner(PASSING));
-    const { status } = runRunner(tmpDir);
-    expect(status).toBe(0);
-  });
-});
-
-// ── formatSecurityCategory() — failure mark ──────────────────────────────────
-
-describe('TestRunner formatSecurityCategory() — failure mark', () => {
-  let tmpDir: string;
-
-  beforeEach(() => { tmpDir = makeTempDir(); });
-  afterEach(() => { fs.rmSync(tmpDir, { recursive: true, force: true }); });
-
-  test('shows ✗ for a category where passed < total', () => {
-    const PARTIAL = {
-      regression: { passed: 2, total: 3 },
-      penetration: { passed: 4, total: 4 },
-      configuration: { passed: 3, total: 3 },
-    };
-    writeFile(path.join(tmpDir, 'scripts', 'security-test-runner.js'), fakePassingRunner(PARTIAL));
-    const { out } = runRunner(tmpDir);
-    expect(out).toMatch(/2\/3 regression ✗/);
-    expect(out).toMatch(/4\/4 pentest ✓/);
-  });
-
-  test('returns null for a null category entry (filtered from summary line)', () => {
-    // All categories null → readSecuritySummary returns object with null values →
-    // formatSecurityCategory called with null for each → all filtered → "passed" label
-    const ALL_NULL = { regression: null, penetration: null, configuration: null };
-    writeFile(path.join(tmpDir, 'scripts', 'security-test-runner.js'), fakePassingRunner(ALL_NULL));
-    const { out } = runRunner(tmpDir);
-    // null inputs → parts empty → falls back to "passed"
-    expect(out).toMatch(/Security:.*passed/);
-  });
-});
-
-// ── readSecuritySummary() — null paths ───────────────────────────────────────
-
-describe('TestRunner readSecuritySummary() — null / absent / corrupt', () => {
-  let tmpDir: string;
-
-  beforeEach(() => { tmpDir = makeTempDir(); });
-  afterEach(() => { fs.rmSync(tmpDir, { recursive: true, force: true }); });
-
-  test('returns null when summary file is absent (fake runner exits 0 without writing)', () => {
-    // Fake runner exits 0 but never writes security-summary.json
-    const noFileRunner = [
-      'process.exit(0);',
-    ].join('\n');
-    writeFile(path.join(tmpDir, 'scripts', 'security-test-runner.js'), noFileRunner);
-    const { out } = runRunner(tmpDir);
-    // categories null (file absent) → parts empty → label "passed"
-    expect(out).toContain('Security:');
-    expect(out).toMatch(/Security:.*passed/);
-  });
-
-  test('returns null for corrupt JSON (falls back to "passed" label)', () => {
-    const corruptRunner = [
-      'import fs from "fs";',
-      'import path from "path";',
-      'fs.writeFileSync(path.join(process.cwd(), "security-summary.json"), "not-valid-json", "utf8");',
-      'process.exit(0);',
-    ].join('\n');
-    writeFile(path.join(tmpDir, 'scripts', 'security-test-runner.js'), corruptRunner);
-    const { out } = runRunner(tmpDir);
-    expect(out).toContain('Security:');
-    expect(out).toMatch(/Security:.*passed/);
   });
 });
