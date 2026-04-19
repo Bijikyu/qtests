@@ -489,7 +489,7 @@ class TestRunner {
       return { skipped: true, failed: false, categories: null };
     }
     const { spawn } = await import('child_process');
-    const runnerPath = path.join(process.cwd(), 'scripts', 'security-test-runner.js');
+    const runnerPath = path.join(process.cwd(), 'dist', 'scripts', 'security-test-runner.js');
     if (!fs.existsSync(runnerPath)) {
       console.error(`${colors.red}✗ Security runner not found at ${runnerPath}${colors.reset}`);
       console.error(`${colors.red}  Security coverage cannot be verified. Failing the test run.${colors.reset}`);

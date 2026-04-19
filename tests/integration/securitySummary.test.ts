@@ -21,7 +21,7 @@ const { writeSummaryFile } = require('../../dist/scripts/writeSummaryFile.js');
 
 const PROJECT_ROOT = process.cwd();
 const RUNNER_PATH = path.join(PROJECT_ROOT, 'qtests-runner.mjs');
-const SECURITY_RUNNER_PATH = path.join(PROJECT_ROOT, 'scripts', 'security-test-runner.js');
+const SECURITY_RUNNER_PATH = path.join(PROJECT_ROOT, 'dist', 'scripts', 'security-test-runner.js');
 const SUMMARY_PATH = path.join(PROJECT_ROOT, 'security-summary.json');
 
 function stripAnsi(s: string): string {
