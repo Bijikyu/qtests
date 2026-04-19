@@ -467,6 +467,9 @@ class TestRunner {
       || path.join(process.cwd(), 'qtests-results.json');
     try {
       fs.writeFileSync(resultsPath, JSON.stringify(runResult, null, 2), 'utf8');
+      if (!this.isEnvTruthy('QTESTS_SILENT')) {
+        console.log(`${colors.dim}📄 Results: ${resultsPath}${colors.reset}`);
+      }
     } catch (error) {
       qerrors(error, 'qtests-runner: failed to write results file', { resultsPath });
       console.warn(`${colors.yellow}⚠  Could not write results file: ${resultsPath}${colors.reset}`);
