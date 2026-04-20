@@ -47,7 +47,7 @@
     "qtests-generate": "bin/qtests-generate.mjs"
   },
   "scripts": {
-    "prepare": "node scripts/ensure-runner.mjs",
+    "prepare": "node scripts/ensure-runner.mjs && node scripts/ensure-bins.mjs",
     "pretest": "node scripts/clean-dist.mjs && node scripts/ensure-runner.mjs",
     "test": "node qtests-runner.mjs",
     "ci:verify": "node scripts/ci-verify-runner.mjs",
@@ -144,7 +144,8 @@
   },
   "overrides": {
     "minimatch": "^10.2.1",
-    "glob": "^11.0.0"
+    "glob": "^11.0.0",
+    "qtests": "file:."
   },
   "files": [
     "bin",
