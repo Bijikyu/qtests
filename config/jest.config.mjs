@@ -15,26 +15,27 @@ export default {
   setupFilesAfterEnv: [path.join(PROJECT_ROOT, 'config', 'jest-setup.ts')],
   roots: [PROJECT_ROOT],
   testMatch: [
-  "**/integration/**/*.test.ts",
-  "**/integration/**/*.test.tsx",
-  "**/integration/**/*.test.js",
-  "**/integration/**/*.test.jsx"
+  "**/*.test.ts",
+  "**/*.test.tsx",
+  "**/*.spec.ts",
+  "**/*.spec.tsx",
+  "**/*.GenerateTest.test.ts",
+  "**/*.GenerateTest.test.tsx",
+  "**/*.GeneratedTest.test.ts",
+  "**/*.GeneratedTest.test.tsx",
+  "**/manual-tests/**/*.test.ts",
+  "**/generated-tests/**/*GeneratedTest*.test.ts",
+  "**/generated-tests/**/*GeneratedTest*.test.tsx"
 ],
   testPathIgnorePatterns: [
   "/node_modules/",
   "/dist/",
   "/build/",
-  "/__mocks__/",
-  "/manual-tests/",
-  "/generated-tests/"
+  "/__mocks__/"
 ],
   // Harden ignores to avoid duplicate manual mocks and compiled artifacts
-  modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/', '<rootDir>/.cache/'],
-  watchPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/', '<rootDir>/.cache/'],
-  haste: {
-    retainAllFiles: false,
-    throwOnModuleCollision: false
-  },
+  modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
+  watchPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/build/'],
   moduleFileExtensions: ["ts","tsx","js","jsx","json"],
   transform: {
   "^.+\\.(ts|tsx)$": [
@@ -47,7 +48,6 @@ export default {
   "^.+\\.(js|jsx)$": [
     "babel-jest",
     {
-      "plugins": ["babel-plugin-transform-import-meta"],
       "presets": [
         [
           "@babel/preset-env",
@@ -62,20 +62,21 @@ export default {
   ]
 },
   extensionsToTreatAsEsm: [".ts",".tsx"],
-  transformIgnorePatterns: ['node_modules/(?!(?:qtests|qerrors|@bijikyu|p-limit|yocto-queue|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul|@langchain|openai|msw|until-async|@mswjs)/)'],
-  resolver: path.join(PROJECT_ROOT, 'config', 'ts-jest-resolver.cjs'),
+  transformIgnorePatterns: ['node_modules/(?!(?:qtests|@tanstack|@radix-ui|lucide-react|react-resizable-panels|cmdk|vaul)/)'],
   moduleNameMapper: {
-    "^qtests$": "<rootDir>/dist/index.js",
-    "^qtests/(.*)$": "<rootDir>/dist/$1",
-   // Essential mocks only - avoid broad patterns that interfere with node_modules
-    "^mongoose$": "<rootDir>/__mocks__/mongoose.js",
-    "^\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",
-    "^\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/__mocks__/fileMock.js",
-    // Custom stubs - only when explicitly needed
-    "^external-service-client$": "<rootDir>/utils/jest-proxies/external-service-client.cjs",
-    "^feature-x$": "<rootDir>/utils/jest-proxies/feature-x.cjs",
-    // Stub ESM-only httpMock modules (use import.meta.url / msw ESM which break CJS require)
-    "^.*/dist/lib/httpMock/serverFactories\\.js$": "<rootDir>/__mocks__/httpMock-serverFactories.js",
-    "^.*/dist/lib/httpMock/modernMSWMock\\.js$": "<rootDir>/__mocks__/httpMock-modernMSWMock.js"
-  }
+  "^\\.\\./index\\.js$": "<rootDir>/index.ts",
+  "^\\.\\./setup\\.js$": "<rootDir>/setup.ts",
+  "^\\.\\./lib/(.*)\\.js$": "<rootDir>/lib/$1.ts",
+  "^\\.\\./lib/(.*)$": "<rootDir>/lib/$1.ts",
+  "^\\.\\./utils/httpTest\\.shim\\.js$": "<rootDir>/utils/httpTest.shim.js",
+  "^\\.\\./utils/(.*)\\.js$": "<rootDir>/utils/$1.ts",
+  "^(.*/httpTest\\.shim)\\.js$": "$1.js",
+  "^external-service-client$": "<rootDir>/utils/jest-proxies/external-service-client.cjs",
+  "^feature-x$": "<rootDir>/utils/jest-proxies/feature-x.cjs",
+  "^(\\.{1,2}/.*)\\.js$": "$1",
+  "^qtests/(.*)$": "<rootDir>/node_modules/qtests/$1",
+  "^mongoose$": "<rootDir>/__mocks__/mongoose.js",
+  "^.+\\\\.(css|less|scss|sass)$": "<rootDir>/__mocks__/fileMock.js",
+  "^.+\\\\.(png|jpg|jpeg|gif|svg|webp|avif|ico|bmp)$": "<rootDir>/__mocks__/fileMock.js"
+}
 };

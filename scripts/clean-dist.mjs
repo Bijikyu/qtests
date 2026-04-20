@@ -1,21 +1,7 @@
 // scripts/clean-dist.mjs
 // Remove compiled test files and __mocks__ from dist/ to prevent duplicate mock warnings.
-import { cleanDist } from './sharedUtils.mjs';
-let qerrors;
-try {
-  const mod = await import('qerrors');
-  qerrors = mod.default?.default || mod.default || mod;
-} catch {
-  qerrors = (error, message, context) => {
-    console.error('[QERRORS]', JSON.stringify({ message: message || error.message, context: context || {} }));
-  };
-}
-
-try {
-  cleanDist();
-} catch (error) {
-  qerrors(error, 'clean-dist: failed to clean distribution directory', { 
-    cwd: process.cwd()
-  });
-  process.exit(1);
-}
+import fs from 'fs';
+import path from 'path';
+function rmDirSafe(p){try{fs.rmSync(p,{recursive:true,force:true})}catch{}}
+function cleanDist(root){const dist=path.join(root,'dist');try{if(!fs.existsSync(dist))return;}catch{return;}const stack=[dist];while(stack.length){const dir=stack.pop();let entries=[];try{entries=fs.readdirSync(dir,{withFileTypes:true})}catch{continue}for(const ent of entries){const full=path.join(dir,ent.name);if(ent.isDirectory()){if(ent.name==='__mocks__'){rmDirSafe(full);continue}stack.push(full);continue}if(!ent.isFile())continue;if(/\.(test|spec)\.[cm]?jsx?$/.test(ent.name)||/GeneratedTest/.test(ent.name)){try{fs.rmSync(full,{force:true})}catch{}}}}}
+cleanDist(process.cwd());
