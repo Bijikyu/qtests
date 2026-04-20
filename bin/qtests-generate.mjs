@@ -519,6 +519,8 @@ function printAgentPrompt(options, stubs) {
     boxLine('  • Start any server once in beforeAll, not per-test'),
     boxLine('  • Mock external HTTP; keep your own data layer real'),
     boxLine('  • Assert status codes + fields, not IDs/timestamps'),
+    boxLine(' 3. DO NOT touch qtests-runner.mjs or the npm test'),
+    boxLine('    script — leave both exactly as generated.'),
     bot,
     'qtests:\n',
     'qtests: Suppress this message: QTESTS_SUPPRESS_PROMPT=1 npx qtests-generate\n',
