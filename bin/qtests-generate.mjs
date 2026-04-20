@@ -415,19 +415,6 @@ async function discoverSourceFiles(clientRoot) {
   return all;
 }
 
-function getUnitStubContent(sourceBasename) {
-  return [
-    `import 'qtests/setup';`,
-    `import * as Module from './${sourceBasename}';`,
-    `// TODO: replace the wildcard import with the specific exports you need.`,
-    ``,
-    `describe('${sourceBasename}', () => {`,
-    `  it.todo('add meaningful tests — happy path, edge cases, and errors');`,
-    `});`,
-    ``
-  ].join('\n');
-}
-
 function getIntegrationStubContent(sourceBasename, importPath, useTs) {
   const moduleDecl = '  let module;';
   return [
@@ -453,7 +440,6 @@ async function scaffoldTestStubs(clientRoot, options, enableTsJest) {
 
   process.stdout.write(`qtests: discovered ${sourceFiles.length} source file(s) — generating stubs\n`);
 
-  const unitStubs = [];
   const integrationStubs = [];
 
   for (const srcAbs of sourceFiles) {
@@ -461,18 +447,6 @@ async function scaffoldTestStubs(clientRoot, options, enableTsJest) {
     const srcBase = path.basename(srcAbs, srcExt);
     const useTs = srcExt === '.ts' || srcExt === '.tsx' || enableTsJest;
     const testExt = useTs ? '.test.ts' : '.test.js';
-
-    // Unit stub: alongside the source file
-    const unitStubAbs = path.join(path.dirname(srcAbs), srcBase + testExt);
-    const unitStubRel = path.relative(clientRoot, unitStubAbs).replace(/\\/g, '/');
-    await scaffoldFile({
-      label: unitStubRel,
-      targetPath: unitStubAbs,
-      content: getUnitStubContent(srcBase),
-      dryRun: options.dryRun,
-      force: options.force
-    });
-    unitStubs.push(unitStubRel);
 
     // Integration stub: mirrored under tests/integration/
     const srcRelDir = path.relative(clientRoot, path.dirname(srcAbs));
@@ -491,7 +465,7 @@ async function scaffoldTestStubs(clientRoot, options, enableTsJest) {
     integrationStubs.push(intStubRel);
   }
 
-  return { unitStubs, integrationStubs };
+  return { unitStubs: [], integrationStubs };
 }
 
 function printAgentPrompt(options, stubs) {
@@ -499,7 +473,6 @@ function printAgentPrompt(options, stubs) {
   if (process.env.QTESTS_SILENT === '1') return;
   if (process.env.QTESTS_SUPPRESS_PROMPT === '1') return;
 
-  const unitStubs = (stubs && stubs.unitStubs) || [];
   const integrationStubs = (stubs && stubs.integrationStubs) || [];
 
   // Box inner width = 53 chars (between │ characters)
@@ -535,16 +508,6 @@ function printAgentPrompt(options, stubs) {
     'qtests: Claude, ChatGPT, etc.) to write project-specific tests:\n',
     'qtests:\n',
     top,
-    boxLine(' ── UNIT TESTS ──────────────────────────────────────'),
-    ...fileLines(unitStubs),
-    blank,
-    boxLine(' For each stub:'),
-    boxLine('  • Read the matching source file'),
-    boxLine('  • Replace it.todo with real assertions'),
-    boxLine('  • Cover happy path, edge cases, and errors'),
-    boxLine('  • qtests/setup is already imported — HTTP, fs,'),
-    boxLine('    and timers are auto-stubbed'),
-    blank,
     boxLine(' ── INTEGRATION TESTS ───────────────────────────────'),
     ...fileLines(integrationStubs),
     blank,
