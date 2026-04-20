@@ -2,7 +2,14 @@
 
 A comprehensive Node.js toolkit covering the full testing lifecycle and production reliability in a single dependency. Stub methods, mock modules and HTTP, test security and performance, generate integration tests automatically, and ship circuit breakers, caching, and rate limiting — all with first-class **ES Module and TypeScript** support.
 
-**Latest Updates (v4.0.0 — April 2026)**:
+**Latest Updates (v4.2.0 — April 2026)**:
+- `npx qtests-generate` now writes integration test stubs under `tests/integration/` for every discovered source file — non-destructively
+- After scaffolding, a ready-to-paste AI agent prompt is printed with three clear instructions: prune stubs that don't map to real workflows, fill in the ones that do, and leave the runner alone
+- Source discovery covers 11 common layouts out of the box: `src`, `lib`, `bin`, `scripts`, `utils`, `pages`, `app`, `routes`, `controllers`, `packages`, `api`
+- Generator output is now compact (3 summary lines instead of one line per file)
+- Fixed: old v1.x binary no longer shadows the current generator when `qerrors` is installed as a dependency
+
+**v4.0.0 — April 2026**:
 - Security testing module: `SecurityValidator`, `JoiSecurityValidator`, and `PenetrationTester` with full TypeScript types
 - Circuit breaker API: `createCircuitBreaker(options)`, `executeWithCircuitBreaker(fn, options)`, `getCircuitBreakerStats()`, `resetCircuitBreaker()`, `CircuitState` enum
 - File system utilities: `safeExists` and `safeDelete` for safe file operations in tests
@@ -30,23 +37,25 @@ qerrors degrades gracefully if neither key is set — errors are still logged, b
 
 ### Generate tests for your project
 
-Point qtests at your source code and it will discover your files and write integration tests for you:
+Point qtests at your source code and it will discover your files and write integration test stubs for you:
 
 ```bash
 npx qtests-generate
 ```
 
-This scans your project, generates `.GenerateTest.test.ts` files for any source files that lack integration tests, and scaffolds the Jest runner and config. Run it once to get started, or re-run it as your codebase grows to fill in missing coverage.
+This scaffolds `qtests-runner.mjs`, `config/jest.config.mjs`, and setup files, then scans your project for source files across the common source directories (`src`, `lib`, `bin`, `scripts`, `utils`, `pages`, `app`, `routes`, `controllers`, `packages`, `api`) and writes a stub under `tests/integration/` for each one — non-destructively, so existing test files are never overwritten.
+
+After scaffolding, the generator prints a ready-to-paste AI agent prompt that tells your AI to delete stubs that don't map to real workflows, flesh out the ones that do, and leave the runner configuration alone.
 
 ```bash
 # Preview what would be generated without writing any files
 npx qtests-generate --dry-run
 
-# Scan a specific source directory
-npx qtests-generate --src lib
-
-# Regenerate and overwrite existing generated tests
+# Regenerate and overwrite existing stubs
 npx qtests-generate --force
+
+# Suppress the AI prompt (useful in CI)
+QTESTS_SUPPRESS_PROMPT=1 npx qtests-generate
 ```
 
 qtests can scaffold its Jest runner/config into your project root via `npx qtests-generate` (non-destructive by default). The runner expects Jest to be installed in your project (as a devDependency).
@@ -70,7 +79,7 @@ const restore = stubMethod(myObject, 'methodName', mockImplementation);
 ## Features
 
 ### Testing
-- **Auto Test Generation** — scans your source and writes missing integration tests (`npx qtests-generate`)
+- **Auto Test Generation** — scans 11 common source directories and writes `tests/integration/` stubs for each source file; prints a ready-to-paste AI agent prompt to flesh them out (`npx qtests-generate`)
 - **Method Stubbing** — replace any object method and restore it automatically (`stubMethod`, `spyOnMethod`)
 - **Console Mocking** — capture and assert on console output with Jest-compatible spies
 - **Module Stubs** — drop-in replacements for axios and winston; register custom stubs for any module

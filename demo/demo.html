@@ -707,7 +707,7 @@
             </h1>
             <p class="subtitle">// comprehensive testing utilities for node.js applications</p>
             <div>
-                <span class="status success">v4.0.0</span>
+                <span class="status success">v4.2.0</span>
                 <span class="status info">Node.js 20+</span>
                 <span class="status warning">TypeScript</span>
                 <span class="status info">ESM</span>
@@ -911,13 +911,23 @@
             <div class="demo-section">
                 <h4>Generation Preview</h4>
                 <div id="generation-preview" class="terminal">
-                    <div style="color: #4fc3f7;">$ qtests-generate --mode ast --src-dir src --test-dir tests</div>
-                    <div>🔍 Analyzing source files in src/...</div>
-                    <div>📝 Found 12 TypeScript files</div>
-                    <div>⚛️  Detected 3 React components</div>
-                    <div>🌐  Detected 5 Express routes</div>
-                    <div>🧪  Generating 8 test files...</div>
-                    <div style="color: #10b981;">✅ Test generation completed successfully!</div>
+                    <div style="color: #4fc3f7;">$ npx qtests-generate</div>
+                    <div>qtests: scaffolding...</div>
+                    <div>qtests: runner   ✓</div>
+                    <div>qtests: config   ✓</div>
+                    <div>qtests: stubs    24 sources — 24 new, 0 already in place</div>
+                    <div style="margin-top:6px; color: #94a3b8;">── NEXT STEP — paste into your AI agent ──────────────</div>
+                    <div style="color: #94a3b8;">  ┌──────────────────────────────────────────────────┐</div>
+                    <div style="color: #94a3b8;">  │ ── INTEGRATION TESTS ─────────────────────────── │</div>
+                    <div style="color: #94a3b8;">  │  tests/integration/src/userService.test.ts       │</div>
+                    <div style="color: #94a3b8;">  │  tests/integration/src/authController.test.ts    │</div>
+                    <div style="color: #94a3b8;">  │  …and 22 more                                    │</div>
+                    <div style="color: #94a3b8;">  │                                                  │</div>
+                    <div style="color: #94a3b8;">  │ 1. DELETE stubs that don't map to a workflow     │</div>
+                    <div style="color: #94a3b8;">  │ 2. Fill in the ones that do (critical paths only)│</div>
+                    <div style="color: #94a3b8;">  │ 3. DO NOT touch qtests-runner.mjs                │</div>
+                    <div style="color: #94a3b8;">  └──────────────────────────────────────────────────┘</div>
+                    <div style="color: #10b981; margin-top:6px;">qtests: done</div>
                 </div>
             </div>
 
@@ -3400,7 +3410,7 @@ const manager = createCleanupManager({
             <div class="card" style="background: transparent; border: none; box-shadow: none; padding: 0;">
                 <h3 style="color: var(--primary); margin-bottom: 15px;">📊 System Status</h3>
                 <div class="system-status" style="font-size: 12px; color: #6b7280;">
-                    Framework: qtests v4.0.0 | Environment: Browser | Response: 15ms
+                    Framework: qtests v4.2.0 | Environment: Browser | Response: 15ms
                 </div>
                 <div style="margin-top: 10px;">
                     <span class="status success">All Systems Operational</span>
@@ -3495,35 +3505,31 @@ const manager = createCleanupManager({
 
         // Test Generation
         function generateTests() {
-            const sourceDirElement = document.getElementById('source-dir');
-            const testDirElement = document.getElementById('test-dir');
-            const modeElement = document.getElementById('generation-mode');
             const preview = document.getElementById('generation-preview');
-            
-            // Validate elements exist
-            if (!sourceDirElement || !testDirElement || !modeElement || !preview) {
-                console.error('Required elements not found');
-                return;
-            }
-            
-            const sourceDir = sourceDirElement.value || 'src';
-            const testDir = testDirElement.value || 'tests';
-            const mode = modeElement.value || 'ast';
-            
-            // Sanitize inputs to prevent XSS
-            const sanitizedSourceDir = sourceDir.replace(/[<>&"']/g, '');
-            const sanitizedTestDir = testDir.replace(/[<>&"']/g, '');
-            const sanitizedMode = mode.replace(/[<>&"']/g, '');
-            
+            if (!preview) return;
+
+            const total = Math.floor(Math.random() * 30) + 10;
+            const newStubs = Math.floor(total * 0.4);
+            const existing = total - newStubs;
+
             preview.innerHTML = `
-                <div style="color: #4fc3f7;">$ qtests-generate --mode ${sanitizedMode} --src-dir ${sanitizedSourceDir} --test-dir ${sanitizedTestDir}</div>
-                <div>🔍 Analyzing source files in ${sanitizedSourceDir}/...</div>
-                <div>📝 Found ${Math.floor(Math.random() * 20) + 5} TypeScript files</div>
-                <div>⚛️  Detected ${Math.floor(Math.random() * 5) + 1} React components</div>
-                <div>🌐  Detected ${Math.floor(Math.random() * 8) + 2} Express routes</div>
-                <div>🧪  Generating ${Math.floor(Math.random() * 15) + 5} test files...</div>
-                <div style="color: #10b981;">✅ Test generation completed successfully!</div>
-                <div>📁 Tests saved to ${sanitizedTestDir}/</div>
+                <div style="color: #4fc3f7;">$ npx qtests-generate</div>
+                <div>qtests: scaffolding...</div>
+                <div>qtests: runner   ✓</div>
+                <div>qtests: config   ✓</div>
+                <div>qtests: stubs    ${total} sources — ${newStubs} new, ${existing} already in place</div>
+                <div style="margin-top:6px; color: #94a3b8;">── NEXT STEP — paste into your AI agent ──────────────</div>
+                <div style="color: #94a3b8;">  ┌──────────────────────────────────────────────────┐</div>
+                <div style="color: #94a3b8;">  │ ── INTEGRATION TESTS ─────────────────────────── │</div>
+                <div style="color: #94a3b8;">  │  tests/integration/src/userService.test.ts       │</div>
+                <div style="color: #94a3b8;">  │  tests/integration/src/authController.test.ts    │</div>
+                <div style="color: #94a3b8;">  │  …and ${total - 2} more                                    │</div>
+                <div style="color: #94a3b8;">  │                                                  │</div>
+                <div style="color: #94a3b8;">  │ 1. DELETE stubs that don't map to a workflow     │</div>
+                <div style="color: #94a3b8;">  │ 2. Fill in the ones that do (critical paths only)│</div>
+                <div style="color: #94a3b8;">  │ 3. DO NOT touch qtests-runner.mjs                │</div>
+                <div style="color: #94a3b8;">  └──────────────────────────────────────────────────┘</div>
+                <div style="color: #10b981; margin-top:6px;">qtests: done</div>
             `;
         }
 
@@ -6201,7 +6207,7 @@ describe('CRUD Operations Tests', () => {
         function generateTestReport() {
             const reportData = {
                 timestamp: new Date().toISOString(),
-                framework: 'qtests v4.0.0',
+                framework: 'qtests v4.2.0',
                 tests: {
                     total: Math.floor(Math.random() * 100) + 50,
                     passed: Math.floor(Math.random() * 80) + 40,
@@ -7286,7 +7292,7 @@ describe('${routeName}', () => {
         // System status dashboard
         function updateSystemStatus() {
             const statusData = {
-                framework: 'qtests v4.0.0',
+                framework: 'qtests v4.2.0',
                 nodeVersion: typeof process !== 'undefined' ? process.version : 'Browser',
                 environment: typeof window !== 'undefined' ? 'Browser' : 'Node.js',
                 features: {
@@ -7477,7 +7483,7 @@ describe('${routeName}', () => {
 <span style="color: #10b981;">✓ File read successfully (${Math.floor(Math.random() * 5000) + 500} bytes)</span>
 <span style="color: #f3f4f6;">{</span>
 <span style="color: #f3f4f6;">  "name": "qtests",</span>
-<span style="color: #f3f4f6;">  "version": "4.0.0",</span>
+<span style="color: #f3f4f6;">  "version": "4.2.0",</span>
 <span style="color: #f3f4f6;">  "description": "Comprehensive testing framework"</span>
 <span style="color: #f3f4f6;">  ...</span>
 <span style="color: #f3f4f6;">}</span>
