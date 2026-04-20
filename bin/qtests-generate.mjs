@@ -284,18 +284,19 @@ async function writeFileAtomic(targetPath, content) {
   await fsp.rename(tmp, targetPath);
 }
 
-async function scaffoldFile({ label, targetPath, content, dryRun, force }) {
+async function scaffoldFile({ label, targetPath, content, dryRun, force, silent }) {
   const already = await exists(targetPath);
   if (already && !force) {
-    process.stdout.write(`qtests: keep ${label} (already exists)\n`);
-    return;
+    if (!silent) process.stdout.write(`qtests: keep ${label}\n`);
+    return { label, result: 'kept' };
   }
   if (dryRun) {
-    process.stdout.write(`qtests: would write ${label} -> ${targetPath}\n`);
-    return;
+    if (!silent) process.stdout.write(`qtests: would write ${label}\n`);
+    return { label, result: 'dry' };
   }
   await writeFileAtomic(targetPath, content);
-  process.stdout.write(`qtests: wrote ${label} -> ${targetPath}\n`);
+  if (!silent) process.stdout.write(`qtests: wrote ${label}\n`);
+  return { label, result: 'wrote' };
 }
 
 function canResolveFromClient(clientRoot, id) {
@@ -436,11 +437,13 @@ function getIntegrationStubContent(sourceBasename, importPath, useTs) {
 
 async function scaffoldTestStubs(clientRoot, options, enableTsJest) {
   const sourceFiles = await discoverSourceFiles(clientRoot);
-  if (sourceFiles.length === 0) return { integrationStubs: [] };
-
-  process.stdout.write(`qtests: discovered ${sourceFiles.length} source file(s) — generating stubs\n`);
+  if (sourceFiles.length === 0) {
+    process.stdout.write('qtests: stubs    0 source files found\n');
+    return { integrationStubs: [] };
+  }
 
   const integrationStubs = [];
+  let wrote = 0, kept = 0;
 
   for (const srcAbs of sourceFiles) {
     const srcExt = path.extname(srcAbs);
@@ -455,16 +458,23 @@ async function scaffoldTestStubs(clientRoot, options, enableTsJest) {
     const intStubDir = path.dirname(intStubAbs);
     const relToSrc = path.relative(intStubDir, srcAbs).replace(/\\/g, '/').replace(/\.[^.]+$/, '');
     const intImport = relToSrc.startsWith('.') ? relToSrc : './' + relToSrc;
-    await scaffoldFile({
+    const { result } = await scaffoldFile({
       label: intStubRel,
       targetPath: intStubAbs,
       content: getIntegrationStubContent(srcBase, intImport, useTs),
       dryRun: options.dryRun,
-      force: options.force
+      force: options.force,
+      silent: true
     });
+    if (result === 'wrote' || result === 'dry') wrote++; else kept++;
     integrationStubs.push(intStubRel);
   }
 
+  const verb = options.dryRun ? 'would create' : 'new';
+  const detail = wrote > 0
+    ? `${sourceFiles.length} sources — ${wrote} ${verb}, ${kept} already in place`
+    : `${sourceFiles.length} sources — all stubs already in place`;
+  process.stdout.write(`qtests: stubs    ${detail}\n`);
   return { integrationStubs };
 }
 
@@ -557,22 +567,12 @@ async function main() {
   }
 
   process.stdout.write('qtests: scaffolding...\n');
-  process.stdout.write(`qtests: clientRoot=${clientRoot}\n`);
 
   const runnerTemplate = await readRunnerTemplate();
   if (!runnerTemplate) {
     process.stderr.write('qtests: unable to locate a valid runner template in the installed package\n');
     process.exit(1);
   }
-
-  const runnerTarget = path.join(clientRoot, 'qtests-runner.mjs');
-  await scaffoldFile({
-    label: 'qtests-runner.mjs',
-    targetPath: runnerTarget,
-    content: runnerTemplate,
-    dryRun: options.dryRun,
-    force: options.force
-  });
 
   const configDir = path.join(clientRoot, 'config');
   const polyfillTarget = path.join(configDir, 'jest-require-polyfill.cjs');
@@ -581,38 +581,32 @@ async function main() {
   const deps = await maybeAutoInstallTsJest(clientRoot, options);
   const enableTsJest = deps.hasTsJest && deps.hasTypescript;
   if (!enableTsJest && !options.autoInstall) {
-    process.stdout.write('qtests: note: ts-jest/typescript not detected; generated Jest config will be JS-only.\n');
-    process.stdout.write('qtests: for TypeScript tests, install dev deps: ts-jest typescript (or re-run with --auto-install).\n');
+    process.stdout.write('qtests: note     TypeScript not detected — config will be JS-only (install ts-jest typescript to enable)\n');
   }
 
   const jestSetupFilename = enableTsJest ? 'jest-setup.ts' : 'jest-setup.cjs';
   const jestSetupTarget = path.join(configDir, jestSetupFilename);
-  const jestSetupLabel = `config/${jestSetupFilename}`;
   const jestSetupContent = enableTsJest ? getJestSetupTemplateTs() : getJestSetupTemplateCjs();
 
-  await scaffoldFile({
-    label: 'config/jest-require-polyfill.cjs',
-    targetPath: polyfillTarget,
-    content: getRequirePolyfillTemplate(),
+  const runnerResult = await scaffoldFile({
+    label: 'qtests-runner.mjs',
+    targetPath: path.join(clientRoot, 'qtests-runner.mjs'),
+    content: runnerTemplate,
     dryRun: options.dryRun,
-    force: options.force
+    force: options.force,
+    silent: true
   });
+  const runnerSuffix = runnerResult.result === 'wrote' ? 'created' : runnerResult.result === 'dry' ? 'would create' : '✓';
+  process.stdout.write(`qtests: runner   ${runnerSuffix}\n`);
 
-  await scaffoldFile({
-    label: jestSetupLabel,
-    targetPath: jestSetupTarget,
-    content: jestSetupContent,
-    dryRun: options.dryRun,
-    force: options.force
-  });
-
-  await scaffoldFile({
-    label: 'config/jest.config.mjs',
-    targetPath: jestConfigTarget,
-    content: getJestConfigTemplate({ enableTsJest }),
-    dryRun: options.dryRun,
-    force: options.force
-  });
+  const configResults = await Promise.all([
+    scaffoldFile({ label: 'jest-require-polyfill.cjs', targetPath: polyfillTarget, content: getRequirePolyfillTemplate(), dryRun: options.dryRun, force: options.force, silent: true }),
+    scaffoldFile({ label: jestSetupFilename, targetPath: jestSetupTarget, content: jestSetupContent, dryRun: options.dryRun, force: options.force, silent: true }),
+    scaffoldFile({ label: 'jest.config.mjs', targetPath: jestConfigTarget, content: getJestConfigTemplate({ enableTsJest }), dryRun: options.dryRun, force: options.force, silent: true }),
+  ]);
+  const newConfigFiles = configResults.filter(r => r.result === 'wrote' || r.result === 'dry').map(r => r.label);
+  const configSuffix = newConfigFiles.length > 0 ? `created ${newConfigFiles.join(', ')}` : '✓';
+  process.stdout.write(`qtests: config   ${configSuffix}\n`);
 
   await updatePackageScript(clientRoot, options);
   const stubs = await scaffoldTestStubs(clientRoot, options, enableTsJest);

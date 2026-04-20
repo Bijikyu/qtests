@@ -1,0 +1,270 @@
+~/workspace$ qtests-generate
+qtests: scaffolding...
+qtests: clientRoot=/home/runner/workspace
+qtests: keep qtests-runner.mjs (already exists)
+qtests: keep config/jest-require-polyfill.cjs (already exists)
+qtests: keep config/jest-setup.ts (already exists)
+qtests: keep config/jest.config.mjs (already exists)
+qtests: discovered 232 source file(s) — generating stubs
+qtests: keep tests/integration/lib/advancedMemoryLeakDetector.test.ts (already exists)
+qtests: keep tests/integration/lib/cache.test.ts (already exists)
+qtests: keep tests/integration/lib/circuitBreaker.test.ts (already exists)
+qtests: keep tests/integration/lib/cleanupManager.test.ts (already exists)
+qtests: keep tests/integration/lib/connectionPool.test.ts (already exists)
+qtests: keep tests/integration/lib/coreUtils.test.ts (already exists)
+qtests: keep tests/integration/lib/dataUtils.test.ts (already exists)
+qtests: keep tests/integration/lib/envUtils.test.ts (already exists)
+qtests: keep tests/integration/lib/errorHandling/advancedWrappers.test.ts (already exists)
+qtests: keep tests/integration/lib/errorHandling/basicWrappers.test.ts (already exists)
+qtests: keep tests/integration/lib/errorHandling/errorLogging.test.ts (already exists)
+qtests: keep tests/integration/lib/errorHandling/errorTransformation.test.ts (already exists)
+qtests: keep tests/integration/lib/errorHandling/errorTypes.test.ts (already exists)
+qtests: keep tests/integration/lib/errorHandling/errorWrappers.test.ts (already exists)
+qtests: keep tests/integration/lib/errorHandling/fallbackHandlers.test.ts (already exists)
+qtests: keep tests/integration/lib/errorHandling/index.test.ts (already exists)
+qtests: keep tests/integration/lib/errorHandling/pRetryTimeoutWrapper.test.ts (already exists)
+qtests: keep tests/integration/lib/errorHandling/placeholderWrappers.test.ts (already exists)
+qtests: keep tests/integration/lib/errorHandling/simpleErrorLogging.test.ts (already exists)
+qtests: keep tests/integration/lib/errorHandling/wrapperFactory.test.ts (already exists)
+qtests: keep tests/integration/lib/fileSystem/errorHandling.test.ts (already exists)
+qtests: keep tests/integration/lib/fileSystem/fileDeletion.test.ts (already exists)
+qtests: keep tests/integration/lib/fileSystem/fileExistence.test.ts (already exists)
+qtests: keep tests/integration/lib/fileSystem/fileReading.test.ts (already exists)
+qtests: keep tests/integration/lib/fileSystem/fileWriting.test.ts (already exists)
+qtests: keep tests/integration/lib/fileSystem/index.test.ts (already exists)
+qtests: keep tests/integration/lib/fileSystem/managementUtils.test.ts (already exists)
+qtests: keep tests/integration/lib/fileSystem/readingUtils.test.ts (already exists)
+qtests: keep tests/integration/lib/httpMock/advancedMSWMock.test.ts (already exists)
+qtests: keep tests/integration/lib/httpMock/clientFactories.test.ts (already exists)
+qtests: keep tests/integration/lib/httpMock/enhancedMSWMock.test.ts (already exists)
+qtests: keep tests/integration/lib/httpMock/index.test.ts (already exists)
+qtests: keep tests/integration/lib/httpMock/legacyAxiosImplementation.test.ts (already exists)
+qtests: keep tests/integration/lib/httpMock/mockTypes.test.ts (already exists)
+qtests: wrote tests/integration/lib/httpMock/mockUtilities.test.ts -> /home/runner/workspace/tests/integration/lib/httpMock/mockUtilities.test.ts
+qtests: wrote tests/integration/lib/httpMock/modernMSWMock.test.ts -> /home/runner/workspace/tests/integration/lib/httpMock/modernMSWMock.test.ts
+qtests: wrote tests/integration/lib/httpMock/serverFactories.test.ts -> /home/runner/workspace/tests/integration/lib/httpMock/serverFactories.test.ts
+qtests: wrote tests/integration/lib/httpMock/userConfigurableAxiosMock.test.ts -> /home/runner/workspace/tests/integration/lib/httpMock/userConfigurableAxiosMock.test.ts
+qtests: wrote tests/integration/lib/httpUtils.test.ts -> /home/runner/workspace/tests/integration/lib/httpUtils.test.ts
+qtests: wrote tests/integration/lib/jestConfigFactory.test.ts -> /home/runner/workspace/tests/integration/lib/jestConfigFactory.test.ts
+qtests: wrote tests/integration/lib/loadTest.test.ts -> /home/runner/workspace/tests/integration/lib/loadTest.test.ts
+qtests: wrote tests/integration/lib/logUtils.test.ts -> /home/runner/workspace/tests/integration/lib/logUtils.test.ts
+qtests: wrote tests/integration/lib/logging/advancedWrappers.test.ts -> /home/runner/workspace/tests/integration/lib/logging/advancedWrappers.test.ts
+qtests: wrote tests/integration/lib/logging/basicWrappers.test.ts -> /home/runner/workspace/tests/integration/lib/logging/basicWrappers.test.ts
+qtests: wrote tests/integration/lib/logging/convenienceWrappers.test.ts -> /home/runner/workspace/tests/integration/lib/logging/convenienceWrappers.test.ts
+qtests: wrote tests/integration/lib/logging/coreWrapper.test.ts -> /home/runner/workspace/tests/integration/lib/logging/coreWrapper.test.ts
+qtests: wrote tests/integration/lib/logging/decoratorTypes.test.ts -> /home/runner/workspace/tests/integration/lib/logging/decoratorTypes.test.ts
+qtests: wrote tests/integration/lib/logging/decorators.test.ts -> /home/runner/workspace/tests/integration/lib/logging/decorators.test.ts
+qtests: wrote tests/integration/lib/logging/index.test.ts -> /home/runner/workspace/tests/integration/lib/logging/index.test.ts
+qtests: wrote tests/integration/lib/logging/winstonLogger.test.ts -> /home/runner/workspace/tests/integration/lib/logging/winstonLogger.test.ts
+qtests: wrote tests/integration/lib/logging.test.ts -> /home/runner/workspace/tests/integration/lib/logging.test.ts
+qtests: wrote tests/integration/lib/loggingDecorators.test.ts -> /home/runner/workspace/tests/integration/lib/loggingDecorators.test.ts
+qtests: wrote tests/integration/lib/memory/cleanupOperations.test.ts -> /home/runner/workspace/tests/integration/lib/memory/cleanupOperations.test.ts
+qtests: wrote tests/integration/lib/memory/garbageCollection.test.ts -> /home/runner/workspace/tests/integration/lib/memory/garbageCollection.test.ts
+qtests: wrote tests/integration/lib/memory/globalCleanup.test.ts -> /home/runner/workspace/tests/integration/lib/memory/globalCleanup.test.ts
+qtests: wrote tests/integration/lib/memory/index.test.ts -> /home/runner/workspace/tests/integration/lib/memory/index.test.ts
+qtests: wrote tests/integration/lib/memory/leakDetector.test.ts -> /home/runner/workspace/tests/integration/lib/memory/leakDetector.test.ts
+qtests: wrote tests/integration/lib/memory/memoryMonitoring.test.ts -> /home/runner/workspace/tests/integration/lib/memory/memoryMonitoring.test.ts
+qtests: wrote tests/integration/lib/memory/memoryTypes.test.ts -> /home/runner/workspace/tests/integration/lib/memory/memoryTypes.test.ts
+qtests: wrote tests/integration/lib/memory/moduleCleanup.test.ts -> /home/runner/workspace/tests/integration/lib/memory/moduleCleanup.test.ts
+qtests: wrote tests/integration/lib/memory/monitoringOrchestration.test.ts -> /home/runner/workspace/tests/integration/lib/memory/monitoringOrchestration.test.ts
+qtests: wrote tests/integration/lib/memory/snapshotManager.test.ts -> /home/runner/workspace/tests/integration/lib/memory/snapshotManager.test.ts
+qtests: wrote tests/integration/lib/memoryPressure.test.ts -> /home/runner/workspace/tests/integration/lib/memoryPressure.test.ts
+qtests: wrote tests/integration/lib/mockSystem.test.ts -> /home/runner/workspace/tests/integration/lib/mockSystem.test.ts
+qtests: wrote tests/integration/lib/monitoring.test.ts -> /home/runner/workspace/tests/integration/lib/monitoring.test.ts
+qtests: wrote tests/integration/lib/optimization/testDiscoveryCache.test.ts -> /home/runner/workspace/tests/integration/lib/optimization/testDiscoveryCache.test.ts
+qtests: wrote tests/integration/lib/performanceMonitor.test.ts -> /home/runner/workspace/tests/integration/lib/performanceMonitor.test.ts
+qtests: wrote tests/integration/lib/polyfills/clipboardPolyfill.test.ts -> /home/runner/workspace/tests/integration/lib/polyfills/clipboardPolyfill.test.ts
+qtests: wrote tests/integration/lib/polyfills/index.test.ts -> /home/runner/workspace/tests/integration/lib/polyfills/index.test.ts
+qtests: wrote tests/integration/lib/polyfills/intersectionObserverPolyfill.test.ts -> /home/runner/workspace/tests/integration/lib/polyfills/intersectionObserverPolyfill.test.ts
+qtests: wrote tests/integration/lib/polyfills/mediaQueryPolyfill.test.ts -> /home/runner/workspace/tests/integration/lib/polyfills/mediaQueryPolyfill.test.ts
+qtests: wrote tests/integration/lib/polyfills/polyfillOrchestrator.test.ts -> /home/runner/workspace/tests/integration/lib/polyfills/polyfillOrchestrator.test.ts
+qtests: wrote tests/integration/lib/polyfills/resizeObserverPolyfill.test.ts -> /home/runner/workspace/tests/integration/lib/polyfills/resizeObserverPolyfill.test.ts
+qtests: wrote tests/integration/lib/qerrorsFallback.test.ts -> /home/runner/workspace/tests/integration/lib/qerrorsFallback.test.ts
+qtests: wrote tests/integration/lib/rateLimiter-flexible.test.ts -> /home/runner/workspace/tests/integration/lib/rateLimiter-flexible.test.ts
+qtests: wrote tests/integration/lib/rateLimiter.test.ts -> /home/runner/workspace/tests/integration/lib/rateLimiter.test.ts
+qtests: wrote tests/integration/lib/routeTestUtils.test.ts -> /home/runner/workspace/tests/integration/lib/routeTestUtils.test.ts
+qtests: wrote tests/integration/lib/runner/jestWorker.test.ts -> /home/runner/workspace/tests/integration/lib/runner/jestWorker.test.ts
+qtests: wrote tests/integration/lib/runner/resultTypes.test.ts -> /home/runner/workspace/tests/integration/lib/runner/resultTypes.test.ts
+qtests: wrote tests/integration/lib/runnerScaffolder.test.ts -> /home/runner/workspace/tests/integration/lib/runnerScaffolder.test.ts
+qtests: wrote tests/integration/lib/scalableApi.test.ts -> /home/runner/workspace/tests/integration/lib/scalableApi.test.ts
+qtests: wrote tests/integration/lib/scalableDatabase.test.ts -> /home/runner/workspace/tests/integration/lib/scalableDatabase.test.ts
+qtests: wrote tests/integration/lib/security/JoiSecurityValidator.test.ts -> /home/runner/workspace/tests/integration/lib/security/JoiSecurityValidator.test.ts
+qtests: wrote tests/integration/lib/security/SecurityTestingFramework.test.ts -> /home/runner/workspace/tests/integration/lib/security/SecurityTestingFramework.test.ts
+qtests: wrote tests/integration/lib/security/SecurityValidator.test.ts -> /home/runner/workspace/tests/integration/lib/security/SecurityValidator.test.ts
+qtests: wrote tests/integration/lib/security/index.test.ts -> /home/runner/workspace/tests/integration/lib/security/index.test.ts
+qtests: wrote tests/integration/lib/security/pathValidator.test.ts -> /home/runner/workspace/tests/integration/lib/security/pathValidator.test.ts
+qtests: wrote tests/integration/lib/security/summaryHelpers.test.ts -> /home/runner/workspace/tests/integration/lib/security/summaryHelpers.test.ts
+qtests: wrote tests/integration/lib/security/types.test.ts -> /home/runner/workspace/tests/integration/lib/security/types.test.ts
+qtests: wrote tests/integration/lib/setup.test.ts -> /home/runner/workspace/tests/integration/lib/setup.test.ts
+qtests: wrote tests/integration/lib/streamingValidator.test.ts -> /home/runner/workspace/tests/integration/lib/streamingValidator.test.ts
+qtests: wrote tests/integration/lib/streamingValidatorModern.test.ts -> /home/runner/workspace/tests/integration/lib/streamingValidatorModern.test.ts
+qtests: wrote tests/integration/lib/stubs.test.ts -> /home/runner/workspace/tests/integration/lib/stubs.test.ts
+qtests: wrote tests/integration/lib/testIsolation/databaseManager.test.ts -> /home/runner/workspace/tests/integration/lib/testIsolation/databaseManager.test.ts
+qtests: wrote tests/integration/lib/testIsolation/environmentManager.test.ts -> /home/runner/workspace/tests/integration/lib/testIsolation/environmentManager.test.ts
+qtests: wrote tests/integration/lib/testIsolation/index.test.ts -> /home/runner/workspace/tests/integration/lib/testIsolation/index.test.ts
+qtests: wrote tests/integration/lib/testIsolation/isolationOrchestrator.test.ts -> /home/runner/workspace/tests/integration/lib/testIsolation/isolationOrchestrator.test.ts
+qtests: wrote tests/integration/lib/testIsolation/mockManager.test.ts -> /home/runner/workspace/tests/integration/lib/testIsolation/mockManager.test.ts
+qtests: wrote tests/integration/lib/testIsolation/serverManager.test.ts -> /home/runner/workspace/tests/integration/lib/testIsolation/serverManager.test.ts
+qtests: wrote tests/integration/lib/testIsolation.test.ts -> /home/runner/workspace/tests/integration/lib/testIsolation.test.ts
+qtests: wrote tests/integration/lib/testPolyfills.test.ts -> /home/runner/workspace/tests/integration/lib/testPolyfills.test.ts
+qtests: wrote tests/integration/lib/testSetupFactory.test.ts -> /home/runner/workspace/tests/integration/lib/testSetupFactory.test.ts
+qtests: wrote tests/integration/lib/testUtils.test.ts -> /home/runner/workspace/tests/integration/lib/testUtils.test.ts
+qtests: wrote tests/integration/lib/unifiedHttpMock.test.ts -> /home/runner/workspace/tests/integration/lib/unifiedHttpMock.test.ts
+qtests: wrote tests/integration/lib/utils/agentFactory.test.ts -> /home/runner/workspace/tests/integration/lib/utils/agentFactory.test.ts
+qtests: wrote tests/integration/lib/utils/asyncUtils.test.ts -> /home/runner/workspace/tests/integration/lib/utils/asyncUtils.test.ts
+qtests: wrote tests/integration/lib/utils/commonPatterns.test.ts -> /home/runner/workspace/tests/integration/lib/utils/commonPatterns.test.ts
+qtests: wrote tests/integration/lib/utils/concurrencyUtils.test.ts -> /home/runner/workspace/tests/integration/lib/utils/concurrencyUtils.test.ts
+qtests: wrote tests/integration/lib/utils/configurationFramework.test.ts -> /home/runner/workspace/tests/integration/lib/utils/configurationFramework.test.ts
+qtests: wrote tests/integration/lib/utils/errorHandling.test.ts -> /home/runner/workspace/tests/integration/lib/utils/errorHandling.test.ts
+qtests: wrote tests/integration/lib/utils/fileSystemFramework.test.ts -> /home/runner/workspace/tests/integration/lib/utils/fileSystemFramework.test.ts
+qtests: wrote tests/integration/lib/utils/httpClient.test.ts -> /home/runner/workspace/tests/integration/lib/utils/httpClient.test.ts
+qtests: wrote tests/integration/lib/utils/httpMockFramework.test.ts -> /home/runner/workspace/tests/integration/lib/utils/httpMockFramework.test.ts
+qtests: wrote tests/integration/lib/utils/importExportUtils.test.ts -> /home/runner/workspace/tests/integration/lib/utils/importExportUtils.test.ts
+qtests: wrote tests/integration/lib/utils/jsonUtils.test.ts -> /home/runner/workspace/tests/integration/lib/utils/jsonUtils.test.ts
+qtests: wrote tests/integration/lib/utils/memoryManagement.test.ts -> /home/runner/workspace/tests/integration/lib/utils/memoryManagement.test.ts
+qtests: wrote tests/integration/lib/utils/performanceBenchmarker.test.ts -> /home/runner/workspace/tests/integration/lib/utils/performanceBenchmarker.test.ts
+qtests: wrote tests/integration/lib/utils/streamingUtils.test.ts -> /home/runner/workspace/tests/integration/lib/utils/streamingUtils.test.ts
+qtests: wrote tests/integration/lib/utils/structuredLogger.test.ts -> /home/runner/workspace/tests/integration/lib/utils/structuredLogger.test.ts
+qtests: wrote tests/integration/lib/utils/testIsolationFramework.test.ts -> /home/runner/workspace/tests/integration/lib/utils/testIsolationFramework.test.ts
+qtests: wrote tests/integration/lib/utils/timerManager.test.ts -> /home/runner/workspace/tests/integration/lib/utils/timerManager.test.ts
+qtests: wrote tests/integration/lib/utils/timingUtils.test.ts -> /home/runner/workspace/tests/integration/lib/utils/timingUtils.test.ts
+qtests: wrote tests/integration/lib/utils/validationSchemas.test.ts -> /home/runner/workspace/tests/integration/lib/utils/validationSchemas.test.ts
+qtests: wrote tests/integration/lib/validation/basicSchemas.test.ts -> /home/runner/workspace/tests/integration/lib/validation/basicSchemas.test.ts
+qtests: wrote tests/integration/lib/validation/htmlSanitization.test.ts -> /home/runner/workspace/tests/integration/lib/validation/htmlSanitization.test.ts
+qtests: wrote tests/integration/lib/validation/index.test.ts -> /home/runner/workspace/tests/integration/lib/validation/index.test.ts
+qtests: wrote tests/integration/lib/validation/legacyStreamingValidator.test.ts -> /home/runner/workspace/tests/integration/lib/validation/legacyStreamingValidator.test.ts
+qtests: wrote tests/integration/lib/validation/streamingValidationLogic.test.ts -> /home/runner/workspace/tests/integration/lib/validation/streamingValidationLogic.test.ts
+qtests: wrote tests/integration/lib/validation/streamingValidator.test.ts -> /home/runner/workspace/tests/integration/lib/validation/streamingValidator.test.ts
+qtests: wrote tests/integration/lib/validation/validationLogic.test.ts -> /home/runner/workspace/tests/integration/lib/validation/validationLogic.test.ts
+qtests: wrote tests/integration/lib/validation/validationMiddleware.test.ts -> /home/runner/workspace/tests/integration/lib/validation/validationMiddleware.test.ts
+qtests: wrote tests/integration/lib/validation/validationSchemas.test.ts -> /home/runner/workspace/tests/integration/lib/validation/validationSchemas.test.ts
+qtests: wrote tests/integration/lib/validation/validationTypes.test.ts -> /home/runner/workspace/tests/integration/lib/validation/validationTypes.test.ts
+qtests: wrote tests/integration/lib/waitForCondition.test.ts -> /home/runner/workspace/tests/integration/lib/waitForCondition.test.ts
+qtests: wrote tests/integration/bin/qtests-generate.test.ts -> /home/runner/workspace/tests/integration/bin/qtests-generate.test.ts
+qtests: wrote tests/integration/scripts/benchmarks/memory-benchmark-simple.test.ts -> /home/runner/workspace/tests/integration/scripts/benchmarks/memory-benchmark-simple.test.ts
+qtests: wrote tests/integration/scripts/benchmarks/memory-benchmark.test.ts -> /home/runner/workspace/tests/integration/scripts/benchmarks/memory-benchmark.test.ts
+qtests: wrote tests/integration/scripts/check-imports.test.ts -> /home/runner/workspace/tests/integration/scripts/check-imports.test.ts
+qtests: wrote tests/integration/scripts/ci-verify-runner.test.ts -> /home/runner/workspace/tests/integration/scripts/ci-verify-runner.test.ts
+qtests: wrote tests/integration/scripts/clean-build.test.ts -> /home/runner/workspace/tests/integration/scripts/clean-build.test.ts
+qtests: wrote tests/integration/scripts/clean-dist.test.ts -> /home/runner/workspace/tests/integration/scripts/clean-dist.test.ts
+qtests: wrote tests/integration/scripts/copy-stubs.test.ts -> /home/runner/workspace/tests/integration/scripts/copy-stubs.test.ts
+qtests: wrote tests/integration/scripts/demonstrate-improvements.test.ts -> /home/runner/workspace/tests/integration/scripts/demonstrate-improvements.test.ts
+qtests: wrote tests/integration/scripts/ensure-bins.test.ts -> /home/runner/workspace/tests/integration/scripts/ensure-bins.test.ts
+qtests: wrote tests/integration/scripts/ensure-runner.test.ts -> /home/runner/workspace/tests/integration/scripts/ensure-runner.test.ts
+qtests: wrote tests/integration/scripts/patch-node-modules.test.ts -> /home/runner/workspace/tests/integration/scripts/patch-node-modules.test.ts
+qtests: wrote tests/integration/scripts/postinstall-scaffold.test.ts -> /home/runner/workspace/tests/integration/scripts/postinstall-scaffold.test.ts
+qtests: wrote tests/integration/scripts/security-test-runner.test.ts -> /home/runner/workspace/tests/integration/scripts/security-test-runner.test.ts
+qtests: wrote tests/integration/scripts/sharedUtils.test.ts -> /home/runner/workspace/tests/integration/scripts/sharedUtils.test.ts
+qtests: wrote tests/integration/scripts/simple-scalability-test-clean.test.ts -> /home/runner/workspace/tests/integration/scripts/simple-scalability-test-clean.test.ts
+qtests: wrote tests/integration/scripts/simple-scalability-test.test.ts -> /home/runner/workspace/tests/integration/scripts/simple-scalability-test.test.ts
+qtests: wrote tests/integration/scripts/test-migrations.test.ts -> /home/runner/workspace/tests/integration/scripts/test-migrations.test.ts
+qtests: wrote tests/integration/scripts/validate-scalability-fixes.test.ts -> /home/runner/workspace/tests/integration/scripts/validate-scalability-fixes.test.ts
+qtests: wrote tests/integration/scripts/validate-scalability.test.ts -> /home/runner/workspace/tests/integration/scripts/validate-scalability.test.ts
+qtests: wrote tests/integration/scripts/verify-npm-replacement.test.ts -> /home/runner/workspace/tests/integration/scripts/verify-npm-replacement.test.ts
+qtests: keep tests/integration/scripts/verify-npm-replacement.test.ts (already exists)
+qtests: keep tests/integration/scripts/verify-npm-replacement.test.ts (already exists)
+qtests: wrote tests/integration/scripts/verify.test.ts -> /home/runner/workspace/tests/integration/scripts/verify.test.ts
+qtests: keep tests/integration/scripts/verify.test.ts (already exists)
+qtests: wrote tests/integration/scripts/writeSummaryFile.test.ts -> /home/runner/workspace/tests/integration/scripts/writeSummaryFile.test.ts
+qtests: wrote tests/integration/utils/console/consoleUtils.test.ts -> /home/runner/workspace/tests/integration/utils/console/consoleUtils.test.ts
+qtests: wrote tests/integration/utils/console/fallbackMocker.test.ts -> /home/runner/workspace/tests/integration/utils/console/fallbackMocker.test.ts
+qtests: wrote tests/integration/utils/console/jestMocker.test.ts -> /home/runner/workspace/tests/integration/utils/console/jestMocker.test.ts
+qtests: wrote tests/integration/utils/customStubs.test.ts -> /home/runner/workspace/tests/integration/utils/customStubs.test.ts
+qtests: wrote tests/integration/utils/email/emailFormatter.test.ts -> /home/runner/workspace/tests/integration/utils/email/emailFormatter.test.ts
+qtests: wrote tests/integration/utils/email/emailHistory.test.ts -> /home/runner/workspace/tests/integration/utils/email/emailHistory.test.ts
+qtests: wrote tests/integration/utils/email/emailSender.test.ts -> /home/runner/workspace/tests/integration/utils/email/emailSender.test.ts
+qtests: wrote tests/integration/utils/email/emailTemplate.test.ts -> /home/runner/workspace/tests/integration/utils/email/emailTemplate.test.ts
+qtests: wrote tests/integration/utils/email/emailValidator.test.ts -> /home/runner/workspace/tests/integration/utils/email/emailValidator.test.ts
+qtests: wrote tests/integration/utils/enhancedTesting.test.ts -> /home/runner/workspace/tests/integration/utils/enhancedTesting.test.ts
+qtests: wrote tests/integration/utils/esm-globals.test.ts -> /home/runner/workspace/tests/integration/utils/esm-globals.test.ts
+qtests: wrote tests/integration/utils/fileSystem/safeOperations.test.ts -> /home/runner/workspace/tests/integration/utils/fileSystem/safeOperations.test.ts
+qtests: wrote tests/integration/utils/helpers/arrayProcessing.test.ts -> /home/runner/workspace/tests/integration/utils/helpers/arrayProcessing.test.ts
+qtests: wrote tests/integration/utils/helpers/envManager.test.ts -> /home/runner/workspace/tests/integration/utils/helpers/envManager.test.ts
+qtests: wrote tests/integration/utils/helpers/functionLogger.test.ts -> /home/runner/workspace/tests/integration/utils/helpers/functionLogger.test.ts
+qtests: wrote tests/integration/utils/helpers/keyGenerator.test.ts -> /home/runner/workspace/tests/integration/utils/helpers/keyGenerator.test.ts
+qtests: wrote tests/integration/utils/helpers/moduleReloader.test.ts -> /home/runner/workspace/tests/integration/utils/helpers/moduleReloader.test.ts
+qtests: wrote tests/integration/utils/helpers/promiseUtils.test.ts -> /home/runner/workspace/tests/integration/utils/helpers/promiseUtils.test.ts
+qtests: wrote tests/integration/utils/helpers/qerrorsStub.test.ts -> /home/runner/workspace/tests/integration/utils/helpers/qerrorsStub.test.ts
+qtests: wrote tests/integration/utils/helpers/responseMocker.test.ts -> /home/runner/workspace/tests/integration/utils/helpers/responseMocker.test.ts
+qtests: wrote tests/integration/utils/helpers/safeExecution.test.ts -> /home/runner/workspace/tests/integration/utils/helpers/safeExecution.test.ts
+qtests: wrote tests/integration/utils/helpers/stringUtils.test.ts -> /home/runner/workspace/tests/integration/utils/helpers/stringUtils.test.ts
+qtests: wrote tests/integration/utils/helpers/timeUtils.test.ts -> /home/runner/workspace/tests/integration/utils/helpers/timeUtils.test.ts
+qtests: wrote tests/integration/utils/helpers/validation.test.ts -> /home/runner/workspace/tests/integration/utils/helpers/validation.test.ts
+qtests: wrote tests/integration/utils/http/mockResponse.test.ts -> /home/runner/workspace/tests/integration/utils/http/mockResponse.test.ts
+qtests: wrote tests/integration/utils/httpClientMockFactory.test.ts -> /home/runner/workspace/tests/integration/utils/httpClientMockFactory.test.ts
+qtests: wrote tests/integration/utils/httpTest.shim.test.ts -> /home/runner/workspace/tests/integration/utils/httpTest.shim.test.ts
+qtests: wrote tests/integration/utils/httpTest.test.ts -> /home/runner/workspace/tests/integration/utils/httpTest.test.ts
+qtests: wrote tests/integration/utils/jest-proxies/external-service-client.test.ts -> /home/runner/workspace/tests/integration/utils/jest-proxies/external-service-client.test.ts
+qtests: wrote tests/integration/utils/jest-proxies/feature-x.test.ts -> /home/runner/workspace/tests/integration/utils/jest-proxies/feature-x.test.ts
+qtests: wrote tests/integration/utils/mockAxios.test.ts -> /home/runner/workspace/tests/integration/utils/mockAxios.test.ts
+qtests: wrote tests/integration/utils/mockConsole.test.ts -> /home/runner/workspace/tests/integration/utils/mockConsole.test.ts
+qtests: wrote tests/integration/utils/mockModels.test.ts -> /home/runner/workspace/tests/integration/utils/mockModels.test.ts
+qtests: wrote tests/integration/utils/models/apiKeyModel.test.ts -> /home/runner/workspace/tests/integration/utils/models/apiKeyModel.test.ts
+qtests: wrote tests/integration/utils/models/apiLogModel.test.ts -> /home/runner/workspace/tests/integration/utils/models/apiLogModel.test.ts
+qtests: wrote tests/integration/utils/models/baseMockModel.test.ts -> /home/runner/workspace/tests/integration/utils/models/baseMockModel.test.ts
+qtests: wrote tests/integration/utils/models/modelFactory.test.ts -> /home/runner/workspace/tests/integration/utils/models/modelFactory.test.ts
+qtests: wrote tests/integration/utils/offlineMode.test.ts -> /home/runner/workspace/tests/integration/utils/offlineMode.test.ts
+qtests: wrote tests/integration/utils/runTestSuite.test.ts -> /home/runner/workspace/tests/integration/utils/runTestSuite.test.ts
+qtests: wrote tests/integration/utils/sendEmail.test.ts -> /home/runner/workspace/tests/integration/utils/sendEmail.test.ts
+qtests: wrote tests/integration/utils/stubMethod.test.ts -> /home/runner/workspace/tests/integration/utils/stubMethod.test.ts
+qtests: wrote tests/integration/utils/stubbing/mockCreation.test.ts -> /home/runner/workspace/tests/integration/utils/stubbing/mockCreation.test.ts
+qtests: wrote tests/integration/utils/stubbing/networkMocking.test.ts -> /home/runner/workspace/tests/integration/utils/stubbing/networkMocking.test.ts
+qtests: wrote tests/integration/utils/stubbing/spying.test.ts -> /home/runner/workspace/tests/integration/utils/stubbing/spying.test.ts
+qtests: wrote tests/integration/utils/stubbing/timerManagement.test.ts -> /home/runner/workspace/tests/integration/utils/stubbing/timerManagement.test.ts
+qtests: wrote tests/integration/utils/stubbing/types.test.ts -> /home/runner/workspace/tests/integration/utils/stubbing/types.test.ts
+qtests: wrote tests/integration/utils/stubbing/utilities.test.ts -> /home/runner/workspace/tests/integration/utils/stubbing/utilities.test.ts
+qtests: wrote tests/integration/utils/stubbing/verification.test.ts -> /home/runner/workspace/tests/integration/utils/stubbing/verification.test.ts
+qtests: wrote tests/integration/utils/testEnv/axiosMocks.test.ts -> /home/runner/workspace/tests/integration/utils/testEnv/axiosMocks.test.ts
+qtests: wrote tests/integration/utils/testEnv/envManager.test.ts -> /home/runner/workspace/tests/integration/utils/testEnv/envManager.test.ts
+qtests: wrote tests/integration/utils/testEnv/functionMocks.test.ts -> /home/runner/workspace/tests/integration/utils/testEnv/functionMocks.test.ts
+qtests: wrote tests/integration/utils/testEnv/mockFactory.test.ts -> /home/runner/workspace/tests/integration/utils/testEnv/mockFactory.test.ts
+qtests: wrote tests/integration/utils/testEnv/serviceMocks.test.ts -> /home/runner/workspace/tests/integration/utils/testEnv/serviceMocks.test.ts
+qtests: wrote tests/integration/utils/testEnv/spyAttacher.test.ts -> /home/runner/workspace/tests/integration/utils/testEnv/spyAttacher.test.ts
+qtests: wrote tests/integration/utils/testEnv/testInitializer.test.ts -> /home/runner/workspace/tests/integration/utils/testEnv/testInitializer.test.ts
+qtests: wrote tests/integration/utils/testEnv/testMockFactory.test.ts -> /home/runner/workspace/tests/integration/utils/testEnv/testMockFactory.test.ts
+qtests: wrote tests/integration/utils/testEnv.test.ts -> /home/runner/workspace/tests/integration/utils/testEnv.test.ts
+qtests: wrote tests/integration/utils/testHelpers.test.ts -> /home/runner/workspace/tests/integration/utils/testHelpers.test.ts
+qtests: wrote tests/integration/utils/testSuite.test.ts -> /home/runner/workspace/tests/integration/utils/testSuite.test.ts
+qtests: wrote tests/integration/utils/testing/assertionHelper.test.ts -> /home/runner/workspace/tests/integration/utils/testing/assertionHelper.test.ts
+qtests: wrote tests/integration/utils/testing/dataTypes.test.ts -> /home/runner/workspace/tests/integration/utils/testing/dataTypes.test.ts
+qtests: wrote tests/integration/utils/testing/databaseTestHelper.test.ts -> /home/runner/workspace/tests/integration/utils/testing/databaseTestHelper.test.ts
+qtests: wrote tests/integration/utils/testing/datasetFactory.test.ts -> /home/runner/workspace/tests/integration/utils/testing/datasetFactory.test.ts
+qtests: wrote tests/integration/utils/testing/entityFactory.test.ts -> /home/runner/workspace/tests/integration/utils/testing/entityFactory.test.ts
+qtests: wrote tests/integration/utils/testing/httpDataFactory.test.ts -> /home/runner/workspace/tests/integration/utils/testing/httpDataFactory.test.ts
+qtests: wrote tests/integration/utils/testing/integrationTestHelper.test.ts -> /home/runner/workspace/tests/integration/utils/testing/integrationTestHelper.test.ts
+qtests: wrote tests/integration/utils/testing/jestSetupHelper.test.ts -> /home/runner/workspace/tests/integration/utils/testing/jestSetupHelper.test.ts
+qtests: wrote tests/integration/utils/testing/mockManager.test.ts -> /home/runner/workspace/tests/integration/utils/testing/mockManager.test.ts
+qtests: wrote tests/integration/utils/testing/mockUtils.test.ts -> /home/runner/workspace/tests/integration/utils/testing/mockUtils.test.ts
+qtests: wrote tests/integration/utils/testing/performanceTestHelper.test.ts -> /home/runner/workspace/tests/integration/utils/testing/performanceTestHelper.test.ts
+qtests: wrote tests/integration/utils/testing/portAllocator.test.ts -> /home/runner/workspace/tests/integration/utils/testing/portAllocator.test.ts
+qtests: wrote tests/integration/utils/testing/testDataFactory.test.ts -> /home/runner/workspace/tests/integration/utils/testing/testDataFactory.test.ts
+qtests: ────────────────────────────────────────────────────────────
+qtests: NEXT STEP — flesh out your generated test stubs
+qtests:
+qtests: Paste the prompt below into an AI agent (Copilot, Cursor,
+qtests: Claude, ChatGPT, etc.) to write project-specific tests:
+qtests:
+qtests:   ┌─────────────────────────────────────────────────────┐
+qtests:   │ ── INTEGRATION TESTS ───────────────────────────────│
+qtests:   │  …tegration/lib/advancedMemoryLeakDetector.test.ts  │
+qtests:   │  tests/integration/lib/cache.test.ts                │
+qtests:   │  tests/integration/lib/circuitBreaker.test.ts       │
+qtests:   │  tests/integration/lib/cleanupManager.test.ts       │
+qtests:   │  tests/integration/lib/connectionPool.test.ts       │
+qtests:   │  …and 227 more                                      │
+qtests:   │                                                     │
+qtests:   │ 1. DELETE any stub that does not map to a critical  │
+qtests:   │    workflow — do not fill in tests for every file.  │
+qtests:   │ 2. In the stubs you keep, cover CRITICAL WORKFLOWS: │
+qtests:   │  • Auth/authz, data mutations, payment flows        │
+qtests:   │  • 1–3 tests per workflow: happy path + failure     │
+qtests:   │  • Start any server once in beforeAll, not per-test │
+qtests:   │  • Mock external HTTP; keep your own data layer real│
+qtests:   │  • Assert status codes + fields, not IDs/timestamps │
+qtests:   │ 3. DO NOT touch qtests-runner.mjs, write new runner │
+qtests:   │    scripts, or reassign the npm test command.       │
+qtests:   └─────────────────────────────────────────────────────┘
+qtests:
+qtests: Suppress this message: QTESTS_SUPPRESS_PROMPT=1 npx qtests-generate
+qtests: ────────────────────────────────────────────────────────────
+qtests: done
