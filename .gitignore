@@ -155,3 +155,5 @@ dist
 
 # Replit debugger
 .breakpoints
+# Integration test temp artifacts
+tests/.tmp/
