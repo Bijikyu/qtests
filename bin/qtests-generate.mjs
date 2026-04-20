@@ -436,7 +436,7 @@ function getIntegrationStubContent(sourceBasename, importPath, useTs) {
 
 async function scaffoldTestStubs(clientRoot, options, enableTsJest) {
   const sourceFiles = await discoverSourceFiles(clientRoot);
-  if (sourceFiles.length === 0) return { unitStubs: [], integrationStubs: [] };
+  if (sourceFiles.length === 0) return { integrationStubs: [] };
 
   process.stdout.write(`qtests: discovered ${sourceFiles.length} source file(s) — generating stubs\n`);
 
@@ -465,7 +465,7 @@ async function scaffoldTestStubs(clientRoot, options, enableTsJest) {
     integrationStubs.push(intStubRel);
   }
 
-  return { unitStubs: [], integrationStubs };
+  return { integrationStubs };
 }
 
 function printAgentPrompt(options, stubs) {
