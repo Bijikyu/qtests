@@ -1,5 +1,5 @@
-// GENERATED RUNNER: qtests-runner.mjs
 #!/usr/bin/env node
+// GENERATED RUNNER: qtests-runner.mjs
 // IMPORTANT: This CLI is sacrosanct and not generated.
 // Policy: API-only via Jest `runCLI` (no child processes).
 
@@ -7,7 +7,7 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 import { Worker } from 'worker_threads';
-import qerrors from '../dist/lib/qerrorsFallback.js';
+import qerrors from './dist/lib/qerrorsFallback.js';
 
 const colors = {
   green: '\u001b[32m',
@@ -211,7 +211,7 @@ async function main() {
   const defaultWorkers = Math.max(1, Math.min(os.cpus().length || 1, 4));
   const fileWorkers = inBand ? 1 : (Number.isFinite(requestedWorkers) && requestedWorkers > 0 ? requestedWorkers : defaultWorkers);
 
-  const workerUrl = new URL('../dist/lib/runner/jestWorker.js', import.meta.url);
+  const workerUrl = new URL('./dist/lib/runner/jestWorker.js', import.meta.url);
 
   let passedFiles = 0;
   let failedFiles = 0;
