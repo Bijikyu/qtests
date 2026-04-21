@@ -1,6 +1,6 @@
 {
   "name": "qtests",
-  "version": "4.2.1",
+  "version": "4.2.2",
   "description": "Node.js testing framework, Node.js stubbing, method stubbing, ESM testing, console mocking, environment management, ESM and TypeScript support, circuit breaker utilities, security validation, jest HTTP mocking, and auto test generation",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
