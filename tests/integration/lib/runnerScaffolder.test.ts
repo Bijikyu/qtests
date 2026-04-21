@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, beforeEach, afterEach, jest } from '@jest/globals';
 import fs from 'fs';
 import path from 'path';
 import { RunnerScaffolder } from '../../../lib/runnerScaffolder.js';
@@ -13,16 +13,16 @@ function makeTempDir(): string {
 
 describe('runnerScaffolder — integration', () => {
   let tmpDir: string;
-  let originalCwd: string;
+  let cwdSpy: jest.SpiedFunction<typeof process.cwd>;
 
   beforeEach(() => {
     tmpDir = makeTempDir();
-    originalCwd = process.cwd();
-    process.chdir(tmpDir);
+    // qtests runs tests in worker threads, so mock cwd instead of calling process.chdir().
+    cwdSpy = jest.spyOn(process, 'cwd').mockReturnValue(tmpDir);
   });
 
   afterEach(() => {
-    process.chdir(originalCwd);
+    cwdSpy.mockRestore();
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 

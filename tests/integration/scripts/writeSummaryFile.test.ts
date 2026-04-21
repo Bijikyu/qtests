@@ -1,4 +1,4 @@
-import { describe, it, beforeEach, afterEach } from '@jest/globals';
+import { describe, it, beforeEach, afterEach, jest } from '@jest/globals';
 import fs from 'fs';
 import path from 'path';
 import { writeSummaryFile } from '../../../scripts/writeSummaryFile.js';
@@ -6,8 +6,8 @@ import { writeSummaryFile } from '../../../scripts/writeSummaryFile.js';
 const PROJECT_ROOT = process.cwd();
 
 const RESULTS = [
-  { type: 'regression_tests'         as const, summary: { passed: 3, total: 3 } },
-  { type: 'penetration_tests'        as const, summary: { passed: 4, total: 4 } },
+  { type: 'regression_tests' as const, summary: { passed: 3, total: 3 } },
+  { type: 'penetration_tests' as const, summary: { passed: 4, total: 4 } },
   { type: 'configuration_validation' as const, summary: { passed: 3, total: 3 } },
 ];
 
@@ -19,16 +19,16 @@ function makeTempDir(): string {
 
 describe('writeSummaryFile — integration', () => {
   let tmpDir: string;
-  let originalCwd: string;
+  let cwdSpy: jest.SpiedFunction<typeof process.cwd>;
 
   beforeEach(() => {
     tmpDir = makeTempDir();
-    originalCwd = process.cwd();
-    process.chdir(tmpDir);
+    // Worker-based Jest execution forbids process.chdir(), so point writeSummaryFile at the temp dir via cwd().
+    cwdSpy = jest.spyOn(process, 'cwd').mockReturnValue(tmpDir);
   });
 
   afterEach(() => {
-    process.chdir(originalCwd);
+    cwdSpy.mockRestore();
     fs.rmSync(tmpDir, { recursive: true, force: true });
   });
 
