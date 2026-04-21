@@ -1,4 +1,4 @@
-<p align="center"><img src="logoqtests.png" alt="qtests logo" width="100" height="100"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/Bijikyu/qtests/main/logoqtests.png" alt="qtests logo" width="100" height="100"></p>
 
 # qtests
 
