@@ -96,6 +96,11 @@ app.get('/logoqtests.png', (_req, res) => {
     res.sendFile(path.join(__dirname, '..', '..', 'logoqtests.png'));
 });
 
+// Serve ICO favicon for broader browser and OS compatibility
+app.get('/favicon.ico', (_req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'favicon.ico'));
+});
+
 // Serve demo.html at root with no-cache headers
 app.get('/', (_req, res) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
