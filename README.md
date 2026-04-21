@@ -1,3 +1,5 @@
+<p align="center"><img src="logoqtests.png" alt="qtests logo" width="100" height="100"></p>
+
 # qtests
 
 A comprehensive Node.js toolkit covering the full testing lifecycle and production reliability in a single dependency. Stub methods, mock modules and HTTP, test security and performance, generate integration tests automatically, and ship circuit breakers, caching, and rate limiting — all with first-class **ES Module and TypeScript** support.

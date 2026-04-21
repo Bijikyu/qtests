@@ -14,22 +14,22 @@
         }
 
         :root {
-            --primary: #00d4ff;
-            --primary-dark: #0099cc;
-            --secondary: #00ff9f;
-            --success: #00ff9f;
+            --primary: #00b4b4;
+            --primary-dark: #007a7a;
+            --secondary: #8b1a28;
+            --success: #00b4b4;
             --warning: #ffb700;
             --error: #ff3860;
-            --dark: #030c14;
-            --surface: #071322;
-            --surface-2: #0a1a2e;
-            --light: #0f2240;
-            --border: #1a3a5c;
-            --border-bright: #2a5080;
-            --text: #c8e6f5;
-            --text-muted: #5a8aaa;
-            --glow-cyan: 0 0 8px rgba(0,212,255,0.5), 0 0 24px rgba(0,212,255,0.2);
-            --glow-green: 0 0 8px rgba(0,255,159,0.5), 0 0 24px rgba(0,255,159,0.2);
+            --dark: #080c0c;
+            --surface: #0d1414;
+            --surface-2: #121e1e;
+            --light: #1a2828;
+            --border: #1a3232;
+            --border-bright: #2a5050;
+            --text: #c8e8e4;
+            --text-muted: #4a8080;
+            --glow-cyan: 0 0 8px rgba(0,180,180,0.5), 0 0 24px rgba(0,180,180,0.2);
+            --glow-green: 0 0 8px rgba(139,26,40,0.60), 0 0 24px rgba(139,26,40,0.24);
             --shadow: 0 2px 8px rgba(0,0,0,0.6);
             --shadow-lg: 0 8px 40px rgba(0,0,0,0.8);
         }
@@ -38,10 +38,10 @@
             font-family: 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
             background-color: var(--dark);
             background-image:
-                linear-gradient(rgba(0,212,255,0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,212,255,0.025) 1px, transparent 1px),
-                radial-gradient(ellipse at 20% 50%, rgba(0,100,200,0.06) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 20%, rgba(0,255,159,0.04) 0%, transparent 50%);
+                linear-gradient(rgba(0,180,180,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,180,180,0.025) 1px, transparent 1px),
+                radial-gradient(ellipse at 20% 50%, rgba(0,120,120,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(139,26,40,0.05) 0%, transparent 50%);
             background-size: 48px 48px, 48px 48px, 100% 100%, 100% 100%;
             min-height: 100vh;
             color: var(--text);
@@ -57,7 +57,7 @@
         }
 
         header {
-            background: linear-gradient(135deg, #071322 0%, #0a1a2e 60%, #061018 100%);
+            background: linear-gradient(135deg, #0d1414 0%, #121e1e 60%, #0a0e0e 100%);
             border: 1px solid var(--primary);
             border-top: 3px solid var(--primary);
             border-radius: 2px;
@@ -92,7 +92,7 @@
             top: 0; left: -100%;
             width: 50%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0,212,255,0.04), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0,180,180,0.04), transparent);
             animation: scanline 4s linear infinite;
         }
 
@@ -123,7 +123,7 @@
             letter-spacing: 2px;
             border-bottom: 1px solid var(--border);
             padding-bottom: 12px;
-            text-shadow: 0 0 12px rgba(0,212,255,0.4);
+            text-shadow: 0 0 12px rgba(0,180,180,0.4);
             text-transform: uppercase;
             font-family: 'Rajdhani', monospace;
             font-weight: 600;
@@ -136,26 +136,19 @@
         .logo {
             width: 50px;
             height: 50px;
-            background: transparent;
-            border: 2px solid var(--primary);
-            border-radius: 2px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--primary);
-            font-weight: bold;
-            font-size: 1.4rem;
-            box-shadow: var(--glow-cyan);
             position: relative;
-            font-family: 'Rajdhani', monospace;
         }
 
-        .logo::before {
-            content: '';
-            position: absolute;
-            inset: 4px;
-            background: rgba(0,212,255,0.08);
+        .logo img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            display: block;
         }
+
 
         .subtitle {
             color: var(--text-muted);
@@ -195,7 +188,7 @@
         }
 
         .nav-tab.active {
-            background: rgba(0,212,255,0.1);
+            background: rgba(0,180,180,0.1);
             color: var(--primary);
             border-color: var(--primary);
             box-shadow: var(--glow-cyan);
@@ -270,7 +263,7 @@
         .icon {
             width: 24px;
             height: 24px;
-            background: rgba(0,212,255,0.1);
+            background: rgba(0,180,180,0.1);
             border: 1px solid var(--primary);
             border-radius: 1px;
             display: inline-flex;
@@ -299,7 +292,7 @@
         }
 
         .btn:hover {
-            background: rgba(0,212,255,0.15);
+            background: rgba(0,180,180,0.15);
             box-shadow: var(--glow-cyan);
             color: var(--primary);
         }
@@ -309,7 +302,7 @@
             color: var(--secondary);
         }
         .btn.secondary:hover {
-            background: rgba(0,255,159,0.12);
+            background: rgba(139,26,40,0.14);
             box-shadow: var(--glow-green);
         }
 
@@ -318,7 +311,7 @@
             color: var(--success);
         }
         .btn.success:hover {
-            background: rgba(0,255,159,0.12);
+            background: rgba(139,26,40,0.14);
             box-shadow: var(--glow-green);
         }
 
@@ -376,7 +369,7 @@
         .input-group select:focus,
         .input-group textarea:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(0,212,255,0.12), var(--glow-cyan);
+            box-shadow: 0 0 0 2px rgba(0,180,180,0.12), var(--glow-cyan);
         }
 
         .input-group select option {
@@ -400,7 +393,7 @@
             margin: 14px 0;
             border: 1px solid var(--border);
             border-left: 3px solid var(--secondary);
-            box-shadow: inset 0 0 16px rgba(0,255,159,0.04);
+            box-shadow: inset 0 0 16px rgba(139,26,40,0.05);
         }
 
         .status {
@@ -419,7 +412,7 @@
         .status.success {
             border-color: var(--success);
             color: var(--success);
-            background: rgba(0,255,159,0.07);
+            background: rgba(139,26,40,0.08);
         }
 
         .status.error {
@@ -437,7 +430,7 @@
         .status.info {
             border-color: var(--primary);
             color: var(--primary);
-            background: rgba(0,212,255,0.07);
+            background: rgba(0,180,180,0.07);
         }
 
         .progress-bar {
@@ -453,7 +446,7 @@
             height: 100%;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             transition: width 0.4s ease;
-            box-shadow: 0 0 6px rgba(0,212,255,0.7);
+            box-shadow: 0 0 6px rgba(0,180,180,0.7);
         }
 
         .feature-list {
@@ -495,7 +488,7 @@
             margin: 14px 0;
             border: 1px solid var(--border);
             border-top: 2px solid var(--primary);
-            box-shadow: inset 0 0 24px rgba(0,212,255,0.04);
+            box-shadow: inset 0 0 24px rgba(0,180,180,0.04);
             scrollbar-width: thin;
             scrollbar-color: var(--border) transparent;
         }
@@ -568,13 +561,13 @@
         }
 
         .alert.info {
-            background: rgba(0,212,255,0.05);
+            background: rgba(0,180,180,0.05);
             border-color: var(--primary);
             color: var(--text);
         }
 
         .alert.success {
-            background: rgba(0,255,159,0.05);
+            background: rgba(139,26,40,0.06);
             border-color: var(--success);
             color: var(--text);
         }
@@ -627,22 +620,22 @@
         }
 
         .workflow-step.completed .workflow-step-number {
-            background: rgba(0,255,159,0.12);
+            background: rgba(139,26,40,0.14);
             border-color: var(--success);
             color: var(--success);
-            box-shadow: 0 0 14px rgba(0,255,159,0.35);
+            box-shadow: 0 0 14px rgba(139,26,40,0.42);
         }
 
         .workflow-step.active .workflow-step-number {
-            background: rgba(0,212,255,0.12);
+            background: rgba(0,180,180,0.12);
             border-color: var(--primary);
             color: var(--primary);
             animation: pulse 1.5s infinite;
         }
 
         @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 8px rgba(0,212,255,0.4); }
-            50%       { box-shadow: 0 0 22px rgba(0,212,255,0.8), 0 0 44px rgba(0,212,255,0.3); }
+            0%, 100% { box-shadow: 0 0 8px rgba(0,180,180,0.4); }
+            50%       { box-shadow: 0 0 22px rgba(0,180,180,0.8), 0 0 44px rgba(0,180,180,0.3); }
         }
 
         .workflow-line {
@@ -662,7 +655,7 @@
             height: 100%;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             transition: width 0.4s ease;
-            box-shadow: 0 0 8px rgba(0,212,255,0.7);
+            box-shadow: 0 0 8px rgba(0,180,180,0.7);
         }
 
         .demo-section {
@@ -686,7 +679,7 @@
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 0; }
         ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-        ::selection { background: rgba(0,212,255,0.2); color: var(--primary); }
+        ::selection { background: rgba(0,180,180,0.2); color: var(--primary); }
 
         @media (max-width: 768px) {
             .container { padding: 10px; }
@@ -702,7 +695,7 @@
     <div class="container">
         <header>
             <h1>
-                <div class="logo">Q</div>
+                <div class="logo"><img src="../logoqtests.png" alt="qtests logo"></div>
                 qtests — Interactive Demo
             </h1>
             <p class="subtitle">// comprehensive testing utilities for node.js applications</p>

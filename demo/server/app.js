@@ -91,6 +91,11 @@ app.use('/api', statusRouter);
 app.use('/api', usersRouter);
 app.use('/', rootRouter);
 
+// Serve logo image from workspace root
+app.get('/logoqtests.png', (_req, res) => {
+    res.sendFile(path.join(__dirname, '..', '..', 'logoqtests.png'));
+});
+
 // Serve demo.html at root with no-cache headers
 app.get('/', (_req, res) => {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
